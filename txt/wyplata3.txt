@@ -1,0 +1,21 @@
+                                           @ADR_FIRMY, @DATA_WYP
+
+               -----------------------------------------------
+                  P O T W I E R D Z E N I E   W Y P L A T Y
+               -----------------------------------------------
+
+        Potwierdzam odbior gotowki w kwocie @NETTO zl.
+    slownie zl.:@NSLOW
+    jako zaplata za wykonane prace zlecone na podstawie umowy nr @UMOWA
+    z dnia @DATA_UM.
+
+    W Y P L A C I L:
+    @FIRMA
+    ul.@UL_FIRMY
+    @ADR_FIRMY                          ....................
+                                                    podpis wyplacajacego
+    O D E B R A L:
+    @NAZWISKO @IMIE1
+    @ULICA @DOM/@LOKAL
+    @KOD @MIEJSC_ZAM                    ....................
+                                                    podpis odbierajacego

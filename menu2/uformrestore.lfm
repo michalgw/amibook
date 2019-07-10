@@ -1,0 +1,134 @@
+object FormRestore: TFormRestore
+  Left = 368
+  Height = 366
+  Top = 267
+  Width = 525
+  Caption = 'Odtwarzanie danych'
+  ClientHeight = 366
+  ClientWidth = 525
+  OnShow = FormShow
+  LCLVersion = '1.6.0.4'
+  object GroupBoxFolder: TGroupBox
+    Left = 6
+    Height = 55
+    Top = 6
+    Width = 513
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Around = 6
+    Caption = 'Folder kopii zapasowych'
+    ClientHeight = 35
+    ClientWidth = 509
+    TabOrder = 0
+    object DirectoryEditFolder: TDirectoryEdit
+      Left = 6
+      Height = 23
+      Top = 6
+      Width = 497
+      ShowHidden = False
+      ButtonWidth = 23
+      NumGlyphs = 1
+      Align = alTop
+      BorderSpacing.Around = 6
+      MaxLength = 0
+      TabOrder = 0
+      OnChange = DirectoryEditFolderChange
+    end
+  end
+  object GroupBoxLista: TGroupBox
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = GroupBoxFolder
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = BitBtn1
+    Left = 6
+    Height = 261
+    Top = 67
+    Width = 513
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    AutoSize = True
+    BorderSpacing.Around = 6
+    Caption = 'Lista kopii zapasowych'
+    ClientHeight = 241
+    ClientWidth = 509
+    TabOrder = 1
+    object ListViewKopie: TListView
+      Left = 6
+      Height = 229
+      Top = 6
+      Width = 497
+      Align = alClient
+      BorderSpacing.Around = 6
+      Columns = <      
+        item
+          AutoSize = True
+          Caption = 'Data utworzenia'
+          Width = 10
+        end      
+        item
+          Alignment = taCenter
+          AutoSize = True
+          Caption = 'Wersja programu'
+          Width = 10
+        end      
+        item
+          Alignment = taCenter
+          AutoSize = True
+          Caption = 'Pełna kopia'
+          Width = 10
+        end      
+        item
+          Alignment = taCenter
+          AutoSize = True
+          Caption = 'Zabezpieczona hasłem'
+          Width = 10
+        end      
+        item
+          AutoSize = True
+          Caption = 'Plik kopii'
+          Width = 10
+        end>
+      RowSelect = True
+      TabOrder = 0
+      ViewStyle = vsReport
+      OnSelectItem = ListViewKopieSelectItem
+    end
+  end
+  object BitBtn1: TBitBtn
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = BitBtn2
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 243
+    Height = 26
+    Top = 334
+    Width = 189
+    Anchors = [akRight, akBottom]
+    AutoSize = True
+    BorderSpacing.Around = 6
+    Caption = 'Przywróć zaznaczoną kopię'
+    Kind = bkOK
+    ModalResult = 1
+    TabOrder = 2
+  end
+  object BitBtn2: TBitBtn
+    AnchorSideTop.Side = asrBottom
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 438
+    Height = 26
+    Top = 334
+    Width = 81
+    Anchors = [akRight, akBottom]
+    AutoSize = True
+    BorderSpacing.Around = 6
+    Cancel = True
+    DefaultCaption = True
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 3
+  end
+end

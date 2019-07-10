@@ -1,0 +1,40 @@
+                                            #MIEJSC_ZAM, #DATA_RA
+#NAZWISKO #IMIE1
+#ULICA #DOM/#LOKAL
+#KOD #MIEJSC_ZAM
+
+                         ---------------------------
+                               R A C H U N E K
+                         ---------------------------
+
+Dla @FIRMA
+    @UL_FIRMY
+    @ADR_FIRMY
+za wykonanie
+    @TEMAT1
+    @TEMAT2
+zgodnie z zawarta umowa nr #UMOWA z dnia #DATA_UM na kwote #BRUTTO
+slownie zl.:#BSLOW
+
+                                                    .....................
+                                                    podpis zleceniobiorcy
+
+Stwierdzam, ze praca zostala wykonana wedlug warunkow w/w umowy.
+
+
+                                                    .....................
+                                                    podpis zleceniodawcy
+
+1.Kwota wynagrodzenia brutto........: @BRUTTO zl.
+2.Skladki na ubezpieczenia:
+  - emerytalne (@STAW_PUE %) - @WAR_PUE
+  - rentowe    (@STAW_PUR %) - @WAR_PUR
+  - chorobowe  (@STAW_PUC %) - @WAR_PUC
+  RAZEM        (@STAW_PSUM %)............: @WAR_PSUM zl.
+3.Kwota uzysku (@%KOSZT %)............: @KOSZT zl.
+4.Kwota do opodatkowania (1-(2+3))..: @DOCHOD zl.
+5.Podatek od wynagrodzenia (@%PODATEK %): @PODATEK zl.
+6.Skladka na ubezpieczenie zdrowotne: @WAR_PUZ
+
+7.Kwota do wyplaty.(1-(2+3+5+6))....: @NETTO zl.
+Slownie zl.:@NSLOW

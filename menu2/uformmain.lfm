@@ -1,0 +1,159 @@
+object FormMain: TFormMain
+  Left = 352
+  Height = 337
+  Top = 146
+  Width = 409
+  HorzScrollBar.Page = 171
+  VertScrollBar.Page = 66
+  AutoScroll = True
+  AutoSize = True
+  Caption = 'AMi-BOOK - Wybór roku'
+  ClientHeight = 337
+  ClientWidth = 409
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
+  OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '2.1.0.0'
+  object PanelTop: TPanel
+    Left = 8
+    Height = 50
+    Top = 8
+    Width = 393
+    Align = alTop
+    BorderSpacing.Around = 8
+    ClientHeight = 50
+    ClientWidth = 393
+    Color = 33023
+    ParentColor = False
+    PopupMenu = PopupMenuTools
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 16
+      Height = 15
+      Top = 18
+      Width = 138
+      Caption = 'AMi-BOOK - Wybór roku'
+      Font.Color = clWhite
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+  object PanelCenter: TPanel
+    Left = 0
+    Height = 271
+    Top = 66
+    Width = 409
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 1
+  end
+  object PopupMenuButton: TPopupMenu
+    OnPopup = PopupMenuButtonPopup
+    Left = 113
+    Top = 145
+    object MenuItemTrybTekstowy: TMenuItem
+      AutoCheck = True
+      Caption = 'Tryb tekstowy'
+      GroupIndex = 1
+      RadioItem = True
+      OnClick = MenuItemTrybClick
+    end
+    object MenuItemTrybGraficzny: TMenuItem
+      AutoCheck = True
+      Caption = 'Tryb graficzny'
+      Checked = True
+      GroupIndex = 1
+      RadioItem = True
+      OnClick = MenuItemTrybClick
+    end
+    object MenuItemS1: TMenuItem
+      Caption = '-'
+    end
+    object MenuItemEkranPelny: TMenuItem
+      Tag = 2
+      AutoCheck = True
+      Caption = 'Pełny ekran'
+      GroupIndex = 2
+      RadioItem = True
+      OnClick = MenuItemEkranClick
+    end
+    object MenuItemEkranMax: TMenuItem
+      Tag = 1
+      AutoCheck = True
+      Caption = 'Maksymalizuj'
+      Checked = True
+      GroupIndex = 2
+      RadioItem = True
+      OnClick = MenuItemEkranClick
+    end
+    object MenuItemEkranOkno: TMenuItem
+      AutoCheck = True
+      Caption = 'Domyślny rozmiar'
+      GroupIndex = 2
+      RadioItem = True
+      OnClick = MenuItemEkranClick
+    end
+    object MenuItemS2: TMenuItem
+      Caption = '-'
+    end
+    object MenuItemBackup: TMenuItem
+      Caption = 'Archiwizuj dane'
+      OnClick = MenuItemBackupClick
+    end
+    object MenuItemRestore: TMenuItem
+      Caption = 'Przywróć dane'
+      OnClick = MenuItemRestoreClick
+    end
+  end
+  object TrIcon: TTrayIcon
+    PopUpMenu = PopupMenuTray
+    Icon.Data = {
+      FE0200000000010001001B20100000000000E802000016000000280000001B00
+      0000400000000100040000000000800200000000000000000000100000000000
+      0000000000000000800000800000008080008000000080008000808000008080
+      8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+      FF00000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000077700000000000000000000000000000077000000
+      0000000000000000000000007700000000000000000000000000000077700000
+      000000000000000000000000777000000000000000000000000A000077700000
+      0000000000007700000AA0000770000000000000000077000E00AA0007700000
+      00000000000077700EE0AA000770000000000000000077700EE0000007700000
+      00000000000077700E0000B0077700000000000000000777000000BB07770000
+      0000000000000777000900BB007700000000000000000770000990BB00770000
+      0000000000000770B00990BB007700000000000000000070B000900000770000
+      0000000000000070BB0000000077000000000000000000770000000000077000
+      0000000000000007770000DDD0077000000000000000000700EE00DDD0077000
+      000000000000000700EE000DD0077000000000000000000000EE000DD0077000
+      000000000000000000EE00000007700000000000000000000000000000007000
+      0000000000000000707000000000770000000000000000000770000000007700
+      0000000000000000077700000000770000000000000000000700000007700000
+      0000000000000000000077700000000000000000000000000000000000000000
+      0000FFFFFFE0FFFFC1E0FFFFC1E0FFFFC1E0FFFFC0E0FFFFC0E0FFFE40E0FF1C
+      00E0FC1800E0FC0020E0FC0020E0FE0000E0FE008060FE000060FE000060FF04
+      0060FF040060FF060060FF824060FF81C020FF80C020FF804020FFC00020FFC0
+      4020FFC46020FFC47820FFE0FC20FFE0F000FFE00000FFE00020FFF001E0FFE0
+      3FE0
+    }
+    Hint = 'AMi-BOOK'
+    Visible = True
+    OnDblClick = TrIconDblClick
+    Left = 112
+    Top = 216
+  end
+  object PopupMenuTray: TPopupMenu
+    Left = 192
+    Top = 216
+  end
+  object PopupMenuTools: TPopupMenu
+    Left = 304
+    Top = 216
+    object MenuItemPomZdal: TMenuItem
+      Caption = '&Pomoc zdalna'
+      OnClick = MenuItemPomZdalClick
+    end
+  end
+end

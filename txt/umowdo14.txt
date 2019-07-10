@@ -1,0 +1,42 @@
+                                                 #ADR_FIRMY, #DATA_UM
+
+                   --------------------------------------
+                     U M O W A - Z L E C E N I E  nr  @UMOWA
+                   --------------------------------------
+
+
+ZLECENIODAWCA:  @FIRMA
+                @UL_FIRMY
+                @ADR_FIRMY
+
+ZLECENIOBIORCA: #NAZWISKO #IMIE1
+                zamieszkaly w @MIEJSC_ZAM
+                przy ul.#ULICA #DOM/#LOKAL
+                legitymujacy sie dowodem osobistym nr @DOWOD
+                PESEL: @PESEL
+
+zawieraja umowe o nastepujacej tresci:
+1. Zleceniodawca zleca zleceniobiorcy wykonanie nastepujacej pracy:
+   @TEMAT1
+   @TEMAT2
+   w terminie do dnia @TERMIN.
+2. Z tytulu wykonania zleconej pracy, zleceniobiorca otrzyma wynagrodzenie
+   w wysokosci @BRUTTO zl.
+   slownie: @BSLOW.
+3. Wyplata wynagrodzenia nastapi po wystawieniu rachunku przez zleceniobiorce
+   i stwierdzeniu przez zleceniodawce terminowego i prawidlowego wykonania
+   zleconej pracy, bedacej przedmiotem niniejszej umowy.
+4. W sprawach nieunormowanych ta umowa maja zastosowanie przepisy kodeksu
+   cywilnego.
+5. Postanowienia dodatkowe:.................................................
+
+   .........................................................................
+
+   .........................................................................
+6. Umowa zostala sporzadzona w 2-ch jednobrzmiacych egzemplarzach, po jednym
+   dla kazdej ze stron.
+
+
+
+   ......................, dnia #DZISIAJ             .......................
+       Zleceniobiorca                                      Zleceniodawca

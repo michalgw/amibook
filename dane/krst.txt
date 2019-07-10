@@ -1,0 +1,692 @@
+"0","grunty i melioracje szczeg¢ˆowe",0.00,0.00
+"00","grunty",0.00,0.00
+"001","grunty u¾ytkowane rolniczo - u¾ytki rolne",0.00,0.00
+"001-0","grunty w uprawie i odˆogi",0.00,0.00
+"001-1","sady",0.00,0.00
+"001-2","ˆ¥ki trwaˆe",0.00,0.00
+"001-3","pastwiska trwaˆe",0.00,0.00
+"002","grunty pod lasami i zadrzewieniami",0.00,0.00
+"002-0","lasy i grunty le˜ne",0.00,0.00
+"002-1","zadrzewienia i zakrzewienia",0.00,0.00
+"003","grunty zabudowane i do zabudowania - tereny osiedlowe",0.00,0.00
+"003-01","tereny zabudowy mieszkaniowej zwane terenami mieszkalnymi",0.00,0.00
+"003-02","tereny zabudowy przemysˆowej, uzbrojenia in¾ynieryjnego",0.00,0.00
+"003-03","tereny zabudowy o innym przeznaczeniu",0.00,0.00
+"003-1","tereny osiedlowe nie zabudowane",0.00,0.00
+"003-2","tereny zieleni",0.00,0.00
+"004","grunty pod urz¥dzeniami komunikacji - tereny komunikacyjne",0.00,0.00
+"004-1","drogi",0.00,0.00
+"004-2","tereny kolejowe",0.00,0.00
+"004-3","tereny komunikacyjne",0.00,0.00
+"005","grunty, tereny wydobywania kopalin sposobem odkrywkowym - u¾",0.00,0.00
+"006","grunty pod wodami - wody",0.00,0.00
+"009","nieu¾ytki oraz grunty i tereny r¢¾ne",0.00,0.00
+"009-8","nieu¾ytki",0.00,0.00
+"009-9","tereny r¢¾ne",0.00,0.00
+"01","melioracje szczeg¢ˆowe",0.00,0.00
+"010","budowle i urz¥dzenia wodno-melioracyjne melioracji szczeg¢ˆo",0.00,0.00
+"011","stawy rybne",0.00,0.00
+"1","budynki",0.00,0.00
+"10","budynki przemysˆowe produkcyjne i energetyczne",0.00,0.00
+"100","budynki produkcyjne og¢lnego przeznaczenia - parterowe",0.00,0.00
+"101","budynki produkcyjne og¢lnego przeznaczenia - wielokondygnacy",0.00,0.00
+"102","hale produkcyjne i energetyczne",0.00,0.00
+"103","budynki kotˆowni",0.00,0.00
+"104","budynki elektrowni, elektrociepˆowni i siˆowni",0.00,0.00
+"105","budynki rozdzielni i transformatorni",0.00,0.00
+"106","budynki pompowni, kompresorni i wentylatorni",0.00,0.00
+"107","budynki maszyn i urz¥dzeä wyci¥gowych oraz budynki nadszybia",0.00,0.00
+"108","budynki produkcyjne specjalne",0.00,0.00
+"109","budynki przemysˆowe produkcyjne i energetyczne pozostaˆe",0.00,0.00
+"11","budynki transportu i ˆ¥czno˜ci",0.00,0.00
+"110","budynki dworc¢w, stacji i przystank¢w kolejowych",0.00,0.00
+"111","budynki parowozowni, lokomotywowni trakcji elektrycznej",0.00,0.00
+"112","budynki nastawni, posterunk¢w ruchu i domk¢w (budek) zwrotni",0.00,0.00
+"113","budynki gara¾y kolejowych",0.00,0.00
+"114","budynki dworc¢w autobusowych i lotniczych oraz ¾eglugi morsk",0.00,0.00
+"115","budynki zajezdni oraz gara¾y samochodowych i trolejbusowych",0.00,0.00
+"116","budynki stacji obsˆugi samochod¢w",0.00,0.00
+"117","hangary lotnicze",0.00,0.00
+"118","budynki techniczne ˆ¥czno˜ci",0.00,0.00
+"119","budynki transportu i ˆ¥czno˜ci pozostaˆe",0.00,0.00
+"12","budynki handlowe i usˆugowe",0.00,0.00
+"120","budynki du¾ych dom¢w towarowych",0.00,0.00
+"121","budynki ˜rednich i maˆych dom¢w towarowych oraz sklep¢w i pu",0.00,0.00
+"122","hale targowe",0.00,0.00
+"123","hale wystawowe",0.00,0.00
+"124","budynki zakˆad¢w gastronomicznych",0.00,0.00
+"125","kioski towarowe",0.00,0.00
+"126","budynki bank¢w, instytucji finansowych i poczt",0.00,0.00
+"129","budynki handlowe i usˆugowe pozostaˆe",0.00,0.00
+"13","budynki skˆadowe",0.00,0.00
+"130","budynki magazyn¢w surowc¢w",0.00,0.00
+"131","budynki magazyn¢w wyrob¢w gotowych",0.00,0.00
+"132","budynki magazyn¢w og¢lnego wykorzystania",0.00,0.00
+"133","budynki magazyn¢w handlowych",0.00,0.00
+"134","budynki magazyn¢w przesyˆowych",0.00,0.00
+"135","budynki magazyn¢w specjalnie zabezpieczonych",0.00,0.00
+"136","budynki magazyn¢w zbo¾owych",0.00,0.00
+"137","budynki magazyn¢w rozlewni",0.00,0.00
+"138","budynki zamra¾alni i magazyn¢w chˆodniczych",0.00,0.00
+"139","budynki skˆadowe pozostaˆe",0.00,0.00
+"14","budynki biurowe",0.00,0.00
+"140","budynki biurowe nowoczesne o du¾ej kubaturze",0.00,0.00
+"141","budynki biurowe zabytkowe o du¾ej kubaturze",0.00,0.00
+"142","budynki biurowe nowoczesne pozostaˆe",0.00,0.00
+"143","budynki biurowe zabytkowe pozostaˆe",0.00,0.00
+"144","budynki biurowe tradycyjne o du¾ej kubaturze",0.00,0.00
+"145","budynki biurowe tradycyjne pozostaˆe",0.00,0.00
+"149","budynki biurowe pozostale",0.00,0.00
+"15","budynki ochrony zdrowia i opieki spoˆecznej",0.00,0.00
+"150","budynki szpitali i klinik",0.00,0.00
+"151","budynki zakˆad¢w otwartej opieki zdrowotnej typu miejskiego",0.00,0.00
+"152","budynki zakˆad¢w otwartej opieki zdrowotnej typu maˆomiejski",0.00,0.00
+"154","budynki sanatori¢w i dom¢w dziecka",0.00,0.00
+"155","budynki sˆu¾by zdrowia zakˆad¢w specjalnych",0.00,0.00
+"156","budynki zakˆad¢w leczniczo-k¥pielowych i fizykoterapeutyczny",0.00,0.00
+"157","budynki rekreacyjne",0.00,0.00
+"158","budynki ˆa«ni",0.00,0.00
+"159","budynki ochrony zdrowia i opieki spoˆecznej pozostaˆe",0.00,0.00
+"16","budynki mieszkalne",0.00,0.00
+"160","budynki mieszkalne rodzinne staˆego zamieszkania typu wielko",0.00,0.00
+"161","budynki mieszkalne rodzinne staˆego zamieszkania typu wielko",0.00,0.00
+"162","budynki mieszkalne rodzinne staˆego zamieszkania typu willow",0.00,0.00
+"163","budynki mieszkalne rodzinne staˆego zamieszkania typu maˆomi",0.00,0.00
+"164","budynki mieszkalne rodzinne staˆego zamieszkania typu maˆomi",0.00,0.00
+"165","budynki mieszkalne rodzinne staˆego zamieszkania typu wiejsk",0.00,0.00
+"166","budynki zbiorowego okresowego zamieszkania - budynki hoteli",0.00,0.00
+"167","budynki hoteli robotniczych, internat¢w i inne budynki zbior",0.00,0.00
+"168","budynki zbiorowego okresowego zamieszkania zwi¥zane z turyst",0.00,0.00
+"169","budynki mieszkalne pozostaˆe",0.00,0.00
+"17","budynki o˜wiaty, nauki i kultury",0.00,0.00
+"170","budynki przedszkoli",0.00,0.00
+"171","budynki szk¢ˆ podstawowych i ˜rednich",0.00,0.00
+"172","budynki szk¢ˆ wy¾szych",0.00,0.00
+"173","budynki instytut¢w, jednostek naukowo-badawczych, laboratori",0.00,0.00
+"174","budynki bibliotek i archiw¢w",0.00,0.00
+"175","budynki muze¢w i staˆych wystaw",0.00,0.00
+"176","budynki teatr¢w i filharmonii",0.00,0.00
+"177","budynki kin",0.00,0.00
+"178","budynki dom¢w kultury, klub¢w i ˜wietlic",0.00,0.00
+"179","budynki o˜wiaty, nauki i kultury pozostaˆe",0.00,0.00
+"18","budynki produkcyjne i usˆugowe rolnictwa oraz gospodarcze",0.00,0.00
+"180","stodoˆy, wozownie, szopy itp.",0.00,0.00
+"181","kom¢rki i inne budynki gospodarcze naziemne",0.00,0.00
+"182","budynki inwentarskie o wyposa¾eniu zˆo¾onym",0.00,0.00
+"183","budynki inwentarskie o wyposa¾eniu prostym",0.00,0.00
+"184","budynki skˆadowe zagˆ©bione w ziemi",0.00,0.00
+"185","szklarnie i cieplarnie",0.00,0.00
+"187","budynki zaplecza mechanizacji gospodarstw rolnych, ogrodnicz",0.00,0.00
+"189","budynki produkcyjne i usˆugowe rolnictwa oraz gospodarcze po",0.00,0.00
+"19","inne budynki, w tym kultury fizycznej",0.00,0.00
+"190","budynki sportowe",0.00,0.00
+"191","hale sportowe i widowiskowe oraz kryte pˆywalnie",0.00,0.00
+"192","budynki stacji ratownictwa g¢rniczego",0.00,0.00
+"193","budynki stra¾nic przeciwpo¾arowych",0.00,0.00
+"194","budynki (baraki) niemieszkalne",0.00,0.00
+"195","budynki portierni, wartowni, dyspozytorni itp.",0.00,0.00
+"196","budynki plac¢wek zoologicznych, botanicznych itp.",0.00,0.00
+"197","budynki infrastruktury miejskiej",0.00,0.00
+"198","wiaty ochronne, domy cmentarne itp.",0.00,0.00
+"199","budynki produkcyjne i inne nie wyodr©bnione w pozostaˆych po",0.00,0.00
+"2","budowle",0.00,0.00
+"20","budowle przemysˆowe i skˆadowe naziemne",0.00,0.00
+"200","bunkry",0.00,0.00
+"202","silosy",0.00,0.00
+"203","chˆodnie przemysˆowe i skˆadowe",0.00,0.00
+"204","chˆodnie kominowe i wentylatorowe",0.00,0.00
+"205","zbiorniki naziemne",0.00,0.00
+"206","wie¾e przemysˆowe",0.00,0.00
+"209","budowle przemysˆowe i skˆadowe naziemne pozostaˆe",0.00,0.00
+"21","budowle g¢rnicze",0.00,0.00
+"210","wie¾e nadszybowe",0.00,0.00
+"211","kapitalne wyrobisko g¢rnicze",0.00,0.00
+"212","otwory wiertnicze",0.00,0.00
+"22","budowle podziemne (poza g¢rniczymi)",0.00,0.00
+"220","magazyny podziemne",0.00,0.00
+"221","zbiorniki podziemne",0.00,0.00
+"222","komory podziemne",0.00,0.00
+"223","zbiorniki, doˆy gnilne, osadniki itp. budowle",0.00,0.00
+"224","tunele i kanaˆy przemysˆowe",0.00,0.00
+"225","tunele i kanaˆy nieprzechodnie",0.00,0.00
+"226","mosty do cel¢w komunikacji w przemy˜le",0.00,0.00
+"227","podziemne gara¾e i parkingi",0.00,0.00
+"23","ruroci¥gi i przewody",0.00,0.00
+"230","ruroci¥gi przesyˆowe i przepˆywowe gazu",0.00,0.00
+"231","przewody sieci rozdzielczej gazu i spr©¾onego powietrza",0.00,0.00
+"232","ruroci¥gi przesyˆowe parowe i ciepˆownicze",0.00,0.00
+"233","przewody sieci rozdzielczej pary i ciepˆa",0.00,0.00
+"234","przewody przesyˆowe wodoci¥gowe",0.00,0.00
+"235","przewody rozdzielcze sieci wodoci¥gowej",0.00,0.00
+"236","przewody sieci kanalizacyjnej",0.00,0.00
+"237","przewody do innych cieczy",0.00,0.00
+"238","ruroci¥gi podsadzkowe i przeciwpo¾arowe (g¢rnicze)",0.00,0.00
+"24","budowle komunikacyjne",0.00,0.00
+"240","drogi kolejowe",0.00,0.00
+"241","drogi tramwajowe",0.00,0.00
+"242","drogi koˆowe",0.00,0.00
+"243","ulice i place",0.00,0.00
+"244","budowle in¾ynierskie dr¢g, ulic i plac¢w",0.00,0.00
+"245","budowle in¾ynierskie dr¢g kolejowych",0.00,0.00
+"246","budowle stacyjne",0.00,0.00
+"247","sieci elektrotrakcji kolejowej",0.00,0.00
+"248","sieci elektrotrakcji tramwajowej i trolejbusowej",0.00,0.00
+"25","budowle in¾ynierskie wodne",0.00,0.00
+"250","budowle morskie i ˜r¢dl¥dowe wodne",0.00,0.00
+"251","budowle pi©trz¥ce",0.00,0.00
+"253","kanaˆy wodne",0.00,0.00
+"254","budowle regulacyjne na rzekach i potokach g¢rskich",0.00,0.00
+"255","uj©cia i zrzuty wody",0.00,0.00
+"256","budowle do uzdatniania w¢d",0.00,0.00
+"257","waˆy i groble",0.00,0.00
+"258","budowle do oczyszczania ˜ciek¢w",0.00,0.00
+"259","budowle in¾ynierskie wodne pozostaˆe",0.00,0.00
+"26","linie i sieci energetyczne",0.00,0.00
+"260","linie elektroenergetyczne przesyˆowe i rozdzielcze",0.00,0.00
+"261","linie elektroenergetyczne wewn¥trzzakˆadowe",0.00,0.00
+"27","linie telekomunikacyjne",0.00,0.00
+"270","linie telekomunikacyjne drutowe",0.00,0.00
+"271","linie telekomunikacyjne kablowe",0.00,0.00
+"272","linie telekomunikacyjne kablowo-drutowe",0.00,0.00
+"28","budowle sportowe",0.00,0.00
+"281","boiska sportowe",0.00,0.00
+"282","budowle do †wiczeä sportowych",0.00,0.00
+"284","tory sportowe",0.00,0.00
+"285","skocznie narciarskie",0.00,0.00
+"286","pˆywalnie i baseny sportowe odkryte",0.00,0.00
+"287","przystanie sportowe",0.00,0.00
+"288","widownie sportowe",0.00,0.00
+"289","budowle sportowe pozostaˆe",0.00,0.00
+"29","inne budowle",0.00,0.00
+"290","zbiorniki wie¾owe cieczy i gazu",0.00,0.00
+"291","wie¾e przeciwpo¾arowe",0.00,0.00
+"292","anteny i konstrukcje antenowe radiostacji i telestacji staˆy",0.00,0.00
+"293","budowle i urz¥dzenia oznakowania nawigacyjnego",0.00,0.00
+"294","latarnie o˜wietleniowe",0.00,0.00
+"295","kominy przemysˆowe",0.00,0.00
+"296","estakady, pomosty i podpory pod ruroci¥gami",0.00,0.00
+"297","pochylnie i slipy stoczniowe",0.00,0.00
+"297-0","pochylnie stoczniowe",0.00,0.00
+"297-1","slipy stoczniowe",0.00,0.00
+"298","ogrodzenia i parkany",0.00,0.00
+"299","budowle pozostaˆe nie wymienione",0.00,0.00
+"3","kotˆy i maszyny energetyczne",0.00,0.00
+"30","kotˆy grzejne o ci˜nieniu poni¾ej 0,5 lub r¢wnym 0,5 atm.",0.00,0.00
+"300","kotˆy grzejne stalowe wodne",0.00,0.00
+"301","kotˆy grzejne stalowe parowe",0.00,0.00
+"302","kotˆy grzejne ¾eliwne wodne",0.00,0.00
+"303","kotˆy grzejne ¾eliwne parowe",0.00,0.00
+"304","kotˆy dautermowe",0.00,0.00
+"31","kotˆy parowe o ci˜nieniu powy¾ej 0,5 atm.",0.00,0.00
+"310","kotˆy parowe o du¾ej pojemno˜ci wodnej",0.00,0.00
+"311","kotˆy parowe wodnorurkowe o naturalnym obiegu wody",0.00,0.00
+"312","kotˆy parowe wodnorurkowe o sztucznym obiegu lub przepˆywie",0.00,0.00
+"32","maszyny nap©dowe pierwotnie nie zespolone",0.00,0.00
+"320","turbiny parowe",0.00,0.00
+"321","turbiny wodne",0.00,0.00
+"322","maszyny parowe tˆokowe",0.00,0.00
+"323","silniki spalinowe na paliwo lekkie",0.00,0.00
+"324","silniki spalinowe na paliwo ci©¾kie",0.00,0.00
+"325","silniki spalinowe na paliwo gazowe",0.00,0.00
+"326","silniki powietrzne",0.00,0.00
+"327","koˆa wodne",0.00,0.00
+"328","silniki nap©dzane powietrzem spr©¾onym",0.00,0.00
+"33","maszyny elektryczne wiruj¥ce nie zespolone",0.00,0.00
+"330","silniki pr¥du staˆego",0.00,0.00
+"331","pr¥dnice pr¥du staˆego",0.00,0.00
+"332","silniki asynchroniczne 50 okr./sek. klatkowe",0.00,0.00
+"333","silniki asynchroniczne 50 okr./sek. pier˜cieniowe",0.00,0.00
+"334","silniki synchroniczne 50 okr./sek.",0.00,0.00
+"335","pr¥dnice synchroniczne 50 okr./sek.",0.00,0.00
+"336","silniki pr¥du zmiennego na inne okresy",0.00,0.00
+"337","silniki komutatorowe pr¥du zmiennego",0.00,0.00
+"338","kompensatory wiruj¥ce",0.00,0.00
+"339","ukˆady nap©dowe elektryczne skojarzone oraz maszyny elektryc",0.00,0.00
+"34","turbozespoˆy i zespoˆy (agregaty) elektroenergetyczne wytw¢r",0.00,0.00
+"340","turbozespoˆy parowe",0.00,0.00
+"341","turbozespoˆy wodne",0.00,0.00
+"342","zespoˆy elektroenergetyczne na silniki parowe tˆokowe",0.00,0.00
+"343","zespoˆy elektroenergetyczne z silnikami spalinowymi na paliw",0.00,0.00
+"344","zespoˆy elektroenergetyczne z silnikami spalinowymi na paliw",0.00,0.00
+"345","zespdy elektroenergetyczne z silnikami spalinowymi na paliwo",0.00,0.00
+"346","zespoˆy wiatrowo-elektryczne",0.00,0.00
+"347","przetwornice",0.00,0.00
+"348","inne maszyny, zespoˆy i turbozespoˆy oraz agregaty wytw¢rcze",0.00,0.00
+"349","reaktory j¥drowe",0.00,0.00
+"4","maszyny, urz¥dzenia i aparaty og¢lnego zastosowania",0.00,0.00
+"40","obrabiarki do metali skrawaj¥ce og¢lnego zastosowania",0.00,0.00
+"400","tokarki",0.00,0.00
+"401","wiertarki, wytaczarki i wiertarko-frezarki",0.00,0.00
+"402","frezarki",0.00,0.00
+"403","przecinarki",0.00,0.00
+"404","strugarki, dˆutownice, przeci¥garki i przepycharki",0.00,0.00
+"405","szlifierki",0.00,0.00
+"41","obrabiarki do metali skrawaj¥ce specjalizowane i specjalne",0.00,0.00
+"410","tokarki specjalizowane i specjalne",0.00,0.00
+"411","wiertarki, wytaczarki i wiertarko-frezarki specjalizowane i",0.00,0.00
+"412","frezarki specjalizowane i specjalne",0.00,0.00
+"413","przecinarki i nakieˆczarki specjalizowane",0.00,0.00
+"414","strugarki, dˆutownice, przeci¥garki i przepycharki specjaliz",0.00,0.00
+"415","szlifierki specjalizowane i specjalne",0.00,0.00
+"416","obrabiarki do uzwojeä i uz©bieä",0.00,0.00
+"417","obrabiarki kombinowane, jednostki obr¢bcze, obrabiarki zespo",0.00,0.00
+"42","maszyny do obr¢bki plastycznej metali i tworzyw sztucznych",0.00,0.00
+"420","mˆoty i ku«niarki",0.00,0.00
+"421","prasy do metali i tworzyw sztucznych",0.00,0.00
+"422","maszyny do gi©cia i prostowania",0.00,0.00
+"423","nitownice",0.00,0.00
+"424","no¾yce do metali i tworzyw sztucznych",0.00,0.00
+"425","ci¥garki",0.00,0.00
+"426","maszyny do skr©cania, tkania i wyrobu spr©¾yn i lin",0.00,0.00
+"429","inne maszyny do obr¢bki plastycznej metali i tworzyw sztuczn",0.00,0.00
+"43","maszyny, urz¥dzenia i aparaty w przemysˆach rolnych i spo¾yw",0.00,0.00
+"430","maszyny, urz¥dzenia i aparaty do rozdrabniania, rozcierania",0.00,0.00
+"431","maszyny, urz¥dzenia i aparaty filtracyjne",0.00,0.00
+"432","maszyny, urz¥dzenia i aparaty do pasteryzacji",0.00,0.00
+"433","maszyny, urz¥dzenia i aparaty do dozowania i napeˆniania but",0.00,0.00
+"434","maszyny, urz¥dzenia i aparaty do zamykanio, korkowania",0.00,0.00
+"435","maszyny, urz¥dzenia i aparaty do pakowania w kartony i torby",0.00,0.00
+"436","maszyny, urz¥dzenia i aparaty do mycia i czyszczenia opakowa",0.00,0.00
+"439","inne maszyny, urz¥dzenia i aparaty w przemysˆach rolnych",0.00,0.00
+"44","maszyny i urz¥dzenia do przetˆaczania i spr©¾ania cieczy i g",0.00,0.00
+"440","pompy nurnikowe i tˆokowe",0.00,0.00
+"441","pompy wirowe",0.00,0.00
+"441-0","pompy wirowe jednostopniowe",0.00,0.00
+"442","pompy rotacyjne",0.00,0.00
+"443","pompy z©bate",0.00,0.00
+"444","spr©¾arki",0.00,0.00
+"445","dmuchawy i ssawy",0.00,0.00
+"446","wentylatory",0.00,0.00
+"449","inne maszyny i urz¥dzenia do przetˆaczania i spr©¾ania ciecz",0.00,0.00
+"45","piece przemysˆowe",0.00,0.00
+"450","piece do przerobu surowc¢w",0.00,0.00
+"450-0","piece szybowe",0.00,0.00
+"450-00","wielkie piece o nie opancerzonym szybie i pojemno˜ci u¾ytkow",0.00,0.00
+"450-01","wielkie piece o caˆkowitym opancerzonym szybie i pojemno˜ci",0.00,0.00
+"450-02","wielkich piec¢w caˆkowicie opancerzonych o pojemno˜ci u¾ytko",0.00,0.00
+"451","piece do przetwarzania paliw",0.00,0.00
+"451-0","piece koksownicze",0.00,0.00
+"451-1","piece do wytleniania w©gla i ˆupk¢w",0.00,0.00
+"451-2","piece gazownicze",0.00,0.00
+"451-3","gazogeneratory",0.00,0.00
+"451-4","piece rurowe do termicznej przer¢bki paliw pˆynnych",0.00,0.00
+"452","piece grzewcze",0.00,0.00
+"453","piece topielne",0.00,0.00
+"453-0","piece wannowe",0.00,0.00
+"454","piece do wypalania",0.00,0.00
+"455","konwertory i mieszalniki stalownicze",0.00,0.00
+"455-0","mieszalniki stalownicze",0.00,0.00
+"455-1","konwertory",0.00,0.00
+"456","piece indukcyjne wysokiej cz©stotliwo˜ci stosowane do obr¢bk",0.00,0.00
+"46","aparaty do wymiany ciepˆa",0.00,0.00
+"460","wymienniki przeponowe dwupˆaszczowe",0.00,0.00
+"461","wymienniki przeponowe pˆaszczowo-rurkowe",0.00,0.00
+"462","wymienniki przeponowe komorowo-grzejnikowe",0.00,0.00
+"463","wymienniki przeponowe pˆaszczowo-w©¾ownicowe",0.00,0.00
+"464","wymienniki przeponowe dwupˆaszczowo-w©¾ownicowe",0.00,0.00
+"465","wymienniki przeponowe rurowe",0.00,0.00
+"466","wymienniki przeponowe kanaˆowe",0.00,0.00
+"469","inne aparaty do wymiany ciepˆa",0.00,0.00
+"47","maszyny, urz¥dzenia i aparaty do operacji i proces¢w materia",0.00,0.00
+"470","mieszalniki cieczy bezci˜nieniowe z urz¥dzeniami mieszaj¥cym",0.00,0.00
+"471","mieszalniki cieczy na ci˜nienie do 16 atm z mechanizmami mie",0.00,0.00
+"472","mieszalniki cieczy na ci˜nienia powy¾ej 16 atm z mechanizmam",0.00,0.00
+"473","skrubery",0.00,0.00
+"474","kolumny",0.00,0.00
+"475","aparaty b©bnowe",0.00,0.00
+"476","aparaty walcowe skrobakowe",0.00,0.00
+"477","suszarki komorowe",0.00,0.00
+"479","inne maszyny i aparaty do operacji i proces¢w materiaˆowych",0.00,0.00
+"48","pozostaˆe maszyny, urz¥dzenia i aparaty og¢lnego zastosowani",0.00,0.00
+"480","elektrolizery",0.00,0.00
+"481","aparaty i urz¥dzenia do powierzchniowej obr¢bki metali sposo",0.00,0.00
+"482","aparaty i urz¥dzenia do powierzchniowej obr¢bki metali sposo",0.00,0.00
+"483","urz¥dzenia i aparaty do elektroerozyjnej obr¢bki metali",0.00,0.00
+"484","maszyny i aparaty do spawania, zgrzewania, natryskiwania",0.00,0.00
+"484-0","urz¥dzenia do spawania i napawania ˆukowego w ochronie gaz¢w",0.00,0.00
+"485","urz¥dzenia i aparaty chˆodnicze nieprzeno˜ne",0.00,0.00
+"486","urz¥dzenia i aparaty chˆodnicze przeno˜ne",0.00,0.00
+"49","pozostaˆe maszyny, urz¥dzenia i aparaty specjalizowane i spe",0.00,0.00
+"490","maszyny i urz¥dzenia do przygotowywania maszynowych no˜nik¢w",0.00,0.00
+"491","zespoˆy komputerowe",0.00,0.00
+"492","samodzielne urz¥dzenia do automatycznej regulacji i sterowan",0.00,0.00
+"493","roboty przemysˆowe",0.00,0.00
+"5","maszyny, urz¥dzenia i aparaty specjalne bran¾owe",0.00,0.00
+"50","maszyny, urz¥dzenia i aparaty przemysˆu chemicznego",0.00,0.00
+"500","maszyny, urz¥dzenia i aparaty przemysˆu azotowego i syntezy",0.00,0.00
+"501","maszyny, urz¥dzenia i aparaty przemysˆu farmaceutycznego i p",0.00,0.00
+"502","maszyny, urz¥dzenia i aparaty przemysˆu wˆ¢kien sztucznych",0.00,0.00
+"503","maszyny, urz¥dzenia i aparaty przemysˆu tworzyw sztucznych",0.00,0.00
+"504","maszyny, urz¥dzenia i aparaty przemysˆu gumowego",0.00,0.00
+"505","maszyny, urz¥dzenia i aparaty przemysˆu nieorganicznego",0.00,0.00
+"506","maszyny, urz¥dzenia i aparaty przemysˆu gaz¢w technicznych",0.00,0.00
+"507","maszyny, urz¥dzenia i aparaty przemysˆu rafineryjnego",0.00,0.00
+"51","maszyny, urz¥dzenia i aparaty wiertnicze, g¢rnicze, hutnicze",0.00,0.00
+"510","maszyny i urz¥dzenia wiertnicze",0.00,0.00
+"511","maszyny g¢rnicze",0.00,0.00
+"512","maszyny i urz¥dzenia do eksploatacji otwor¢w wiertniczych",0.00,0.00
+"513","maszyny i urz¥dzenia do przer¢bki mechanicznej rud i w©gla",0.00,0.00
+"513-0","stoˆy przebiercze",0.00,0.00
+"513-1","stoˆy koncentracyjne",0.00,0.00
+"513-2","osadzarki",0.00,0.00
+"513-3","wzbogacalniki z cieczami ci©¾kimi",0.00,0.00
+"513-4","wzbogacalniki strumieniowe",0.00,0.00
+"513-5","wzbogacalniki zwojowe mokre do rud",0.00,0.00
+"513-6","wialniki",0.00,0.00
+"513-7","flotowniki",0.00,0.00
+"513-8","pozostaˆe urz¥dzenia sˆu¾¥cych do przer¢bki mechanicznej",0.00,0.00
+"513-9","pomocnicze urz¥dzenia przer¢bki mechanicznej rud i w©gla",0.00,0.00
+"514","maszyny i urz¥dzenia hutnicze",0.00,0.00
+"514-0","maszyny i urz¥dzenia aglomerowni",0.00,0.00
+"514-1","maszyny i urz¥dzenia wielkopiecowe",0.00,0.00
+"514-2","maszyny i urz¥dzenia hutnicze stalowni",0.00,0.00
+"514-3","maszyny i urz¥dzenia walcowni gor¥cych",0.00,0.00
+"514-4","maszyny i urz¥dzenia walcowni rur",0.00,0.00
+"514-5","maszyny i urz¥dzenia walcowni zimnych",0.00,0.00
+"514-6","tabor hutniczy",0.00,0.00
+"514-9","inne maszyny, urz¥dzenia i aparaty hutnicze",0.00,0.00
+"515","maszyny i urz¥dzenia koksownicze i gazownicze",0.00,0.00
+"516","maszyny i urz¥dzenia odlewnicze",0.00,0.00
+"517","maszyny i urz¥dzenia torfiarskie",0.00,0.00
+"518","aparaty i urz¥dzenia do pomiar¢w i zabieg¢w geofizycznych",0.00,0.00
+"52","maszyny do produkcji surowc¢w mineralnych i wyrob¢w z nich",0.00,0.00
+"520","maszyny i urz¥dzenia przemysˆu kamieniarskiego",0.00,0.00
+"521","maszyny i urz¥dzenia przemysˆu mineralnego",0.00,0.00
+"522","maszyny i urz¥dzenia przemysˆu wapienniczego i gipsowego",0.00,0.00
+"523","maszyny i urz¥dzenia przemysˆu cementowego",0.00,0.00
+"524","maszyny, urz¥dzenia i aparaty przemysˆu izolacyjnego i korko",0.00,0.00
+"525","maszyny i urz¥dzenia do produkcji ceramiki budowlanej",0.00,0.00
+"525-0","maszyny i urz¥dzenia do przerobu surowca i formowania",0.00,0.00
+"525-3","maszyn do wyrobu cegˆy wapienno-piaskowej (silikatowej)",0.00,0.00
+"525-4","maszyny i urz¥dzenia do produkcji materiaˆ¢w ognioodpornych",0.00,0.00
+"526","maszyny przemysˆu ceramiki szlachetnej i technicznej",0.00,0.00
+"526-0","maszyny do wst©pnego przygotowania surowc¢w ceramicznych",0.00,0.00
+"526-1","urz¥dzenia specjalne do przenoszenia surowc¢w i p¢ˆfabrykat¢",0.00,0.00
+"526-2","maszyny i urz¥dzenia do formowania p¢ˆfabrykat¢w",0.00,0.00
+"526-3","maszyny i urz¥dzenia do wykaäczania wyrob¢w",0.00,0.00
+"526-4","piece do szkliwa (frytowniki)",0.00,0.00
+"526-5","r¢¾ne maszyny ceramiczne",0.00,0.00
+"527","maszyny i urz¥dzenia do produkcji szkˆa i wyrob¢w ze szkˆa",0.00,0.00
+"527-1","maszyny do produkcji szkˆa gospodarczego i o˜wietleniowego",0.00,0.00
+"528","maszyny i urz¥dzenia przemysˆu materiaˆ¢w ˜ciernych",0.00,0.00
+"529","maszyny, urz¥dzenia i agregaty do produkcji innych materiaˆ¢",0.00,0.00
+"529-8","pozostaˆe maszyny, urz¥dzenia i aparaty do produkcji innych",0.00,0.00
+"53","maszyny do wyrob¢w z metali i tworzyw sztucznych",0.00,0.00
+"531","maszyny specjalne do wyrob¢w drobnej galanterii metalowej",0.00,0.00
+"532","maszyny do wyrob¢w metalowych",0.00,0.00
+"533","maszyny i urz¥dzenia do wyrobu kabli i przewod¢w elektryczny",0.00,0.00
+"534","maszyny i urz¥dzenia do wyrobu akumulator¢w i baterii",0.00,0.00
+"535","maszyny i urz¥dzenia do produkcji ¾ar¢wek i lamp elektronowy",0.00,0.00
+"536","maszyny i aparaty do produkcji ta˜my filmowej i magnetycznej",0.00,0.00
+"537","maszyny i aparaty do produkcji film¢w i kopii filmowych",0.00,0.00
+"538","maszyny do nawijania cewek oraz izolacji silnik¢w, transform",0.00,0.00
+"54","maszyny do obr¢bki i przerobu drewna, wyrob¢w z drewna",0.00,0.00
+"540","maszyny, urz¥dzenia i aparaty do ˜cinki drzew oraz obr¢bki d",0.00,0.00
+"541","maszyny, urz¥dzenia i aparaty do wyrobu oklein, pˆyt stolars",0.00,0.00
+"542","maszyny, urz¥dzenia i aparaty do wyrobu pˆyt pil˜niowych",0.00,0.00
+"542-0","maszyny rozwˆ¢kniaj¥ce",0.00,0.00
+"542-1","maszyny i urz¥dzenia klejarä",0.00,0.00
+"542-4","urz¥dzenia pomocnicze do wyrobu pˆyt spil˜nionych",0.00,0.00
+"542-5","urz¥dzenia hartownicze i klimatyzacyjne, pˆyt spil˜nionych",0.00,0.00
+"542-6","maszyny, urz¥dzenia i aparaty do wyrobu pˆyt wi¢rowych",0.00,0.00
+"543","maszyny, urz¥dzenia i aparaty do wyrobu zapaˆek",0.00,0.00
+"544","maszyny, urz¥dzenia i aparaty do wyrobu beczek, skrzyä",0.00,0.00
+"544-0","maszyny i urz¥dzenia do wyrobu beczek i innych wyrob¢w bedna",0.00,0.00
+"544-1","maszyny do produkcji skrzynek i mebli gi©tych",0.00,0.00
+"544-3","maszyny do produkcji oˆ¢wk¢w",0.00,0.00
+"544-4","maszyny do produkcji kopyt, obcas¢w i innych element¢w drewn",0.00,0.00
+"544-8","inne maszyny do beczek, skrzyä i r¢¾nych wyrob¢w z drewna",0.00,0.00
+"545","maszyny, urz¥dzenia i aparaty do wyrobu celulozy",0.00,0.00
+"546","maszyny i urz¥dzenia do wyrobu papieru i tektury",0.00,0.00
+"547","maszyny, urz¥dzenia i aparaty do wyrob¢w papierniczych i tek",0.00,0.00
+"548","maszyny, urz¥dzenia i aparaty poligraficzne",0.00,0.00
+"548-0","maszyny i aparaty do produkcji materiaˆu zecerskiego",0.00,0.00
+"548-2","maszyny i aparaty do fotochemicznego i chemicznego wykonania",0.00,0.00
+"548-4","maszyny do druku we wszystkich technikach drukarskich",0.00,0.00
+"548-6","maszyny poligraficzne pomocnicze",0.00,0.00
+"549","maszyny i urz¥dzenia do wyrob¢w z drewna lub materiaˆ¢w zast",0.00,0.00
+"55","maszyny wˆ¢kiennicze i odzie¾owe oraz do produkcji sk¢ry",0.00,0.00
+"550","maszyny do wst©pnej obr¢bki wˆ¢kien ˆykowych",0.00,0.00
+"551","maszyny prz©dzalnicze",0.00,0.00
+"552","maszyny do produkcji nici, sznurk¢w i lin",0.00,0.00
+"553","maszyny tkackie",0.00,0.00
+"553-1","krosna i maszyny do produkcji tkanin",0.00,0.00
+"554","maszyny dziewiarskie i poäczosznicze",0.00,0.00
+"555","maszyny wykaäczalnicze i farbiarskie",0.00,0.00
+"556","maszyny do produkcji filcu i artykuˆ¢w z filcu",0.00,0.00
+"557","maszyny szwalnicze, odzie¾owe i do wyrobu guzik¢w",0.00,0.00
+"558","maszyny do produkcji sk¢ry i wyrob¢w ze sk¢ry",0.00,0.00
+"559","inne maszyny i urz¥dzenia przemysˆu wˆ¢kienniczego, odzie¾ow",0.00,0.00
+"56","maszyny, urz¥dzenia i aparaty przemysˆ¢w rolnych",0.00,0.00
+"560","maszyny, urz¥dzenia i aparaty przemysˆu cukrowniczego",0.00,0.00
+"561","maszyny, urz¥dzenia i aparaty przemysˆu piwowarsko-sˆodownic",0.00,0.00
+"562","maszyny, urz¥dzenia i aparaty przemysˆu dro¾d¾owego",0.00,0.00
+"563","maszyny, urz¥dzenia i aparaty przemysˆu spirytusowego",0.00,0.00
+"564","maszyny, urz¥dzenia i aparaty przemysˆu octowego",0.00,0.00
+"565","maszyny, urz¥dzenia i aparaty przemysˆu ziemniaczanego",0.00,0.00
+"566","maszyny, urz¥dzenia i aparaty przemysˆu owocowo-warzywnego",0.00,0.00
+"567","maszyny, urz¥dzenia i aparaty przemysˆu mˆynarskiego",0.00,0.00
+"567-1","maszyny do obr¢bki powierzchniowej zbo¾a i produkt¢w zbo¾owy",0.00,0.00
+"568","maszyny, urz¥dzenia i aparaty przemysˆu piekarniczego",0.00,0.00
+"568-4","piece piekarnicze",0.00,0.00
+"57","maszyny, urz¥dzenia i aparaty przemysˆ¢w spo¾ywczych",0.00,0.00
+"570","maszyny, urz¥dzenia i aparaty przemysˆu cukierniczego",0.00,0.00
+"570-1","maszyny i urz¥dzenia do produkcji cukierk¢w",0.00,0.00
+"570-3","maszyny i urz¥dzenia do produkcji wyrob¢w czekoladowanych",0.00,0.00
+"570-4","maszyny i urz¥dzenia do produkcji pieczywa cukierniczego",0.00,0.00
+"571","maszyny, urz¥dzenia i aparaty przemysˆu koncentrat¢w spo¾ywc",0.00,0.00
+"572","maszyny, urz¥dzenia i aparaty przemysˆu tytoniowego i zielar",0.00,0.00
+"572-0","maszyny i urz¥dzenia fermentowni tytoniu przemysˆowego",0.00,0.00
+"572-1","maszyny i urz¥dzenia do przygotowania mieszanki tytoniowej",0.00,0.00
+"572-5","maszyny i urz¥dzenia pomocniczych przemysˆu tytoniowego",0.00,0.00
+"572-6","maszyny i urz¥dzenia do przerobu zi¢ˆ",0.00,0.00
+"572-8","inne maszyny, urz¥dzenia i aparaty przemysˆu tytoniowego",0.00,0.00
+"573","maszyny, urz¥dzenia i aparaty przemysˆu mi©snego",0.00,0.00
+"574","maszyny, urz¥dzenia i aparaty przemysˆu rybnego",0.00,0.00
+"575","maszyny, urz¥dzenia i aparaty przemysˆu tˆuszczowego",0.00,0.00
+"575-0","maszyny i urz¥dzenia do produkcji oleju, margaryny oraz myde",0.00,0.00
+"575-2","maszyny i urz¥dzenia do pozostaˆego przetw¢rstwa tˆuszczoweg",0.00,0.00
+"576","maszyny, urz¥dzenia i aparaty przemysˆu mleczarskiego",0.00,0.00
+"577","maszyny, urz¥dzenia i aparaty przemysˆu jajczarsko-drobiarsk",0.00,0.00
+"578","maszyny, urz¥dzenia i aparaty przemysˆu gastronomicznego",0.00,0.00
+"579","inne maszyny, urz¥dzenia i aparaty przemysˆ¢w spo¾ywczych",0.00,0.00
+"579-0","maszyny, urz¥dzenia i aparaty do przetw¢rstwa odpad¢w zwierz",0.00,0.00
+"579-1","maszyny i urz¥dzenia do przerobu pasz zielonych obejmuj¥cy",0.00,0.00
+"58","maszyny do rob¢t ziemnych, budowlanych i drogowych",0.00,0.00
+"580","maszyny do rob¢t ziemnych i fundamentowych",0.00,0.00
+"581","maszyny do rob¢t budowlanych",0.00,0.00
+"582","maszyny do rob¢t drogowych",0.00,0.00
+"583","koparki i zwaˆowarki u¾ywane w kopalnictwie odkrywkowym",0.00,0.00
+"584","maszyny do rob¢t torowych kolejowych",0.00,0.00
+"59","maszyny rolnicze i gospodarki le˜nej",0.00,0.00
+"590","maszyny i narz©dzia uprawowe",0.00,0.00
+"590-0","pˆugi",0.00,0.00
+"590-1","kultywatory i skaryfikatory",0.00,0.00
+"590-2","glebogryzarki",0.00,0.00
+"590-3","brony",0.00,0.00
+"590-4","spulchniacze",0.00,0.00
+"590-5","waˆy uprawowe",0.00,0.00
+"590-6","wˆ¢ki",0.00,0.00
+"590-9","inne maszyny i urz¥dzenia uprawowe",0.00,0.00
+"590-91","gˆ©bosze",0.00,0.00
+"590-92","maszyny i zestawy uprawowe i uprawowo-siewne",0.00,0.00
+"590-93","maszyny do zbierania kamieni",0.00,0.00
+"590-99","maszyny i urz¥dzenia uprawowe r¢¾ne",0.00,0.00
+"591","maszyny do siewu, sadzenia, nawo¾enia i deszczowania",0.00,0.00
+"592","maszyny i narz©dzia piel©gnacyjne",0.00,0.00
+"592-5","maszyny i urz¥dzenia do piel©gnacji szk¢ˆek, upraw le˜nych",0.00,0.00
+"592-9","inne maszyny i urz¥dzenia do piel©gnacji ro˜lin i drzew",0.00,0.00
+"593","maszyny do ochrony ro˜lin",0.00,0.00
+"594","maszyny do zbioru ziemiopˆod¢w",0.00,0.00
+"594-0","maszyny i urz¥dzenia do zbioru traw, siana i zielonek",0.00,0.00
+"594-1","maszyny do zbioru zb¢¾",0.00,0.00
+"594-2","maszyny do zbioru ziemniak¢w",0.00,0.00
+"594-3","maszyny do zbioru burak¢w",0.00,0.00
+"594-4","maszyny i urz¥dzenia do zbioru szyszek i nasion z drzew i kr",0.00,0.00
+"594-5","maszyny do zbioru warzyw",0.00,0.00
+"594-6","maszyny do zbioru owoc¢w",0.00,0.00
+"594-7","maszyny do pozyskiwania materiaˆu szk¢ˆkarskiego",0.00,0.00
+"594-8","maszyny do zbioru ro˜lin przemysˆowych",0.00,0.00
+"595","maszyny omˆotowe, suszarnie i urz¥dzenia pomocnicze",0.00,0.00
+"596","maszyny do czyszczenia, sortowania i zaprawiania ziemiopˆod¢",0.00,0.00
+"596-0","maszyny do czyszczenia i sortowania zb¢¾, str¥czkowych i ole",0.00,0.00
+"596-1","maszyny do czyszczenia i sortowania okopowych",0.00,0.00
+"596-2","maszyny do czyszczenia i sortowania warzyw i owoc¢w",0.00,0.00
+"597","maszyny do przetw¢rstwa paszowego",0.00,0.00
+"598","maszyny oraz urz¥dzenia do chowu i hodowli zwierz¥t",0.00,0.00
+"598-0","maszyny i urz¥dzenia hodowlane dla bydˆa",0.00,0.00
+"598-1","maszyny i urz¥dzenia hodowlane dla trzody",0.00,0.00
+"598-2","maszyny i urz¥dzenia hodowlane dla drobiu",0.00,0.00
+"598-3","maszyny i urz¥dzenia hodowlane dla owiec",0.00,0.00
+"598-4","maszyny i urz¥dzenia hodowlane dla zwierz¥t futerkowych",0.00,0.00
+"598-5","urz¥dzenia dla produkcji pszczelej",0.00,0.00
+"598-9","urz¥dzenia i sprz©t zootechniczny",0.00,0.00
+"599","maszyny i urz¥dzenia r¢¾ne",0.00,0.00
+"599-0","maszyny i urz¥dzenia do pozyskiwania drewna i karpiny",0.00,0.00
+"599-1","karczowniki",0.00,0.00
+"599-2","inne maszyny, urz¥dzenia i narz©dzia specjalizowane dla gosp",0.00,0.00
+"6","urz¥dzenia techniczne",0.00,0.00
+"60","zbiorniki naziemne",0.00,0.00
+"600","zbiorniki naziemne ceglane",0.00,0.00
+"601","zbiorniki naziemne betonowe",0.00,0.00
+"602","zbiorniki naziemne drewniane",0.00,0.00
+"603","zbiorniki naziemne z tworzyw naturalnych i sztucznych",0.00,0.00
+"604","zbiorniki naziemne stalowe",0.00,0.00
+"605","zbiorniki naziemne z metali nie¾elaznych",0.00,0.00
+"61","urz¥dzenia i aparatura energii elektrycznej",0.00,0.00
+"610","urz¥dzenia rozdzielcze pr¥du zmiennego",0.00,0.00
+"611","urz¥dzenia nastawcze pr¥du zmiennego i staˆego",0.00,0.00
+"612","aparatura pr¥du zmiennego",0.00,0.00
+"613","stacje transformatorowe staˆe i przewo«ne",0.00,0.00
+"614","urz¥dzenia i aparatura rozdzielcza pr¥du staˆego",0.00,0.00
+"615","aparatura pr¥du staˆego",0.00,0.00
+"62","urz¥dzenia tele- i radiotechniczne",0.00,0.00
+"620","urz¥dzenia i aparatura radionadawcza",0.00,0.00
+"621","urz¥dzenia i aparatura radioodbiorcza",0.00,0.00
+"622","urz¥dzenia elektroakustyczne i elektrowizyjne",0.00,0.00
+"623","urz¥dzenia teletransmisji przewodowej",0.00,0.00
+"624","urz¥dzenia alarmowe i sygnalizacyjne",0.00,0.00
+"626","ˆ¥cznice i urz¥dzenia telefoniczne",0.00,0.00
+"627","ˆ¥cznice i urz¥dzenia telegraficzne",0.00,0.00
+"629","inne urz¥dzenia tele- i radiotechniczne",0.00,0.00
+"63","urz¥dzenia elektroenergetyczne przetw¢rcze i zasilaj¥ce",0.00,0.00
+"630","transformatory",0.00,0.00
+"631","zespoˆy prostownikowe",0.00,0.00
+"632","kondensatory statyczne",0.00,0.00
+"633","baterie akumulator¢w elektrycznych staˆych (stacyjnych)",0.00,0.00
+"634","baterie akumulator¢w elektrycznych zasadowych",0.00,0.00
+"64","d«wigi i przeno˜niki (transportery)",0.00,0.00
+"640","d«wigi osobowe i towarowe",0.00,0.00
+"641","d«wigniki, wci¥garki i wci¥gniki przejezdne oraz nieprzejezd",0.00,0.00
+"642","¾urawie (d«wigi przeˆadunkowe)",0.00,0.00
+"643","przeno˜niki (transportery) og¢lnego zastosowania",0.00,0.00
+"644","przeno˜niki (transportery) kopalniane",0.00,0.00
+"645","przeno˜niki (transportery) powietrzne i wodne",0.00,0.00
+"646","suwnice i wsadzarki",0.00,0.00
+"647","przesuwnice, obrotnice i wywrotnice",0.00,0.00
+"648","tory, kolejki linowe i d«wignice linowe",0.00,0.00
+"65","urz¥dzenia przemysˆowe",0.00,0.00
+"650","przekˆadnie",0.00,0.00
+"651","przewody sieci technologicznych wewn¥trzzakˆadowych",0.00,0.00
+"652","urz¥dzenia wentylacyjne",0.00,0.00
+"653","urz¥dzenia klimatyzacyjne",0.00,0.00
+"654","urz¥dzenia do oczyszczania wody",0.00,0.00
+"655","urz¥dzenia do oczyszczania gaz¢w",0.00,0.00
+"656","urz¥dzenia do odpopielania i od¾u¾lania",0.00,0.00
+"657","akumulatory hydrauliczne",0.00,0.00
+"658","urz¥dzenia do oczyszczania ˜ciek¢w",0.00,0.00
+"659","pozostaˆe urz¥dzenia przemysˆowe nie wymienione",0.00,0.00
+"66","urz¥dzenia nieprzemysˆowe",0.00,0.00
+"660","wagi wozowe, wagonowe i inne wbudowane",0.00,0.00
+"661","urz¥dzenia pralni i farbiarni",0.00,0.00
+"662","urz¥dzenia i aparaty projekcyjne",0.00,0.00
+"663","urz¥dzenia przeciwpo¾arowe",0.00,0.00
+"664","urz¥dzenia i aparatura do przeprowadzania badaä technicznych",0.00,0.00
+"668","urz¥dzenia techniczne teatralne",0.00,0.00
+"669","pozostaˆe urz¥dzenia nieprzemysˆowe",0.00,0.00
+"68","pozostaˆe urz¥dzenia techniczne",0.00,0.00
+"680","urz¥dzenia zabezpieczaj¥ce ruch poci¥g¢w",0.00,0.00
+"681","kontenery",0.00,0.00
+"7","˜rodki transportowe",0.00,0.00
+"70","kolejowy tabor szynowy naziemny",0.00,0.00
+"700","kolejowy tabor szynowy naziemny dla szeroko˜ci toru 1435 i 1",0.00,0.00
+"701","kolejowy tabor szynowy naziemny dla szeroko˜ci toru 1000 mm",0.00,0.00
+"702","kolejowy tabor szynowy naziemny dla szeroko˜ci toru 800 mm",0.00,0.00
+"703","kolejowy tabor szynowy naziemny dla szeroko˜ci toru 785 mm",0.00,0.00
+"704","kolejowy tabor szynowy naziemny dla szeroko˜ci toru 750 mm",0.00,0.00
+"705","kolejowy tabor szynowy naziemny dla szeroko˜ci toru 600 mm",0.00,0.00
+"706","kolejowy tabor szynowy naziemny dla tor¢w o szeroko˜ciach ni",0.00,0.00
+"71","kolejowy tabor szynowy podziemny",0.00,0.00
+"710","kolejowy tabor podziemny dla szeroko˜ci toru 750ö1050 mm",0.00,0.00
+"710-0","lokomotywy",0.00,0.00
+"710-1","w¢zy kopalniane",0.00,0.00
+"711","kolejowy tabor szynowy podziemny dla szeroko˜ci toru od 550ö",0.00,0.00
+"712","kolejowy tabor szynowy podziemny dla szeroko˜ci tora 400ö550",0.00,0.00
+"72","tramwajowy tabor szynowy",0.00,0.00
+"720","tramwajowy tabor szynowy normalnotorowy",0.00,0.00
+"721","tramwajowy tabor szynowy w¥skotorowy",0.00,0.00
+"73","pozostaˆy tabor szynowy naziemny",0.00,0.00
+"730","pozostaˆy tabor szynowy naziemny przystosowany do szeroko˜ci",0.00,0.00
+"731","pozostaˆy tabor szynowy naziemny przystosowany do szeroko˜ci",0.00,0.00
+"732","pozostaˆy tabor szynowy naziemny przystosowany do szeroko˜ci",0.00,0.00
+"733","pozostaˆy tabor szynowy naziemny przystosowany do szeroko˜ci",0.00,0.00
+"734","pozostaˆy tabor szynowy naziemny przystosowany do szeroko˜ci",0.00,0.00
+"735","pozostaˆy tabor szynowy naziemny przystosowany do szeroko˜ci",0.00,0.00
+"74","pojazdy mechaniczne",0.00,0.00
+"740","motocykle, przyczepy i w¢zki motocyklowe",0.00,0.00
+"741","samochody osobowe",0.00,0.00
+"742","samochody ci©¾arowe",0.00,0.00
+"742-0","samochody uniwersalne",0.00,0.00
+"742-1","furgony",0.00,0.00
+"742-2","samochody ci©¾arowe samowyˆadowcze",0.00,0.00
+"742-3","cysterny - pojazdy do przewozu paliw pˆynnych, mleka, wody",0.00,0.00
+"742-4","pojemniki do przewozu betonu, bitumu, cementu luzem",0.00,0.00
+"743","samochody specjalne",0.00,0.00
+"743-0","samochody sanitarne",0.00,0.00
+"743-2","pojazdy stanowi¥ce objazdowe punkty usˆugowe",0.00,0.00
+"743-3","pojazdy zaˆadowczo-wyˆadowcze",0.00,0.00
+"743-4","pojazdy mechaniczne",0.00,0.00
+"744","autobusy i autokary",0.00,0.00
+"745","trolejbusy i samochody o nap©dzie elektrycznym",0.00,0.00
+"746","ci¥gniki",0.00,0.00
+"746-1","ci¥gniki samochodowe",0.00,0.00
+"746-2","ci¥gniki rolnicze",0.00,0.00
+"747","naczepy",0.00,0.00
+"748","przyczepy",0.00,0.00
+"75","tabor konny",0.00,0.00
+"750","pojazdy koˆowe osobowe",0.00,0.00
+"751","wozy gospodarcze i platformy",0.00,0.00
+"752","furgony",0.00,0.00
+"753","wozy specjalne",0.00,0.00
+"754","sanie",0.00,0.00
+"76","pozostaˆy tabor bezszynowy",0.00,0.00
+"760","w¢zki jezdniowe z pomostem staˆym o nap©dzie elektrycznym",0.00,0.00
+"761","w¢zki jezdniowe podno˜nikowe z nisko podnoszon¥ platform¥",0.00,0.00
+"762","w¢zki jezdniowe podno˜nikowe, mechaniczne, wysokiego podnosz",0.00,0.00
+"763","w¢zki jezdniowe podno˜nikowe, mechaniczne, wysokiego podnosz",0.00,0.00
+"764","w¢zki jezdniowe transportowe ze staˆ¥ platform¥ i ¾urawiem",0.00,0.00
+"768","inne w¢zki jezdniowe",0.00,0.00
+"77","tabor pˆywaj¥cy",0.00,0.00
+"770","tabor transportu morskiego",0.00,0.00
+"771","tabor ryboˆ¢wstwa morskiego",0.00,0.00
+"772","tabor techniczny i ratowniczy morski",0.00,0.00
+"773","tabor transportu ˜r¢dl¥dowego",0.00,0.00
+"774","tabor techniczny i ratowniczy ˜r¢dl¥dowy",0.00,0.00
+"778","inny tabor pˆywaj¥cy",0.00,0.00
+"78","tabor lotniczy",0.00,0.00
+"780","samoloty",0.00,0.00
+"781","wiropˆaty (˜migˆowce)",0.00,0.00
+"782","szybowce",0.00,0.00
+"783","balony",0.00,0.00
+"788","inne ˜rodki transportu lotniczego",0.00,0.00
+"8","narz©dzia, przyrz¥dy, ruchomo˜ci i wyposa¾enie",0.00,0.00
+"80","narz©dzia, aparaty, sprz©t i wyposa¾enie",0.00,0.00
+"800","narz©dzia, przyrz¥dy, sprawdziany itp.",0.00,0.00
+"801","wyposa¾enie, aparaty i sprz©t laboratoryjny",0.00,0.00
+"802","wyposa¾enie, aparaty i sprz©t medyczny",0.00,0.00
+"803","wyposa¾enie techniczne biur",0.00,0.00
+"804","wyposa¾enie i sprz©t cyrkowy",0.00,0.00
+"805","wyposa¾enie i sprz©t kin, teatr¢w, plac¢wek kulturalno-o˜wia",0.00,0.00
+"806","kioski, budki, baraki, domki campingowe itp.",0.00,0.00
+"808","inne przyrz¥dy, ruchomo˜ci i wyposa¾enie techniczne",0.00,0.00
+

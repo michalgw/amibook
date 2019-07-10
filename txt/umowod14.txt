@@ -1,0 +1,57 @@
+                                                 #ADR_FIRMY, #DATA_UM
+
+                   --------------------------------------
+                     U M O W A - Z L E C E N I E  nr  @UMOWA
+                   --------------------------------------
+
+
+ZLECENIODAWCA:  @FIRMA
+                @UL_FIRMY
+                @ADR_FIRMY
+
+ZLECENIOBIORCA: #NAZWISKO #IMIE1
+                zamieszkaly w @MIEJSC_ZAM
+                przy ul.#ULICA #DOM/#LOKAL
+                legitymujacy sie dowodem osobistym nr @DOWOD
+                PESEL: @PESEL
+
+zawieraja umowe o nastepujacej tresci:
+1. Zleceniodawca zleca zleceniobiorcy wykonanie nastepujacej pracy:
+   @TEMAT1
+   @TEMAT2
+   w terminie do dnia @TERMIN.
+2. Z tytulu wykonania zleconej pracy, zleceniobiorca otrzyma wynagrodzenie
+   w wysokosci #BRUTTO zl.
+   slownie: @BSLOW.
+   pomniejszone o kwoty skladek na ubezpieczenia finansowane przez
+   zleceniobiorce:
+   - emerytalne (@STAW_PUE %) - @WAR_PUE
+   - rentowe    (@STAW_PUR %) - @WAR_PUR
+   - chorobowe  (@STAW_PUC %) - @WAR_PUC
+3. Od w/w wynagrodzenia zleceniodawca obliczy, pobierze i odprowadzi kwoty
+   nalezne na podatek dochodowy oraz skladke na ubezpieczenie zdrowotne.
+4. Od w/w wynagrodzenia zleceniodawca obliczy i odprowadzi kwoty nalezne
+   na skladki na ubezpieczenia finansowane przez zleceniodawce:
+   - emerytalne (@STAW_FUE %) - @WAR_FUE
+   - rentowe    (@STAW_FUR %) - @WAR_FUR
+   - wypadkowe  (@STAW_FUW %) - @WAR_FUW
+   oraz na fundusze:
+   - pracy      (@STAW_FFP %) - @WAR_FFP
+   - FGSP       (@STAW_FFG %) - @WAR_FFG
+5. Wyplata wynagrodzenia nastapi po wystawieniu rachunku przez zleceniobiorce
+   i stwierdzeniu przez zleceniodawce terminowego i prawidlowego wykonania
+   zleconej pracy, bedacej przedmiotem niniejszej umowy.
+6. W sprawach nieunormowanych ta umowa maja zastosowanie przepisy kodeksu
+   cywilnego.
+7. Postanowienia dodatkowe:.................................................
+
+   .........................................................................
+
+   .........................................................................
+8. Umowa zostala sporzadzona w 2-ch jednobrzmiacych egzemplarzach, po jednym
+   dla kazdej ze stron.
+
+
+
+   ......................, dnia #DZISIAJ             .......................
+       Zleceniobiorca                                      Zleceniodawca
