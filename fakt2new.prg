@@ -157,10 +157,12 @@ sprawdzVAT(10,faktury->DATAS)
       zWART02=0
       zWART22=0
       zWART12=0
+      zWARTOO=0
       zVAT07=0
       zVAT02=0
       zVAT22=0
       zVAT12=0
+      zVATOO=0
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       _grupa=.t.
       do while .not.&_koniec
@@ -200,7 +202,7 @@ sprawdzVAT(10,faktury->DATAS)
          case k6='0 '
               zWART00=zWART00+k5
          CASE k6 == 'PN' .OR. k6 == 'PU'
-              zWART08=zWART08+k5
+              zWARTOO=zWARTOO+k5
               DrukujPN := .T.
          case alltrim(k6)=str(vat_B,1)
               zWART07=zWART07+k5
@@ -227,8 +229,8 @@ sprawdzVAT(10,faktury->DATAS)
       zVAT22=_round(zWART22*(vat_A/100),2)
       *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
       s0_7=zVAT07+zVAT02+zVAT22+zVAT12
-      s0_8=zWARTZW+zWART08+zWART00+zWART07+zWART02+zWART22+zWART12+zVAT07+zVAT02+zVAT22+zVAT12
-      s1_8=zWARTZW+zWART08+zWART00+zWART07+zWART02+zWART22+zWART12+zVAT07+zVAT02+zVAT22+zVAT12
+      s0_8=zWARTZW+zWART08+zWART00+zWART07+zWART02+zWART22+zWART12+zVAT07+zVAT02+zVAT22+zVAT12+zWARTOO+zVATOO
+      s1_8=zWARTZW+zWART08+zWART00+zWART07+zWART02+zWART22+zWART12+zVAT07+zVAT02+zVAT22+zVAT12+zWARTOO+zVATOO
       zm=wyraz(slownie(s1_8),50)
       zm=zm+space(150-len(zm))
       k1=left(zm,50)
@@ -277,6 +279,9 @@ sprawdzVAT(10,faktury->DATAS)
       mon_drk([ ]+k1                                            +[                                 ณ ]+kwota(zWART22,12,2)+[  ]+str(vat_A,2)+[ ]+kwota(zVAT22,12,2)+[ณ]+kwota(zWART22+zVAT22,12,2)+'ณ')
       mon_drk([ ]+k2                                            +[                                 ณ ]+kwota(zWART08,12,2)+[  NP ]+kwota(0,12,2)+[ณ]+kwota(zWART08,12,2)+'ณ')
       mon_drk([ ]+k4                                            +[                                 ณ ]+kwota(zWART12,12,2)+[  ]+str(vat_D,2)+[ ]+kwota(zVAT12,12,2)+[ณ]+kwota(zWART12+zVAT12,12,2)+'ณ')
+      IF zWARTOO <> 0 .OR. zVATOO <> 0
+         mon_drk([                                                                                    ณ ]+kwota(zWARTOO,12,2)+[  OO ]+kwota(zVATOO,12,2)+[ณ]+kwota(zWARTOO+zVATOO,12,2)+'ณ')
+      ENDIF
       mon_drk([                                                                             RAZEM  ฺออออออออออออออออออออออออออออออยออออออออออออฟ])
       mon_drk([ ]+padr(k5,78)                                                               +[     ณ ]+kwota(s0_5,12,2)+[     ]+kwota(s0_7,12,2)+[ณ]+kwota(s0_8,12,2)+'ณ')
       mon_drk([ ]+padr(k6,78)                                                               +[     ภออออออออออออออออออออออออออออออมออออออออออออู])
