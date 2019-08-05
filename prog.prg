@@ -163,7 +163,9 @@ FUNCTION Main()
          CANCEL
       ENDCASE
 
-      hb_IdleAdd( { || amiProcessMessages() } )
+      IF .NOT. trybSerwisowy
+         hb_IdleAdd( { || amiProcessMessages() } )
+      ENDIF
 
    ENDIF
 
