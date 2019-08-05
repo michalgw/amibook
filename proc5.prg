@@ -561,6 +561,61 @@ FUNCTION FRUstawMarginesy( oRap, nLewy, nPrawy, nGora, nDol )
 
 /*----------------------------------------------------------------------*/
 
+PROCEDURE FRDrukuj( cPlikFrp, aDane )
+
+   LOCAL oRap, nMonDruk
+
+   IF ! File( cPlikFrp )
+      Komun( 'Brak pliku wydruku: ' + cPlikFrp )
+      RETURN
+   ENDIF
+
+   @ 24, 0
+   @ 24, 26 PROMPT '[ Monitor ]'
+   @ 24, 44 PROMPT '[ Drukarka ]'
+   IF trybSerwisowy
+      @ 24, 70 PROMPT '[ Edytor ]'
+   ENDIF
+   CLEAR TYPE
+   menu TO nMonDruk
+   IF LastKey() == 27
+      RETURN
+   ENDIF
+
+   oRap := TFreeReport():New()
+   oRap:LoadFromFile( cPlikFrp )
+
+   IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+      oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+   ENDIF
+
+   FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+      hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+
+   RaportUstawDane( oRap, aDane )
+
+   oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+   oRap:ModalPreview := .F.
+
+   SWITCH nMonDruk
+   CASE 1
+      oRap:ShowReport()
+      EXIT
+   CASE 2
+      oRap:PrepareReport()
+      oRap:PrintPreparedReport('', 1)
+      EXIT
+   CASE 3
+      oRap:DesignReport()
+      EXIT
+   ENDSWITCH
+
+   oRap := NIL
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
 #define KEY_ELEM 1
 #define BLK_ELEM 2
 
