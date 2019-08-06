@@ -74,7 +74,8 @@ PROCEDURE ListaPla()
       IF nMenu == 1
 
          aDane := hb_Hash()
-         aDane[ 'firma' ] := SYMBOL_FIR
+         aDane[ 'uzytkownik' ] := AllTrim( dos_c( code() ) )
+         aDane[ 'firma' ] := AllTrim( SYMBOL_FIR )
          aDane[ 'miesiac' ] := miesiac
          aDane[ 'rok' ] := param_rok
 
