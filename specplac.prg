@@ -274,7 +274,7 @@ PROCEDURE SpecPlac()
                aWiersz[ 'war_ffp' ] := zwar_ffp
                aWiersz[ 'war_ffg' ] := zwar_ffg
                aWiersz[ 'war_fsum' ] := zwar_fsum
-               aWiersz[ 'staw_podat' ] := iif( mm == 0, '(' + Str( staw_podat, 4, 2 ) + '%)', '' )
+               aWiersz[ 'staw_podat' ] := iif( mm == 0, '(' + Str( staw_podat, 2 ) + '%)', '' )
                aWiersz[ 'staw_pue' ] := iif( mm == 0, '(' + Str( staw_pue, 4, 2 ) + '%)', '' )
                aWiersz[ 'staw_pur' ] := iif( mm == 0, '(' + Str( staw_pur, 4, 2 ) + '%)', '' )
                aWiersz[ 'staw_puc' ] := iif( mm == 0, '(' + Str( staw_puc, 4, 2 ) + '%)', '' )
