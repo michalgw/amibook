@@ -20,253 +20,287 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-private _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
-private _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15,koniep
-begin sequence
-      @ 1,47 say space(10)
+PROCEDURE RozlicP4()
+
+   LOCAL nMenu, aDane, aWiersz
+
+   PRIVATE _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
+   PRIVATE _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15,koniep
+
+   BEGIN SEQUENCE
+      @ 1, 47 say Space( 10 )
       *-----parametry wewnetrzne-----
-      nr_strony=0
-      _papsz=1
-      _lewa=1
-      _prawa=87
-      _strona=.f.
-      _czy_mon=.t.
-      _czy_close=.t.
-      czesc=1
+      nr_strony := 0
+      _papsz := 1
+      _lewa := 1
+      _prawa := 87
+      _strona := .F.
+      _czy_mon := .T.
+      _czy_close := .T.
+      czesc := 1
       *------------------------------
-      _szerokosc=87
-      _koniec="del#[+].or.firma#ident_fir"
+      _szerokosc := 87
+      _koniec := "del#[+].or.firma#ident_fir"
       *@@@@@@@@@@@@@@@@@@@@@@@@@@ ZAKRES @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      sele 3
-      if dostep('ETATY')
-         do SETIND with 'ETATY'
-      else
-         break
-      endif
-      sele 2
-      if dostep('PRAC')
-         do SETIND with 'PRAC'
-      else
-         break
-      endif
-      seek '+'+ident_fir
-      if .not.found()
-         kom(3,[*w],[b r a k   p r a c o w n i k &_o. w])
-         break
-      endif
+      SELECT 3
+      IF Dostep( 'ETATY' )
+         SetInd( 'ETATY' )
+      ELSE
+         BREAK
+      ENDIF
+      SELECT 2
+      IF Dostep( 'PRAC' )
+         SetInd( 'PRAC' )
+      ELSE
+         BREAK
+      ENDIF
+      SEEK '+' + ident_fir
+      IF .NOT. Found()
+         kom( 3, '*w', 'b r a k   p r a c o w n i k &_o. w' )
+         BREAK
+      ENDIF
 
-//tworzenie bazy roboczej
-      if file('ROBWYP.dbf')=.f.
-         dbcreate("ROBWYP",{;
-                 {"NAZWISKO", "C",50, 0},;
-                 {"PESEL",    "C",11, 0},;
-                 {"MCWYP",    "C", 2, 0},;
-                 {"DOWYPLATY","N", 9, 2},;
-                 {"WYPLACONO","N", 9, 2},;
-                 {"DATAWYPLA","D", 8, 0},;
-                 {"ZALICZKA", "N", 9, 2},;
-                 {"DATAZALI", "D", 8, 0},;
-                 {"DATA",     "D", 8, 0},;
-                 {"PODATEK",  "N", 9, 2},;
-                 {"DOPIT4",   "C", 6, 0}})
-      endif
-      select 1
-      if dostepex('ROBWYP')
-         zap
-      else
-         break
-      endif
+      //tworzenie bazy roboczej
+      IF ! File( 'ROBWYP.dbf' )
+         dbCreate( "ROBWYP", { ;
+            { "NAZWISKO",  "C", 50, 0 }, ;
+            { "PESEL",     "C", 11, 0 }, ;
+            { "MCWYP",     "C",  2, 0 }, ;
+            { "DOWYPLATY", "N",  9, 2 }, ;
+            { "WYPLACONO", "N",  9, 2 }, ;
+            { "DATAWYPLA", "D",  8, 0 }, ;
+            { "ZALICZKA",  "N",  9, 2 }, ;
+            { "DATAZALI",  "D",  8, 0 }, ;
+            { "DATA",      "D",  8, 0 }, ;
+            { "PODATEK",   "N",  9, 2 }, ;
+            { "DOPIT4",    "C",  6, 0 } } )
+      ENDIF
+      SELECT 1
+      IF DostepEx( 'ROBWYP' )
+         ZAP
+      ELSE
+         BREAK
+      ENDIF
 
-      paras_rp4='Rozliczone w PIT-4'
-      if .not.file([param_sp.mem])
-         save to param_sp all like paras_*
-      else
-         restore from param_sp addi
-      endif
-      zparas_rp4=paras_rp4+space(40-len(paras_rp4))
-*      mcod=val(miesiac)
-*      mcdo=val(miesiac)
-      zdopit4=param_rok+strtran(miesiac,' ','0')
-      @ 23,0  clear to 23,79
-      @ 23,0 say [Okres PIT-4] get zdopit4 pict '@R 9999.99'
-*      @ 23,10 say [do] get mcdo
-      @ 23,22 say [Nag&_l.&_o.wek] get zparas_rp4 pict repl('X',40)
+      paras_rp4 := 'Rozliczone w PIT-4'
+      IF .NOT. File( 'param_sp.mem' )
+         SAVE TO param_sp ALL LIKE paras_*
+      ELSE
+         RESTORE FROM param_sp ADDITIVE
+      ENDIF
+      zparas_rp4 := paras_rp4 + Space( 40 - Len( paras_rp4 ) )
+      zdopit4 := param_rok + StrTran( miesiac, ' ', '0' )
+      @ 23,  0 CLEAR TO 23, 79
+      @ 23,  0 SAY 'Okres PIT-4' GET zdopit4 PICTURE '@R 9999.99'
+      @ 23, 22 SAY 'Nag&_l.&_o.wek' GET zparas_rp4 PICTURE repl( 'X', 40 )
       read_()
-      if lastkey()=27
-         break
-      endif
-      paras_rp4=alltrim(zparas_rp4)
-      save to param_sp all like paras_*
-*      if mcod>mcdo
-*         kom(3,[*u],[ Nieprawid&_l.owy zakres ])
-*         break
-*      endif
-      sele etaty
-      set filt to (DO_WYPLATY<>0.or.(BRUT_RAZEM-WAR_PSUM)<>0.or.PODATEK<>0).and.do_pit4==zdopit4
-***********************
-*      (DOD.and.DDO)
-***********************
-*      set filt to do_pit4==zdopit4
-      go top
+      IF LastKey() == 27
+         BREAK
+      ENDIF
+      paras_rp4 := AllTrim( zparas_rp4 )
+      SAVE TO param_sp ALL LIKE paras_*
 
-      sele prac
+      SELECT etaty
+      SET FILTER TO ( do_wyplaty <> 0 .OR. ( brut_razem - war_psum ) <> 0 .OR. podatek <> 0 ) .AND. do_pit4 == zdopit4
+      ***********************
+      *      (DOD.and.DDO)
+      ***********************
+      GO TOP
 
-      do while .not. &_koniec .and. .not. eof()
-         sele etaty
-         seek '+'+ident_fir+str(prac->rec_no,5)
-         if found()
-            znazimie=alltrim(prac->nazwisko)+' '+alltrim(prac->imie1)+' '+alltrim(prac->imie2)
-            zpesel=prac->pesel
-            do while del+firma+ident=='+'+ident_fir+str(prac->rec_no,5) .and. .not. eof()
-               sele ROBWYP
-               appe blan
-               repl NAZWISKO with znazimie,;
-                    PESEL with zPESEL,;
-                    MCWYP with etaty->MC,;
-                    DOWYPLATY with etaty->do_wyplaty,;
-                    WYPLACONO with etaty->brut_razem-etaty->war_psum,;
-                    PODATEK with etaty->podatek,;
-                    DOPIT4 with etaty->do_pit4
-               sele etaty
-               skip
-            enddo
-         endif
-         sele prac
-         skip
-      enddo
+      SELECT prac
 
-*@@@@@@@@@@@@@@@@@@@@ OTWARCIE BAZ DANYCH @@@@@@@@@@@@@@@@@@@@@@
-sele ROBWYP
-go top
-strona=0
-glowka=padc(alltrim(paras_rp4)+[ za ]+transform(zdopit4,'@R 9999.99'),61,' ')
-mon_drk([ö]+procname())
-      _grupa1=int(strona/max(1,_druk_2-6))
-      _grupa=.t.
-*@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-kk3=mcwyp
-kk1=substr(nazwisko,1,32)
-kk2=pesel
-kk2a=kk1+kk2
-kk4=transform(dowyplaty,'@Z 999999.99')
-kk5=strtran(dtoc(datawypla),'    .  .  ',space(10))
-kk6=transform(wyplacono,'@Z 999999.99')
-kk7=strtran(dtoc(datazali),'    .  .  ',space(10))
-kk8=transform(zaliczka,'@Z 999999.99')
-kk9=space(9)
-kk10=transform(podatek,'@Z 999999.99')
-kk11=strtran(substr(dopit4,1,4)+'.'+substr(dopit4,5,2),'    .  ',space(7))
-store 0 to sumkk4mc,sumkk4,sumkk6mc,sumkk6,sumkk8mc,sumkk8,sumkk9mc,sumkk9,sumkk10mc,sumkk10,sumkklicz,sumkkliczm
-store 0 to allkk4,allkk6,allkk8,allkk9,allkk10
-*** wstawic gdy bedzie komplet petli***
-do while .not.eof()
-   do glrozlicp4
-*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   k3=mcwyp
-   k1=substr(nazwisko,1,32)
-   k2=pesel
-   k4=transform(dowyplaty,'@Z 999999.99')
-   k5=strtran(dtoc(datawypla),'    .  .  ',space(10))
-   k6=transform(wyplacono,'@Z 999999.99')
-   k7=strtran(dtoc(datazali),'    .  .  ',space(10))
-   k8=transform(zaliczka,'@Z 999999.99')
-   k9=transform(val(kk4)-(sumkk6mc+sumkk8mc+val(k6)+val(k8)),'999999.99')
-   k10=transform(podatek,'@Z 999999.99')
-   k11=strtran(substr(dopit4,1,4)+'.'+substr(dopit4,5,2),'    .  ',space(7))
-   if sumkklicz=0
-      mon_drk2('glrozlicp4','strozlicp4',[ ]+k1+[ ]+k2+[ ]+k3+[ ]+k6+[ ]+k4+[ ]+k10+[ ]+k11+[ ])
-   else
-      mon_drk2('glrozlicp4','strozlicp4',[ ]+space(32)+[ ]+space(11)+[ ]+k3+[ ]+k6+[ ]+k4+[ ]+k10+[ ]+k11+[ ])
-   endif
-   skip
-   sumkk6mc=sumkk6mc+val(k6)
-   sumkk4mc=sumkk4mc+val(k4)
-   sumkk10mc=sumkk10mc+val(k10)
-   sumkklicz=sumkklicz+1
-   if substr(nazwisko,1,32)+pesel<>kk1+kk2 .or. eof()
-      if sumkklicz>1
-         mon_drk2('glrozlicp4','strozlicp4',space(46)+repl('-',41))
-         mon_drk2('glrozlicp4','strozlicp4',[ ]+space(32)+[ ]+kk2+[ ]+space(2)+[ ]+transform(sumkk6mc,'999999.99')+[ ]+transform(sumkk4mc,'999999.99')+[ ]+transform(sumkk10mc,'999999.99'))
-         mon_drk2('glrozlicp4','strozlicp4',space(34)+repl('=',53))
-         sumkk6=sumkk6+sumkk6mc
-         sumkk4=sumkk4+sumkk4mc
-         sumkk10=sumkk10+sumkk10mc
-         sumkk6mc=0
-         sumkk4mc=0
-         sumkk10mc=0
-         sumkklicz=0
-      else
-         sumkk6=sumkk6+sumkk6mc
-         sumkk4=sumkk4+sumkk4mc
-         sumkk10=sumkk10+sumkk10mc
-         sumkk6mc=0
-         sumkk4mc=0
-         sumkk10mc=0
-         sumkklicz=0
-      endif
-      kk3=mcwyp
-      kk1=substr(nazwisko,1,32)
-      kk2=pesel
-      kk2a=kk1+kk2
-      kk4=transform(dowyplaty,'@Z 999999.99')
-      kk5=strtran(dtoc(datawypla),'    .  .  ',space(10))
-      kk6=transform(wyplacono,'@Z 999999.99')
-      kk7=strtran(dtoc(datazali),'    .  .  ',space(10))
-      kk8=transform(zaliczka,'@Z 999999.99')
-      kk9=space(9)
-      kk10=transform(podatek,'@Z 999999.99')
-      kk11=strtran(substr(dopit4,1,4)+'.'+substr(dopit4,5,2),'    .  ',space(7))
-   endif
-   do strozlicp4
-   *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-enddo
-*@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
-mon_drk(repl('=',87))
-mon_drk2('glrozlicp4','strozlicp4',[ ]+space(32)+[ ]+space(11)+[ ]+space(2)+transform(sumkk6,'9999999.99')+transform(sumkk4,'9999999.99')+transform(sumkk10,'9999999.99'))
-*mon_drk(space(48)+transform(allkk4,'9999999.99')+[ ]+space(10)+transform(allkk6,'9999999.99')+[ ]+space(10)+transform(allkk8,'9999999.99')+transform(allkk4-(allkk6+allkk8),'9999999.99')+transform(allkk10,'9999999.99'))
-mon_drk(repl('*',87))
-mon_drk([])
-mon_drk([                U&_z.ytkownik programu komputerowego])
-mon_drk([        ]+dos_c(code()))
-*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-               mon_drk([ş])
-               end
-               if _czy_close
-               close_()
-               endif
+      DO WHILE .NOT. &_koniec .AND. .NOT. Eof()
+         SELECT etaty
+         SEEK '+' + ident_fir + Str( prac->rec_no, 5 )
+         IF Found()
+            znazimie := AllTrim( prac->nazwisko ) + ' ' + AllTrim( prac->imie1 ) + ' ' + AllTrim( prac->imie2 )
+            zpesel := prac->pesel
+            DO WHILE del + firma + ident == '+' + ident_fir + Str( prac->rec_no, 5 ) .AND. .NOT. Eof()
+               SELECT robwyp
+               APPEND BLANK
+               REPLACE nazwisko WITH znazimie, ;
+                  pesel WITH zpesel, ;
+                  mcwyp WITH etaty->mc, ;
+                  dowyplaty WITH etaty->do_wyplaty, ;
+                  wyplacono WITH etaty->brut_razem-etaty->war_psum, ;
+                  podatek WITH etaty->podatek, ;
+                  dopit4 WITH etaty->do_pit4
+               SELECT etaty
+               SKIP
+            ENDDO
+         ENDIF
+         SELECT prac
+         SKIP
+      ENDDO
+
+      *@@@@@@@@@@@@@@@@@@@@ OTWARCIE BAZ DANYCH @@@@@@@@@@@@@@@@@@@@@@
+      SELECT robwyp
+      GO TOP
+
+      nMenu := GraficznyCzyTekst()
+      IF nMenu == 0
+         BREAK
+      ENDIF
+
+      IF nMenu == 1
+
+         aDane := hb_Hash()
+         aDane[ 'uzytkownik' ] := AllTrim( dos_c( code() ) )
+         aDane[ 'firma' ] := AllTrim( symbol_fir )
+         aDane[ 'naglowek' ] := AllTrim( paras_rp4 ) + ' za ' + Transform( zdopit4, '@R 9999.99')
+
+         aDane[ 'wiersze' ] := {}
+
+         DO WHILE .NOT. Eof()
+
+
+            aWiersz := hb_Hash()
+            aWiersz[ 'mcwyp' ] := mcwyp
+            aWiersz[ 'nazwisko' ] := AllTrim( nazwisko )
+            aWiersz[ 'pesel' ] := AllTrim( pesel )
+            aWiersz[ 'dowyplaty' ] := dowyplaty
+            aWiersz[ 'datawypla' ] := StrTran( DToC( datawypla ), '    .  .  ', '' )
+            aWiersz[ 'wyplacono' ] := wyplacono
+            aWiersz[ 'datazali' ] := StrTran( DToC( datazali ), '    .  .  ', '' )
+            aWiersz[ 'zaliczka' ] := zaliczka
+            aWiersz[ 'podatek' ] := podatek
+            aWiersz[ 'dopit4' ] := StrTran( SubStr( dopit4, 1, 4 ) + '.' + SubStr( dopit4, 5, 2 ), '    .  ', '' )
+
+            AAdd( aDane[ 'wiersze' ], aWiersz )
+            SKIP
+
+         ENDDO
+
+         FRDrukuj( 'frf\rozlicp4.frf', aDane )
+
+      ELSE
+
+         strona := 0
+         glowka := PadC( AllTrim( paras_rp4 ) + ' za ' + Transform( zdopit4, '@R 9999.99'), 61, ' ' )
+         mon_drk( 'ö' + ProcName() )
+         _grupa1 := Int( strona / Max( 1, _druk_2 - 6 ) )
+         _grupa := .T.
+         *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         kk3 := mcwyp
+         kk1 := SubStr( nazwisko, 1, 32 )
+         kk2 := pesel
+         kk2a := kk1 + kk2
+         kk4 := Transform( dowyplaty, '@Z 999999.99' )
+         kk5 := StrTran( DToC( datawypla ), '    .  .  ', Space( 10 ) )
+         kk6 := Transform( wyplacono, '@Z 999999.99' )
+         kk7 := StrTran( DToC( datazali ), '    .  .  ', Space( 10 ) )
+         kk8 := Transform( zaliczka, '@Z 999999.99' )
+         kk9 := Space( 9 )
+         kk10 := Transform( podatek, '@Z 999999.99' )
+         kk11 := StrTran( SubStr( dopit4, 1, 4 ) + '.' + SubStr( dopit4, 5, 2 ), '    .  ', Space( 7 ) )
+         STORE 0 TO sumkk4mc,sumkk4,sumkk6mc,sumkk6,sumkk8mc,sumkk8,sumkk9mc,sumkk9,sumkk10mc,sumkk10,sumkklicz,sumkkliczm
+         STORE 0 TO allkk4,allkk6,allkk8,allkk9,allkk10
+         *** wstawic gdy bedzie komplet petli***
+         DO WHILE .NOT. Eof()
+            glrozlicp4()
+            *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            k3 := mcwyp
+            k1 := SubStr( nazwisko, 1, 32 )
+            k2 := pesel
+            k4 := Transform( dowyplaty, '@Z 999999.99' )
+            k5 := StrTran( DToC( datawypla ), '    .  .  ', Space( 10 ) )
+            k6 := Transform( wyplacono, '@Z 999999.99' )
+            k7 := StrTran( DToC( datazali ), '    .  .  ', Space( 10 ) )
+            k8 := Transform( zaliczka, '@Z 999999.99' )
+            k9 := Transform( Val( kk4 ) - ( sumkk6mc + sumkk8mc + Val( k6 ) + Val( k8 ) ), '999999.99' )
+            k10 := Transform( podatek, '@Z 999999.99' )
+            k11 := StrTran( SubStr( dopit4, 1, 4 ) + '.' + SubStr( dopit4, 5, 2 ), '    .  ', Space( 7 ) )
+            IF sumkklicz = 0
+               mon_drk2( 'glrozlicp4', 'strozlicp4', ' ' + k1 + ' ' + k2 + ' ' + k3 + ' ' + k6 + ' ' + k4 + ' ' + k10 + ' ' + k11 + ' ' )
+            ELSE
+               mon_drk2( 'glrozlicp4', 'strozlicp4', ' ' + Space( 32 ) + ' ' + Space( 11 ) + ' ' + k3 + ' ' + k6 + ' ' + k4 + ' ' + k10 + ' ' + k11 + ' ' )
+            ENDIF
+            SKIP
+            sumkk6mc := sumkk6mc + Val( k6 )
+            sumkk4mc := sumkk4mc + Val( k4 )
+            sumkk10mc := sumkk10mc + Val( k10 )
+            sumkklicz := sumkklicz + 1
+            IF SubStr( nazwisko, 1, 32 ) + pesel <> kk1 + kk2 .OR. Eof()
+               IF sumkklicz > 1
+                  mon_drk2( 'glrozlicp4', 'strozlicp4', Space( 46 ) + repl( '-', 41 ) )
+                  mon_drk2( 'glrozlicp4', 'strozlicp4', ' ' + Space( 32 ) + ' ' + kk2 + ' ' + Space( 2 ) + ' ' + Transform( sumkk6mc, '999999.99' ) + ' ' + Transform( sumkk4mc, '999999.99' ) + ' ' + Transform( sumkk10mc, '999999.99' ) )
+                  mon_drk2( 'glrozlicp4', 'strozlicp4', Space( 34 ) + repl( '=', 53 ) )
+                  sumkk6 := sumkk6 + sumkk6mc
+                  sumkk4 := sumkk4 + sumkk4mc
+                  sumkk10 := sumkk10 + sumkk10mc
+                  sumkk6mc := 0
+                  sumkk4mc := 0
+                  sumkk10mc := 0
+                  sumkklicz := 0
+               ELSE
+                  sumkk6 := sumkk6 + sumkk6mc
+                  sumkk4 := sumkk4 + sumkk4mc
+                  sumkk10 := sumkk10 + sumkk10mc
+                  sumkk6mc := 0
+                  sumkk4mc := 0
+                  sumkk10mc := 0
+                  sumkklicz := 0
+               ENDIF
+               kk3 := mcwyp
+               kk1 := SubStr( nazwisko, 1, 32 )
+               kk2 := pesel
+               kk2a := kk1 + kk2
+               kk4 := Transform( dowyplaty, '@Z 999999.99' )
+               kk5 := StrTran( DToC( datawypla ), '    .  .  ', Space( 10 ) )
+               kk6 := Transform( wyplacono, '@Z 999999.99' )
+               kk7 := StrTran( DToC( datazali ), '    .  .  ', Space( 10 ) )
+               kk8 := Transform( zaliczka, '@Z 999999.99' )
+               kk9 := Space( 9 )
+               kk10 := Transform( podatek, '@Z 999999.99' )
+               kk11 := StrTran( SubStr( dopit4, 1, 4 ) + '.' + SubStr( dopit4, 5, 2 ), '    .  ', Space( 7 ) )
+            ENDIF
+            strozlicp4()
+            *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         ENDDO
+         *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
+         mon_drk( repl( '=', 87 ) )
+         mon_drk2( 'glrozlicp4', 'strozlicp4', ' ' + Space( 32 ) + ' ' + Space( 11 ) + ' ' + Space( 2 ) + Transform( sumkk6, '9999999.99' ) + Transform( sumkk4, '9999999.99' ) + Transform( sumkk10, '9999999.99' ) )
+         mon_drk( repl( '*', 87 ) )
+         mon_drk( '' )
+         mon_drk( '                U&_z.ytkownik programu komputerowego' )
+         mon_drk( '        ' + dos_c( code() ) )
+         *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         mon_drk( 'ş' )
+
+      ENDIF
+
+   END
+   IF _czy_close
+      close_()
+   ENDIF
+   RETURN
+
 ***************************************************
-proc glrozlicp4
+PROCEDURE glrozlicp4()
 ***************************************************
-if _grupa.or._grupa1#int(strona/max(1,_druk_2-6))
-   _grupa1=int(strona/max(1,_druk_2-6))
-   _grupa=.f.
-   nr_strony=nr_strony+1
-   *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   mon_drk([ FIRMA:]+SYMBOL_FIR+[ ]+glowka+[ str.]+str(nr_strony,2))
-   mon_drk([ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿])
-   mon_drk([³                                ³           ³MC³  Kwota  ³  Kwota  ³     PODATEK     ³])
-   mon_drk([³ N A Z W I S K O  i  I M I O N A³   PESEL   ³wy³    do   ³    do   ÃÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄ´])
-   mon_drk([³                                ³           ³pl³  PIT-4  ³ wyplaty ³  Kwota  ³ w PIT4³])
-   mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÙ])
-*  strona=6
-endif
+   IF _grupa .OR. _grupa1 # Int( strona / Max( 1, _druk_2 - 6 ) )
+      _grupa1 := Int( strona / max( 1, _druk_2 - 6 ) )
+      _grupa := .F.
+      nr_strony := nr_strony + 1
+      *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      mon_drk( ' FIRMA:' + symbol_fir + ' ' + glowka + ' str.' + Str( nr_strony, 2 ) )
+      mon_drk( 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿' )
+      mon_drk( '³                                ³           ³MC³  Kwota  ³  Kwota  ³     PODATEK     ³' )
+      mon_drk( '³ N A Z W I S K O  i  I M I O N A³   PESEL   ³wy³    do   ³    do   ÃÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄ´' )
+      mon_drk( '³                                ³           ³pl³  PIT-4  ³ wyplaty ³  Kwota  ³ w PIT4³' )
+      mon_drk( 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÙ' )
+   ENDIF
+   RETURN
+
 ***************************************************
-proc strozlicp4
+PROCEDURE strozlicp4()
 ***************************************************
-   _numer=1
-   do case
-   case int(strona/max(1,_druk_2-6))#_grupa1
-        _numer=0
-        _grupa=.t.
-   other
-        _grupa=.f.
-   endcase
-***************************************************
-*func mon_drk2    - udostepniono w PROC2.prg
-***************************************************
-*para _glmondrk2,_stmondrk2,_trmondrk2
-*do &_glmondrk2
-*mon_drk(_trmondrk2)
-*strona=strona+1
-*do &_stmondrk2
-*return
+   _numer := 1
+   DO CASE
+   CASE Int( strona / Max( 1, _druk_2 - 6 ) ) # _grupa1
+      _numer := 0
+      _grupa := .T.
+   OTHERWISE
+      _grupa := .F.
+   ENDCASE
+   RETURN
