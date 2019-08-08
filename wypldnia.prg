@@ -221,8 +221,8 @@ PROCEDURE WyplDnia()
             aWiersz := hb_Hash()
             aWiersz[ 'data' ] := data
             aWiersz[ 'mcwyp' ] := mcwyp
-            aWiersz[ 'nazwisko' ] := nazwisko
-            aWiersz[ 'pesel' ] := pesel
+            aWiersz[ 'nazwisko' ] := AllTrim( nazwisko )
+            aWiersz[ 'pesel' ] := AllTrim( pesel )
             aWiersz[ 'wyplacono' ] := wyplacono
             aWiersz[ 'zaliczka' ] := zaliczka
 
