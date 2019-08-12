@@ -334,44 +334,6 @@ FUNCTION WyswietlPomoc(aPomoc)
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION DodajRaportDoListy(xRaport)
-   AAdd(aListaRaportow, xRaport)
-   RETURN Len(aListaRaportow)
-
-/*----------------------------------------------------------------------*/
-
-FUNCTION UsunRaportZListy(nIndeks)
-   IF HB_ISARRAY(aListaRaportow[nIndeks])
-      AEval(aListaRaportow[nIndeks], { | oRap | oRap := NIL } )
-   ENDIF
-   aListaRaportow[nIndeks] := NIL
-   RETURN nIndeks
-
-/*----------------------------------------------------------------------*/
-
-FUNCTION RaportUstawDane(oRap, hDane)
-   LOCAL nI, aDane
-   PRIVATE cAktKlucz
-   aDane := hb_HKeys(hDane)
-   AEval(aDane, {| cKlucz |
-      IF .NOT.HB_ISHASH(hDane[cKlucz])
-         IF HB_ISARRAY(hDane[cKlucz])
-            oRap:AddDataset(cKlucz)
-            cAktKlucz := cKlucz
-            AEval(hDane[cKlucz], {| hRekord |
-               IF HB_ISHASH(hRekord)
-                  oRap:AddRow(cAktKlucz, hRekord)
-               ENDIF
-            })
-         ELSE
-            oRap:AddValue(cKlucz, hDane[cKlucz])
-         ENDIF
-      ENDIF
-   })
-   RETURN
-
-/*----------------------------------------------------------------------*/
-
 FUNCTION scr2html(cScr, nWidth, cTitle)
    LOCAL cHtml := ;
       '<html><head><meta charset="UTF-8"><title>' + cTitle + '</title>' + ;
@@ -546,73 +508,6 @@ FUNCTION MenuEx( nTop, nLeft, aItems, nSelected, lSaveScr )
    SetColor( cKolor )
 
    RETURN nRes
-
-/*----------------------------------------------------------------------*/
-
-FUNCTION FRUstawMarginesy( oRap, nLewy, nPrawy, nGora, nDol )
-
-   LOCAL nI
-
-   FOR nI := 0 TO oRap:GetPageCount() - 1
-      oRap:SetMargins( nI, nLewy, nPrawy, nGora, nDol )
-   NEXT
-
-   RETURN NIL
-
-/*----------------------------------------------------------------------*/
-
-PROCEDURE FRDrukuj( cPlikFrp, aDane )
-
-   LOCAL oRap, nMonDruk
-
-   IF ! File( cPlikFrp )
-      Komun( 'Brak pliku wydruku: ' + cPlikFrp )
-      RETURN
-   ENDIF
-
-   @ 24, 0
-   @ 24, 26 PROMPT '[ Monitor ]'
-   @ 24, 44 PROMPT '[ Drukarka ]'
-   IF trybSerwisowy
-      @ 24, 70 PROMPT '[ Edytor ]'
-   ENDIF
-   CLEAR TYPE
-   menu TO nMonDruk
-   IF LastKey() == 27
-      RETURN
-   ENDIF
-
-   oRap := TFreeReport():New()
-   oRap:LoadFromFile( cPlikFrp )
-
-   IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-      oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-   ENDIF
-
-   FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-      hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
-
-   RaportUstawDane( oRap, aDane )
-
-   oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-   oRap:ModalPreview := .F.
-
-   SWITCH nMonDruk
-   CASE 1
-      oRap:ShowReport()
-      EXIT
-   CASE 2
-      oRap:PrepareReport()
-      oRap:PrintPreparedReport('', 1)
-      EXIT
-   CASE 3
-      oRap:DesignReport()
-      EXIT
-   ENDSWITCH
-
-   oRap := NIL
-
-   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 
