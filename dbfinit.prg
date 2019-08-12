@@ -337,7 +337,8 @@ public aETATYdbf := {;
    { "PIT4RC5", "N", 8, 2 },;                     // 108
    { "PIT4RC6", "N", 8, 2 },;                     // 109
    { "PIT4RC7", "N", 8, 2 },;                     // 110
-   { "PIT4RC8", "N", 8, 2 } }                     // 111
+   { "PIT4RC8", "N", 8, 2 },;                     // 111
+   { "OSWIAD26R", "C", 1, 0 } }                   // 112
 
 // Create: EWID.DBF
 public aEWIDdbf := {;

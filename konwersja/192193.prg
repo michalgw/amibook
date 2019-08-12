@@ -23,10 +23,12 @@ FUNCTION Main()
       MakeDir( ".\BKP" )
    ENDIF
    COPY FILE prac.dbf TO bkp\prac.192
+   COPY FILE etaty.dbf TO bkp\etaty.192
 
    ? 'Aktualizacja struktury danych...'
    dbfInicjujDane()
    dbfUtworzTabele( 'PRAC', 'prac.tym' )
+   dbfUtworzTabele( 'ETATY', 'etaty.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
