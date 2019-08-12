@@ -830,7 +830,8 @@ public aPRACdbf := {;
    { "RODZOBOW", "C", 1, 0 },;                    //  76
    { "ZAGRNRID", "C", 20, 0 },;                   //  77
    { "DOKIDROZ", "C", 1, 0 },;                    //  78
-   { "DOKIDKRAJ", "C", 2, 0 } }                   //  79
+   { "DOKIDKRAJ", "C", 2, 0 },;                   //  79
+   { "OSWIAD26R", "C", 1, 0 } }                   //  80
 
 // Create: PROFIL.DBF
 public aPROFILdbf := { ;

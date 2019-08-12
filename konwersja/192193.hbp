@@ -1,0 +1,9 @@
+-lhbct
+-lhbnf
+-lhbwin
+-ic:\hb32\contrib\hbwin
+
+192193.prg
+..\proc1.prg
+..\proc5.prg
+..\dbfinit.prg
