@@ -27,784 +27,814 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Etaty( mieskart )
 
-private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,kluc,ins,nr_rec,wiersz,f10,rec,fou,mieslok
-public z_dowyp
-zData_wwyp=date()
-zkwota_wwyp=0
-mieslok=mieskart
-for x=1 to 12
-    xx=strtran(str(x,2),' ','0')
-    zK_WYP&XX=0
-    zK_ZAL&XX=0
-    zDO_PIT4&XX='    .  '
-    zD_ZAL&XX=ctod('    .  .  ')
-next
-@ 1,47 say [          ]
-*################################# GRAFIKA ##################################
-@  3, 0 say '        K A R T O T E K I   W Y N A G R O D Z E &__N.   P R A C O W N I K &__O. W       '
-@  4, 0 say 'ÚÄÄÄÄÄWyp&_l.a&_c. wszystkim...ÄÄÄÄÄ¿ Przyj&_e.to:             Zwolniono.:               '
-@  5, 0 say '³                             ³ Odlicza&_c. podatek:                               '
-@  6, 0 say '³                             ³ Wykszta&_l.c:                                      '
-@  7, 0 say '³                             ³ Zaw&_o.d....:                                      '
-@  8, 0 say '³                             ³ M-c PRZYCH. DO WYP&__L.A. Wyp&_l.aty Wp&_l..podat. Do PIT4'
-@  9, 0 say '³                             ³  1                                              '
-@ 10, 0 say '³                             ³  2                                              '
-@ 11, 0 say '³                             ³  3                                              '
-@ 12, 0 say '³                             ³  4                                              '
-@ 13, 0 say '³                             ³  5                                              '
-@ 14, 0 say '³                             ³  6                                              '
-@ 15, 0 say '³                             ³  7                                              '
-@ 16, 0 say '³                             ³  8                                              '
-@ 17, 0 say '³                             ³  9                                              '
-@ 18, 0 say '³                             ³ 10                                              '
-@ 19, 0 say '³                             ³ 11                                              '
-@ 20, 0 say '³                             ³ 12                                              '
-@ 21, 0 say 'ÀÄ(       )ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙSUMA                                             '
-@ 22, 0 say ' UWAGI:                                                                         '
-ColInf()
-@  4, 7 say 'y'
-@  8,54 say 'W'
-@  8,66 say 'p'
-@  8,79 say '4'
-set colo to
-*ColStd()
-*############################### OTWARCIE BAZ ###############################
-select 5
-do while.not.dostep('ZALICZKI')
-enddo
-do setind with 'ZALICZKI'
-seek [+]+ident_fir
-select 4
-do while.not.dostep('WYPLATY')
-enddo
-do setind with 'WYPLATY'
-seek [+]+ident_fir
-select 3
-do while.not.dostep('NIEOBEC')
-enddo
-do setind with 'NIEOBEC'
-seek [+]+ident_fir
-select 2
-do while.not.dostep('ETATY')
-enddo
-do setind with 'ETATY'
-seek [+]+ident_fir
-select 1
-do while.not.dostep('PRAC')
-enddo
-do setind with 'PRAC'
-set orde to 2
-SET FILTER TO prac->aktywny == 'T'
-seek [+]+ident_fir+[+]
-if eof().or.del#'+'.or.firma#ident_fir.or.status>'U'
-   kom(3,[*u],[ Brak pracownik&_o.w etatowych ])
-   return
-endif
-*################################# OPERACJE #################################
-*----- parametry ------
-_row_g=5
-_col_l=1
-_row_d=20
-_col_p=29
-_invers=[i]
-_curs_l=0
-_curs_p=0
-_esc=[27,-9,13,247,75,107,77,109,7,28,80,87,89,112,119,121,52]
-_top=[firma#ident_fir.or.status>'U']
-_bot=[del#'+'.or.firma#ident_fir.or.status>'U']
-_stop=[+]+ident_fir+[+]
-_sbot=[+]+ident_fir+[+]+[þ]
-_proc=[say41e()]
-_row=int((_row_g+_row_d)/2)
-_proc_spe=[say41es]
-_disp=.t.
-_cls=''
-*----------------------
-kl=0
-siacpla='  '
-do while kl#27
-   ColSta()
-   @ 1,47 say '[F1]-pomoc'
-   set colo to
-   _row=wybor(_row)
-   ColStd()
-   kl=lastkey()
-   do case
-   case kl=13
-        save scre to robs
-        if empty(data_przy)
-           kom(3,[*u],[ Brak daty przyj&_e.cia do pracy ])
-        else
-           do etaty1
-        endif
-        rest scre from robs
-   case kl=107.or.kl=75
-        save scre to robs
-        Kartot_W( mieslok )
-        rest scre from robs
-   *################################### POMOC ##################################
-   case kl=28
-        save screen to scr_
-        @ 1,47 say [          ]
-        declare p[20]
-        *---------------------------------------
-        p[ 1]='                                                                       '
-        p[ 2]='  ['+chr(24)+'/'+chr(25)+']...........poprzedni/nast&_e.pny pracownik                         '
-        p[ 3]='  [Home/End]......pierwszy/ostatni pracownik                           '
-        p[ 4]='  [Enter].........ustalenie p&_l.acy miesi&_e.cznej                          '
-        p[ 5]='  [M].............modyfikacja danych kadrowych                         '
-        if mieslok='C'
-           p[ 6]='  [K].............kartoteka wynagrodze&_n. - ca&_l.y rok                     '
-        else
-           p[ 6]='  [K].............kartoteka dodruk za m-c '+mieslok+'                           '
-        endif
-        p[ 7]='  [Y].............dokonywane wyp&_l.aty - aktualizacja grupowa            '
-        p[ 8]='  [W].............dokonywane wyp&_l.aty/zaliczki - aktualizacja wybranego '
-        p[ 9]='  [P].............data wp&_l.aty zaliczki na podatek dochodowy            '
-        p[10]='  [4].............okres PIT-4 i PIT-11/8B w kt&_o.rym uwzgl&_e.dni&_c. podatek   '
-        p[11]='  [Esc]...........wyj&_s.cie                                              '
-        p[12]='                                                                       '
-        *---------------------------------------
-        set color to i
-        i=20
-        j=24
-        do while i>0
-           if type('p[i]')#[U]
-              center(j,p[i])
-              j=j-1
-           endif
-           i=i-1
-        enddo
-        set color to
-        pause(0)
-        if lastkey()#27.and.lastkey()#28
-           keyboard chr(lastkey())
-        endif
-        restore screen from scr_
-        _disp=.f.
-   case kl=77.or.kl=109
-        ColStb()
-        center(23,[þ                       þ])
-        ColSta()
-        center(23,[M O D Y F I K A C J A])
-        ColStd()
-        zDATA_PRZY=DATA_PRZY
-        zDATA_ZWOL=DATA_ZWOL
-        zODLICZENIE=ODLICZENIE
-        zWYKSZTALC=WYKSZTALC
-        zZAWOD_WYU=ZAWOD_WYU
-        zUWAGI=UWAGI
-        @  4,42 get zdata_przy pict '@D' valid .not.empty(zdata_przy)
-        @  4,68 get zdata_zwol pict '@D'
-        @  5,49 get zodliczenie pict '!' valid vodlicz()
-        @  6,43 get zwyksztalc pict '@S37 '+repl('X',40)
-        @  7,43 get zzawod_wyu pict '@S37 '+repl('X',40)
-        @ 22,8 get zuwagi
-        set curs on
-        read
-        set curs off
-        if lastkey()=13
-           do BLOKADAR
-           repl_([DATA_PRZY],zDATA_PRZY)
-           repl_([DATA_ZWOL],zDATA_ZWOL)
-           repl_([ODLICZENIE],zODLICZENIE)
-           repl_([WYKSZTALC],zWYKSZTALC)
-           repl_([ZAWOD_WYU],zZAWOD_WYU)
-           repl_([UWAGI],zUWAGI)
-           unlock
-        endif
-        @ 23,0
-   case kl=87.or.kl=119
-        if zRYCZALT='T'
-           sele 100
-           do while.not.dostep('EWID')
-           enddo
-           do SETIND with 'EWID'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        else
-           sele 100
-           do while.not.dostep('OPER')
-           enddo
-           do SETIND with 'OPER'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        endif
-        sele prac
-        siacpla=iif(siacpla=[  ],aktualny,siacpla)
-        mieda=val(siacpla)
-        do while .t.
-           set curs off
-           ColPro()
-           for x=1 to 12
-               xx=strtran(str(x,2),' ','0')
-               zSUMA_WYP=transform(zK_WYP&XX+zK_ZAL&XX,'99999.99')
-               @ 8+x,53 prompt zSUMA_WYP
-           next
-           mieda=menu(mieda)
-           ColStd()
-           if lastkey()=27
-              exit
-           endif
-           if lastkey()=13
-              _tak='P'
-              _mieda_=strtran(str(mieda,2),' ','0')
-              save scre to scr_sklad
-              @ 11,40 clear to 19,75
-              @ 11,40 to 19,75
-              @ 12,41 say '  Wprowadzanie wyplat dokonanych  '
-              @ 13,41 say '         za okres 9999.99         '
-              @ 14,41 say 'Suma wyplaconych zaliczek.'+transform(zK_ZAL&_mieda_,'99999.99')
-              @ 15,41 say 'Suma wyplaconych plac.....'+transform(zK_WYP&_mieda_,'99999.99')
-              @ 16,41 say 'RAZEM wyplacono...........'+transform(zK_WYP&_mieda_+zK_ZAL&_mieda_,'99999.99')
-              @ 17,41 say '                                  '
-              @ 18,41 say 'Wprowadzasz Zaliczke/Place (Z/P) !'
-              set colo to w+
-              @ 13,59 say param_rok+'.'+_mieda_
-              @ 14,67 say transform(zK_ZAL&_mieda_,'99999.99')
-              @ 15,67 say transform(zK_WYP&_mieda_,'99999.99')
-              @ 16,67 say transform(zK_WYP&_mieda_+zK_ZAL&_mieda_,'99999.99')
-              @ 18,74 get _tak pict '!' valid _tak$'ZP'
-              set conf on
-              read
-              set conf off
-              if lastkey()=13
-                 if _tak=='P'
-                    do wyplaty
-                 else
-                    do zaliczki
-                 endif
-              endif
-              sele prac
-              rest scre from scr_sklad
-              do say41es
-           endif
-        enddo
-   case kl=122.or.kl=90
-        if zRYCZALT='T'
-           sele 100
-           do while.not.dostep('EWID')
-           enddo
-           do SETIND with 'EWID'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        else
-           sele 100
-           do while.not.dostep('OPER')
-           enddo
-           do SETIND with 'OPER'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        endif
-        sele prac
-        siacpla=iif(siacpla=[  ],aktualny,siacpla)
-        mieda=val(siacpla)
-        do while .t.
-           set curs off
-           ColPro()
-           for x=1 to 12
-               xx=strtran(str(x,2),' ','0')
-               zSUMA_ZAL=transform(zK_ZAL&XX,'99999.99')
-               @ 8+x,63 prompt zSUMA_ZAL
-           next
-           mieda=menu(mieda)
-           ColStd()
-           if lastkey()=27
-              exit
-           endif
-           if lastkey()=13
-              save scre to scr_sklad
-              do zaliczki
-              sele prac
-              rest scre from scr_sklad
-              do say41es
-           endif
-        enddo
-   case kl=80.or.kl=112
-        if zRYCZALT='T'
-           sele 100
-           do while.not.dostep('EWID')
-           enddo
-           do SETIND with 'EWID'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        else
-           sele 100
-           do while.not.dostep('OPER')
-           enddo
-           do SETIND with 'OPER'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        endif
-        sele prac
-        siacpla=iif(siacpla=[  ],aktualny,siacpla)
-        mieda=val(siacpla)
-        do while .t.
-           set curs off
-           ColPro()
-           for x=1 to 12
-               xx=strtran(str(x,2),' ','0')
-               zDATA_ZAL=dtoc(zD_ZAL&XX)
-               @ 8+x,62 prompt zDATA_ZAL
-           next
-           mieda=menu(mieda)
-           ColStd()
-           if lastkey()=27
-              exit
-           endif
-           if lastkey()=13
-               ColStb()
-               center(23,[þ                       þ])
-               ColSta()
-               center(23,  [M O D Y F I K A C J A])
-               ColStd()
-               xx=strtran(str(mieda,2),' ','0')
-*               zDATA_ZAL=zD_ZAL&XX
-               @ 8+mieda,62 get zD_ZAL&XX pict '@D'
-               set conf on
-               set curs on
-               read
-               set curs off
-               set conf off
-               if lastkey()=13
-                  zidp=str(rec_no,5)
-                  sele etaty
-                  seek [+]+ident_fir+zidp+str(mieda,2)
-                  if found()
-                     do BLOKADAR
-                     repl_([DATA_ZAL],zD_ZAL&XX)
-                     unlock
-                  endif
-                  _pisac=tnesc([*i],[   Czy wpisa&_c. tak&_a. sam&_a. dat&_e. innym pracownikom firmy ? (T/N)   ])
-                  if _pisac
-                     sele prac
-                     set orde to 4
-                     sele etaty
-                     set orde to 2
-                     go top
-                     kluc=[+]+ident_fir+str(mieda,2)
-                     seek kluc
-                     if found()
-                        do while .not.eof().and.del+firma+mc==kluc
-                           sele prac
-                           seek val(etaty->ident)
-                           if found() .and. del=='+'.and.firma==ident_fir.and.rec_no=val(etaty->ident).and.status<='U'
-                              sele etaty
-                              do BLOKADAR
-                              repl_([DATA_ZAL],zD_ZAL&XX)
-                              unlock
-                           endif
-                           sele etaty
-                           skip
-                        enddo
-                     endif
-                     set orde to 1
-                     go top
-                     sele prac
-                     set orde to 2
-                  endif
-                  sele prac
-               endif
-               @ 23,0
-           endif
-        enddo
+   PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,kluc,ins,nr_rec,wiersz,f10,rec,fou,mieslok
+   PUBLIC z_dowyp
 
-   case kl=121.or.kl=89
-        if zRYCZALT='T'
-           sele 100
-           do while.not.dostep('EWID')
-           enddo
-           do SETIND with 'EWID'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        else
-           sele 100
-           do while.not.dostep('OPER')
-           enddo
-           do SETIND with 'OPER'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        endif
-        sele prac
-        siacpla=iif(siacpla=[  ],aktualny,siacpla)
-        mieda=val(siacpla)
-        ColDlg()
-        _miewyp=mieda
-        _dzienwyp=eom(ctod(param_rok+'.'+str(_miewyp,2)+'.'+'01'))
-        _dopit4=substr(dtos(_dzienwyp),1,6)
-        _sposob=1
-        _sposproc=100
-        _sposwart=0
-        _tak=' '
-        save scre to scr_sklad
-        @  8,40 clear to 21,75
-        @  8,40 to 21,75
-        @  9,41 say '  Nanie&_s.&_c. wyp&_l.aty dla wszystkich  '
-        @ 11,41 say 'Wyp&_l.aty za miesi&_a.c..........:99   '
-        @ 12,41 say 'Wyp&_l.acono dnia.........:9999.99.99'
-        @ 13,41 say 'Uwzgl&_e.dni&_c. w PIT-4 za..:9999.99   '
-        @ 15,41 say ' W jaki spos&_o.b nanie&_s.c (1/2/3):9  '
-        @ 16,41 say '1.kwoty pozosta&_l.e do wyp&_l.aty      '
-        @ 17,41 say '2.% kwoty pozosta&_l.ej do wyp&_l.a.:999'
-        @ 18,41 say '3.okre&_s.lona wskazana kwota..:99999'
-        @ 20,41 say '     ZATWIERDZAM (Tak/Nie):!      '
-        @ 11,70 get _miewyp pict '99' range 1,12
-        @ 12,65 get _dzienwyp pict '@D' when v_dzienwyp()
-        @ 13,65 get _dopit4 pict '@R 9999.99' when v_dopit4()
-        @ 15,72 get _sposob pict '9' range 1,3
-        @ 17,72 get _sposproc pict '999' range 0,100 when _sposob=2
-        @ 18,70 get _sposwart pict '99999' range 0,99999 when _sposob=3
-        @ 20,68 get _tak pict '!' valid _tak$'TN'
-        set conf on
-        read
-        set conf off
-        if lastkey()=13 .and. _tak=='T'
-           mmmie=str(_miewyp,2)
-           do case
-           case _sposob=1
-                ColInf()
-                @ 24,0
-                Center(24,'Prosz&_e. czeka&_c....')
-                sele prac
-                nurek_=recno()
-                seek [+]+ident_fir+[+]
-                do while .not. eof().and.del=='+'.and.firma==ident_fir.and.status<='U'
-                   _zident_=str(rec_no,5)
-                   sele ETATY
-                   seek [+]+ident_fir+_zident_+mmmie
-                   z_dowyp=DO_WYPLATY
-                   do inswyp
-                   zdata_wwyp=_dzienwyp
-                   if zkwota_wwyp>0.0
-                      ins=.t.
-                      do zapiszwyp
-                      sele ETATY
-                      do BLOKADAR
-                      repl_([DO_PIT4],_dopit4)
-                      commit_()
-                      unlock
-                   endif
-                   sele prac
-                   skip
-                enddo
-                go nurek_
-           case _sposob=2
-                if _sposproc>0
-                   ColInf()
-                   @ 24,0
-                   Center(24,'Prosz&_e. czeka&_c....')
-                   sele prac
-                   nurek_=recno()
-                   seek [+]+ident_fir+[+]
-                   do while .not. eof().and.del=='+'.and.firma==ident_fir.and.status<='U'
-                      _zident_=str(rec_no,5)
-                      sele ETATY
-                      seek [+]+ident_fir+_zident_+mmmie
-                      z_dowyp=DO_WYPLATY
-                      do inswyp
-                      zdata_wwyp=_dzienwyp
-                      if zkwota_wwyp>0.0
-                         if _round(zkwota_wwyp*(_sposproc/100),2)>0.0 .and. min(zkwota_wwyp,_round(zkwota_wwyp*(_sposproc/100),2))>0.0
-                            zkwota_wwyp=min(zkwota_wwyp,_round(zkwota_wwyp*(_sposproc/100),2))
-                            ins=.t.
-                            do zapiszwyp
-                            sele ETATY
-                            do BLOKADAR
-                            repl_([DO_PIT4],_dopit4)
-                            commit_()
-                            unlock
-                         endif
-                      endif
-                      sele prac
-                      skip
-                   enddo
-                   go nurek_
-                else
-                   kom(5,'*u','Podano 0%. Nie naniesiono wyp&_l.at.')
-                endif
-           case _sposob=3
-                if _sposwart>0
-                   ColInf()
-                   @ 24,0
-                   Center(24,'Prosz&_e. czeka&_c....')
-                   sele prac
-                   nurek_=recno()
-                   seek [+]+ident_fir+[+]
-                   do while .not. eof().and.del=='+'.and.firma==ident_fir.and.status<='U'
-                      _zident_=str(rec_no,5)
-                      sele ETATY
-                      seek [+]+ident_fir+_zident_+mmmie
-                      z_dowyp=DO_WYPLATY
-                      do inswyp
-                      zdata_wwyp=_dzienwyp
-                      if zkwota_wwyp>0.0
-                         if min(zkwota_wwyp,_sposwart)>0.0
-                            zkwota_wwyp=min(zkwota_wwyp,_sposwart)
-                            ins=.t.
-                            do zapiszwyp
-                            sele ETATY
-                            do BLOKADAR
-                            repl_([DO_PIT4],_dopit4)
-                            commit_()
-                            unlock
-                         endif
-                      endif
-                      sele prac
-                      skip
-                   enddo
-                   go nurek_
-                else
-                   kom(5,'*u','Podano kwot&_e. 0z&_l.. Nie naniesiono wyp&_l.at.')
-                endif
-           endcase
-        endif
-        ColStd()
-        @ 24,0
-        sele prac
-        rest scre from scr_sklad
-        do say41es
-   case kl=52
-        if zRYCZALT='T'
-           sele 100
-           do while.not.dostep('EWID')
-           enddo
-           do SETIND with 'EWID'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        else
-           sele 100
-           do while.not.dostep('OPER')
-           enddo
-           do SETIND with 'OPER'
-           seek [+]+ident_fir
-           mc_rozp=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           seek [+]+ident_fir+[þ]
-           skip -1
-           aktualny=iif(del=[+].and.firma=ident_fir,mc,[  ])
-           use
-        endif
-        sele prac
-        siacpla=iif(siacpla=[  ],aktualny,siacpla)
-        mieda=val(siacpla)
-        do while .t.
-           set curs off
-           ColPro()
-           for x=1 to 12
-               xx=strtran(str(x,2),' ','0')
-*               zDO_PIT4=transform(zK_WYP&XX,'99999.99')
-               @ 8+x,73 prompt transform(zDO_PIT4&XX,'@R 9999.99')
-           next
-           mieda=menu(mieda)
-           ColStd()
-           if lastkey()=27
-              exit
-           endif
-           if lastkey()=13
-*              save scre to scr_sklad
-*              do wyplaty
-*              sele prac
-*              rest scre from scr_sklad
-*              do say41es
+   zData_wwyp := Date()
+   zkwota_wwyp := 0
+   mieslok := mieskart
+   FOR x := 1 TO 12
+       xx := StrTran( Str( x, 2 ), ' ', '0' )
+       zK_WYP&XX := 0
+       zK_ZAL&XX := 0
+       zDO_PIT4&XX := '    .  '
+       zD_ZAL&XX := CToD( '    .  .  ' )
+   NEXT
+   @ 1,  47 SAY '          '
+   *################################# GRAFIKA ##################################
+   @  3,  0 SAY '        K A R T O T E K I   W Y N A G R O D Z E &__N.   P R A C O W N I K &__O. W       '
+   @  4,  0 SAY 'ÚÄÄÄÄÄWyp&_l.a&_c. wszystkim...ÄÄÄÄÄ¿ Przyj&_e.to:             Zwolniono.:               '
+   @  5,  0 SAY '³                             ³ Odlicza&_c. podatek:        O˜wiadczenie <26r.:    '
+   @  6,  0 SAY '³                             ³ Wykszta&_l.c:                                      '
+   @  7,  0 SAY '³                             ³ Zaw&_o.d....:                                      '
+   @  8,  0 SAY '³                             ³ M-c PRZYCH. DO WYP&__L.A. Wyp&_l.aty Wp&_l..podat. Do PIT4'
+   @  9,  0 SAY '³                             ³  1                                              '
+   @ 10,  0 SAY '³                             ³  2                                              '
+   @ 11,  0 SAY '³                             ³  3                                              '
+   @ 12,  0 SAY '³                             ³  4                                              '
+   @ 13,  0 SAY '³                             ³  5                                              '
+   @ 14,  0 SAY '³                             ³  6                                              '
+   @ 15,  0 SAY '³                             ³  7                                              '
+   @ 16,  0 SAY '³                             ³  8                                              '
+   @ 17,  0 SAY '³                             ³  9                                              '
+   @ 18,  0 SAY '³                             ³ 10                                              '
+   @ 19,  0 SAY '³                             ³ 11                                              '
+   @ 20,  0 SAY '³                             ³ 12                                              '
+   @ 21,  0 SAY 'ÀÄ(       )ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙSUMA                                             '
+   @ 22,  0 SAY ' UWAGI:                                                                         '
+   ColInf()
+   @  4,  7 SAY 'y'
+   @  8, 54 SAY 'W'
+   @  8, 66 SAY 'p'
+   @  8, 79 SAY '4'
+   SET COLOR TO
+
+   *############################### OTWARCIE BAZ ###############################
+   SELECT 5
+   DO WHILE .NOT. Dostep( 'ZALICZKI' )
+   ENDDO
+   SetInd( 'ZALICZKI' )
+   SEEK '+' + ident_fir
+   SELECT 4
+   DO WHILE .NOT. Dostep( 'WYPLATY' )
+   ENDDO
+   SetInd( 'WYPLATY' )
+   SEEK '+' + ident_fir
+   SELECT 3
+   DO WHILE .NOT. Dostep( 'NIEOBEC' )
+   ENDDO
+   SetInd( 'NIEOBEC' )
+   SEEK '+' + ident_fir
+   SELECT 2
+   DO WHILE .NOT. Dostep( 'ETATY' )
+   ENDDO
+   SetInd( 'ETATY' )
+   SEEK '+' + ident_fir
+   SELECT 1
+   DO WHILE .NOT. Dostep( 'PRAC' )
+   ENDDO
+   SetInd( 'PRAC' )
+   SET ORDER TO 2
+   SET FILTER TO prac->aktywny == 'T'
+   SEEK '+' + ident_fir + '+'
+   IF Eof() .OR. del # '+' .OR. firma # ident_fir .OR. status > 'U'
+      kom( 3, '*u', ' Brak pracownik&_o.w etatowych ' )
+      RETURN
+   ENDIF
+
+   *################################# OPERACJE #################################
+   *----- parametry ------
+   _row_g := 5
+   _col_l := 1
+   _row_d := 20
+   _col_p := 29
+   _invers := 'i'
+   _curs_l := 0
+   _curs_p := 0
+   _esc := '27,-9,13,247,75,107,77,109,7,28,80,87,89,112,119,121,52'
+   _top := "firma#ident_fir.or.status>'U'"
+   _bot := "del#'+'.or.firma#ident_fir.or.status>'U'"
+   _stop := '+' + ident_fir + '+'
+   _sbot := '+' + ident_fir + '+' + 'þ'
+   _proc := 'say41e()'
+   _row := Int( ( _row_g + _row_d ) / 2 )
+   _proc_spe := 'say41es'
+   _disp := .T.
+   _cls := ''
+   *----------------------
+   kl := 0
+   siacpla := '  '
+   DO WHILE kl # 27
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      SET COLOR TO
+      _row := wybor( _row )
+      ColStd()
+      kl := LastKey()
+      DO CASE
+      CASE kl == 13
+         SAVE SCREEN TO robs
+         IF Empty( data_przy )
+            kom( 3, '*u', ' Brak daty przyj&_e.cia do pracy ' )
+         ELSE
+            etaty1()
+         ENDIF
+         RESTORE SCREEN FROM robs
+      CASE kl == 107 .OR. kl == 75
+         SAVE SCREEN TO robs
+         Kartot_W( mieslok )
+         RESTORE SCREEN FROM robs
+      *################################### POMOC ##################################
+      CASE kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY '          '
+         DECLARE p[ 20 ]
+         *---------------------------------------
+         p[  1 ] := '                                                                       '
+         p[  2 ] := '  [' + Chr( 24 ) + '/' + Chr( 25 ) + ']...........poprzedni/nast&_e.pny pracownik                         '
+         p[  3 ] := '  [Home/End]......pierwszy/ostatni pracownik                           '
+         p[  4 ] := '  [Enter].........ustalenie p&_l.acy miesi&_e.cznej                          '
+         p[  5 ] := '  [M].............modyfikacja danych kadrowych                         '
+         if mieslok = 'C'
+            p[  6 ] := '  [K].............kartoteka wynagrodze&_n. - ca&_l.y rok                     '
+         else
+            p[  6 ] := '  [K].............kartoteka dodruk za m-c ' + mieslok + '                           '
+         endif
+         p[  7 ] := '  [Y].............dokonywane wyp&_l.aty - aktualizacja grupowa            '
+         p[  8 ] := '  [W].............dokonywane wyp&_l.aty/zaliczki - aktualizacja wybranego '
+         p[  9 ] := '  [P].............data wp&_l.aty zaliczki na podatek dochodowy            '
+         p[ 10 ] := '  [4].............okres PIT-4 i PIT-11/8B w kt&_o.rym uwzgl&_e.dni&_c. podatek   '
+         p[ 11 ] := '  [Esc]...........wyj&_s.cie                                              '
+         p[ 12 ] := '                                                                       '
+         *---------------------------------------
+         SET COLOR TO i
+         i := 20
+         j := 24
+         DO WHILE i > 0
+          IF Type( 'p[i]' ) # 'U'
+               center( j, p[i] )
+               j := j - 1
+            ENDIF
+            i := i - 1
+         ENDDO
+         SET COLOR TO
+         pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            KEYBOARD Chr( LastKey() )
+         ENDIF
+         RESTORE SCREEN FROM scr_
+         _disp := .F.
+      case kl=77.or.kl=109
+         ColStb()
+         center( 23, 'þ                       þ' )
+         ColSta()
+         center( 23, 'M O D Y F I K A C J A' )
+         ColStd()
+         zDATA_PRZY := DATA_PRZY
+         zDATA_ZWOL := DATA_ZWOL
+         zODLICZENIE := ODLICZENIE
+         zOSWIAD26R := iif( OSWIAD26R == ' ', 'N', OSWIAD26R )
+         zWYKSZTALC := WYKSZTALC
+         zZAWOD_WYU := ZAWOD_WYU
+         zUWAGI := UWAGI
+         @  4, 42 GET zdata_przy PICTURE '@D' VALID .NOT. Empty( zdata_przy )
+         @  4, 68 GET zdata_zwol PICTURE '@D'
+         @  5, 49 GET zodliczenie PICTURE '!' VALID vodlicz()
+         @  5, 76 GET zOSWIAD26R PICTURE '!' VALID voswiad26r()
+         @  6, 43 GET zwyksztalc PICTURE '@S37 ' + repl( 'X', 40 )
+         @  7, 43 GET zzawod_wyu PICTURE '@S37 ' + repl( 'X', 40 )
+         @ 22,  8 GET zuwagi
+         SET CURSOR ON
+         READ
+         SET CURSOR OFF
+         IF LastKey() == 13
+            BlokadaR()
+            repl_( 'DATA_PRZY', zDATA_PRZY )
+            repl_( 'DATA_ZWOL', zDATA_ZWOL )
+            repl_( 'ODLICZENIE', zODLICZENIE )
+            repl_( 'OSWIAD26R', zOSWIAD26R )
+            repl_( 'WYKSZTALC', zWYKSZTALC )
+            repl_( 'ZAWOD_WYU', zZAWOD_WYU )
+            repl_( 'UWAGI', zUWAGI )
+            UNLOCK
+         ENDIF
+         @ 23, 0
+      CASE kl == 87 .OR. kl == 119
+         IF zRYCZALT = 'T'
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'EWID' )
+            ENDDO
+            SetInd( 'EWID' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ELSE
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'OPER' )
+            ENDDO
+            SetInd( 'OPER' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ENDIF
+         SELECT prac
+         siacpla := iif( siacpla = '  ', aktualny, siacpla )
+         mieda := Val( siacpla )
+         DO WHILE .T.
+            SET CURSOR OFF
+            ColPro()
+            FOR x := 1 TO 12
+                xx := StrTran( Str( x, 2 ), ' ', '0' )
+                zSUMA_WYP := Transform( zK_WYP&XX + zK_ZAL&XX, '99999.99' )
+                @ 8 + x, 53 PROMPT zSUMA_WYP
+            NEXT
+            mieda := menu( mieda )
+            ColStd()
+            IF LastKey() == 27
+               EXIT
+            ENDIF
+            IF LastKey() == 13
+               _tak := 'P'
+               _mieda_ := StrTran( Str( mieda, 2 ), ' ', '0' )
+               SAVE SCREEN TO scr_sklad
+               @ 11, 40 CLEAR TO 19, 75
+               @ 11, 40 TO 19, 75
+               @ 12, 41 SAY '  Wprowadzanie wyplat dokonanych  '
+               @ 13, 41 SAY '         za okres 9999.99         '
+               @ 14, 41 SAY 'Suma wyplaconych zaliczek.' + Transform( zK_ZAL&_mieda_, '99999.99' )
+               @ 15, 41 SAY 'Suma wyplaconych plac.....' + Transform( zK_WYP&_mieda_, '99999.99' )
+               @ 16, 41 SAY 'RAZEM wyplacono...........' + Transform( zK_WYP&_mieda_ + zK_ZAL&_mieda_, '99999.99' )
+               @ 17, 41 SAY '                                  '
+               @ 18, 41 SAY 'Wprowadzasz Zaliczke/Place (Z/P) !'
+               SET COLOR TO w+
+               @ 13, 59 SAY param_rok + '.' + _mieda_
+               @ 14, 67 SAY Transform( zK_ZAL&_mieda_, '99999.99' )
+               @ 15, 67 SAY Transform( zK_WYP&_mieda_, '99999.99' )
+               @ 16, 67 SAY Transform( zK_WYP&_mieda_ + zK_ZAL&_mieda_, '99999.99' )
+               @ 18, 74 GET _tak PICTURE '!' valid _tak $ 'ZP'
+               SET CONF ON
+               READ
+               SET CONF OFF
+               IF LastKey() == 13
+                  IF _tak == 'P'
+                     wyplaty()
+                  ELSE
+                     zaliczki()
+                  ENDIF
+               ENDIF
+               SELECT prac
+               RESTORE SCREEN FROM scr_sklad
+               say41es()
+            ENDIF
+         ENDDO
+      CASE kl == 122 .OR. kl == 90
+         IF zRYCZALT = 'T'
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'EWID' )
+            ENDDO
+            SetInd( 'EWID' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ELSE
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'OPER' )
+            ENDDO
+            SetInd( 'OPER' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ENDIF
+         SELECT prac
+         siacpla := iif( siacpla = '  ', aktualny, siacpla )
+         mieda := Val( siacpla )
+         DO WHILE .T.
+            SET CURSOR OFF
+            ColPro()
+            FOR x := 1 TO 12
+                xx := StrTran( Str( x, 2 ), ' ', '0' )
+                zSUMA_ZAL := Transform( zK_ZAL&XX, '99999.99' )
+                @ 8 + x, 63 PROMPT zSUMA_ZAL
+            NEXT
+            mieda := menu( mieda )
+            ColStd()
+            IF LastKey() == 27
+               EXIT
+            ENDIF
+            IF LastKey() == 13
+               SAVE SCREEN TO scr_sklad
+               zaliczki()
+               SELECT prac
+               RESTORE SCREEN FROM scr_sklad
+               say41es()
+            ENDIF
+         ENDDO
+      CASE kl == 80 .OR. kl == 112
+         IF zRYCZALT = 'T'
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'EWID' )
+            ENDDO
+            SetInd( 'EWID' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ELSE
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'OPER' )
+            ENDDO
+            SetInd( 'OPER' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ENDIF
+         SELECT prac
+         siacpla := iif( siacpla = '  ', aktualny, siacpla )
+         mieda := Val( siacpla )
+         DO WHILE .T.
+            SET CURSOR OFF
+            ColPro()
+            FOR x := 1 TO 12
+                xx := StrTran( str( x, 2 ), ' ', '0' )
+                zDATA_ZAL := DToC( zD_ZAL&XX )
+                @ 8 + x, 62 PROMPT zDATA_ZAL
+            NEXT
+            mieda := menu( mieda )
+            ColStd()
+            IF LastKey() == 27
+               EXIT
+            ENDIF
+            IF LastKey() == 13
+               ColStb()
+               center( 23, 'þ                       þ' )
+               ColSta()
+               center( 23, 'M O D Y F I K A C J A' )
+               ColStd()
+               xx := StrTran( Str( mieda, 2 ), ' ', '0' )
+               @ 8 + mieda, 62 GET zD_ZAL&XX PICTURE '@D'
+               SET CONF ON
+               SET CURSOR ON
+               READ
+               SET CURSOR OFF
+               SET CONF OFF
+               IF LastKey() == 13
+                  zidp := Str( rec_no, 5 )
+                  SELECT etaty
+                  SEEK '+' + ident_fir + zidp + Str( mieda, 2 )
+                  IF Found()
+                     BlokadaR()
+                     repl_( 'DATA_ZAL', zD_ZAL&XX )
+                     UNLOCK
+                  ENDIF
+                  _pisac := tnesc( '*i', '   Czy wpisa&_c. tak&_a. sam&_a. dat&_e. innym pracownikom firmy ? (T/N)   ' )
+                  IF _pisac
+                     SELECT prac
+                     SET ORDER TO 4
+                     SELECT etaty
+                     SET ORDER TO 2
+                     GO TOP
+                     kluc := '+' + ident_fir + Str( mieda, 2 )
+                     SEEK kluc
+                     IF Found()
+                        DO WHILE .NOT. Eof() .AND. del + firma + mc == kluc
+                           SELECT prac
+                           SEEK Val( etaty->ident )
+                           IF Found() .AND. del == '+' .AND. firma == ident_fir .AND. rec_no = Val( etaty->ident ) .AND. status <= 'U'
+                              SELECT etaty
+                              BlokadaR()
+                              repl_( 'DATA_ZAL', zD_ZAL&XX )
+                              UNLOCK
+                           ENDIF
+                           SELECT etaty
+                           SKIP
+                        ENDDO
+                     ENDIF
+                     SET ORDER TO 1
+                     GO TOP
+                     SELECT prac
+                     SET ORDER TO 2
+                  ENDIF
+                  SELECT prac
+               ENDIF
+               @ 23, 0
+            ENDIF
+         ENDDO
+
+      CASE kl == 121 .OR. kl == 89
+         if zRYCZALT = 'T'
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'EWID' )
+            ENDDO
+            SetInd( 'EWID' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ELSE
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'OPER' )
+            ENDDO
+            SetInd( 'OPER' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ENDIF
+         SELECT prac
+         siacpla := iif( siacpla = '  ', aktualny, siacpla )
+         mieda := Val( siacpla )
+         ColDlg()
+         _miewyp := mieda
+         _dzienwyp := eom( CToD( param_rok + '.' + Str( _miewyp, 2 ) + '.' + '01' ) )
+         _dopit4 := SubStr( DToS( _dzienwyp ), 1, 6 )
+         _sposob := 1
+         _sposproc := 100
+         _sposwart := 0
+         _tak := ' '
+         SAVE SCREEN TO scr_sklad
+         @  8, 40 CLEAR TO 21, 75
+         @  8, 40 TO 21, 75
+         @  9, 41 SAY '  Nanie&_s.&_c. wyp&_l.aty dla wszystkich  '
+         @ 11, 41 SAY 'Wyp&_l.aty za miesi&_a.c..........:99   '
+         @ 12, 41 SAY 'Wyp&_l.acono dnia.........:9999.99.99'
+         @ 13, 41 SAY 'Uwzgl&_e.dni&_c. w PIT-4 za..:9999.99   '
+         @ 15, 41 SAY ' W jaki spos&_o.b nanie&_s.c (1/2/3):9  '
+         @ 16, 41 SAY '1.kwoty pozosta&_l.e do wyp&_l.aty      '
+         @ 17, 41 SAY '2.% kwoty pozosta&_l.ej do wyp&_l.a.:999'
+         @ 18, 41 SAY '3.okre&_s.lona wskazana kwota..:99999'
+         @ 20, 41 SAY '     ZATWIERDZAM (Tak/Nie):!      '
+         @ 11, 70 GET _miewyp PICTURE '99' RANGE 1, 12
+         @ 12, 65 GET _dzienwyp PICTURE '@D' WHEN v_dzienwyp()
+         @ 13, 65 GET _dopit4 PICTURE '@R 9999.99' WHEN v_dopit4()
+         @ 15, 72 GET _sposob PICTURE '9' RANGE 1, 3
+         @ 17, 72 GET _sposproc PICTURE '999' RANGE 0, 100 WHEN _sposob = 2
+         @ 18, 70 GET _sposwart PICTURE '99999' RANGE 0, 99999 WHEN _sposob = 3
+         @ 20, 68 GET _tak PICTURE '!' VALID _tak $ 'TN'
+         SET CONF ON
+         READ
+         SET CONF OFF
+         IF LastKey() == 13 .AND. _tak == 'T'
+            mmmie := Str( _miewyp, 2 )
+            DO CASE
+            CASE _sposob = 1
+               ColInf()
+               @ 24, 0
+               Center( 24, 'Prosz&_e. czeka&_c....' )
+               SELECT prac
+               nurek_ := recno()
+               SEEK '+' + ident_fir + '+'
+               DO WHILE .NOT. Eof() .AND. del == '+' .AND. firma == ident_fir .AND. status <= 'U'
+                  _zident_ := Str( rec_no, 5 )
+                  SELECT etaty
+                  SEEK '+' + ident_fir + _zident_ + mmmie
+                  z_dowyp := DO_WYPLATY
+                  inswyp()
+                  zdata_wwyp := _dzienwyp
+                  IF zkwota_wwyp > 0.0
+                     ins := .T.
+                     zapiszwyp()
+                     SELECT etaty
+                     BlokadaR()
+                     repl_( 'DO_PIT4', _dopit4 )
+                     commit_()
+                     UNLOCK
+                  ENDIF
+                  SELECT prac
+                  SKIP
+               ENDDO
+               GO nurek_
+            CASE _sposob = 2
+               IF _sposproc > 0
+                  ColInf()
+                  @ 24, 0
+                  Center( 24, 'Prosz&_e. czeka&_c....' )
+                  SELECT prac
+                  nurek_ := RecNo()
+                  SEEK '+' + ident_fir + '+'
+                  DO WHILE .NOT. Eof() .AND. del == '+' .AND. firma == ident_fir .AND. status <= 'U'
+                     _zident_ := Str( rec_no, 5 )
+                     SELECT etaty
+                     SEEK '+' + ident_fir + _zident_ + mmmie
+                     z_dowyp := DO_WYPLATY
+                     inswyp()
+                     zdata_wwyp := _dzienwyp
+                     IF zkwota_wwyp > 0.0
+                        IF _round( zkwota_wwyp * ( _sposproc / 100 ), 2 ) > 0.0 .AND. Min( zkwota_wwyp, _round( zkwota_wwyp * ( _sposproc / 100 ), 2 ) ) > 0.0
+                           zkwota_wwyp := Min( zkwota_wwyp, _round( zkwota_wwyp * ( _sposproc / 100 ), 2  ))
+                           ins := .T.
+                           zapiszwyp()
+                           SELECT etaty
+                           BlokadaR()
+                           repl_( 'DO_PIT4', _dopit4 )
+                           commit_()
+                           UNLOCK
+                        ENDIF
+                     ENDIF
+                     SELECT prac
+                     SKIP
+                  ENDDO
+                  GO nurek_
+               ELSE
+                  kom( 5, '*u', 'Podano 0%. Nie naniesiono wyp&_l.at.' )
+               ENDIF
+            CASE _sposob = 3
+               IF _sposwart > 0
+                  ColInf()
+                  @ 24, 0
+                  Center( 24, 'Prosz&_e. czeka&_c....' )
+                  SELECT prac
+                  nurek_ := RecNo()
+                  SEEK '+' + ident_fir + '+'
+                  DO WHILE .NOT. Eof() .AND. del == '+' .AND. firma == ident_fir .AND. status <= 'U'
+                     _zident_ := Str( rec_no, 5 )
+                     SELECT etaty
+                     SEEK '+' + ident_fir + _zident_ + mmmie
+                     z_dowyp := DO_WYPLATY
+                     inswyp()
+                     zdata_wwyp := _dzienwyp
+                     IF zkwota_wwyp > 0.0
+                        IF Min( zkwota_wwyp, _sposwart ) > 0.0
+                           zkwota_wwyp := Min( zkwota_wwyp, _sposwart )
+                           ins := .T.
+                           zapiszwyp()
+                           SELECT etaty
+                           BlokadaR()
+                           repl_( 'DO_PIT4', _dopit4 )
+                           commit_()
+                           UNLOCK
+                        ENDIF
+                     ENDIF
+                     SELECT prac
+                     SKIP
+                  ENDDO
+                  GO nurek_
+               ELSE
+                  kom( 5, '*u', 'Podano kwot&_e. 0z&_l.. Nie naniesiono wyp&_l.at.' )
+               ENDIF
+             ENDCASE
+         ENDIF
+         ColStd()
+         @ 24, 0
+         SELECT prac
+         RESTORE SCREEN FROM scr_sklad
+         say41es()
+      CASE kl == 52
+         IF zRYCZALT = 'T'
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'EWID' )
+            ENDDO
+            SetInd( 'EWID' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ELSE
+            SELECT 100
+            DO WHILE .NOT. Dostep( 'OPER' )
+            ENDDO
+            SetInd( 'OPER' )
+            SEEK '+' + ident_fir
+            mc_rozp := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            SEEK '+' + ident_fir + 'þ'
+            SKIP -1
+            aktualny := iif( del = '+' .AND. firma = ident_fir, mc, '  ' )
+            USE
+         ENDIF
+         SELECT prac
+         siacpla := iif( siacpla = '  ', aktualny, siacpla )
+         mieda := Val( siacpla )
+         DO WHILE .T.
+            SET CURSOR OFF
+            ColPro()
+            FOR x := 1 TO 12
+               xx := StrTran( str( x, 2 ), ' ', '0' )
+               @ 8 + x, 73 PROMPT Transform( zDO_PIT4&XX, '@R 9999.99' )
+            NEXT
+            mieda := menu( mieda )
+            ColStd()
+            IF LastKey() == 27
+               EXIT
+            ENDIF
+            IF LastKey() == 13
 
                ColStb()
-               center(23,[þ                       þ])
+               center( 23, 'þ                       þ' )
                ColSta()
-               center(23,  [M O D Y F I K A C J A])
+               center( 23, 'M O D Y F I K A C J A' )
                ColStd()
-               xx=strtran(str(mieda,2),' ','0')
-*               SUMA_WYP=zK_WYP&XX
-               @ 8+mieda,73 get zDO_PIT4&XX pict '@R 9999.99'
-               set conf on
-               set curs on
-               read
-               set curs off
-               set conf off
-               if lastkey()=13
-                  zidp=str(rec_no,5)
-                  sele etaty
-                  seek [+]+ident_fir+zidp+str(mieda,2)
-                  if found()
-                     do BLOKADAR
-                     repl_([DO_PIT4],zDO_PIT4&XX)
-                     unlock
-                  endif
-                  _pisac=tnesc([*i],[   Czy wpisa&_c. tak&_a. sam&_a. dat&_e. innym pracownikom firmy ? (T/N)   ])
-                  if _pisac
-                     sele prac
-                     set orde to 4
-                     sele etaty
-                     set orde to 2
-                     go top
-                     kluc=[+]+ident_fir+str(mieda,2)
-                     seek kluc
-                     if found()
-                        do while .not.eof().and.del+firma+mc==kluc
-                           sele prac
-                           seek val(etaty->ident)
-                           if found() .and. del=='+'.and.firma==ident_fir.and.rec_no=val(etaty->ident).and.status<='U'
-                              sele etaty
-                              do BLOKADAR
-                              repl_([DO_PIT4],zDO_PIT4&XX)
-                              unlock
-                           endif
-                           sele etaty
-                           skip
-                        enddo
-                     endif
-                     set orde to 1
-                     go top
-                     sele prac
-                     set orde to 2
-                  endif
-                  sele prac
-               endif
-               @ 23,0
-           endif
-        enddo
-   endcase
-enddo
-close_()
+               xx := StrTran( Str( mieda, 2 ), ' ', '0' )
+               @ 8 + mieda, 73 GET zDO_PIT4&XX PICTURE '@R 9999.99'
+               SET CONF ON
+               SET CURSOR ON
+               READ
+               SET CURSOR OFF
+               SET CONF OFF
+               IF LastKey() == 13
+                  zidp := Str( rec_no, 5 )
+                  SELECT etaty
+                  SEEK '+' + ident_fir + zidp + Str( mieda, 2 )
+                  IF Found()
+                     BlokadaR()
+                     repl_( 'DO_PIT4', zDO_PIT4&XX )
+                     UNLOCK
+                  ENDIF
+                  _pisac := tnesc( '*i', '   Czy wpisa&_c. tak&_a. sam&_a. dat&_e. innym pracownikom firmy ? (T/N)   ' )
+                  IF _pisac
+                     SELECT prac
+                     SET ORDER TO 4
+                     SELECT etaty
+                     SET ORDER TO 2
+                     GO TOP
+                     kluc := '+' + ident_fir + Str( mieda, 2 )
+                     SEEK kluc
+                     IF Found()
+                        DO WHILE .NOT. Eof() .AND. del + firma + mc == kluc
+                           SELECT prac
+                           SEEK Val( etaty->ident )
+                           IF Found() .AND. del == '+' .AND. firma == ident_fir .AND. rec_no = Val( etaty->ident ) .AND. status <= 'U'
+                              SELECT etaty
+                              BlokadaR()
+                              repl_( 'DO_PIT4', zDO_PIT4&XX )
+                              UNLOCK
+                           ENDIF
+                           SELECT etaty
+                           SKIP
+                        ENDDO
+                     ENDIF
+                     SET ORDER TO 1
+                     GO TOP
+                     SELECT prac
+                     SET ORDER TO 2
+                  ENDIF
+                  SELECT prac
+               ENDIF
+               @ 23, 0
+            ENDIF
+         ENDDO
+      ENDCASE
+   ENDDO
+   close_()
+
+   RETURN
+
 *################################## FUNKCJE #################################
-procedure say41e
-znazwisko=padr(alltrim(nazwisko)+' '+alltrim(imie1)+' '+alltrim(imie2),29)
-return znazwisko
+
+FUNCTION say41e()
+
+   znazwisko := PadR( AllTrim( nazwisko ) + ' ' + AllTrim( imie1 ) + ' ' + AllTrim( imie2 ), 29 )
+   RETURN znazwisko
+
 *##############################################################################
-procedure say41es
-clear type
-set color to +w
-@  4,42 say data_przy
-@  4,68 say data_zwol
-@  5,49 say iif(odliczenie='T','Tak','Nie')
-@  6,43 say substr(wyksztalc,1,37)
-@  7,43 say substr(zawod_wyu,1,37)
-zidp=str(rec_no,5)
-sele etaty
-seek [+]+ident_fir+zidp
-if found()
-   store 0 to w1,w2,w3,w4
-   for x=1 to 12
-       xx=strtran(str(x,2),' ','0')
-       zK_WYP&XX=0
-       zK_ZAL&XX=0
-       @ 8+x,35 say BRUT_RAZEM pict '99999.99'
-       do jakiewyp
-       do jakiezal
-*      do jakipit4
-       sele etaty
-       if str(DO_WYPLATY,10,2)<>str(zK_WYP&XX+zK_ZAL&XX,10,2)
-          ColErr()
-       else
-          set color to +w
-       endif
-       @ 8+x,44 say DO_WYPLATY pict '99999.99'
-       @ 8+x,53 say zK_WYP&XX+zK_ZAL&XX pict '99999.99'
-       set color to +w
-       zD_ZAL&XX=DATA_ZAL
-       zDO_PIT4&XX=DO_PIT4
-       @ 8+x,62 say zD_ZAL&XX pict '@D'
-       @ 8+x,73 say zDO_PIT4&XX pict '@R 9999.99'
-       w1=w1+BRUT_RAZEM
-       w2=w2+DO_WYPLATY
-       w3=w3+zK_WYP&XX+zK_ZAL&XX
-       skip 1
-   next
-   @ 21,4  say transform(str(int((date()-A->DATA_UR)/365),2),'99')+' lat'
-   @ 21,35 say w1 pict '99999.99'
-   @ 21,44 say w2 pict '99999.99'
-   @ 21,53 say w3 pict '99999.99'
-endif
-sele prac
-@ 22,8 say uwagi
-set color to
-return
+PROCEDURE say41es()
+
+   CLEAR TYPE
+   SET COLOR TO +w
+   @  4, 42 SAY data_przy
+   @  4, 68 SAY data_zwol
+   @  5, 49 SAY iif( odliczenie = 'T', 'Tak', 'Nie' )
+   @  5, 76 SAY iif( oswiad26r = 'T', 'Tak', 'Nie' )
+   @  6, 43 SAY SubStr( wyksztalc, 1, 37 )
+   @  7, 43 SAY SubStr( zawod_wyu, 1, 37 )
+   zidp := Str( rec_no, 5 )
+   SELECT etaty
+   SEEK '+' + ident_fir + zidp
+   IF Found()
+      STORE 0 TO w1, w2, w3, w4
+      FOR x := 1 TO 12
+         xx := StrTran( Str( x, 2 ), ' ', '0' )
+         zK_WYP&XX := 0
+         zK_ZAL&XX := 0
+         @ 8 + x, 35 SAY brut_razem PICTURE '99999.99'
+         jakiewyp()
+         jakiezal()
+         SELECT etaty
+         IF Str( do_wyplaty, 10, 2 ) <> Str( zK_WYP&XX + zK_ZAL&XX, 10, 2 )
+            ColErr()
+         ELSE
+            SET COLOR TO +w
+         ENDIF
+         @ 8 + x, 44 SAY DO_WYPLATY PICTURE '99999.99'
+         @ 8 + x, 53 SAY zK_WYP&XX+zK_ZAL&XX PICTURE '99999.99'
+         SET COLOR TO +w
+         zD_ZAL&XX := DATA_ZAL
+         zDO_PIT4&XX := DO_PIT4
+         @ 8 + x, 62 SAY zD_ZAL&XX PICTURE '@D'
+         @ 8 + x, 73 SAY zDO_PIT4&XX PICTURE '@R 9999.99'
+         w1 := w1 + BRUT_RAZEM
+         w2 := w2 + DO_WYPLATY
+         w3 := w3 + zK_WYP&XX + zK_ZAL&XX
+         SKIP 1
+      NEXT
+      @ 21,  4 SAY Transform( Str( Int( ( Date() - A->DATA_UR ) / 365 ), 2 ), '99' ) + ' lat'
+      @ 21, 35 SAY w1 PICTURE '99999.99'
+      @ 21, 44 SAY w2 PICTURE '99999.99'
+      @ 21, 53 SAY w3 PICTURE '99999.99'
+   ENDIF
+   SELECT prac
+   @ 22, 8 SAY uwagi
+   SET COLOR TO
+   RETURN
+
 ***************************************************
-func vodlicz
-R=.f.
-if zodliczenie$'TN'
-   @ 5,50 say iif(zodliczenie='T','ak','ie')
-   R=.t.
-endif
-return R
+FUNCTION vodlicz()
+
+   R := .F.
+   IF zodliczenie $ 'TN'
+      @ 5, 50 SAY iif( zodliczenie = 'T', 'ak', 'ie' )
+      R := .T.
+   ENDIF
+   RETURN R
+
+***************************************************
+FUNCTION voswiad26r()
+
+   R := .F.
+   IF zodliczenie $ 'TN'
+      @ 5, 77 SAY iif( zodliczenie = 'T', 'ak', 'ie' )
+      R := .T.
+   ENDIF
+   RETURN R
+
 ***************************************************
 *       @ 8+x,55 say DATA_WYP   pict '@D'
 *       @ 8+x,66 say DATA_ZAL   pict '@D'
 ***************************************************
-proc jakiewyp
-xy=str(x,2)
-sele WYPLATY
-seek [+]+ident_fir+zidp+xy
-if found()
-   do while del=='+' .and. firma==ident_fir .and. ident==zidp .and. mc==xy .and. .not. eof()
-      zK_WYP&XX=zK_WYP&XX+kwota
-      skip
-   enddo
-endif
+PROCEDURE jakiewyp()
+
+   xy := Str( x, 2 )
+   SELECT wyplaty
+   SEEK '+' + ident_fir + zidp + xy
+   IF Found()
+      DO WHILE del == '+' .AND. firma == ident_fir .AND. ident == zidp .AND. mc == xy .AND. .NOT. Eof()
+         zK_WYP&XX := zK_WYP&XX + kwota
+         SKIP
+      ENDDO
+   ENDIF
+   RETURN
+
 ***************************************************
-proc jakiezal
-xy=str(x,2)
-sele ZALICZKI
-seek [+]+ident_fir+zidp+xy
-if found()
-   do while del=='+' .and. firma==ident_fir .and. ident==zidp .and. mc==xy .and. .not. eof()
-      zK_ZAL&XX=zK_ZAL&XX+kwota
-      skip
-   enddo
-endif
+PROCEDURE jakiezal()
+
+   xy := Str( x, 2 )
+   SELECT zaliczki
+   SEEK '+' + ident_fir + zidp + xy
+   IF Found()
+      DO WHILE del == '+' .AND. firma == ident_fir .AND. ident == zidp .AND. mc == xy .AND. .NOT. Eof()
+         zK_ZAL&XX := zK_ZAL&XX + kwota
+         SKIP
+      ENDDO
+   ENDIF
+   RETURN
+
 ***************************************************
-proc jakiPIT4
-xy=str(x,2)
-sele ETATY
-NRREKO=recno()
-seek [+]+ident_fir+zidp+xy
-if found()
-   do while del=='+' .and. firma==ident_fir .and. ident==zidp .and. mc==xy .and. .not. eof()
-      zDO_PIT4&XX=DO_PIT4
-      skip
-   enddo
-endif
-go NRREKO
+PROCEDURE jakiPIT4()
+
+   xy := Str( x, 2 )
+   SELECT etaty
+   nrreko := RecNo()
+   SEEK '+' + ident_fir + zidp + xy
+   IF Found()
+      DO WHILE del == '+' .AND. firma == ident_fir .AND. ident == zidp .AND. mc == xy .AND. .NOT. Eof()
+         zDO_PIT4&XX := DO_PIT4
+         SKIP
+      ENDDO
+   ENDIF
+   GO nrreko
+   RETURN
+
 ******************************************************
-func v_dzienwyp
-_dzienwyp=eom(ctod(param_rok+'.'+str(_miewyp,2)+'.'+'01'))
-return .t.
+FUNCTION v_dzienwyp()
+
+   _dzienwyp := eom( CToD( param_rok + '.' + Str( _miewyp, 2 ) + '.' + '01' ) )
+   RETURN .T.
+
 *******************************************************
-func v_dopit4
-_dopit4=substr(dtos(_dzienwyp),1,6)
-return .t.
+FUNCTION v_dopit4()
+
+   _dopit4 := SubStr( DToS( _dzienwyp ), 1, 6 )
+   RETURN .T.
+
 *############################################################################

@@ -826,3 +826,16 @@ FUNCTION PracDokRodzajStr( cRodzaj )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION CzyPracowPonizej26R( nMiesiac, nRok )
+
+   IF nMiesiac == 12
+      nMiesiac := 1
+      nRok := nRok + 1
+   ELSE
+      nMiesiac := nMiesiac + 1
+   ENDIF
+
+   RETURN Int( ( hb_Date( nRok, nMiesiac, 1 ) - prac->data_ur ) / 365 ) < 26
+
+/*----------------------------------------------------------------------*/
+
