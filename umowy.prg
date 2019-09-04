@@ -20,367 +20,375 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-*±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-*±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-*±Obsluga podstawowych operacji na bazie ......                             ±
-*±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou,_top_bot
-zNAZWISKO=space(62)
-zTYT='Z'
-@ 1,47 say [          ]
-*################################# GRAFIKA ##################################
-@  3, 0 say padc('EWIDENCJA  INNYCH  UM&__O.W  i  INNYCH  &__X.R&__O.DE&__L.  PRZYCHOD&__O.W',80)
-@  4, 0 say '    Data    Numer   Termin      Data       Data                                 '
-@  5, 0 say '   umowy    umowy  wykonania  rachunku   wyp&_l.aty           Opis prac            '
-@  6, 0 say 'ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿'
-@  7, 0 say '³          ³     ³          ³          ³          ³                            ³'
-@  8, 0 say '³          ³     ³          ³          ³          ³                            ³'
-@  9, 0 say '³          ³     ³          ³          ³          ³                            ³'
-@ 10, 0 say '³          ³     ³          ³          ³          ³                            ³'
-@ 11, 0 say '³          ³     ³          ³          ³          ³                            ³'
-*@ 12, 0 say '³          ³     ³          ³          ³          ³                            ³'
-@ 12, 0 say 'ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´'
-@ 13, 0 say '³                                                                              ³'
-@ 14, 0 say '³ Opis...                                                                      ³'
-@ 15, 0 say '³ prac...                                                                      ³'
-//002a nowe pole
-@ 16, 0 say '³                                                                              ³'
-@ 17, 0 say '³ Przychody opodatkowane =                 Z jakiego tytu&_l.u ?                  ³'
-@ 18, 0 say '³ Sk&_l.adki wykonawcy      =     %             Przych&_o.d netto=                   ³'
-@ 19, 0 say '³ Koszt uzyskania        =  %              Do opodatkowania=                   ³'
-@ 20, 0 say '³ Wyliczenie podatku     =  %                    DO WYP&__L.ATY=                   ³'
-@ 21, 0 say '³ Sk&_l.adki zleceniodawcy  =     %                 Fundusze  =     %             ³'
-@ 22, 0 say 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
-*############################### OTWARCIE BAZ ###############################
-select 4
-do while.not.dostep('FIRMA')
-enddo
-set inde to firma
-go val(ident_fir)
-select 3
-do while.not.dostep('TAB_DOCH')
-enddo
-set inde to tab_doch
-select 2
-do while.not.dostep('UMOWY')
-enddo
-do setind with 'UMOWY'
-set orde to 2
-seek [+]+ident_fir
-select 1
-do while.not.dostep('PRAC')
-enddo
-do setind with 'PRAC'
-set orde to 3
-SET FILTER TO prac->aktywny == 'T'
-seek [+]+ident_fir+[+]
-if eof().or.del#'+'.or.firma#ident_fir.or.status<'U'
-   kom(3,[*u],[ Brak pracownik&_o.w pracuj&_a.cych na umowy ])
-   return
-endif
-sele umowy
-*################################# OPERACJE #################################
-*----- parametry ------
-_row_g=7
-_col_l=1
-_row_d=11
-_col_p=78
-_invers=[i]
-_curs_l=0
-_curs_p=0
-_esc=[27,-9,13,247,22,48,77,109,7,46,28,82,114,85,117,87,119]
-_top=[firma#ident_fir]
-_bot=[del#'+'.or.firma#ident_fir]
-_stop=[+]+ident_fir
-_sbot=[+]+ident_fir+[þ]
-_proc=[say41()]
-_row=int((_row_g+_row_d)/2)
-_proc_spe=[say41s]
-_disp=.t.
-_cls=''
-_top_bot=_top+[.or.]+_bot
-*----------------------
-kl=0
-do while kl#27
-ColSta()
-@ 1,47 say '[F1]-pomoc'
-set colo to
-_row=wybor(_row)
-ColStd()
-kl=lastkey()
-do case
-*########################### INSERT/MODYFIKACJA #############################
-              case kl=22.or.kl=48.or._row=-1.or.kl=77.or.kl=109
-@ 1,47 say [          ]
-ins=(kl#109.and.kl#77).OR.&_top_bot
-if ins
-ColStb()
-   center(23,[þ                     þ])
-ColSta()
-     center(23,[W P I S Y W A N I E])
-ColStd()
-restscreen(_row_g,_col_l,_row_d+1,_col_p,_cls)
-wiersz=_row_d
-else
-ColStb()
-   center(23,[þ                       þ])
-ColSta()
-     center(23,[M O D Y F I K A C J A])
-ColStd()
-wiersz=_row
-endif
-                             begin sequence
-*ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
-if ins
-   zIDENT=space(5)
-   zNUMER=space(8)
-   zDATA_UMOWY=ctod('    .  .  ')
-   zTEMAT1=space(70)
-   zTEMAT2=space(70)
-   zTERMIN=ctod('    .  .  ')
-   zDATA_RACH=ctod('    .  .  ')
-   zDATA_WYP=ctod('    .  .  ')
-   zNAZWISKO=space(62)
-   zSTAW_PODAT=parap_pod
-//002a nowa zmienna
-   zTYT=('Z')
-else
-   zIDENT=IDENT
-   zNUMER=NUMER
-   zDATA_UMOWY=DATA_UMOWY
-   zTEMAT1=TEMAT1
-   zTEMAT2=TEMAT2
-   zTERMIN=TERMIN
-   zDATA_RACH=DATA_RACH
-   zDATA_WYP=DATA_WYP
-   zSTAW_PODAT=STAW_PODAT
-//002a i tu tez
-   do case
-*  case TYTUL='0'
-*       zTYT='O' //organy stanowiace
-   case TYTUL='1'
-        zTYT='A' //aktywizacja
-   case TYTUL='2'
-        zTYT='C' //czlonkowstwo w spoldzielni
-   case TYTUL='3'
-        zTYT='E' //emerytury i renty zagraniczne
-   case TYTUL='4'
-        zTYT='F' //swiadczenia z funduszu pracy i GSP
-   case TYTUL='9'
-        zTYT='S' //obowiazki spoleczne
-   case TYTUL='6'
-        zTYT='P' //prawa autorskie
-   case TYTUL='7'
-        zTYT='I' //inne zrodla
-   case TYTUL='8'
-        zTYT='R' //kontrakty menadzerskie
-   CASE TYTUL = '10'
-      zTYT := 'O'
-   other
-        zTYT='Z' //umowy zlecenia i o dzielo 5
-   endcase
-   sele prac
-   set orde to 4
-   seek val(zident)
-   set orde to 3
-   zNAZWISKO=NAZWISKO+','+IMIE1+','+IMIE2
-   sele umowy
-endif
-*ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-@ wiersz,1  get zDATA_UMOWY
-@ wiersz,12 get zNUMER picture "XXXXX"
-@ wiersz,18 get zTERMIN
-@ wiersz,29 get zDATA_RACH
-@ wiersz,40 get zDATA_WYP
-@ 13, 9 get zNAZWISKO picture "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,XXXXXXXXXXXXXXX,XXXXXXXXXXXXXXX" valid v4_141()
-@ 14, 9 get zTEMAT1   picture replicate('X',70)
-@ 15, 9 get zTEMAT2   picture replicate('X',70)
-read_()
-if lastkey()=27
-   break
-endif
-*ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
-if ins
-   app()
-endif
-do BLOKADAR
-repl_([FIRMA],IDENT_FIR)
-repl_([IDENT],zIDENT)
-repl_([NUMER],zNUMER)
-repl_([DATA_UMOWY],zDATA_UMOWY)
-repl_([TEMAT1],zTEMAT1)
-repl_([TEMAT2],zTEMAT2)
-repl_([TERMIN],zTERMIN)
-repl_([DATA_RACH],zDATA_RACH)
-repl_([DATA_WYP],zDATA_WYP)
-repl_([STAW_PODAT],zSTAW_PODAT)
+PROCEDURE Umowy()
 
-do case
-*case zTYT='O'
-*     zTYTUL:='0'
-case zTYT='A'
-     zTYTUL:='1'
-case zTYT='C'
-     zTYTUL:='2'
-case zTYT='E'
-     zTYTUL:='3'
-case zTYT='F'
-     zTYTUL:='4'
-case zTYT='S'
-     zTYTUL:='9'
+   *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+   *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+   *±Obsluga podstawowych operacji na bazie ......                             ±
+   *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 
-case zTYT='P'
-     zTYTUL:='6'
-case zTYT='I'
-     zTYTUL:='7'
-case zTYT='R'
-     zTYTUL:='8'
-CASE zTYT = 'O'
-   zTYTUL := '10'
-otherwise
-     zTYTUL :='5' //<--= brak danych
-endcase
-repl_([TYTUL],zTYTUL)
-commit_()
-unlock
-*ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
-_row=int((_row_g+_row_d)/2)
-if .not.ins
-   break
-endif
-scroll(_row_g,_col_l,_row_d,_col_p,1)
-@ _row_d,_col_l say '          ³     ³          ³          ³          ³                            '
-                             end
-_disp=ins.or.lastkey()#27
-kl=iif(lastkey()=27.and._row=-1,27,kl)
-@ 23,0
-*################################ KASOWANIE #################################
-              case kl=7.or.kl=46
-@ 1,47 say [          ]
-ColStb()
-center(23,[þ                   þ])
-ColSta()
-center(23,[K A S O W A N I E])
-ColStd()
-_disp=tnesc([*i],[   Czy skasowa&_c.? (T/N)   ])
-if _disp
-   do BLOKADAR
-   del()
-   unlock
-   skip
-   commit_()
-   if &_bot
-      skip -1
-   endif
-endif
-@ 23,0
-*################################### WYBOR POZYCJI ##########################
-case kl=13
-     save screen to scr_
-     @ 1,47 say [          ]
-     store 'A' to zAKOSZT,;
-                  zAPUZ,;
-                  zAPUE,;
-                  zAPUR,;
-                  zAPUC,;
-                  zAPUW,;
-                  zAPFP,;
-                  zAPFG,;
-                  zAPF3,;
-                  zAFUZ,;
-                  zAFUE,;
-                  zAFUR,;
-                  zAFUC,;
-                  zAFUW,;
-                  zAFFP,;
-                  zAFFG,;
-                  zAFF3,;
-                  zAPZK
-     store 0 to zBRUT_ZASAD,;
-           zKOSZT     ,;
-           zKOSZTY    ,;
-           zSTAW_PUE  ,;
-           zSTAW_PUR  ,;
-           zSTAW_PUC  ,;
-           zSTAW_PSUM ,;
-           zWAR_PUE   ,;
-           zWAR_PUR   ,;
-           zWAR_PUC   ,;
-           zWAR_PSUM  ,;
-           oWAR_PUE   ,;
-           oWAR_PUR   ,;
-           oWAR_PUC   ,;
-           oWAR_PSUM  ,;
-           zSTAW_PODAT,;
-           zSTAW_PUZ  ,;
-           zSTAW_PZK  ,;
-           zWAR_PUZ   ,;
-           zWAR_PZK   ,;
-           zWAR_PUZO  ,;
-           oWAR_PUZ   ,;
-           oWAR_PZK   ,;
-           oWAR_PUZO  ,;
-           zSTAW_FUE  ,;
-           zSTAW_FUR  ,;
-           zSTAW_FUW  ,;
-           zSTAW_FFP  ,;
-           zSTAW_FFG  ,;
-           zSTAW_FSUM ,;
-           zWAR_FUE   ,;
-           zWAR_FUR   ,;
-           zWAR_FUW   ,;
-           zWAR_FFP   ,;
-           zWAR_FFG   ,;
-           zWAR_FSUM  ,;
-           oWAR_FUE   ,;
-           oWAR_FUR   ,;
-           oWAR_FUW   ,;
-           oWAR_FFP   ,;
-           oWAR_FFG   ,;
-           oWAR_FSUM  ,;
-           zBRUT_RAZEM,;
-           zDOCHOD    ,;
-           zDOCHODPOD ,;
-           zPENSJA    ,;
-           zPODATEK   ,;
-           zNETTO     ,;
-           zDO_WYPLATY,;
-           zUWAGI     ,;
-           B5         ,;
-           SKLADN
-*           zZAOPOD    ,;
-*     zJAKZAO='Z'
-     zTYTUL=TYTUL
+   PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou,_top_bot
 
+   zNAZWISKO := Space( 62 )
+   zTYT := 'Z'
+   @ 1, 47 SAY '          '
 
-     do case
-*     case TYTUL='0'
-*          zTYT='O' //organy stanowiace
-     case TYTUL='1'
-          zTYT='A' //aktywizacja
-     case TYTUL='2'
-          zTYT='C' //czlonkowstwo w spoldzielni
-     case TYTUL='3'
-          zTYT='E' //emerytury i renty zagraniczne
-     case TYTUL='4'
-          zTYT='F' //swiadczenia z funduszu pracy i GSP
-     case TYTUL='9'
-          zTYT='S' //obowiazki spoleczne
-     case TYTUL='6'
-          zTYT='P' //prawa autorskie
-     case TYTUL='7'
-          zTYT='I' //inne zrodla
-     case TYTUL='8'
-          zTYT='R' //kontrakty menadzerskie
-     CASE TYTUL = '10'
-          zTYT := 'O'
-     other
-          zTYT='Z' //umowy zlecenia i o dzielo 5
-     endcase
+   *################################# GRAFIKA ##################################
+   @  3, 0 SAY PadC( 'EWIDENCJA  INNYCH  UM&__O.W  i  INNYCH  &__X.R&__O.DE&__L.  PRZYCHOD&__O.W', 80 )
+   @  4, 0 SAY '    Data    Numer   Termin      Data       Data                                 '
+   @  5, 0 SAY '   umowy    umowy  wykonania  rachunku   wyp&_l.aty           Opis prac            '
+   @  6, 0 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿'
+   @  7, 0 SAY '³          ³     ³          ³          ³          ³                            ³'
+   @  8, 0 SAY '³          ³     ³          ³          ³          ³                            ³'
+   @  9, 0 SAY '³          ³     ³          ³          ³          ³                            ³'
+   @ 10, 0 SAY '³          ³     ³          ³          ³          ³                            ³'
+   @ 11, 0 SAY '³          ³     ³          ³          ³          ³                            ³'
+   @ 12, 0 SAY 'ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´'
+   @ 13, 0 SAY '³                                                                              ³'
+   @ 14, 0 SAY '³ Opis...                                                                      ³'
+   @ 15, 0 SAY '³ prac...                                                                      ³'
+   //002a nowe pole
+   @ 16, 0 say '³                                                                              ³'
+   @ 17, 0 say '³ Przychody opodatkowane =                 Z jakiego tytu&_l.u ?                  ³'
+   @ 18, 0 say '³ Sk&_l.adki wykonawcy      =     %             Przych&_o.d netto=                   ³'
+   @ 19, 0 say '³ Koszt uzyskania        =  %              Do opodatkowania=                   ³'
+   @ 20, 0 say '³ Wyliczenie podatku     =  %                    DO WYP&__L.ATY=                   ³'
+   @ 21, 0 say '³ Sk&_l.adki zleceniodawcy  =     %                 Fundusze  =     %             ³'
+   @ 22, 0 say 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
 
-//002a 2 nowe linie-/\
-     do podstawu
-     save scre to scr_sklad
+   *############################### OTWARCIE BAZ ###############################
+   SELECT 4
+   DO WHILE .NOT. Dostep( 'FIRMA' )
+   ENDDO
+   SET INDEX TO firma
+   GO Val( ident_fir )
+   SELECT 3
+   DO WHILE .NOT. Dostep( 'TAB_DOCH' )
+   ENDDO
+   SET INDEX TO tab_doch
+   SELECT 2
+   DO WHILE .NOT. Dostep( 'UMOWY' )
+   ENDDO
+   SetInd( 'UMOWY' )
+   SET ORDER TO 2
+   SEEK '+' + ident_fir
+   SELECT 1
+   DO WHILE .NOT. Dostep( 'PRAC' )
+   ENDDO
+   SetInd( 'PRAC' )
+   SET ORDER TO 3
+   SET FILTER TO prac->aktywny == 'T'
+   SEEK '+' + ident_fir + '+'
+   IF Eof() .OR. del # '+' .OR. firma # ident_fir .OR. status < 'U'
+      kom( 3, '*u', ' Brak pracownik&_o.w pracuj&_a.cych na umowy ' )
+      RETURN
+   ENDIF
+   SELECT umowy
+
+   *################################# OPERACJE #################################
+   *----- parametry ------
+   _row_g := 7
+   _col_l := 1
+   _row_d := 11
+   _col_p := 78
+   _invers := [i]
+   _curs_l := 0
+   _curs_p := 0
+   _esc := '27,-9,13,247,22,48,77,109,7,46,28,82,114,85,117,87,119'
+   _top := 'firma#ident_fir'
+   _bot := "del#'+'.or.firma#ident_fir"
+   _stop := '+' + ident_fir
+   _sbot := '+' + ident_fir + 'þ'
+   _proc := 'say41()'
+   _row := int( ( _row_g + _row_d ) / 2 )
+   _proc_spe := 'say41s'
+   _disp := .T.
+   _cls := ''
+   _top_bot := _top + '.or.' + _bot
+
+   *----------------------
+   kl := 0
+   DO WHILE kl # 27
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      SET COLOR TO
+      _row := wybor( _row )
+      ColStd()
+      kl := lastkey()
+      DO CASE
+      *########################### INSERT/MODYFIKACJA #############################
+      CASE kl == 22 .OR. kl == 48 .OR. _row == -1 .OR. kl == 77 .OR. kl == 109
+         @ 1, 47 SAY '          '
+         ins := ( kl # 109 .AND. kl # 77 ) .OR. &_top_bot
+         IF ins
+            ColStb()
+            center( 23, 'þ                     þ' )
+            ColSta()
+            center( 23, 'W P I S Y W A N I E' )
+            ColStd()
+            RestScreen( _row_g, _col_l, _row_d + 1, _col_p, _cls )
+            wiersz := _row_d
+         ELSE
+            ColStb()
+            center( 23, 'þ                       þ' )
+            ColSta()
+            center( 23, 'M O D Y F I K A C J A' )
+            ColStd()
+            wiersz := _row
+         ENDIF
+
+         BEGIN SEQUENCE
+            *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
+            IF ins
+               zIDENT := Space( 5 )
+               zNUMER := Space( 8 )
+               zDATA_UMOWY := CToD( '    .  .  ' )
+               zTEMAT1 := Space( 70 )
+               zTEMAT2 := Space( 70 )
+               zTERMIN := CToD( '    .  .  ' )
+               zDATA_RACH := CToD( '    .  .  ' )
+               zDATA_WYP := CToD( '    .  .  ' )
+               zNAZWISKO := Space( 62 )
+               zSTAW_PODAT := parap_pod
+               //002a nowa zmienna
+               zTYT := ( 'Z' )
+            ELSE
+               zIDENT := IDENT
+               zNUMER := NUMER
+               zDATA_UMOWY := DATA_UMOWY
+               zTEMAT1 := TEMAT1
+               zTEMAT2 := TEMAT2
+               zTERMIN := TERMIN
+               zDATA_RACH := DATA_RACH
+               zDATA_WYP := DATA_WYP
+               zSTAW_PODAT := STAW_PODAT
+               //002a i tu tez
+               do case
+               *  case TYTUL='0'
+               *       zTYT='O' //organy stanowiace
+               CASE TYTUL = '1'
+                  zTYT := 'A' //aktywizacja
+               CASE TYTUL = '2'
+                  zTYT := 'C' //czlonkowstwo w spoldzielni
+               CASE TYTUL = '3'
+                  zTYT := 'E' //emerytury i renty zagraniczne
+               CASE TYTUL = '4'
+                  zTYT := 'F' //swiadczenia z funduszu pracy i GSP
+               CASE TYTUL = '9'
+                  zTYT := 'S' //obowiazki spoleczne
+               CASE TYTUL = '6'
+                  zTYT := 'P' //prawa autorskie
+               CASE TYTUL = '7'
+                  zTYT := 'I' //inne zrodla
+               CASE TYTUL = '8'
+                  zTYT := 'R' //kontrakty menadzerskie
+               CASE TYTUL = '10'
+                  zTYT := 'O'
+               OTHERWISE
+                  zTYT := 'Z' //umowy zlecenia i o dzielo 5
+               ENDCASE
+
+               SELECT prac
+               SET ORDER TO 4
+               SEEK Val( zident )
+               SET ORDER TO 3
+               zNAZWISKO := NAZWISKO+','+IMIE1+','+IMIE2
+               SELECT umowy
+            ENDIF
+
+            *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
+            @ wiersz, 1  GET zDATA_UMOWY
+            @ wiersz, 12 GET zNUMER PICTURE "XXXXX"
+            @ wiersz, 18 GET zTERMIN
+            @ wiersz, 29 GET zDATA_RACH
+            @ wiersz, 40 GET zDATA_WYP
+            @ 13, 9 GET zNAZWISKO PICTURE "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,XXXXXXXXXXXXXXX,XXXXXXXXXXXXXXX" valid v4_141()
+            @ 14, 9 GET zTEMAT1   PICTURE Replicate( 'X', 70 )
+            @ 15, 9 GET zTEMAT2   PICTURE Replicate( 'X', 70 )
+            read_()
+            IF LastKey() == 27
+               BREAK
+            ENDIF
+            *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
+            IF ins
+               app()
+            ENDIF
+            BlokadaR()
+            repl_( 'FIRMA', IDENT_FIR )
+            repl_( 'IDENT', zIDENT )
+            repl_( 'NUMER', zNUMER )
+            repl_( 'DATA_UMOWY', zDATA_UMOWY )
+            repl_( 'TEMAT1', zTEMAT1 )
+            repl_( 'TEMAT2', zTEMAT2 )
+            repl_( 'TERMIN', zTERMIN )
+            repl_( 'DATA_RACH', zDATA_RACH )
+            repl_( 'DATA_WYP', zDATA_WYP )
+            repl_( 'STAW_PODAT', zSTAW_PODAT )
+
+            DO CASE
+            *case zTYT='O'
+            *     zTYTUL:='0'
+            CASE zTYT = 'A'
+               zTYTUL := '1'
+            CASE zTYT = 'C'
+               zTYTUL := '2'
+            CASE zTYT = 'E'
+               zTYTUL := '3'
+            CASE zTYT = 'F'
+               zTYTUL := '4'
+            CASE zTYT = 'S'
+               zTYTUL := '9'
+            CASE zTYT = 'P'
+               zTYTUL := '6'
+            CASE zTYT = 'I'
+               zTYTUL := '7'
+            CASE zTYT = 'R'
+               zTYTUL := '8'
+            CASE zTYT = 'O'
+               zTYTUL := '10'
+            OTHERWISE
+               zTYTUL := '5' //<--= brak danych
+            ENDCASE
+            repl_( 'TYTUL', zTYTUL )
+            commit_()
+            UNLOCK
+            *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
+            _row := int( ( _row_g + _row_d ) / 2 )
+            IF .NOT. ins
+               BREAK
+            ENDIF
+            Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
+            @ _row_d, _col_l SAY '          ³     ³          ³          ³          ³                            '
+         END
+         _disp := ins .OR. LastKey() # 27
+         kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
+         @ 23, 0
+      *################################ KASOWANIE #################################
+      CASE kl == 7 .OR. kl == 46
+         @ 1, 47 SAY '          '
+         ColStb()
+         center( 23, 'þ                   þ' )
+         ColSta()
+         center( 23, 'K A S O W A N I E' )
+         ColStd()
+         _disp := tnesc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
+         IF _disp
+            BlokadaR()
+            del()
+            UNLOCK
+            SKIP
+            commit_()
+            IF &_bot
+               SKIP -1
+            ENDIF
+         ENDIF
+         @ 23, 0
+      *################################### WYBOR POZYCJI ##########################
+      CASE kl == 13
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY '          '
+         STORE 'A' TO zAKOSZT, ;
+            zAPUZ, ;
+            zAPUE, ;
+            zAPUR, ;
+            zAPUC, ;
+            zAPUW, ;
+            zAPFP, ;
+            zAPFG, ;
+            zAPF3, ;
+            zAFUZ, ;
+            zAFUE, ;
+            zAFUR, ;
+            zAFUC, ;
+            zAFUW, ;
+            zAFFP, ;
+            zAFFG, ;
+            zAFF3, ;
+            zAPZK
+         STORE 0 TO zBRUT_ZASAD, ;
+            zKOSZT     , ;
+            zKOSZTY    , ;
+            zSTAW_PUE  , ;
+            zSTAW_PUR  , ;
+            zSTAW_PUC  , ;
+            zSTAW_PSUM , ;
+            zWAR_PUE   , ;
+            zWAR_PUR   , ;
+            zWAR_PUC   , ;
+            zWAR_PSUM  , ;
+            oWAR_PUE   , ;
+            oWAR_PUR   , ;
+            oWAR_PUC   , ;
+            oWAR_PSUM  , ;
+            zSTAW_PODAT, ;
+            zSTAW_PUZ  , ;
+            zSTAW_PZK  , ;
+            zWAR_PUZ   , ;
+            zWAR_PZK   , ;
+            zWAR_PUZO  , ;
+            oWAR_PUZ   , ;
+            oWAR_PZK   , ;
+            oWAR_PUZO  , ;
+            zSTAW_FUE  , ;
+            zSTAW_FUR  , ;
+            zSTAW_FUW  , ;
+            zSTAW_FFP  , ;
+            zSTAW_FFG  , ;
+            zSTAW_FSUM , ;
+            zWAR_FUE   , ;
+            zWAR_FUR   , ;
+            zWAR_FUW   , ;
+            zWAR_FFP   , ;
+            zWAR_FFG   , ;
+            zWAR_FSUM  , ;
+            oWAR_FUE   , ;
+            oWAR_FUR   , ;
+            oWAR_FUW   , ;
+            oWAR_FFP   , ;
+            oWAR_FFG   , ;
+            oWAR_FSUM  , ;
+            zBRUT_RAZEM, ;
+            zDOCHOD    , ;
+            zDOCHODPOD , ;
+            zPENSJA    , ;
+            zPODATEK   , ;
+            zNETTO     , ;
+            zDO_WYPLATY, ;
+            zUWAGI     , ;
+            B5         , ;
+            SKLADN
+            *zZAOPOD    ,;
+            *zJAKZAO='Z'
+         zTYTUL := TYTUL
+
+         DO CASE
+         *case TYTUL='0'
+         *zTYT='O' //organy stanowiace
+         CASE TYTUL = '1'
+            zTYT := 'A' //aktywizacja
+         CASE TYTUL = '2'
+            zTYT := 'C' //czlonkowstwo w spoldzielni
+         CASE TYTUL = '3'
+            zTYT := 'E' //emerytury i renty zagraniczne
+         CASE TYTUL = '4'
+            zTYT := 'F' //swiadczenia z funduszu pracy i GSP
+         CASE TYTUL = '9'
+            zTYT := 'S' //obowiazki spoleczne
+         CASE TYTUL = '6'
+            zTYT := 'P' //prawa autorskie
+         CASE TYTUL = '7'
+            zTYT := 'I' //inne zrodla
+         CASE TYTUL = '8'
+            zTYT := 'R' //kontrakty menadzerskie
+         CASE TYTUL = '10'
+            zTYT := 'O'
+         OTHERWISE
+            zTYT := 'Z' //umowy zlecenia i o dzielo 5
+         ENDCASE
+
+         //002a 2 nowe linie-/\
+         Podstawu()
+         SAVE SCREEN TO scr_sklad
 *     set curs on
 *     @ 16,32 get zJAKZAO pict '!' when wJAKZAOu(16,33) valid vJAKZAOu(16,33)
 *     read
@@ -399,815 +407,840 @@ case kl=13
 *        _infoskl_u()
 *     endif
 
-     do while .t.
-        ColStd()
-        @ 17, 1 prompt ' Przychody opodatkowane '
-//002a nowa linia
-        @ 17,42 prompt ' Z jakiego tytu&_l.u ?'
-        @ 18, 1 prompt ' Sk&_l.adki wykonawcy      '
-        @ 19, 1 prompt ' Koszt uzyskania        '
-        @ 20, 1 prompt ' Wyliczenie podatku     '
-        @ 21, 1 prompt ' Sk&_l.adki zleceniodawcy  '
-        skladn=menu(skladn)
-        ColStd()
-        if lastkey()=27
-           exit
-        endif
-        do podstawu
-        do case
-        case skladn=1
-             save scre to scr_sklad
-             set curs on
-             @ 17,26 get zBRUT_ZASAD pict '999999.99' valid oblplu()
-             read
-             set curs off
-             rest scre from scr_sklad
-        case skladn=2
-             save scre to scr_sklad
-             set curs on
-             @ 17,62 get zTYT pict '!' when jaki_tytul() valid zTYT$'AZPICEFSRO'
-             read
-             set curs off
-             rest scre from scr_sklad
-        case skladn=3
-             save scre to scr_sklad
-             set curs on
-             @ 16,25 clear to 22,66
-             @ 16,25 to 22,66
-             @ 17,26 say 'SK&__L.ADKI    %stawki wart.obli. wart.odli.'
-             @ 18,26 say 'Emerytalna ' get zSTAW_PUE pict '99.99' valid OBLPLu()
-             @ 18,45 get oWAR_PUE pict '999999.99' when oblplu().and..f.
-             @ 18,55 get zAPUE pict '!' when oblplu().and.wAUTOKOM() valid zAPUE$'AR'.and.vAUTOKOM()
-             @ 18,57 get zWAR_PUE pict '999999.99' when oblplu()
-             @ 19,26 say 'Rentowa    ' get zSTAW_PUR pict '99.99' valid OBLPLu()
-             @ 19,45 get oWAR_PUR pict '999999.99' when oblplu().and..f.
-             @ 19,55 get zAPUR pict '!' when oblplu().and.wAUTOKOM() valid zAPUR$'AR'.and.vAUTOKOM()
-             @ 19,57 get zWAR_PUR pict '999999.99' when oblplu()
-             @ 20,26 say 'Chorobowa  ' get zSTAW_PUC pict '99.99' valid OBLPLu()
-             @ 20,45 get oWAR_PUC pict '999999.99' when oblplu().and..f.
-             @ 20,55 get zAPUC pict '!' when oblplu().and.wAUTOKOM() valid zAPUC$'AR'.and.vAUTOKOM()
-             @ 20,57 get zWAR_PUC pict '999999.99' when oblplu()
-             @ 21,26 say 'RAZEM      ' get zSTAW_PSUM pict '99.99' when oblplu().and..f.
-             @ 21,45 get oWAR_PSUM pict '999999.99' when oblplu().and..f.
-             @ 21,57 get zWAR_PSUM pict '999999.99' when oblplu().and..f.
-             read
-             set curs off
-             rest scre from scr_sklad
-        case skladn=4
-             save scre to scr_sklad
-             set curs on
-             @ 19,26 get zKOSZTY  pict '99' valid oblplu()
-             @ 19,30 get zAKOSZT pict '!' when oblplu().and.wAUTOKOM() valid zAKOSZT$'AR'.and.vAUTOKOM()
-             @ 19,33 get zKOSZT pict '999999.99' valid oblplu()
-             read
-             set curs off
-             rest scre from scr_sklad
-        case skladn=5
-             save scre to scr_sklad
-             set curs on
-             @ 17,25 clear to 22,75
-             @ 17,25 to 22,75
-             @ 18,26 say 'Podatek stawka..........%.='
-             @ 18,45 get zSTAW_PODAT pict '99' valid oblplu()
-             @ 18,66 get B5          pict '999999.99' when oblplu().and..f.
-             @ 19,26 say 'Ubezp.zdrow. do ZUS.....%.='
-             @ 19,45 get zSTAW_PUZ pict '99.99' valid oblplu()
-             @ 19,54 get oWAR_PUZ  pict '999999.99' when oblplu().and..f.
-             @ 19,64 get zAPUZ pict '!' when oblplu().and.wAUTOKOM() valid zAPUZ$'AR'.and.vAUTOKOM()
-             @ 19,66 get zWAR_PUZ  pict '999999.99' when oblplu()
-             @ 20,26 say '             do odlicz..%.='
-             @ 20,45 get zSTAW_PZK pict '99.99' valid oblplu()
-             @ 20,54 get oWAR_PZK  pict '999999.99' when oblplu().and..f.
-             @ 20,64 get zAPZK pict '!' when oblplu().and.wAUTOKOM() valid zAPZK$'AR'.and.vAUTOKOM()
-             @ 20,66 get zWAR_PZK  pict '999999.99' when oblplu()
-             @ 21,26 say 'Podatek do zap&_l.aty........:'
-             @ 21,66 get zPODATEK    pict '999999.99' when oblplu().and..f.
-             read
-             set curs off
-             rest scre from scr_sklad
-        case skladn=6
-             save scre to scr_sklad
-             set curs on
-             @ 13,25 clear to 22,66
-             @ 13,25 to 22,66
-             @ 14,26 say 'SK&__L.ADKI    %stawki wart.obli. wart.odli.'
-             @ 15,26 say 'Emerytalna ' get zSTAW_FUE pict '99.99' valid OBLPLu()
-             @ 15,45 get oWAR_FUE pict '999999.99' when oblplu().and..f.
-             @ 15,55 get zAFUE pict '!' when oblplu().and.wAUTOKOM() valid zAFUE$'AR'.and.vAUTOKOM()
-             @ 15,57 get zWAR_FUE pict '999999.99' when oblplu()
-             @ 16,26 say 'Rentowa    ' get zSTAW_FUR pict '99.99' valid OBLPLu()
-             @ 16,45 get oWAR_FUR pict '999999.99' when oblplu().and..f.
-             @ 16,55 get zAFUR pict '!' when oblplu().and.wAUTOKOM() valid zAFUR$'AR'.and.vAUTOKOM()
-             @ 16,57 get zWAR_FUR pict '999999.99' when oblplu()
-             @ 17,26 say 'Wypadkowa  ' get zSTAW_FUW pict '99.99' valid OBLPLu()
-             @ 17,45 get oWAR_FUW pict '999999.99' when oblplu().and..f.
-             @ 17,55 get zAFUW pict '!' when oblplu().and.wAUTOKOM() valid zAFUW$'AR'.and.vAUTOKOM()
-             @ 17,57 get zWAR_FUW pict '999999.99' when oblplu()
-             @ 18,26 say 'FUNDUSZE   %stawki wart.obli. wart.odli.'
-             @ 19,26 say 'Pracy      ' get zSTAW_FFP pict '99.99' valid OBLPLu()
-             @ 19,45 get oWAR_FFP pict '999999.99' when oblplu().and..f.
-             @ 19,55 get zAFFP pict '!' when oblplu().and.wAUTOKOM() valid zAFFP$'AR'.and.vAUTOKOM()
-             @ 19,57 get zWAR_FFP pict '999999.99' when oblplu()
-             @ 20,26 say 'G&__S.P        ' get zSTAW_FFG pict '99.99' valid OBLPLu()
-             @ 20,45 get oWAR_FFG pict '999999.99' when oblplu().and..f.
-             @ 20,55 get zAFFG pict '!' when oblplu().and.wAUTOKOM() valid zAFFG$'AR'.and.vAUTOKOM()
-             @ 20,57 get zWAR_FFG pict '999999.99' when oblplu()
-             @ 21,26 say 'RAZEM      ' get zSTAW_FSUM pict '99.99' when oblplu().and..f.
-             @ 21,45 get oWAR_FSUM pict '999999.99' when oblplu().and..f.
-             @ 21,57 get zWAR_FSUM pict '999999.99' when oblplu().and..f.
-             read
-             set curs off
-             rest scre from scr_sklad
-        endcase
-//002a zmiana skladn z 2 na 3
-        if lastkey()#27.or.skladn=3
-           oblplu()
-           do BLOKADAR
-           do ZAPISZPLAU
-           unlock
-        endif
-        _infoskl_u()
-     enddo
-     @ 17, 1 say ' Przychody opodatkowane '
-//002a nowa linia
-     @ 17,42 say ' Z jakiego tytu&_l.u ?'
-     @ 18, 1 say ' Sk&_l.adki wykonawcy      '
-     @ 19, 1 say ' Koszt uzyskania        '
-     @ 20, 1 say ' Wyliczenie podatku     '
-     @ 21, 1 say ' Sk&_l.adki zleceniodawcy  '
-     restore screen from scr_
-*################################### POMOC ##################################
-              case kl=28
-save screen to scr_
-@ 1,47 say [          ]
-declare p[20]
-*---------------------------------------
-p[ 1]='                                                        '
-p[ 2]='   ['+chr(24)+'/'+chr(25)+']...................poprzednia/nast&_e.pna pozycja  '
-p[ 3]='   [Home/End]..............pierwsza/ostatnia pozycja    '
-p[ 4]='   [Enter].................zmiana wyliczonych kwot      '
-p[ 5]='   [Ins]...................dopisanie przychodu          '
-p[ 6]='   [M].....................modyfikacja przychodu        '
-p[ 7]='   [Del]...................kasowanie przychodu          '
-p[ 8]='   [U].....................drukowanie tytu&_l.u przychodu  '
-p[ 9]='   [R].....................drukowanie rachunku za prac&_e. '
-p[10]='   [W].....................drukowanie dowodu wyp&_l.aty    '
-p[11]='   [Esc]...................wyj&_s.cie                      '
-p[12]='                                                        '
-*---------------------------------------
-set color to i
-   i=20
-   j=24
-   do while i>0
-      if type('p[i]')#[U]
-      center(j,p[i])
-      j=j-1
-      endif
-   i=i-1
-   enddo
-set color to
-pause(0)
-if lastkey()#27.and.lastkey()#28
-keyboard chr(lastkey())
-endif
-restore screen from scr_
-_disp=.f.
-*############################## DRUK RACHUNKU ###############################
-case kl=82 .or. kl=114
-     do wybzbior with 'RACH*.TXT'
-*############################## DRUK UMOWA ##################################
-case kl=85 .or. kl=117
-     do wybzbior with 'UMOW*.TXT'
-*############################## DRUK WYPLATY ################################
-case kl=87 .or. kl=119
-     do wybzbior with 'WYPL*.TXT'
-******************** ENDCASE
-endcase
-enddo
-close_()
+         DO WHILE .T.
+            ColStd()
+            @ 17,  1 PROMPT ' Przychody opodatkowane '
+            //002a nowa linia
+            @ 17, 42 PROMPT ' Z jakiego tytu&_l.u ?'
+            @ 18,  1 PROMPT ' Sk&_l.adki wykonawcy      '
+            @ 19,  1 PROMPT ' Koszt uzyskania        '
+            @ 20,  1 PROMPT ' Wyliczenie podatku     '
+            @ 21,  1 PROMPT ' Sk&_l.adki zleceniodawcy  '
+            skladn := menu( skladn )
+            ColStd()
+            IF LastKey() == 27
+               EXIT
+            ENDIF
+            podstawu()
+            DO CASE
+            CASE skladn == 1
+               SAVE SCREEN TO scr_sklad
+               SET CURSOR ON
+               @ 17, 26 GET zBRUT_ZASAD PICTURE '999999.99' VALID oblplu()
+               READ
+               SET CURSOR OFF
+               RESTORE SCREEN FROM scr_sklad
+            CASE skladn == 2
+               SAVE SCREEN TO scr_sklad
+               SET CURSOR ON
+               @ 17, 62 GET zTYT PICTURE '!' when jaki_tytul() VALID zTYT $ 'AZPICEFSRO'
+               READ
+               SET CURSOR OFF
+               RESTORE SCREEN FROM scr_sklad
+            CASE skladn == 3
+               SAVE SCREEN TO scr_sklad
+               SET CURSOR on
+               @ 16, 25 CLEAR TO 22, 66
+               @ 16, 25 TO 22, 66
+               @ 17, 26 SAY 'SK&__L.ADKI    %stawki wart.obli. wart.odli.'
+               @ 18, 26 SAY 'Emerytalna ' GET zSTAW_PUE PICTURE '99.99' VALID OBLPLu()
+               @ 18, 45 GET oWAR_PUE PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 18, 55 GET zAPUE PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUE $ 'AR' .AND. vAUTOKOM()
+               @ 18, 57 GET zWAR_PUE PICTURE '999999.99' WHEN oblplu()
+               @ 19, 26 SAY 'Rentowa    ' GET zSTAW_PUR PICTURE '99.99' VALID OBLPLu()
+               @ 19, 45 GET oWAR_PUR PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 19, 55 GET zAPUR PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUR $ 'AR' .AND. vAUTOKOM()
+               @ 19, 57 GET zWAR_PUR PICTURE '999999.99' WHEN oblplu()
+               @ 20, 26 SAY 'Chorobowa  ' GET zSTAW_PUC PICTURE '99.99' VALID OBLPLu()
+               @ 20, 45 GET oWAR_PUC PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 20, 55 GET zAPUC PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUC $ 'AR' .AND. vAUTOKOM()
+               @ 20, 57 GET zWAR_PUC PICTURE '999999.99' WHEN oblplu()
+               @ 21, 26 SAY 'RAZEM      ' GET zSTAW_PSUM PICTURE '99.99' WHEN oblplu() .AND. .F.
+               @ 21, 45 GET oWAR_PSUM PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 21, 57 GET zWAR_PSUM PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               READ
+               SET CURSOR OFF
+               RESTORE SCREEN FROM scr_sklad
+            CASE skladn == 4
+               SAVE SCREEN TO scr_sklad
+               SET CURSOR ON
+               @ 19, 26 GET zKOSZTY PICTURE '99' VALID oblplu()
+               @ 19, 30 GET zAKOSZT PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAKOSZT $ 'AR' .AND. vAUTOKOM()
+               @ 19, 33 GET zKOSZT PICTURE '999999.99' VALID oblplu()
+               READ
+               SET CURSOR OFF
+               REST SCREEN FROM scr_sklad
+            CASE skladn == 5
+               SAVE SCREEN TO scr_sklad
+               SET CURSOR ON
+               @ 17, 25 CLEAR TO 22, 75
+               @ 17, 25 TO 22, 75
+               @ 18, 26 SAY 'Podatek stawka..........%.='
+               @ 18, 45 GET zSTAW_PODAT PICTURE '99' VALID oblplu()
+               @ 18, 66 GET B5          PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 19, 26 SAY 'Ubezp.zdrow. do ZUS.....%.='
+               @ 19, 45 GET zSTAW_PUZ PICTURE '99.99' VALID oblplu()
+               @ 19, 54 GET oWAR_PUZ  PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 19, 64 GET zAPUZ PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUZ $ 'AR' .AND. vAUTOKOM()
+               @ 19, 66 GET zWAR_PUZ  PICTURE '999999.99' WHEN oblplu()
+               @ 20, 26 SAY '             do odlicz..%.='
+               @ 20, 45 GET zSTAW_PZK PICTURE '99.99' VALID oblplu()
+               @ 20, 54 GET oWAR_PZK  PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 20, 64 GET zAPZK PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPZK $ 'AR' .AND. vAUTOKOM()
+               @ 20, 66 GET zWAR_PZK  PICTURE '999999.99' WHEN oblplu()
+               @ 21, 26 SAY 'Podatek do zap&_l.aty........:'
+               @ 21, 66 GET zPODATEK  PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               READ
+               SET CURSOR OFF
+               RESTORE SCREEN FROM scr_sklad
+            CASE skladn == 6
+               SAVE SCREEN TO scr_sklad
+               SET CURSOR ON
+               @ 13, 25 CLEAR TO 22, 66
+               @ 13, 25 TO 22, 66
+               @ 14, 26 SAY 'SK&__L.ADKI    %stawki wart.obli. wart.odli.'
+               @ 15, 26 SAY 'Emerytalna ' GET zSTAW_FUE PICTURE '99.99' VALID OBLPLu()
+               @ 15, 45 GET oWAR_FUE PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 15, 55 GET zAFUE PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAFUE $ 'AR' .AND. vAUTOKOM()
+               @ 15, 57 GET zWAR_FUE PICTURE '999999.99' WHEN oblplu()
+               @ 16, 26 SAY 'Rentowa    ' GET zSTAW_FUR PICTURE '99.99' VALID OBLPLu()
+               @ 16, 45 GET oWAR_FUR PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 16, 55 GET zAFUR PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAFUR $ 'AR' .AND. vAUTOKOM()
+               @ 16, 57 GET zWAR_FUR PICTURE '999999.99' WHEN oblplu()
+               @ 17, 26 SAY 'Wypadkowa  ' GET zSTAW_FUW PICTURE '99.99' VALID OBLPLu()
+               @ 17, 45 GET oWAR_FUW PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 17, 55 GET zAFUW PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAFUW $ 'AR' .AND. vAUTOKOM()
+               @ 17, 57 GET zWAR_FUW PICTURE '999999.99' WHEN oblplu()
+               @ 18, 26 SAY 'FUNDUSZE   %stawki wart.obli. wart.odli.'
+               @ 19, 26 SAY 'Pracy      ' GET zSTAW_FFP PICTURE '99.99' VALID OBLPLu()
+               @ 19, 45 GET oWAR_FFP PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 19, 55 GET zAFFP PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAFFP $ 'AR' .AND. vAUTOKOM()
+               @ 19, 57 GET zWAR_FFP PICTURE '999999.99' WHEN oblplu()
+               @ 20, 26 SAY 'G&__S.P        ' GET zSTAW_FFG PICTURE '99.99' VALID OBLPLu()
+               @ 20, 45 GET oWAR_FFG PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 20, 55 GET zAFFG PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAFFG $ 'AR' .AND. vAUTOKOM()
+               @ 20, 57 GET zWAR_FFG PICTURE '999999.99' WHEN oblplu()
+               @ 21, 26 SAY 'RAZEM      ' GET zSTAW_FSUM PICTURE '99.99' WHEN oblplu() .AND. .F.
+               @ 21, 45 GET oWAR_FSUM PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 21, 57 GET zWAR_FSUM PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               read
+               SET CURSOR OFF
+               RESTORE SCREEN FROM scr_sklad
+            ENDCASE
+            //002a zmiana skladn z 2 na 3
+            IF LastKey() # 27 .OR. skladn == 3
+               oblplu()
+               BlokadaR()
+               ZapiszPLAU()
+               UNLOCK
+            ENDIF
+            _infoskl_u()
+         ENDDO
+         @ 17,  1 SAY ' Przychody opodatkowane '
+         //002a nowa linia
+         @ 17, 42 SAY ' Z jakiego tytu&_l.u ?'
+         @ 18,  1 SAY ' Sk&_l.adki wykonawcy      '
+         @ 19,  1 SAY ' Koszt uzyskania        '
+         @ 20,  1 SAY ' Wyliczenie podatku     '
+         @ 21,  1 SAY ' Sk&_l.adki zleceniodawcy  '
+         RESTORE SCREEN FROM scr_
+      *################################### POMOC ##################################
+      CASE kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY '          '
+         declare p[20]
+         *---------------------------------------
+         p[  1 ] := '                                                        '
+         p[  2 ] := '   [' + Chr( 24 ) + '/' + Chr( 25 ) + ']...................poprzednia/nast&_e.pna pozycja  '
+         p[  3 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
+         p[  4 ] := '   [Enter].................zmiana wyliczonych kwot      '
+         p[  5 ] := '   [Ins]...................dopisanie przychodu          '
+         p[  6 ] := '   [M].....................modyfikacja przychodu        '
+         p[  7 ] := '   [Del]...................kasowanie przychodu          '
+         p[  8 ] := '   [U].....................drukowanie tytu&_l.u przychodu  '
+         p[  9 ] := '   [R].....................drukowanie rachunku za prac&_e. '
+         p[ 10 ] := '   [W].....................drukowanie dowodu wyp&_l.aty    '
+         p[ 11 ] := '   [Esc]...................wyj&_s.cie                      '
+         p[ 12 ] := '                                                        '
+         *---------------------------------------
+         SET COLOR TO I
+         i := 20
+         j := 24
+         DO WHILE i > 0
+            IF Type( 'p[i]' ) # 'U'
+               center( j, p[ i ] )
+               j := j - 1
+            ENDIF
+            i := i - 1
+         ENDDO
+         SET COLOR TO
+         pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            keyboard Chr( LastKey() )
+         ENDIF
+         RESTORE SCREEN FROM scr_
+         _disp := .F.
+      *############################## DRUK RACHUNKU ###############################
+      CASE kl == 82 .OR. kl == 114
+         wybzbior( 'RACH*.TXT' )
+      *############################## DRUK UMOWA ##################################
+      CASE kl == 85 .OR. kl == 117
+         wybzbior( 'UMOW*.TXT' )
+      *############################## DRUK WYPLATY ################################
+      CASE kl == 87 .OR. kl == 119
+         wybzbior( 'WYPL*.TXT' )
+      ******************** ENDCASE
+      ENDCASE
+   ENDDO
+   close_()
+
+   RETURN
+
 *****************************************************************************
-proc TRANTEK
+PROCEDURE TRANTEK()
 *****************************************************************************
-     //set cons off
-     //set device to print
-     //set print on
-     TEKSTDR:=strtran(TEKSTDR,'@DZISIAJ',dtoc(DATE()))
-     TEKSTDR:=strtran(TEKSTDR,'#DZISIAJ',dtoc(DATE()))
-     sele prac
-     TEKSTDR:=strtran(TEKSTDR,'@NAZWISKO',NAZWISKO)
-     TEKSTDR:=strtran(TEKSTDR,'#NAZWISKO',alltrim(NAZWISKO))
-     TEKSTDR:=strtran(TEKSTDR,'@IMIE1',IMIE1)
-     TEKSTDR:=strtran(TEKSTDR,'#IMIE1',alltrim(IMIE1))
-     TEKSTDR:=strtran(TEKSTDR,'@IMIE2',IMIE2)
-     TEKSTDR:=strtran(TEKSTDR,'#IMIE2',alltrim(IMIE2))
-     TEKSTDR:=strtran(TEKSTDR,'@IMIE_O',IMIE_O)
-     TEKSTDR:=strtran(TEKSTDR,'#IMIE_O',alltrim(IMIE_O))
-     TEKSTDR:=strtran(TEKSTDR,'@IMIE_M',IMIE_M)
-     TEKSTDR:=strtran(TEKSTDR,'#IMIE_M',alltrim(IMIE_M))
-     TEKSTDR:=strtran(TEKSTDR,'@MIEJSC_UR',MIEJSC_UR)
-     TEKSTDR:=strtran(TEKSTDR,'#MIEJSC_UR',alltrim(MIEJSC_UR))
-     TEKSTDR:=strtran(TEKSTDR,'@DATA_UR',dtoc(DATA_UR))
-     TEKSTDR:=strtran(TEKSTDR,'#DATA_UR',dtoc(DATA_UR))
-     TEKSTDR:=strtran(TEKSTDR,'@ZATR',ZATRUD)
-     TEKSTDR:=strtran(TEKSTDR,'#ZATR',alltrim(ZATRUD))
-     TEKSTDR:=strtran(TEKSTDR,'@PESEL',PESEL)
-     TEKSTDR:=strtran(TEKSTDR,'#PESEL',alltrim(PESEL))
-     TEKSTDR:=strtran(TEKSTDR,'@NIP',NIP)
-     TEKSTDR:=strtran(TEKSTDR,'#NIP',alltrim(NIP))
-     TEKSTDR:=strtran(TEKSTDR,'@MIEJSC_ZAM',MIEJSC_ZAM)
-     TEKSTDR:=strtran(TEKSTDR,'#MIEJSC_ZAM',alltrim(MIEJSC_ZAM))
-     TEKSTDR:=strtran(TEKSTDR,'@KOD',KOD_POCZT)
-     TEKSTDR:=strtran(TEKSTDR,'#KOD',alltrim(KOD_POCZT))
-     TEKSTDR:=strtran(TEKSTDR,'@GMINA',GMINA)
-     TEKSTDR:=strtran(TEKSTDR,'#GMINA',alltrim(GMINA))
-     TEKSTDR:=strtran(TEKSTDR,'@ULICA',ULICA)
-     TEKSTDR:=strtran(TEKSTDR,'#ULICA',alltrim(ULICA))
-     TEKSTDR:=strtran(TEKSTDR,'@DOM',NR_DOMU)
-     TEKSTDR:=strtran(TEKSTDR,'#DOM',alltrim(NR_DOMU))
-     TEKSTDR:=strtran(TEKSTDR,'@LOKAL',NR_MIESZK)
-     TEKSTDR:=strtran(TEKSTDR,'#LOKAL',alltrim(NR_MIESZK))
-     TEKSTDR:=strtran(TEKSTDR,'@DOWOD',DOWOD_OSOB)
-     TEKSTDR:=strtran(TEKSTDR,'#DOWOD',alltrim(DOWOD_OSOB))
-     sele firma
-     TEKSTDR:=strtran(TEKSTDR,'@FIRMA',NAZWA)
-     TEKSTDR:=strtran(TEKSTDR,'#FIRMA',alltrim(NAZWA))
-     TEKSTDR:=strtran(TEKSTDR,'@UL_FIRMY',ULICA+' '+NR_DOMU+'/'+NR_MIESZK)
-     TEKSTDR:=strtran(TEKSTDR,'#UL_FIRMY',alltrim(ULICA)+' '+alltrim(NR_DOMU)+'/'+alltrim(NR_MIESZK))
-     TEKSTDR:=strtran(TEKSTDR,'@ADR_FIRMY',MIEJSC)
-     TEKSTDR:=strtran(TEKSTDR,'#ADR_FIRMY',alltrim(MIEJSC))
-     sele umowy
-     TEKSTDR:=strtran(TEKSTDR,'@UMOWA',NUMER)
-     TEKSTDR:=strtran(TEKSTDR,'#UMOWA',alltrim(NUMER))
-     TEKSTDR:=strtran(TEKSTDR,'@DATA_UM',dtoc(DATA_UMOWY))
-     TEKSTDR:=strtran(TEKSTDR,'#DATA_UM',dtoc(DATA_UMOWY))
-     TEKSTDR:=strtran(TEKSTDR,'@DATA_WYP',dtoc(DATA_WYP))
-     TEKSTDR:=strtran(TEKSTDR,'#DATA_WYP',dtoc(DATA_WYP))
-     TEKSTDR:=strtran(TEKSTDR,'@DATA_RA',dtoc(DATA_RACH))
-     TEKSTDR:=strtran(TEKSTDR,'#DATA_RA',dtoc(DATA_RACH))
-     TEKSTDR:=strtran(TEKSTDR,'@BRUTTO',kwota(BRUT_RAZEM,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#BRUTTO',alltrim(kwota(BRUT_RAZEM,11,2)))
-     WW1=slownie(BRUT_RAZEM)
-     TEKSTDR:=strtran(TEKSTDR,'@BSLOW',WW1)
-     TEKSTDR:=strtran(TEKSTDR,'#BSLOW',WW1)
-     TEKSTDR:=strtran(TEKSTDR,'@%KOSZT',str(KOSZTY,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#%KOSZT',alltrim(str(KOSZTY,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@KOSZT',kwota(KOSZT,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#KOSZT',alltrim(kwota(KOSZT,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@DOCHOD',kwota(DOCHOD,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#DOCHOD',alltrim(kwota(DOCHOD,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@%PODATEK',str(STAW_PODAT,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#%PODATEK',alltrim(str(STAW_PODAT,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@PODATEK',kwota(PODATEK,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#PODATEK',alltrim(kwota(PODATEK,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@NETTO',kwota(DO_WYPLATY,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#NETTO',alltrim(kwota(DO_WYPLATY,11,2)))
-     WW5=slownie(DO_WYPLATY)
-     TEKSTDR:=strtran(TEKSTDR,'@NSLOW',WW5)
-     TEKSTDR:=strtran(TEKSTDR,'#NSLOW',alltrim(WW5))
-     TEKSTDR:=strtran(TEKSTDR,'@TEMAT1',TEMAT1)
-     TEKSTDR:=strtran(TEKSTDR,'#TEMAT1',alltrim(TEMAT1))
-     TEKSTDR:=strtran(TEKSTDR,'@TEMAT2',TEMAT2)
-     TEKSTDR:=strtran(TEKSTDR,'#TEMAT2',alltrim(TEMAT2))
-     TEKSTDR:=strtran(TEKSTDR,'@TERMIN',dtoc(TERMIN))
-     TEKSTDR:=strtran(TEKSTDR,'#TERMIN',dtoc(TERMIN))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_PUE',kwota(STAW_PUE,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_PUE',alltrim(kwota(STAW_PUE,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_PUR',kwota(STAW_PUR,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_PUR',alltrim(kwota(STAW_PUR,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_PUC',kwota(STAW_PUC,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_PUC',alltrim(kwota(STAW_PUC,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_PSUM',kwota(STAW_PSUM,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_PSUM',alltrim(kwota(STAW_PSUM,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_PUW',kwota(STAW_PUW,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_PUW',alltrim(kwota(STAW_PUW,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_PUZ',kwota(STAW_PUZ,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_PUZ',alltrim(kwota(STAW_PUZ,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_PZK',kwota(STAW_PZK,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_PZK',alltrim(kwota(STAW_PZK,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_FUE',kwota(STAW_FUE,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_FUE',alltrim(kwota(STAW_FUE,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_FUR',kwota(STAW_FUR,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_FUR',alltrim(kwota(STAW_FUR,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_FUC',kwota(STAW_FUC,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_FUC',alltrim(kwota(STAW_FUC,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_FUW',kwota(STAW_FUW,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_FUW',alltrim(kwota(STAW_FUW,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_FUZ',kwota(STAW_FUZ,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_FUZ',alltrim(kwota(STAW_FUZ,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_FSUM',kwota(STAW_FSUM,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_FSUM',alltrim(kwota(STAW_FSUM,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_PUE',kwota(WAR_PUE,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_PUE',alltrim(kwota(WAR_PUE,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_PUR',kwota(WAR_PUR,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_PUR',alltrim(kwota(WAR_PUR,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_PUC',kwota(WAR_PUC,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_PUC',alltrim(kwota(WAR_PUC,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_PSUM',kwota(WAR_PSUM,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_PSUM',alltrim(kwota(WAR_PSUM,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_PUW',kwota(WAR_PUW,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_PUW',alltrim(kwota(WAR_PUW,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_PUZ',kwota(WAR_PUZ,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_PUZ',alltrim(kwota(WAR_PUZ,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_PZK',kwota(WAR_PZK,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_PZK',alltrim(kwota(WAR_PZK,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_FUE',kwota(WAR_FUE,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_FUE',alltrim(kwota(WAR_FUE,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_FUR',kwota(WAR_FUR,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_FUR',alltrim(kwota(WAR_FUR,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_FUC',kwota(WAR_FUC,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_FUC',alltrim(kwota(WAR_FUC,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_FUW',kwota(WAR_FUW,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_FUW',alltrim(kwota(WAR_FUW,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_FUZ',kwota(WAR_FUZ,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_FUZ',alltrim(kwota(WAR_FUZ,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_FSUM',kwota(WAR_FSUM,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_FSUM',alltrim(kwota(WAR_FSUM,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_FFP',kwota(STAW_FFP,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_FFP',alltrim(kwota(STAW_FFP,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@STAW_FFG',kwota(STAW_FFG,5,2))
-     TEKSTDR:=strtran(TEKSTDR,'#STAW_FFG',alltrim(kwota(STAW_FFG,5,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_FFP',kwota(WAR_FFP,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_FFP',alltrim(kwota(WAR_FFP,11,2)))
-     TEKSTDR:=strtran(TEKSTDR,'@WAR_FFG',kwota(WAR_FFG,11,2))
-     TEKSTDR:=strtran(TEKSTDR,'#WAR_FFG',alltrim(kwota(WAR_FFG,11,2)))
-     //?tekstdr
-     //ejec
-     //set print off
-     //set device to scre
-     //set cons on
-     DrukujNowyProfil(TEKSTDR)
+   //set cons off
+   //set device to print
+   //set print on
+   TEKSTDR := StrTran( TEKSTDR, '@DZISIAJ', DToC( DATE() ) )
+   TEKSTDR := StrTran( TEKSTDR, '#DZISIAJ', DToC( DATE() ) )
+   SELECT prac
+   TEKSTDR := StrTran( TEKSTDR, '@NAZWISKO', NAZWISKO )
+   TEKSTDR := StrTran( TEKSTDR, '#NAZWISKO', AllTrim( NAZWISKO ) )
+   TEKSTDR := StrTran( TEKSTDR, '@IMIE1', IMIE1 )
+   TEKSTDR := StrTran( TEKSTDR, '#IMIE1', AllTrim( IMIE1 ) )
+   TEKSTDR := StrTran( TEKSTDR, '@IMIE2', IMIE2 )
+   TEKSTDR := StrTran( TEKSTDR, '#IMIE2', AllTrim( IMIE2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '@IMIE_O', IMIE_O )
+   TEKSTDR := StrTran( TEKSTDR, '#IMIE_O', AllTrim( IMIE_O ) )
+   TEKSTDR := StrTran( TEKSTDR, '@IMIE_M', IMIE_M )
+   TEKSTDR := StrTran( TEKSTDR, '#IMIE_M', AllTrim( IMIE_M ) )
+   TEKSTDR := StrTran( TEKSTDR, '@MIEJSC_UR', MIEJSC_UR )
+   TEKSTDR := StrTran( TEKSTDR, '#MIEJSC_UR', AllTrim( MIEJSC_UR ) )
+   TEKSTDR := StrTran( TEKSTDR, '@DATA_UR', DToC( DATA_UR ) )
+   TEKSTDR := StrTran( TEKSTDR, '#DATA_UR', DToC( DATA_UR ) )
+   TEKSTDR := StrTran( TEKSTDR, '@ZATR', ZATRUD )
+   TEKSTDR := StrTran( TEKSTDR, '#ZATR', AllTrim( ZATRUD ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PESEL', PESEL )
+   TEKSTDR := StrTran( TEKSTDR, '#PESEL', AllTrim( PESEL ) )
+   TEKSTDR := StrTran( TEKSTDR, '@NIP', NIP )
+   TEKSTDR := StrTran( TEKSTDR, '#NIP', AllTrim( NIP ) )
+   TEKSTDR := StrTran( TEKSTDR, '@MIEJSC_ZAM', MIEJSC_ZAM )
+   TEKSTDR := StrTran( TEKSTDR, '#MIEJSC_ZAM', AllTrim( MIEJSC_ZAM ) )
+   TEKSTDR := StrTran( TEKSTDR, '@KOD', KOD_POCZT )
+   TEKSTDR := StrTran( TEKSTDR, '#KOD', AllTrim( KOD_POCZT ) )
+   TEKSTDR := StrTran( TEKSTDR, '@GMINA', GMINA )
+   TEKSTDR := StrTran( TEKSTDR, '#GMINA', AllTrim( GMINA ) )
+   TEKSTDR := StrTran( TEKSTDR, '@ULICA', ULICA )
+   TEKSTDR := StrTran( TEKSTDR, '#ULICA', AllTrim( ULICA ) )
+   TEKSTDR := StrTran( TEKSTDR, '@DOM', NR_DOMU )
+   TEKSTDR := StrTran( TEKSTDR, '#DOM', AllTrim( NR_DOMU ) )
+   TEKSTDR := StrTran( TEKSTDR, '@LOKAL', NR_MIESZK )
+   TEKSTDR := StrTran( TEKSTDR, '#LOKAL', AllTrim( NR_MIESZK ) )
+   TEKSTDR := StrTran( TEKSTDR, '@DOWOD', DOWOD_OSOB )
+   TEKSTDR := StrTran( TEKSTDR, '#DOWOD', AllTrim( DOWOD_OSOB ) )
+   SELECT firma
+   TEKSTDR := StrTran( TEKSTDR, '@FIRMA', NAZWA )
+   TEKSTDR := StrTran( TEKSTDR, '#FIRMA', AllTrim( NAZWA ) )
+   TEKSTDR := StrTran( TEKSTDR, '@UL_FIRMY', ULICA + ' ' + NR_DOMU + '/' + NR_MIESZK )
+   TEKSTDR := StrTran( TEKSTDR, '#UL_FIRMY', AllTrim( ULICA ) + ' ' + AllTrim( NR_DOMU ) + '/' + AllTrim( NR_MIESZK ) )
+   TEKSTDR := StrTran( TEKSTDR, '@ADR_FIRMY', MIEJSC )
+   TEKSTDR := StrTran( TEKSTDR, '#ADR_FIRMY', AllTrim( MIEJSC ) )
+   SELECT umowy
+   TEKSTDR := StrTran( TEKSTDR, '@UMOWA', NUMER )
+   TEKSTDR := StrTran( TEKSTDR, '#UMOWA', AllTrim( NUMER ) )
+   TEKSTDR := StrTran( TEKSTDR, '@DATA_UM', DToC( DATA_UMOWY ) )
+   TEKSTDR := StrTran( TEKSTDR, '#DATA_UM', DToC( DATA_UMOWY ) )
+   TEKSTDR := StrTran( TEKSTDR, '@DATA_WYP', DToC( DATA_WYP ) )
+   TEKSTDR := StrTran( TEKSTDR, '#DATA_WYP', DToC( DATA_WYP ) )
+   TEKSTDR := StrTran( TEKSTDR, '@DATA_RA', DToC( DATA_RACH ) )
+   TEKSTDR := StrTran( TEKSTDR, '#DATA_RA', DToC( DATA_RACH ) )
+   TEKSTDR := StrTran( TEKSTDR, '@BRUTTO', kwota( BRUT_RAZEM, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#BRUTTO', AllTrim( kwota( BRUT_RAZEM, 11, 2 ) ) )
+   WW1 := slownie( BRUT_RAZEM )
+   TEKSTDR := StrTran( TEKSTDR, '@BSLOW', WW1 )
+   TEKSTDR := StrTran( TEKSTDR, '#BSLOW', WW1 )
+   TEKSTDR := StrTran( TEKSTDR, '@%KOSZT', Str( KOSZTY, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#%KOSZT', AllTrim( Str( KOSZTY, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@KOSZT', kwota( KOSZT, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#KOSZT', AllTrim( kwota( KOSZT, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@DOCHOD', kwota( DOCHOD, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#DOCHOD', AllTrim( kwota( DOCHOD, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@%PODATEK', Str( STAW_PODAT, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#%PODATEK', AllTrim( Str( STAW_PODAT, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PODATEK', kwota( PODATEK, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PODATEK', AllTrim( kwota( PODATEK, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@NETTO', kwota( DO_WYPLATY, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#NETTO', AllTrim( kwota( DO_WYPLATY, 11, 2 ) ) )
+   WW5 := slownie( DO_WYPLATY )
+   TEKSTDR := StrTran( TEKSTDR, '@NSLOW', WW5 )
+   TEKSTDR := StrTran( TEKSTDR, '#NSLOW', AllTrim( WW5 ) )
+   TEKSTDR := StrTran( TEKSTDR, '@TEMAT1', TEMAT1 )
+   TEKSTDR := StrTran( TEKSTDR, '#TEMAT1', AllTrim( TEMAT1 ) )
+   TEKSTDR := StrTran( TEKSTDR, '@TEMAT2', TEMAT2 )
+   TEKSTDR := StrTran( TEKSTDR, '#TEMAT2', AllTrim( TEMAT2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '@TERMIN', DToC( TERMIN ) )
+   TEKSTDR := StrTran( TEKSTDR, '#TERMIN', DToC( TERMIN ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_PUE', kwota( STAW_PUE, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_PUE', AllTrim( kwota( STAW_PUE, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_PUR', kwota( STAW_PUR, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_PUR', AllTrim( kwota( STAW_PUR, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_PUC', kwota( STAW_PUC, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_PUC', AllTrim( kwota( STAW_PUC, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_PSUM', kwota( STAW_PSUM, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_PSUM', AllTrim( kwota( STAW_PSUM, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_PUW', kwota( STAW_PUW, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_PUW', AllTrim( kwota( STAW_PUW, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_PUZ', kwota( STAW_PUZ, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_PUZ', AllTrim( kwota( STAW_PUZ, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_PZK', kwota( STAW_PZK, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_PZK', AllTrim( kwota( STAW_PZK, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_FUE', kwota( STAW_FUE, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_FUE', AllTrim( kwota( STAW_FUE, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_FUR', kwota( STAW_FUR, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_FUR', AllTrim( kwota( STAW_FUR, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_FUC', kwota( STAW_FUC, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_FUC', AllTrim( kwota( STAW_FUC, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_FUW', kwota( STAW_FUW, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_FUW', AllTrim( kwota( STAW_FUW, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_FUZ', kwota( STAW_FUZ, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_FUZ', AllTrim( kwota( STAW_FUZ, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_FSUM', kwota( STAW_FSUM, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_FSUM', AllTrim( kwota( STAW_FSUM, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_PUE', kwota( WAR_PUE, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_PUE', AllTrim( kwota( WAR_PUE, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_PUR', kwota( WAR_PUR, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_PUR', AllTrim( kwota( WAR_PUR, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_PUC', kwota( WAR_PUC, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_PUC', AllTrim( kwota( WAR_PUC, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_PSUM', kwota( WAR_PSUM, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_PSUM', AllTrim( kwota( WAR_PSUM, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_PUW', kwota( WAR_PUW, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_PUW', AllTrim( kwota( WAR_PUW, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_PUZ', kwota( WAR_PUZ, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_PUZ', AllTrim( kwota( WAR_PUZ, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_PZK', kwota( WAR_PZK, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_PZK', AllTrim( kwota( WAR_PZK, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_FUE', kwota( WAR_FUE, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_FUE', AllTrim( kwota( WAR_FUE, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_FUR', kwota( WAR_FUR, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_FUR', AllTrim( kwota( WAR_FUR, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_FUC', kwota( WAR_FUC, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_FUC', AllTrim( kwota( WAR_FUC, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_FUW', kwota( WAR_FUW, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_FUW', AllTrim( kwota( WAR_FUW, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_FUZ', kwota( WAR_FUZ, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_FUZ', AllTrim( kwota( WAR_FUZ, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_FSUM', kwota( WAR_FSUM, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_FSUM', AllTrim( kwota( WAR_FSUM, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_FFP', kwota( STAW_FFP, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_FFP', AllTrim( kwota( STAW_FFP, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@STAW_FFG', kwota( STAW_FFG, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#STAW_FFG', AllTrim( kwota( STAW_FFG, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_FFP', kwota( WAR_FFP, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_FFP', AllTrim( kwota( WAR_FFP, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@WAR_FFG', kwota( WAR_FFG, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#WAR_FFG', AllTrim( kwota( WAR_FFG, 11, 2 ) ) )
+   //?tekstdr
+   //ejec
+   //set print off
+   //set device to scre
+   //set cons on
+   DrukujNowyProfil( TEKSTDR )
+
+   RETURN NIL
 
 *################################## FUNKCJE #################################
-procedure say41
-return dtoc(DATA_UMOWY)+[³]+NUMER+[³]+dtoc(TERMIN)+[³]+dtoc(DATA_RACH)+[³]+dtoc(DATA_WYP)+[³]+substr(TEMAT1,1,28)
+FUNCTION say41()
+   RETURN DToC( DATA_UMOWY ) + '³' + NUMER + '³' + DToC( TERMIN ) + '³' + DToC( DATA_RACH ) + '³' + DToC( DATA_WYP ) + '³' + SubStr( TEMAT1, 1, 28 )
+
 *############################################################################
-procedure say41s
-clear type
-set color to +w
-sele prac
-set orde to 4
-seek val(umowy->ident)
-set orde to 3
-znazwisko=nazwisko+','+imie1+','+imie2
-sele umowy
-@ 13, 9 say zNAZWISKO
-@ 14, 9 say TEMAT1
-@ 15, 9 say TEMAT2
-_infoskl_u()
-set color to
-return
+PROCEDURE say41s()
+
+   CLEAR TYPE
+   SET COLOR TO +w
+   SELECT prac
+   SET ORDER TO 4
+   SEEK Val( umowy->ident )
+   SET ORDER TO 3
+   znazwisko := nazwisko + ',' + imie1 + ',' + imie2
+   SELECT umowy
+   @ 13, 9 SAY zNAZWISKO
+   @ 14, 9 SAY TEMAT1
+   @ 15, 9 SAY TEMAT2
+   _infoskl_u()
+   SET COLOR TO
+   RETURN
+
 ***************************************************
-function v4_141
-if lastkey()=5
-   return .f.
-endif
-save screen to scr2
-select prac
-set orde to 1
-seek [+]+ident_fir+substr(znazwisko,1,30)+substr(znazwisko,32,15)+substr(znazwisko,48)
-if del#[+].or.ident_fir#umowy->firma.or.nazwisko#substr(znazwisko,1,30).or.imie1#substr(znazwisko,32,15).or.imie2#substr(znazwisko,48)
-   set orde to 3
-   seek [+]+ident_fir+[+]
-   if .not. found()
-      restore screen from scr2
-      sele umowy
-      return .f.
-   endif
-endif
-set orde to 3
-do prac_
-restore screen from scr2
-if lastkey()=13
-   znazwisko=nazwisko+','+imie1+','+imie2
-   set color to i
-   @ 14,9 say znazwisko
-   set color to
-   pause(.5)
-endif
-select umowy
-return .not.empty(znazwisko)
+FUNCTION v4_141()
+
+   IF LastKey() == 5
+      RETURN .F.
+   ENDIF
+   SAVE SCREEN TO scr2
+   SELECT prac
+   SET ORDER TO 1
+   SEEK '+' + ident_fir + SubStr( znazwisko, 1, 30 ) + SubStr( znazwisko, 32, 15 ) + SubStr( znazwisko, 48 )
+   IF del # '+' .OR. ident_fir # umowy->firma .OR. nazwisko # SubStr( znazwisko, 1, 30 ) .OR. imie1 # SubStr( znazwisko, 32, 15 ) .OR. imie2 # SubStr( znazwisko, 48 )
+      SET ORDER TO 3
+      SEEK '+' + ident_fir + '+'
+      IF .NOT. Found()
+         RESTORE SCREEN FROM scr2
+         SELECT umowy
+         RETURN .F.
+      ENDIF
+   ENDIF
+   SET ORDER TO 3
+   prac_()
+   RESTORE SCREEN FROM scr2
+   IF LastKey() == 13
+      znazwisko := nazwisko + ',' + imie1 + ',' + imie2
+      SET COLOR TO i
+      @ 14, 9 SAY znazwisko
+      SET COLOR TO
+      pause( .5 )
+   ENDIF
+   SELECT umowy
+   RETURN .NOT. Empty( znazwisko )
+
 ***************************************************
-proc WYBZBIOR
+PROCEDURE WYBZBIOR( SKRYPT )
 ***************************************************
-para SKRYPT
-save scre to WYSKR
-     _ilm=adir(SKRYPT)
-     declare a[_ilm]
-     adir(SKRYPT,a)
-     asort(a)
-     ZZ=0
-     if _ilm>21
-        _ilm=21
-     endif
-     CURR=ColPro()
-     @ 21-_ilm,0 to 22,13
-     ZZ=achoice(21-(_ilm-1),1,21,12,a,.t.,.t.,ZZ)
-     if ZZ<>0
-        TEKSTDR:=memoread(alltrim(a[ZZ]))
-        do TRANTEK
-     endif
-     setcolor(CURR)
-rest scre from WYSKR
+
+   SAVE SCREEN TO WYSKR
+   _ilm := ADir( SKRYPT )
+   declare a[ _ilm ]
+   ADir( SKRYPT, a )
+   ASort( a )
+   ZZ := 0
+   IF _ilm > 21
+      _ilm := 21
+   ENDIF
+   CURR := ColPro()
+   @ 21 - _ilm, 0 TO 22, 13
+   ZZ := AChoice( 21 - ( _ilm - 1 ), 1, 21, 12, a, .T., .T., ZZ )
+   IF ZZ <> 0
+      TEKSTDR := MemoRead( AllTrim( a[ZZ] ) )
+      TRANTEK()
+   ENDIF
+   SetColor( CURR )
+   RESTORE SCREEN FROM WYSKR
+
+   RETURN
+
 *############################################################################
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± _infoskl_u  ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Wyswietla informacje o skladnikach placowych                              ±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-func _infoskl_u
-     CURR=ColStd()
-     set color to w+
-*     @ 16,32 say iif(ZAOPOD=1,'Dziesiec groszy','Zlotowka       ')
-     @ 17,26 say BRUT_ZASAD pict '999999.99'
-//002a nowe linie
+FUNCTION _infoskl_u()
 
-     do case
-*     case TYTUL='0'
-*          zTYT='O' //organy stanowiace
-     case TYTUL='1'
-          zTYT='A' //aktywizacja
-     case TYTUL='2'
-          zTYT='C' //czlonkowstwo w spoldzielni
-     case TYTUL='3'
-          zTYT='E' //emerytury i renty zagraniczne
-     case TYTUL='4'
-          zTYT='F' //swiadczenia z funduszu pracy i GSP
-     case TYTUL='9'
-          zTYT='S' //obowiazki spoleczne
+   CURR := ColStd()
+   SET COLOR TO w+
+   *@ 16,32 say iif(ZAOPOD=1,'Dziesiec groszy','Zlotowka       ')
+   @ 17, 26 SAY BRUT_ZASAD PICTURE '999999.99'
+   //002a nowe linie
+   DO CASE
+    *     case TYTUL='0'
+    *          zTYT='O' //organy stanowiace
+   CASE TYTUL = '1'
+      zTYT := 'A' //aktywizacja
+   CASE TYTUL = '2'
+      zTYT := 'C' //czlonkowstwo w spoldzielni
+   CASE TYTUL = '3'
+      zTYT := 'E' //emerytury i renty zagraniczne
+   CASE TYTUL = '4'
+      zTYT := 'F' //swiadczenia z funduszu pracy i GSP
+   CASE TYTUL = '9'
+      zTYT := 'S' //obowiazki spoleczne
+   CASE TYTUL = '6'
+      zTYT := 'P' //prawa autorskie
+   CASE TYTUL = '7'
+      zTYT := 'I' //inne zrodla
+   CASE TYTUL = '8'
+      zTYT := 'R' //kontrakty menadzerskie
+   CASE TYTUL = '10'
+      zTYT := 'O'
+   OTHERWISE
+      zTYT := 'Z' //umowy zlecenia i o dzielo 5
+   ENDCASE
 
-     case TYTUL='6'
-          zTYT='P' //prawa autorskie
-     case TYTUL='7'
-          zTYT='I' //inne zrodla
-     case TYTUL='8'
-          zTYT='R' //kontrakty menadzerskie
-     CASE TYTUL = '10'
-          zTYT := 'O'
-     other
-          zTYT='Z' //umowy zlecenia i o dzielo 5
-     endcase
+   @ 17, 62 SAY zTYT + iif( zTYT = 'I', 'nne             ', ;
+      iif( zTYT = 'A', 'ktywizacja umowa', ;
+      iif( zTYT = 'C', 'zlonkow.spoldzi.', ;
+      iif( zTYT = 'E', 'meryt.i ren.zagr', ;
+      iif( zTYT = 'F', 'P i FGSP wyplaty', ;
+      iif( zTYT = 'S', 'polecz.obowiazki', ;
+      iif( zTYT = 'P', 'rawo autorskie  ', ;
+      iif( zTYT = 'R', 'yczalt do 200zl ', ;
+      iif( zTYT = 'O', 'bcokrajowiec    ', ;
+      'lecenia i dzie&_l.a')))))))))
+   //002a do tad
+   @ 18, 26 SAY STAW_PSUM PICTURE '99.99'
+   @ 18, 33 SAY WAR_PSUM PICTURE '999999.99'
+   @ 18, 60 SAY BRUT_ZASAD-WAR_PSUM PICTURE '999999.99'
+   @ 19, 26 SAY KOSZTY PICTURE '99'
+   @ 19, 30 SAY AKOSZT PICTURE '!'
+   @ 19, 33 SAY KOSZT PICTURE '999999.99'
+   @ 19, 60 SAY DOCHOD PICTURE '999999.99'
+   @ 20, 26 SAY STAW_PODAT PICTURE "99"
+   @ 20, 33 SAY PODATEK PICTURE "999999.99"
+   @ 20, 60 SAY DO_WYPLATY PICTURE "999999.99"
+   @ 21, 26 SAY STAW_FUE + STAW_FUR + STAW_FUW PICTURE '99.99'
+   @ 21, 33 SAY WAR_FUE + WAR_FUR + WAR_FUW PICTURE '999999.99'
+   @ 21, 60 SAY STAW_FFP + STAW_FFG PICTURE '99.99'
+   @ 21, 67 SAY WAR_FFP + WAR_FFG PICTURE '999999.99'
+   SetColor( CURR )
 
-     @ 17,62 say zTYT+iif(zTYT='I','nne             ',;
-                      iif(zTYT='A','ktywizacja umowa',;
-                      iif(zTYT='C','zlonkow.spoldzi.',;
-                      iif(zTYT='E','meryt.i ren.zagr',;
-                      iif(zTYT='F','P i FGSP wyplaty',;
-                      iif(zTYT='S','polecz.obowiazki',;
-                      iif(zTYT='P','rawo autorskie  ',;
-                      iif(zTYT='R','yczalt do 200zl ',;
-                      iif(zTYT='O','bcokrajowiec    ',;
-                                   'lecenia i dzie&_l.a')))))))))
-//002a do tad
-     @ 18,26 say STAW_PSUM pict '99.99'
-     @ 18,33 say WAR_PSUM pict '999999.99'
-     @ 18,60 say BRUT_ZASAD-WAR_PSUM pict '999999.99'
-     @ 19,26 say KOSZTY pict '99'
-     @ 19,30 say AKOSZT pict '!'
-     @ 19,33 say KOSZT pict '999999.99'
-     @ 19,60 say DOCHOD pict '999999.99'
-     @ 20,26 say STAW_PODAT picture "99"
-     @ 20,33 say PODATEK picture "999999.99"
-     @ 20,60 say DO_WYPLATY picture "999999.99"
-     @ 21,26 say STAW_FUE+STAW_FUR+STAW_FUW pict '99.99'
-     @ 21,33 say WAR_FUE+WAR_FUR+WAR_FUW pict '999999.99'
-     @ 21,60 say STAW_FFP+STAW_FFG pict '99.99'
-     @ 21,67 say WAR_FFP+WAR_FFG pict '999999.99'
-     setcolor(CURR)
-return
+   RETURN
+
 *############################################################################
-func oblplu
-     if zTYT='R' .OR. zTYT == 'O'
-      zPENSJA=zBRUT_ZASAD
-      zBRUT_RAZEM=zPENSJA
-      oWAR_PUE=_round(zPENSJA*(zSTAW_PUE/100),2)
-      oWAR_PUR=_round(zPENSJA*(zSTAW_PUR/100),2)
-      oWAR_PUC=_round(zPENSJA*(zSTAW_PUC/100),2)
-      oWAR_PSUM=oWAR_PUE+oWAR_PUR+oWAR_PUC
-      if zAPUE#'R'
-         zWAR_PUE=_round(zPENSJA*(zSTAW_PUE/100),2)
-      endif
-      if zAPUR#'R'
-         zWAR_PUR=_round(zPENSJA*(zSTAW_PUR/100),2)
-      endif
-      if zAPUC#'R'
-         zWAR_PUC=_round(zPENSJA*(zSTAW_PUC/100),2)
-      endif
-      zWAR_PSUM=zWAR_PUE+zWAR_PUR+zWAR_PUC
-      if zAKOSZT#'R'
-         zKOSZT=_round((zBRUT_ZASAD-zWAR_PSUM)*(zKOSZTY/100),2)
-      endif
-      zDOCHOD=zBRUT_RAZEM
-      zDOCHODPOD=_round(zDOCHOD,0)
-      B5=_round(zBRUT_RAZEM*(zSTAW_PODAT/100),0)
-      oWAR_PUZ=min(B5,_round((zBRUT_RAZEM-zWAR_PSUM)*(zSTAW_PUZ/100),2))
-      oWAR_PZK=min(B5,_round((zBRUT_RAZEM-zWAR_PSUM)*(zSTAW_PZK/100),2))
-      if zAPUZ#'R'
-         zWAR_PUZ=min(B5,_round((zBRUT_RAZEM-zWAR_PSUM)*(zSTAW_PUZ/100),2))
-      endif
-      if zAPZK#'R'
-         zWAR_PZK=min(B5,_round((zBRUT_RAZEM-zWAR_PSUM)*(zSTAW_PZK/100),2))
-      endif
-      zWAR_PUZO=zWAR_PZK
-      zPODATEK=_round(zBRUT_RAZEM*(zSTAW_PODAT/100),0)
-      zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ)
-      zDO_WYPLATY=zNETTO
-      oWAR_FUE=_round(zPENSJA*(zSTAW_FUE/100),2)
-      oWAR_FUR=_round(zPENSJA*(zSTAW_FUR/100),2)
-      oWAR_FUW=_round(zPENSJA*(zSTAW_FUW/100),2)
-      oWAR_FFP=_round(zPENSJA*(zSTAW_FFP/100),2)
-      oWAR_FFG=_round(zPENSJA*(zSTAW_FFG/100),2)
-      oWAR_FSUM=oWAR_FUE+oWAR_FUR+oWAR_FUW+oWAR_FFP+oWAR_FFG
-      if zAFUE#'R'
-         zWAR_FUE=_round(zPENSJA*(zSTAW_FUE/100),2)
-      endif
-      if zAFUR#'R'
-         zWAR_FUR=_round(zPENSJA*(zSTAW_FUR/100),2)
-      endif
-      if zAFUW#'R'
-         zWAR_FUW=_round(zPENSJA*(zSTAW_FUW/100),2)
-      endif
-      if zAFFP#'R'
-         zWAR_FFP=_round(zPENSJA*(zSTAW_FFP/100),2)
-      endif
-      if zAFFG#'R'
-         zWAR_FFG=_round(zPENSJA*(zSTAW_FFG/100),2)
-      endif
-      zWAR_FSUM=zWAR_FUE+zWAR_FUR+zWAR_FUW+zWAR_FFP+zWAR_FFG
-      zSTAW_FSUM=zSTAW_FUE+zSTAW_FUR+zSTAW_FUW+zSTAW_FFP+zSTAW_FFG
-      zSTAW_PSUM=zSTAW_PUE+zSTAW_PUR+zSTAW_PUC
-     else
-      zPENSJA=zBRUT_ZASAD
-      zBRUT_RAZEM=zPENSJA
-      oWAR_PUE=_round(zPENSJA*(zSTAW_PUE/100),2)
-      oWAR_PUR=_round(zPENSJA*(zSTAW_PUR/100),2)
-      oWAR_PUC=_round(zPENSJA*(zSTAW_PUC/100),2)
-      oWAR_PSUM=oWAR_PUE+oWAR_PUR+oWAR_PUC
-      if zAPUE#'R'
-         zWAR_PUE=_round(zPENSJA*(zSTAW_PUE/100),2)
-      endif
-      if zAPUR#'R'
-         zWAR_PUR=_round(zPENSJA*(zSTAW_PUR/100),2)
-      endif
-      if zAPUC#'R'
-         zWAR_PUC=_round(zPENSJA*(zSTAW_PUC/100),2)
-      endif
-      zWAR_PSUM=zWAR_PUE+zWAR_PUR+zWAR_PUC
-      if zAKOSZT#'R'
-         zKOSZT=_round((zBRUT_ZASAD-zWAR_PSUM)*(zKOSZTY/100),2)
-      endif
-      zDOCHOD=max(0,zBRUT_RAZEM-(zKOSZT+zWAR_PSUM))
-      zDOCHODPOD=_round(zDOCHOD,0)
-      B5=zDOCHODPOD*(zSTAW_PODAT/100)
-      oWAR_PUZ=min(B5,_round((zBRUT_RAZEM-zWAR_PSUM)*(zSTAW_PUZ/100),2))
-      oWAR_PZK=min(B5,_round((zBRUT_RAZEM-zWAR_PSUM)*(zSTAW_PZK/100),2))
-      if zAPUZ#'R'
-         zWAR_PUZ=min(B5,_round((zBRUT_RAZEM-zWAR_PSUM)*(zSTAW_PUZ/100),2))
-      endif
-      if zAPZK#'R'
-         zWAR_PZK=min(B5,_round((zBRUT_RAZEM-zWAR_PSUM)*(zSTAW_PZK/100),2))
-      endif
-      zWAR_PUZO=zWAR_PZK
-      zPODATEK=max(0,_round(B5-zWAR_PZK,0))
-      zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ)
-      zDO_WYPLATY=zNETTO
-      oWAR_FUE=_round(zPENSJA*(zSTAW_FUE/100),2)
-      oWAR_FUR=_round(zPENSJA*(zSTAW_FUR/100),2)
-      oWAR_FUW=_round(zPENSJA*(zSTAW_FUW/100),2)
-      oWAR_FFP=_round(zPENSJA*(zSTAW_FFP/100),2)
-      oWAR_FFG=_round(zPENSJA*(zSTAW_FFG/100),2)
-      oWAR_FSUM=oWAR_FUE+oWAR_FUR+oWAR_FUW+oWAR_FFP+oWAR_FFG
-      if zAFUE#'R'
-         zWAR_FUE=_round(zPENSJA*(zSTAW_FUE/100),2)
-      endif
-      if zAFUR#'R'
-         zWAR_FUR=_round(zPENSJA*(zSTAW_FUR/100),2)
-      endif
-      if zAFUW#'R'
-         zWAR_FUW=_round(zPENSJA*(zSTAW_FUW/100),2)
-      endif
-      if zAFFP#'R'
-         zWAR_FFP=_round(zPENSJA*(zSTAW_FFP/100),2)
-      endif
-      if zAFFG#'R'
-         zWAR_FFG=_round(zPENSJA*(zSTAW_FFG/100),2)
-      endif
-      zWAR_FSUM=zWAR_FUE+zWAR_FUR+zWAR_FUW+zWAR_FFP+zWAR_FFG
-      zSTAW_FSUM=zSTAW_FUE+zSTAW_FUR+zSTAW_FUW+zSTAW_FFP+zSTAW_FFG
-      zSTAW_PSUM=zSTAW_PUE+zSTAW_PUR+zSTAW_PUC
-      endif
-return .t.
+FUNCTION oblplu()
+
+   IF zTYT = 'R' .OR. zTYT == 'O'
+      zPENSJA := zBRUT_ZASAD
+      zBRUT_RAZEM := zPENSJA
+      oWAR_PUE := _round( zPENSJA * ( zSTAW_PUE / 100 ), 2 )
+      oWAR_PUR := _round( zPENSJA * ( zSTAW_PUR / 100 ), 2 )
+      oWAR_PUC := _round( zPENSJA * ( zSTAW_PUC / 100 ), 2 )
+      oWAR_PSUM := oWAR_PUE + oWAR_PUR + oWAR_PUC
+      IF zAPUE # 'R'
+         zWAR_PUE := _round( zPENSJA * ( zSTAW_PUE / 100 ), 2 )
+      ENDIF
+      IF zAPUR # 'R'
+         zWAR_PUR := _round( zPENSJA * ( zSTAW_PUR / 100 ), 2 )
+      ENDIF
+      IF zAPUC # 'R'
+         zWAR_PUC := _round( zPENSJA * ( zSTAW_PUC / 100 ), 2 )
+      ENDIF
+      zWAR_PSUM := zWAR_PUE + zWAR_PUR + zWAR_PUC
+      IF zAKOSZT # 'R'
+         zKOSZT := _round( ( zBRUT_ZASAD - zWAR_PSUM ) * ( zKOSZTY / 100 ), 2 )
+      ENDIF
+      zDOCHOD := zBRUT_RAZEM
+      zDOCHODPOD := _round( zDOCHOD, 0 )
+      B5 := _round( zBRUT_RAZEM*( zSTAW_PODAT / 100 ), 0 )
+      oWAR_PZK := min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+      oWAR_PUZ := min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+      IF zAPUZ # 'R'
+         zWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+      ENDIF
+      IF zAPZK # 'R'
+         zWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+      ENDIF
+      zWAR_PUZO := zWAR_PZK
+      zPODATEK := _round( zBRUT_RAZEM * ( zSTAW_PODAT / 100 ), 0 )
+      zNETTO := zBRUT_RAZEM - ( zPODATEK + zWAR_PSUM + zWAR_PUZ )
+      zDO_WYPLATY := zNETTO
+      oWAR_FUE := _round( zPENSJA * ( zSTAW_FUE / 100 ), 2 )
+      oWAR_FUR := _round( zPENSJA * ( zSTAW_FUR / 100 ), 2 )
+      oWAR_FUW := _round( zPENSJA * ( zSTAW_FUW / 100 ), 2 )
+      oWAR_FFP := _round( zPENSJA * ( zSTAW_FFP / 100 ), 2 )
+      oWAR_FFG := _round( zPENSJA * ( zSTAW_FFG / 100 ), 2 )
+      oWAR_FSUM := oWAR_FUE + oWAR_FUR + oWAR_FUW + oWAR_FFP + oWAR_FFG
+      IF zAFUE # 'R'
+         zWAR_FUE := _round( zPENSJA * ( zSTAW_FUE / 100 ), 2 )
+      ENDIF
+      IF zAFUR # 'R'
+         zWAR_FUR := _round( zPENSJA * ( zSTAW_FUR / 100 ), 2 )
+      ENDIF
+      IF zAFUW # 'R'
+         zWAR_FUW := _round( zPENSJA * ( zSTAW_FUW / 100 ), 2 )
+      ENDIF
+      IF zAFFP # 'R'
+         zWAR_FFP := _round( zPENSJA * ( zSTAW_FFP / 100 ), 2 )
+      ENDIF
+      IF zAFFG # 'R'
+         zWAR_FFG := _round( zPENSJA * ( zSTAW_FFG / 100 ), 2 )
+      ENDIF
+      zWAR_FSUM := zWAR_FUE + zWAR_FUR + zWAR_FUW + zWAR_FFP + zWAR_FFG
+      zSTAW_FSUM := zSTAW_FUE + zSTAW_FUR + zSTAW_FUW + zSTAW_FFP + zSTAW_FFG
+      zSTAW_PSUM := zSTAW_PUE + zSTAW_PUR + zSTAW_PUC
+   ELSE
+      zPENSJA := zBRUT_ZASAD
+      zBRUT_RAZEM := zPENSJA
+      oWAR_PUE := _round( zPENSJA * ( zSTAW_PUE / 100 ), 2 )
+      oWAR_PUR := _round( zPENSJA * ( zSTAW_PUR / 100 ), 2 )
+      oWAR_PUC := _round( zPENSJA * ( zSTAW_PUC / 100 ), 2 )
+      oWAR_PSUM := oWAR_PUE + oWAR_PUR + oWAR_PUC
+      IF zAPUE # 'R'
+         zWAR_PUE := _round( zPENSJA * ( zSTAW_PUE / 100 ), 2 )
+      ENDIF
+      IF zAPUR # 'R'
+         zWAR_PUR := _round( zPENSJA * ( zSTAW_PUR / 100 ), 2 )
+      ENDIF
+      IF zAPUC # 'R'
+         zWAR_PUC := _round( zPENSJA * ( zSTAW_PUC / 100 ), 2 )
+      ENDIF
+      zWAR_PSUM := zWAR_PUE + zWAR_PUR + zWAR_PUC
+      IF zAKOSZT # 'R'
+         zKOSZT := _round( ( zBRUT_ZASAD - zWAR_PSUM ) * ( zKOSZTY / 100 ), 2 )
+      ENDIF
+      zDOCHOD := Max( 0, zBRUT_RAZEM - ( zKOSZT + zWAR_PSUM ) )
+      zDOCHODPOD := _round( zDOCHOD, 0 )
+      B5 := zDOCHODPOD * ( zSTAW_PODAT / 100 )
+      oWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+      oWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+      IF zAPUZ # 'R'
+         zWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+      ENDIF
+      IF zAPZK # 'R'
+         zWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+      ENDIF
+      zWAR_PUZO := zWAR_PZK
+      zPODATEK := Max( 0, _round( B5 - zWAR_PZK, 0 ) )
+      zNETTO := zBRUT_RAZEM - ( zPODATEK + zWAR_PSUM + zWAR_PUZ )
+      zDO_WYPLATY := zNETTO
+      oWAR_FUE := _round( zPENSJA * ( zSTAW_FUE / 100 ), 2 )
+      oWAR_FUR := _round( zPENSJA * ( zSTAW_FUR / 100 ), 2 )
+      oWAR_FUW := _round( zPENSJA * ( zSTAW_FUW / 100 ), 2 )
+      oWAR_FFP := _round( zPENSJA * ( zSTAW_FFP / 100 ), 2 )
+      oWAR_FFG := _round( zPENSJA * ( zSTAW_FFG / 100 ), 2 )
+      oWAR_FSUM := oWAR_FUE + oWAR_FUR + oWAR_FUW + oWAR_FFP + oWAR_FFG
+      IF zAFUE # 'R'
+         zWAR_FUE := _round( zPENSJA * ( zSTAW_FUE / 100 ), 2 )
+      ENDIF
+      IF zAFUR # 'R'
+         zWAR_FUR := _round( zPENSJA * ( zSTAW_FUR / 100 ), 2 )
+      ENDIF
+      IF zAFUW # 'R'
+         zWAR_FUW := _round( zPENSJA * ( zSTAW_FUW / 100 ), 2 )
+      ENDIF
+      IF zAFFP # 'R'
+         zWAR_FFP := _round( zPENSJA * ( zSTAW_FFP / 100 ), 2 )
+      ENDIF
+      IF zAFFG # 'R'
+         zWAR_FFG := _round( zPENSJA * ( zSTAW_FFG / 100 ), 2 )
+      ENDIF
+      zWAR_FSUM := zWAR_FUE + zWAR_FUR + zWAR_FUW + zWAR_FFP + zWAR_FFG
+      zSTAW_FSUM := zSTAW_FUE + zSTAW_FUR + zSTAW_FUW + zSTAW_FFP + zSTAW_FFG
+      zSTAW_PSUM := zSTAW_PUE + zSTAW_PUR + zSTAW_PUC
+   ENDIF
+   RETURN .T.
+
 ***************************************************************************
-proc PODSTAWu
+PROCEDURE PODSTAWu()
 ***************************************************************************
-zAKOSZT=AKOSZT
-zAPUZ=APUZ
-zAPUE=APUE
-zAPUR=APUR
-zAPUC=APUC
-zAPUW=APUW
-zAPFP=APFP
-zAPFG=APFG
-zAPF3=APF3
-zAFUZ=AFUZ
-zAFUE=AFUE
-zAFUR=AFUR
-zAFUC=AFUC
-zAFUW=AFUW
-zAFFP=AFFP
-zAFFG=AFFG
-zAFF3=AFF3
-zAPZK=APZK
+   zAKOSZT := AKOSZT
+   zAPUZ := APUZ
+   zAPUE := APUE
+   zAPUR := APUR
+   zAPUC := APUC
+   zAPUW := APUW
+   zAPFP := APFP
+   zAPFG := APFG
+   zAPF3 := APF3
+   zAFUZ := AFUZ
+   zAFUE := AFUE
+   zAFUR := AFUR
+   zAFUC := AFUC
+   zAFUW := AFUW
+   zAFFP := AFFP
+   zAFFG := AFFG
+   zAFF3 := AFF3
+   zAPZK := APZK
 
-zBRUT_ZASAD=BRUT_ZASAD
+   zBRUT_ZASAD := BRUT_ZASAD
 
-zKOSZT=KOSZT
-zKOSZTY=KOSZTY
+   zKOSZT := KOSZT
+   zKOSZTY := KOSZTY
 
-zSTAW_PUE=STAW_PUE
-zSTAW_PUR=STAW_PUR
-zSTAW_PUC=STAW_PUC
-zSTAW_PSUM=STAW_PSUM
-zWAR_PUE=WAR_PUE
-zWAR_PUR=WAR_PUR
-zWAR_PUC=WAR_PUC
-zWAR_PSUM=WAR_PSUM
+   zSTAW_PUE := STAW_PUE
+   zSTAW_PUR := STAW_PUR
+   zSTAW_PUC := STAW_PUC
+   zSTAW_PSUM := STAW_PSUM
+   zWAR_PUE := WAR_PUE
+   zWAR_PUR := WAR_PUR
+   zWAR_PUC := WAR_PUC
+   zWAR_PSUM := WAR_PSUM
 
-zSTAW_PODAT=STAW_PODAT
-zSTAW_PUZ=STAW_PUZ
-zWAR_PUZ=WAR_PUZ
-zSTAW_PZK=STAW_PZK
-zWAR_PZK=WAR_PZK
-zWAR_PUZO=WAR_PUZO
+   zSTAW_PODAT := STAW_PODAT
+   zSTAW_PUZ := STAW_PUZ
+   zWAR_PUZ := WAR_PUZ
+   zSTAW_PZK := STAW_PZK
+   zWAR_PZK := WAR_PZK
+   zWAR_PUZO := WAR_PUZO
 
-zSTAW_FUE=STAW_FUE
-zSTAW_FUR=STAW_FUR
-zSTAW_FUW=STAW_FUW
-zSTAW_FFP=STAW_FFP
-zSTAW_FFG=STAW_FFG
-zSTAW_FSUM=STAW_FSUM
-zWAR_FUE=WAR_FUE
-zWAR_FUR=WAR_FUR
-zWAR_FUW=WAR_FUW
-zWAR_FFP=WAR_FFP
-zWAR_FFG=WAR_FFG
-zWAR_FSUM=WAR_FSUM
+   zSTAW_FUE := STAW_FUE
+   zSTAW_FUR := STAW_FUR
+   zSTAW_FUW := STAW_FUW
+   zSTAW_FFP := STAW_FFP
+   zSTAW_FFG := STAW_FFG
+   zSTAW_FSUM := STAW_FSUM
+   zWAR_FUE := WAR_FUE
+   zWAR_FUR := WAR_FUR
+   zWAR_FUW := WAR_FUW
+   zWAR_FFP := WAR_FFP
+   zWAR_FFG := WAR_FFG
+   zWAR_FSUM := WAR_FSUM
 
-zBRUT_RAZEM=BRUT_RAZEM
-zDOCHOD=DOCHOD
-zDOCHODPOD=DOCHODPOD
-*zZAOPOD=ZAOPOD
-*zJAKZAO=iif(zZAOPOD=1,'D','Z')
-zPENSJA=PENSJA
-zPODATEK=PODATEK
-zNETTO=NETTO
-zDO_WYPLATY=DO_WYPLATY
+   zBRUT_RAZEM := BRUT_RAZEM
+   zDOCHOD := DOCHOD
+   zDOCHODPOD := DOCHODPOD
+   *zZAOPOD := ZAOPOD
+   *zJAKZAO := iif(zZAOPOD=1,'D','Z')
+   zPENSJA := PENSJA
+   zPODATEK := PODATEK
+   zNETTO := NETTO
+   zDO_WYPLATY := DO_WYPLATY
 
-B5=zDOCHODPOD*(zSTAW_PODAT/100)
-//002a nowa linia
+   B5 := zDOCHODPOD*(zSTAW_PODAT/100)
+   //002a nowa linia
 
-do case
-*case TYTUL='0'
-*     zTYT='O' //organy stanowiace
-case TYTUL='1'
-     zTYT='A' //aktywizacja
-case TYTUL='2'
-     zTYT='C' //czlonkowstwo w spoldzielni
-case TYTUL='3'
-     zTYT='E' //emerytury i renty zagraniczne
-case TYTUL='4'
-     zTYT='F' //swiadczenia z funduszu pracy i GSP
-case TYTUL='9'
-     zTYT='S' //obowiazki spoleczne
+   DO CASE
+   *case TYTUL='0'
+   *     zTYT='O' //organy stanowiace
+   CASE TYTUL = '1'
+      zTYT := 'A' //aktywizacja
+   CASE TYTUL = '2'
+      zTYT := 'C' //czlonkowstwo w spoldzielni
+   CASE TYTUL = '3'
+      zTYT := 'E' //emerytury i renty zagraniczne
+   CASE TYTUL = '4'
+      zTYT := 'F' //swiadczenia z funduszu pracy i GSP
+   CASE TYTUL = '9'
+      zTYT := 'S' //obowiazki spoleczne
 
-case TYTUL='6'
-     zTYT='P' //prawa autorskie
-case TYTUL='7'
-     zTYT='I' //inne zrodla
-case TYTUL='8'
-     zTYT='R' //kontrakty menadzerskie
-CASE TYTUL = '10'
-     zTYT := 'O'
-other
-     zTYT='Z' //umowy zlecenia i o dzielo 5
-endcase
+   CASE TYTUL = '6'
+      zTYT := 'P' //prawa autorskie
+   CASE TYTUL = '7'
+      zTYT := 'I' //inne zrodla
+   CASE TYTUL = '8'
+      zTYT := 'R' //kontrakty menadzerskie
+   CASE TYTUL = '10'
+      zTYT := 'O'
+   OTHERWISE
+      zTYT := 'Z' //umowy zlecenia i o dzielo 5
+   ENDCASE
 
-zTYTUL=TYTUL
+   zTYTUL := TYTUL
+
+   RETURN
+
 ***************************************************************************
-proc ZAPISZPLAu
+PROCEDURE ZAPISZPLAu()
 ***************************************************************************
-repl_('AKOSZT',zAKOSZT)
-repl_('APUZ',zAPUZ)
-repl_('APUE',zAPUE)
-repl_('APUR',zAPUR)
-repl_('APUC',zAPUC)
-repl_('APUW',zAPUW)
-repl_('APFP',zAPFP)
-repl_('APFG',zAPFG)
-repl_('APF3',zAPF3)
-repl_('AFUZ',zAFUZ)
-repl_('AFUE',zAFUE)
-repl_('AFUR',zAFUR)
-repl_('AFUC',zAFUC)
-repl_('AFUW',zAFUW)
-repl_('AFFP',zAFFP)
-repl_('AFFG',zAFFG)
-repl_('AFF3',zAFF3)
-repl_('APZK',zAPZK)
+   repl_( 'AKOSZT', zAKOSZT )
+   repl_( 'APUZ', zAPUZ )
+   repl_( 'APUE', zAPUE )
+   repl_( 'APUR', zAPUR )
+   repl_( 'APUC', zAPUC )
+   repl_( 'APUW', zAPUW )
+   repl_( 'APFP', zAPFP )
+   repl_( 'APFG', zAPFG )
+   repl_( 'APF3', zAPF3 )
+   repl_( 'AFUZ', zAFUZ )
+   repl_( 'AFUE', zAFUE )
+   repl_( 'AFUR', zAFUR )
+   repl_( 'AFUC', zAFUC )
+   repl_( 'AFUW', zAFUW )
+   repl_( 'AFFP', zAFFP )
+   repl_( 'AFFG', zAFFG )
+   repl_( 'AFF3', zAFF3 )
+   repl_( 'APZK', zAPZK )
 
-repl_('BRUT_ZASAD',zBRUT_ZASAD)
-repl_('KOSZT',     zKOSZT     )
-repl_('KOSZTY',    zKOSZTY    )
-repl_('STAW_PUE',  zSTAW_PUE  )
-repl_('STAW_PUr',  zSTAW_PUr  )
-repl_('STAW_PUc',  zSTAW_PUc  )
-repl_('STAW_PSUM', zSTAW_PSUM )
-repl_('WAR_pUE',   zWAR_pUE  )
-repl_('WAR_pUr',   zWAR_pUr  )
-repl_('WAR_pUc',   zWAR_pUc  )
-repl_('WAR_psum',  zWAR_psum )
-repl_('STAW_PODAT',zSTAW_PODAT)
-repl_('STAW_PUz',  zSTAW_PUz  )
-repl_('WAR_pUz',   zWAR_pUz  )
-repl_('STAW_Pzk',  zSTAW_Pzk  )
-repl_('WAR_pzk',   zWAR_pzk  )
-repl_('WAR_pUzO',  zWAR_pUzO )
-repl_('STAW_fUE',  zSTAW_fUE  )
-repl_('STAW_fUr',  zSTAW_fUr  )
-repl_('STAW_fUw',  zSTAW_fUw  )
-repl_('STAW_ffp',  zSTAW_ffp  )
-repl_('STAW_ffg',  zSTAW_ffg  )
-repl_('STAW_fsum', zSTAW_fsum )
-repl_('WAR_fUE',   zWAR_fUE  )
-repl_('WAR_fUr',   zWAR_fUr  )
-repl_('WAR_fUw',   zWAR_fUw  )
-repl_('WAR_ffp',   zWAR_ffp  )
-repl_('WAR_ffg',   zWAR_ffg  )
-repl_('WAR_fsum',  zWAR_fsum )
-repl_('BRUT_RAZEM',zBRUT_RAZEM)
-repl_('DOCHOD',    zDOCHOD    )
-repl_('DOCHODPOD', zDOCHODPOD )
-*repl_('ZAOPOD',    zZAOPOD    )
-repl_('PENSJA',    zPENSJA    )
-repl_('PODATEK',   zPODATEK   )
-repl_('NETTO',     zNETTO     )
-repl_('DO_WYPLATY',zDO_WYPLATY)
-//002a nowa linia
+   repl_( 'BRUT_ZASAD', zBRUT_ZASAD )
+   repl_( 'KOSZT',      zKOSZT      )
+   repl_( 'KOSZTY',     zKOSZTY     )
+   repl_( 'STAW_PUE',   zSTAW_PUE   )
+   repl_( 'STAW_PUr',   zSTAW_PUr   )
+   repl_( 'STAW_PUc',   zSTAW_PUc   )
+   repl_( 'STAW_PSUM',  zSTAW_PSUM  )
+   repl_( 'WAR_pUE',    zWAR_pUE   )
+   repl_( 'WAR_pUr',    zWAR_pUr   )
+   repl_( 'WAR_pUc',    zWAR_pUc   )
+   repl_( 'WAR_psum',   zWAR_psum  )
+   repl_( 'STAW_PODAT', zSTAW_PODAT )
+   repl_( 'STAW_PUz',   zSTAW_PUz   )
+   repl_( 'WAR_pUz',    zWAR_pUz   )
+   repl_( 'STAW_Pzk',   zSTAW_Pzk  )
+   repl_( 'WAR_pzk',    zWAR_pzk  )
+   repl_( 'WAR_pUzO',   zWAR_pUzO )
+   repl_( 'STAW_fUE',   zSTAW_fUE  )
+   repl_( 'STAW_fUr',   zSTAW_fUr  )
+   repl_( 'STAW_fUw',   zSTAW_fUw  )
+   repl_( 'STAW_ffp',   zSTAW_ffp  )
+   repl_( 'STAW_ffg',   zSTAW_ffg  )
+   repl_( 'STAW_fsum',  zSTAW_fsum )
+   repl_( 'WAR_fUE',    zWAR_fUE  )
+   repl_( 'WAR_fUr',    zWAR_fUr  )
+   repl_( 'WAR_fUw',    zWAR_fUw  )
+   repl_( 'WAR_ffp',    zWAR_ffp  )
+   repl_( 'WAR_ffg',    zWAR_ffg  )
+   repl_( 'WAR_fsum',   zWAR_fsum )
+   repl_( 'BRUT_RAZEM', zBRUT_RAZEM )
+   repl_( 'DOCHOD',     zDOCHOD     )
+   repl_( 'DOCHODPOD',  zDOCHODPOD  )
+   *repl_('ZAOPOD',     zZAOPOD     )
+   repl_( 'PENSJA',     zPENSJA     )
+   repl_( 'PODATEK',    zPODATEK    )
+   repl_( 'NETTO',      zNETTO      )
+   repl_( 'DO_WYPLATY', zDO_WYPLATY )
+   //002a nowa linia
 
-do case
-*case zTYT='O'
-*     zTYTUL:='0'
-case zTYT='A'
-     zTYTUL:='1'
-case zTYT='C'
-     zTYTUL:='2'
-case zTYT='E'
-     zTYTUL:='3'
-case zTYT='F'
-     zTYTUL:='4'
-case zTYT='S'
-     zTYTUL:='9'
+   DO CASE
+   *case zTYT='O'
+   *     zTYTUL:='0'
+   CASE zTYT = 'A'
+      zTYTUL := '1'
+   CASE zTYT = 'C'
+      zTYTUL := '2'
+   CASE zTYT = 'E'
+      zTYTUL := '3'
+   CASE zTYT = 'F'
+      zTYTUL := '4'
+   CASE zTYT = 'S'
+      zTYTUL := '9'
 
-case zTYT='P'
-     zTYTUL:='6'
-case zTYT='I'
-     zTYTUL:='7'
-case zTYT='R'
-     zTYTUL:='8'
-CASE zTYT = 'O'
-     zTYTUL := '10'
-otherwise
-     zTYTUL :='5' //<--= brak danych
-endcase
+   CASE zTYT = 'P'
+      zTYTUL := '6'
+   CASE zTYT = 'I'
+      zTYTUL := '7'
+   CASE zTYT = 'R'
+      zTYTUL := '8'
+   CASE zTYT = 'O'
+      zTYTUL := '10'
+   OTHERWISE
+      zTYTUL :='5' //<--= brak danych
+   ENDCASE
 
-repl_('TYTUL',     zTYTUL)
+   repl_( 'TYTUL', zTYTUL )
+
+   RETURN
 
 //002a nowe funkcje
-func jaki_tytul
+FUNCTION jaki_tytul()
    ColInf()
-   @  4,50 clear to 16,79
-   @  4,50 to 16,79
-   @  5,51 say padc('Wpisz:',28)
-   @  6,51 say 'Z - umowy zlecenia i o dziel'
-   @  7,51 say 'P - prawa autorskie i inne  '
-*   @  8,51 say 'K - kontrakty menedzerskie  '
-   @  8,51 say 'I - inne zrodla             '
-   @  9,51 say 'C - czlonkowstwo w spoldziel'
-   @ 10,51 say 'E - emerytury,renty zagrani.'
-   @ 11,51 say 'F - swiadczenia z FP i FGSP '
-   @ 12,51 say 'S - spoleczne obowiazki     '
-*   @ 14,51 say 'O - organy stanowiace       '
-   @ 13,51 say 'A - aktywizacyjna umowa     '
-   @ 14,51 say 'R - ryczalt do 200zl        '
-   @ 15,51 say 'O - obcokrajowiec           '
-*  @ 24,0 say padc('Wpisz: A-rtyst.dzia&_l.alno&_s.&_c.,Z-lecenia i dzie&_l.a,P-rawa autorskie,K-ontrakty,I-nne',80,' ')
-return .t.
-func wAUTOKOM
+   @  4, 50 CLEAR TO 16, 79
+   @  4, 50 to 16, 79
+   @  5, 51 SAY padc('Wpisz:',28)
+   @  6, 51 SAY 'Z - umowy zlecenia i o dziel'
+   @  7, 51 SAY 'P - prawa autorskie i inne  '
+   *   @  8,51 SAY 'K - kontrakty menedzerskie  '
+   @  8, 51 SAY 'I - inne zrodla             '
+   @  9, 51 SAY 'C - czlonkowstwo w spoldziel'
+   @ 10, 51 SAY 'E - emerytury,renty zagrani.'
+   @ 11, 51 SAY 'F - swiadczenia z FP i FGSP '
+   @ 12, 51 SAY 'S - spoleczne obowiazki     '
+   *   @ 14,51 SAY 'O - organy stanowiace       '
+   @ 13, 51 SAY 'A - aktywizacyjna umowa     '
+   @ 14, 51 SAY 'R - ryczalt do 200zl        '
+   @ 15, 51 SAY 'O - obcokrajowiec           '
+   *  @ 24,0 say padc('Wpisz: A-rtyst.dzia&_l.alno&_s.&_c.,Z-lecenia i dzie&_l.a,P-rawa autorskie,K-ontrakty,I-nne',80,' ')
+
+   RETURN .T.
+
+FUNCTION wAUTOKOM()
    ColInf()
-   @ 24,0 say padc('Wpisz: A-automatyczne wyliczanie kwoty, R-r&_e.czna aktualizacja kwot',80,' ')
-return .t.
-func vAUTOKOM
+   @ 24, 0 SAY PadC( 'Wpisz: A-automatyczne wyliczanie kwoty, R-r&_e.czna aktualizacja kwot', 80, ' ' )
+   RETURN .T.
+
+FUNCTION vAUTOKOM()
    ColStd()
    @ 24,0 clear
-return .t.
+   RETURN .T.
+
 ***************************************************
 *function wJAKZAOu
 *para x,y

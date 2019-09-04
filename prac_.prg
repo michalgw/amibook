@@ -20,72 +20,80 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-*±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-*±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-*±Obsluga podstawowych operacji na bazie ......                             ±
-*±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
-@ 1,47 say [          ]
-RECS=recno()
-if reccount()=0
-   kom(3,[*u],[ Brak pracownik&_o.w w katalogu ])
-   keyboard chr(27)
-   inkey()
-   go RECS
-   return
-endif
-go RECS
-CURR=ColStd()
-*################################# GRAFIKA ##################################
-@  8, 0 say '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
-@  9, 0 say '°                                                                              °'
-@ 10, 0 say '°                                                                              °'
-@ 11, 0 say '°                                                                              °'
-@ 12, 0 say '°                                                                              °'
-@ 13, 0 say '°                                                                              °'
-@ 14, 0 say '°                                                                              °'
-@ 15, 0 say '°                                                                              °'
-@ 16, 0 say '°                                                                              °'
-@ 17, 0 say '°                                                                              °'
-@ 18, 0 say '°                                                                              °'
-@ 19, 0 say '°                                                                              °'
-@ 20, 0 say '°                                                                              °'
-@ 21, 0 say '°                                                                              °'
-@ 22, 0 say '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
-*################################# OPERACJE #################################
-*----- parametry ------
-_row_g=9
-_col_l=1
-_row_d=21
-_col_p=78
-_invers=[i]
-_curs_l=0
-_curs_p=0
-_esc=[27,28,13,32,7,46]
-_top=[firma#ident_fir.or.status<'U']
-_bot=[del#'+'.or.firma#ident_fir.or.status<'U']
-_stop=[+]+ident_fir+[+]
-_sbot=[+]+ident_fir+[+]+[þ]
-_proc=[linia161()]
-_row=int((_row_g+_row_d)/2)
-_proc_spe=[]
-_disp=.t.
-_cls=''
-*----------------------
-kl=0
-do while kl#27.and.kl#13
-   ColSta()
-   @ 1,47 say '[F1]-pomoc'
-   set colo to
-   _row=wybor(_row)
-   ColStd()
-   kl=lastkey()
-enddo
-if kl=13
-   zident=str(rec_no,5)
-endif
-setcolor(CURR)
+PROCEDURE Prac_()
+
+   *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+   *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+   *±Obsluga podstawowych operacji na bazie ......                             ±
+   *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+   PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
+   @ 1, 47 SAY '          '
+   RECS := RecNo()
+   IF RecCount() == 0
+      kom( 3, '*u', ' Brak pracownik&_o.w w katalogu ' )
+      KEYBOARD Chr( 27 )
+      Inkey()
+      GO RECS
+      RETURN
+   ENDIF
+   GO RECS
+   CURR := ColStd()
+
+   *################################# GRAFIKA ##################################
+   @  8, 0 SAY '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
+   @  9, 0 SAY '°                                                                              °'
+   @ 10, 0 SAY '°                                                                              °'
+   @ 11, 0 SAY '°                                                                              °'
+   @ 12, 0 SAY '°                                                                              °'
+   @ 13, 0 SAY '°                                                                              °'
+   @ 14, 0 SAY '°                                                                              °'
+   @ 15, 0 SAY '°                                                                              °'
+   @ 16, 0 SAY '°                                                                              °'
+   @ 17, 0 SAY '°                                                                              °'
+   @ 18, 0 SAY '°                                                                              °'
+   @ 19, 0 SAY '°                                                                              °'
+   @ 20, 0 SAY '°                                                                              °'
+   @ 21, 0 SAY '°                                                                              °'
+   @ 22, 0 SAY '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
+
+   *################################# OPERACJE #################################
+   *----- parametry ------
+   _row_g := 9
+   _col_l := 1
+   _row_d := 21
+   _col_p := 78
+   _invers := 'i'
+   _curs_l := 0
+   _curs_p := 0
+   _esc := '27,28,13,32,7,46'
+   _top := "firma#ident_fir.or.status<'U'"
+   _bot := "del#'+'.or.firma#ident_fir.or.status<'U'"
+   _stop := '+' + ident_fir + '+'
+   _sbot := '+' + ident_fir + '+' + 'þ'
+   _proc := 'linia161()'
+   _row := Int( ( _row_g + _row_d ) / 2 )
+   _proc_spe := ''
+   _disp := .T.
+   _cls := ''
+   *----------------------
+   kl := 0
+   DO WHILE kl # 27 .AND. kl # 13
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      SET COLOR TO
+      _row := wybor( _row )
+      ColStd()
+      kl := LastKey()
+   ENDDO
+   IF kl == 13
+      zident := Str( rec_no, 5 )
+   ENDIF
+   SetColor( CURR )
+
+   RETURN
+
 *################################## FUNKCJE #################################
-function linia161
-return NAZWISKO+[³]+IMIE1+[³]+IMIE2+[³]+iif(STATUS<>'U',iif(STATUS='E','Etatowy        ','Zleceniowy     '),'Uniwersalny    ')
+FUNCTION linia161()
+
+   RETURN NAZWISKO + '³' + IMIE1 + '³' + IMIE2 + '³' + iif( STATUS <> 'U', iif( STATUS = 'E', 'Etatowy        ', 'Zleceniowy     ' ), 'Uniwersalny    ' )
 *############################################################################
