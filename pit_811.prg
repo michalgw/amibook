@@ -20,7 +20,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-para _G,_M,_STR,_OU
+PROCEDURE Pit_811( _G, _M, _STR, _OU )
+
 RAPORT=RAPTEMP
 private P4,P4d,P5,P6,P6_kod,p7,p8,p8n,p8r,p8d,p9,p10
 private P1,P1s,P11,P12,P13,P14,P15,P16,P17,P18,P19
