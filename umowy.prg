@@ -152,6 +152,7 @@ PROCEDURE Umowy()
                zSTAW_PODAT := parap_pod
                //002a nowa zmienna
                zTYT := ( 'Z' )
+               zOSWIAD26R := 'N'
             ELSE
                zIDENT := IDENT
                zNUMER := NUMER
@@ -187,6 +188,8 @@ PROCEDURE Umowy()
                OTHERWISE
                   zTYT := 'Z' //umowy zlecenia i o dzielo 5
                ENDCASE
+
+               zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
 
                SELECT prac
                SET ORDER TO 4
@@ -360,6 +363,7 @@ PROCEDURE Umowy()
             *zZAOPOD    ,;
             *zJAKZAO='Z'
          zTYTUL := TYTUL
+         zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
 
          DO CASE
          *case TYTUL='0'
@@ -473,8 +477,9 @@ PROCEDURE Umowy()
             CASE skladn == 5
                SAVE SCREEN TO scr_sklad
                SET CURSOR ON
-               @ 17, 25 CLEAR TO 22, 75
-               @ 17, 25 TO 22, 75
+               @ 16, 25 CLEAR TO 22, 75
+               @ 16, 25 TO 22, 75
+               @ 17, 26 SAY 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' WHEN CzyPracowPonizej26R( Month( Date() ), Year( Date() ) ) VALID zOSWIAD26R $ 'TN' .AND. oblplu()
                @ 18, 26 SAY 'Podatek stawka..........%.='
                @ 18, 45 GET zSTAW_PODAT PICTURE '99' VALID oblplu()
                @ 18, 66 GET B5          PICTURE '999999.99' WHEN oblplu() .AND. .F.
@@ -796,6 +801,9 @@ FUNCTION v4_141()
    RESTORE SCREEN FROM scr2
    IF LastKey() == 13
       znazwisko := nazwisko + ',' + imie1 + ',' + imie2
+      IF ! Empty( zDATA_WYP )
+         zOSWIAD26R := iif( CzyPracowPonizej26R( Month( zDATA_WYP ), Year( zDATA_WYP ) ) .AND. OSWIAD26R == 'T', 'T', 'N' )
+      ENDIF
       SET COLOR TO i
       @ 14, 9 SAY znazwisko
       SET COLOR TO
@@ -979,17 +987,32 @@ FUNCTION oblplu()
       ENDIF
       zDOCHOD := Max( 0, zBRUT_RAZEM - ( zKOSZT + zWAR_PSUM ) )
       zDOCHODPOD := _round( zDOCHOD, 0 )
-      B5 := zDOCHODPOD * ( zSTAW_PODAT / 100 )
-      oWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
-      oWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
-      IF zAPUZ # 'R'
-         zWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+      IF zOSWIAD26R = 'T'
+         B5 := 0.0
+         oWAR_PUZ := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
+         oWAR_PZK := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
+         IF zAPUZ # 'R'
+            zWAR_PUZ := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
+         ENDIF
+         IF zAPZK # 'R'
+            zWAR_PZK := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
+         ENDIF
+         zWAR_PUZO := zWAR_PZK
+         zPODATEK := 0.0
+         zSTAW_PODAT := 0.0
+      ELSE
+         B5 := zDOCHODPOD * ( zSTAW_PODAT / 100 )
+         oWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+         oWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+         IF zAPUZ # 'R'
+            zWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+         ENDIF
+         IF zAPZK # 'R'
+            zWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+         ENDIF
+         zWAR_PUZO := zWAR_PZK
+         zPODATEK := Max( 0, _round( B5 - zWAR_PZK, 0 ) )
       ENDIF
-      IF zAPZK # 'R'
-         zWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
-      ENDIF
-      zWAR_PUZO := zWAR_PZK
-      zPODATEK := Max( 0, _round( B5 - zWAR_PZK, 0 ) )
       zNETTO := zBRUT_RAZEM - ( zPODATEK + zWAR_PSUM + zWAR_PUZ )
       zDO_WYPLATY := zNETTO
       oWAR_FUE := _round( zPENSJA * ( zSTAW_FUE / 100 ), 2 )
@@ -1116,6 +1139,8 @@ PROCEDURE PODSTAWu()
 
    zTYTUL := TYTUL
 
+   zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
+
    RETURN
 
 ***************************************************************************
@@ -1206,6 +1231,8 @@ PROCEDURE ZAPISZPLAu()
    ENDCASE
 
    repl_( 'TYTUL', zTYTUL )
+
+   repl_( 'OSWIAD26R', zOSWIAD26R )
 
    RETURN
 
