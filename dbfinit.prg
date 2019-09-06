@@ -1462,7 +1462,8 @@ public aUMOWYdbf := {;
    { "APZK", "C", 1, 0 },;                        //  79
    { "WAR_PZK", "N", 8, 2 },;                     //  80
    { "DOCHODPOD", "N", 12, 2 },;                  //  81
-   { "ZAOPOD", "N", 1, 0 } }                      //  82
+   { "ZAOPOD", "N", 1, 0 },;                      //  82
+   { "OSWIAD26R", "C", 1, 0 } }                   //  83
 
 // Create: URZEDY.DBF
 public aURZEDYdbf := {;
