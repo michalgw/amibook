@@ -50,7 +50,7 @@ PROCEDURE Pracow()
    @ 15, 0 SAY '³ Miejsce zamieszkania.                        Kod..        Poczta..           ³'
    @ 16, 0 SAY '³ Ulica,dom,lokal......                              /        Tel...           ³'
    @ 17, 0 SAY '³ Gmina.                   Powiat.                   Wojew.                    ³'
-   @ 18, 0 SAY '³ Urz&_a.d Skarbowy.......                                                        ³'
+   @ 18, 0 SAY '³ Urz¥d Skarbowy.                                                  O˜w.<26r    ³'
    @ 19, 0 SAY '³ Miejsce zatrudnienia.                                                        ³'
    @ 20, 0 SAY '³ Bank:                Konto:                Kwota przelewu:                   ³'
    @ 21, 0 SAY '³ Nr id. podat.                  Rodzaj nr id.                                 ³'
@@ -194,6 +194,7 @@ PROCEDURE Pracow()
                zDOKIDKRAJ := 'PL'
                zZAGRNRID := Space( 20 )
                zDOKIDROZ := ' '
+               zOSWIAD26R := 'N'
             else
                zNREWID := NREWID
                zNAZWISKO := NAZWISKO
@@ -239,6 +240,8 @@ PROCEDURE Pracow()
                zZAGRNRID := ZAGRNRID
                zDOKIDROZ := DOKIDROZ
 
+               zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
+
                SELECT urzedy
                GO zSKARB
                zURZAD := miejsc_us + ' - ' + urzad
@@ -272,7 +275,8 @@ PROCEDURE Pracow()
             @ 17,  8 GET zGMINA      PICTURE "@S17 !!!!!!!!!!!!!!!!!!!!"
             @ 17, 34 GET zPARAM_POW  PICTURE "@S17 !!!!!!!!!!!!!!!!!!!!"
             @ 17, 59 GET zPARAM_WOJ  PICTURE "!!!!!!!!!!!!!!!!!!!!"
-            @ 18, 23 GET zURZAD      PICTURE "!!!!!!!!!!!!!!!!!!!! - !!!!!!!!!!!!!!!!!!!!!!!!!" VALID v3_141()
+            @ 18, 17 GET zURZAD      PICTURE "!!!!!!!!!!!!!!!!!!!! - !!!!!!!!!!!!!!!!!!!!!!!!!" VALID v3_141()
+            @ 18, 76 GET zOSWIAD26R  PICTURE "!" VALID ValidPracOswiad26r()
             @ 19, 23 GET zZATRUD     PICTURE '@S55 ' + Replicate( '!', 70 )
             //002 zawezone parametry banku
             @ 20,  7 GET zBANK       PICTURE '@S15 ' + repl( '!', 30 )
@@ -348,7 +352,8 @@ PROCEDURE Pracow()
                RODZOBOW WITH zRODZOBOW, ;
                DOKIDKRAJ WITH zDOKIDKRAJ, ;
                DOKIDROZ WITH zDOKIDROZ, ;
-               ZAGRNRID WITH zZAGRNRID
+               ZAGRNRID WITH zZAGRNRID, ;
+               OSWIAD26R WITH zOSWIAD26R
             IF (zJAKI_PRZEL = 'P' ) .AND. ( zKW_PRZELEW > 100 )
                SaveScreen()
                Tone( 500, 4 )
@@ -618,10 +623,11 @@ PROCEDURE say31s()
    @ 17,  8 SAY SubStr( GMINA, 1, 17 )
    @ 17, 34 SAY SubStr( PARAM_POW, 1, 17 )
    @ 17, 59 SAY PARAM_WOJ
+   @ 18, 76 SAY iif( iif( OSWIAD26R = ' ', 'N', OSWIAD26R ) = 'T', 'Tak', 'Nie' )
    SELECT urzedy
    GO prac->skarb
    zurzad := miejsc_us + ' - ' + urzad
-   @ 18, 23 SAY zURZAD
+   @ 18, 17 SAY zURZAD
    SELECT prac
    @ 19, 23 SAY SubStr( ZATRUD, 1, 55 )
    //002 skrocenia pol banku
@@ -754,13 +760,26 @@ FUNCTION v3_141()
    IF LastKey() == 13
       zurzad := miejsc_us + ' - ' + urzad
       SET COLOR TO i
-      @ 18, 23 SAY zurzad
+      @ 18, 17 SAY zurzad
       SET COLOR TO
       pause( .5 )
    ENDIF
    SELECT prac
 
    RETURN .NOT. Empty( zurzad )
+
+FUNCTION ValidPracOswiad26r()
+
+   LOCAL R := .F.
+
+   IF zOSWIAD26R $ 'NT'
+      R := .T.
+      SET COLOR TO w+
+      @ 18, 77 SAY iif( zOSWIAD26R == 'T', 'ak', 'ie' )
+      SET COLOR TO
+   ENDIF
+
+   RETURN R
 
 ***************************************************
 FUNCTION rod()
