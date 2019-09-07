@@ -963,7 +963,8 @@ public aREJSdbf := {;
    { "KOL38", "N", 11, 2 },;                      //  48
    { "KOL39", "N", 11, 2 },;                      //  49
    { "KOLUMNA2", "C", 2, 0 },;                    //  50
-   { "NETTO2", "N", 11, 2 } }                     //  51
+   { "NETTO2", "N", 11, 2 },;                     //  51
+   { "DATATRAN", "D", 8, 0 } }                    //  52
 
 // Create: REJZ.DBF
 public aREJZdbf := {;
@@ -1031,7 +1032,8 @@ public aREJZdbf := {;
    { "KOL49", "N", 11, 2 },;                      //  62
    { "KOL50", "N", 11, 2 },;                      //  63
    { "KOLUMNA2", "C", 2, 0 },;                    //  64
-   { "NETTO2", "N", 11, 2 } }                     //  65
+   { "NETTO2", "N", 11, 2 },;                     //  65
+   { "DATATRAN", "D", 8, 0 } }                    //  66
 
 // Create: RELACJE.DBF
 public aRELACJEdbf := {;
