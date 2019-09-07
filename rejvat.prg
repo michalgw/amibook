@@ -463,7 +463,8 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
          aRow[ 'korekta' ] := iif( rejz->korekta == 'T', '1', '0' )
          aRow[ 'symbol_rej' ] := AllTrim( rejz->symb_rej )
          aRow[ 'dzien' ] := StrTran( rejz->dzien, ' ', '0' ) + '.' + StrTran( cMiesiac, ' ', '0' )
-         aRow[ 'data_wystawienia' ] := StrTran( rejz->dziens, ' ', '0' ) + '.' + StrTran( rejz->mcs, ' ', '0' ) + '.' + rejz->roks
+         aRow[ 'data_wystawienia' ] := rejz->roks + '.' + StrTran( rejz->mcs, ' ', '0' ) + '.' + StrTran( rejz->dziens, ' ', '0' )
+         aRow[ 'datatran' ] := DToC( rejz->datatran )
          aRow[ 'rodzaj' ] := iif( rejz->rach == 'F', 'Faktura', 'Rachunek' )
          aRow[ 'numer' ] := AllTrim( iif( Left( rejz->numer, 1 ) == Chr( 1 ) .OR. Left( rejz->numer, 1 ) == Chr( 254 ), SubStr( rejz->numer, 2 ), rejz->numer ) )
          aRow[ 'nazwa' ] := AllTrim( rejz->nazwa )
@@ -857,7 +858,8 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       aRow[ 'tresc' ] := AllTrim( rejs->tresc )
       aRow[ 'symb_rej' ] := AllTrim( rejs->symb_rej )
       aRow[ 'dzien' ] := StrTran( rejs->dzien, ' ', '0' ) + '.' + StrTran( cMiesiac, ' ', '0' )
-      aRow[ 'data_sprzedazy' ] := StrTran( rejs->dziens, ' ', '0' ) + '.' + StrTran( rejs->mcs, ' ' , '0' ) + '.' + rejs->roks
+      aRow[ 'data_sprzedazy' ] := rejs->roks + '.' + StrTran( rejs->mcs, ' ' , '0' ) + '.' + StrTran( rejs->dziens, ' ', '0' )
+      aRow[ 'datatran' ] := DToC( rejs->datatran )
       aRow[ 'korekta' ] := iif( rejs->korekta == 'T', '1', '0' )
       aRow[ 'uwagi' ] := AllTrim( rejs->uwagi )
 

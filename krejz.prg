@@ -200,6 +200,7 @@ PROCEDURE KRejZ()
 
                zNETTO2 := 0
                zKOLUMNA2 := '  '
+               zDATATRAN := CToD( zROKS + '.' + zMCS + '.' + zDZIENS )
                ***********************
             ELSE
                IF DocSys()
@@ -275,6 +276,7 @@ PROCEDURE KRejZ()
 
                zNETTO2 := NETTO2
                zKOLUMNA2 := KOLUMNA2
+               zDATATRAN := DATATRAN
             ENDIF
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 
@@ -304,6 +306,7 @@ PROCEDURE KRejZ()
             oGetTRESC := ATail( GetList )
             @  8, 29 GET zUWAGI PICTURE '@K' WHEN w1_21z() VALID v1_21z()
             @  9, 29 GET zDATAS PICTURE '@D' WHEN w1_6s() VALID v1_6z()
+            @  9, 56 GET zDATATRAN PICTURE '@D' WHEN w1_7s()
             @ 10, 29 GET zKOREKTA PICTURE '!' VALID zKOREKTA $ 'TN' .AND. v1_8z()
             @  5, 77 GET zUE PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
             @  6, 77 GET zKRAJ PICTURE '!!'
@@ -690,6 +693,7 @@ PROCEDURE say1z()
    @  7, 29 SAY TRESC
    @  8, 29 SAY uwagi
    @  9, 29 SAY ROKS + '.' + MCS + '.' + DZIENS
+   @  9, 56 SAY DToC( DATATRAN )
    @ 10, 29 SAY KOREKTA + iif( KOREKTA == 'T', 'ak', 'ie' )
    @  5, 77 SAY UE + iif( UE == 'T', 'ak', 'ie' )
    @  6, 77 SAY KRAJ
@@ -1091,6 +1095,14 @@ FUNCTION w1_6z()
 ***************************************************
    IF zDATAS == CToD( '    .  .  ' )
       zDATAS := CToD( param_rok + '.' + StrTran( miesiac, ' ', '0' ) + '.' + StrTran( zDZIEN, ' ', '0' ) )
+   ENDIF
+   RETURN .T.
+
+***************************************************
+FUNCTION w1_7z()
+***************************************************
+   IF zDATATRAN == CToD( '    .  .  ' )
+      zDATATRAN := CToD( param_rok + '.' + StrTran( miesiac, ' ', '0' ) + '.' + StrTran( zDZIEN, ' ', '0' ) )
    ENDIF
    RETURN .T.
 
@@ -1609,13 +1621,13 @@ FUNCTION vZAP_DATZ()
 
 FUNCTION krejzRysujTlo()
    ColStd()
-   @  3, 0 SAY 'Dzie&_n. wp&_l.ywu........     Symbol rej...     Nr dowodu ksi&_e.g...                   '
+   @  3, 0 SAY 'Do rej. na dzieה....     Symbol rej...     Nr dowodu ksi©g...                   '
    @  4, 0 SAY 'KONTRAH: Nr identyfik. (NIP).                                                   '
    @  5, 0 SAY '         Nazwa...............                                             UE:   '
    @  6, 0 SAY '         Adres...............                                           Kraj:   '
    @  7, 0 SAY 'Opis zdarzenia gospodarczego.                                                   '
    @  8, 0 SAY 'Uwagi........................                         Transakcja tr¢jstronna:   '
-   @  9, 0 SAY 'Data wystawien.(rrrr.mm.dd)..                                          Opcje:   '
+   @  9, 0 SAY 'Data zakupu....(rrrr.mm.dd)..           Data wpˆywu.....               Opcje:   '
    @ 10, 0 SAY 'Korekta ?....................                            Pola sekcji C VAT-7:   '
    @ 11, 0 SAY ' -------------------------------------------------------------------------------'
    @ 12, 0 SAY '           N E T T O         V A T          B R U T T O  ZAK DO SPR VATwgStrSprz'

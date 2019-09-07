@@ -168,6 +168,7 @@ PROCEDURE KRejS()
                zKOL39 := 0
                zNETTO2 := 0
                zKOLUMNA2 := '  '
+               zDATATRAN := CToD( zROKS + '.' + zMCS + '.' + zDZIENS )
                ***********************
             ELSE
                lRyczModSys := .F.
@@ -240,6 +241,7 @@ PROCEDURE KRejS()
                zKOL39 := KOL39
                zNETTO2 := NETTO2
                zKOLUMNA2 := KOLUMNA2
+               zDATATRAN := DATATRAN
             ENDIF
             stan_ := -zNETTO - zNETTO2
             netprzed := zNETTO
@@ -266,8 +268,9 @@ PROCEDURE KRejS()
                @  6, 29 GET zADRES    PICTURE "@S40 " + repl( '!', 100 ) VALID v1_4s()
                @  7, 29 GET zTRESC    VALID v1_5s()
                @  8, 29 GET zUWAGI    VALID v1_21s()
-               @  9, 29 GET zDATAS    PICTURE '@D' WHEN w1_6s() VALID v1_6s()
-               @  9, 51 GET zKOREKTA  PICTURE '!' VALID zKOREKTA $ 'TN' .AND. v1_8s()
+               @  9, 11 GET zDATAS    PICTURE '@D' WHEN w1_6s() VALID v1_6s()
+               @  9, 32 GET zDATATRAN PICTURE '@D' WHEN w1_7s()
+               @  9, 53 GET zKOREKTA  PICTURE '!' VALID zKOREKTA $ 'TN' .AND. v1_8s()
                @  4, 77 GET zexport   PICTURE '!' WHEN wfEXIM( 4, 78 ) VALID vfEXIM( 4, 78 )
                @  5, 77 GET zUE       PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
                @  6, 77 GET zKRAJ     PICTURE '!!'
@@ -1084,8 +1087,9 @@ PROCEDURE say1s()
    @  6, 29 SAY SubStr( ADRES, 1, 40 )
    @  7, 29 SAY TRESC
    @  8, 29 SAY uwagi
-   @  9, 29 SAY ROKS + '.' + MCS + '.' + DZIENS
-   @  9, 51 SAY KOREKTA + iif( KOREKTA == 'T', 'ak', 'ie' )
+   @  9, 11 SAY ROKS + '.' + MCS + '.' + DZIENS
+   @  9, 32 SAY DToC( DATATRAN )
+   @  9, 53 SAY KOREKTA + iif( KOREKTA == 'T', 'ak', 'ie' )
    @  4, 77 SAY EXPORT + iif( EXPORT == 'T', 'ak', 'ie' )
    @  5, 77 SAY UE + iif( UE == 'T', 'ak', 'ie' )
    @  6, 77 SAY KRAJ
@@ -1438,6 +1442,14 @@ FUNCTION w1_6s()
    RETURN .T.
 
 ***************************************************
+FUNCTION w1_7s()
+***************************************************
+   IF zDATATRAN == CToD( '    .  .  ' )
+      zDATATRAN := CToD( param_rok + '.' + miesiac + '.' + zDZIEN )
+   ENDIF
+   RETURN .T.
+
+***************************************************
 *function V1_7s
 ***************************************************
 *@ 10,42 say iif(zRACH='F','aktura ','achunek')
@@ -1448,7 +1460,7 @@ FUNCTION w1_6s()
 ***************************************************
 FUNCTION V1_8s()
 ***************************************************
-   @ 9, 52 SAY iif( zKOREKTA == 'T', 'ak', 'ie' )
+   @ 9, 53 SAY iif( zKOREKTA == 'T', 'ak', 'ie' )
 
    // to jest niepotrzebne
    IF LastKey() == K_UP
@@ -1740,13 +1752,13 @@ FUNCTION wfsSEK_CV7()
 
 FUNCTION krejsRysujTlo()
    ColStd()
-   @  3, 0 SAY 'Dzie&_n. wystawienia...     Symbol rej...     Nr dowodu ksi&_e.g...                   '
+   @  3, 0 SAY 'Do rej. na dzien....     Symbol rej...     Nr dowodu ksi©g...                   '
    @  4, 0 SAY 'KONTRAH: Nr identyfik. (NIP).                                            Exp:   '
    @  5, 0 SAY '         Nazwa...............                                             UE:   '
    @  6, 0 SAY '         Adres...............                                           Kraj:   '
    @  7, 0 SAY 'Opis zdarzenia gospodarczego.                                                   '
    @  8, 0 SAY 'Uwagi........................                         Transakcja tr¢jstronna:   '
-   @  9, 0 SAY 'Data sprzedazy (rrrr.mm.dd)..            Korekta ?.      Pola sekcji C VAT-7:   '
+   @  9, 0 SAY 'Data sprze.           Data wyst.           Korekta ?.    Pola sekcji C VAT-7:   '
    @ 10, 0 SAY ' ------------------------------------------------------------------------------ '
    @ 11, 0 SAY '                 N E T T O         V A T          B R U T T O                   '
    @ 12, 0 SAY '        ' + Str( vat_A, 2 ) + '%                                                                     '

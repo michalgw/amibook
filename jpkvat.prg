@@ -217,7 +217,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
       ENDCASE
 
       aPoz[ 'DowodSprzedazy' ] := NrDokUsunHasz( rejs->numer )
-      aPoz[ 'DataWystawienia' ] := hb_Date( Val( param_rok ), Val( rejs->mc ), Val( rejs->dzien ) )
+      aPoz[ 'DataWystawienia' ] := rejs->datatran //hb_Date( Val( param_rok ), Val( rejs->mc ), Val( rejs->dzien ) )
       aPoz[ 'DataSprzedazy' ] := hb_Date( Val( rejs->roks ), Val( rejs->mcs ), Val( rejs->dziens ) )
 
       aPoz[ 'NrKontrahenta' ] := JPK_NIPEU( rejs->nr_ident, rejs->ue == 'T', rejs->kraj )
@@ -581,7 +581,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
 
          IF lSprzedaz == .T.
             aPoz[ 'DowodSprzedazy' ] := NrDokUsunHasz( rejz->numer )
-            aPoz[ 'DataWystawienia' ] := hb_Date( Val( param_rok ), Val( rejz->mc ), Val( rejz->dzien ) )
+            aPoz[ 'DataWystawienia' ] := rejz->datatran //hb_Date( Val( param_rok ), Val( rejz->mc ), Val( rejz->dzien ) )
             aPoz[ 'DataSprzedazy' ] := hb_Date( Val( rejz->roks ), Val( rejz->mcs ), Val( rejz->dziens ) )
 
             aPoz[ 'NrKontrahenta' ] := JPK_NIPEU( rejz->nr_ident, rejz->ue == 'T', rejz->kraj )
@@ -590,7 +590,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
          ENDIF
          aPoz[ 'DowodZakupu' ] := NrDokUsunHasz( rejz->numer )
          aPoz[ 'DataZakupu' ] := hb_Date( Val( rejz->roks ), Val( rejz->mcs ), Val( rejz->dziens ) )
-         aPoz[ 'DataWplywu' ] := hb_Date( Val( param_rok ), Val( rejz->mc ), Val( rejz->dzien ) )
+         aPoz[ 'DataWplywu' ] := rejz->datatran //hb_Date( Val( param_rok ), Val( rejz->mc ), Val( rejz->dzien ) )
 
          aPoz[ 'NrDostawcy' ] := JPK_NIPEU( rejz->nr_ident, rejz->ue == 'T', rejz->kraj )
          aPoz[ 'NazwaDostawcy' ] := rejz->nazwa
