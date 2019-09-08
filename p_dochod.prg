@@ -20,7 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-         PROCEDURE P_Dochod( _OUT )
+PROCEDURE P_Dochod( _OUT )
 
    PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
    PRIVATE ObiczKwWl := 'S'
@@ -696,14 +696,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                   ENDDO
                   SELECT spolka
                   IF param_kskw == 'N'
-                     IF TabDochProcent( a_ppodst[ 1, xxx ], 'tab_doch' ) = 18
+                     IF TabDochProcent( a_ppodst[ 1, xxx ], 'tab_doch', Val( param_rok ), xxx ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx )
                         ppodatek := Max( 0, ppodatek - param_kw )
                      ENDIF
                   ELSE
                      ppodatek := Max( 0, ppodatek - param_kw )
                   ENDIF
                ELSE
-                  ppodatek := TabDochPodatek( pzm, 'tab_doch' )
+                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx )
                ENDIF
             ENDIF
             *---------------
@@ -1119,14 +1119,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                   ENDDO
                   SELECT spolka
                   IF param_kskw == 'N'
-                     IF TabDochProcent( a_ppodst[ 2, xxx ], 'tab_doch' ) = 18
+                     IF TabDochProcent( a_ppodst[ 2, xxx ], 'tab_doch', Val( param_rok ), xxx ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx )
                         ppodatek := Max( 0, ppodatek - param_kw )
                      ENDIF
                   ELSE
                      ppodatek := Max( 0, ppodatek - param_kw )
                   ENDIF
                ELSE
-                  ppodatek := TabDochPodatek( pzm, 'tab_doch' )
+                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx )
                ENDIF
             END
             *---------------
@@ -1270,14 +1270,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                   ENDDO
                   SELECT spolka
                   IF param_kskw == 'N'
-                     IF TabDochProcent( a_ppodst[ 3, xxx ], 'tab_doch' ) = 18
+                     IF TabDochProcent( a_ppodst[ 3, xxx ], 'tab_doch', Val( param_rok ), xxx ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx )
                         ppodatek := Max( 0, ppodatek - param_kw )
                      ENDIF
                   ELSE
                      ppodatek := Max( 0, ppodatek - param_kw )
                   ENDIF
                ELSE
-                  ppodatek := TabDochPodatek( pzm, 'tab_doch' )
+                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx )
                ENDIF
             ENDIF
             *---------------

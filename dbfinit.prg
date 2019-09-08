@@ -1343,7 +1343,9 @@ public aTAB_DOCHdbf := {;
    { "KWOTAZMN", "N", 11, 2 },;                   //   5
    { "DEGRES", "L", 1, 0 },;                      //   6
    { "KWOTADE1", "N", 11, 2 },;                   //   7
-   { "KWOTADE2", "N", 11, 2 } }                   //   8
+   { "KWOTADE2", "N", 11, 2 },;                   //   8
+   { "DATAOD", "D", 8, 0 },;                      //   9
+   { "DATADO", "D", 8, 0 } }                      //  10
 
 // Create: TAB_POJ.DBF
 public aTAB_POJdbf := {;
@@ -1611,7 +1613,7 @@ FUNCTION dbfIdxTAB_DOCH()
    do while.not.dostepex('TAB_DOCH')
    enddo
    pack
-   index on del+str(podstawa,11,2) to tab_doch
+   index on del+DToS(dataod)+str(podstawa,11,2) to tab_doch
    RETURN
 ****************************************
 *do while.not.dostepex('TAB_VAT')

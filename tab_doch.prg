@@ -32,22 +32,21 @@ PROCEDURE Tab_Doch()
    @  1, 47 say '          '
 
    *################################# GRAFIKA ##################################
-   @  3, 42 CLEAR TO 22, 79
-   @  5, 30 CLEAR TO 20, 79
-   @  6, 32 SAY 'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»'
-   @  7, 32 SAY 'º Podstawa ³Pd³Odl. od ³Deg³  Kwota  ³  Kwota  º'
-   @  8, 32 SAY 'ºopodatkow.³% ³podatku ³   ³ degr.#1 ³ degr.#2 º'
-   @  9, 32 SAY 'ºÄÄÄÄÄÄÄÄÄÄÅÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄº'
-   @ 10, 32 SAY 'º          ³  ³        ³   ³         ³         º'
-   @ 11, 32 SAY 'º          ³  ³        ³   ³         ³         º'
-   @ 12, 32 SAY 'º          ³  ³        ³   ³         ³         º'
-   @ 13, 32 SAY 'º          ³  ³        ³   ³         ³         º'
-   @ 14, 32 SAY 'º          ³  ³        ³   ³         ³         º'
-   @ 15, 32 SAY 'º          ³  ³        ³   ³         ³         º'
-   @ 16, 32 SAY 'º          ³  ³        ³   ³         ³         º'
-   @ 17, 32 SAY 'º          ³  ³        ³   ³         ³         º'
-   @ 18, 32 SAY 'º          ³  ³        ³   ³         ³         º'
-   @ 19, 32 SAY 'ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼'
+   @  5,  8 CLEAR TO 20, 79
+   @  6, 10 SAY 'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»'
+   @  7, 10 SAY 'º Podstawa ³Pd³Odl. od ³Deg³  Kwota  ³  Kwota  ³   Data   ³   Data   º'
+   @  8, 10 SAY 'ºopodatkow.³% ³podatku ³   ³ degr.#1 ³ degr.#2 ³    od    ³    do    º'
+   @  9, 10 SAY 'ºÄÄÄÄÄÄÄÄÄÄÅÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄº'
+   @ 10, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
+   @ 11, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
+   @ 12, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
+   @ 13, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
+   @ 14, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
+   @ 15, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
+   @ 16, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
+   @ 17, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
+   @ 18, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
+   @ 19, 10 SAY 'ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼'
 
    *############################### OTWARCIE BAZ ###############################
    DO WHILE.NOT.Dostep( 'TAB_DOCH' )
@@ -57,7 +56,7 @@ PROCEDURE Tab_Doch()
    *################################# OPERACJE #################################
    *----- parametry ------
    _row_g := 10
-   _col_l := 33
+   _col_l := 11
    _row_d := 18
    _col_p := 78
    _invers := 'i'
@@ -73,7 +72,7 @@ PROCEDURE Tab_Doch()
    _proc_spe := ''
    _disp := .T.
    _cls := ''
-   _top_bot := top + '.or.' + _bot
+   _top_bot := _top + '.or.' + _bot
 
    *----------------------
    kl := 0
@@ -114,6 +113,8 @@ PROCEDURE Tab_Doch()
                zDEGRES := 'N'
                zKWOTADE1 := 0
                zKWOTADE2 := 0
+               zDATAOD := SToD("")
+               zDATADO := SToD("")
             ELSE
                zPODSTAWA := PODSTAWA
                zPROCENT := PROCENT
@@ -121,15 +122,19 @@ PROCEDURE Tab_Doch()
                zDEGRES := iif( DEGRES, 'T', 'N' )
                zKWOTADE1 := KWOTADE1
                zKWOTADE2 := KWOTADE2
+               zDATAOD := DATAOD
+               zDATADO := DATADO
             ENDIF
 
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-            @ wiersz, 33 GET zPODSTAWA PICTURE "9999999.99" valid v2_1()
-            @ wiersz, 44 GET zPROCENT  PICTURE "99" valid v2_2()
-            @ wiersz, 47 GET zKWOTAZMN PICTURE "99999.99"
-            @ wiersz, 57 GET zDEGRES   PICTURE "!" valid v2_3()
-            @ wiersz, 60 GET zKWOTADE1 PICTURE "999999.99"
-            @ wiersz, 70 GET zKWOTADE2 PICTURE "999999.99"
+            @ wiersz, 11 GET zPODSTAWA PICTURE "9999999.99" valid v2_1()
+            @ wiersz, 22 GET zPROCENT  PICTURE "99" valid v2_2()
+            @ wiersz, 25 GET zKWOTAZMN PICTURE "99999.99"
+            @ wiersz, 35 GET zDEGRES   PICTURE "!" valid v2_3()
+            @ wiersz, 38 GET zKWOTADE1 PICTURE "999999.99"
+            @ wiersz, 48 GET zKWOTADE2 PICTURE "999999.99"
+            @ wiersz, 58 GET zDATAOD   PICTURE "@D"
+            @ wiersz, 69 GET zDATADO   PICTURE "@D"
             read_()
             SET CURSOR OFF
             IF LastKey() == 27
@@ -147,6 +152,8 @@ PROCEDURE Tab_Doch()
             repl_( 'DEGRES', iif( zDEGRES == 'T', .T., .F. ) )
             repl_( 'KWOTADE1', zKWOTADE1 )
             repl_( 'KWOTADE2', zKWOTADE2 )
+            repl_( 'DATAOD', zDATAOD )
+            repl_( 'DATADO', zDATADO )
             commit_()
             UNLOCK
 
@@ -157,7 +164,7 @@ PROCEDURE Tab_Doch()
             ENDIF
             @ _row_d, _col_l SAY &_proc
             Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
-            @ _row_d, _col_l SAY '          ³  ³        ³   ³         ³         '
+            @ _row_d, _col_l SAY '          ³  ³        ³   ³         ³         ³          ³          '
          ENDDO
          _disp := ins .OR. LastKey() # 27
          kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
@@ -228,7 +235,7 @@ PROCEDURE Tab_Doch()
 *################################## FUNKCJE #################################
 FUNCTION linia2()
 
-   RETURN kwota( PODSTAWA, 10, 2 ) + "³" + Str( PROCENT, 2 ) + "³" + kwota( kwotazmn, 8, 2 ) + "³ " +iif( degres, "T", "N" ) +  " ³" + kwota( kwotade1, 9, 2 ) + "³" + kwota( kwotade2, 9, 2 )
+   RETURN kwota( PODSTAWA, 10, 2 ) + "³" + Str( PROCENT, 2 ) + "³" + kwota( kwotazmn, 8, 2 ) + "³ " +iif( degres, "T", "N" ) +  " ³" + kwota( kwotade1, 9, 2 ) + "³" + kwota( kwotade2, 9, 2 ) + "³" +  DToC( dataod ) + "³" +  DToC( datado )
    //return [   ]+kwota(PODSTAWA,14,2)+[    ³   ]+str(PROCENT,2)+[    ]
 
 ***************************************************
@@ -262,11 +269,12 @@ FUNCTION v2_3()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION TabDochPobierz( nKwota, ncWorkspace )
+FUNCTION TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac  )
 
    LOCAL aRes := {}
    LOCAL lZamknij := .F.
    LOCAL nPod
+   LOCAL dDataNa := hb_Date( nRok, nMiesiac, 1 )
 
    IF Empty( ncWorkspace )
       ncWorkspace := 'tab_doch_pob'
@@ -275,8 +283,10 @@ FUNCTION TabDochPobierz( nKwota, ncWorkspace )
       ENDDO
    ENDIF
 
-   ( ncWorkspace )->( dbSeek( '-' ) )
-   ( ncWorkspace )->( dbSkip( -1 ) )
+   ( ncWorkspace )->( dbSetFilter( { || ( ncWorkspace )->del == '+' .AND. ( ( ncWorkspace )->dataod <= dDataNa ) .AND. ( ( ( ncWorkspace )->datado >= dDataNa ) .OR. ( ( ncWorkspace )->datado == CToD('') ) ) } ) )
+   ( ncWorkspace )->( dbGoBottom() )
+//   ( ncWorkspace )->( dbSeek( '-' ) )
+//   ( ncWorkspace )->( dbSkip( -1 ) )
 
    DO WHILE ( ncWorkspace )->podstawa >= nKwota .AND. ! ( ncWorkspace )->( Bof() )
       ( ncWorkspace )->( dbSkip( -1 ) )
@@ -289,6 +299,8 @@ FUNCTION TabDochPobierz( nKwota, ncWorkspace )
    AAdd( aRes, ( ncWorkspace )->kwotade1 )
    AAdd( aRes, ( ncWorkspace )->kwotade2 )
 
+   ( ncWorkspace )->( dbClearFilter() )
+
    IF lZamknij
       ( ncWorkspace )->( dbCloseArea() )
    ENDIF
@@ -297,12 +309,12 @@ FUNCTION TabDochPobierz( nKwota, ncWorkspace )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION TabDochPodatek( nKwota, ncWorkspace )
+FUNCTION TabDochPodatek( nKwota, ncWorkspace, nRok, nMiesiac )
 
    LOCAL nRes := 0
    LOCAL aTab
 
-   aTab := TabDochPobierz( nKwota, ncWorkspace )
+   aTab := TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac )
 
    IF Len( aTab ) > 0
       nRes := nKwota * aTab[ 2 ] / 100
@@ -317,12 +329,12 @@ FUNCTION TabDochPodatek( nKwota, ncWorkspace )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION TabDochProcent( nPodstawa, ncWorkspace )
+FUNCTION TabDochProcent( nPodstawa, ncWorkspace, nRok, nMiesiac  )
 
    LOCAL aTab := {}
    LOCAL nRes := 0
 
-   aTab := TabDochPobierz( nPodstawa, ncWorkspace )
+   aTab := TabDochPobierz( nPodstawa, ncWorkspace, nRok, nMiesiac )
    IF Len( aTab ) > 0
       nRes := aTab[ 2 ]
    ENDIF
