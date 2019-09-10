@@ -269,7 +269,7 @@ FUNCTION v2_3()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac  )
+FUNCTION TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac, lUzyjFiltra  )
 
    LOCAL aRes := {}
    LOCAL lZamknij := .F.
@@ -283,7 +283,9 @@ FUNCTION TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac  )
       ENDDO
    ENDIF
 
-   ( ncWorkspace )->( dbSetFilter( { || ( ncWorkspace )->del == '+' .AND. ( ( ncWorkspace )->dataod <= dDataNa ) .AND. ( ( ( ncWorkspace )->datado >= dDataNa ) .OR. ( ( ncWorkspace )->datado == CToD('') ) ) } ) )
+   IF ! Empty( lUzyjFiltra ) .AND. lUzyjFiltra
+      ( ncWorkspace )->( dbSetFilter( { || ( ncWorkspace )->del == '+' .AND. ( ( ncWorkspace )->dataod <= dDataNa ) .AND. ( ( ( ncWorkspace )->datado >= dDataNa ) .OR. ( ( ncWorkspace )->datado == CToD('') ) ) } ) )
+   ENDIF
    ( ncWorkspace )->( dbGoBottom() )
 //   ( ncWorkspace )->( dbSeek( '-' ) )
 //   ( ncWorkspace )->( dbSkip( -1 ) )
@@ -299,7 +301,9 @@ FUNCTION TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac  )
    AAdd( aRes, ( ncWorkspace )->kwotade1 )
    AAdd( aRes, ( ncWorkspace )->kwotade2 )
 
-   ( ncWorkspace )->( dbClearFilter() )
+   IF ! Empty( lUzyjFiltra ) .AND. lUzyjFiltra
+      ( ncWorkspace )->( dbClearFilter() )
+   ENDIF
 
    IF lZamknij
       ( ncWorkspace )->( dbCloseArea() )

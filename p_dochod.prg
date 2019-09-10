@@ -22,6 +22,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE P_Dochod( _OUT )
 
+   LOCAL dDataNa
+
    PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
    PRIVATE ObiczKwWl := 'S'
 
@@ -676,11 +678,13 @@ PROCEDURE P_Dochod( _OUT )
             a_ppodst[ 1, xxx ] := a_pk7[ 1, xxx ]
 
             *--------------- podatek dochodowy wg tabeli
-
+            dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
+            tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
             IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
-               SEEK '-'
-               SKIP -1
+//               SEEK '-'
+//               SKIP -1
+               tab_doch->( dbGoBottom() )
             ENDIF
             ppodatek := 0
             pzm := a_ppodst[ 1, xxx ]
@@ -696,16 +700,17 @@ PROCEDURE P_Dochod( _OUT )
                   ENDDO
                   SELECT spolka
                   IF param_kskw == 'N'
-                     IF TabDochProcent( a_ppodst[ 1, xxx ], 'tab_doch', Val( param_rok ), xxx ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx )
+                     IF TabDochProcent( a_ppodst[ 1, xxx ], 'tab_doch', Val( param_rok ), xxx, .F. ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx, .F. )
                         ppodatek := Max( 0, ppodatek - param_kw )
                      ENDIF
                   ELSE
                      ppodatek := Max( 0, ppodatek - param_kw )
                   ENDIF
                ELSE
-                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx )
+                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
                ENDIF
             ENDIF
+            tab_doch->( dbClearFilter() )
             *---------------
             SELECT spolka
             a_pk8[ 1, xxx ] := ppodatek
@@ -1100,10 +1105,13 @@ PROCEDURE P_Dochod( _OUT )
 
             *--------------- podatek dochodowy wg tabeli
 
+            dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
+            tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
             IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
-               SEEK '-'
-               SKIP -1
+//               SEEK '-'
+//               SKIP -1
+               tab_doch->( dbGoBottom() )
             ENDIF
             ppodatek := 0
             pzm := a_ppodst[ 2, xxx ]
@@ -1119,16 +1127,17 @@ PROCEDURE P_Dochod( _OUT )
                   ENDDO
                   SELECT spolka
                   IF param_kskw == 'N'
-                     IF TabDochProcent( a_ppodst[ 2, xxx ], 'tab_doch', Val( param_rok ), xxx ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx )
+                     IF TabDochProcent( a_ppodst[ 2, xxx ], 'tab_doch', Val( param_rok ), xxx, .F. ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx, .F. )
                         ppodatek := Max( 0, ppodatek - param_kw )
                      ENDIF
                   ELSE
                      ppodatek := Max( 0, ppodatek - param_kw )
                   ENDIF
                ELSE
-                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx )
+                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
                ENDIF
             END
+            tab_doch->( dbClearFilter() )
             *---------------
             SELECT spolka
             a_pk8[ 2, xxx ] := ppodatek
@@ -1251,10 +1260,13 @@ PROCEDURE P_Dochod( _OUT )
             a_ppodst[ 3, xxx ] := a_pk7[ 3, xxx ]
 
             *--------------- podatek dochodowy wg tabeli
+            dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
+            tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
             IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
-               SEEK '-'
-               SKIP -1
+//               SEEK '-'
+//               SKIP -1
+               tab_doch->( dbGoBottom() )
             ENDIF
             ppodatek := 0
             pzm := a_ppodst[ 3, xxx ]
@@ -1270,16 +1282,17 @@ PROCEDURE P_Dochod( _OUT )
                   ENDDO
                   SELECT spolka
                   IF param_kskw == 'N'
-                     IF TabDochProcent( a_ppodst[ 3, xxx ], 'tab_doch', Val( param_rok ), xxx ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx )
+                     IF TabDochProcent( a_ppodst[ 3, xxx ], 'tab_doch', Val( param_rok ), xxx, .F. ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx, .F. )
                         ppodatek := Max( 0, ppodatek - param_kw )
                      ENDIF
                   ELSE
                      ppodatek := Max( 0, ppodatek - param_kw )
                   ENDIF
                ELSE
-                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx )
+                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
                ENDIF
             ENDIF
+            tab_doch->( dbClearFilter() )
             *---------------
             SELECT spolka
             a_pk8[ 3, xxx ] := ppodatek
