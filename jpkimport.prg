@@ -986,7 +986,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
          aPozDek := hb_Hash()
          aPozDek[ 'zsek_cv7' ] := '  '
          aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
-         aPozDek[ 'zdatatan' ] := aPoz[ 'DataWystawienia' ]
+         aPozDek[ 'zdatatran' ] := aPoz[ 'DataWystawienia' ]
          aPozDek[ 'znumer' ] := aPoz[ 'DowodSprzedazy' ]
 
          cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
