@@ -1184,6 +1184,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
          aPozDek[ 'zsek_cv7' ] := '  '
          aPozDek[ 'zkolumna' ] := '10'
          aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataZakupu' ] ), 2 )
+         aPozDek[ 'zdatatran' ] := aPoz[ 'DataZakupu' ]
          aPozDek[ 'znumer' ] := aPoz[ 'DowodZakupu' ]
 
          cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrDostawcy' ] ) ) == "BRAK", "", aPoz[ 'NrDostawcy' ] ), @cKraj )
