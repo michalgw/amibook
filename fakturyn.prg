@@ -598,6 +598,7 @@ PROCEDURE FakturyN()
                repl_( 'ROKS', Str( Year( zDATAS ), 4 ) )
                repl_( 'MCS', Str( Month( zDATAS ), 2 ) )
                repl_( 'DZIENS', Str( Day( zDATAS ), 2 ) )
+               repl_( 'DATATRAN', hb_Date( Val( param_rok ), Val( miesiac ), Val( zdzien ) ) )
  *           if zsposob_p=1.or.zsposob_p=3
 *              if zsposob_p=3.and.nr_uzytk=6
 *                 repl_([zaplata],[1])
