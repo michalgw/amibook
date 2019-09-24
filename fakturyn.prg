@@ -555,6 +555,20 @@ PROCEDURE FakturyN()
                   IF Found()
                      razem_ := netto
                   ELSE
+                     app()
+                     repl_( 'firma', ident_fir )
+                     repl_( 'mc', miesiac )
+                     repl_( 'RACH', zRACH )
+                     repl_( 'numer', zRACH + '-' + StrTran( Str( znumer&zRACH, 5 ), ' ', '0' ) + '/' + param_rok )
+                     repl_( 'tresc', 'Sprzedaz udokumentowana' )
+                     IF zRYCZALT == 'T'
+                        repl_( 'KOLUMNA', ' 0' )
+                     ELSE
+                        repl_( 'KOLUMNA', ' 7' )
+                     ENDIF
+                     repl_( 'KOREKTA', 'N' )
+                     repl_( 'UWAGI', Space( 20 ) )
+                     UNLOCK
                      razem_ := 0
                   ENDIF
                ENDIF
