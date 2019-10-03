@@ -94,7 +94,7 @@ FUNCTION IFT1_Dane( dDataOd, dDataDo )
 
       //IF umowy->tytul <> '8 '
          aRes[ 'P_72' ] := aRes[ 'P_72' ] + umowy->brut_razem
-         aRes[ 'P_73' ] := umowy->staw_podat
+         aRes[ 'P_73' ] := umowy->staw_podat2
          aRes[ 'P_74' ] := aRes[ 'P_74' ] + umowy->podatek
       //ENDIF
 

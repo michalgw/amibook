@@ -372,7 +372,7 @@ do while .t.
               @  9,42 to 21,79
               @ 10,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) VALID zOSWIAD26R $ 'TN' .AND. oblpl()
               @ 11,43 say 'Podatek stawka..........%.='
-              @ 11,62 get zSTAW_PODAT pict '99' valid oblpl()
+              @ 11,62 get zSTAW_PODAT pict '99.99' valid oblpl()
               @ 11,71 get B5          pict '99999.99' when oblpl().and..f.
               @ 12,43 say 'Odliczenie od dochodu.....:' get zODLICZ     pict '99999.99' valid oblpl()
               @ 13,43 say 'Na ubezp.zdrowotne do ZUS  '
@@ -881,7 +881,7 @@ zWAR_PF3=WAR_PF3
 zWAR_PSUM=WAR_PSUM
 
 zODLICZ=ODLICZ
-zSTAW_PODAT=STAW_PODAT
+zSTAW_PODAT=STAW_PODA2
 zSTAW_PUZ=STAW_PUZ
 zWAR_PUZ=WAR_PUZ
 zWAR_PUZO=WAR_PUZO
@@ -938,7 +938,7 @@ if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    zWAR_PF3=iif(zWAR_PF3=0,WAR_PF3,zWAR_PF3)
 
    zODLICZ=iif(zODLICZ=0,ODLICZ,zODLICZ)
-   zSTAW_PODAT=iif(zSTAW_PODAT=0,STAW_PODAT,zSTAW_PODAT)
+   zSTAW_PODAT=iif(zSTAW_PODAT=0,STAW_PODA2,zSTAW_PODAT)
    zSTAW_PUZ=iif(zSTAW_PUZ=0,STAW_PUZ,zSTAW_PUZ)
    zSTAW_PZK=iif(zSTAW_PZK=0,STAW_PZK,zSTAW_PZK)
 
@@ -1116,7 +1116,7 @@ repl_('WAR_pUc',   zWAR_pUc  )
 repl_('WAR_pf3',   zWAR_pf3  )
 repl_('WAR_psum',  zWAR_psum )
 repl_('ODLICZ',    zODLICZ    )
-repl_('STAW_PODAT',zSTAW_PODAT)
+repl_('STAW_PODA2',zSTAW_PODAT)
 repl_('STAW_PUz',  zSTAW_PUz  )
 repl_('WAR_pUz',   zWAR_pUz  )
 repl_('STAW_Pzk',  zSTAW_Pzk  )

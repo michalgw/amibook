@@ -52,7 +52,7 @@ PROCEDURE Umowy()
    @ 17, 0 say '³ Przychody opodatkowane =                 Z jakiego tytu&_l.u ?                  ³'
    @ 18, 0 say '³ Sk&_l.adki wykonawcy      =     %             Przych&_o.d netto=                   ³'
    @ 19, 0 say '³ Koszt uzyskania        =  %              Do opodatkowania=                   ³'
-   @ 20, 0 say '³ Wyliczenie podatku     =  %                    DO WYP&__L.ATY=                   ³'
+   @ 20, 0 say '³ Wyliczenie podatku     =     %                 DO WYP&__L.ATY=                   ³'
    @ 21, 0 say '³ Sk&_l.adki zleceniodawcy  =     %                 Fundusze  =     %             ³'
    @ 22, 0 say 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
 
@@ -162,7 +162,7 @@ PROCEDURE Umowy()
                zTERMIN := TERMIN
                zDATA_RACH := DATA_RACH
                zDATA_WYP := DATA_WYP
-               zSTAW_PODAT := STAW_PODAT
+               zSTAW_PODAT := STAW_PODA2
                //002a i tu tez
                do case
                *  case TYTUL='0'
@@ -226,7 +226,7 @@ PROCEDURE Umowy()
             repl_( 'TERMIN', zTERMIN )
             repl_( 'DATA_RACH', zDATA_RACH )
             repl_( 'DATA_WYP', zDATA_WYP )
-            repl_( 'STAW_PODAT', zSTAW_PODAT )
+            repl_( 'STAW_PODA2', zSTAW_PODAT )
 
             DO CASE
             *case zTYT='O'
@@ -481,7 +481,7 @@ PROCEDURE Umowy()
                @ 16, 25 TO 22, 75
                @ 17, 26 SAY 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' WHEN CzyPracowPonizej26R( Month( Date() ), Year( Date() ) ) VALID zOSWIAD26R $ 'TN' .AND. oblplu()
                @ 18, 26 SAY 'Podatek stawka..........%.='
-               @ 18, 45 GET zSTAW_PODAT PICTURE '99' VALID oblplu()
+               @ 18, 45 GET zSTAW_PODAT PICTURE '99.99' VALID oblplu()
                @ 18, 66 GET B5          PICTURE '999999.99' WHEN oblplu() .AND. .F.
                @ 19, 26 SAY 'Ubezp.zdrow. do ZUS.....%.='
                @ 19, 45 GET zSTAW_PUZ PICTURE '99.99' VALID oblplu()
@@ -671,8 +671,8 @@ PROCEDURE TRANTEK()
    TEKSTDR := StrTran( TEKSTDR, '#KOSZT', AllTrim( kwota( KOSZT, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@DOCHOD', kwota( DOCHOD, 11, 2 ) )
    TEKSTDR := StrTran( TEKSTDR, '#DOCHOD', AllTrim( kwota( DOCHOD, 11, 2 ) ) )
-   TEKSTDR := StrTran( TEKSTDR, '@%PODATEK', Str( STAW_PODAT, 5, 2 ) )
-   TEKSTDR := StrTran( TEKSTDR, '#%PODATEK', AllTrim( Str( STAW_PODAT, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@%PODATEK', Str( STAW_PODA2, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#%PODATEK', AllTrim( Str( STAW_PODA2, 5, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@PODATEK', kwota( PODATEK, 11, 2 ) )
    TEKSTDR := StrTran( TEKSTDR, '#PODATEK', AllTrim( kwota( PODATEK, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@NETTO', kwota( DO_WYPLATY, 11, 2 ) )
@@ -892,7 +892,7 @@ FUNCTION _infoskl_u()
    @ 19, 30 SAY AKOSZT PICTURE '!'
    @ 19, 33 SAY KOSZT PICTURE '999999.99'
    @ 19, 60 SAY DOCHOD PICTURE '999999.99'
-   @ 20, 26 SAY STAW_PODAT PICTURE "99"
+   @ 20, 26 SAY STAW_PODA2 PICTURE "99.99"
    @ 20, 33 SAY PODATEK PICTURE "999999.99"
    @ 20, 60 SAY DO_WYPLATY PICTURE "999999.99"
    @ 21, 26 SAY STAW_FUE + STAW_FUR + STAW_FUW PICTURE '99.99'
@@ -1078,7 +1078,7 @@ PROCEDURE PODSTAWu()
    zWAR_PUC := WAR_PUC
    zWAR_PSUM := WAR_PSUM
 
-   zSTAW_PODAT := STAW_PODAT
+   zSTAW_PODAT := STAW_PODA2
    zSTAW_PUZ := STAW_PUZ
    zWAR_PUZ := WAR_PUZ
    zSTAW_PZK := STAW_PZK
@@ -1176,7 +1176,7 @@ PROCEDURE ZAPISZPLAu()
    repl_( 'WAR_pUr',    zWAR_pUr   )
    repl_( 'WAR_pUc',    zWAR_pUc   )
    repl_( 'WAR_psum',   zWAR_psum  )
-   repl_( 'STAW_PODAT', zSTAW_PODAT )
+   repl_( 'STAW_PODA2', zSTAW_PODAT )
    repl_( 'STAW_PUz',   zSTAW_PUz   )
    repl_( 'WAR_pUz',    zWAR_pUz   )
    repl_( 'STAW_Pzk',   zSTAW_Pzk  )

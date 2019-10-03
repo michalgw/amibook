@@ -105,7 +105,7 @@ zparap_rkc=parap_rkc
 @  4,73 get zparap_kos picture "9999.99" range 0,9999
 @  5,73 get zparap_odl picture "9999.99" range 0,9999
 @  6,75 get zparap_cho picture '99'
-@  7,75 get zparap_pod picture '99'
+@  7,72 get zparap_pod picture '99.99'
 @  9,73 get zparap_p51 picture "9999.99" range 0,9999
 @ 10,73 get zparap_p52 picture "9999.99" range 0,9999
 @ 11,65 get zparap_pue picture "99.99"
@@ -211,7 +211,7 @@ set colo to w+
 @  4,73 say parap_kos pict '9999.99'
 @  5,73 say parap_odl pict '9999.99'
 @  6,75 say parap_cho pict [99]
-@  7,75 say parap_pod pict [99]
+@  7,72 say parap_pod pict '99.99'
 @  9,73 say parap_p51 picture "9999.99"
 @ 10,73 say parap_p52 picture "9999.99"
 @ 11,65 say parap_pue picture "99.99"

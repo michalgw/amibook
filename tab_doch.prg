@@ -32,21 +32,21 @@ PROCEDURE Tab_Doch()
    @  1, 47 say '          '
 
    *################################# GRAFIKA ##################################
-   @  5,  8 CLEAR TO 20, 79
-   @  6, 10 SAY 'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»'
-   @  7, 10 SAY 'º Podstawa ³Pd³Odl. od ³Deg³  Kwota  ³  Kwota  ³   Data   ³   Data   º'
-   @  8, 10 SAY 'ºopodatkow.³% ³podatku ³   ³ degr.#1 ³ degr.#2 ³    od    ³    do    º'
-   @  9, 10 SAY 'ºÄÄÄÄÄÄÄÄÄÄÅÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄº'
-   @ 10, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
-   @ 11, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
-   @ 12, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
-   @ 13, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
-   @ 14, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
-   @ 15, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
-   @ 16, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
-   @ 17, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
-   @ 18, 10 SAY 'º          ³  ³        ³   ³         ³         ³          ³          º'
-   @ 19, 10 SAY 'ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼'
+   @  5,  5 CLEAR TO 20, 79
+   @  6,  7 SAY 'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»'
+   @  7,  7 SAY 'º Podstawa ³ Pod ³Odl. od ³Deg³  Kwota  ³  Kwota  ³   Data   ³   Data   º'
+   @  8,  7 SAY 'ºopodatkow.³  %  ³podatku ³   ³ degr.#1 ³ degr.#2 ³    od    ³    do    º'
+   @  9,  7 SAY 'ºÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄº'
+   @ 10,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
+   @ 11,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
+   @ 12,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
+   @ 13,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
+   @ 14,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
+   @ 15,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
+   @ 16,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
+   @ 17,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
+   @ 18,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
+   @ 19,  7 SAY 'ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼'
 
    *############################### OTWARCIE BAZ ###############################
    DO WHILE.NOT.Dostep( 'TAB_DOCH' )
@@ -56,7 +56,7 @@ PROCEDURE Tab_Doch()
    *################################# OPERACJE #################################
    *----- parametry ------
    _row_g := 10
-   _col_l := 11
+   _col_l := 8
    _row_d := 18
    _col_p := 78
    _invers := 'i'
@@ -117,7 +117,7 @@ PROCEDURE Tab_Doch()
                zDATADO := SToD("")
             ELSE
                zPODSTAWA := PODSTAWA
-               zPROCENT := PROCENT
+               zPROCENT := PROCENT2
                zKWOTAZMN := KWOTAZMN
                zDEGRES := iif( DEGRES, 'T', 'N' )
                zKWOTADE1 := KWOTADE1
@@ -127,8 +127,8 @@ PROCEDURE Tab_Doch()
             ENDIF
 
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-            @ wiersz, 11 GET zPODSTAWA PICTURE "9999999.99" valid v2_1()
-            @ wiersz, 22 GET zPROCENT  PICTURE "99" valid v2_2()
+            @ wiersz, 8 GET zPODSTAWA PICTURE "9999999.99" valid v2_1()
+            @ wiersz, 19 GET zPROCENT  PICTURE "99.99" valid v2_2()
             @ wiersz, 25 GET zKWOTAZMN PICTURE "99999.99"
             @ wiersz, 35 GET zDEGRES   PICTURE "!" valid v2_3()
             @ wiersz, 38 GET zKWOTADE1 PICTURE "999999.99"
@@ -147,7 +147,7 @@ PROCEDURE Tab_Doch()
             ENDIF
             BlokadaR()
             repl_( 'PODSTAWA', zPODSTAWA )
-            repl_( 'PROCENT', zPROCENT )
+            repl_( 'PROCENT2', zPROCENT )
             repl_( 'KWOTAZMN', zKWOTAZMN )
             repl_( 'DEGRES', iif( zDEGRES == 'T', .T., .F. ) )
             repl_( 'KWOTADE1', zKWOTADE1 )
@@ -235,7 +235,7 @@ PROCEDURE Tab_Doch()
 *################################## FUNKCJE #################################
 FUNCTION linia2()
 
-   RETURN kwota( PODSTAWA, 10, 2 ) + "³" + Str( PROCENT, 2 ) + "³" + kwota( kwotazmn, 8, 2 ) + "³ " +iif( degres, "T", "N" ) +  " ³" + kwota( kwotade1, 9, 2 ) + "³" + kwota( kwotade2, 9, 2 ) + "³" +  DToC( dataod ) + "³" +  DToC( datado )
+   RETURN kwota( PODSTAWA, 10, 2 ) + "³" + Str( PROCENT2, 5, 2 ) + "³" + kwota( kwotazmn, 8, 2 ) + "³ " +iif( degres, "T", "N" ) +  " ³" + kwota( kwotade1, 9, 2 ) + "³" + kwota( kwotade2, 9, 2 ) + "³" +  DToC( dataod ) + "³" +  DToC( datado )
    //return [   ]+kwota(PODSTAWA,14,2)+[    ³   ]+str(PROCENT,2)+[    ]
 
 ***************************************************
@@ -295,7 +295,7 @@ FUNCTION TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac, lUzyjFiltra  )
    ENDDO
 
    AAdd( aRes, ( ncWorkspace )->podstawa )
-   AAdd( aRes, ( ncWorkspace )->procent )
+   AAdd( aRes, ( ncWorkspace )->procent2 )
    AAdd( aRes, ( ncWorkspace )->kwotazmn )
    AAdd( aRes, ( ncWorkspace )->degres )
    AAdd( aRes, ( ncWorkspace )->kwotade1 )

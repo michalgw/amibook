@@ -191,7 +191,7 @@ PROCEDURE SpecPlac()
                      zwar_puc := zwar_puc + war_puc
                      zwar_pue := zwar_pue + war_pue
                      zwar_psum := zwar_psum + war_psum
-                     B4 := Max( 0, _round( DOCHODPOD * ( STAW_PODAT / 100 ), 2 ) )
+                     B4 := Max( 0, _round( DOCHODPOD * ( STAW_PODA2 / 100 ), 2 ) )
                      zb4 := zb4 + b4
                      zwar_puz := zwar_puz + war_puz
                      zwar_puzo := zwar_puzo + war_puzo
@@ -212,7 +212,7 @@ PROCEDURE SpecPlac()
                      zwar_ffp := zwar_ffp + war_ffp
                      zwar_ffg := zwar_ffg + war_ffg
                      zwar_fsum := zwar_fsum + war_fsum
-                     zstaw_podat := staw_podat
+                     zstaw_podat := staw_poda2
                      zstaw_pue := staw_pue
                      zstaw_pur := staw_pur
                      zstaw_puc := staw_puc
@@ -274,7 +274,7 @@ PROCEDURE SpecPlac()
                aWiersz[ 'war_ffp' ] := zwar_ffp
                aWiersz[ 'war_ffg' ] := zwar_ffg
                aWiersz[ 'war_fsum' ] := zwar_fsum
-               aWiersz[ 'staw_podat' ] := iif( mm == 0, '(' + Str( staw_podat, 2 ) + '%)', '' )
+               aWiersz[ 'staw_podat' ] := iif( mm == 0, '(' + Str( staw_poda2, 5, 2 ) + '%)', '' )
                aWiersz[ 'staw_pue' ] := iif( mm == 0, '(' + Str( staw_pue, 4, 2 ) + '%)', '' )
                aWiersz[ 'staw_pur' ] := iif( mm == 0, '(' + Str( staw_pur, 4, 2 ) + '%)', '' )
                aWiersz[ 'staw_puc' ] := iif( mm == 0, '(' + Str( staw_puc, 4, 2 ) + '%)', '' )
@@ -434,7 +434,7 @@ PROCEDURE SpecPlac()
                      zwar_puc := zwar_puc + war_puc
                      zwar_pue := zwar_pue + war_pue
                      zwar_psum := zwar_psum + war_psum
-                     B4 := Max( 0, _round( DOCHODPOD * ( STAW_PODAT / 100 ), 2 ) )
+                     B4 := Max( 0, _round( DOCHODPOD * ( STAW_PODA2 / 100 ), 2 ) )
                      zb4 := zb4 + b4
                      zwar_puz := zwar_puz + war_puz
                      zwar_puzo := zwar_puzo + war_puzo
@@ -455,7 +455,7 @@ PROCEDURE SpecPlac()
                      zwar_ffp := zwar_ffp + war_ffp
                      zwar_ffg := zwar_ffg + war_ffg
                      zwar_fsum := zwar_fsum + war_fsum
-                     zstaw_podat := staw_podat
+                     zstaw_podat := staw_poda2
                      zstaw_pue := staw_pue
                      zstaw_pur := staw_pur
                      zstaw_puc := staw_puc
@@ -494,7 +494,7 @@ PROCEDURE SpecPlac()
                   iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' ), 22 ) + ;
                   '  **III filar(PPE)**:' + kwota( zWAR_PF3, 11, 2 ) + '  Dla osob..........:' + kwota( zILOSO_PIEL, 11 ) ;
                   + '  Fundusz Pracy' + iif( mm == 0, Str( zSTAW_ffp, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_ffp, 11, 2 ) )
-               mon_drk( 'Za czas przepracow:' + kwota( zs7, 11, 2 ) + '  Oblicz.podat...' + iif( mm == 0, Str( zSTAW_PODAT, 2 ), Space( 2 ) ) + '%=' + kwota( zb4, 11, 2 ) + '  Dop&_l.at.nieopodat..:' + kwota( zDOPL_NIEOP, 11, 2 );
+               mon_drk( 'Za czas przepracow:' + kwota( zs7, 11, 2 ) + '  Oblicz.poda.' + iif( mm == 0, Str( zSTAW_PODAT, 5, 2 ), Space( 5 ) ) + '%=' + kwota( zb4, 11, 2 ) + '  Dop&_l.at.nieopodat..:' + kwota( zDOPL_NIEOP, 11, 2 );
                   + '  FG&__S.P         ' + iif( mm == 0, Str( zSTAW_ffg, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_ffg, 11, 2 ) )
                mon_drk( 'Za chorobowe itp..:' + kwota( zs10, 11, 2 ) + '  Odliczenie od pod.:' + kwota( zODLICZ, 11, 2 ) + '  Potr&_a.c.nieopodat..:' + kwota( zODL_NIEOP, 11, 2 ) ;
                   + '  ***RAZEM SK&__L.ADKI**:' + kwota( zwar_fsum, 11, 2 ) )
