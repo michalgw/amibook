@@ -338,7 +338,8 @@ public aETATYdbf := {;
    { "PIT4RC6", "N", 8, 2 },;                     // 109
    { "PIT4RC7", "N", 8, 2 },;                     // 110
    { "PIT4RC8", "N", 8, 2 },;                     // 111
-   { "OSWIAD26R", "C", 1, 0 } }                   // 112
+   { "OSWIAD26R", "C", 1, 0 },;                   // 112
+   { "STAW_PODA2", "N", 5, 2 } }                  // 113
 
 // Create: EWID.DBF
 public aEWIDdbf := {;
@@ -1177,7 +1178,9 @@ public aSPOLKAdbf := {;
    { "SPOSOB", "C", 1, 0 },;                      //  65
    { "KOD_TYTU", "C", 6, 0 },;                    //  66
    { "KRAJ", "C", 10, 0 },;                       //  67
-   { "OBLKWWOL", "C", 1, 0 } }                    //  68
+   { "OBLKWWOL", "C", 1, 0 },;                    //  68
+   { "PARAM_KWD", "D", 8, 0 },;                  //  69
+   { "PARAM_KW2", "N", 9, 2 } }                   //  70
 
 // Create: SUMA_MC.DBF
 public aSUMA_MCdbf := {;
@@ -1345,7 +1348,8 @@ public aTAB_DOCHdbf := {;
    { "KWOTADE1", "N", 11, 2 },;                   //   7
    { "KWOTADE2", "N", 11, 2 },;                   //   8
    { "DATAOD", "D", 8, 0 },;                      //   9
-   { "DATADO", "D", 8, 0 } }                      //  10
+   { "DATADO", "D", 8, 0 },;                      //  10
+   { "PROCENT2", "N", 5, 2 } }                    //  11
 
 // Create: TAB_POJ.DBF
 public aTAB_POJdbf := {;
@@ -1467,7 +1471,8 @@ public aUMOWYdbf := {;
    { "WAR_PZK", "N", 8, 2 },;                     //  80
    { "DOCHODPOD", "N", 12, 2 },;                  //  81
    { "ZAOPOD", "N", 1, 0 },;                      //  82
-   { "OSWIAD26R", "C", 1, 0 } }                   //  83
+   { "OSWIAD26R", "C", 1, 0 },;                   //  83
+   { "STAW_PODA2", "N", 5, 2 } }                  //  84
 
 // Create: URZEDY.DBF
 public aURZEDYdbf := {;
