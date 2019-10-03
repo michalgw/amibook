@@ -29,6 +29,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Param()
 
+   PRIVATE oGetKW
+
 if .not.file([param.mem])
    save to param all like param_*
    return
@@ -79,6 +81,9 @@ do while kl#27
               zparam_has=param_has
               zparam_rok=param_rok
               zparam_kw=param_kw
+              zparam_kwd=param_kwd
+              zparam_kw2=param_kw2
+              zparam_kw3=iif( Date() < param_kwd, param_kw, param_kw2 )
               zparam_vat=param_vat
               zparam_aut=param_aut
               zparam_lin=param_lin
@@ -95,7 +100,8 @@ do while kl#27
               *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
               @  4,48 get zparam_has picture [!!!!!!!!] valid vp_1()
               @  4,69 get zparam_rok picture "9999" valid vp_2()
-              @  7,46 get zparam_kw picture "  9999999.99" range 0,9999999
+              @  7,46 get zparam_kw3 picture "  9999999.99" WHEN ParmaKW3When()  //range 0,9999999
+              oGetKW := ATail( GetList )
               @  7,66 get zparam_vat picture "999999.99" range 0,999999
               @ 10,56 get zparam_aut picture "!" valid vp_3()
               @ 10,69 get zparam_dzw picture "!" valid vp_3v()
@@ -115,6 +121,8 @@ do while kl#27
               param_has=zparam_has
               param_rok=zparam_rok
               param_kw=zparam_kw
+              param_kwd=zparam_kwd
+              param_kw2=zparam_kw2
               param_vat=zparam_vat
               param_aut=zparam_aut
               param_lin=zparam_lin
@@ -218,7 +226,7 @@ clear type
 set colo to w+
 @  4,48 say dos_c(param_has)
 @  4,69 say param_rok
-@  7,46 say param_kw picture "9 999 999.99"
+@  7,46 say iif( Date() < param_kwd, param_kw, param_kw2 ) picture "9 999 999.99"
 @  7,66 say param_vat picture "999999.99"
 @ 10,56 say iif(param_aut=[T],[Tak],[Nie])
 @ 10,69 say iif(param_dzw=[T],[Tak],[Nie])
@@ -448,6 +456,40 @@ PROCEDURE Ksiega_Przenumeruj()
    SetColor( cKolor )
 
    RETURN
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION ParmaKW3When()
+
+   LOCAL cScreen
+   LOCAL GetList := {}
+
+   SAVE SCREEN TO cScreen
+
+   ColStd()
+
+   @ 7, 42 CLEAR TO 10, 79
+   @ 7, 42 TO 10, 79
+   @ 8, 45 SAY '1. Kwota przed' GET zparam_kw PICTURE "9999999.99" range 0,9999999
+   @ 9, 45 SAY '2. Od' GET zparam_kwd PICTURE "@D"
+   @ 9, 62 SAY 'kwota' GET zparam_kw2 PICTURE "9999999.99" range 0,9999999
+   READ
+
+   IF LastKey() == 27
+      zparam_kw := param_kw
+      zparam_kwd := param_kwd
+      zparam_kw2 := param_kw2
+   ENDIF
+
+   zparam_kw3 := iif( Date() < zparam_kwd, zparam_kw, zparam_kw2 )
+
+   RESTORE SCREEN FROM cScreen
+
+   IF ! Empty( oGetKW )
+      oGetKW:display()
+   ENDIF
+
+   RETURN .F.
 
 /*----------------------------------------------------------------------*/
 

@@ -701,10 +701,10 @@ PROCEDURE P_Dochod( _OUT )
                   SELECT spolka
                   IF param_kskw == 'N'
                      IF TabDochProcent( a_ppodst[ 1, xxx ], 'tab_doch', Val( param_rok ), xxx, .F. ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx, .F. )
-                        ppodatek := Max( 0, ppodatek - param_kw )
+                        ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
                      ENDIF
                   ELSE
-                     ppodatek := Max( 0, ppodatek - param_kw )
+                     ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
                   ENDIF
                ELSE
                   ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
@@ -1128,10 +1128,10 @@ PROCEDURE P_Dochod( _OUT )
                   SELECT spolka
                   IF param_kskw == 'N'
                      IF TabDochProcent( a_ppodst[ 2, xxx ], 'tab_doch', Val( param_rok ), xxx, .F. ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx, .F. )
-                        ppodatek := Max( 0, ppodatek - param_kw )
+                        ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
                      ENDIF
                   ELSE
-                     ppodatek := Max( 0, ppodatek - param_kw )
+                     ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
                   ENDIF
                ELSE
                   ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
@@ -1283,10 +1283,10 @@ PROCEDURE P_Dochod( _OUT )
                   SELECT spolka
                   IF param_kskw == 'N'
                      IF TabDochProcent( a_ppodst[ 3, xxx ], 'tab_doch', Val( param_rok ), xxx, .F. ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx, .F. )
-                        ppodatek := Max( 0, ppodatek - param_kw )
+                        ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
                      ENDIF
                   ELSE
-                     ppodatek := Max( 0, ppodatek - param_kw )
+                     ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
                   ENDIF
                ELSE
                   ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )

@@ -568,7 +568,10 @@ FUNCTION Main()
    // Podczas wystawiania FAKTUR
    PUBLIC pzROZRZAPF := 'N'
 
-   PUBLIC param_kw := 586.85
+   PUBLIC param_kw := 556.02
+
+   PUBLIC param_kwd := d"2019-10-01"
+   PUBLIC param_kw2 := 548.30
 
    // --
 
