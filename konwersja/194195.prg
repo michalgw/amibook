@@ -31,6 +31,7 @@ FUNCTION Main()
    COPY FILE tab_doch.dbf TO bkp\tab_doch.195
    COPY FILE umowy.dbf TO bkp\umowy.195
    COPY FILE spolka.dbf TO bkp\spolka.195
+   COPY FILE faktury.dbf TO bkp\faktury.195
 
    ? 'Aktualizacja struktury danych...'
    dbfInicjujDane()
@@ -38,6 +39,7 @@ FUNCTION Main()
    dbfUtworzTabele( 'TAB_DOCH', 'tab_doch.tym' )
    dbfUtworzTabele( 'ETATY', 'etaty.tym' )
    dbfUtworzTabele( 'SPOLKA', 'spolka.tym' )
+   dbfUtworzTabele( 'FAKTURY', 'faktury.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
@@ -103,6 +105,15 @@ FUNCTION Main()
    tab_doch->( dbCommit() )
    tab_doch->( dbCloseArea() )
 
+   dbUseArea( .T., , 'faktury', , .F. )
+   faktury->( dbGoTop() )
+   DO WHILE ! faktury->( Eof() )
+      faktury->splitpay := 'N'
+      faktury->( dbSkip() )
+   ENDDO
+   faktury->( dbCommit() )
+   faktury->( dbCloseArea() )
+
    dbCloseAll()
 
    ? 'Indeksowanie...'
@@ -112,6 +123,7 @@ FUNCTION Main()
    dbfIdxREJZ()
    dbfIdxTAB_DOCH()
    dbfIdxSPOLKA()
+   dbfIdxFAKTURY()
    dbCloseAll()
 
    RETURN

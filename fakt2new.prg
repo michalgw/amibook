@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 private _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
 private _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15
-private DrukujPN := .F.
+private DrukujPN := .F., Dopisek
 begin sequence
       @ 1,47 say space(10)
       *-----parametry wewnetrzne-----
@@ -272,7 +272,14 @@ sprawdzVAT(10,faktury->DATAS)
 *      endcase
       k7=code()
       mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄ´])
-      mon_drk([ ] + iif(DrukujPN, 'Odwrotne obci¥¾enie', '                   ') + [                                                        w tym:  ³ ]+kwota(zWARTZW,12,2)+[  ZW ]+kwota(0,12,2)+[³]+kwota(zWARTZW,12,2)+'³')
+      IF faktury->splitpay == 'T'
+         Dopisek := 'Mechanizm podzielonej pˆatno˜ci'
+      ELSEIF DrukujPN
+         Dopisek := 'Odwrotne obci¥¾enie            '
+      ELSE
+         Dopisek := '                               '
+      ENDIF
+      mon_drk([ ] + Dopisek + [                                            w tym:  ³ ]+kwota(zWARTZW,12,2)+[  ZW ]+kwota(0,12,2)+[³]+kwota(zWARTZW,12,2)+'³')
       mon_drk([                                                                                    ³ ]+kwota(zWART00,12,2)+[   0 ]+kwota(0,12,2)+[³]+kwota(zWART00,12,2)+'³')
       mon_drk([ WARTO&__S.&__C. FAKTURY: ]+kwota(s1_8,14,2)+[                                                    ³ ]+kwota(zWART02,12,2)+[  ]+str(vat_C,2)+[ ]+kwota(zVAT02,12,2)+[³]+kwota(zWART02+zVAT02,12,2)+'³')
       mon_drk([ S &__L. O W N I E  :                                                                   ³ ]+kwota(zWART07,12,2)+[  ]+str(vat_B,2)+[ ]+kwota(zVAT07,12,2)+[³]+kwota(zWART07+zVAT07,12,2)+'³')

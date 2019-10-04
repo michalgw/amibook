@@ -44,7 +44,7 @@ PROCEDURE FakturyN()
    @  1, 47 SAY '          '
    *################################# GRAFIKA ##################################
    @  3, 0 SAY 'Faktura  Nr       z dnia                 data                                   '
-   @  4, 0 SAY 'NABYWCA: Nr ident.(NIP).                                                 Exp:   '
+   @  4, 0 SAY 'NABYWCA: Nr ident.(NIP).                                 SplitPay.:      Exp:   '
    @  5, 0 SAY '         Nazwa..........                                                  UE:   '
    @  6, 0 SAY '         Adres..........                                                Kraj:   '
    @  7, 0 SAY 'UWAGI....                                         Zlecenie.                     '
@@ -242,6 +242,7 @@ PROCEDURE FakturyN()
     *              zkwota=0
                   zKOMENTARZ := Space( 60 )
                   zzamowienie := Space( 30 )
+                  zSplitPay := 'N'
                   zexport := 'N'
                   zkraj := 'PL'
                   zUE := 'N'
@@ -282,6 +283,7 @@ PROCEDURE FakturyN()
     *                zKRAJ=KRAJ
     *             else
     *                sele faktury
+                  zSplitPay := splitpay
                   zexport := export
                   zUE := ue
                   zKRAJ := KRAJ
@@ -306,6 +308,7 @@ PROCEDURE FakturyN()
                @ 5, 24 GET znazwa PICTURE "@S46 " + repl( '!', 100 ) VALID w1_3fn()
                @ 6, 24 GET zADRES PICTURE "@S40 " + repl( '!', 100 )
     *          if ins
+                  @ 4,67 get zSplitPay PICTURE '!' WHEN wfSplitPay() VALID vfSplitPay()
                   @ 4,77 get zexport picture '!' when wfEXIM( 4, 78 ) valid vfEXIM( 4, 78 )
                   @ 5,77 get zUE picture '!' when wfUE( 5, 78 ) valid vfUE( 5, 78 )
                   @ 6,77 get zKRAJ picture '!!'
@@ -355,6 +358,7 @@ PROCEDURE FakturyN()
                repl_( 'NR_IDENT', zNR_IDENT )
                repl_( 'KOMENTARZ', zKOMENTARZ )
                repl_( 'ZAMOWIENIE', zZAMOWIENIE )
+               repl_( 'SPLITPAY', zSplitPay )
                repl_( 'EXPORT', zEXPORT )
                repl_( 'UE', zUE )
                repl_( 'KRAJ', zKRAJ )
@@ -1078,6 +1082,7 @@ PROCEDURE say260vn()
    @  4, 24 SAY nr_ident
    @  5, 24 SAY substr(nazwa,1,46)
    @  6, 24 SAY SubStr( adres, 1, 40 )
+   @  4, 67 SAY SPLITPAY + iif( SPLITPAY == 'T', 'ak', 'ie' )
    @  4, 77 SAY EXPORT+iif(EXPORT='T','ak','ie')
    @  5, 77 SAY UE+iif(UE='T','ak','ie')
    @  6, 77 SAY KRAJ
@@ -1432,3 +1437,31 @@ FUNCTION vDATA2TYPv()
       @ 24, 0 CLEAR
    ENDIF
    RETURN R
+
+FUNCTION wfSplitPay()
+
+   ColInf()
+   @ 24, 0 SAY PadC( 'Mechanizm podzielonej pˆatno˜ci (split payment): T-tak   lub   N-nie', 80, ' ' )
+   ColStd()
+   @  4, 68 SAY iif( zSplitPay == 'T', 'ak', 'ie' )
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION vfSplitPay()
+
+   LOCAL R
+
+   R := .F.
+   IF zSplitPay $ 'TN'
+      ColStd()
+      @  4, 68 SAY iif( zSplitPay == 'T', 'ak', 'ie' )
+      @ 24,  0
+      R := .T.
+   ENDIF
+
+   RETURN R
+
+/*----------------------------------------------------------------------*/
+
