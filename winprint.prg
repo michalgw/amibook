@@ -585,7 +585,7 @@ FUNCTION WczytajProfileDrukarek()
    LOCAL n := 0, aProf, aDrukarkaStr := {}
    aProfileDrukarek := {}
    aDomProfilDrukarki := hb_Hash()
-   aDomProfilDrukarkiIdx := 0
+   nDomProfilDrukarkiIdx := 0
    select 1
    IF !dostep('drukarka')
       RETURN
@@ -677,7 +677,7 @@ FUNCTION WczytajProfileDrukarek()
 
       AAdd(aProfileDrukarek, aProf)
       aDomProfilDrukarki := aProf
-      aDomProfilDrukarkiIdx := 1
+      nDomProfilDrukarkiIdx := 1
 
       dbAppend()
       drukarka->punkt := cPunktLogowania
@@ -711,6 +711,11 @@ FUNCTION WczytajProfileDrukarek()
       nDomProfilDrukarkiIdx := 1
       aDomProfilDrukarki := aProfileDrukarek[1]
    ENDIF
+
+   IF nDomProfilDrukarkiIdx > 0 .AND. nWybProfilDrukarkiIdx == 0
+      nWybProfilDrukarkiIdx := nDomProfilDrukarkiIdx
+   ENDIF
+
    RETURN
 
 /*----------------------------------------------------------------------*/
