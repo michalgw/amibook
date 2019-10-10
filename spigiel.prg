@@ -116,7 +116,7 @@ begin sequence
    for czesc=iif(_mon_drk#2,1,S1) to iif(_mon_drk#2,1,S2)
        if _mon_drk=2.and.czesc=1
           _lewa=1
-         IF aProfileDrukarek[nWybProfilDrukarki, 'szercal']=10
+         IF aProfileDrukarek[nWybProfilDrukarkiIdx, 'szercal']=10
              _prawa=130
           else
              _prawa=177
