@@ -1631,7 +1631,7 @@ FUNCTION KRejSWZNetto2()
 
    LOCAL lRes := zNETTO <> 0
 
-   IF lRes .AND. zNETTO < zNETTOOrg
+   IF lRes .AND. zNETTOOrg <> 0 .AND. zNETTO <> zNETTOOrg
       zNETTO2 := zNETTOOrg - zNETTO
    ENDIF
 

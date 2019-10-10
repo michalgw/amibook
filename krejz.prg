@@ -1413,11 +1413,8 @@ FUNCTION wKOLz2()
 
 FUNCTION KRejZWNetto2()
 
-   IF zNETTO > 0
+   IF zNETTO <> 0 .AND. nWartoscNetto <> 0 .AND. zNETTO <> nWartoscNetto
       zNETTO2 := nWartoscNetto - zNETTO
-   ENDIF
-   IF zNETTO2 < 0
-      zNETTO2 := 0
    ENDIF
 
    RETURN .T.
