@@ -694,7 +694,7 @@ PROCEDURE P_Dochod( _OUT )
             ELSE
                IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                   DO WHILE  ! Bof()
-                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 1, xxx ], pzm ) - podstawa ) * procent / 100
+                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 1, xxx ], pzm ) - podstawa ) * procent2 / 100
                      pzm := podstawa
                      SKIP -1
                   ENDDO
@@ -1121,7 +1121,7 @@ PROCEDURE P_Dochod( _OUT )
             ELSE
                IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                   DO WHILE ! Bof()
-                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 2, xxx ], pzm ) - podstawa ) * procent / 100
+                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 2, xxx ], pzm ) - podstawa ) * procent2 / 100
                      pzm := podstawa
                      SKIP -1
                   ENDDO
@@ -1276,7 +1276,7 @@ PROCEDURE P_Dochod( _OUT )
             ELSE
                IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                   DO WHILE ! Bof()
-                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 3, xxx ], pzm ) - podstawa ) * procent / 100
+                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 3, xxx ], pzm ) - podstawa ) * procent2 / 100
                      pzm := podstawa
                      SKIP -1
                   ENDDO
