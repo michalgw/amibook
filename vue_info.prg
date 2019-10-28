@@ -173,7 +173,7 @@ PROCEDURE VUE_Info()
 
       SELECT rejz
       DO WHILE ! &_koniec
-         IF rach == 'F' .AND. UE == 'T' .AND. SEK_CV7 == 'WT'
+         IF rach == 'F' .AND. UE == 'T' .AND. ( SEK_CV7 == 'WT' .OR. SEK_CV7 == 'WS' )
             STORE 0 TO p45ue, p47ue, p47aue, p49ue, p51ue, p51aue
             p45ue := iif( SP02 == 'S' .AND. ZOM02 == 'O', WART02, 0 ) + iif( SP07 == 'S' .AND. ZOM07 == 'O', WART07, 0 ) ;
                + iif( SP22 == 'S' .AND. ZOM22 == 'O', WART22, 0 ) + iif( SP12 == 'S' .AND. ZOM12 == 'O', WART12, 0 ) ;

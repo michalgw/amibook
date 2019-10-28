@@ -132,7 +132,7 @@ FUNCTION VatUE4Oblicz()
 
    SELECT rejz
    DO WHILE ! &_koniec
-      IF rach == 'F' .AND. UE == 'T' .AND. SEK_CV7 == 'WT'
+      IF rach == 'F' .AND. UE == 'T' .AND. ( SEK_CV7 == 'WT' .OR. SEK_CV7 == 'WS' )
          STORE 0 TO p45ue, p47ue, p47aue, p49ue, p51ue, p51aue
          p45ue=iif(SP02='S'.and.ZOM02='O',WART02,0)+iif(SP07='S'.and.ZOM07='O',WART07,0)+iif(SP22='S'.and. ZOM22='O',WART22,0)+iif(SP12='S'.and. ZOM12='O',WART12,0)+iif(SP00='S'.and. ZOM00='O',WART00,0)+iif(SPZW='S',WARTZW,0)
          p47ue=iif(SP02='S'.and.ZOM02='M',WART02,0)+iif(SP07='S'.and.ZOM07='M',WART07,0)+iif(SP22='S'.and. ZOM22='M',WART22,0)+iif(SP12='S'.and. ZOM12='M',WART12,0)+iif(SP00='S'.and. ZOM00='M',WART00,0)
