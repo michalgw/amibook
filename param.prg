@@ -170,6 +170,10 @@ do while kl#27
                  Ksiega_Przenumeruj()
               ENDIF
 
+              IF TNEsc( , "Czy przypsa† kwot© woln¥ do wszysztkich firm? (T/N)" )
+                 UstawKwoteWolnaWFirmach()
+              ENDIF
+
               IF Len(AllTrim(param_tyt)) > 0
                  hb_gtInfo(HB_GTI_WINTITLE, AllTrim(param_tyt) + " - AMi-BOOK " + wersprog)
               ELSE
@@ -490,6 +494,34 @@ FUNCTION ParmaKW3When()
    ENDIF
 
    RETURN .F.
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE UstawKwoteWolnaWFirmach()
+
+   ColInf()
+   @ 24, 0 SAY PadC( "Ustawianie kwoty wolnej...", 80 )
+
+   DO WHILE ! Dostep( 'SPOLKA' )
+   ENDDO
+   SetInd( 'SPOLKA' )
+
+   spolka->( dbGoTop() )
+   DO WHILE ! spolka->( Eof() )
+      IF spolka->del == '+'
+         spolka->( dbRLock() )
+         spolka->param_kw := m->param_kw
+         spolka->param_kwd := m->param_kwd
+         spolka->param_kw2 := m->param_kw2
+         spolka->( dbRUnlock() )
+      ENDIF
+      spolka->( dbSkip() )
+   ENDDO
+   spolka->( dbCloseArea() )
+
+   ColStd()
+   @ 24, 0
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 
