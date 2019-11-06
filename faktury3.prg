@@ -20,6 +20,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+#include "Inkey.ch"
+
 PROCEDURE Faktury3()
 
 * do 99 999 999 faktur w sumie na wszystkie firmy
@@ -56,6 +58,14 @@ PROCEDURE Faktury3()
    @ 22, 0 SAY '                                                                                '
 
    *############################### OTWARCIE BAZ ###############################
+   SELECT 7
+   IF Dostep( 'TRESC' )
+      SET INDEX TO tresc
+   ELSE
+      SELECT 2
+      close_()
+      RETURN
+   ENDIF
    SELECT 6
    IF Dostep( 'KONTR' )
       SetInd( 'KONTR' )
@@ -204,11 +214,11 @@ PROCEDURE Faktury3()
             @ 1,  6 GET znazwa PICTURE repl( '!', 70 ) VALID v26_203()
             @ 2,  6 GET zADRES PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             FOR i := 1 TO 15
-                @ 5 + i,  1 GET ztowar[i]   PICTURE '@s28 !' + repl( 'X', 45 ) VALID v26_503()
-                @ 5 + i, 30 GET zilosc[i]   PICTURE "  9999999.999"            VALID v26_603()
-                @ 5 + i, 44 GET zjm[i]      PICTURE "XXXXX"                    VALID v26_703()
-                @ 5 + i, 50 GET zcena[i]    PICTURE "   99999999.99"           VALID v26_803()
-                @ 5 + i, 65 GET zwartosc[i] PICTURE "   99999999.99"           VALID v26_903()
+                @ 5 + i,  1 GET ztowar[ i ]   PICTURE '@s28 !' + repl( 'X', 45 ) WHEN { | oGet | Fakt3WhenTowar( oGet:row - 5 ) } VALID v26_503()
+                @ 5 + i, 30 GET zilosc[ i ]   PICTURE "  9999999.999"            VALID v26_603()
+                @ 5 + i, 44 GET zjm[ i ]      PICTURE "XXXXX"                    VALID v26_703()
+                @ 5 + i, 50 GET zcena[ i ]    PICTURE "   99999999.99"           VALID v26_803()
+                @ 5 + i, 65 GET zwartosc[ i ] PICTURE "   99999999.99"           VALID v26_903()
             NEXT
             wiersz := 1
             CLEAR TYPEAHEAD
@@ -862,3 +872,32 @@ FUNCTION v26_1003()
    RETURN .T.
 
 *############################################################################
+
+FUNCTION Fakt3WhenTowar( nWiersz )
+
+   LOCAL cTresc
+
+   IF Empty( zTowar[ nWiersz ] )
+      SELECT tresc
+      SEEK '+' + ident_fir
+      IF ! Found()
+         SELECT faktury
+      ELSE
+         SAVE SCREEN TO scr2_a
+         Tresc_()
+         RESTORE SCREEN FROM scr2_a
+         IF LastKey() == K_ENTER
+            cTresc := tresc->tresc
+            zTowar[ nWiersz ] := PadR( AllTrim( cTresc ), 45 )
+         ENDIF
+         SELECT faktury
+      ENDIF
+   ENDIF
+   SET CONFIRM OFF
+   RETURN .T.
+
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
