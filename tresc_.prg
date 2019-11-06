@@ -95,7 +95,7 @@ do while kl#27.and.kl#13
         declare p[20]
         *---------------------------------------
         p[ 1]='                                                        '
-        p[ 2]='   ['+chr(24)+'/'+chr(25)+']..........poprzednia/nast&_e.pna pozycja       '
+        p[ 2]='   ['+chr(24)+'/'+chr(25)+']..........poprzednia/nast&_e.pna pozycja           '
         p[ 3]='   [PgUp/PgDn]....poprzednia/nast&_e.pna strona            '
         p[ 4]='   [Home/End].....pierwsza/ostatnia pozycja             '
         p[ 5]='   [Enter]........akceptacja                            '
