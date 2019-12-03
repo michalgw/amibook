@@ -442,6 +442,10 @@ PROCEDURE FakturyN()
                   SKIP
                ENDDO
 
+               IF zSplitPay == 'T'
+                  zSEK_CV7 := 'SP'
+               ENDIF
+
                zVAT07 := _round( zWART07 * ( vat_B / 100 ), 2 )
                zVAT02 := _round( zWART02 * ( vat_C / 100 ), 2 )
                zVAT22 := _round( zWART22 * ( vat_A / 100 ), 2 )
