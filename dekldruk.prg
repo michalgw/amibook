@@ -74,6 +74,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_VAT7w19()
       cPlikRap := 'frf\vat7_w19.frf'
       EXIT
+   CASE 'VAT7-20'
+      hDane := DaneDek_VAT7w20()
+      cPlikRap := 'frf\vat7_w20.frf'
+      EXIT
    CASE 'VAT7K-9'
       hDane := DaneDek_VAT7Kw9()
       cPlikRap := 'frf\vat7k_w9.frf'
@@ -93,6 +97,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
    CASE 'VAT7K-13'
       hDane := DaneDek_VAT7Kw13()
       cPlikRap := 'frf\vat7k_w13.frf'
+      EXIT
+   CASE 'VAT7K-14'
+      hDane := DaneDek_VAT7Kw14()
+      cPlikRap := 'frf\vat7k_w14.frf'
       EXIT
    CASE 'VAT7D-6'
       hDane := DaneDek_VAT7Dw6()
@@ -2019,6 +2027,97 @@ FUNCTION DaneDek_VAT7w19()
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION DaneDek_VAT7w20()
+   LOCAL hDane := hb_Hash()
+
+   hDane['P_1'] := P4
+   hDane['P_2'] := ''
+   hDane['P_4'] := p5a
+   hDane['P_5'] := p5b
+   hDane['P_6'] := iif( AllTrim(p6a) != '', KodUS2Nazwa( AllTrim(p6a) ), '' )
+   hDane['P_7_1'] := iif( kordek == 'K', '0', '1' )
+   hDane['P_7_2'] := iif( kordek == 'K', '1', '0' )
+   hDane['P_8_1'] := iif( spolka_, '1', '0' )
+   hDane['P_8_2'] := iif( spolka_, '0', '1' )
+   hDane['P_9'] := P8 + ',     ' + P11
+
+   hDane['P_10'] := Int( P64 )
+   hDane['P_11'] := Int( P64exp )
+   hDane['P_12'] := Int( P64expue )
+   hDane['P_13'] := Int( P67 )
+   hDane['P_14'] := Int( P67art129 )
+   hDane['P_15'] := Int( P61+P61a )
+   hDane['P_16'] := Int( P62+P62a )
+   hDane['P_17'] := Int( P69 )
+   hDane['P_18'] := Int( P70 )
+   hDane['P_19'] := Int( P71 )
+   hDane['P_20'] := Int( P72 )
+   hDane['P_21'] := Int( P65ue )
+   hDane['P_22'] := Int( P65 )
+   hDane['P_23'] := Int( P65dekue )
+   hDane['P_24'] := Int( P65vdekue )
+   hDane['P_25'] := Int( P65dekit )
+   hDane['P_26'] := Int( P65vdekit )
+   hDane['P_27'] := Int( P65dekus )
+   hDane['P_28'] := Int( P65vdekus )
+   hDane['P_29'] := Int( P65dekusu )
+   hDane['P_30'] := Int( P65vdekusu )
+   hDane['P_31'] := Int( SEK_CV7net )
+   hDane['P_32'] := 0
+   hDane['P_33'] := 0
+   hDane['P_34'] := Int( P65dekwe )
+   hDane['P_35'] := Int( P65vdekwe )
+   hDane['P_36'] := Int( Pp12 )
+   hDane['P_37'] := Int( art111u6 )
+   hDane['P_38'] := Int( znowytran )
+   hDane['P_39'] := Int( zKOL39 )
+   hDane['P_40'] := Int( P75 )
+   hDane['P_41'] := Int( P76 )
+   hDane['P_42'] := Int( Pp8 )
+   hDane['P_43'] := Int( P45dek )
+   hDane['P_44'] := Int( P46dek )
+   hDane['P_45'] := Int( P49dek )
+   hDane['P_46'] := Int( P50dek )
+   hDane['P_47'] := Int( zkorekst )
+   hDane['P_48'] := Int( zkorekpoz )
+   hDane['P_49'] := Int( art89b1 )
+   hDane['P_50'] := Int( art89b4 )
+   hDane['P_51'] := Int( P79 )
+   hDane['P_52'] := Int( P98a )
+   hDane['P_53'] := Int( pp13 )
+   hDane['P_54'] := Int( P98b )
+   hDane['P_55'] := Int( P99a )
+   hDane['P_56'] := Int( P99 )
+   hDane['P_57'] := Int( P99c )
+   hDane['P_58'] := Int( zZwrRaVAT )
+   hDane['P_59'] := Int( P99abc )
+   hDane['P_60'] := Int( P99ab )
+   hDane['P_61'] := Int( P99b )
+   hDane['P_62'] := Int( Max( 0, P99d ) )
+
+   hDane['P_63'] := iif( zf2='T', '1', '0' )
+   hDane['P_64'] := iif( zf3='T', '1', '0' )
+   hDane['P_65'] := iif( zf4='T', '1', '0' )
+   hDane['P_66'] := iif( zf5='T', '1', '0' )
+   hDane['P_67'] := '0'
+   hDane['P_68'] := iif( zZwrRaVAT > 0, '1', '0' )
+   hDane['P_69'] := iif( lSplitPayment, '1', '0' )
+
+   hDane['P_70_1'] := 0
+   hDane['P_70_2'] := 0
+
+   hDane['P_73'] := zAdrEMail
+   hDane['P_74'] := AllTrim(zDEKLTEL)
+
+   hDane['P_PODPIS_IMIE'] := zDEKLIMIE
+   hDane['P_PODPIS_NAZWISKO'] := zDEKLNAZWI
+   hDane['P_PODPIS_TEL'] := zDEKLTEL
+   hDane['P_PODPIS_DATA'] := ''
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION DaneDek_VAT7Kw9()
    LOCAL hDane := hb_Hash()
 
@@ -2450,6 +2549,97 @@ FUNCTION DaneDek_VAT7Kw13()
 
    hDane['P_72'] := zAdrEMail
    hDane['P_73'] := AllTrim(zDEKLTEL)
+
+   hDane['P_PODPIS_IMIE'] := zDEKLIMIE
+   hDane['P_PODPIS_NAZWISKO'] := zDEKLNAZWI
+   hDane['P_PODPIS_TEL'] := zDEKLTEL
+   hDane['P_PODPIS_DATA'] := ''
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_VAT7Kw14()
+   LOCAL hDane := hb_Hash()
+
+   hDane['P_1'] := P4
+   hDane['P_2'] := ''
+   hDane['P_4'] := p5a
+   hDane['P_5'] := p5b
+   hDane['P_6'] := iif( AllTrim(p6a) != '', KodUS2Nazwa( AllTrim(p6a) ), '' )
+   hDane['P_7_1'] := iif( kordek == 'K', '0', '1' )
+   hDane['P_7_2'] := iif( kordek == 'K', '1', '0' )
+   hDane['P_8_1'] := iif( spolka_, '1', '0' )
+   hDane['P_8_2'] := iif( spolka_, '0', '1' )
+   hDane['P_9'] := P8 + ',     ' + P11
+
+   hDane['P_10'] := Int( P64 )
+   hDane['P_11'] := Int( P64exp )
+   hDane['P_12'] := Int( P64expue )
+   hDane['P_13'] := Int( P67 )
+   hDane['P_14'] := Int( P67art129 )
+   hDane['P_15'] := Int( P61+P61a )
+   hDane['P_16'] := Int( P62+P62a )
+   hDane['P_17'] := Int( P69 )
+   hDane['P_18'] := Int( P70 )
+   hDane['P_19'] := Int( P71 )
+   hDane['P_20'] := Int( P72 )
+   hDane['P_21'] := Int( P65ue )
+   hDane['P_22'] := Int( P65 )
+   hDane['P_23'] := Int( P65dekue )
+   hDane['P_24'] := Int( P65vdekue )
+   hDane['P_25'] := Int( P65dekit )
+   hDane['P_26'] := Int( P65vdekit )
+   hDane['P_27'] := Int( P65dekus )
+   hDane['P_28'] := Int( P65vdekus )
+   hDane['P_29'] := Int( P65dekusu )
+   hDane['P_30'] := Int( P65vdekusu )
+   hDane['P_31'] := Int( SEK_CV7net )
+   hDane['P_32'] := 0
+   hDane['P_33'] := 0
+   hDane['P_34'] := Int( P65dekwe )
+   hDane['P_35'] := Int( P65vdekwe )
+   hDane['P_36'] := Int( Pp12 )
+   hDane['P_37'] := Int( art111u6 )
+   hDane['P_38'] := Int( znowytran )
+   hDane['P_39'] := Int( zKOL39 )
+   hDane['P_40'] := Int( P75 )
+   hDane['P_41'] := Int( P76 )
+   hDane['P_42'] := Int( Pp8 )
+   hDane['P_43'] := Int( P45dek )
+   hDane['P_44'] := Int( P46dek )
+   hDane['P_45'] := Int( P49dek )
+   hDane['P_46'] := Int( P50dek )
+   hDane['P_47'] := Int( zkorekst )
+   hDane['P_48'] := Int( zkorekpoz )
+   hDane['P_49'] := Int( art89b1 )
+   hDane['P_50'] := Int( art89b4 )
+   hDane['P_51'] := Int( P79 )
+   hDane['P_52'] := Int( P98a )
+   hDane['P_53'] := Int( pp13 )
+   hDane['P_54'] := Int( P98b )
+   hDane['P_55'] := Int( P99a )
+   hDane['P_56'] := Int( P99 )
+   hDane['P_57'] := Int( P99c )
+   hDane['P_58'] := Int( zZwrRaVAT )
+   hDane['P_59'] := Int( P99abc )
+   hDane['P_60'] := Int( P99ab )
+   hDane['P_61'] := Int( P99b )
+   hDane['P_62'] := Int( Max( 0, P99d ) )
+
+   hDane['P_63'] := iif( zf2='T', '1', '0' )
+   hDane['P_64'] := iif( zf3='T', '1', '0' )
+   hDane['P_65'] := iif( zf4='T', '1', '0' )
+   hDane['P_66'] := iif( zf5='T', '1', '0' )
+   hDane['P_67'] := '0'
+   hDane['P_68'] := iif( zZwrRaVAT > 0, '1', '0' )
+   hDane['P_69'] := iif( lSplitPayment, '1', '0' )
+
+   hDane['P_70_1'] := 0
+   hDane['P_70_2'] := 0
+
+   hDane['P_73'] := zAdrEMail
+   hDane['P_74'] := AllTrim(zDEKLTEL)
 
    hDane['P_PODPIS_IMIE'] := zDEKLIMIE
    hDane['P_PODPIS_NAZWISKO'] := zDEKLNAZWI

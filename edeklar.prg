@@ -3634,6 +3634,292 @@ FUNCTION edek_vat7k_13( aDane )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION edek_vat7_20( aDane )
+   LOCAL r, nl, tmp_cel
+      tmp_cel = '1'
+      IF kordek='K'
+         tmp_cel = '2'
+      ENDIF
+      nl = Chr(13) + Chr(10)
+      r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
+      r = r + '<Deklaracja  xmlns="http://crd.gov.pl/wzor/2019/11/08/8836/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2018/08/24/eD/DefinicjeTypy/">' + nl
+      r = r + '  <Naglowek>' + nl
+      r = r + '    <KodFormularza kodPodatku="VAT" kodSystemowy="VAT-7 (20)" rodzajZobowiazania="Z" wersjaSchemy="1-0E" >VAT-7</KodFormularza>' + nl
+      r = r + '    <WariantFormularza>20</WariantFormularza>' + nl
+		r = r + '    <CelZlozenia poz="P_7">' + tmp_cel + '</CelZlozenia>' + nl
+      r = r + '    <Rok>' + AllTrim(p5b) + '</Rok>' + nl
+      r = r + '    <Miesiac>' + AllTrim(p5a) + '</Miesiac>' + nl
+		r = r + '    <KodUrzedu>' + P6a + '</KodUrzedu>' + nl
+	   r = r + '  </Naglowek>' + nl
+   	r = r + '  <Podmiot1 rola="Podatnik">' + nl
+      IF spolka_
+         r = r + '    <OsobaNiefizyczna>' + nl
+			r = r + '      <NIP>' + trimnip(AllTrim(P4)) + '</NIP>' + nl
+			r = r + '      <PelnaNazwa>' + str2sxml(AllTrim(P8)) + '</PelnaNazwa>' + nl
+//			r = r + '      <REGON>' +  AllTrim(P11) + '</etd:REGON>' + nl
+		   r = r + '    </OsobaNiefizyczna>' + nl
+      else
+		   r = r + '    <OsobaFizyczna>' + nl
+//         IF Len(AllTrim(P30)) = 0
+            r = r + '      <NIP>' + trimnip(P4) + '</NIP>' + nl
+//         ELSE
+//    			r = r + '      <etd:PESEL>' + P30 + '</etd:PESEL>' + nl
+//         ENDIF
+			r = r + '      <ImiePierwsze>' + str2sxml(naz_imie_imie(AllTrim(P8ni))) + '</ImiePierwsze>' + nl
+			r = r + '      <Nazwisko>' + str2sxml(naz_imie_naz(AllTrim(P8ni))) +'</Nazwisko>' + nl
+//			r = r + '      <DataUrodzenia>' + date2strxml(P11d) + '</DataUrodzenia>' + nl
+		   r = r + '    </OsobaFizyczna>' + nl
+      ENDIF
+      r = r + '  </Podmiot1>' + nl
+      r = r + '  <PozycjeSzczegolowe>' + nl
+		r = r + '    <P_10>' + TKwotaC(P64) + '</P_10>' + nl
+		r = r + '    <P_11>' + TKwotaC(P64exp) + '</P_11>' + nl
+		r = r + '    <P_12>' + TKwotaC(P64expue) + '</P_12>' + nl
+		r = r + '    <P_13>' + TKwotaC(P67) + '</P_13>' + nl
+		r = r + '    <P_14>' + TKwotaC(P67art129) + '</P_14>' + nl
+		r = r + '    <P_15>' + TKwotaC(P61+P61a) + '</P_15>' + nl
+		r = r + '    <P_16>' + TKwotaC(P62+P62a) + '</P_16>' + nl
+		r = r + '    <P_17>' + TKwotaC(P69) + '</P_17>' + nl
+		r = r + '    <P_18>' + TKwotaC(P70) + '</P_18>' + nl
+		r = r + '    <P_19>' + TKwotaC(P71) + '</P_19>' + nl
+		r = r + '    <P_20>' + TKwotaC(P72) + '</P_20>' + nl
+		r = r + '    <P_21>' + TKwotaC(P65ue) + '</P_21>' + nl
+		r = r + '    <P_22>' + TKwotaC(P65) + '</P_22>' + nl
+		r = r + '    <P_23>' + TKwotaC(P65dekue) + '</P_23>' + nl
+		r = r + '    <P_24>' + TKwotaC(P65vdekue) + '</P_24>' + nl
+		r = r + '    <P_25>' + TKwotaC(P65dekit) + '</P_25>' + nl
+		r = r + '    <P_26>' + TKwotaC(P65vdekit) + '</P_26>' + nl
+		r = r + '    <P_27>' + TKwotaC(P65dekus) + '</P_27>' + nl
+		r = r + '    <P_28>' + TKwotaC(P65vdekus) + '</P_28>' + nl
+		r = r + '    <P_29>' + TKwotaC(P65dekusu) + '</P_29>' + nl
+		r = r + '    <P_30>' + TKwotaC(P65vdekusu) + '</P_30>' + nl
+		r = r + '    <P_31>' + TKwotaC(SEK_CV7net) + '</P_31>' + nl
+		r = r + '    <P_32>' + TKwotaC(0) + '</P_32>' + nl
+		r = r + '    <P_33>' + TKwotaC(0) + '</P_33>' + nl
+		r = r + '    <P_34>' + TKwotaC(P65dekwe) + '</P_34>' + nl
+		r = r + '    <P_35>' + TKwotaC(P65vdekwe) + '</P_35>' + nl
+		r = r + '    <P_36>' + TKwotaCNieujemna(Pp12) + '</P_36>' + nl
+		r = r + '    <P_37>' + TKwotaCNieujemna( art111u6 ) + '</P_37>' + nl
+		r = r + '    <P_38>' + TKwotaCNieujemna(znowytran) + '</P_38>' + nl
+		r = r + xmlNiePusty(zKOL39, '    <P_39>' + TKwotaCNieujemna(zKOL39) + '</P_39>' + nl)
+		r = r + '    <P_40>' + TKwotaC(P75) + '</P_40>' + nl
+		r = r + '    <P_41>' + TKwotaC(P76) + '</P_41>' + nl
+		r = r + xmlNiePusty(Pp8, '    <P_42>' + TKwotaCNieujemna(Pp8) + '</P_42>' + nl)
+		r = r + '    <P_43>' + TKwotaC(P45dek) + '</P_43>' + nl
+		r = r + '    <P_44>' + TKwotaC(P46dek) + '</P_44>' + nl
+		r = r + '    <P_45>' + TKwotaC(P49dek) + '</P_45>' + nl
+		r = r + '    <P_46>' + TKwotaC(P50dek) + '</P_46>' + nl
+		r = r + xmlNiePusty(zkorekst, '    <P_47>' + TKwotaC(zkorekst) + '</P_47>' + nl)
+		r = r + xmlNiePusty(zkorekpoz, '    <P_48>' + TKwotaC(zkorekpoz) + '</P_48>' + nl)
+		r = r + xmlNiePusty(art89b1, '    <P_49>' + TKwotaC(art89b1) + '</P_49>' + nl)
+		r = r + xmlNiePusty(art89b4, '    <P_50>' + TKwotaC(art89b4) + '</P_50>' + nl)
+		r = r + xmlNiePusty(P79, '    <P_51>' + TKwotaC(P79) + '</P_51>' + nl)
+		r = r + xmlNiePusty(P98a, '    <P_52>' + TKwotaCNieujemna(P98a) + '</P_52>' + nl)
+		r = r + xmlNiePusty(pp13, '    <P_53>' + TKwotaCNieujemna(pp13) + '</P_53>' + nl)
+		r = r + '    <P_54>' + TKwotaCNieujemna(P98b) + '</P_54>' + nl
+		r = r + xmlNiePusty(P99a, '    <P_55>' + TKwotaCNieujemna(P99a) + '</P_55>' + nl)
+		r = r + xmlNiePusty(P99, '    <P_56>' + TKwotaCNieujemna(P99) + '</P_56>' + nl)
+      IF P99c > 0
+   		r = r + '    <P_57>' + TKwotaCNieujemna(P99c) + '</P_57>' + nl
+         IF zZwrRaVAT > 0
+      		r = r + '    <P_58>' + TKwotaCNieujemna(zZwrRaVAT) + '</P_58>' + nl
+            r = r + '    <P_68>1</P_68>' + nl
+         ELSEIF P99abc > 0
+      		r = r + xmlNiePusty(P99abc, '    <P_59>' + TKwotaCNieujemna(P99abc) + '</P_59>' + nl)
+         ELSEIF P99ab > 0
+      		r = r + xmlNiePusty(P99ab, '    <P_60>' + TKwotaCNieujemna(P99ab) + '</P_60>' + nl)
+         ELSEIF P99b > 0
+      		r = r + xmlNiePusty(P99b, '    <P_61>' + TKwotaCNieujemna(P99b) + '</P_61>' + nl)
+         ENDIF
+      ENDIF
+		r = r + xmlNiePusty(P99d, '    <P_62>' + TKwotaCNieujemna(P99d) + '</P_62>' + nl)
+      IF zf2='T'
+   		r = r + '    <P_63>1</P_63>' + nl
+      ENDIF
+      IF zf3='T'
+   		r = r + '    <P_64>1</P_64>' + nl
+      ENDIF
+      IF zf4='T'
+   		r = r + '    <P_65>1</P_65>' + nl
+      ENDIF
+      IF zf5='T'
+   		r = r + '    <P_66>1</P_66>' + nl
+      ENDIF
+//		r = r + '    <P_60>2</P_60>' + nl
+//		r = r + '    <P_61>2</P_61>' + nl
+//		r = r + '    <P_62>2</P_62>' + nl
+//		r = r + '    <P_63>2</P_63>' + nl
+
+      IF lSplitPayment
+         r = r + '    <P_69>1</P_69>' + nl
+      ENDIF
+
+      IF Len( zAdrEMail ) > 0
+         r = r + '    <P_73>' + zAdrEMail + '</P_73>' + nl
+      ENDIF
+
+      IF Len(AllTrim(zDEKLTEL)) > 0
+   		r = r + '    <P_74>' + AllTrim(zDEKLTEL) + '</P_74>' + nl
+      ENDIF
+		//r = r + '    <P_76>' + date2strxml(Date()) + '</P_76>' + nl
+		r = r + '  </PozycjeSzczegolowe>' + nl
+		r = r + '  <Pouczenia>1</Pouczenia>' + nl
+      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) // .OR. aDane[ 'VATZZ' ][ 'rob' ]
+         r = r + '  <Zalaczniki>' + nl
+         IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 )
+            r = r + edek_ord_zu3v2(tresc_korekty_vat7) + nl
+         ENDIF
+//         IF aDane[ 'VATZZ' ][ 'rob' ]
+//            r += edek_vat_zz5( aDane[ 'VATZZ' ] )
+//         ENDIF
+         r = r + '  </Zalaczniki>' + nl
+      ENDIF
+		r = r + '</Deklaracja>'
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION edek_vat7k_14( aDane )
+   LOCAL r, nl, tmp_cel
+      tmp_cel = '1'
+      IF kordek='K'
+         tmp_cel = '2'
+      ENDIF
+      nl = Chr(13) + Chr(10)
+      r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
+      r = r + '<Deklaracja  xmlns="http://crd.gov.pl/wzor/2019/11/08/8838/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2018/08/24/eD/DefinicjeTypy/">' + nl
+      r = r + '  <Naglowek>' + nl
+      r = r + '    <KodFormularza kodPodatku="VAT" kodSystemowy="VAT-7K (14)" rodzajZobowiazania="Z" wersjaSchemy="1-0E" >VAT-7K</KodFormularza>' + nl
+      r = r + '    <WariantFormularza>14</WariantFormularza>' + nl
+		r = r + '    <CelZlozenia poz="P_7">' + tmp_cel + '</CelZlozenia>' + nl
+      r = r + '    <Rok>' + AllTrim(p5b) + '</Rok>' + nl
+      r = r + '    <Kwartal>' + AllTrim(p5a) + '</Kwartal>' + nl
+		r = r + '    <KodUrzedu>' + P6a + '</KodUrzedu>' + nl
+	   r = r + '  </Naglowek>' + nl
+   	r = r + '  <Podmiot1 rola="Podatnik">' + nl
+      IF spolka_
+         r = r + '    <OsobaNiefizyczna>' + nl
+			r = r + '      <NIP>' + trimnip(AllTrim(P4)) + '</NIP>' + nl
+			r = r + '      <PelnaNazwa>' + str2sxml(AllTrim(P8)) + '</PelnaNazwa>' + nl
+		   r = r + '    </OsobaNiefizyczna>' + nl
+      else
+		   r = r + '    <OsobaFizyczna>' + nl
+//         IF Len(AllTrim(P30)) = 0
+            r = r + '      <NIP>' + trimnip(P4) + '</NIP>' + nl
+//         ELSE
+//    			r = r + '      <etd:PESEL>' + P30 + '</etd:PESEL>' + nl
+//         ENDIF
+			r = r + '      <ImiePierwsze>' + str2sxml(naz_imie_imie(AllTrim(P8ni))) + '</ImiePierwsze>' + nl
+			r = r + '      <Nazwisko>' + str2sxml(naz_imie_naz(AllTrim(P8ni))) +'</Nazwisko>' + nl
+//			r = r + '      <DataUrodzenia>' + date2strxml(P11d) + '</DataUrodzenia>' + nl
+		   r = r + '    </OsobaFizyczna>' + nl
+      ENDIF
+      r = r + '  </Podmiot1>' + nl
+      r = r + '  <PozycjeSzczegolowe>' + nl
+		r = r + '    <P_10>' + TKwotaC(P64) + '</P_10>' + nl
+		r = r + '    <P_11>' + TKwotaC(P64exp) + '</P_11>' + nl
+		r = r + '    <P_12>' + TKwotaC(P64expue) + '</P_12>' + nl
+		r = r + '    <P_13>' + TKwotaC(P67) + '</P_13>' + nl
+		r = r + '    <P_14>' + TKwotaC(P67art129) + '</P_14>' + nl
+		r = r + '    <P_15>' + TKwotaC(P61+P61a) + '</P_15>' + nl
+		r = r + '    <P_16>' + TKwotaC(P62+P62a) + '</P_16>' + nl
+		r = r + '    <P_17>' + TKwotaC(P69) + '</P_17>' + nl
+		r = r + '    <P_18>' + TKwotaC(P70) + '</P_18>' + nl
+		r = r + '    <P_19>' + TKwotaC(P71) + '</P_19>' + nl
+		r = r + '    <P_20>' + TKwotaC(P72) + '</P_20>' + nl
+		r = r + '    <P_21>' + TKwotaC(P65ue) + '</P_21>' + nl
+		r = r + '    <P_22>' + TKwotaC(P65) + '</P_22>' + nl
+		r = r + '    <P_23>' + TKwotaC(P65dekue) + '</P_23>' + nl
+		r = r + '    <P_24>' + TKwotaC(P65vdekue) + '</P_24>' + nl
+		r = r + '    <P_25>' + TKwotaC(P65dekit) + '</P_25>' + nl
+		r = r + '    <P_26>' + TKwotaC(P65vdekit) + '</P_26>' + nl
+		r = r + '    <P_27>' + TKwotaC(P65dekus) + '</P_27>' + nl
+		r = r + '    <P_28>' + TKwotaC(P65vdekus) + '</P_28>' + nl
+		r = r + '    <P_29>' + TKwotaC(P65dekusu) + '</P_29>' + nl
+		r = r + '    <P_30>' + TKwotaC(P65vdekusu) + '</P_30>' + nl
+		r = r + '    <P_31>' + TKwotaC(SEK_CV7net) + '</P_31>' + nl
+		r = r + '    <P_32>' + TKwotaC(0) + '</P_32>' + nl
+		r = r + '    <P_33>' + TKwotaC(0) + '</P_33>' + nl
+		r = r + '    <P_34>' + TKwotaC(P65dekwe) + '</P_34>' + nl
+		r = r + '    <P_35>' + TKwotaC(P65vdekwe) + '</P_35>' + nl
+		r = r + '    <P_36>' + TKwotaCNieujemna(Pp12) + '</P_36>' + nl
+		r = r + '    <P_37>' + TKwotaCNieujemna( art111u6 ) + '</P_37>' + nl
+		r = r + '    <P_38>' + TKwotaCNieujemna(znowytran) + '</P_38>' + nl
+		r = r + xmlNiePusty(zKOL39, '    <P_39>' + TKwotaCNieujemna(zKOL39) + '</P_39>' + nl)
+		r = r + '    <P_40>' + TKwotaC(P75) + '</P_40>' + nl
+		r = r + '    <P_41>' + TKwotaC(P76) + '</P_41>' + nl
+		r = r + xmlNiePusty(Pp8, '    <P_42>' + TKwotaCNieujemna(Pp8) + '</P_42>' + nl)
+		r = r + '    <P_43>' + TKwotaC(P45dek) + '</P_43>' + nl
+		r = r + '    <P_44>' + TKwotaC(P46dek) + '</P_44>' + nl
+		r = r + '    <P_45>' + TKwotaC(P49dek) + '</P_45>' + nl
+		r = r + '    <P_46>' + TKwotaC(P50dek) + '</P_46>' + nl
+		r = r + xmlNiePusty(zkorekst, '    <P_47>' + TKwotaC(zkorekst) + '</P_47>' + nl)
+		r = r + xmlNiePusty(zkorekpoz, '    <P_48>' + TKwotaC(zkorekpoz) + '</P_48>' + nl)
+		r = r + xmlNiePusty(art89b1, '    <P_49>' + TKwotaC(art89b1) + '</P_49>' + nl)
+		r = r + xmlNiePusty(art89b4, '    <P_50>' + TKwotaC(art89b4) + '</P_50>' + nl)
+		r = r + xmlNiePusty(P79, '    <P_51>' + TKwotaC(P79) + '</P_51>' + nl)
+		r = r + xmlNiePusty(P98a, '    <P_52>' + TKwotaCNieujemna(P98a) + '</P_52>' + nl)
+		r = r + xmlNiePusty(pp13, '    <P_53>' + TKwotaCNieujemna(pp13) + '</P_53>' + nl)
+		r = r + '    <P_54>' + TKwotaCNieujemna(P98b) + '</P_54>' + nl
+		r = r + xmlNiePusty(P99a, '    <P_55>' + TKwotaCNieujemna(P99a) + '</P_55>' + nl)
+		r = r + xmlNiePusty(P99, '    <P_56>' + TKwotaCNieujemna(P99) + '</P_56>' + nl)
+      IF P99c > 0
+   		r = r + '    <P_57>' + TKwotaCNieujemna(P99c) + '</P_57>' + nl
+         IF zZwrRaVAT > 0
+      		r = r + '    <P_58>' + TKwotaCNieujemna(zZwrRaVAT) + '</P_58>' + nl
+            r = r + '    <P_68>1</P_68>' + nl
+         ELSEIF P99abc > 0
+      		r = r + xmlNiePusty(P99abc, '    <P_59>' + TKwotaCNieujemna(P99abc) + '</P_59>' + nl)
+         ELSEIF P99ab > 0
+      		r = r + xmlNiePusty(P99ab, '    <P_60>' + TKwotaCNieujemna(P99ab) + '</P_60>' + nl)
+         ELSEIF P99b > 0
+      		r = r + xmlNiePusty(P99b, '    <P_61>' + TKwotaCNieujemna(P99b) + '</P_61>' + nl)
+         ENDIF
+      ENDIF
+		r = r + xmlNiePusty(P99d, '    <P_62>' + TKwotaCNieujemna(P99d) + '</P_62>' + nl)
+      IF zf2='T'
+   		r = r + '    <P_63>1</P_63>' + nl
+      ENDIF
+      IF zf3='T'
+   		r = r + '    <P_64>1</P_64>' + nl
+      ENDIF
+      IF zf4='T'
+   		r = r + '    <P_65>1</P_65>' + nl
+      ENDIF
+      IF zf5='T'
+   		r = r + '    <P_66>1</P_66>' + nl
+      ENDIF
+//		r = r + '    <P_60>2</P_60>' + nl
+//		r = r + '    <P_61>2</P_61>' + nl
+//		r = r + '    <P_62>2</P_62>' + nl
+//		r = r + '    <P_63>2</P_63>' + nl
+
+      IF lSplitPayment
+         r = r + '    <P_69>1</P_69>' + nl
+      ENDIF
+
+      IF Len( zAdrEMail ) > 0
+         r = r + '    <P_73>' + zAdrEMail + '</P_73>' + nl
+      ENDIF
+
+      IF Len(AllTrim(zDEKLTEL)) > 0
+   		r = r + '    <P_74>' + AllTrim(zDEKLTEL) + '</P_74>' + nl
+      ENDIF
+		//r = r + '    <P_76>' + date2strxml(Date()) + '</P_76>' + nl
+		r = r + '  </PozycjeSzczegolowe>' + nl
+		r = r + '  <Pouczenia>1</Pouczenia>' + nl
+      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) // .OR. aDane[ 'VATZZ' ][ 'rob' ]
+         r = r + '  <Zalaczniki>' + nl
+         IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 )
+            r = r + edek_ord_zu3v2(tresc_korekty_vat7) + nl
+         ENDIF
+         r = r + '  </Zalaczniki>' + nl
+      ENDIF
+		r = r + '</Deklaracja>'
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION edek_vatue_3()
    LOCAL r, nl
       nl = Chr(13) + Chr(10)

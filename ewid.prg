@@ -400,10 +400,10 @@ FUNCTION Ewid()
 
                   DO CASE
                      CASE zVATFORDR == '7 '
-                        verdekvat := '(19)   (czyste kartki) '
+                        verdekvat := '(20)   (czyste kartki) '
 
                      CASE zVATFORDR == '7K'
-                        verdekvat := '(13)   (czyste kartki) '
+                        verdekvat := '(14)   (czyste kartki) '
 
                      CASE zVATFORDR == '7D'
                         verdekvat := '(8)    (czyste kartki) '
@@ -411,10 +411,10 @@ FUNCTION Ewid()
 
                   DO CASE
                      CASE zVATFORDR == '7 '
-                        verdeknew := '(18)   (czyste kartki) '
+                        verdeknew := '(19)   (czyste kartki) '
 
                      CASE zVATFORDR == '7K'
-                        verdeknew := '(12)   (czyste kartki) '
+                        verdeknew := '(13)   (czyste kartki) '
 
                      CASE zVATFORDR == '7D'
                         verdeknew := '(8)    (czyste kartki) '
@@ -540,20 +540,20 @@ FUNCTION Ewid()
                         IF LastKey() <> K_ESC
                            DO CASE
                               CASE papier == 'K'
-                                 vat_719( 0, 0, 1, 'K' )
+                                 vat_720( 0, 0, 1, 'K' )
 
                               CASE papier == 'F'
                                  AFill( nazform, '' )
                                  AFill( strform, 0 )
-                                 nazform[ 1 ] := 'VAT-718'
+                                 nazform[ 1 ] := 'VAT-720'
                                  strform[ 1 ] := 2
                                  form( nazform, strform, 1 )
 
                               CASE papier == 'E'
-                                 vat_719( 0, 0, 1, 'E' )
+                                 vat_720( 0, 0, 1, 'E' )
 
                               CASE papier == 'X'
-                                 vat_719( 0, 0, 1, 'X' )
+                                 vat_720( 0, 0, 1, 'X' )
                            ENDCASE
                         ENDIF
 
@@ -575,20 +575,20 @@ FUNCTION Ewid()
                         if LastKey() <> K_ESC
                            DO CASE
                               CASE papier == 'K'
-                                 vat_718( 0, 0, 1, 'K' )
+                                 vat_719( 0, 0, 1, 'K' )
 
                               CASE papier == 'F'
                                  AFill( nazform, '' )
                                  AFill( strform, 0 )
-                                 nazform[ 1 ] := 'VAT-717'
+                                 nazform[ 1 ] := 'VAT-719'
                                  strform[ 1 ] := 2
                                  form( nazform, strform, 1 )
 
                               CASE papier == 'E'
-                                 vat_718( 0, 0, 1, 'E' )
+                                 vat_719( 0, 0, 1, 'E' )
 
                               CASE papier == 'X'
-                                 vat_718( 0, 0, 1, 'X' )
+                                 vat_719( 0, 0, 1, 'X' )
                            ENDCASE
                         ENDIF
 
