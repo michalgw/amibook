@@ -475,7 +475,7 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                   xRes := aDaneJPK
                ENDIF
 
-            CASE aDaneJPK[ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA" .AND. ! lZakupy
+            CASE aDaneJPK[ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
 
                aDaneJPK[ 'Faktura' ] := {}
 
@@ -1028,6 +1028,174 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
             aPozDek[ 'FakturaPoz' ] := aPoz
 
             AAdd( aRes, aPozDek )
+         ENDIF
+
+      ENDIF
+   } )
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
+
+   LOCAL aRes := {}
+   LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
+       "ES", "FI", "FR", "GB", "HR", "HU", "IE", "IT", "LV", "LT", "LU", ;
+       "MT", "NL", "PT", "RO", "SE", "SI", "SK" }
+   LOCAL cNipFir := TrimNip( aDane[ 'JPK' ][ 'Firma' ][ 'firma' ][ 'nip' ] )
+
+   AEval( aDane[ 'JPK' ][ 'Faktura' ], { | aPoz |
+      LOCAL aPozDek
+      LOCAL cNip := HGetDefault( aPoz, 'P_5B', '' )
+      LOCAL cKraj := "PL"
+      IF ( ( hb_HHasKey( aPoz, 'P_13_1' ) .AND. aPoz[ 'P_13_1' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_13_2' ) .AND. aPoz[ 'P_13_2' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_13_3' ) .AND. aPoz[ 'P_13_3' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_13_4' ) .AND. aPoz[ 'P_13_4' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_13_5' ) .AND. aPoz[ 'P_13_5' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_13_6' ) .AND. aPoz[ 'P_13_6' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_13_7' ) .AND. aPoz[ 'P_13_7' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_14_1' ) .AND. aPoz[ 'P_14_1' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_14_2' ) .AND. aPoz[ 'P_14_2' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_13_3' ) .AND. aPoz[ 'P_14_3' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_14_4' ) .AND. aPoz[ 'P_14_4' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'P_14_5' ) .AND. aPoz[ 'P_14_5' ] <> 0 ) ) .AND. ;
+         aPoz[ 'P_16' ] == .F. .AND. aPoz[ 'P_17' ] == .F. .AND. /*aPoz[ 'P_19' ] == .F. .AND.*/ ;
+         aPoz[ 'P_20' ] == .F. .AND. aPoz[ 'P_21' ] == .F. .AND. aPoz[ 'P_106E_2' ] == .F. .AND. ;
+         ( ( ( Month( aPoz[ 'P_1' ] ) == Val( miesiac ) ) .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ;
+         .OR. ( hb_HHasKey( aPoz, 'P_6' ) .AND. ( Month( aPoz[ 'P_6' ] ) == Val( miesiac ) ) ;
+         .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ) .AND. ( iif( cNip == '', .T., cNip == cNipFir ) )
+
+         IF hb_HHasKey( aPoz, 'KodWaluty' ) .AND. aPoz[ 'KodWaluty' ] <> 'PLN'
+            IF ( hb_HHasKey( aPoz, 'P_14_1W' ) .AND. aPoz[ 'P_14_1W' ] <> 0 ) .OR. ;
+            ( hb_HHasKey( aPoz, 'P_14_2W' ) .AND. aPoz[ 'P_14_2W' ] <> 0 ) .OR. ;
+            ( hb_HHasKey( aPoz, 'P_14_3W' ) .AND. aPoz[ 'P_14_3W' ] <> 0 )
+
+               aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
+
+               aPoz[ 'Aktywny' ] := .T.
+               aPoz[ 'Importuj' ] := .T.
+
+               aPozDek := hb_Hash()
+               aPozDek[ 'zsek_cv7' ] := '  '
+               aPozDek[ 'zkolumna' ] := '10'
+               aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
+               aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
+               aPozDek[ 'znumer' ] := HGetDefault( aPoz, 'P_2A', '' )
+
+               //cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
+               aPozDek[ 'zkraj' ] := HGetDefault( aPoz, 'P_4A', 'PL' )
+               aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, aPozDek[ 'zkraj' ] ) > 0, 'T', 'N' )
+               aPozDek[ 'znr_ident' ] := HGetDefault( aPoz, 'P_4B', '' )
+               aPozDek[ 'znazwa' ] := HGetDefault( aPoz, 'P_3C', '' )
+               aPozDek[ 'zadres' ] := HGetDefault( aPoz, 'P_3D', '' )
+               aPozDek[ 'zdatas' ] := HGetDefault( aPoz, 'P_6', aPoz[ 'P_1' ] )
+
+               aPozDek[ 'zexport' ] := 'N'
+               IF aPozDek[ 'zue' ] == 'N' .AND. aPozDek[ 'zkraj' ] <> 'PL'
+                  aPozDek[ 'zexport' ] := 'T'
+               ENDIF
+
+               aPozDek[ 'zkorekta' ] := aPozDek[ 'zkorekta' ] := iif( aPoz[ 'RodzajFaktury' ] == "KOREKTA" , 'T', 'N' )
+
+               aPozDek[ 'zwartzw' ] := 0
+               aPozDek[ 'zwart00' ] := 0
+               aPozDek[ 'zwart02' ] := 0
+               aPozDek[ 'zvat02' ] := HGetDefault( aPoz, 'P_14_3W', 0 )
+               aPozDek[ 'zwart07' ] := 0
+               aPozDek[ 'zvat07' ] := HGetDefault( aPoz, 'P_14_2W', 0 )
+               aPozDek[ 'zwart22' ] := 0
+               aPozDek[ 'zvat22' ] := HGetDefault( aPoz, 'P_14_1W', 0 )
+               aPozDek[ 'zwart12' ] := 0
+               aPozDek[ 'zvat12' ] := 0
+               aPozDek[ 'zbrut02' ] := 0
+               aPozDek[ 'zbrut07' ] := 0
+               aPozDek[ 'zbrut22' ] := 0
+               aPozDek[ 'zbrut12' ] := 0
+               aPozDek[ 'znetto' ] := 0
+
+               IF aPoz[ 'P_18' ]
+                  aPozDek[ 'zwart08' ] := HGetDefault( aPoz, 'P_13_6', 0 ) + HGetDefault( aPoz, 'P_13_4', 0 )
+                  aPozDek[ 'zsek_cv7' ] := 'PN'
+               ELSE
+                  aPozDek[ 'zwart00' ] := HGetDefault( aPoz, 'P_13_6', 0 ) + HGetDefault( aPoz, 'P_13_4', 0 )
+               ENDIF
+
+               IF hb_HHasKey( aPoz, 'P_18A' ) .AND. aPoz[ 'P_18A' ]
+                  aPozDek[ 'zsek_cv7' ] := 'SP'
+               ENDIF
+
+               aPozDek[ 'SierTrwaly' ] := .F.
+               aPozDek[ 'UwagaVat' ] := .F.
+
+               aPozDek[ 'SprzedazPoz' ] := aPoz
+
+               AAdd( aRes, aPozDek )
+
+            ENDIF
+         ELSE
+            aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
+
+            aPoz[ 'Aktywny' ] := .T.
+            aPoz[ 'Importuj' ] := .T.
+
+            aPozDek := hb_Hash()
+            aPozDek[ 'zsek_cv7' ] := '  '
+            aPozDek[ 'zkolumna' ] := '10'
+            aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
+            aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
+            aPozDek[ 'znumer' ] := HGetDefault( aPoz, 'P_2A', '' )
+
+            //cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
+            aPozDek[ 'zkraj' ] := HGetDefault( aPoz, 'P_4A', 'PL' )
+            aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, aPozDek[ 'zkraj' ] ) > 0, 'T', 'N' )
+            aPozDek[ 'znr_ident' ] := HGetDefault( aPoz, 'P_4B', '' )
+            aPozDek[ 'znazwa' ] := HGetDefault( aPoz, 'P_3C', '' )
+            aPozDek[ 'zadres' ] := HGetDefault( aPoz, 'P_3D', '' )
+            aPozDek[ 'zdatas' ] := HGetDefault( aPoz, 'P_6', aPoz[ 'P_1' ] )
+
+            aPozDek[ 'zexport' ] := 'N'
+            IF aPozDek[ 'zue' ] == 'N' .AND. aPozDek[ 'zkraj' ] <> 'PL'
+               aPozDek[ 'zexport' ] := 'T'
+            ENDIF
+
+            aPozDek[ 'zkorekta' ] := aPozDek[ 'zkorekta' ] := iif( aPoz[ 'RodzajFaktury' ] == "KOREKTA" , 'T', 'N' )
+
+            aPozDek[ 'zwartzw' ] := HGetDefault( aPoz, 'P_13_7', 0 )
+            aPozDek[ 'zwart00' ] := 0
+            aPozDek[ 'zwart02' ] := HGetDefault( aPoz, 'P_13_3', 0 )
+            aPozDek[ 'zvat02' ] := HGetDefault( aPoz, 'P_14_3', 0 )
+            aPozDek[ 'zwart07' ] := HGetDefault( aPoz, 'P_13_2', 0 )
+            aPozDek[ 'zvat07' ] := HGetDefault( aPoz, 'P_14_2', 0 )
+            aPozDek[ 'zwart22' ] := HGetDefault( aPoz, 'P_13_1', 0 )
+            aPozDek[ 'zvat22' ] := HGetDefault( aPoz, 'P_14_1', 0 )
+            aPozDek[ 'zwart12' ] := 0
+            aPozDek[ 'zvat12' ] := 0
+            aPozDek[ 'zbrut02' ] := 0
+            aPozDek[ 'zbrut07' ] := 0
+            aPozDek[ 'zbrut22' ] := 0
+            aPozDek[ 'zbrut12' ] := 0
+            aPozDek[ 'znetto' ] := 0
+
+            IF aPoz[ 'P_18' ]
+               aPozDek[ 'zwart08' ] := HGetDefault( aPoz, 'P_13_6', 0 ) + HGetDefault( aPoz, 'P_13_4', 0 )
+               aPozDek[ 'zsek_cv7' ] := 'PN'
+            ELSE
+               aPozDek[ 'zwart00' ] := HGetDefault( aPoz, 'P_13_6', 0 ) + HGetDefault( aPoz, 'P_13_4', 0 )
+            ENDIF
+
+            IF hb_HHasKey( aPoz, 'P_18A' ) .AND. aPoz[ 'P_18A' ]
+               aPozDek[ 'zsek_cv7' ] := 'SP'
+            ENDIF
+
+            aPozDek[ 'SierTrwaly' ] := .F.
+            aPozDek[ 'UwagaVat' ] := .F.
+
+            aPozDek[ 'SprzedazPoz' ] := aPoz
+
+            AAdd( aRes, aPozDek )
+
          ENDIF
 
       ENDIF
@@ -1909,6 +2077,15 @@ PROCEDURE JPKImp_VatZ()
                aDane[ 'JPK' ][ 'ZakupSum' ][ 'K_46' ]
             nLiczbaLp := Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) + Len( aDane[ 'JPK' ][ 'Zakup' ] )
 
+         CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
+
+            aDane[ 'Dekret' ] := JPKImp_VatZ_Dekretuj_FA( aDane )
+            nSumaImp := aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_1' ] + ;
+               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_2' ] + ;
+               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_3' ] + ;
+               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_4' ] + ;
+               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_5' ]
+            nLiczbaLp := Len( aDane[ 'JPK' ][ 'Faktura' ] )
          ENDCASE
 
          ColStd()
@@ -1983,16 +2160,22 @@ PROCEDURE JPKImp_VatZ()
                   nMenu := 0
                ENDIF
             CASE nMenu == 2
-               nMenu2 := MenuEx( 18, 26, { "SprzedazPoz (podatek nale¾ny)", "ZakupPoz (podatek naliczony)" } )
-               SWITCH nMenu2
-               CASE 1
-                  JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
-                  EXIT
-               CASE 2
-                  JPKImp_VatZ_Podglad_VAT( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
-                  EXIT
-               ENDSWITCH
-               PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+               DO CASE
+               CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
+                  nMenu2 := MenuEx( 18, 26, { "SprzedazPoz (podatek nale¾ny)", "ZakupPoz (podatek naliczony)" } )
+                  SWITCH nMenu2
+                  CASE 1
+                     JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                     EXIT
+                  CASE 2
+                     JPKImp_VatZ_Podglad_VAT( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
+                     EXIT
+                  ENDSWITCH
+                  PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+               CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
+                  JPKImp_VatS_Podglad_FA( aDane[ 'JPK' ][ 'Faktura' ], aDane[ 'JPK' ][ 'FakturaSum' ] )
+                  PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+               ENDCASE
             CASE nMenu == 3
                cEkran2 := SaveScreen()
                cTN := aDane[ 'ZezwolNaDuplikaty' ]
