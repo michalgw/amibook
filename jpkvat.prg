@@ -184,7 +184,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
    DO WHILE .NOT. &cKoniec
       aPoz := hb_Hash()
       DO CASE
-         CASE rejs->sek_cv7 == '  '
+         CASE rejs->sek_cv7 == '  ' .OR. rejs->sek_cv7 == 'SP'
             ADodajNieZero( @aPoz, 'K_10', rejs->wartzw )
             IF rejs->export == 'T'
                ADodajNieZero( @aPoz, 'K_11', rejs->wart08 )
