@@ -469,7 +469,7 @@ PROCEDURE Vat_719( _G, _M, _STR, _OU )
       DO WHILE ! &_koniec
          ILS++
          DO CASE
-         CASE SEK_CV7 == '  '
+         CASE SEK_CV7 == '  ' .OR. SEK_CV7 == 'SP'
             p61 := p61 + WART02
             p62 := p62 + VAT02
             p61a := p61a + WART12
