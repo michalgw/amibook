@@ -247,6 +247,11 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       AAdd( aRaporty, { hDane[ 'VATZZ' ], cPlikRap } )
    ENDIF
 
+   IF hb_HHasKey( hDane, 'VATZD' ) .AND. hDane[ 'VATZD' ][ 'rob' ]
+      cPlikRap := 'frf\vatzd_w1.frf'
+      AAdd( aRaporty, { hDane[ 'VATZD' ], cPlikRap } )
+   ENDIF
+
    AEval( aRaporty, { | aPoz |
       oRap := TFreeReport():New()
       oRap:LoadFromFile( aPoz[ 2 ] )
@@ -496,6 +501,36 @@ FUNCTION edekXmlVATZZ5( oDoc )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION edekXmlVATZD1( oDoc )
+
+   LOCAL aRes := hb_Hash( 'P_10', 0, 'P_11', 0, 'PB', {} )
+   LOCAL xWar
+
+   IF ! Empty( xWar := edekXmlPobierzWartosc( oDoc, 'vzd:P_10' ) )
+      aRes[ 'P_10' ] := Val( xWar )
+   ENDIF
+
+   IF ! Empty( xWar := edekXmlPobierzWartosc( oDoc, 'vzd:P_11' ) )
+      aRes[ 'P_11' ] := Val( xWar )
+   ENDIF
+
+   IF ! Empty( xWar := edekXmlGrupaTab( oDoc, 'vzd:PozycjeSzczegolowe', 'vzd:P_B' ) )
+      AEval( xWar, { | aVal |
+         LOCAL xV := hb_Hash()
+         xV[ 'P_BB' ] := aVal[ 'vzd:P_BB' ]
+         xV[ 'P_BC' ] := aVal[ 'vzd:P_BC' ]
+         xV[ 'P_BD1' ] := aVal[ 'vzd:P_BD1' ]
+         xV[ 'P_BD2' ] := aVal[ 'vzd:P_BD2' ]
+         xV[ 'P_BE' ] := aVal[ 'vzd:P_BE' ]
+         xV[ 'P_BF' ] := aVal[ 'vzd:P_BF' ]
+         xV[ 'P_BG' ] := aVal[ 'vzd:P_BG' ]
+         AAdd( aRes[ 'PB' ], xV )
+      } )
+   ENDIF
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
 
 FUNCTION DaneXML_UPO(oDoc)
    LOCAL oObj, oIt, oEl
@@ -2880,7 +2915,7 @@ FUNCTION DaneXML_VAT7w20(oDoc, cNrRef, hNaglowek)
       hDane['P_8_R'] := ''
       hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'Nazwisko' )
       hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'ImiePierwsze' )
-//      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
+      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
    ELSE
       hDane['P_8_N'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
       hDane['P_8_R'] := xmlWartoscH( hPodmiot1, 'NIP' )
@@ -2978,16 +3013,19 @@ FUNCTION DaneXML_VAT7w20(oDoc, cNrRef, hNaglowek)
    ENDIF
 
    IF xmlWartoscH( hPozycje, 'P_70' ) == '1'
-      hDane[ 'VATZZ' ] := edekXmlVATZZ5( oDoc )
-      hDane[ 'VATZZ' ][ 'rob' ] := .T.
-      hDane[ 'VATZZ' ][ 'P_1' ] := hDane[ 'P_1' ]
-      hDane[ 'VATZZ' ][ 'P_2' ] := hDane[ 'P_2' ]
-      hDane[ 'VATZZ' ][ 'P_4' ] := hDane[ 'P_8_N' ] + hDane[ 'P_9_N' ]
-      hDane[ 'VATZZ' ][ 'P_5' ] := hDane[ 'P_9_I' ]
-      hDane[ 'VATZZ' ][ 'P_6' ] := hDane[ 'P_9_D' ]
-      hDane[ 'VATZZ' ][ 'P_7' ] := hDane[ 'P_8_R' ]
+      hDane[ 'VATZD' ] := edekXmlVATZD1( oDoc )
+      hDane[ 'VATZD' ][ 'rob' ] := .T.
+      hDane[ 'VATZD' ][ 'P_1' ] := hDane[ 'P_1' ]
+      hDane[ 'VATZD' ][ 'P_2' ] := hDane[ 'P_2' ]
+      hDane[ 'VATZD' ][ 'P_4' ] := hDane[ 'P_4' ]
+      hDane[ 'VATZD' ][ 'P_5' ] := ''
+      hDane[ 'VATZD' ][ 'P_6' ] := hDane[ 'P_5' ]
+      hDane[ 'VATZD' ][ 'P_7' ] := '1'
+      hDane[ 'VATZD' ][ 'P_8_1' ] := hDane[ 'P_8_1' ]
+      hDane[ 'VATZD' ][ 'P_8_2' ] := hDane[ 'P_8_2' ]
+      hDane[ 'VATZD' ][ 'P_9' ] := hDane[ 'P_9' ]
    ELSE
-      hDane[ 'VATZZ' ] := hb_Hash( 'rob', .F. )
+      hDane[ 'VATZD' ] := hb_Hash( 'rob', .F. )
    ENDIF
 
    hDane['P_PODPIS_IMIE'] := ''
@@ -3751,7 +3789,7 @@ FUNCTION DaneXML_VAT7Kw14(oDoc, cNrRef, hNaglowek)
       hDane['P_8_R'] := ''
       hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'Nazwisko' )
       hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'ImiePierwsze' )
-//      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
+      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
    ELSE
       hDane['P_8_N'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
       hDane['P_8_R'] := xmlWartoscH( hPodmiot1, 'NIP' )
@@ -3849,16 +3887,19 @@ FUNCTION DaneXML_VAT7Kw14(oDoc, cNrRef, hNaglowek)
    ENDIF
 
    IF xmlWartoscH( hPozycje, 'P_70' ) == '1'
-      hDane[ 'VATZZ' ] := edekXmlVATZZ5( oDoc )
-      hDane[ 'VATZZ' ][ 'rob' ] := .T.
-      hDane[ 'VATZZ' ][ 'P_1' ] := hDane[ 'P_1' ]
-      hDane[ 'VATZZ' ][ 'P_2' ] := hDane[ 'P_2' ]
-      hDane[ 'VATZZ' ][ 'P_4' ] := hDane[ 'P_8_N' ] + hDane[ 'P_9_N' ]
-      hDane[ 'VATZZ' ][ 'P_5' ] := hDane[ 'P_9_I' ]
-      hDane[ 'VATZZ' ][ 'P_6' ] := hDane[ 'P_9_D' ]
-      hDane[ 'VATZZ' ][ 'P_7' ] := hDane[ 'P_8_R' ]
+      hDane[ 'VATZD' ] := edekXmlVATZD1( oDoc )
+      hDane[ 'VATZD' ][ 'rob' ] := .T.
+      hDane[ 'VATZD' ][ 'P_1' ] := hDane[ 'P_1' ]
+      hDane[ 'VATZD' ][ 'P_2' ] := hDane[ 'P_2' ]
+      hDane[ 'VATZD' ][ 'P_4' ] := ''
+      hDane[ 'VATZD' ][ 'P_5' ] := hDane[ 'P_4' ]
+      hDane[ 'VATZD' ][ 'P_6' ] := hDane[ 'P_5' ]
+      hDane[ 'VATZD' ][ 'P_7' ] := '1'
+      hDane[ 'VATZD' ][ 'P_8_1' ] := hDane[ 'P_8_1' ]
+      hDane[ 'VATZD' ][ 'P_8_2' ] := hDane[ 'P_8_2' ]
+      hDane[ 'VATZD' ][ 'P_9' ] := hDane[ 'P_9' ]
    ELSE
-      hDane[ 'VATZZ' ] := hb_Hash( 'rob', .F. )
+      hDane[ 'VATZD' ] := hb_Hash( 'rob', .F. )
    ENDIF
 
    hDane['P_PODPIS_IMIE'] := ''

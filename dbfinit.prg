@@ -1489,6 +1489,20 @@ public aURZEDYdbf := {;
    { "KONTOVAT", "C", 32, 0 },;                   //  10
    { "KODURZEDU", "C", 4, 0 } }                   //  11
 
+// Create: VAT7ZD.DBF
+public aVAT7ZDdbf := {;
+   { "ID", "+", 4, 0 },;                          //  1
+   { "DEL", "C", 1, 0 },;                         //  2
+   { "FIRMA", "C", 3, 0 },;                       //  3
+   { "MC", "C", 2, 0 },;                          //  4
+   { "NAZWA", "C", 100, 0 },;                     //  5
+   { "NIP", "C", 30, 0 },;                        //  6
+   { "NR_DOK", "C", 40, 0 },;                     //  7
+   { "DATA_WYST", "D", 8, 0 },;                   //  8
+   { "DATA_TERM", "D", 8, 0 },;                   //  9
+   { "PODSTAWA", "N", 11, 2 },;                   //  11
+   { "PODATEK", "N", 11, 2 } }                    //  12
+
 // Create: WYPLATY.DBF
 public aWYPLATYdbf := {;
    { "ID", "+", 4, 0 },;                          //   1
@@ -1576,6 +1590,7 @@ public TabliceDbf := {;
    { "tresckor", "tresckor.dbf", aTRESCKORdbf, .T. },;
    { "umowy",    "umowy.dbf",    aUMOWYdbf,    .T. },;
    { "urzedy",   "urzedy.dbf",   aURZEDYdbf,   .T. },;
+   { "vat7zd",   "vat7zd.dbf",   aVAT7ZDdbf,   .T. },;
    { "wyplaty",  "wyplaty.dbf",  aWYPLATYdbf,  .T. },;
    { "wyposaz",  "wyposaz.dbf",  aWYPOSAZdbf,  .T. },;
    { "zaliczki", "zaliczki.dbf", aZALICZKIdbf, .T. } }
@@ -1948,7 +1963,13 @@ FUNCTION dbfIdxEDEKLAR()
    index on firma+miesiac+rodzaj TO edeklar1
    RETURN
 ****************************************
-
+FUNCTION dbfIdxVAT7ZD()
+   do while.not.dostepex('VAT7ZD')
+   enddo
+   pack
+   index on del+firma+mc TO vat7zd
+   RETURN
+****************************************
 
 
 FUNCTION dbfZnajdzTablice(cNazwa)

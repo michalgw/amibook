@@ -50,8 +50,8 @@ PROCEDURE VAT_Zalaczniki19( aDane )
    @ 17, 16, 22, 79 BOX B_DOUBLE
    @ 18, 18 GET aDane[ 'ORDZU' ][ 'rob' ] CHECKBOX CAPTION 'Uzasadnienie przyczyn korekty (ORD-ZU)' WHEN aDane[ 'Korekta' ] STYLE '[X ]'
    @ 18, 61 GET lBORDZU  PUSHBUTTON CAPTION ' Edytuj ORD-ZU ' WHEN aDane[ 'ORDZU' ][ 'rob' ] STATE { || VAT_ORD_ZU( aDane ) }
-//   @ 19, 18 GET aDane[ 'VATZZ' ][ 'rob' ] CHECKBOX CAPTION 'Wniosek o zwrot podatku VAT   (VAT-ZZ)' STYLE '[X ]'
-//   @ 19, 61 GET lBVATZZ  PUSHBUTTON CAPTION ' Edytuj VAT-ZZ ' WHEN aDane[ 'VATZZ' ][ 'rob' ] STATE { || VAT_ZZ_Edycja( aDane ) }
+   @ 19, 18 GET aDane[ 'VATZD' ][ 'rob' ] CHECKBOX CAPTION 'Zawiadomienie o skoryg. podat.(VAT-ZZ)' STYLE '[X ]'
+   @ 19, 61 GET lBVATZZ  PUSHBUTTON CAPTION ' Edytuj VAT-ZD ' WHEN aDane[ 'VATZD' ][ 'rob' ] STATE { || VAT_ZD_Edycja( aDane ) }
    @ 21, 67 GET lBKoniec PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
    Read_()
 
@@ -105,6 +105,102 @@ PROCEDURE VAT_ZZ_Edycja( aDane )
    RestScreen( , , , , cScr )
 
    RETURN
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE VAT_ZD_Edycja( aDane )
+
+   LOCAL cEkran, aKolumny
+
+   cEkran := SaveScreen( 0, 0, MaxRow(), MaxCol() )
+
+   DO WHILE ! DostepPro( 'VAT7ZD', 'VAT7ZD' )
+   ENDDO
+
+   vat7zd->( dbSetFilter( { || vat7zd->del == "+" .AND. vat7zd->firma == aDane[ 'Firma' ] .AND. vat7zd->mc == aDane[ 'Miesiac' ] }, ;
+      "vat7zd->del == '+' .AND. vat7zd->firma == aDane[ 'Firma' ] .AND. vat7zd->mc == aDane[ 'Miesiac' ]" ) )
+   vat7zd->( dbGoTop() )
+
+   GMBrowse( { ;
+      { 'field' => 'NIP', 'caption' => 'Nr ident. podatk.', 'width' => 14, 'picture' => '@S30 !!!!!!!!!!!!!!' }, ;
+      { 'field' => 'NAZWA', 'caption' => 'Nazwa kontrahenta', 'width' => 60, 'picture' => '@S100 ' + Replicate( '!', 60 ) }, ;
+      { 'field' => 'NR_DOK', 'caption' => 'Numer dokumentu', 'width' => 20, 'picture' => '@S40 ' + Replicate( '!', 20 ) }, ;
+      { 'field' => 'DATA_WYST', 'caption' => 'Data wyst.', 'width' => 10 }, ;
+      { 'field' => 'DATA_TERM', 'caption' => 'Termin plat.', 'width' => 10 }, ;
+      { 'field' => 'PODSTAWA', 'caption' => 'Podstawa opod.', 'width' => 11 }, ;
+      { 'field' => 'PODATEK', 'caption' => 'Podatek', 'width' => 11 } }, ;
+      2, 0, 22, 79, { 'new_record' => { || vat7zd->del := '+', vat7zd->mc := aDane[ 'Miesiac' ], vat7zd->firma := aDane[ 'Firma' ] }, ;
+      'before_delete' => { || vat7zd->( RLock() ) }, 'after_delete' => { || vat7zd->( dbUnlock() ) }, ;
+      'before_edit' => { || vat7zd->( RLock() ) }, 'after_edit' => { || vat7zd->( dbUnlock() ) } } )
+
+   aDane[ 'VATZD' ][ 'P_10' ] := 0
+   aDane[ 'VATZD' ][ 'P_11' ] := 0
+   aDane[ 'VATZD' ][ 'PB' ] := {}
+   vat7zd->( dbGoTop() )
+   DO WHILE ! vat7zd->( Eof() )
+      IF ! Empty( vat7zd->nip ) .AND. ! Empty( vat7zd->nazwa ) .AND. ( vat7zd->podstawa > 0 .OR. vat7zd->podstawa > 0 )
+         AAdd( aDane[ 'VATZD' ][ 'PB' ], { ;
+            'P_BB' => AllTrim( vat7zd->nazwa ), ;
+            'P_BC' => AllTrim( vat7zd->nip ), ;
+            'P_BD1' => AllTrim( vat7zd->nr_dok ), ;
+            'P_BD2' => vat7zd->data_wyst, ;
+            'P_BE' => vat7zd->data_term, ;
+            'P_BF' => vat7zd->podstawa, ;
+            'P_BG' => vat7zd->podatek } )
+         aDane[ 'VATZD' ][ 'P_10' ] := aDane[ 'VATZD' ][ 'P_10' ] + vat7zd->podstawa
+         aDane[ 'VATZD' ][ 'P_11' ] := aDane[ 'VATZD' ][ 'P_11' ] + vat7zd->podatek
+      ENDIF
+      vat7zd->( dbSkip() )
+   ENDDO
+
+   aDane[ 'VATZD' ][ 'P_10' ] := Round( aDane[ 'VATZD' ][ 'P_10' ], 0 )
+   aDane[ 'VATZD' ][ 'P_11' ] := Round( aDane[ 'VATZD' ][ 'P_11' ], 0 )
+
+   vat7zd->( dbCommit() )
+   vat7zd->( dbCloseArea() )
+
+   RestScreen( 0, 0, MaxRow(), MaxCol(), cEkran )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE VAT_ZD_Wczytaj( aDane )
+
+   DO WHILE ! DostepPro( 'VAT7ZD', 'VAT7ZD' )
+   ENDDO
+
+   vat7zd->( dbSetFilter( { || vat7zd->del == "+" .AND. vat7zd->firma == aDane[ 'Firma' ] .AND. vat7zd->mc == aDane[ 'Miesiac' ] }, ;
+      "vat7zd->del == '+' .AND. vat7zd->firma == aDane[ 'Firma' ] .AND. vat7zd->mc == aDane[ 'Miesiac' ]" ) )
+   vat7zd->( dbGoTop() )
+
+   aDane[ 'VATZD' ][ 'P_10' ] := 0
+   aDane[ 'VATZD' ][ 'P_11' ] := 0
+   aDane[ 'VATZD' ][ 'PB' ] := {}
+   vat7zd->( dbGoTop() )
+   DO WHILE ! vat7zd->( Eof() )
+      IF ! Empty( vat7zd->nip ) .AND. ! Empty( vat7zd->nazwa ) .AND. ( vat7zd->podstawa > 0 .OR. vat7zd->podstawa > 0 )
+         AAdd( aDane[ 'VATZD' ][ 'PB' ], { ;
+            'P_BB' => AllTrim( vat7zd->nazwa ), ;
+            'P_BC' => AllTrim( vat7zd->nip ), ;
+            'P_BD1' => AllTrim( vat7zd->nr_dok ), ;
+            'P_BD2' => vat7zd->data_wyst, ;
+            'P_BE' => vat7zd->data_term, ;
+            'P_BF' => vat7zd->podstawa, ;
+            'P_BG' => vat7zd->podatek } )
+         aDane[ 'VATZD' ][ 'P_10' ] := aDane[ 'VATZD' ][ 'P_10' ] + vat7zd->podstawa
+         aDane[ 'VATZD' ][ 'P_11' ] := aDane[ 'VATZD' ][ 'P_11' ] + vat7zd->podatek
+      ENDIF
+      vat7zd->( dbSkip() )
+   ENDDO
+
+   aDane[ 'VATZD' ][ 'P_10' ] := Round( aDane[ 'VATZD' ][ 'P_10' ], 0 )
+   aDane[ 'VATZD' ][ 'P_11' ] := Round( aDane[ 'VATZD' ][ 'P_11' ], 0 )
+
+   vat7zd->( dbCommit() )
+   vat7zd->( dbCloseArea() )
+
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 

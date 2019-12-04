@@ -183,6 +183,10 @@ if tnesc([*i],[   Jeste&_s. pewny? (T/N)   ])
    enddo
    do SETIND with 'EDEKLAR'
    zap_()
+   do while.not.dostepex('VAT7ZD')
+   enddo
+   do SETIND with 'VAT7ZD'
+   zap_()
 *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
    close_()
    Indeks()

@@ -3754,6 +3754,10 @@ FUNCTION edek_vat7_20( aDane )
          r = r + '    <P_69>1</P_69>' + nl
       ENDIF
 
+      IF aDane[ 'VATZD' ][ 'rob' ]
+         r = r + '    <P_70>1</P_70>' + nl
+      ENDIF
+
       IF Len( zAdrEMail ) > 0
          r = r + '    <P_73>' + zAdrEMail + '</P_73>' + nl
       ENDIF
@@ -3764,14 +3768,14 @@ FUNCTION edek_vat7_20( aDane )
 		//r = r + '    <P_76>' + date2strxml(Date()) + '</P_76>' + nl
 		r = r + '  </PozycjeSzczegolowe>' + nl
 		r = r + '  <Pouczenia>1</Pouczenia>' + nl
-      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) // .OR. aDane[ 'VATZZ' ][ 'rob' ]
+      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) .OR. aDane[ 'VATZD' ][ 'rob' ]
          r = r + '  <Zalaczniki>' + nl
          IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 )
             r = r + edek_ord_zu3v2(tresc_korekty_vat7) + nl
          ENDIF
-//         IF aDane[ 'VATZZ' ][ 'rob' ]
-//            r += edek_vat_zz5( aDane[ 'VATZZ' ] )
-//         ENDIF
+         IF aDane[ 'VATZD' ][ 'rob' ]
+            r += edek_vat_zd1( aDane[ 'VATZD' ] )
+         ENDIF
          r = r + '  </Zalaczniki>' + nl
       ENDIF
 		r = r + '</Deklaracja>'
@@ -3898,6 +3902,10 @@ FUNCTION edek_vat7k_14( aDane )
          r = r + '    <P_69>1</P_69>' + nl
       ENDIF
 
+      IF aDane[ 'VATZD' ][ 'rob' ]
+         r = r + '    <P_70>1</P_70>' + nl
+      ENDIF
+
       IF Len( zAdrEMail ) > 0
          r = r + '    <P_73>' + zAdrEMail + '</P_73>' + nl
       ENDIF
@@ -3908,10 +3916,13 @@ FUNCTION edek_vat7k_14( aDane )
 		//r = r + '    <P_76>' + date2strxml(Date()) + '</P_76>' + nl
 		r = r + '  </PozycjeSzczegolowe>' + nl
 		r = r + '  <Pouczenia>1</Pouczenia>' + nl
-      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) // .OR. aDane[ 'VATZZ' ][ 'rob' ]
+      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) .OR. aDane[ 'VATZD' ][ 'rob' ]
          r = r + '  <Zalaczniki>' + nl
          IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 )
             r = r + edek_ord_zu3v2(tresc_korekty_vat7) + nl
+         ENDIF
+         IF aDane[ 'VATZD' ][ 'rob' ]
+            r += edek_vat_zd1( aDane[ 'VATZD' ] )
          ENDIF
          r = r + '  </Zalaczniki>' + nl
       ENDIF
@@ -4464,6 +4475,36 @@ FUNCTION edek_vat_zz5( aDane )
    r += '        <vzz:P_10>' + str2sxml( AllTrim( aDane[ 'P_10' ] ) ) + '</vzz:P_10>' + nl
    r += '      </vzz:PozycjeSzczegolowe>' + nl
    r += '    </vzz:Wniosek_VAT-ZZ>' + nl
+
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION edek_vat_zd1( aDane )
+
+   LOCAL r, nl := Chr( 13 ) + Chr( 10 ), i
+
+   r := '    <vzd:Wniosek_VAT-ZD xmlns:vzd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2019/02/07/eD/VATZD/">' + nl
+   r += '      <vzd:Naglowek>' + nl
+   r += '        <vzd:KodFormularza kodSystemowy="VAT-ZD (1)" wersjaSchemy="3-0E">VAT-ZD</vzd:KodFormularza>' + nl
+   r += '        <vzd:WariantFormularza>1</vzd:WariantFormularza>' + nl
+   r += '      </vzd:Naglowek>' + nl
+   r += '      <vzd:PozycjeSzczegolowe>' + nl
+   FOR i := 1 TO Len( aDane[ 'PB' ] )
+      r += '        <vzd:P_B typ="G">' + nl
+      r += '          <vzd:P_BB>' + str2sxml( AllTrim( aDane[ 'PB' ][ i ][ 'P_BB' ] ) ) + '</vzd:P_BB>' + nl
+      r += '          <vzd:P_BC>' + str2sxml( AllTrim( aDane[ 'PB' ][ i ][ 'P_BC' ] ) ) + '</vzd:P_BC>' + nl
+      r += '          <vzd:P_BD1>' + str2sxml( AllTrim( aDane[ 'PB' ][ i ][ 'P_BD1' ] ) ) + '</vzd:P_BD1>' + nl
+      r += '          <vzd:P_BD2>' + date2strxml( aDane[ 'PB' ][ i ][ 'P_BD2' ] ) + '</vzd:P_BD2>' + nl
+      r += '          <vzd:P_BE>' + date2strxml( aDane[ 'PB' ][ i ][ 'P_BE' ] ) + '</vzd:P_BE>' + nl
+      r += '          <vzd:P_BF>' + TKwota2Nieujemna( aDane[ 'PB' ][ i ][ 'P_BF' ] ) + '</vzd:P_BF>' + nl
+      r += '          <vzd:P_BG>' + TKwota2Nieujemna( aDane[ 'PB' ][ i ][ 'P_BG' ] ) + '</vzd:P_BG>' + nl
+      r += '        </vzd:P_B>' + nl
+   NEXT
+   r += '        <vzd:P_10>' + TKwotaCNieujemna( aDane[ 'P_10' ] ) + '</vzd:P_10>' + nl
+   r += '        <vzd:P_11>' + TKwotaCNieujemna( aDane[ 'P_11' ] ) + '</vzd:P_11>' + nl
+   r += '      </vzd:PozycjeSzczegolowe>' + nl
+   r += '    </vzd:Wniosek_VAT-ZD>' + nl
 
    RETURN r
 
