@@ -80,7 +80,7 @@ PROCEDURE KRejZ()
       DO &_proc
    ENDIF
    scr_kolum := SaveScreen( 7, 40, 20, 79 )
-   scr_sekcv7 := SaveScreen( 0, 16, 11, 55 )
+   scr_sekcv7 := SaveScreen( 0, 16, 12, 55 )
    kl := 0
    zSYMB_REJ := '  '
    DO WHILE kl # K_ESC
@@ -365,7 +365,7 @@ PROCEDURE KRejZ()
                RestScreen( 7, 40, 20, 79, scr_kolum )
             ENDIF
             IF scr_kolumC == .T.
-               RestScreen( 0, 16, 11, 55, scr_sekcv7 )
+               RestScreen( 0, 16, 12, 55, scr_sekcv7 )
             ENDIF
             IF LastKey() == K_ESC
                BREAK

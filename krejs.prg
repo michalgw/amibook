@@ -72,7 +72,7 @@ PROCEDURE KRejS()
    IF ! &_top_bot
       DO &_proc
    ENDIF
-   scr_sekcv7 := SaveScreen( 3, 40, 8, 79 )
+   scr_sekcv7 := SaveScreen( 1, 40, 8, 79 )
    kl := 0
    zSYMB_REJ := '  '
    DO WHILE kl # K_ESC
@@ -329,7 +329,7 @@ PROCEDURE KRejS()
             read_()
             SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_DlgK
             IF scr_kolumC := .T.
-               RestScreen( 2, 40, 8, 79, scr_sekcv7 )
+               RestScreen( 1, 40, 8, 79, scr_sekcv7 )
             ENDIF
             IF LastKey() == K_ESC
                BREAK
