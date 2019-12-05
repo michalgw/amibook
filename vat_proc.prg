@@ -50,7 +50,7 @@ PROCEDURE VAT_Zalaczniki19( aDane )
    @ 17, 16, 22, 79 BOX B_DOUBLE
    @ 18, 18 GET aDane[ 'ORDZU' ][ 'rob' ] CHECKBOX CAPTION 'Uzasadnienie przyczyn korekty (ORD-ZU)' WHEN aDane[ 'Korekta' ] STYLE '[X ]'
    @ 18, 61 GET lBORDZU  PUSHBUTTON CAPTION ' Edytuj ORD-ZU ' WHEN aDane[ 'ORDZU' ][ 'rob' ] STATE { || VAT_ORD_ZU( aDane ) }
-   @ 19, 18 GET aDane[ 'VATZD' ][ 'rob' ] CHECKBOX CAPTION 'Zawiadomienie o skoryg. podat.(VAT-ZZ)' STYLE '[X ]'
+   @ 19, 18 GET aDane[ 'VATZD' ][ 'rob' ] CHECKBOX CAPTION 'Zawiadomienie o skoryg. podat.(VAT-ZD)' STYLE '[X ]'
    @ 19, 61 GET lBVATZZ  PUSHBUTTON CAPTION ' Edytuj VAT-ZD ' WHEN aDane[ 'VATZD' ][ 'rob' ] STATE { || VAT_ZD_Edycja( aDane ) }
    @ 21, 67 GET lBKoniec PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
    Read_()
