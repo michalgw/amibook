@@ -50,11 +50,11 @@ PROCEDURE Vat_719( _G, _M, _STR, _OU )
    aDane[ 'ORDZU' ] := hb_Hash()
    aDane[ 'ORDZU' ][ 'rob' ] := .F.
    aDane[ 'ORDZU' ][ 'P_13' ] := ''
-   aDane[ 'VATZZ' ] := hb_Hash()
-   aDane[ 'VATZZ' ][ 'rob' ] := .F.
-   aDane[ 'VATZZ' ][ 'P_8' ] := 0
-   aDane[ 'VATZZ' ][ 'P_9' ] := 0
-   aDane[ 'VATZZ' ][ 'P_10' ] := ''
+   aDane[ 'VATZD' ] := hb_Hash()
+   aDane[ 'VATZD' ][ 'rob' ] := .F.
+   aDane[ 'VATZD' ][ 'PB' ] := {}
+   aDane[ 'VATZD' ][ 'P_10' ] := 0
+   aDane[ 'VATZD' ][ 'P_11' ] := 0
    aDane[ 'Firma' ] := ident_fir
    aDane[ 'Miesiac' ] := miesiac
 
@@ -119,6 +119,9 @@ PROCEDURE Vat_719( _G, _M, _STR, _OU )
       zstrusprob := strusprob
 
       zAdrEMail := AllTrim( email )
+
+      VAT_ZD_Wczytaj( aDane )
+      aDane[ 'VATZD' ][ 'rob' ] := Len( aDane[ 'VATZD' ][ 'PB' ] ) > 0
 
       SELECT 2
       IF Dostep( 'SUMA_MC' )

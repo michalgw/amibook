@@ -3472,6 +3472,10 @@ FUNCTION edek_vat7_19( aDane )
 //		r = r + '    <P_62>2</P_62>' + nl
 //		r = r + '    <P_63>2</P_63>' + nl
 
+      IF aDane[ 'VATZD' ][ 'rob' ]
+         r = r + '    <P_69>1</P_69>' + nl
+      ENDIF
+
       IF Len( zAdrEMail ) > 0
          r = r + '    <P_72>' + zAdrEMail + '</P_72>' + nl
       ENDIF
@@ -3482,14 +3486,14 @@ FUNCTION edek_vat7_19( aDane )
 		//r = r + '    <P_76>' + date2strxml(Date()) + '</P_76>' + nl
 		r = r + '  </PozycjeSzczegolowe>' + nl
 		r = r + '  <Pouczenia>1</Pouczenia>' + nl
-      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) // .OR. aDane[ 'VATZZ' ][ 'rob' ]
+      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) .OR. aDane[ 'VATZD' ][ 'rob' ]
          r = r + '  <Zalaczniki>' + nl
          IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 )
             r = r + edek_ord_zu3v2(tresc_korekty_vat7) + nl
          ENDIF
-//         IF aDane[ 'VATZZ' ][ 'rob' ]
-//            r += edek_vat_zz5( aDane[ 'VATZZ' ] )
-//         ENDIF
+         IF aDane[ 'VATZD' ][ 'rob' ]
+            r += edek_vat_zd1( aDane[ 'VATZD' ] )
+         ENDIF
          r = r + '  </Zalaczniki>' + nl
       ENDIF
 		r = r + '</Deklaracja>'
@@ -3612,6 +3616,10 @@ FUNCTION edek_vat7k_13( aDane )
 //		r = r + '    <P_62>2</P_62>' + nl
 //		r = r + '    <P_63>2</P_63>' + nl
 
+      IF aDane[ 'VATZD' ][ 'rob' ]
+         r = r + '    <P_69>1</P_69>' + nl
+      ENDIF
+
       IF Len( zAdrEMail ) > 0
          r = r + '    <P_72>' + zAdrEMail + '</P_72>' + nl
       ENDIF
@@ -3622,10 +3630,13 @@ FUNCTION edek_vat7k_13( aDane )
 		//r = r + '    <P_76>' + date2strxml(Date()) + '</P_76>' + nl
 		r = r + '  </PozycjeSzczegolowe>' + nl
 		r = r + '  <Pouczenia>1</Pouczenia>' + nl
-      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) // .OR. aDane[ 'VATZZ' ][ 'rob' ]
+      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 ) .OR. aDane[ 'VATZD' ][ 'rob' ]
          r = r + '  <Zalaczniki>' + nl
          IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 )
             r = r + edek_ord_zu3v2(tresc_korekty_vat7) + nl
+         ENDIF
+         IF aDane[ 'VATZD' ][ 'rob' ]
+            r += edek_vat_zd1( aDane[ 'VATZD' ] )
          ENDIF
          r = r + '  </Zalaczniki>' + nl
       ENDIF

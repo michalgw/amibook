@@ -2862,16 +2862,19 @@ FUNCTION DaneXML_VAT7w19(oDoc, cNrRef, hNaglowek)
    ENDIF
 
    IF xmlWartoscH( hPozycje, 'P_69' ) == '1'
-      hDane[ 'VATZZ' ] := edekXmlVATZZ5( oDoc )
-      hDane[ 'VATZZ' ][ 'rob' ] := .T.
-      hDane[ 'VATZZ' ][ 'P_1' ] := hDane[ 'P_1' ]
-      hDane[ 'VATZZ' ][ 'P_2' ] := hDane[ 'P_2' ]
-      hDane[ 'VATZZ' ][ 'P_4' ] := hDane[ 'P_8_N' ] + hDane[ 'P_9_N' ]
-      hDane[ 'VATZZ' ][ 'P_5' ] := hDane[ 'P_9_I' ]
-      hDane[ 'VATZZ' ][ 'P_6' ] := hDane[ 'P_9_D' ]
-      hDane[ 'VATZZ' ][ 'P_7' ] := hDane[ 'P_8_R' ]
+      hDane[ 'VATZD' ] := edekXmlVATZD1( oDoc )
+      hDane[ 'VATZD' ][ 'rob' ] := .T.
+      hDane[ 'VATZD' ][ 'P_1' ] := hDane[ 'P_1' ]
+      hDane[ 'VATZD' ][ 'P_2' ] := hDane[ 'P_2' ]
+      hDane[ 'VATZD' ][ 'P_4' ] := hDane[ 'P_4' ]
+      hDane[ 'VATZD' ][ 'P_5' ] := ''
+      hDane[ 'VATZD' ][ 'P_6' ] := hDane[ 'P_5' ]
+      hDane[ 'VATZD' ][ 'P_7' ] := '1'
+      hDane[ 'VATZD' ][ 'P_8_1' ] := hDane[ 'P_8_1' ]
+      hDane[ 'VATZD' ][ 'P_8_2' ] := hDane[ 'P_8_2' ]
+      hDane[ 'VATZD' ][ 'P_9' ] := hDane[ 'P_9' ]
    ELSE
-      hDane[ 'VATZZ' ] := hb_Hash( 'rob', .F. )
+      hDane[ 'VATZD' ] := hb_Hash( 'rob', .F. )
    ENDIF
 
    hDane['P_PODPIS_IMIE'] := ''
@@ -3736,16 +3739,19 @@ FUNCTION DaneXML_VAT7Kw13(oDoc, cNrRef, hNaglowek)
    ENDIF
 
    IF xmlWartoscH( hPozycje, 'P_69' ) == '1'
-      hDane[ 'VATZZ' ] := edekXmlVATZZ5( oDoc )
-      hDane[ 'VATZZ' ][ 'rob' ] := .T.
-      hDane[ 'VATZZ' ][ 'P_1' ] := hDane[ 'P_1' ]
-      hDane[ 'VATZZ' ][ 'P_2' ] := hDane[ 'P_2' ]
-      hDane[ 'VATZZ' ][ 'P_4' ] := hDane[ 'P_8_N' ] + hDane[ 'P_9_N' ]
-      hDane[ 'VATZZ' ][ 'P_5' ] := hDane[ 'P_9_I' ]
-      hDane[ 'VATZZ' ][ 'P_6' ] := hDane[ 'P_9_D' ]
-      hDane[ 'VATZZ' ][ 'P_7' ] := hDane[ 'P_8_R' ]
+      hDane[ 'VATZD' ] := edekXmlVATZD1( oDoc )
+      hDane[ 'VATZD' ][ 'rob' ] := .T.
+      hDane[ 'VATZD' ][ 'P_1' ] := hDane[ 'P_1' ]
+      hDane[ 'VATZD' ][ 'P_2' ] := hDane[ 'P_2' ]
+      hDane[ 'VATZD' ][ 'P_4' ] := hDane[ 'P_4' ]
+      hDane[ 'VATZD' ][ 'P_5' ] := ''
+      hDane[ 'VATZD' ][ 'P_6' ] := hDane[ 'P_5' ]
+      hDane[ 'VATZD' ][ 'P_7' ] := '1'
+      hDane[ 'VATZD' ][ 'P_8_1' ] := hDane[ 'P_8_1' ]
+      hDane[ 'VATZD' ][ 'P_8_2' ] := hDane[ 'P_8_2' ]
+      hDane[ 'VATZD' ][ 'P_9' ] := hDane[ 'P_9' ]
    ELSE
-      hDane[ 'VATZZ' ] := hb_Hash( 'rob', .F. )
+      hDane[ 'VATZD' ] := hb_Hash( 'rob', .F. )
    ENDIF
 
    hDane['P_PODPIS_IMIE'] := ''
