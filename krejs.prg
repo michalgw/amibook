@@ -1725,7 +1725,7 @@ FUNCTION vfsSEK_CV7()
 *******************************************************
    R := .F.
    IF zSEK_CV7 == 'PN' .OR. zSEK_CV7 == '  ' .OR. zSEK_CV7 == 'PU' .OR. zSEK_CV7 == 'DP' .OR. zSEK_CV7 == 'SP'
-      RestScreen( 2, 40, 8, 79, scr_sekcv7 )
+      RestScreen( 1, 40, 8, 79, scr_sekcv7 )
       R := .T.
    ELSE
       R := .F.
@@ -1735,17 +1735,17 @@ FUNCTION vfsSEK_CV7()
 *******************************************************
 FUNCTION wfsSEK_CV7()
 *******************************************************
-   scr_sekcv7 := SaveScreen( 2, 40, 9, 79 )
+   scr_sekcv7 := SaveScreen( 1, 40, 8, 79 )
    scr_kolumC := .T.
    ColInf()
-   @ 2, 40 CLEAR TO 9, 79
-   @ 2, 40 TO 9, 79
-   @ 3, 41 SAY PadC( 'Podaj sekcje deklaracji VAT-7:', 30 )
-   @ 4, 41 SAY '   - dwie spacje - zadne z ponizszych '
-   @ 5, 41 SAY 'PN - podatnikiem nabywca (towar)      '
-   @ 6, 41 SAY 'PU - podatnikiem nabywca (usˆuga)     '
-   @ 7, 41 SAY 'SP - mechanizm podzielonej pˆatno˜ci  '
-   @ 8, 41 SAY 'DP - dodatowe pola (K_36, K_46)       '
+   @ 1, 40 CLEAR TO 8, 79
+   @ 1, 40 TO 8, 79
+   @ 2, 41 SAY PadC( 'Podaj sekcje deklaracji VAT-7:', 30 )
+   @ 3, 41 SAY '   - dwie spacje - zadne z ponizszych '
+   @ 4, 41 SAY 'PN - podatnikiem nabywca (towar)      '
+   @ 5, 41 SAY 'PU - podatnikiem nabywca (usˆuga)     '
+   @ 6, 41 SAY 'SP - mechanizm podzielonej pˆatno˜ci  '
+   @ 7, 41 SAY 'DP - dodatowe pola (K_36, K_46)       '
    ColStd()
    RETURN .T.
 

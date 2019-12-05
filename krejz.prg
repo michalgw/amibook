@@ -1427,7 +1427,7 @@ FUNCTION vfSEK_CV7()
    R := .F.
    IF zSEK_CV7 == 'WT' .OR. zSEK_CV7 == 'IT' .OR. zSEK_CV7 == 'IU' .OR. zSEK_CV7 == 'PN' .OR. zSEK_CV7 == '  ' ;
       .OR. zSEK_CV7 == 'WS' .OR. zSEK_CV7 == 'WZ' .OR. zSEK_CV7 == 'PZ' .OR. zSEK_CV7 == 'PS' .OR. zSEK_CV7 == 'SP'
-      RestScreen( 0, 16, 11, 55, scr_sekcv7 )
+      RestScreen( 0, 16, 12, 55, scr_sekcv7 )
       R := .T.
    ELSE
       R := .F.
@@ -1452,7 +1452,7 @@ FUNCTION wfSEK_CV7()
    @  8, 17 SAY 'PN - dostawa tow.(podatnikiem nabywca)'
    @  9, 17 SAY 'PZ - podat.nab. (tylko pod. naliczony)'
    @ 10, 17 SAY 'PS - podat.nab. (tylko pod. nale¾ny)  '
-   @ 10, 17 SAY 'SP - mechanizm podzielonej pˆatno˜ci  '
+   @ 11, 17 SAY 'SP - mechanizm podzielonej pˆatno˜ci  '
    ColStd()
    RETURN .T.
 
