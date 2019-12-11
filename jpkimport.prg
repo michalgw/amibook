@@ -551,7 +551,7 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                         aDaneJPK[ 'FakturaSum' ][ 'P_14_2' ] += aW[ 'P_14_2' ]
                      ENDIF
                      IF hb_HHasKey( aW, 'P_14_2W' ) .AND. HB_ISCHAR( aW[ 'P_14_2W' ] )
-                        aW[ 'P_14_2' ] := sxml2num( aW[ 'P_14_2W' ], 0 )
+                        aW[ 'P_14_2W' ] := sxml2num( aW[ 'P_14_2W' ], 0 )
                         aDaneJPK[ 'FakturaSum' ][ 'P_14_2W' ] += aW[ 'P_14_2W' ]
                      ENDIF
                      IF hb_HHasKey( aW, 'P_13_3' ) .AND. HB_ISCHAR( aW[ 'P_13_3' ] )
@@ -607,6 +607,9 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                      ENDIF
                      IF hb_HHasKey( aW, 'P_18' ) .AND. HB_ISCHAR( aW[ 'P_18' ] )
                         aW[ 'P_18' ] := sxml2bool( aW[ 'P_18' ], 0 )
+                     ENDIF
+                     IF hb_HHasKey( aW, 'P_18A' ) .AND. HB_ISCHAR( aW[ 'P_18A' ] )
+                        aW[ 'P_18A' ] := sxml2bool( aW[ 'P_18A' ], 0 )
                      ENDIF
                      IF hb_HHasKey( aW, 'P_19' ) .AND. HB_ISCHAR( aW[ 'P_19' ] )
                         aW[ 'P_19' ] := sxml2bool( aW[ 'P_19' ], 0 )
