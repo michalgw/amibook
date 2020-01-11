@@ -1584,7 +1584,7 @@ FUNCTION edek_pit11_25()
          r = r + '    <OsobaNiefizyczna>' + nl
 			r = r + '      <NIP>' + trimnip(P1s) + '</NIP>' + nl
 			r = r + '      <PelnaNazwa>' + str2sxml(AllTrim(P8n)) + '</PelnaNazwa>' + nl
-			r = r + '      <REGON>' + P8r + '</REGON>' + nl
+			//r = r + '      <REGON>' + P8r + '</REGON>' + nl
 		   r = r + '    </OsobaNiefizyczna>' + nl
       else
 		   r = r + '    <OsobaFizyczna>' + nl

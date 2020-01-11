@@ -2195,9 +2195,9 @@ FUNCTION DaneXML_PIT11w25(oDoc, cNrRef, hNaglowek)
       hDane['P_10_I'] := xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' )
       hDane['P_10_D'] := xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
    ELSE
-      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
-      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' )
-      hDane['P_9_R'] := xmlWartoscH( hPodmiot1, 'etd:REGON' )
+      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
+      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
+      hDane['P_9_R'] := xmlWartoscH( hPodmiot1, 'REGON' )
       hDane['P_10_N'] := ''
       hDane['P_10_I'] := ''
       hDane['P_10_D'] := ''
