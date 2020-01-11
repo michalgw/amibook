@@ -54,6 +54,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_PIT11w24()
       cPlikRap := 'frf\pit11_w24.frf'
       EXIT
+   CASE 'PIT11-25'
+      hDane := DaneDek_PIT11w25()
+      cPlikRap := 'frf\pit11_w25.frf'
+      EXIT
    CASE 'VAT7-15'
       hDane := DaneDek_VAT7w15()
       cPlikRap := 'frf\vat7_w15.frf'
@@ -1581,6 +1585,130 @@ FUNCTION DaneDek_PIT11w24()
 
    hDane['P_85_1'] := '0'
    hDane['P_85_2'] := '1'
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_PIT11w25()
+   LOCAL hDane := hb_Hash()
+
+   hDane['P_1'] := p1s
+   hDane['P_2'] := ''
+   hDane['P_4'] := substr(p4,13)
+   hDane['P_5'] := ''
+   hDane['P_6'] := iif( AllTrim(p6_kod) != '', KodUS2Nazwa( AllTrim(p6_kod) ), '' )
+   hDane['P_7_1'] := iif( JAKICEL == 'K', '0', '1' )
+   hDane['P_7_2'] := iif( JAKICEL == 'K', '1', '0' )
+   hDane['P_8_1'] := iif( spolka_, '1', '0' )
+   hDane['P_8_2'] := iif( spolka_, '0', '1' )
+   IF spolka_
+      hDane['P_9_N'] := p8n
+      hDane['P_9_R'] := p8r
+      hDane['P_10_N'] := ''
+      hDane['P_10_I'] := ''
+      hDane['P_10_D'] := ''
+   ELSE
+      hDane['P_9_N'] := ''
+      hDane['P_9_R'] := ''
+      hDane['P_10_N'] := naz_imie_naz(AllTrim(P8n))
+      hDane['P_10_I'] := naz_imie_imie(AllTrim(P8n))
+      hDane['P_10_D'] := P8d
+   ENDIF
+   hDane['P_11_1'] := iif( DP10 == 'T', '1', '0' )
+   hDane['P_11_2'] := iif( DP10 == 'N', '1', '0' )
+   IF Len(AllTrim(P30)) = 0
+      hDane['P_12_R'] := 'P'
+      hDane['P_12_N'] := AllTrim(P29)
+   ELSE
+      hDane['P_12_R'] := 'N'
+      hDane['P_12_N'] := AllTrim(P30)
+   ENDIF
+   hDane['P_13'] := AllTrim( P_DokIDNr )
+   hDane['P_14'] := PracDokRodzajStr( P_DokIDTyp )
+   hDane['P_15'] := P_KrajID
+   hDane['P_16'] := AllTrim(P31)
+   hDane['P_17'] := AllTrim(P32)
+   hDane['P_18'] := substr(p36,1,4) + '-' + substr(p36,7,4) + '-' + substr(p36,13)
+   hDane['P_19'] := P_18Kraj
+   hDane['P_20'] := AllTrim(P38)
+   hDane['P_21'] := AllTrim(P38a)
+   hDane['P_22'] := AllTrim(P39)
+   hDane['P_23'] := AllTrim(P40)
+   hDane['P_24'] := AllTrim(P41)
+   hDane['P_25'] := AllTrim(P42)
+   hDane['P_26'] := AllTrim(P43)
+   hDane['P_27'] := AllTrim(P44)
+
+   hDane['P_28_1'] := iif( DP28 == '1', '1', '0' )
+   hDane['P_28_2'] := iif( DP28 == '2', '1', '0' )
+   hDane['P_28_3'] := iif( DP28 == '3', '1', '0' )
+   hDane['P_28_4'] := iif( DP28 == '4', '1', '0' )
+
+   hDane['P_29'] := P50
+   hDane['P_30'] := P51
+   hDane['P_31'] := P53a
+   hDane['P_32'] := zKOR_ZWET
+   hDane['P_33'] := P55
+   hDane['P_34'] := 0
+   hDane['P_35'] := 0
+   hDane['P_36'] := P50_R26
+   hDane['P_37'] := P51_R26
+   hDane['P_38'] := P53a_R26
+   hDane['P_39'] := zKOR_ZWET
+   hDane['P_40'] := P55_R26
+   hDane['P_41'] := 0
+   hDane['P_42'] := 0
+   hDane['P_43'] := p50_3
+   hDane['P_44'] := p50_3
+   hDane['P_45'] := zKOR_ZWEM
+   hDane['P_46'] := p53_3
+   hDane['P_47'] := p50_5
+   hDane['P_48'] := p51_5
+   hDane['P_49'] := p52_5a
+   hDane['P_50'] := p53_5
+   hDane['P_51'] := 0
+   hDane['P_52'] := 0
+   hDane['P_53'] := 0
+   hDane['P_54'] := 0
+   hDane['P_55'] := P50_5_R26
+   hDane['P_56'] := P51_5_R26
+   hDane['P_57'] := P52_5a_R26
+   hDane['P_58'] := P53_5_R26
+   hDane['P_59'] := 0
+   hDane['P_60'] := p52_6a
+   hDane['P_61'] := p53_6
+   hDane['P_62'] := p50_6
+   hDane['P_63'] := p51_6
+   hDane['P_64'] := p50_7
+   hDane['P_65'] := p51_7
+   hDane['P_66'] := P50_7-P51_7
+   hDane['P_67'] := zKOR_ZWIN
+   hDane['P_68'] := p53_7
+   hDane['P_69'] := p52+p52z
+   hDane['P_70'] := p52_R26+p52z_R26
+   hDane['P_71'] := zKOR_SPOLZ
+   hDane['P_72'] := p54a+p54za+p64
+   hDane['P_73'] := p54a_R26+p54za_R26+p64_R26
+   hDane['P_74'] := zKOR_ZDROZ
+
+   hDane['P_75'] := 0
+   hDane['P_76'] := 0
+   hDane['P_77'] := 0
+   hDane['P_78'] := 0
+   hDane['P_79'] := 0
+   hDane['P_80'] := 0
+   hDane['P_81'] := 0
+   hDane['P_82'] := 0
+   hDane['P_83'] := 0
+   hDane['P_84'] := 0
+   hDane['P_85'] := 0
+   hDane['P_86'] := 0
+   hDane['P_87'] := 0
+   hDane['P_88'] := 0
+
+   hDane['P_89_1'] := '0'
+   hDane['P_89_2'] := '1'
 
    RETURN hDane
 
