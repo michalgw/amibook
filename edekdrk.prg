@@ -72,6 +72,11 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\pit4r_w8.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'PIT4R-9'
+      hDane := DaneXML_PIT4Rw9( oDoc, cNrRef )
+      cPlikRap := 'frf\pit4r_w9.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'PIT8AR-6'
       hDane := DaneXML_PIT8ARw6( oDoc, cNrRef )
       cPlikRap := 'frf\pit8ar_w6.frf'
@@ -1040,6 +1045,230 @@ FUNCTION DaneXML_PIT4Rw8(oDoc, cNrRef, hNaglowek)
       hDane['ORDZU']['ORDZU_6'] := hDane['P_9_I']
       hDane['ORDZU']['ORDZU_7'] := hDane['P_9_D']
       hDane['ORDZU']['ORDZU_8'] := hDane['P_8_N']
+
+      hDane['ORDZU']['ORDZU_9'] := ''
+      hDane['ORDZU']['ORDZU_10'] := ''
+      hDane['ORDZU']['ORDZU_11'] := ''
+   ENDIF
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneXML_PIT4Rw9(oDoc, cNrRef, hNaglowek)
+   LOCAL hPodmiot1, cTmp, hPozycje
+   LOCAL hDane := hb_Hash()
+   IF !HB_ISHASH( hNaglowek )
+      hNaglowek := edekXmlNaglowek( oDoc )
+   ENDIF
+   hPodmiot1 := edekXmlPodmiot1( oDoc )
+
+   hPozycje := edekXmlGrupa( oDoc, 'PozycjeSzczegolowe' )
+
+   hDane['P_2'] := iif( HB_ISSTRING( cNrRef ), cNrRef, '' )
+   hDane['P_4'] := sxml2num( xmlWartoscH( hNaglowek, 'Rok' ) )
+   cTmp := xmlWartoscH( hNaglowek, 'KodUrzedu' )
+   hDane['P_5'] := iif( cTmp != '', KodUS2Nazwa( cTmp ), '' )
+   hDane['P_6_1'] := iif( xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '1', '1', '0' )
+   hDane['P_6_2'] := iif( xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '2', '1', '0' )
+   hDane['P_8_1'] := iif( !xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   hDane['P_8_2'] := iif( xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' ) + ', ' ;
+        + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' ) + ',      ' + xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+   ELSE
+      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' ) + ',      ' + xmlWartoscH( hPodmiot1, 'REGON' )
+   ENDIF
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane['P_9_R'] := ''
+      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'Nazwisko' )
+      hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'ImiePierwsze' )
+      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
+   ELSE
+      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' )
+      hDane['P_9_R'] := xmlWartoscH( hPodmiot1, 'etd:REGON' )
+      hDane['P_9_I'] := ''
+      hDane['P_9_D'] := ''
+   ENDIF
+   hDane['P_10'] := sxml2num( xmlWartoscH( hPozycje, 'P_10' ) )
+   hDane['P_11'] := sxml2num( xmlWartoscH( hPozycje, 'P_11' ) )
+   hDane['P_12'] := sxml2num( xmlWartoscH( hPozycje, 'P_12' ) )
+   hDane['P_13'] := sxml2num( xmlWartoscH( hPozycje, 'P_13' ) )
+   hDane['P_14'] := sxml2num( xmlWartoscH( hPozycje, 'P_14' ) )
+   hDane['P_15'] := sxml2num( xmlWartoscH( hPozycje, 'P_15' ) )
+   hDane['P_16'] := sxml2num( xmlWartoscH( hPozycje, 'P_16' ) )
+   hDane['P_17'] := sxml2num( xmlWartoscH( hPozycje, 'P_17' ) )
+   hDane['P_18'] := sxml2num( xmlWartoscH( hPozycje, 'P_18' ) )
+   hDane['P_19'] := sxml2num( xmlWartoscH( hPozycje, 'P_19' ) )
+   hDane['P_20'] := sxml2num( xmlWartoscH( hPozycje, 'P_20' ) )
+   hDane['P_21'] := sxml2num( xmlWartoscH( hPozycje, 'P_21' ) )
+   hDane['P_22'] := sxml2num( xmlWartoscH( hPozycje, 'P_22' ) )
+   hDane['P_23'] := sxml2num( xmlWartoscH( hPozycje, 'P_23' ) )
+   hDane['P_24'] := sxml2num( xmlWartoscH( hPozycje, 'P_24' ) )
+   hDane['P_25'] := sxml2num( xmlWartoscH( hPozycje, 'P_25' ) )
+   hDane['P_26'] := sxml2num( xmlWartoscH( hPozycje, 'P_26' ) )
+   hDane['P_27'] := sxml2num( xmlWartoscH( hPozycje, 'P_27' ) )
+   hDane['P_28'] := sxml2num( xmlWartoscH( hPozycje, 'P_28' ) )
+   hDane['P_29'] := sxml2num( xmlWartoscH( hPozycje, 'P_29' ) )
+   hDane['P_30'] := sxml2num( xmlWartoscH( hPozycje, 'P_30' ) )
+   hDane['P_31'] := sxml2num( xmlWartoscH( hPozycje, 'P_31' ) )
+   hDane['P_32'] := sxml2num( xmlWartoscH( hPozycje, 'P_32' ) )
+   hDane['P_33'] := sxml2num( xmlWartoscH( hPozycje, 'P_33' ) )
+   hDane['P_34'] := sxml2num( xmlWartoscH( hPozycje, 'P_34' ) )
+   hDane['P_35'] := sxml2num( xmlWartoscH( hPozycje, 'P_35' ) )
+   hDane['P_36'] := sxml2num( xmlWartoscH( hPozycje, 'P_36' ) )
+   hDane['P_37'] := sxml2num( xmlWartoscH( hPozycje, 'P_37' ) )
+   hDane['P_38'] := sxml2num( xmlWartoscH( hPozycje, 'P_38' ) )
+   hDane['P_39'] := sxml2num( xmlWartoscH( hPozycje, 'P_39' ) )
+   hDane['P_40'] := sxml2num( xmlWartoscH( hPozycje, 'P_40' ) )
+   hDane['P_41'] := sxml2num( xmlWartoscH( hPozycje, 'P_41' ) )
+   hDane['P_42'] := sxml2num( xmlWartoscH( hPozycje, 'P_42' ) )
+   hDane['P_43'] := sxml2num( xmlWartoscH( hPozycje, 'P_43' ) )
+   hDane['P_44'] := sxml2num( xmlWartoscH( hPozycje, 'P_44' ) )
+   hDane['P_45'] := sxml2num( xmlWartoscH( hPozycje, 'P_45' ) )
+   hDane['P_46'] := sxml2num( xmlWartoscH( hPozycje, 'P_46' ) )
+   hDane['P_47'] := sxml2num( xmlWartoscH( hPozycje, 'P_47' ) )
+   hDane['P_48'] := sxml2num( xmlWartoscH( hPozycje, 'P_48' ) )
+   hDane['P_49'] := sxml2num( xmlWartoscH( hPozycje, 'P_49' ) )
+   hDane['P_50'] := sxml2num( xmlWartoscH( hPozycje, 'P_50' ) )
+   hDane['P_51'] := sxml2num( xmlWartoscH( hPozycje, 'P_51' ) )
+   hDane['P_52'] := sxml2num( xmlWartoscH( hPozycje, 'P_52' ) )
+   hDane['P_53'] := sxml2num( xmlWartoscH( hPozycje, 'P_53' ) )
+   hDane['P_54'] := sxml2num( xmlWartoscH( hPozycje, 'P_54' ) )
+   hDane['P_55'] := sxml2num( xmlWartoscH( hPozycje, 'P_55' ) )
+   hDane['P_56'] := sxml2num( xmlWartoscH( hPozycje, 'P_56' ) )
+   hDane['P_57'] := sxml2num( xmlWartoscH( hPozycje, 'P_57' ) )
+   hDane['P_58'] := sxml2num( xmlWartoscH( hPozycje, 'P_58' ) )
+   hDane['P_59'] := sxml2num( xmlWartoscH( hPozycje, 'P_59' ) )
+   hDane['P_60'] := sxml2num( xmlWartoscH( hPozycje, 'P_60' ) )
+   hDane['P_61'] := sxml2num( xmlWartoscH( hPozycje, 'P_61' ) )
+   hDane['P_62'] := sxml2num( xmlWartoscH( hPozycje, 'P_62' ) )
+   hDane['P_63'] := sxml2num( xmlWartoscH( hPozycje, 'P_63' ) )
+   hDane['P_64'] := sxml2num( xmlWartoscH( hPozycje, 'P_64' ) )
+   hDane['P_65'] := sxml2num( xmlWartoscH( hPozycje, 'P_65' ) )
+   hDane['P_66'] := sxml2num( xmlWartoscH( hPozycje, 'P_66' ) )
+   hDane['P_67'] := sxml2num( xmlWartoscH( hPozycje, 'P_67' ) )
+   hDane['P_68'] := sxml2num( xmlWartoscH( hPozycje, 'P_68' ) )
+   hDane['P_69'] := sxml2num( xmlWartoscH( hPozycje, 'P_69' ) )
+   hDane['P_70'] := sxml2num( xmlWartoscH( hPozycje, 'P_70' ) )
+   hDane['P_71'] := sxml2num( xmlWartoscH( hPozycje, 'P_71' ) )
+   hDane['P_72'] := sxml2num( xmlWartoscH( hPozycje, 'P_72' ) )
+   hDane['P_73'] := sxml2num( xmlWartoscH( hPozycje, 'P_73' ) )
+   hDane['P_74'] := sxml2num( xmlWartoscH( hPozycje, 'P_74' ) )
+   hDane['P_75'] := sxml2num( xmlWartoscH( hPozycje, 'P_75' ) )
+   hDane['P_76'] := sxml2num( xmlWartoscH( hPozycje, 'P_76' ) )
+   hDane['P_77'] := sxml2num( xmlWartoscH( hPozycje, 'P_77' ) )
+   hDane['P_78'] := sxml2num( xmlWartoscH( hPozycje, 'P_78' ) )
+   hDane['P_79'] := sxml2num( xmlWartoscH( hPozycje, 'P_79' ) )
+   hDane['P_80'] := sxml2num( xmlWartoscH( hPozycje, 'P_80' ) )
+   hDane['P_81'] := sxml2num( xmlWartoscH( hPozycje, 'P_81' ) )
+   hDane['P_82'] := sxml2num( xmlWartoscH( hPozycje, 'P_82' ) )
+   hDane['P_83'] := sxml2num( xmlWartoscH( hPozycje, 'P_83' ) )
+   hDane['P_84'] := sxml2num( xmlWartoscH( hPozycje, 'P_84' ) )
+   hDane['P_85'] := sxml2num( xmlWartoscH( hPozycje, 'P_85' ) )
+   hDane['P_86'] := sxml2num( xmlWartoscH( hPozycje, 'P_86' ) )
+   hDane['P_87'] := sxml2num( xmlWartoscH( hPozycje, 'P_87' ) )
+   hDane['P_88'] := sxml2num( xmlWartoscH( hPozycje, 'P_88' ) )
+   hDane['P_89'] := sxml2num( xmlWartoscH( hPozycje, 'P_89' ) )
+   hDane['P_90'] := sxml2num( xmlWartoscH( hPozycje, 'P_90' ) )
+   hDane['P_91'] := sxml2num( xmlWartoscH( hPozycje, 'P_91' ) )
+   hDane['P_92'] := sxml2num( xmlWartoscH( hPozycje, 'P_92' ) )
+   hDane['P_93'] := sxml2num( xmlWartoscH( hPozycje, 'P_93' ) )
+   hDane['P_94'] := sxml2num( xmlWartoscH( hPozycje, 'P_94' ) )
+   hDane['P_95'] := sxml2num( xmlWartoscH( hPozycje, 'P_95' ) )
+   hDane['P_96'] := sxml2num( xmlWartoscH( hPozycje, 'P_96' ) )
+   hDane['P_97'] := sxml2num( xmlWartoscH( hPozycje, 'P_97' ) )
+   hDane['P_98'] := sxml2num( xmlWartoscH( hPozycje, 'P_98' ) )
+   hDane['P_99'] := sxml2num( xmlWartoscH( hPozycje, 'P_99' ) )
+   hDane['P_100'] := sxml2num( xmlWartoscH( hPozycje, 'P_100' ) )
+   hDane['P_101'] := sxml2num( xmlWartoscH( hPozycje, 'P_101' ) )
+   hDane['P_102'] := sxml2num( xmlWartoscH( hPozycje, 'P_102' ) )
+   hDane['P_103'] := sxml2num( xmlWartoscH( hPozycje, 'P_103' ) )
+   hDane['P_104'] := sxml2num( xmlWartoscH( hPozycje, 'P_104' ) )
+   hDane['P_105'] := sxml2num( xmlWartoscH( hPozycje, 'P_105' ) )
+   hDane['P_106'] := sxml2num( xmlWartoscH( hPozycje, 'P_106' ) )
+   hDane['P_107'] := sxml2num( xmlWartoscH( hPozycje, 'P_107' ) )
+   hDane['P_108'] := sxml2num( xmlWartoscH( hPozycje, 'P_108' ) )
+   hDane['P_109'] := sxml2num( xmlWartoscH( hPozycje, 'P_109' ) )
+   hDane['P_110'] := sxml2num( xmlWartoscH( hPozycje, 'P_110' ) )
+   hDane['P_111'] := sxml2num( xmlWartoscH( hPozycje, 'P_111' ) )
+   hDane['P_112'] := sxml2num( xmlWartoscH( hPozycje, 'P_112' ) )
+   hDane['P_113'] := sxml2num( xmlWartoscH( hPozycje, 'P_113' ) )
+   hDane['P_114'] := sxml2num( xmlWartoscH( hPozycje, 'P_114' ) )
+   hDane['P_115'] := sxml2num( xmlWartoscH( hPozycje, 'P_115' ) )
+   hDane['P_116'] := sxml2num( xmlWartoscH( hPozycje, 'P_116' ) )
+   hDane['P_117'] := sxml2num( xmlWartoscH( hPozycje, 'P_117' ) )
+   hDane['P_118'] := sxml2num( xmlWartoscH( hPozycje, 'P_118' ) )
+   hDane['P_119'] := sxml2num( xmlWartoscH( hPozycje, 'P_119' ) )
+   hDane['P_120'] := sxml2num( xmlWartoscH( hPozycje, 'P_120' ) )
+   hDane['P_121'] := sxml2num( xmlWartoscH( hPozycje, 'P_121' ) )
+   hDane['P_122'] := sxml2num( xmlWartoscH( hPozycje, 'P_122' ) )
+   hDane['P_123'] := sxml2num( xmlWartoscH( hPozycje, 'P_123' ) )
+   hDane['P_124'] := sxml2num( xmlWartoscH( hPozycje, 'P_124' ) )
+   hDane['P_125'] := sxml2num( xmlWartoscH( hPozycje, 'P_125' ) )
+   hDane['P_126'] := sxml2num( xmlWartoscH( hPozycje, 'P_126' ) )
+   hDane['P_127'] := sxml2num( xmlWartoscH( hPozycje, 'P_127' ) )
+   hDane['P_128'] := sxml2num( xmlWartoscH( hPozycje, 'P_128' ) )
+   hDane['P_129'] := sxml2num( xmlWartoscH( hPozycje, 'P_129' ) )
+   hDane['P_130'] := sxml2num( xmlWartoscH( hPozycje, 'P_130' ) )
+   hDane['P_131'] := sxml2num( xmlWartoscH( hPozycje, 'P_131' ) )
+   hDane['P_132'] := sxml2num( xmlWartoscH( hPozycje, 'P_132' ) )
+   hDane['P_133'] := sxml2num( xmlWartoscH( hPozycje, 'P_133' ) )
+   hDane['P_134'] := sxml2num( xmlWartoscH( hPozycje, 'P_134' ) )
+   hDane['P_135'] := sxml2num( xmlWartoscH( hPozycje, 'P_135' ) )
+   hDane['P_136'] := sxml2num( xmlWartoscH( hPozycje, 'P_136' ) )
+   hDane['P_137'] := sxml2num( xmlWartoscH( hPozycje, 'P_137' ) )
+   hDane['P_138'] := sxml2num( xmlWartoscH( hPozycje, 'P_138' ) )
+   hDane['P_139'] := sxml2num( xmlWartoscH( hPozycje, 'P_139' ) )
+   hDane['P_140'] := sxml2num( xmlWartoscH( hPozycje, 'P_140' ) )
+   hDane['P_141'] := sxml2num( xmlWartoscH( hPozycje, 'P_141' ) )
+   hDane['P_142'] := sxml2num( xmlWartoscH( hPozycje, 'P_142' ) )
+   hDane['P_143'] := sxml2num( xmlWartoscH( hPozycje, 'P_143' ) )
+   hDane['P_144'] := sxml2num( xmlWartoscH( hPozycje, 'P_144' ) )
+   hDane['P_145'] := sxml2num( xmlWartoscH( hPozycje, 'P_145' ) )
+   hDane['P_146'] := sxml2num( xmlWartoscH( hPozycje, 'P_146' ) )
+   hDane['P_147'] := sxml2num( xmlWartoscH( hPozycje, 'P_147' ) )
+   hDane['P_148'] := sxml2num( xmlWartoscH( hPozycje, 'P_148' ) )
+   hDane['P_149'] := sxml2num( xmlWartoscH( hPozycje, 'P_149' ) )
+   hDane['P_150'] := sxml2num( xmlWartoscH( hPozycje, 'P_150' ) )
+   hDane['P_151'] := sxml2num( xmlWartoscH( hPozycje, 'P_151' ) )
+   hDane['P_152'] := sxml2num( xmlWartoscH( hPozycje, 'P_152' ) )
+   hDane['P_153'] := sxml2num( xmlWartoscH( hPozycje, 'P_153' ) )
+   hDane['P_154'] := sxml2num( xmlWartoscH( hPozycje, 'P_154' ) )
+   hDane['P_155'] := sxml2num( xmlWartoscH( hPozycje, 'P_155' ) )
+   hDane['P_156'] := sxml2num( xmlWartoscH( hPozycje, 'P_156' ) )
+   hDane['P_157'] := sxml2num( xmlWartoscH( hPozycje, 'P_157' ) )
+   hDane['P_158'] := sxml2num( xmlWartoscH( hPozycje, 'P_158' ) )
+   hDane['P_159'] := sxml2num( xmlWartoscH( hPozycje, 'P_159' ) )
+   hDane['P_160'] := sxml2num( xmlWartoscH( hPozycje, 'P_160' ) )
+   hDane['P_161'] := sxml2num( xmlWartoscH( hPozycje, 'P_161' ) )
+   hDane['P_162'] := sxml2num( xmlWartoscH( hPozycje, 'P_162' ) )
+   hDane['P_163'] := sxml2num( xmlWartoscH( hPozycje, 'P_163' ) )
+   hDane['P_164'] := sxml2num( xmlWartoscH( hPozycje, 'P_164' ) )
+   hDane['P_165'] := sxml2num( xmlWartoscH( hPozycje, 'P_165' ) )
+   hDane['P_166'] := sxml2num( xmlWartoscH( hPozycje, 'P_166' ) )
+   hDane['P_167'] := sxml2num( xmlWartoscH( hPozycje, 'P_167' ) )
+   hDane['P_168'] := sxml2num( xmlWartoscH( hPozycje, 'P_168' ) )
+   hDane['P_168'] := sxml2num( xmlWartoscH( hPozycje, 'P_168' ) )
+   hDane['P_169'] := sxml2num( xmlWartoscH( hPozycje, 'P_169' ) )
+   hDane['P_170'] := xmlWartoscH( hPozycje, 'P_170', '' )
+
+   IF xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '2' .AND. Len(edekXmlORDZU( oDoc )) > 0
+      hDane['ORDZU'] := hb_Hash()
+      hDane['ORDZU']['ORDZU_13'] := edekXmlORDZU( oDoc )
+      hDane['ORDZU']['ORDZU_1_R'] := 'N'
+      hDane['ORDZU']['ORDZU_1_N'] := hDane['P_1']
+      hDane['ORDZU']['ORDZU_2_R'] := ''
+      hDane['ORDZU']['ORDZU_2_N'] := ''
+      hDane['ORDZU']['ORDZU_3'] := hDane['P_2']
+
+      hDane['ORDZU']['ORDZU_5_N1'] := hDane['P_9_N']
+      hDane['ORDZU']['ORDZU_5_N2'] := hDane['P_9_N']
+      hDane['ORDZU']['ORDZU_6'] := hDane['P_9_I']
+      hDane['ORDZU']['ORDZU_7'] := hDane['P_9_D']
+      hDane['ORDZU']['ORDZU_8'] := hDane['P_9_N']
 
       hDane['ORDZU']['ORDZU_9'] := ''
       hDane['ORDZU']['ORDZU_10'] := ''

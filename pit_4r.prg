@@ -805,7 +805,7 @@ next
       appe blan
       repl linia_l with '        '+kwota(z1307,10,0)+' '+kwota(z1308,10,0)+' '+kwota(z1309,10,0)+' '+kwota(z1310,10,0)+' '+kwota(z1311,10,0)+' '+kwota(z1312,10,0)
    CASE _OU == 'X'
-        edeklaracja_plik = 'PIT_4R_8_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
+        edeklaracja_plik = 'PIT_4R_9_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
         IF ( zCzyKorekta := edekCzyKorekta() ) > 0
            IF zCzyKorekta == 2
               tresc_korekty_pit4r = edekOrdZuTrescPobierz('PIT-4R', Val(ident_fir), 0)
@@ -813,8 +813,8 @@ next
            ENDIF
            IF zDEKLKOR != 'K' .OR. (zDEKLKOR == 'K' .AND. ValType(tresc_korekty_pit4r) == "C")
               private danedekl
-              danedekl = edek_pit4r_8()
-              edekZapiszXml(danedekl, edeklaracja_plik, wys_edeklaracja, 'PIT4R-8', zDEKLKOR == 'K')
+              danedekl = edek_pit4r_9()
+              edekZapiszXml(danedekl, edeklaracja_plik, wys_edeklaracja, 'PIT4R-9', zDEKLKOR == 'K')
            ENDIF
         ENDIF
    other //_OU='K'
@@ -823,7 +823,7 @@ next
         CASE 0
            EXIT
         CASE 1
-           DeklarDrukuj( 'PIT4R-8' )
+           DeklarDrukuj( 'PIT4R-9' )
            EXIT
         CASE 2
            do kpit_4r
