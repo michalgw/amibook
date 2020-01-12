@@ -890,7 +890,7 @@ FUNCTION V1_2z()
       Kom( 4, '*u', ' Symbol dowodu (KR-) jest zastrze&_z.ony dla rachunk&_o.w uproszcz.koryg. ')
       RETURN .F.
    ENDCASE
-   EwidSprawdzNrDok( 'REJZ', ident_fir, miesiac, znumer )
+   EwidSprawdzNrDok( 'REJZ', ident_fir, miesiac, znumer, iif( ins, 0, RecNo() ) )
    *@  3,2 say '   '
    *@  4,2 say 'ออ'+chr(16)
    RETURN .T.

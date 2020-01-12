@@ -407,10 +407,11 @@ FUNCTION EwidSprawdzNrDokRec( cTablica, cKontrahent, cMiesiac, cNumer, aRec )
 
 /*----------------------------------------------------------------------*/
 
-PROCEDURE EwidSprawdzNrDok(cTablica, cKontrahent, cMiesiac, cNumer)
-   LOCAL nWS, nPopArea
+PROCEDURE EwidSprawdzNrDok(cTablica, cKontrahent, cMiesiac, cNumer, nRecNo)
 
-   IF param_ksnd <> 'T'
+   LOCAL nWS, nPopArea, nM, nMS
+
+   IF ! ( param_ksnd $ 'TR' )
       RETURN
    ENDIF
 
@@ -444,9 +445,20 @@ PROCEDURE EwidSprawdzNrDok(cTablica, cKontrahent, cMiesiac, cNumer)
       RETURN
    ENDIF
 
-   IF dbSeek('+' + cKontrahent + cMiesiac + PadR(cNumer, 20))
-      komun('Istnieje ju¾ dokument o tym numerze.')
+   IF param_ksnd == 'R'
+      nMS := 1
+   ELSE
+      nMS := Val( cMiesiac )
    ENDIF
+
+   FOR nM := nMS TO Val( cMiesiac )
+      IF dbSeek('+' + cKontrahent + Str( nM, 2 ) + PadR(cNumer, 20))
+         IF Empty( nRecNo ) .OR. nRecNo <> RecNo()
+            komun('Istnieje ju¾ dokument o tym numerze.')
+            EXIT
+         ENDIF
+      ENDIF
+   NEXT
 
    dbCloseArea()
    Select(nPopArea)

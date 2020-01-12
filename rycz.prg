@@ -762,7 +762,7 @@ FUNCTION V1_2r()
       Kom( 4, '*u', ' Symbol dowodu (RZ-) jest zastrzezony dla dokument&_o.w z rejestru zakupu ' )
       RETURN .F.
    ENDCASE
-   EwidSprawdzNrDok( 'EWID', ident_fir, miesiac, znumer )
+   EwidSprawdzNrDok( 'EWID', ident_fir, miesiac, znumer, iif( ins, 0, RecNo() ) )
    RETURN .T.
 
 ***************************************************

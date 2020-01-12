@@ -45,8 +45,8 @@ FUNCTION menuKonfigKsiega()
    @ 15,42 say ' (1 - Nr dok./Dzieä, 2 - Dzieä)       '
    @ 16,42 say ' (3 - Lp./Dzieä )                     '
    @ 17,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-   @ 18,42 say ' Informacja o wprowadzeniu dokumentu  '
-   @ 19,42 say ' z istniej¥cym numerem (T/N):         '
+   @ 18,42 say ' Inf. o wprowadzeniu dok. z istn. nr  '
+   @ 19,42 say ' (N-nie, T-akt.miesiac, R-rok):       '
    @ 20,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
    @ 21,42 say ' Odliczanie kwoty wolnej po przekr.   '
    @ 22,42 say ' progu (Tak/Nie)                      '
@@ -76,7 +76,7 @@ FUNCTION menuKonfigKsiega()
                  @  3, 76 get zparam_ks5v PICTURE '!' VALID menuKonfigKsiegaPolKS5V()
                  @ 11, 76 get zparam_ks5d PICTURE '!' VALID menuKonfigKsiegaPolKS5D()
                  @ 16, 62 get zparam_kslp PICTURE '!' VALID menuKonfigKsiegaPolKSLP()
-                 @ 19, 72 get zparam_ksnd PICTURE '!' VALID menuKonfigKsiegaPolKSND()
+                 @ 19, 74 get zparam_ksnd PICTURE '!' VALID menuKonfigKsiegaPolKSND()
                  @ 22, 72 get zparam_kskw PICTURE '!' VALID menuKonfigKsiegaPolKSKW()
                  ****************************
                  clear type
@@ -200,7 +200,7 @@ PROCEDURE menuKonfigKsiegaPokaz()
    set colo to w+
    @  3, 76 SAY param_ks5v
    @ 11, 76 SAY param_ks5d
-   @ 19, 72 SAY iif(param_ksnd == 'T', 'Tak', 'Nie')
+   @ 19, 74 SAY param_ksnd
    @ 22, 72 SAY iif(param_kskw == 'T', 'Tak', 'Nie')
    SWITCH param_kslp
    CASE '1'
@@ -221,11 +221,11 @@ FUNCTION menuKonfigKsiegaPolKSND()
    IF LastKey()=5
       RETURN .T.
    ENDIF
-      IF !zparam_ksnd$'TN'
+      IF !zparam_ksnd$'TNR'
          zparam_ksnd = param_ksnd
          RETURN .F.
       ENDIF
-   @ 19, 73 SAY iif(param_ksnd == 'T', 'ak', 'ie')
+   //@ 19, 73 SAY iif(param_ksnd == 'T', 'ak', 'ie')
    RETURN .T.
 
 /*----------------------------------------------------------------------*/
