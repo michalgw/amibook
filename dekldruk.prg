@@ -151,6 +151,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_IFT1w13( xDane )
       cPlikRap := 'frf\ift1_w13.frf'
       EXIT
+   CASE 'IFT1-15'
+      hDane := DaneDek_IFT1w15( xDane )
+      cPlikRap := 'frf\ift1_w15.frf'
+      EXIT
    CASE 'VATINFO'
       hDane := DaneDek_VAT7w17()
       cPlikRap := 'frf\vatinfo.frf'
@@ -4009,4 +4013,60 @@ FUNCTION DaneDek_IFT1w13( aDaneZrd )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION DaneDek_IFT1w15( aDaneZrd )
+   LOCAL aDane := hb_Hash()
 
+   aDane[ 'P_1' ] := aDaneZrd[ 'Dane' ][ 'FirmaNIP' ]
+   aDane[ 'P_2' ] := ''
+   aDane[ 'P_4' ] := aDaneZrd[ 'Parametry' ][ 'DataOd' ]
+   aDane[ 'P_5' ] := aDaneZrd[ 'Parametry' ][ 'DataDo' ]
+   aDane[ 'P_6' ] := iif( AllTrim( aDaneZrd[ 'Dane' ][ 'KodUrzedu' ] ) != '', KodUS2Nazwa( AllTrim( aDaneZrd[ 'Dane' ][ 'KodUrzedu' ] ) ), '' )
+   aDane[ 'P_7_1' ] := iif( aDaneZrd[ 'Parametry' ][ 'Korekta' ], '0', '1' )
+   aDane[ 'P_7_2' ] := iif( aDaneZrd[ 'Parametry' ][ 'Korekta' ], '1', '0' )
+   aDane[ 'P_8_1' ] := iif( aDaneZrd[ 'Dane' ][ 'FirmaSpolka' ], '1', '0' )
+   aDane[ 'P_8_2' ] := iif( aDaneZrd[ 'Dane' ][ 'FirmaSpolka' ], '0', '1' )
+   IF aDaneZrd[ 'Dane' ][ 'FirmaSpolka' ]
+      aDane[ 'P_9' ] := aDaneZrd[ 'Dane' ][ 'FirmaNazwa' ] + ', ' + aDaneZrd[ 'Dane' ][ 'FirmaREGON' ]
+   ELSE
+      aDane[ 'P_9' ] := aDaneZrd[ 'Dane' ][ 'FirmaNazwisko' ] + ', ' + aDaneZrd[ 'Dane' ][ 'FirmaImie' ] + ', ' + DToC( aDaneZrd[ 'Dane' ][ 'FirmaData' ] )
+   ENDIF
+   aDane[ 'P_10' ] := 'POLSKA'
+   aDane[ 'P_11' ] := aDaneZrd[ 'Dane' ][ 'FirmaWojewodztwo' ]
+   aDane[ 'P_12' ] := aDaneZrd[ 'Dane' ][ 'FirmaPowiat' ]
+   aDane[ 'P_13' ] := aDaneZrd[ 'Dane' ][ 'FirmaGmina' ]
+   aDane[ 'P_14' ] := aDaneZrd[ 'Dane' ][ 'FirmaUlica' ]
+   aDane[ 'P_15' ] := aDaneZrd[ 'Dane' ][ 'FirmaNrDomu' ]
+   aDane[ 'P_16' ] := aDaneZrd[ 'Dane' ][ 'FirmaNrLokalu' ]
+   aDane[ 'P_17' ] := aDaneZrd[ 'Dane' ][ 'FirmaMiejscowosc' ]
+   aDane[ 'P_18' ] := aDaneZrd[ 'Dane' ][ 'FirmaKodPocztowy' ]
+   //aDane[ 'P_19' ] := aDaneZrd[ 'Dane' ][ 'FirmaPoczta' ]
+
+   aDane[ 'P_19' ] := aDaneZrd[ 'Dane' ][ 'OsobaNazwisko' ]
+   aDane[ 'P_20' ] := aDaneZrd[ 'Dane' ][ 'OsobaImiePierwsze' ]
+   aDane[ 'P_21' ] := aDaneZrd[ 'Dane' ][ 'OsobaImieOjca' ]
+   aDane[ 'P_22' ] := aDaneZrd[ 'Dane' ][ 'OsobaImieMatki' ]
+   aDane[ 'P_23' ] := aDaneZrd[ 'Dane' ][ 'OsobaDataUrodzenia' ]
+   aDane[ 'P_24' ] := aDaneZrd[ 'Dane' ][ 'OsobaMiejsceUrodzenia' ]
+   aDane[ 'P_25' ] := aDaneZrd[ 'Dane' ][ 'OsobaNrId' ]
+   aDane[ 'P_26' ] := PracDokRodzajStr( aDaneZrd[ 'Dane' ][ 'OsobaRodzajNrId' ] )
+   aDane[ 'P_27' ] := aDaneZrd[ 'Dane' ][ 'OsobaKraj' ]
+   aDane[ 'P_28' ] := aDaneZrd[ 'Dane' ][ 'OsobaKraj' ]
+   aDane[ 'P_39' ] := aDaneZrd[ 'Dane' ][ 'OsobaMiejscowosc' ]
+   aDane[ 'P_30' ] := aDaneZrd[ 'Dane' ][ 'OsobaKodPocztowy' ]
+   aDane[ 'P_31' ] := aDaneZrd[ 'Dane' ][ 'OsobaUlica' ]
+   aDane[ 'P_32' ] := aDaneZrd[ 'Dane' ][ 'OsobaNrDomu' ]
+   aDane[ 'P_33' ] := aDaneZrd[ 'Dane' ][ 'OsobaNrLokalu' ]
+
+   aDane[ 'P_70' ] := 0
+   aDane[ 'P_72' ] := aDaneZrd[ 'Dane' ][ 'P_71' ]
+   aDane[ 'P_73' ] := aDaneZrd[ 'Dane' ][ 'P_72' ]
+   aDane[ 'P_74' ] := aDaneZrd[ 'Dane' ][ 'P_73' ]
+
+   aDane[ 'P_74' ] := aDaneZrd[ 'Parametry' ][ 'DataZlozenia' ]
+   aDane[ 'P_75' ] := aDaneZrd[ 'Parametry' ][ 'DataPrzekazania' ]
+
+   aDane[ 'ROCZNY' ] := iif( aDaneZrd[ 'Parametry' ][ 'Roczny' ], '1', '0' )
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/

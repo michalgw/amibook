@@ -82,9 +82,9 @@ FUNCTION IFT1_Dane( dDataOd, dDataDo )
       spolka->( dbCloseArea() )
    ENDIF
 
-   aRes[ 'P_72' ] := 0.0
-   aRes[ 'P_73' ] := 0
-   aRes[ 'P_74' ] := 0.0
+   aRes[ 'P_71' ] := 0.0
+   aRes[ 'P_72' ] := 0
+   aRes[ 'P_73' ] := 0.0
    umowy->( dbCreateIndex( raptemp, 'del+firma+ident+dtos(data_wyp)', { || del+firma+ident+dtos(data_wyp) } ) )
    umowy->( dbSeek( '+' + ident_fir + Str( prac->rec_no, 5 ) + SubStr( DToS( dDataOd ), 1, 6 ) ) )
    DO WHILE .NOT. umowy->( Eof() ) .AND. umowy->del == '+' .AND. umowy->firma == ident_fir .AND. ;
@@ -93,9 +93,9 @@ FUNCTION IFT1_Dane( dDataOd, dDataDo )
       SubStr( DToS( umowy->data_wyp ), 1, 6 ) <= SubStr( DToS( dDataDo), 1, 6 ) )
 
       //IF umowy->tytul <> '8 '
-         aRes[ 'P_72' ] := aRes[ 'P_72' ] + umowy->brut_razem
-         aRes[ 'P_73' ] := umowy->staw_podat2
-         aRes[ 'P_74' ] := aRes[ 'P_74' ] + umowy->podatek
+         aRes[ 'P_71' ] := aRes[ 'P_71' ] + umowy->brut_razem
+         aRes[ 'P_72' ] := umowy->staw_podat2
+         aRes[ 'P_73' ] := aRes[ 'P_73' ] + umowy->podatek
       //ENDIF
 
       umowy->( dbSkip() )
@@ -196,16 +196,16 @@ FUNCTION IFT1_Rob( lEDeklaracja )
             IF aDane[ 'Parametry' ][ 'Korekta' ]
                aDane[ 'ORDZU' ] := edekOrdZuTrescPobierz( iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT-1R', 'IFT-1' ), Val( ident_fir ), prac->( RecNo() ) )
             ENDIF
-            cXML := edek_ift1_13( aDane )
-            cNazwaPlikuXML := iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT_1R_13_', 'IFT_1_13_' ) ;
+            cXML := edek_ift1_15( aDane )
+            cNazwaPlikuXML := iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT_1R_15_', 'IFT_1_15_' ) ;
                + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' ;
                + AllTrim( Str( Year( aDane[ 'Parametry' ][ 'DataOd' ] ) ) ) + '_' ;
                + AllTrim( aDane[ 'Dane' ][ 'OsobaNazwisko' ] )
             edekZapiszXml(cXML, cNazwaPlikuXML, wys_edeklaracja, ;
-               iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT1R-13', 'IFT1-13' ), ;
+               iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT1R-15', 'IFT1-15' ), ;
                aDane[ 'Parametry' ][ 'Korekta' ], 0, prac->( RecNo() ) )
          ELSE
-            DeklarDrukuj( 'IFT1-13', aDane )
+            DeklarDrukuj( 'IFT1-15', aDane )
          ENDIF
       ENDIF
    ENDIF
