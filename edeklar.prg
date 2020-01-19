@@ -1279,6 +1279,9 @@ FUNCTION edek_pit8ar_8()
       ENDIF
       r = r + '  </Podmiot1>' + nl
       r = r + '  <PozycjeSzczegolowe>' + nl
+      IF zDEKLKOR <> 'D'
+         r = r + '    <P_7>' + iif(rodzaj_korekty == 2, '2', '1' ) + '</P_7>' + nl
+      ENDIF
 		r = r + xmlNiePusty(z601, '    <P_10>' + TKwotaCNieujemna(z601) + '</P_10>' + nl)
 		r = r + xmlNiePusty(z602, '    <P_11>' + TKwotaCNieujemna(z602) + '</P_11>' + nl)
 		r = r + xmlNiePusty(z603, '    <P_12>' + TKwotaCNieujemna(z603) + '</P_12>' + nl)

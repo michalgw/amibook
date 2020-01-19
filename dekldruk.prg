@@ -1448,8 +1448,8 @@ FUNCTION DaneDek_PIT8ARw8()
    hDane['P_5'] := iif( AllTrim(p6k) != '', KodUS2Nazwa( AllTrim(p6k) ), '' )
    hDane['P_6_1'] := iif( zDEKLKOR == 'D', '1', '0' )
    hDane['P_6_2'] := iif( zDEKLKOR <> 'D', '1', '0' )
-   hDane['P_7_1'] := '0'
-   hDane['P_7_2'] := '0'
+   hDane['P_7_1'] := iif(rodzaj_korekty == 1, '1', '0' )
+   hDane['P_7_2'] := iif(rodzaj_korekty == 2, '1', '0' )
    hDane['P_8_1'] := iif( spolka_, '1', '0' )
    hDane['P_8_2'] := iif( ! spolka_, '1', '0' )
    hDane['P_1'] := P1

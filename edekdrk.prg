@@ -2016,6 +2016,8 @@ FUNCTION DaneXML_PIT8ARw8(oDoc, cNrRef, hNaglowek)
       hDane['P_9_I'] := ''
       hDane['P_9_D'] := ''
    ENDIF
+   hDane['P_7_1'] := iif( xmlWartoscH( hPozycje, 'P_7' ) == '1', '1', '0' )
+   hDane['P_7_2'] := iif( xmlWartoscH( hPozycje, 'P_7' ) == '2', '1', '0' )
    hDane['P_10'] := sxml2num( xmlWartoscH( hPozycje, 'P_10' ) )
    hDane['P_11'] := sxml2num( xmlWartoscH( hPozycje, 'P_11' ) )
    hDane['P_12'] := sxml2num( xmlWartoscH( hPozycje, 'P_12' ) )
