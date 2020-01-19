@@ -638,6 +638,8 @@ FUNCTION DaneDek_PIT4Rw9()
    hDane['P_8_2'] := iif( ! spolka_, '1', '0' )
    hDane['P_1'] := P1
    hDane['P_9'] := AllTrim(P8)
+   hDane['P_7_1'] := iif(rodzaj_korekty == 1, '1', '0' )
+   hDane['P_7_2'] := iif(rodzaj_korekty == 2, '1', '0' )
    hDane['P_10']  := z1a01
    hDane['P_11'] := z1a02
    hDane['P_12'] := z1a03

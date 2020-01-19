@@ -672,6 +672,9 @@ FUNCTION edek_pit4r_9()
       ENDIF
       r = r + '  </Podmiot1>' + nl
       r = r + '  <PozycjeSzczegolowe>' + nl
+      IF zDEKLKOR <> 'D'
+         r = r + '    <P_7>' + iif(rodzaj_korekty == 2, '2', '1' ) + '</P_7>' + nl
+      ENDIF
 		r = r + xmlNiePusty(z1a01, '    <P_10>' + TNaturalny(z1a01) + '</P_10>' + nl)
 		r = r + xmlNiePusty(z1a02, '    <P_11>' + TNaturalny(z1a02) + '</P_11>' + nl)
 		r = r + xmlNiePusty(z1a03, '    <P_12>' + TNaturalny(z1a03) + '</P_12>' + nl)

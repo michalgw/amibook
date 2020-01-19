@@ -552,6 +552,32 @@ FUNCTION edekCzyKorekta( nRow, nCol )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION edekRodzajKorekty( nRow, nCol )
+   LOCAL xScr, nRes := 1, cKolor
+
+   hb_default( @nRow, 10 )
+   hb_default( @nCol, 22 )
+
+   SAVE SCREEN TO xScr
+   cKolor := ColPro()
+   @ nRow, nCol, nRow + 8, nCol + 36 BOX B_SINGLE + Space(1)
+   @ nRow + 1, nCol + 2 SAY '        Rodzaj korekty  (1/2): ' GET nRes PICTURE '9' VALID {|cV| nRes == 1 .OR. nRes == 2 }
+   @ nRow + 3, nCol + 2 SAY '1 - korekta dekl., o kt¢rej mowa'
+   @ nRow + 4, nCol + 2 SAY '    w art. 81 Ordynacji podat.'
+   @ nRow + 5, nCol + 2 SAY '2 - korekta dekl. skˆadana w toku'
+   @ nRow + 6, nCol + 2 SAY '    post©powania w spr. unikania'
+   @ nRow + 7, nCol + 2 SAY '    opodatkowania - art.81b p.1a'
+   CLEAR TYPE
+   read_()
+   RESTORE SCREEN FROM xScr
+   IF LastKey() == K_ESC
+      nRes := 0
+   ENDIF
+   SetColor( cKolor )
+   RETURN nRes
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION edekWczytajTrescKor(cSymbol, nID1, nID2)
    LOCAL cTresc := '', cWarunekSeek := ''
    hb_default(@nID1, 0)

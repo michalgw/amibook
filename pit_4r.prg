@@ -26,7 +26,7 @@ private P3,P4,P4r,P6,P6k
 private P1,P16,P17,P18,P19,p17a
 private P20,P21,P22,P23,P24,p46,p47,p48
 private P63
-private tresc_korekty_pit4r := ''
+private tresc_korekty_pit4r := '', rodzaj_korekty := 0
 zDEKLKOR='D'
 store 0 to P29,P30,P31,p32,p33,p34,p35
 store '' to P3,P4,P4r,P6,P6k,P1,P16,P17,P18,P19,P20,p17a
@@ -808,6 +808,7 @@ next
         edeklaracja_plik = 'PIT_4R_9_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
         IF ( zCzyKorekta := edekCzyKorekta() ) > 0
            IF zCzyKorekta == 2
+              rodzaj_korekty := edekRodzajKorekty()
               tresc_korekty_pit4r = edekOrdZuTrescPobierz('PIT-4R', Val(ident_fir), 0)
               zDEKLKOR = 'K'
            ENDIF
