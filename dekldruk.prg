@@ -2211,11 +2211,11 @@ FUNCTION DaneDek_PIT11w25()
    hDane['P_33'] := P55
    hDane['P_34'] := 0
    hDane['P_35'] := 0
-   hDane['P_36'] := P50_R26
-   hDane['P_37'] := P51_R26
-   hDane['P_38'] := P53a_R26
+   hDane['P_36'] := P50_R262
+   hDane['P_37'] := P51_R262
+   hDane['P_38'] := P53a_R262
    hDane['P_39'] := zKOR_ZWET
-   hDane['P_40'] := P55_R26
+   hDane['P_40'] := P55_R262
    hDane['P_41'] := 0
    hDane['P_42'] := 0
    hDane['P_43'] := p50_3
@@ -2230,10 +2230,10 @@ FUNCTION DaneDek_PIT11w25()
    hDane['P_52'] := 0
    hDane['P_53'] := 0
    hDane['P_54'] := 0
-   hDane['P_55'] := P50_5_R26
-   hDane['P_56'] := P51_5_R26
-   hDane['P_57'] := P52_5a_R26
-   hDane['P_58'] := P53_5_R26
+   hDane['P_55'] := P50_5_R262
+   hDane['P_56'] := P51_5_R262
+   hDane['P_57'] := P52_5a_R262
+   hDane['P_58'] := P53_5_R262
    hDane['P_59'] := 0
    hDane['P_60'] := p52_6a
    hDane['P_61'] := p53_6
@@ -2245,11 +2245,11 @@ FUNCTION DaneDek_PIT11w25()
    hDane['P_67'] := zKOR_ZWIN
    hDane['P_68'] := p53_7
    hDane['P_69'] := p52+p52z
-   hDane['P_70'] := p52_R26+p52z_R26
-   hDane['P_71'] := zKOR_SPOLZ
+   hDane['P_70'] := p52_R262+p52z_R262
+   hDane['P_71'] := p52_R26+p52z_R26
    hDane['P_72'] := p54a+p54za+p64
-   hDane['P_73'] := p54a_R26+p54za_R26+p64_R26
-   hDane['P_74'] := zKOR_ZDROZ
+   hDane['P_73'] := p54a_R262+p54za_R262+p64_R262
+   hDane['P_74'] := zKOR_ZDROZ+p54a_R26+p54za_R26+p64_R26
 
    hDane['P_75'] := 0
    hDane['P_76'] := 0
@@ -2262,9 +2262,9 @@ FUNCTION DaneDek_PIT11w25()
    hDane['P_83'] := 0
    hDane['P_84'] := 0
    hDane['P_85'] := 0
-   hDane['P_86'] := 0
-   hDane['P_87'] := 0
-   hDane['P_88'] := 0
+   hDane['P_86'] := P50_R26 + P50_5_R26
+   hDane['P_87'] := P50_R26
+   hDane['P_88'] := P50_5_R26
 
    hDane['P_89_1'] := '0'
    hDane['P_89_2'] := '1'

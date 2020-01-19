@@ -439,12 +439,27 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       P54a_R26 := 0
       P64_R26 := 0
 
+      P50_R262 := 0
+      P51_R262 := 0
+      P52_R262 := 0
+      P55_R262 := 0
+      P53a_R262 := 0
+      P54a_R262 := 0
+      P64_R262 := 0
+
       P50_5_R26 := 0
       P51_5_R26 := 0
       P53_5_R26 := 0
       P52_5a_R26 := 0
       P52z_R26 := 0
       P54za_R26 := 0
+
+      P50_5_R262 := 0
+      P51_5_R262 := 0
+      P53_5_R262 := 0
+      P52_5a_R262 := 0
+      P52z_R262 := 0
+      P54za_R262 := 0
 
       SELECT etaty
 
@@ -455,13 +470,22 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       SEEK '+' + ident_fir + idpr + ' 1'
       DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma = ident_fir .AND. ident = idpr
          IF do_pit4 >= SubStr( DToS( ODKIEDY ), 1, 6 ) .AND. do_pit4 <= SubStr( DToS( DOKIEDY ), 1, 6 )
-            IF OSWIAD26R == 'T'
-               P50_R26 := P50_R26 + BRUT_RAZEM
-               P51_R26 := P51_R26 + koszt
-               P52_R26 := P52_R26 + war_psum
-               P54a_R26 := P54a_R26 + war_puzo
-               P55_R26 := P55_R26 + podatek
-               P64_R26 := P64_R26 + ZUS_RKCH
+            IF CzyPracowPonizej26R( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) )
+               IF OSWIAD26R == 'T'
+                  P50_R26 := P50_R26 + BRUT_RAZEM
+                  P51_R26 := P51_R26 + koszt
+                  P52_R26 := P52_R26 + war_psum
+                  P54a_R26 := P54a_R26 + war_puzo
+                  P55_R26 := P55_R26 + podatek
+                  P64_R26 := P64_R26 + ZUS_RKCH
+               ELSE
+                  P50_R262 := P50_R262 + BRUT_RAZEM
+                  P51_R262 := P51_R262 + koszt
+                  P52_R262 := P52_R262 + war_psum
+                  P54a_R262 := P54a_R262 + war_puzo
+                  P55_R262 := P55_R262 + podatek
+                  P64_R262 := P64_R262 + ZUS_RKCH
+               ENDIF
             ELSE
                P50 := P50 + BRUT_RAZEM
                P51 := P51 + koszt
@@ -485,11 +509,17 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       P54a := P54a + zKOR_ZDRO
       P53a := Max( 0, P50 - P51 )
 
-      P50_R26 := P50_R26 + zKOR_PRZY
-      P51_R26 := P51_R26 + zKOR_KOSZ
-      P55_R26 := P55_R26 + zKOR_ZALI
+//      P50_R26 := P50_R26 + zKOR_PRZY
+//      P51_R26 := P51_R26 + zKOR_KOSZ
+//      P55_R26 := P55_R26 + zKOR_ZALI
       P53a_R26 := Max( 0, P50_R26 - P51_R26 )
-      P54a_R26 := P54a_R26 + zKOR_ZDRO
+//      P54a_R26 := P54a_R26 + zKOR_ZDRO
+
+//      P50_R262 := P50_R262 + zKOR_PRZY
+//      P51_R262 := P51_R262 + zKOR_KOSZ
+//      P55_R262 := P55_R262 + zKOR_ZALI
+      P53a_R262 := Max( 0, P50_R262 - P51_R262 )
+//      P54a_R262 := P54a_R262 + zKOR_ZDRO
 
       SELECT umowy
       *   index on del+firma+ident+dtos(data_wyp) to &raptemp
@@ -579,10 +609,16 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                *        P52b_8=P52b_8+war_puzo
                *        P53_8=P53_8+podatek
             OTHERWISE
-               IF OSWIAD26R == 'T'
-                  P50_5_R26 := P50_5_R26 + BRUT_RAZEM
-                  P51_5_R26 := P51_5_R26 + koszt
-                  P53_5_R26 := P53_5_R26 + podatek
+               IF CzyPracowPonizej26R( Month( SToD( data_wyp ) ), Year( SToD( data_wyp ) ) )
+                  IF OSWIAD26R == 'T'
+                     P50_5_R26 := P50_5_R26 + BRUT_RAZEM
+                     P51_5_R26 := P51_5_R26 + koszt
+                     P53_5_R26 := P53_5_R26 + podatek
+                  ELSE
+                     P50_5_R262 := P50_5_R262 + BRUT_RAZEM
+                     P51_5_R262 := P51_5_R262 + koszt
+                     P53_5_R262 := P53_5_R262 + podatek
+                  ENDIF
                ELSE
                   P50_5 := P50_5 + BRUT_RAZEM
                   P51_5 := P51_5 + koszt
@@ -619,6 +655,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       P53za := Max( 0, P50z - P51z )
 
       P52_5a_R26 := Max( 0, P50_5_R26 - P51_5_R26 )
+      P52_5a_R262 := Max( 0, P50_5_R262 - P51_5_R262 )
 
       SELECT 100
       DO WHILE .NOT. DostepEx( RAPORT )
