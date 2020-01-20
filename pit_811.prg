@@ -470,7 +470,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       SEEK '+' + ident_fir + idpr + ' 1'
       DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma = ident_fir .AND. ident = idpr
          IF do_pit4 >= SubStr( DToS( ODKIEDY ), 1, 6 ) .AND. do_pit4 <= SubStr( DToS( DOKIEDY ), 1, 6 )
-            IF CzyPracowPonizej26R( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) )
+            IF  SToD( do_pit4 + '01' ) >= 0d20190801 .AND. CzyPracowPonizej26R( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) )
                IF OSWIAD26R == 'T'
                   P50_R26 := P50_R26 + BRUT_RAZEM
                   P51_R26 := P51_R26 + koszt
@@ -609,7 +609,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                *        P52b_8=P52b_8+war_puzo
                *        P53_8=P53_8+podatek
             OTHERWISE
-               IF CzyPracowPonizej26R( Month( SToD( data_wyp ) ), Year( SToD( data_wyp ) ) )
+               IF data_wyp >= 0d20190801 .AND. CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) )
                   IF OSWIAD26R == 'T'
                      P50_5_R26 := P50_5_R26 + BRUT_RAZEM
                      P51_5_R26 := P51_5_R26 + koszt
@@ -631,7 +631,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                P52b_5 := P52b_5 + war_puzo
             ENDCASE
             *     if alltrim(TYTUL)#'1'
-            IF OSWIAD26R == 'T'
+            IF data_wyp >= 0d20190801 .AND. CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) )
                P52z_R26 := P52z_R26 + war_psum
                P54za_R26 := P54za_R26 + war_puzo
             ELSE
