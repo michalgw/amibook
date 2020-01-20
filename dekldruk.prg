@@ -4053,16 +4053,16 @@ FUNCTION DaneDek_IFT1w15( aDaneZrd )
    aDane[ 'P_26' ] := PracDokRodzajStr( aDaneZrd[ 'Dane' ][ 'OsobaRodzajNrId' ] )
    aDane[ 'P_27' ] := aDaneZrd[ 'Dane' ][ 'OsobaKraj' ]
    aDane[ 'P_28' ] := aDaneZrd[ 'Dane' ][ 'OsobaKraj' ]
-   aDane[ 'P_39' ] := aDaneZrd[ 'Dane' ][ 'OsobaMiejscowosc' ]
+   aDane[ 'P_29' ] := aDaneZrd[ 'Dane' ][ 'OsobaMiejscowosc' ]
    aDane[ 'P_30' ] := aDaneZrd[ 'Dane' ][ 'OsobaKodPocztowy' ]
    aDane[ 'P_31' ] := aDaneZrd[ 'Dane' ][ 'OsobaUlica' ]
    aDane[ 'P_32' ] := aDaneZrd[ 'Dane' ][ 'OsobaNrDomu' ]
    aDane[ 'P_33' ] := aDaneZrd[ 'Dane' ][ 'OsobaNrLokalu' ]
 
    aDane[ 'P_70' ] := 0
-   aDane[ 'P_72' ] := aDaneZrd[ 'Dane' ][ 'P_71' ]
-   aDane[ 'P_73' ] := aDaneZrd[ 'Dane' ][ 'P_72' ]
-   aDane[ 'P_74' ] := aDaneZrd[ 'Dane' ][ 'P_73' ]
+   aDane[ 'P_71' ] := aDaneZrd[ 'Dane' ][ 'P_71' ]
+   aDane[ 'P_72' ] := aDaneZrd[ 'Dane' ][ 'P_72' ]
+   aDane[ 'P_73' ] := aDaneZrd[ 'Dane' ][ 'P_73' ]
 
    aDane[ 'P_74' ] := aDaneZrd[ 'Parametry' ][ 'DataZlozenia' ]
    aDane[ 'P_75' ] := aDaneZrd[ 'Parametry' ][ 'DataPrzekazania' ]
