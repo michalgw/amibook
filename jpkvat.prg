@@ -196,11 +196,11 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                ADodajNieZero( @aPoz, 'K_13', rejs->wart00 )
             ENDIF
             ADodajNieZero( @aPoz, 'K_15', rejs->wart02 + rejs->wart12, 'K_16' )
-            ADodajNieZero( @aPoz, 'K_16', rejs->vat02 + rejs->vat12 )
+            ADodajNieZero( @aPoz, 'K_16', rejs->vat02 + rejs->vat12, 'K_15' )
             ADodajNieZero( @aPoz, 'K_17', rejs->wart07, 'K_18' )
-            ADodajNieZero( @aPoz, 'K_18', rejs->vat07 )
+            ADodajNieZero( @aPoz, 'K_18', rejs->vat07, 'K_17' )
             ADodajNieZero( @aPoz, 'K_19', rejs->wart22, 'K_20' )
-            ADodajNieZero( @aPoz, 'K_20', rejs->vat22 )
+            ADodajNieZero( @aPoz, 'K_20', rejs->vat22, 'K_19' )
             IF rejs->ue == 'T'
                ADodajNieZero( @aPoz, 'K_21', rejs->wart00 )
             ENDIF
@@ -298,7 +298,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                   + iif( rejz->sp02 == 'P' .AND. rejz->zom02 == 'M', rejz->vat02, 0 ) ;
                   + iif( rejz->sp07 == 'P' .AND. rejz->zom07 == 'M', rejz->vat07, 0 ) ;
                   + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'M', rejz->vat22, 0 ) ;
-                  + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ) )
+                  + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ), 'K_23' )
 
             CASE rejz->sek_cv7 == 'IT'
                lSprzedaz := .T.
@@ -353,7 +353,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                   + iif( rejz->sp02 == 'P' .AND. rejz->zom02 == 'M', rejz->vat02, 0 ) ;
                   + iif( rejz->sp07 == 'P' .AND. rejz->zom07 == 'M', rejz->vat07, 0 ) ;
                   + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'M', rejz->vat22, 0 ) ;
-                  + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ) )
+                  + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ), 'K_25' )
 
             CASE SEK_CV7 == 'IU'
                lSprzedaz := .T.
@@ -410,7 +410,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                      + iif( rejz->sp02 == 'P' .AND. rejz->zom02 == 'M', rejz->vat02, 0 ) ;
                      + iif( rejz->sp07 == 'P' .AND. rejz->zom07 == 'M', rejz->vat07, 0 ) ;
                      + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'M', rejz->vat22, 0 ) ;
-                     + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ) )
+                     + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ), 'K_29' )
 
                ELSE
                   ADodajNieZero( @aPoz, 'K_27', ;
@@ -464,7 +464,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                      + iif( rejz->sp02 == 'P' .AND. rejz->zom02 == 'M', rejz->vat02, 0 ) ;
                      + iif( rejz->sp07 == 'P' .AND. rejz->zom07 == 'M', rejz->vat07, 0 ) ;
                      + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'M', rejz->vat22, 0 ) ;
-                     + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ) )
+                     + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ), 'K_27' )
 
                ENDIF
 
@@ -521,7 +521,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                   + iif( rejz->sp02 == 'P' .AND. rejz->zom02 == 'M', rejz->vat02, 0 ) ;
                   + iif( rejz->sp07 == 'P' .AND. rejz->zom07 == 'M', rejz->vat07, 0 ) ;
                   + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'M', rejz->vat22, 0 ) ;
-                  + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ) )
+                  + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ), 'K_34' )
 
          ENDCASE
 
