@@ -5736,18 +5736,18 @@ FUNCTION DaneXML_IFT1w15(oDoc, cNrRef, hNaglowek)
    hDane['P_8_1'] := iif( !xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
    hDane['P_8_2'] := iif( xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
    IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
-      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
-      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'Nazwisko' ) + ', ' + xmlWartoscH( hPodmiot1, 'ImiePierwsze' ) + ', ' + xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
+      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' ) + ', ' + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' ) + ', ' + xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
       hDane['P_8_N'] := ''
       hDane['P_8_R'] := ''
-      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'Nazwisko' )
-      hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'ImiePierwsze' )
-      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
+      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' )
+      hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' )
+      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
    ELSE
-      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
-      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' ) + ', ' + xmlWartoscH( hPodmiot1, 'etd:REGON' )
-      hDane['P_8_N'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' )
-      hDane['P_8_R'] := xmlWartoscH( hPodmiot1, 'etd:REGON' )
+      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' ) + ', ' + xmlWartoscH( hPodmiot1, 'REGON' )
+      hDane['P_8_N'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
+      hDane['P_8_R'] := xmlWartoscH( hPodmiot1, 'REGON' )
       hDane['P_9_N'] := ''
       hDane['P_9_I'] := ''
       hDane['P_9_D'] := ''
