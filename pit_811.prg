@@ -28,7 +28,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
    PRIVATE P1,P1s,P11,P12,P13,P14,P15,P16,P17,P18,P19
    PRIVATE P20,P21,P22,P23,P24,DP28,DP10 := 'T'
    PRIVATE tresc_korekty_pit11 := '', id_pracownika, DP28Scr
-   PRIVATE P_KrajID, P_DokIDTyp, P_DokIDNr, P_18Kraj
+   PRIVATE P_KrajID, P_DokIDTyp, P_DokIDNr, P_18Kraj, cIgnoruj26r := 'N'
 
    STORE 0 TO P29,P30,P31
    STORE '' TO P3,P4,P4d,P6,P1,P11,P12,P13,P15,P16,P17,P18,P19,P20
@@ -118,8 +118,8 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
 
       LGwie := 3
       LGkol := 1
-      @ LGwie, LGkol CLEAR TO LGwie + 11 + ILR, 78
-      @ LGwie, LGkol TO LGwie + 11 + ILR, 78
+      @ LGwie, LGkol CLEAR TO LGwie + 12 + ILR, 78
+      @ LGwie, LGkol TO LGwie + 12 + ILR, 78
       ColInf()
       @ LGwie+1, LGkol + 1  CLEAR TO LGwie+1, 77
       @ LGwie+1, LGkol + 2  SAY 'Etat-poczatek'
@@ -218,6 +218,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       @ LINI + 4, LGKol + 56 SAY 'ZUS(p.74)' GET zKOR_ZDROZ PICTURE '99999.99'
       @ LINI + 5, LGKol + 2  SAY 'Informacje o kosztach uzyskania przychodu (sek. D p. 28):' GET DP28 PICT '!' WHEN PIT11_DP28When() VALID PIT11_DP28Valid()
       @ LINI + 6, LGKol + 2  SAY 'Nieograniczony obowi¥zek podatkowy (sek. C p. 10):' GET DP10 PICT '!' VALID DP10 $ 'TN'
+      @ LINI + 7, LGKol + 2  SAY 'Wykazuj jako osob© powy¾ej 26 r. ¾ycia (Tak/Nie):' GET cIgnoruj26r PICT '!' VALID cIgnoruj26r $ 'TN'
       read_()
       SET CONF OFF
       IF LastKey() <> 13
@@ -470,7 +471,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       SEEK '+' + ident_fir + idpr + ' 1'
       DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma = ident_fir .AND. ident = idpr
          IF do_pit4 >= SubStr( DToS( ODKIEDY ), 1, 6 ) .AND. do_pit4 <= SubStr( DToS( DOKIEDY ), 1, 6 )
-            IF  SToD( do_pit4 + '01' ) >= 0d20190801 .AND. CzyPracowPonizej26R( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) )
+            IF  cIgnoruj26r == 'N' .AND. SToD( do_pit4 + '01' ) >= 0d20190801 .AND. CzyPracowPonizej26R( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) )
                IF OSWIAD26R == 'T'
                   P50_R26 := P50_R26 + BRUT_RAZEM
                   P51_R26 := P51_R26 + koszt
@@ -609,7 +610,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                *        P52b_8=P52b_8+war_puzo
                *        P53_8=P53_8+podatek
             OTHERWISE
-               IF data_wyp >= 0d20190801 .AND. CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) )
+               IF cIgnoruj26r == 'N' .AND. data_wyp >= 0d20190801 .AND. CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) )
                   IF OSWIAD26R == 'T'
                      P50_5_R26 := P50_5_R26 + BRUT_RAZEM
                      P51_5_R26 := P51_5_R26 + koszt
