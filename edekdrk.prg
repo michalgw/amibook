@@ -1996,12 +1996,12 @@ FUNCTION DaneXML_PIT8ARw8(oDoc, cNrRef, hNaglowek)
    hDane['P_8_1'] := iif( !xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
    hDane['P_8_2'] := iif( xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
    IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
-      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
-      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'Nazwisko' ) + ', ' ;
-        + xmlWartoscH( hPodmiot1, 'ImiePierwsze' ) + ',      ' + xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
+      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' ) + ', ' ;
+        + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' ) + ',      ' + xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
    ELSE
       hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
-      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' ) + ',      ' + xmlWartoscH( hPodmiot1, 'etd:REGON' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' ) + ',      ' + xmlWartoscH( hPodmiot1, 'REGON' )
    ENDIF
    IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
       hDane['P_8_N'] := ''
