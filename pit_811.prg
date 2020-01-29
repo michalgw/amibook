@@ -476,7 +476,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                   P50_R26 := P50_R26 + BRUT_RAZEM
                   P51_R26 := P51_R26 + koszt
                   P52_R26 := P52_R26 + war_psum
-                  P54a_R26 := P54a_R26 + war_puzo
+                  P54a_R26 := P54a_R26 + war_puz // war_puzo
                   P55_R26 := P55_R26 + podatek
                   P64_R26 := P64_R26 + ZUS_RKCH
                ELSE
@@ -632,9 +632,14 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                P52b_5 := P52b_5 + war_puzo
             ENDCASE
             *     if alltrim(TYTUL)#'1'
-            IF data_wyp >= 0d20190801 .AND. CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) )
-               P52z_R26 := P52z_R26 + war_psum
-               P54za_R26 := P54za_R26 + war_puzo
+            IF cIgnoruj26r == 'N' .AND. data_wyp >= 0d20190801 .AND. CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) )
+               IF OSWIAD26R == 'T'
+                  P52z_R26 := P52z_R26 + war_psum
+                  P54za_R26 := P54za_R26 + war_puzo
+               ELSE
+                  P52z_R262 := P52z_R262 + war_psum
+                  P54za_R262 := P54za_R262 + war_puzo
+               ENDIF
             ELSE
                P52z := P52z + war_psum
                P54za := P54za + war_puzo
