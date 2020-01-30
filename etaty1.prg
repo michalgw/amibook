@@ -725,14 +725,22 @@ func oblpl
       zDOCHODPOD=_round(zDOCHOD,0)
 
       IF zOSWIAD26R == 'T'
-         B5 := 0.0
-         zODLICZ := 0.0
-         zWAR_PUZ := _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
+         B5=zDOCHODPOD*(parap_pod/100)
+         zWAR_PUZ=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)))
+         zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
+         zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PZK/100),2)
+         zWAR_PUZO=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PZK/100),2)))
+         zPODATEK=max(0,_round(B5-(zWAR_PUZO+parap_odl),0))
+         zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
+
+         zWAR_PUZ := Min( _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2), zWAR_PUZ )
          zWAR_PUZB := zWAR_PUZ
          zWAR_PZKB := 0.0
          zWAR_PUZO := 0.0
          zPODATEK := 0.0
          zNETTO := zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
+         B5 := 0.0
+         zODLICZ := 0.0
       ELSE
          B5=zDOCHODPOD*(zSTAW_PODAT/100)
    *--> Gdy potracanie skladki do wysokosci podatku
