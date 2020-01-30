@@ -2226,10 +2226,10 @@ FUNCTION DaneDek_PIT11w25()
    hDane['P_48'] := p51_5
    hDane['P_49'] := p52_5a
    hDane['P_50'] := p53_5
-   hDane['P_51'] := 0
-   hDane['P_52'] := 0
-   hDane['P_53'] := 0
-   hDane['P_54'] := 0
+   hDane['P_51'] := p50_11
+   hDane['P_52'] := p51_11
+   hDane['P_53'] := p52_11a
+   hDane['P_54'] := p53_11
    hDane['P_55'] := P50_5_R262
    hDane['P_56'] := P51_5_R262
    hDane['P_57'] := P52_5a_R262

@@ -185,6 +185,8 @@ PROCEDURE Umowy()
                   zTYT := 'R' //kontrakty menadzerskie
                CASE TYTUL = '10'
                   zTYT := 'O'
+               CASE TYTUL = '11'
+                  zTYT := 'D' // umowa o dzielo
                OTHERWISE
                   zTYT := 'Z' //umowy zlecenia i o dzielo 5
                ENDCASE
@@ -249,6 +251,8 @@ PROCEDURE Umowy()
                zTYTUL := '8'
             CASE zTYT = 'O'
                zTYTUL := '10'
+            CASE zTYT = 'D'
+               zTYTUL := '11'
             OTHERWISE
                zTYTUL := '5' //<--= brak danych
             ENDCASE
@@ -386,6 +390,8 @@ PROCEDURE Umowy()
             zTYT := 'R' //kontrakty menadzerskie
          CASE TYTUL = '10'
             zTYT := 'O'
+         CASE TYTUL = '11'
+            zTYT := 'D'
          OTHERWISE
             zTYT := 'Z' //umowy zlecenia i o dzielo 5
          ENDCASE
@@ -437,7 +443,7 @@ PROCEDURE Umowy()
             CASE skladn == 2
                SAVE SCREEN TO scr_sklad
                SET CURSOR ON
-               @ 17, 62 GET zTYT PICTURE '!' when jaki_tytul() VALID zTYT $ 'AZPICEFSRO'
+               @ 17, 62 GET zTYT PICTURE '!' when jaki_tytul() VALID zTYT $ 'AZPICEFSROD'
                READ
                SET CURSOR OFF
                RESTORE SCREEN FROM scr_sklad
@@ -870,6 +876,8 @@ FUNCTION _infoskl_u()
       zTYT := 'R' //kontrakty menadzerskie
    CASE TYTUL = '10'
       zTYT := 'O'
+   CASE TYTUL = '11'
+      zTYT := 'D'
    OTHERWISE
       zTYT := 'Z' //umowy zlecenia i o dzielo 5
    ENDCASE
@@ -883,7 +891,8 @@ FUNCTION _infoskl_u()
       iif( zTYT = 'P', 'rawo autorskie  ', ;
       iif( zTYT = 'R', 'yczalt do 200zl ', ;
       iif( zTYT = 'O', 'bcokrajowiec    ', ;
-      'lecenia i dzie&_l.a')))))))))
+      iif( zTYT = 'D', 'zieˆa           ', ;
+      'lecenia         '))))))))))
    //002a do tad
    @ 18, 26 SAY STAW_PSUM PICTURE '99.99'
    @ 18, 33 SAY WAR_PSUM PICTURE '999999.99'
@@ -1133,6 +1142,8 @@ PROCEDURE PODSTAWu()
       zTYT := 'R' //kontrakty menadzerskie
    CASE TYTUL = '10'
       zTYT := 'O'
+   CASE TYTUL = '11'
+      zTYT := 'D'
    OTHERWISE
       zTYT := 'Z' //umowy zlecenia i o dzielo 5
    ENDCASE
@@ -1226,6 +1237,8 @@ PROCEDURE ZAPISZPLAu()
       zTYTUL := '8'
    CASE zTYT = 'O'
       zTYTUL := '10'
+   CASE zTYT = 'D'
+      zTYTUL := '11'
    OTHERWISE
       zTYTUL :='5' //<--= brak danych
    ENDCASE
@@ -1239,10 +1252,11 @@ PROCEDURE ZAPISZPLAu()
 //002a nowe funkcje
 FUNCTION jaki_tytul()
    ColInf()
-   @  4, 50 CLEAR TO 16, 79
-   @  4, 50 to 16, 79
-   @  5, 51 SAY padc('Wpisz:',28)
-   @  6, 51 SAY 'Z - umowy zlecenia i o dziel'
+   @  3, 50 CLEAR TO 16, 79
+   @  3, 50 to 16, 79
+   @  4, 51 SAY padc('Wpisz:',28)
+   @  5, 51 SAY 'Z - umowy zlecenia          '
+   @  6, 51 SAY 'D - umowy o dzieˆo          '
    @  7, 51 SAY 'P - prawa autorskie i inne  '
    *   @  8,51 SAY 'K - kontrakty menedzerskie  '
    @  8, 51 SAY 'I - inne zrodla             '

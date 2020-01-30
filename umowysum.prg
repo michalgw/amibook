@@ -53,7 +53,7 @@ begin sequence
       @ 20,60 say [Imi&_e.] get od_kontr1 picture repl('!',15)
       @ 21,20 say [(je&_z.eli zestawienie dla wszystkich to zostaw puste pola)]
       @ 22,1  say [W/w daty dotycza: zawarcia umowy(1),wyplaty(2) ?] get sort pict '9' range 1,2
-      @ 22,54 say [Tylko umowy typu:] get zTYT pict '!' when jakitytul2() valid zTYT$'*AZPICEFSRO'
+      @ 22,54 say [Tylko umowy typu:] get zTYT pict '!' when jakitytul2() valid zTYT$'*AZPICEFSROD'
       read_()
       if lastkey()=27
          break
@@ -133,7 +133,7 @@ begin sequence
       case zTYT='F'
            TytulOpis='swiadczenia z FP i FGSP'
       case zTYT='Z'
-           TytulOpis='umowy zlecenia i o dzielo'
+           TytulOpis='umowy zlecenia'
       case zTYT='P'
            TytulOpis='prawa autorskie i podobne'
       case zTYT='I'
@@ -144,6 +144,8 @@ begin sequence
            TytulOpis='obowiazki spoleczne'
       case zTYT='O'
            TytulOpis='obcokrajowcy'
+      case zTYT='D'
+           TytulOpis='umowy o dzieˆo'
       endcase
 
       mon_drk([ ZESTAWIENIE UMOW i INNYCH WYPLAT za okres od  ]+k1+[  do  ]+k2+[   (]+TytulOpis+[)        FIRMA: ]+SYMBOL_FIR)
@@ -192,6 +194,8 @@ begin sequence
               set filter to TYTUL='9'
          case zTYT='O'
               set filter to TYTUL='10'
+         case zTYT='D'
+              set filter to TYTUL='11'
          endcase
          go top
          seek '+'+IDENT_FIR+str(kk5,5)
@@ -220,6 +224,8 @@ begin sequence
                     typ='R' //kontrakty menadzerskie
                case TYTUL='10'
                     typ='O' //kontrakty menadzerskie
+               case TYTUL='11'
+                    typ='D' //kontrakty menadzerskie
                other
                     typ='Z' //umowy zlecenia i o dzielo 5
                endcase
@@ -325,11 +331,12 @@ if _czy_close
 endif
 func jakitytul2
    ColInf()
-   @  8,50 clear to 21,79
-   @  8,50 to 21,79
-   @  9,51 say padc('Wpisz:',28)
-   @ 10,51 say '* - wszystkie rodzaje       '
-   @ 11,51 say 'Z - umowy zlecenia i o dziel'
+   @  7,50 clear to 21,79
+   @  7,50 to 21,79
+   @  8,51 say padc('Wpisz:',28)
+   @  9,51 say '* - wszystkie rodzaje       '
+   @ 10,51 say 'Z - umowy zlecenia          '
+   @ 11,51 say 'D - umowy o dzieˆo          '
    @ 12,51 say 'P - prawa autorskie i inne  '
    @ 13,51 say 'I - inne zrodla             '
    @ 14,51 say 'C - czlonkowstwo w spoldziel'

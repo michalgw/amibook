@@ -430,7 +430,8 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                  p50_2,p51_2,p51a_2,p52_2,p52_2a,p52a_2,p52b_2,p53_2,;
                  p50_3,p51_3,p51a_3,p52_3,p52_3a,p52a_3,p52b_3,p53_3,;
                  p50_4,p51_4,p51a_4,p52_4,p52_4a,p52a_4,p52b_4,p53_4,;
-                 p50_9,p51_9,p51a_9,p52_9,p52_9a,p52a_9,p52b_9,p53_9
+                 p50_9,p51_9,p51a_9,p52_9,p52_9a,p52a_9,p52b_9,p53_9,;
+                 p50_11,p51_11,p53_11,p52_11a
 
       P50_R26 := 0
       P51_R26 := 0
@@ -621,9 +622,15 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                      P53_5_R262 := P53_5_R262 + podatek
                   ENDIF
                ELSE
-                  P50_5 := P50_5 + BRUT_RAZEM
-                  P51_5 := P51_5 + koszt
-                  P53_5 := P53_5 + podatek
+                  IF TYTUL == '11'
+                     P50_11 := P50_11 + BRUT_RAZEM
+                     P51_11 := P51_11 + koszt
+                     P53_11 := P53_11 + podatek
+                  ELSE
+                     P50_5 := P50_5 + BRUT_RAZEM
+                     P51_5 := P51_5 + koszt
+                     P53_5 := P53_5 + podatek
+                  ENDIF
                ENDIF
                P51a_5 := P51a_5 + war_psum
                P52_5 := P52_5 + dochod
@@ -658,6 +665,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       P52_6a := Max( 0, P50_6 - P51_6 )
       P52_7a := Max( 0, P50_7 - P51_7 )
       P52_5a := Max( 0, P50_5 - P51_5 )
+      P52_11a := Max( 0, P50_11 - P51_11 )
       P53za := Max( 0, P50z - P51z )
 
       P52_5a_R26 := Max( 0, P50_5_R26 - P51_5_R26 )
