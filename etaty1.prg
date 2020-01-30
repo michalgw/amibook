@@ -725,7 +725,7 @@ func oblpl
       zDOCHODPOD=_round(zDOCHOD,0)
 
       IF zOSWIAD26R == 'T'
-         B5=zDOCHODPOD*(parap_pod/100)
+         B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(parap_pod/100)
          zWAR_PUZ=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)))
          zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
          zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PZK/100),2)
