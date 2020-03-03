@@ -528,3 +528,39 @@ PROCEDURE SprawdzAktualizacje( lCzekaj )
    RETURN NIL
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION amiRest( cAdres, cContentType, cRequest, cMethod, cHeaders )
+
+   LOCAL nRes
+
+   IF Empty( amiDllH )
+      RETURN 1
+   ENDIF
+
+   hb_default( @cContentType, "" )
+   hb_default( @cRequest, "" )
+   hb_default( @cMethod, "GET" )
+   hb_default( @cHeaders, "" )
+
+   RETURN hb_DynCall( { 'amiRest', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ) }, ;
+      cAdres, cContentType, cRequest, cMethod, cHeaders )
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION amiRestResponse()
+
+   IF Empty( amiDllH )
+      RETURN NIL
+   ENDIF
+
+   RETURN hb_DynCall( { 'amiRestResponse', amiDllH, ;
+      hb_bitOr( hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), HB_DYN_CALLCONV_STDCALL ) } )
+
+/*----------------------------------------------------------------------*/
+
