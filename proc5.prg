@@ -281,20 +281,31 @@ FUNCTION Komunikat(cTresc)
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION WyswietlTekst(cTekst)
+FUNCTION WyswietlTekst( cTekst, nTop, nBottom, cTytul )
+
    LOCAL cScr
    PRIVATE cWyswietlTekstTekst := cTekst
+   PRIVATE cTytulWydruku := cTytul
+
+   hb_default( @nTop, 3 )
+   hb_default( @nBottom, 22 )
+
    SAVE SCREEN TO cScr
-   @ 3, 0 CLEAR TO 22, 79
-   @ 3, 0, 21, 79 BOX B_SINGLE
-   @ 22, 0 SAY 'Esc - zamknij     C - kopiuj do schowka     Z - zapisz do pliku    ' + Chr( 24 ) + '/' + Chr( 25 ) + ' - przewiä'
-   MemoEdit(cTekst, 4, 1, 20, 78, .F., 'WyswietlTekstUserFunc')
+
+   @ nTop, 0 CLEAR TO nBottom, 79
+   @ nTop, 0, nBottom - 1, 79 BOX B_SINGLE
+   @ nBottom, 0 SAY 'Esc - zamknij | D - drukuj | C - kopiuj do schowka | Z - zapisz | ' + Chr( 24 ) + '/' + Chr( 25 ) + ' - przewiä'
+
+   MemoEdit( cTekst, nTop + 1, 1, nBottom - 2, 78, .F., 'WyswietlTekstUserFunc' )
+
    RESTORE SCREEN FROM cScr
+
    RETURN
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION WyswietlTekstUserFunc(nMode, nRow, nCol)
+FUNCTION WyswietlTekstUserFunc( nMode, nRow, nCol )
+
    LOCAL nKey := LastKey()
    LOCAL nRet := ME_DEFAULT
    LOCAL cNazwaPliku
@@ -302,13 +313,17 @@ FUNCTION WyswietlTekstUserFunc(nMode, nRow, nCol)
    DO CASE
    CASE nMode == ME_UNKEY .OR. nMode == ME_UNKEYX
       DO CASE
-      CASE nKey == Asc('C') .OR. nKey == Asc('c')
+      CASE nKey == Asc( 'C' ) .OR. nKey == Asc( 'c' )
          hb_gtInfo( HB_GTI_CLIPBOARDDATA, cWyswietlTekstTekst )
-         komun('Komunikat zostaˆ skopiowany do schowka.', 5)
-      CASE nKey == Asc('Z') .OR. nKey == Asc('z')
-         cNazwaPliku := AllTrim(win_GetSaveFileName())
-         IF Len(cNazwaPliku) > 0
-            MemoWrit(cNazwaPliku, cWyswietlTekstTekst)
+         Komun( 'Komunikat zostaˆ skopiowany do schowka.', 5 )
+
+      CASE nKey == Asc( 'D' ) .OR. nKey == Asc( 'd' )
+         WydrukProsty( cWyswietlTekstTekst, cTytulWydruku )
+
+      CASE nKey == Asc( 'Z' ) .OR. nKey == Asc( 'z' )
+         cNazwaPliku := AllTrim( win_GetSaveFileName() )
+         IF Len( cNazwaPliku ) > 0
+            MemoWrit( cNazwaPliku, cWyswietlTekstTekst )
          ENDIF
       ENDCASE
    ENDCASE
@@ -829,6 +844,79 @@ FUNCTION BlokadaPro( cTablica )
    ENDDO
 
    RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION SprawdzNIPSuma( cNip )
+
+   LOCAL lRes := .F.
+   LOCAL nSuma
+
+   IF Len( cNip ) == 10
+      nSuma := 6 * Val( SubStr( cNip, 1, 1 ) ) + ;
+         5 * Val( SubStr( cNip, 2, 1 ) ) + ;
+         7 * Val( SubStr( cNip, 3, 1 ) ) + ;
+         2 * Val( SubStr( cNip, 4, 1 ) ) + ;
+         3 * Val( SubStr( cNip, 5, 1 ) ) + ;
+         4 * Val( SubStr( cNip, 6, 1 ) ) + ;
+         5 * Val( SubStr( cNip, 7, 1 ) ) + ;
+         6 * Val( SubStr( cNip, 8, 1 ) ) + ;
+         7 * Val( SubStr( cNip, 9, 1 ) )
+      nSuma := nSuma % 11
+      lRes := nSuma == Val( SubStr( cNip, 10, 1 ) )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE WydrukProsty( cTresc, cTytul )
+
+   LOCAL oRap
+
+   IF Empty( cTresc ) .OR. ValType( cTresc ) <> 'C'
+      RETURN
+   ENDIF
+
+   hb_default( @cTytul, "" )
+
+   oRap := TFreeReport():New()
+   oRap:LoadFromFile( 'frf\drukprosty.frf' )
+   IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+      oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+   ENDIF
+   oRap:AddValue( 'Tytul', cTytul )
+   oRap:AddValue( 'Tresc', cTresc )
+   oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+   oRap:ModalPreview := .F.
+   cKolor := ColStd()
+   @ 24, 0
+   @ 24, 26 PROMPT '[ Monitor ]'
+   @ 24, 44 PROMPT '[ Drukarka ]'
+   IF trybSerwisowy
+      @ 24, 70 PROMPT '[ Edytor ]'
+   ENDIF
+   CLEAR TYPE
+   nMenu := Menu(1)
+   IF LastKey() != 27
+      SWITCH nMenu
+      CASE 1
+         oRap:ShowReport()
+         EXIT
+      CASE 2
+         IF oRap:PrepareReport()
+            oRap:PrintPreparedReport('', 1)
+         ENDIF
+         EXIT
+      CASE 3
+         oRap:DesignReport()
+         EXIT
+      ENDSWITCH
+   ENDIF
+   @ 24, 0
+   SetColor(cKolor)
+
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 
