@@ -603,8 +603,8 @@ public aKONTRdbf := {;
    { "ID", "+", 4, 0 },;                          //  1
    { "DEL", "C", 1, 0 },;                         //  2
    { "FIRMA", "C", 3, 0 },;                       //  3
-   { "NAZWA", "C", 100, 0 },;                      //  4
-   { "ADRES", "C", 100, 0 },;                      //  5
+   { "NAZWA", "C", 100, 0 },;                     //  4
+   { "ADRES", "C", 100, 0 },;                     //  5
    { "NR_IDENT", "C", 30, 0 },;                   //  6
    { "EXPORT", "C", 1, 0 },;                      //  7
    { "BANK", "C", 28, 0 },;                       //  8
@@ -612,6 +612,27 @@ public aKONTRdbf := {;
    { "TEL", "C", 20, 0 },;                        //  10
    { "UE", "C", 1, 0 },;                          //  11
    { "KRAJ", "C", 2, 0 } }                        //  12
+
+public aKONTRSPRdbf := {;
+   { "ID", "+", 4, 0 }, ;                         //  1
+   { "NIP", "C", 10, 0 }, ;                       //  2
+   { "STANNA", "D", 8, 0 }, ;                     //  3
+   { "NAME", "C", 200, 0 }, ;                     //  4
+   { "STATUSVAT", "C", 20, 0 }, ;                 //  5
+   { "REGON", "C", 14, 0 }, ;                     //  6
+   { "PESEL", "C", 11, 0 }, ;                     //  7
+   { "KRS", "C", 10, 0 }, ;                       //  8
+   { "RESADRES", "C", 200, 0 }, ;                 //  9
+   { "WORKADR", "C", 200, 0 }, ;                  //  10
+   { "REGLEGDAT", "D", 8, 0 }, ;                  //  11
+   { "REGDENDAT", "D", 8, 0 }, ;                  //  12
+   { "REGDENBAS", "C", 200, 0 }, ;                //  13
+   { "RESTDATE", "D", 8, 0 }, ;                   //  14
+   { "RESTBASIS", "C", 200, 0 }, ;                //  15
+   { "REMOVDATE", "D", 8, 0 }, ;                  //  16
+   { "REMOVBASI", "C", 200, 0 }, ;                //  17
+   { "REQDATETM", "@", 8, 0 }, ;                  //  18
+   { "REQID", "C", 16, 0 } }                      //  19
 
 // Create: KRST.DBF
 public aKRSTdbf := {;
@@ -1557,6 +1578,7 @@ public TabliceDbf := {;
    { "kat_spr",  "kat_spr.dbf",  aKAT_SPRdbf,  .T. },;
    { "kat_zak",  "kat_zak.dbf",  aKAT_ZAKdbf,  .T. },;
    { "kontr",    "kontr.dbf",    aKONTRdbf,    .T. },;
+   { "kontrspr", "kontrspr.dbf", aKONTRSPRdbf, .T. },;
    { "krst",     "krst.dbf",     aKRSTdbf,     .T. },;
    { "nieobec",  "nieobec.dbf",  aNIEOBECdbf,  .T. },;
    { "notes",    "notes.dbf",    aNOTESdbf,    .T. },;
@@ -1753,6 +1775,13 @@ FUNCTION dbfIdxKONTR()
    pack
    index on del+firma+substr(nazwa,1,15)+substr(adres,1,15) to kontr
    index on del+firma+substr(nr_ident,1,15) to kontr1
+   RETURN
+****************************************
+FUNCTION dbfIdxKONTRSPR()
+   do while.not.dostepex('KONTRSPR')
+   enddo
+   pack
+   index on nip + DToS( stanna ) to kontrspr
    RETURN
 ****************************************
 FUNCTION dbfIdxKAT_ZAK()

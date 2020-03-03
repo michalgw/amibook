@@ -257,6 +257,14 @@ FUNCTION VAT_Sprawdz_NIP( cNIP )
 
 PROCEDURE VAT_Sprzwdz_NIP_Dlg( cNIPIn )
 
+   VAT_Sprzwdz_NIP_Dlg_WLApi( cNIPIn )
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE VAT_Sprzwdz_NIP_DlgOld( cNIPIn )
+
    LOCAL cEkran := SaveScreen()
    LOCAL cKolor := ColStd()
    LOCAL cNIP := iif( Empty( cNIPIn ), Space( 10 ), PadR( TrimNip( cNIPIn ), 10 ) )
@@ -307,6 +315,446 @@ PROCEDURE VAT_Sprzwdz_NIP_Rej()
 PROCEDURE VAT_Sprzwdz_NIP_DlgK()
 
    VAT_Sprzwdz_NIP_Dlg()
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
+#define WLAPI_URL          "https://wl-api.mf.gov.pl/api"
+#define WLAPI_CONTENT_TYPE "application/json"
+#define WLAPI_HEADER       "accept: application/json"
+
+FUNCTION WLApiSearchNip( cNip, dData, xDane )
+
+   LOCAL nRes
+   LOCAL cAdres
+   LOCAL cResponse
+
+   cAdres := WLAPI_URL + "/search/nip/" + cNip + "?date=" + hb_DToC( dData, "yyyy-mm-dd" )
+
+   nRes := amiRest( cAdres, WLAPI_CONTENT_TYPE, "", "GET", WLAPI_HEADER )
+
+   cResponse := amiRestResponse()
+   IF ! Empty( cResponse )
+      IF nRes == 200 .OR. nRes == 400
+         hb_jsonDecode( cResponse, @xDane )
+         IF nRes == 200 .AND. HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'result' ) .AND. hb_HHasKey( xDane[ 'result' ], 'subject' )
+            IF hb_HHasKey( xDane[ 'result' ], 'requestDateTime' ) .AND. ! Empty( xDane[ 'result' ][ 'requestDateTime' ] )
+               xDane[ 'result' ][ 'subject' ][ 'requestDateTime' ] := xDane[ 'result' ][ 'requestDateTime' ]
+            ENDIF
+            IF hb_HHasKey( xDane[ 'result' ], 'requestId' ) .AND. ! Empty( xDane[ 'result' ][ 'requestId' ] )
+               xDane[ 'result' ][ 'subject' ][ 'requestId' ] := xDane[ 'result' ][ 'requestId' ]
+            ENDIF
+            WLApiFixDate( @xDane[ 'result' ][ 'subject' ] )
+            xDane := xDane[ 'result' ][ 'subject' ]
+            xDane[ 'jest' ] := .T.
+            xDane[ 'stanNa' ] := dData
+         ENDIF
+      ELSE
+         xDane := cResponse
+      ENDIF
+   ENDIF
+
+   RETURN nRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION WLApiSearchNips( aNips, dData, xDane )
+
+   LOCAL nRes
+   LOCAL cAdres
+   LOCAL cResponse
+   LOCAL cNips := ""
+
+   AEval( aNips, { | cElement |
+      IF Len( cNips ) > 0
+         cNips := cNips + ","
+      ENDIF
+      cNips := cNips + cElement
+   } )
+
+   cAdres := WLAPI_URL + "/search/nips/" + cNips + "?date=" + hb_DToC( dData, "yyyy-mm-dd" )
+
+   nRes := amiRest( cAdres, WLAPI_CONTENT_TYPE, "", "GET", WLAPI_HEADER )
+
+   cResponse := amiRestResponse()
+   IF ! Empty( cResponse )
+      IF nRes == 200 .OR. nRes == 400
+         hb_jsonDecode( cResponse, @xDane )
+         IF nRes == 200 .AND. HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'result' ) .AND. hb_HHasKey( xDane[ 'result' ], 'subjects' )
+            AEval( xDane[ 'result' ][ 'subjects' ], { | aElem |
+               aElem[ 'stanNa' ] := dData
+               IF hb_HHasKey( xDane[ 'result' ], 'requestDateTime' ) .AND. ! Empty( xDane[ 'result' ][ 'requestDateTime' ] )
+                  aElem[ 'requestDateTime' ] := xDane[ 'result' ][ 'requestDateTime' ]
+               ENDIF
+               IF hb_HHasKey( xDane[ 'result' ], 'requestId' ) .AND. ! Empty( xDane[ 'result' ][ 'requestId' ] )
+                  aElem[ 'requestId' ] := xDane[ 'result' ][ 'requestId' ]
+               ENDIF
+               WLApiFixDate( @aElem )
+            } )
+            xDane := xDane[ 'result' ][ 'subjects' ]
+         ENDIF
+      ELSE
+         xDane := cResponse
+      ENDIF
+   ENDIF
+
+   RETURN nRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE WLApiFixDate( aWpis )
+
+   IF ! HB_ISHASH( aWpis )
+      RETURN
+   ENDIF
+
+   IF hb_HHasKey( aWpis, 'registrationLegalDate' ) .AND. ! Empty( aWpis[ 'registrationLegalDate' ] ) .AND. ValType( aWpis[ 'registrationLegalDate' ] ) == 'C'
+      aWpis[ 'registrationLegalDate' ] := hb_CToD( aWpis[ 'registrationLegalDate' ], "yyyy-mm-dd" )
+   ENDIF
+   IF hb_HHasKey( aWpis, 'registrationDenialDate' ) .AND. ! Empty( aWpis[ 'registrationDenialDate' ] ) .AND. ValType( aWpis[ 'registrationDenialDate' ] ) == 'C'
+      aWpis[ 'registrationDenialDate' ] := hb_CToD( aWpis[ 'registrationDenialDate' ], "yyyy-mm-dd" )
+   ENDIF
+   IF hb_HHasKey( aWpis, 'restorationDate' ) .AND. ! Empty( aWpis[ 'restorationDate' ] ) .AND. ValType( aWpis[ 'restorationDate' ] ) == 'C'
+      aWpis[ 'restorationDate' ] := hb_CToD( aWpis[ 'restorationDate' ], "yyyy-mm-dd" )
+   ENDIF
+   IF hb_HHasKey( aWpis, 'removalDate' ) .AND. ! Empty( aWpis[ 'removalDate' ] ) .AND. ValType( aWpis[ 'removalDate' ] ) == 'C'
+      aWpis[ 'removalDate' ] := hb_CToD( aWpis[ 'removalDate' ], "yyyy-mm-dd" )
+   ENDIF
+   IF hb_HHasKey( aWpis, 'requestDateTime' ) .AND. ! Empty( aWpis[ 'requestDateTime' ] ) .AND. ValType( aWpis[ 'requestDateTime' ] ) == 'C'
+      aWpis[ 'requestDateTime' ] := hb_CToT( aWpis[ 'requestDateTime' ], "dd-mm-yyyy", " hh:mm:ss" )
+   ENDIF
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KontrSprDodaj( aWpis, lOtworz )
+
+   LOCAL nTmpWA
+
+   IF ! hb_HHasKey( aWpis, 'nip' )
+      RETURN .F.
+   END
+
+   hb_default( @lOtworz, .T. )
+
+   IF lOtworz
+      nTmpWA := Select()
+      DO WHILE ! DostepPro( "KONTRSPR", "KONTRSPR", .T. )
+      ENDDO
+   ENDIF
+
+   kontrspr->( dbAppend() )
+   kontrspr->nip := aWpis[ 'nip' ]
+   kontrspr->stanna := aWpis[ 'stanNa' ]
+   IF hb_HHasKey( aWpis, 'name' ) .AND. ! Empty( aWpis[ 'name' ] )
+      kontrspr->name := aWpis[ 'name' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'statusVat' ) .AND. ! Empty( aWpis[ 'statusVat' ] )
+      kontrspr->statusvat := aWpis[ 'statusVat' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'regon' ) .AND. ! Empty( aWpis[ 'regon' ] )
+      kontrspr->regon := aWpis[ 'regon' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'pesel' ) .AND. ! Empty( aWpis[ 'pesel' ] )
+      kontrspr->pesel := aWpis[ 'pesel' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'krs' ) .AND. ! Empty( aWpis[ 'krs' ] )
+      kontrspr->krs := aWpis[ 'krs' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'residenceAddress' ) .AND. ! Empty( aWpis[ 'residenceAddress' ] )
+      kontrspr->resadres := aWpis[ 'residenceAddress' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'workingAddress' ) .AND. ! Empty( aWpis[ 'workingAddress' ] )
+      kontrspr->workadr := aWpis[ 'workingAddress' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'registrationLegalDate' ) .AND. ! Empty( aWpis[ 'registrationLegalDate' ] )
+      kontrspr->reglegdat := aWpis[ 'registrationLegalDate' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'registrationDenialDate' ) .AND. ! Empty( aWpis[ 'registrationDenialDate' ] )
+      kontrspr->regdendat := aWpis[ 'registrationDenialDate' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'registrationDenialBasis' ) .AND. ! Empty( aWpis[ 'registrationDenialBasis' ] )
+      kontrspr->regdenbas := aWpis[ 'registrationDenialBasis' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'restorationDate' ) .AND. ! Empty( aWpis[ 'restorationDate' ] )
+      kontrspr->restdate := aWpis[ 'restorationDate' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'restorationBasis' ) .AND. ! Empty( aWpis[ 'restorationBasis' ] )
+      kontrspr->restbasis := aWpis[ 'restorationBasis' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'removalDate' ) .AND. ! Empty( aWpis[ 'removalDate' ] )
+      kontrspr->removdate := aWpis[ 'removalDate' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'removalBasis' ) .AND. ! Empty( aWpis[ 'removalBasis' ] )
+      kontrspr->removbasi := aWpis[ 'removalBasis' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'requestDateTime' ) .AND. ! Empty( aWpis[ 'requestDateTime' ] )
+      kontrspr->reqdatetm := aWpis[ 'requestDateTime' ]
+   ENDIF
+   IF hb_HHasKey( aWpis, 'requestId' ) .AND. ! Empty( aWpis[ 'requestId' ] )
+      kontrspr->reqid := aWpis[ 'requestId' ]
+   ENDIF
+   kontrspr->( dbCommit() )
+
+   IF lOtworz
+      kontrspr->( dbCloseArea() )
+      dbSelectArea( nTmpWA )
+   ENDIF
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KontrSprSzukaj( cNip, dData, lOtworz )
+
+   LOCAL aRes := hb_Hash( 'jest', .F., 'nip', cNip )
+   LOCAL nTmpWA
+
+   hb_default( @dData, Date() )
+   hb_default( @lOtworz, .T. )
+
+   IF lOtworz
+      nTmpWA := Select()
+      DO WHILE ! DostepPro( "KONTRSPR", "KONTRSPR", .T. )
+      ENDDO
+   ENDIF
+
+   //kontrspr->( dbSetFilter( { || kontrspr->nip == cNip }, "kontrspr->nip == cNip" ) )
+   //kontrspr->( dbGoBottom() )
+
+   IF kontrspr->( dbSeek( cNip + DToS( dData ) ) ) .AND. kontrspr->nip == cNip .AND. kontrspr->stanna == dData
+      aRes[ 'jest' ] := .T.
+      IF ! Empty( kontrspr->name )
+         aRes[ 'name' ] := AllTrim( kontrspr->name )
+      ENDIF
+      aRes[ 'stanNa' ] := kontrspr->stanna
+      IF ! Empty( kontrspr->statusvat )
+         aRes[ 'statusVat' ] := AllTrim( kontrspr->statusvat )
+      ENDIF
+      IF ! Empty( kontrspr->regon )
+         aRes[ 'regon' ] := AllTrim( kontrspr->regon )
+      ENDIF
+      IF ! Empty( kontrspr->pesel )
+         aRes[ 'pesel' ] := AllTrim( kontrspr->pesel )
+      ENDIF
+      IF ! Empty( kontrspr->krs )
+         aRes[ 'krs' ] := AllTrim( kontrspr->krs )
+      ENDIF
+      IF ! Empty( kontrspr->resadres )
+         aRes[ 'residenceAddress' ] := AllTrim( kontrspr->resadres )
+      ENDIF
+      IF ! Empty( kontrspr->workadr )
+         aRes[ 'workingAddress' ] := AllTrim( kontrspr->workadr )
+      ENDIF
+      IF ! Empty( kontrspr->reglegdat )
+         aRes[ 'registrationLegalDate' ] := kontrspr->reglegdat
+      ENDIF
+      IF ! Empty( kontrspr->regdendat )
+         aRes[ 'registrationDenialDate' ] := kontrspr->regdendat
+      ENDIF
+      IF ! Empty( kontrspr->regdenbas )
+         aRes[ 'registrationDenialBasis' ] := AllTrim( kontrspr->regdenbas )
+      ENDIF
+      IF ! Empty( kontrspr->restdate )
+         aRes[ 'restorationDate' ] := kontrspr->restdate
+      ENDIF
+      IF ! Empty( kontrspr->restbasis )
+         aRes[ 'restorationBasis' ] := AllTrim( kontrspr->restbasis )
+      ENDIF
+      IF ! Empty( kontrspr->removdate )
+         aRes[ 'removalDate' ] := kontrspr->removdate
+      ENDIF
+      IF ! Empty( kontrspr->removbasi )
+         aRes[ 'removalBasis' ] := AllTrim( kontrspr->removbasi )
+      ENDIF
+      IF ! Empty( kontrspr->reqdatetm )
+         aRes[ 'requestDateTime' ] := kontrspr->reqdatetm
+      ENDIF
+      IF ! Empty( kontrspr->reqid )
+         aRes[ 'requestId' ] := AllTrim( kontrspr->reqid )
+      ENDIF
+   ENDIF
+
+   IF lOtworz
+      kontrspr->( dbCloseArea() )
+      dbSelectArea( nTmpWA )
+   ENDIF
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION WLApiSzukajNip( cNip, dData, xDane )
+
+   LOCAL cScr := SaveScreen( 0, 0, MaxRow(), MaxCol() )
+   LOCAL lRes := .F.
+   LOCAL cKolor := ColInf()
+
+   @ 24, 0 SAY PadC( 'Trwa sprawdzanie statusu VAT... Prosz© czeka†...', 80 )
+
+   xDane := KontrSprSzukaj( cNip, dData )
+   lRes := HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'jest' ) .AND. xDane[ 'jest' ]
+   IF ! lRes
+      IF WLApiSearchNip( cNip, dData, @xDane ) == 200
+         lRes := HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'jest' ) .AND. xDane[ 'jest' ]
+         IF lRes
+            KontrSprDodaj( xDane )
+         ENDIF
+      ENDIF
+   ENDIF
+
+   RestScreen( cScr, 0, 0, MaxRow(), MaxCol() )
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE VAT_Sprzwdz_NIP_Dlg_WLApi( cNIPIn )
+
+   LOCAL cEkran := SaveScreen()
+   LOCAL cKolor := ColStd()
+   LOCAL cNIP := iif( Empty( cNIPIn ), Space( 10 ), PadR( TrimNip( cNIPIn ), 10 ) )
+   LOCAL GetList := {}
+   LOCAL bOldF8
+   LOCAL dData := Date()
+   LOCAL xDane
+   LOCAL cRaport
+   LOCAL nCnt
+   LOCAL bPerson := { | aElem |
+      cRaport += AllTrim( Str( nCnt ) ) + ". "
+      IF hb_HHasKey( aElem, 'companyName' ) .AND. ! Empty( aElem[ 'companyName' ] )
+         cRaport += "(" + eElem[ 'companyName' ] + ")"
+      ENDIF
+      IF hb_HHasKey( aElem, 'firstName' ) .AND. ! Empty( aElem[ 'firstName' ] )
+         cRaport += " " + eElem[ 'firstName' ]
+      ENDIF
+      IF hb_HHasKey( aElem, 'lastName' ) .AND. ! Empty( aElem[ 'lastName' ] )
+         cRaport += " " + eElem[ 'lastName' ]
+      ENDIF
+      IF hb_HHasKey( aElem, 'pesel' ) .AND. ! Empty( aElem[ 'pesel' ] )
+         cRaport += " PESEL:" + eElem[ 'pesel' ]
+      ENDIF
+      IF hb_HHasKey( aElem, 'nip' ) .AND. ! Empty( aElem[ 'nip' ] )
+         cRaport += " " + eElem[ 'nip' ]
+      ENDIF
+      cRaport += hb_eol()
+      nCnt++
+   }
+
+   bOldF8 := hb_SetKeyGet( K_ALT_F8 )
+   SET KEY K_ALT_F8 TO
+
+   @  9, 16 CLEAR TO 16, 59
+   @ 10, 18 TO 15, 57
+   @ 10, 21 SAY "SPRAWDZENIE STATUSU PODMIOTU W VAT"
+   @ 12, 20 SAY "          Stan na dzieä:" GET dData VALID ! Empty( dData )
+   @ 13, 20 SAY "Identyfikator podatkowy:" GET cNIP PICTURE "9999999999" VALID Len( AllTrim( cNIP ) ) == 10 .AND. SprawdzNIPSuma( cNIP )
+
+   READ
+
+   IF LastKey() <> K_ESC
+      IF WLApiSzukajNip( cNIP, dData, @xDane )
+         ColStd()
+         @ 3, 0
+         @ 3, 0 SAY "       Status podmiotu w VAT:"
+         @ 24, 0
+         ColInf()
+         IF hb_HHasKey( xDane, 'statusVat' )
+            @ 3, 33 SAY "  " + xDane[ 'statusVat' ] + "  "
+         ENDIF
+         ColStd()
+         cRaport := "Sprawdzanie statusu VAT podmiotu" + hb_eol()
+         cRaport += "--------------------------------" + hb_eol()
+         cRaport += "Nr NIP: " + cNIP + hb_eol()
+         cRaport += "Stan na dzieä: " + hb_DToC( dData ) + hb_eol()
+         cRaport += "--------------------------------" + hb_eol()
+         cRaport += "Status VAT: " + xmlWartoscH( xDane, 'statusVat', 'nieznany' ) + hb_eol()
+         cRaport += "--------------------------------" + hb_eol()
+         cRaport += "Firma (nazwa) lub imi© i nazwisko: " + xmlWartoscH( xDane, 'name', '' ) + hb_eol()
+         IF hb_HHasKey( xDane, 'regon' ) .AND. ! Empty( xDane[ 'regon' ] )
+            cRaport += "Numer identyfikacyjny REGON: " + xDane[ 'regon' ] + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'pesel' ) .AND. ! Empty( xDane[ 'pesel' ] )
+            cRaport += "Numer identyfikacyjny PESEL: " + xDane[ 'pesel' ] + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'krs' ) .AND. ! Empty( xDane[ 'krs' ] )
+            cRaport += "Numer identyfikacyjny KRS: " + xDane[ 'krs' ] + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'residenceAddress' ) .AND. ! Empty( xDane[ 'residenceAddress' ] )
+            cRaport += "Adres siedziby: " + xDane[ 'residenceAddress' ] + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'workingAddress' ) .AND. ! Empty( xDane[ 'workingAddress' ] )
+            cRaport += "Adres staˆego miejsca prowadzenia dziaˆalno˜ci lub adres miejsca zamieszkania w przypadku braku adresu staˆego miejsca prowadzenia dziaˆalno˜ci: " + xDane[ 'workingAddress' ] + hb_eol()
+         ENDIF
+
+         IF hb_HHasKey( xDane, 'representatives' ) .AND. ! Empty( xDane[ 'representatives' ] )
+            cRaport += "Imiona i nazwiska os¢b wchodz¥cych w skˆad organu uprawnionego do reprezentowania podmiotu oraz ich numery NIP i/lub PESEL: " + hb_eol()
+            nCnt := 1
+            AEval( xDane[ 'representatives' ], bPerson )
+         ENDIF
+
+         IF hb_HHasKey( xDane, 'authorizedClerks' ) .AND. ! Empty( xDane[ 'authorizedClerks' ] )
+            cRaport += "Imiona i nazwiska prokurent¢w oraz ich numery NIP i/lub PESEL: " + hb_eol()
+            nCnt := 1
+            AEval( xDane[ 'authorizedClerks' ], bPerson )
+         ENDIF
+
+         IF hb_HHasKey( xDane, 'partners' ) .AND. ! Empty( xDane[ 'partners' ] )
+            cRaport += "Imiona i nazwiska lub firm© (nazwa) wsp¢lnika oraz jego numeryNIP i/lub PESEL: " + hb_eol()
+            nCnt := 1
+            AEval( xDane[ 'partners' ], bPerson )
+         ENDIF
+
+         IF hb_HHasKey( xDane, 'registrationLegalDate' ) .AND. ! Empty( xDane[ 'registrationLegalDate' ] )
+            cRaport += "Data rejestracji jako podatnika VAT: " + hb_DToC( xDane[ 'registrationLegalDate' ] ) + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'registrationDenialDate' ) .AND. ! Empty( xDane[ 'registrationDenialDate' ] )
+            cRaport += "Data odmowy rejestracji jako podatnika VAT: " + hb_DToC( xDane[ 'registrationDenialDate' ] ) + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'registrationDenialBasis' ) .AND. ! Empty( xDane[ 'registrationDenialBasis' ] )
+            cRaport += "Podstawa prawna odmowy rejestracji: " + xDane[ 'registrationDenialBasis' ] + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'restorationDate' ) .AND. ! Empty( xDane[ 'restorationDate' ] )
+            cRaport += "Data przywr¢cenia jako podatnika VAT: " + hb_DToC( xDane[ 'restorationDate' ] ) + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'restorationBasis' ) .AND. ! Empty( xDane[ 'restorationBasis' ] )
+            cRaport += "Podstawa prawna przywr¢cenia jako podatnika VAT: " + xDane[ 'restorationBasis' ] + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'removalDate' ) .AND. ! Empty( xDane[ 'removalDate' ] )
+            cRaport += "Data wykre˜lenia odmowy rejestracji jako podatnika VAT: " + hb_DToC( xDane[ 'removalDate' ] ) + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'removalBasis' ) .AND. ! Empty( xDane[ 'removalBasis' ] )
+            cRaport += "Podstawa prawna wykre˜lenia odmowy rejestracji jako podatnika VAT: " + xDane[ 'removalBasis' ] + hb_eol()
+         ENDIF
+
+         IF hb_HHasKey( xDane, 'accountNumbers' ) .AND. ! Empty( xDane[ 'accountNumbers' ] )
+            cRaport += "Numery kont: " + hb_eol()
+            nCnt := 1
+            AEval( xDane[ 'accountNumbers' ], { | cNr |
+               cRaport += AllTrim( Str( nCnt ) ) + ". " + cNr + hb_eol()
+               nCnt++
+            } )
+         ENDIF
+
+         IF hb_HHasKey( xDane, 'requestId' ) .AND. ! Empty( xDane[ 'requestId' ] )
+            cRaport += "Id wywoˆania: " + xDane[ 'requestId' ] + hb_eol()
+         ENDIF
+         IF hb_HHasKey( xDane, 'requestDateTime' ) .AND. ! Empty( xDane[ 'requestDateTime' ] )
+            cRaport += "Data i czas wywoˆania: " + hb_TToC( xDane[ 'requestDateTime' ] ) + hb_eol()
+         ENDIF
+         WyswietlTekst( cRaport, 4, , "Statusu VAT podmiotu" )
+      ELSE
+         Komun( "Sprawdzanie statusu nie powiodˆo si©." )
+      ENDIF
+   ENDIF
+
+   RestScreen( , , , , cEkran )
+   SetColor( cKolor )
+
+   //SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_DlgK
+   SetKey( K_ALT_F8, bOldF8 )
 
    RETURN
 
