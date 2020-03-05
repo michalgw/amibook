@@ -1018,19 +1018,20 @@ PROCEDURE KRejS()
       case kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 11 ]
+         DECLARE pppp[ 12 ]
          *---------------------------------------
          pppp[  1 ] := '                                                        '
          pppp[  2 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
          pppp[  3 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
          pppp[  4 ] := '   [Ins]...................wpisywanie                   '
          pppp[  5 ] := '   [M].....................modyfikacja pozycji          '
-         pppp[  6 ] := '   [I].....................import z pliku JPK VAT       '
-         pppp[  7 ] := '   [Del]...................kasowanie pozycji            '
-         pppp[  8 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[  9 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 10 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 11 ] := '                                                        '
+         pppp[  6 ] := '   [I].....................import z pliku JPK           '
+         pppp[  7 ] := '   [W].....................grupowa weryf. stat. VAT     '
+         pppp[  8 ] := '   [Del]...................kasowanie pozycji            '
+         pppp[  9 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 10 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 11 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 12 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO I
          i := 11
@@ -1052,6 +1053,10 @@ PROCEDURE KRejS()
 
       CASE kl == K_ALT_F8
          VAT_Sprzwdz_NIP_Rej()
+
+      CASE kl == Asc( 'W' ) .OR. kl == Asc( 'w' )
+         VAT_Sprzwdz_GrpNIP_WLApi( 'rejs', { || &_bot }  )
+
       ******************** ENDCASE
       ENDCASE
    ENDDO

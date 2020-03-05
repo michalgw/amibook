@@ -338,7 +338,7 @@ FUNCTION WLApiSearchNip( cNip, dData, xDane )
    IF ! Empty( cResponse )
       IF nRes == 200 .OR. nRes == 400
          hb_jsonDecode( cResponse, @xDane )
-         IF nRes == 200 .AND. HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'result' ) .AND. hb_HHasKey( xDane[ 'result' ], 'subject' )
+         IF nRes == 200 .AND. HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'result' ) .AND. hb_HHasKey( xDane[ 'result' ], 'subject' ) .AND. ! Empty( xDane[ 'result' ][ 'subject' ] )
             IF hb_HHasKey( xDane[ 'result' ], 'requestDateTime' ) .AND. ! Empty( xDane[ 'result' ][ 'requestDateTime' ] )
                xDane[ 'result' ][ 'subject' ][ 'requestDateTime' ] := xDane[ 'result' ][ 'requestDateTime' ]
             ENDIF
@@ -586,21 +586,18 @@ FUNCTION KontrSprSzukaj( cNip, dData, lOtworz )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION WLApiSzukajNip( cNip, dData, xDane )
+FUNCTION WLApiSzukajNip( cNip, dData, xDane, lOtworz )
 
    LOCAL cScr := SaveScreen( 0, 0, MaxRow(), MaxCol() )
    LOCAL lRes := .F.
-   LOCAL cKolor := ColInf()
 
-   @ 24, 0 SAY PadC( 'Trwa sprawdzanie statusu VAT... Prosz© czeka†...', 80 )
-
-   xDane := KontrSprSzukaj( cNip, dData )
+   xDane := KontrSprSzukaj( cNip, dData, lOtworz )
    lRes := HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'jest' ) .AND. xDane[ 'jest' ]
    IF ! lRes
       IF WLApiSearchNip( cNip, dData, @xDane ) == 200
          lRes := HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'jest' ) .AND. xDane[ 'jest' ]
          IF lRes
-            KontrSprDodaj( xDane )
+            KontrSprDodaj( xDane, lOtworz )
          ENDIF
       ENDIF
    ENDIF
@@ -655,6 +652,9 @@ PROCEDURE VAT_Sprzwdz_NIP_Dlg_WLApi( cNIPIn )
    READ
 
    IF LastKey() <> K_ESC
+      ColInf()
+      @ 24, 0 SAY PadC( 'Trwa sprawdzanie statusu VAT... Prosz© czeka†...', 80 )
+      ColStd()
       IF WLApiSzukajNip( cNIP, dData, @xDane )
          ColStd()
          @ 3, 0
@@ -759,3 +759,258 @@ PROCEDURE VAT_Sprzwdz_NIP_Dlg_WLApi( cNIPIn )
    RETURN
 
 /*----------------------------------------------------------------------*/
+
+STATIC PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi_DNA2( aGrpAr, aResPoz )
+
+   AEval( aGrpAr, { | aGrpPoz |
+      IF aGrpPoz[ 'NIP' ] == aResPoz[ 'nip' ]
+         aGrpPoz[ 'StatusVat' ] := aResPoz[ 'statusVat' ]
+      ENDIF
+   } )
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
+STATIC PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi_DNA( xData, dData, aGrpAr )
+
+   AEval( xData, { | aResPoz |
+      IF HB_ISHASH( aResPoz ) .AND. hb_HHasKey( aResPoz, 'statusVat' ) .AND. ! Empty( aResPoz[ 'statusVat' ] )
+         aResPoz[ 'stanNa' ] := dData
+         KontrSprDodaj( aResPoz, .F. )
+         VAT_Sprzwdz_GrpNIP_WLApi_DNA2( @aGrpAr, aResPoz )
+      ENDIF
+   } )
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
+STATIC FUNCTION VAT_Sprzwdz_GrpNIP_WLApi_Prz()
+
+   RETURN iif( lPrzerwij, .T., ( lPrzerwij := NextKey() == K_ESC ) )
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
+
+   LOCAL cRodzajDaty := "Z"
+   LOCAL dData := Date()
+   LOCAL lBtnRozpocznij := .T.
+   LOCAL cEkran := SaveScreen( 0, 0, MaxRow(), MaxCol() )
+   LOCAL cKolor := ColStd()
+   LOCAL cEkranDt
+   LOCAL bRodzajDatyW := { | x |
+      cEkranDt := SaveScreen( 13, 36, 18, 55 )
+      ColInf()
+      @ 13, 36 CLEAR TO 18, 55
+      @ 13, 36 TO 18, 55
+      @ 14, 38 SAY "R - Rejestru"
+      @ 15, 38 SAY "W - Wystawienia"
+      @ 16, 38 SAY "T - Transakcji"
+      @ 17, 38 SAY "Z - Zdefiniowany"
+      ColStd()
+      RETURN .T.
+   }
+   LOCAL bRodzajDatyV := { | x |
+      IF cRodzajDaty $ 'RWTZ'
+         RestScreen( 13, 36, 18, 55, cEkranDt )
+         RETURN .T.
+      ELSE
+         RETURN .F.
+      ENDIF
+   }
+   LOCAL aDane := {}
+   LOCAL aPozycja, nTmpWA, nTmpRecNo, aGrupy, cRaport := '', nCnt, nIlosc
+
+   PRIVATE lPrzerwij := .F.
+
+   @  9, 16 CLEAR TO 16, 59
+   @ 10, 18 TO 15, 57
+   @ 10, 21 SAY "GRUPOWA WERYFIKACJA PODMIOTU W VAT"
+   @ 12, 20 SAY "Sprawdz na dzieä:" GET cRodzajDaty PICTURE "!" WHEN Eval( bRodzajDatyW ) VALID Eval( bRodzajDatyV )
+   @ 13, 20 SAY "   Stan na dzieä:" GET dData WHEN cRodzajDaty == "Z" VALID ! Empty( dData )
+
+   READ
+
+   Restscreen( 0, 0, MaxRow(), MaxCol(), cEkran )
+
+   IF LastKey() <> K_ESC
+      ColInf()
+      @ 24, 0 SAY PadC( "Krok 1/3 ...Wybieranie danych...", 80 )
+      nTmpWA := Select()
+      nTmpRecNo := ( cTablica )->( RecNo() )
+      DO WHILE .NOT. Eval( bEof ) .AND. ! VAT_Sprzwdz_GrpNIP_WLApi_Prz()
+         IF ( ( cTablica )->kraj == 'PL' .OR. ( cTablica )->kraj == '  ' )
+            IF Len( TrimNip( ( cTablica )->nr_ident ) ) >= 10 .AND. SprawdzNIPSuma( TrimNip( ( cTablica )->nr_ident ) )
+               aPozycja := hb_Hash()
+               aPozycja[ 'RecNo' ] := ( cTablica )->( RecNo() )
+               aPozycja[ 'NIP' ] := TrimNip( ( cTablica )->nr_ident )
+               aPozycja[ 'NrDok' ] := AllTrim( ( cTablica )->numer )
+               aPozycja[ 'Kontrahent' ] := AllTrim( ( cTablica )->nazwa )
+               aPozycja[ 'DataDok' ] := hb_Date( Val( param_rok ), Val( ( cTablica )->mc ), Val( ( cTablica )->dzien ) )
+               SWITCH cRodzajDaty
+               CASE "Z"
+                  aPozycja[ 'StanNa' ] := dData
+                  EXIT
+               CASE "R"
+                  aPozycja[ 'StanNa' ] := aPozycja[ 'DataDok' ]
+                  EXIT
+               CASE "W"
+                  aPozycja[ 'StanNa' ] := hb_Date( Val( ( cTablica )->roks ), Val( ( cTablica )->mcs ), Val( ( cTablica )->dziens ) )
+                  EXIT
+               CASE "T"
+                  aPozycja[ 'StanNa' ] := iif( Empty( ( cTablica )->datatran ), hb_Date( Val( ( cTablica )->roks ), Val( ( cTablica )->mcs ), Val( ( cTablica )->dziens ) ), ( cTablica )->datatran )
+                  EXIT
+               OTHERWISE
+                  aPozycja[ 'StanNa' ] := aPozycja[ 'DataDok' ]
+                  EXIT
+               ENDSWITCH
+               AAdd( aDane, aPozycja )
+            ELSE
+               cRaport += "--------------------------------" + hb_eol()
+               cRaport += "Nr NIP: " + TrimNip( ( cTablica )->nr_ident ) + hb_eol()
+               cRaport += "Kontrahent: " + AllTrim( ( cTablica )->nazwa ) + hb_eol()
+               cRaport += "NIEPRAWIDOWA SUMA KONTROLNA NIP" + hb_eol()
+               cRaport += "Nr dokumantu: " + AllTrim( ( cTablica )->numer ) + hb_eol()
+               cRaport += "Data dokumentu: " + hb_DToC( hb_Date( Val( param_rok ), Val( ( cTablica )->mc ), Val( ( cTablica )->dzien ) ) ) + hb_eol()
+            ENDIF
+         ENDIF
+         ( cTablica )->( dbSkip() )
+      ENDDO
+      ( cTablica )->( dbGoto( nTmpRecNo ) )
+
+      IF ! lPrzerwij
+
+         ASort( aDane, , , { | aEl1, aEl2 | aEl1[ 'StanNa' ] > aEl2[ 'StanNa' ] } )
+
+         DO WHILE ! DostepPro( "KONTRSPR", "KONTRSPR", .T. )
+         ENDDO
+
+         @ 24, 0 SAY PadC( "Krok 2/3 ...Wyszukiwanie statusu w lokalnej bazie...", 80 )
+         ColStd()
+         @ 11, 15 CLEAR TO 15, 64
+         @ 11, 15 TO 15, 64 DOUBLE
+         @ 12, 16 SAY PadC( "Wyszukiwanie w bazie lokalnej", 48 )
+         nCnt := 0
+         AEval( aDane, { | aPoz |
+            LOCAL aWynik
+
+            @ 13, 16 SAY PadC( AllTrim( Str( nCnt ) ) + " / " + AllTrim( Str( Len( aDane ) ) ), 48 )
+            @ 14, 17 SAY ProgressBar( nCnt, Len( aDane ), 46 )
+
+            IF ! VAT_Sprzwdz_GrpNIP_WLApi_Prz()
+               aWynik := KontrSprSzukaj( aPoz[ 'NIP' ], aPoz[ 'StanNa' ], .F. )
+               IF HB_ISHASH( aWynik ) .AND. hb_HHasKey( aWynik, 'statusVat' ) .AND. ! Empty( aWynik[ 'statusVat' ] )
+                  aPoz[ 'StatusVat' ] := aWynik[ 'statusVat' ]
+               ENDIF
+            ENDIF
+
+            nCnt++
+            @ 13, 16 SAY PadC( AllTrim( Str( nCnt ) ) + " / " + AllTrim( Str( Len( aDane ) ) ), 48 )
+            @ 14, 17 SAY ProgressBar( nCnt, Len( aDane ), 46 )
+
+         } )
+
+         IF ! VAT_Sprzwdz_GrpNIP_WLApi_Prz()
+            nIlosc := 0
+            aGrupy := hb_Hash()
+            AEval( aDane, { | aPoz |
+               IF ! VAT_Sprzwdz_GrpNIP_WLApi_Prz()
+                  IF ! hb_HHasKey( aPoz, 'StatusVat' )
+                     IF ! hb_HHasKey( aGrupy, aPoz[ 'StanNa' ] )
+                        aGrupy[ aPoz[ 'StanNa' ] ] := {}
+                     ENDIF
+                     AAdd( aGrupy[ aPoz[ 'StanNa' ] ], aPoz )
+                     nIlosc++
+                  ENDIF
+               ENDIF
+            } )
+
+            IF ! lPrzerwij
+               ColInf()
+               @ 24, 0 SAY PadC( "Krok 3/3 ...Wyszukiwanie statusu w bazie MF...", 80 )
+
+               ColStd()
+               @ 11, 15 CLEAR TO 15, 64
+               @ 11, 15 TO 15, 64 DOUBLE
+               @ 12, 16 SAY PadC( "Wyszukiwanie w bazie MF", 48 )
+               nCnt := 0
+
+               hb_HEval( aGrupy, { | dData, aGrpAr |
+
+                  LOCAL xData, nI, nJ, aNipy
+
+                  IF ! VAT_Sprzwdz_GrpNIP_WLApi_Prz()
+
+                     IF Len( aGrpAr ) == 1
+                        IF WLApiSzukajNip( aGrpAr[ 1 ][ 'NIP' ], dData, @xData, .F. ) .AND. HB_ISHASH( xData ) .AND. hb_HHasKey( xData, 'statusVat' )
+                           aGrpAr[ 1 ][ 'StatusVat' ] := xData[ 'statusVat' ]
+                        ENDIF
+                        nCnt++
+                        @ 13, 16 SAY PadC( AllTrim( Str( nCnt ) ) + " / " + AllTrim( Str( nIlosc ) ), 48 )
+                        @ 14, 17 SAY ProgressBar( nCnt, nIlosc, 46 )
+                     ELSEIF Len( aGrpAr ) > 1
+                        aNipy := {}
+                        @ 13, 16 SAY PadC( AllTrim( Str( nCnt ) ) + " / " + AllTrim( Str( nIlosc ) ), 48 )
+                        @ 14, 17 SAY ProgressBar( nCnt, nIlosc, 46 )
+                        FOR nI := 1 TO Len( aGrpAr )
+                           IF ! VAT_Sprzwdz_GrpNIP_WLApi_Prz()
+                              IF AScan( aNipy, aGrpAr[ nI ][ 'NIP' ] ) == 0
+                                 AAdd( aNipy, aGrpAr[ nI ][ 'NIP' ] )
+                              ENDIF
+                              IF Len( aNipy ) == 30 .OR. nI == Len( aGrpAr )
+                                 IF WLApiSearchNips( aNipy, dData, @xData ) == 200 .AND. HB_ISARRAY( xData )
+                                    VAT_Sprzwdz_GrpNIP_WLApi_DNA( @xData, dData, @aGrpAr )
+                                 ENDIF
+                                 nCnt := nCnt + Len( aNipy )
+                                 @ 13, 16 SAY PadC( AllTrim( Str( nCnt ) ) + " / " + AllTrim( Str( nIlosc ) ), 48 )
+                                 @ 14, 17 SAY ProgressBar( nCnt, nIlosc, 46 )
+                                 aNipy := {}
+                              ENDIF
+                           ENDIF
+                        NEXT
+                     ENDIF
+                  ENDIF
+               } )
+            ENDIF
+         ENDIF
+      ENDIF
+
+      kontrspr->( dbCloseArea() )
+      dbSelectArea( nTmpWA )
+
+      CLEAR TYPEAHEAD
+      ColStd()
+      @ 24, 0
+      AEval( aDane, { | aPoz |
+         IF ! hb_HHasKey( aPoz, 'StatusVat' ) .OR. Empty( aPoz[ 'StatusVat' ] ) .OR. SubStr( aPoz[ 'StatusVat' ], 1, 1 ) <> "C"
+            cRaport += "--------------------------------" + hb_eol()
+            cRaport += "Nr NIP: " + aPoz[ 'NIP' ] + hb_eol()
+            cRaport += "Kontrahent: " + aPoz[ 'Kontrahent' ] + hb_eol()
+            IF hb_HHasKey( aPoz, 'StatusVat' ) .AND. ! Empty( aPoz[ 'StatusVat' ] )
+               cRaport += "Status VAT: " + aPoz[ 'StatusVat' ] + hb_eol()
+            ELSE
+               cRaport += "Status VAT: (nieznany)" + hb_eol()
+            ENDIF
+            cRaport += "Stan na dzieä: " + hb_DToC( aPoz[ 'StanNa' ] ) + hb_eol()
+            cRaport += "Nr dokumantu: " + aPoz[ 'NrDok' ] + hb_eol()
+            cRaport += "Data dokumentu: " + hb_DToC( aPoz[ 'DataDok' ] ) + hb_eol()
+         ENDIF
+      } )
+
+      IF Len( cRaport ) > 0
+         WyswietlTekst( cRaport, , , "Raport sprawdzenia statusu VAT podmiot¢w" )
+      ELSE
+         Komun( 'Wszystkie podmioty maj¥ "czynny" status VAT' )
+      ENDIF
+
+   ENDIF
+
+   Restscreen( 0, 0, MaxRow(), MaxCol(), cEkran )
+   SetColor( cKolor )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
