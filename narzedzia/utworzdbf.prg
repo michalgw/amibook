@@ -1,6 +1,6 @@
 #include "directry.ch"
 #require hbwin.ch
-#include "hblang.ch" 
+#include "hblang.ch"
 #include "dbinfo.ch"
 #include "hbgtinfo.ch"
 REQUEST HB_LANG_PL
@@ -20,7 +20,20 @@ FUNCTION main(cKatalog, cKatDanych)
    importujDane(cKatalog, cKatDanych, "*.txt")
    dbfUtworzIndeksy({ | aTab, nAkt, nIlosc | QOut( "Tworzenie indeksu: " + Str(nAkt) + "/" + Str(nIlosc) + "  " + aTab[1] ) }, cKatalog)
    RETURN
-   
+
+FUNCTION DodajBackslash(cSciezka)
+   cSciezka = AllTrim(cSciezka)
+   IF Len(cSciezka) == 0
+      RETURN cSciezka
+   ENDIF
+   IF SubStr(cSciezka, Len(cSciezka), 1) <> '\'
+      cSciezka = cSciezka + '\'
+   ENDIF
+   RETURN cSciezka
+
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION importujDane(cKatalog, cKatalogDanych, cRozszerzenie)
    LOCAL nI, aPliki, cFDir, cFName, cFExt, aStruct := {}, aPola := {}
    aPliki := Directory(DodajBackslash(cKatalogDanych) + "*" + cRozszerzenie)
@@ -37,7 +50,7 @@ FUNCTION importujDane(cKatalog, cKatalogDanych, cRozszerzenie)
          USE
       ENDIF
    NEXT
-   RETURN 
+   RETURN
 
 /*----------------------------------------------------------------------*/
 
