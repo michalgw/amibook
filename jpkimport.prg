@@ -923,7 +923,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
          .OR. ( hb_HHasKey( aPoz, 'P_6' ) .AND. ( Month( aPoz[ 'P_6' ] ) == Val( miesiac ) ) ;
          .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ) .AND. ( iif( cNip == '', .T., cNip == cNipFir ) )
 
-         IF hb_HHasKey( aPoz, 'KodWaluty' ) .AND. aPoz[ 'KodWaluty' ] <> 'PLN'
+/*         IF hb_HHasKey( aPoz, 'KodWaluty' ) .AND. aPoz[ 'KodWaluty' ] <> 'PLN'
             IF ( hb_HHasKey( aPoz, 'P_14_1W' ) .AND. aPoz[ 'P_14_1W' ] <> 0 ) .OR. ;
             ( hb_HHasKey( aPoz, 'P_14_2W' ) .AND. aPoz[ 'P_14_2W' ] <> 0 ) .OR. ;
             ( hb_HHasKey( aPoz, 'P_14_3W' ) .AND. aPoz[ 'P_14_3W' ] <> 0 )
@@ -978,7 +978,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
 
                AAdd( aRes, aPozDek )
             ENDIF
-         ELSE
+         ELSE */
             aPoz[ 'Aktywny' ] := .T.
             aPoz[ 'Importuj' ] := .T.
 
@@ -1028,10 +1028,12 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
 
             aPozDek[ 'zkorekta' ] := iif( aPoz[ 'RodzajFaktury' ] == "KOREKTA" , 'T', 'N' )
 
+            aPozDek[ 'KodWaluty' ] := HGetDefault( aPoz, 'KodWaluty', 'PLN' )
+
             aPozDek[ 'FakturaPoz' ] := aPoz
 
             AAdd( aRes, aPozDek )
-         ENDIF
+         //ENDIF
 
       ENDIF
    } )
@@ -1070,7 +1072,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
          .OR. ( hb_HHasKey( aPoz, 'P_6' ) .AND. ( Month( aPoz[ 'P_6' ] ) == Val( miesiac ) ) ;
          .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ) .AND. ( iif( cNip == '', .T., cNip == cNipFir ) )
 
-         IF hb_HHasKey( aPoz, 'KodWaluty' ) .AND. aPoz[ 'KodWaluty' ] <> 'PLN'
+/*         IF hb_HHasKey( aPoz, 'KodWaluty' ) .AND. aPoz[ 'KodWaluty' ] <> 'PLN'
             IF ( hb_HHasKey( aPoz, 'P_14_1W' ) .AND. aPoz[ 'P_14_1W' ] <> 0 ) .OR. ;
             ( hb_HHasKey( aPoz, 'P_14_2W' ) .AND. aPoz[ 'P_14_2W' ] <> 0 ) .OR. ;
             ( hb_HHasKey( aPoz, 'P_14_3W' ) .AND. aPoz[ 'P_14_3W' ] <> 0 )
@@ -1137,7 +1139,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
                AAdd( aRes, aPozDek )
 
             ENDIF
-         ELSE
+         ELSE */
             aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
 
             aPoz[ 'Aktywny' ] := .T.
@@ -1195,11 +1197,13 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
             aPozDek[ 'SierTrwaly' ] := .F.
             aPozDek[ 'UwagaVat' ] := .F.
 
+            aPozDek[ 'KodWaluty' ] := HGetDefault( aPoz, 'KodWaluty', 'PLN' )
+
             aPozDek[ 'SprzedazPoz' ] := aPoz
 
             AAdd( aRes, aPozDek )
 
-         ENDIF
+         //ENDIF
 
       ENDIF
    } )
@@ -1563,7 +1567,7 @@ FUNCTION JPKImp_VatZ_CzyImport( aDane, aPoz )
 FUNCTION JPKImp_VatS_Importuj( aDane )
 
    LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
-   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {} )
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {} )
 
    @ 11, 15 CLEAR TO 15, 64
    @ 11, 15 TO 15, 64 DOUBLE
@@ -1642,6 +1646,10 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
             AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje ju¾ dokument o tym numerze' ) )
          ELSE
             KRejS_Ksieguj()
+            IF HGetDefault( aPoz, 'KodWaluty', 'PLN' ) <> 'PLN'
+               aRaport[ 'Waluta' ] := aRaport[ 'Waluta' ] + 1
+               AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
+            ENDIF
             aRaport[ 'Zaimportowano' ] := aRaport[ 'Zaimportowano' ] + 1
          ENDIF
 
@@ -1660,7 +1668,7 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
 FUNCTION JPKImp_VatZ_Importuj( aDane )
 
    LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
-   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Uwagi', 0, 'ListaUwag', {} )
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Uwagi', 0, 'ListaUwag', {}, 'Waluta', 0, 'ListaWal', {} )
 
    @ 11, 15 CLEAR TO 15, 64
    @ 11, 15 TO 15, 64 DOUBLE
@@ -1769,6 +1777,10 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
             IF aPoz[ 'UwagaVat' ]
                aRaport[ 'Uwagi' ] := aRaport[ 'Uwagi' ] + 1
                AAdd( aRaport[ 'ListaUwag' ], hb_Hash( 'Numer', aPoz[ 'znumer' ], 'Data', aPoz[ 'SprzedazPoz' ][ 'DataDok' ] ) )
+            ENDIF
+            IF HGetDefault( aPoz, 'KodWaluty', 'PLN' ) <> 'PLN'
+               aRaport[ 'Waluta' ] := aRaport[ 'Waluta' ] + 1
+               AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
             ENDIF
          ENDIF
 
@@ -1922,11 +1934,25 @@ PROCEDURE JPKImp_VatS()
                   cRaport += hb_eol()
                   cRaport += "Liczba zaimportowanych pozycji: " + AllTrim( Str( aRaport[ 'Zaimportowano' ] ) ) + hb_eol()
                   cRaport += "Liczba pomini©tych dokument¢w: " + AllTrim( Str( aRaport[ 'Pominieto' ] ) ) + hb_eol()
+                  cRaport += "Liczba dokument¢w w obej walucie: " + AllTrim( Str( aRaport[ 'Waluta' ] ) ) + hb_eol()
                   IF aRaport[ 'Pominieto' ] > 0
                      cRaport += hb_eol()
                      cRaport += "POMINI¨TE DOKUMENTY" + hb_eol()
                      cRaport += "-------------------" + hb_eol()
                      AEval( aRaport[ 'ListaPom' ], { | aPoz |
+                        cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
+                        cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
+                        cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
+                        cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
+                        cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                        cRaport += "--------------------------" + hb_eol()
+                     } )
+                  ENDIF
+                  IF aRaport[ 'Waluta' ] > 0
+                     cRaport += hb_eol()
+                     cRaport += "DOKUMENTY W OBCEJ WALUCIE" + hb_eol()
+                     cRaport += "-------------------" + hb_eol()
+                     AEval( aRaport[ 'ListaWal' ], { | aPoz |
                         cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
                         cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
                         cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
@@ -2133,6 +2159,7 @@ PROCEDURE JPKImp_VatZ()
                   cRaport += hb_eol()
                   cRaport += "Liczba zaimportowanych pozycji: " + AllTrim( Str( aRaport[ 'Zaimportowano' ] ) ) + hb_eol()
                   cRaport += "Liczba pomini©tych dokument¢w: " + AllTrim( Str( aRaport[ 'Pominieto' ] ) ) + hb_eol()
+                  cRaport += "Liczba dokument¢w w obej walucie: " + AllTrim( Str( aRaport[ 'Waluta' ] ) ) + hb_eol()
                   cRaport += "Liczba uwag: " + AllTrim( Str( aRaport[ 'Uwagi' ] ) ) + hb_eol()
                   IF aRaport[ 'Uwagi' ] > 0
                      cRaport += hb_eol()
@@ -2149,6 +2176,19 @@ PROCEDURE JPKImp_VatZ()
                      cRaport += "POMINI¨TE DOKUMENTY" + hb_eol()
                      cRaport += "-------------------" + hb_eol()
                      AEval( aRaport[ 'ListaPom' ], { | aPoz |
+                        cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
+                        cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
+                        cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
+                        cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
+                        cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                        cRaport += "--------------------------" + hb_eol()
+                     } )
+                  ENDIF
+                  IF aRaport[ 'Waluta' ] > 0
+                     cRaport += hb_eol()
+                     cRaport += "DOKUMENTY W OBCEJ WALUCIE" + hb_eol()
+                     cRaport += "-------------------" + hb_eol()
+                     AEval( aRaport[ 'ListaWal' ], { | aPoz |
                         cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
                         cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
                         cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
