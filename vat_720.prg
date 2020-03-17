@@ -1067,6 +1067,10 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       p79 := pp8 + pp11 + p46dek + p50dek + zkorekst + zkorekpoz + art89b1 + art89b4
 
       p98a := Min( kkasa_odl, Max( 0, p76 - p79 ) )
+      IF p98a <> kkasa_odl .AND. kkasa_zwr == 0
+         kkasa_zwr := kkasa_odl - p98a
+      ENDIF
+
       pp13 := iif( ( p76 - p79 - p98a ) < 0.00, 0, Min( pp13, p76 - p79 - p98a ) )
       p98b := iif( p76 - p79 > 0.0, p76 - p79 - p98a - pp13, 0 )
       p98dozap := Max( 0, p98b - ( zVATZALMIE + zVATNADKWA ) )
@@ -1074,7 +1078,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       wartprzek := p98b
 
       p99a := kkasa_zwr
-      p99 := iif( p79 - p76 >= 0.0, p79 - p76 + p99a, 0 )
+      p99 := iif( p79 - p76 + p99a + p98a >= 0.0, p79 - p76 + p99a + p98a, 0 )
 
       p99c := pp10
       p99abc := zzwr25dni
