@@ -3,7 +3,7 @@
 AMi-BOOK
 
 Copyright (C) 1991-2014  AMi-SYS s.c.
-              2015-2019  GM Systems Michaˆ Gawrycki (gmsystems.pl)
+              2015-2020  GM Systems Michaˆ Gawrycki (gmsystems.pl)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
