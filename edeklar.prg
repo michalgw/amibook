@@ -1982,8 +1982,8 @@ FUNCTION edek_pit11_25()
 		r = r + xmlNiePusty(p51_11, '    <P_48>' + TKwota2Nieujemna(p51_11) + '</P_48>' + nl)
 		r = r + '    <P_49>' + TKwota2Nieujemna(p52_11a) + '</P_49>' + nl
 		r = r + '    <P_50>' + TKwotaCNieujemna(p53_11) + '</P_50>' + nl
-		r = r + '    <P_51>' + TKwota2Nieujemna(p51_5) + '</P_51>' + nl
-		r = r + xmlNiePusty(p50_5, '    <P_52>' + TKwota2Nieujemna(p50_5) + '</P_52>' + nl)
+		r = r + '    <P_51>' + TKwota2Nieujemna(p50_5) + '</P_51>' + nl
+		r = r + xmlNiePusty(p51_5, '    <P_52>' + TKwota2Nieujemna(p51_5) + '</P_52>' + nl)
 		r = r + '    <P_53>' + TKwota2Nieujemna(p52_5a) + '</P_53>' + nl
 		r = r + '    <P_54>' + TKwotaCNieujemna(p53_5) + '</P_54>' + nl
 		r = r + '    <P_55>' + TKwota2Nieujemna(P50_5_R262) + '</P_55>' + nl
