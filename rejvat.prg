@@ -132,7 +132,8 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
 
    DO WHILE ! Eval( bKoniec ) // &cKoniec
 
-      IF ! lTylkoUE .AND. ( rejz->sek_cv7 == 'WS' .OR. rejz->sek_cv7 == 'PS' )
+      IF ! lTylkoUE .AND. ( rejz->sek_cv7 == 'WS' .OR. rejz->sek_cv7 == 'PS' ;
+         .OR. rejz->sek_cv7 == 'IS' .OR. rejz->sek_cv7 == 'US' )
          rejz->( dbSkip() )
          LOOP
       ENDIF
@@ -311,7 +312,7 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
             aRow[ 'ue_wt_net' ] := rejz->wartzw + rejz->wart02 + rejz->wart07 + rejz->wart22 + rejz->wart12 + rejz->wart00
             aRow[ 'ue_wt_vat' ] := rejz->vat02 + rejz->vat07 + rejz->vat22 + rejz->vat12
 
-         CASE rejz->sek_cv7 == 'IT'
+         CASE rejz->sek_cv7 == 'IT' .OR. rejz->sek_cv7 == 'IZ' .OR. ( lTylkoUE .AND. rejz->sek_cv7 == 'IS' )
             aRow[ 'zak_it_net' ] := iif( rejz->spzw $ cRodzaj, rejz->wartzw, 0 ) ;
                + iif( rejz->sp02 $ cRodzaj .AND. rejz->zom02 == 'Z', rejz->wart02, 0 ) ;
                + iif( rejz->sp07 $ cRodzaj .AND. rejz->zom07 == 'Z', rejz->wart07, 0 ) ;
@@ -345,7 +346,7 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
             aRow[ 'ue_it_net' ] := rejz->wartzw + rejz->wart02 + rejz->wart07 + rejz->wart22 + rejz->wart12 + rejz->wart00
             aRow[ 'ue_it_vat' ] := rejz->vat02 + rejz->vat07 + rejz->vat22 + rejz->vat12
 
-         CASE rejz->sek_cv7 == 'IU'
+         CASE rejz->sek_cv7 == 'IU' .OR. rejz->sek_cv7 == 'UZ' .OR. ( lTylkoUE .AND. rejz->sek_cv7 == 'US' )
              aRow[ 'zak_iu_net' ] := iif( rejz->spzw $ cRodzaj, rejz->wartzw, 0 ) ;
                + iif( rejz->sp02 $ cRodzaj .AND. rejz->zom02 == 'Z', rejz->wart02, 0 ) ;
                + iif( rejz->sp07 $ cRodzaj .AND. rejz->zom07 == 'Z', rejz->wart07, 0 ) ;
@@ -428,7 +429,7 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
          .AND. iif( ewid_rzi <> '**', rejz->symb_rej == ewid_rzi, .T. ) ;
          .AND. iif( ! lTylkoUE, ( ewid_rzz$'NW' .OR. ( ewid_rzz == 'D' .AND. rejz->zaplata$'23' ) .OR. ( ewid_rzz == 'Z' .AND. rejz->zaplata == '1') ), .T. ) ;
          .AND. iif( cRodzaj == 'P', Eval( bFiltr ), .T. ) ;
-         .AND. iif( lTylkoUE, AScan( { 'WT', 'WS', 'IT', 'IU', 'PN', 'PS' }, rejz->sek_cv7 ) > 0, .T. )
+         .AND. iif( lTylkoUE, AScan( { 'WT', 'WS', 'IT', 'IU', 'PN', 'PS', 'IS', 'US' }, rejz->sek_cv7 ) > 0, .T. )
 
          nFZ := 0
          nZZ := 0

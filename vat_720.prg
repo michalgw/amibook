@@ -519,7 +519,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       DO WHILE ! &_koniec
          ILZ++
          IF RACH == 'F'
-            IF SEK_CV7 <> 'WS' .AND. SEK_CV7 <> 'PS'
+            IF SEK_CV7 <> 'WS' .AND. SEK_CV7 <> 'PS' .AND. SEK_CV7 <> 'IS' .AND. SEK_CV7 <> 'US'
                p45 := p45 + iif( SP02 == 'S' .AND. ZOM02 == 'O' .AND. VAT02 <> 0, WART02, 0 ) + ;
                   iif( SP07 == 'S' .AND. ZOM07 == 'O' .AND. VAT07 <> 0, WART07, 0 ) + ;
                   iif( SP22 == 'S' .AND. ZOM22 == 'O' .AND. VAT22 <> 0, WART22, 0 ) + ;
@@ -633,7 +633,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                      iif( SP07 == 'P' .AND. ZOM07 == 'M', VAT07, 0 ) + ;
                      iif( SP22 == 'P' .AND. ZOM22 == 'M', VAT22, 0 ) + ;
                      iif( SP12 == 'P' .AND. ZOM12 == 'M', VAT12, 0 )
-               CASE SEK_CV7 == 'IT'
+               CASE SEK_CV7 == 'IT' .OR. SEK_CV7 == 'IS'
                   p45it := p45it + iif( SP02 == 'S' .AND. ZOM02 == 'O', WART02, 0 ) + ;
                   iif( SP07 == 'S' .AND. ZOM07 == 'O', WART07, 0 ) + ;
                   iif( SP22 == 'S' .AND. ZOM22 == 'O', WART22, 0 ) + ;
@@ -685,7 +685,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                      iif( SP07 == 'P' .AND. ZOM07 == 'M', VAT07, 0 ) + ;
                      iif( SP22 == 'P' .AND. ZOM22 == 'M', VAT22, 0 ) + ;
                      iif( SP12 == 'P' .AND. ZOM12 == 'M', VAT12, 0 )
-               CASE SEK_CV7 == 'IU'
+               CASE SEK_CV7 == 'IU' .OR. SEK_CV7 == 'US'
                   p45us := p45us + iif( SP02 == 'S' .AND. ZOM02 == 'O', WART02, 0 ) + ;
                      iif( SP07 == 'S' .AND. ZOM07 == 'O', WART07, 0 ) + ;
                      iif( SP22 == 'S' .AND. ZOM22 == 'O', WART22, 0 ) + ;

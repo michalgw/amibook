@@ -1430,14 +1430,14 @@ FUNCTION KRejZWNetto2()
 *******************************************************
 FUNCTION vfSEK_CV7()
 *******************************************************
-   R := .F.
-   IF zSEK_CV7 == 'WT' .OR. zSEK_CV7 == 'IT' .OR. zSEK_CV7 == 'IU' .OR. zSEK_CV7 == 'PN' .OR. zSEK_CV7 == '  ' ;
-      .OR. zSEK_CV7 == 'WS' .OR. zSEK_CV7 == 'WZ' .OR. zSEK_CV7 == 'PZ' .OR. zSEK_CV7 == 'PS' .OR. zSEK_CV7 == 'SP'
-      RestScreen( 0, 16, 12, 55, scr_sekcv7 )
-      R := .T.
-   ELSE
-      R := .F.
+
+   LOCAL R
+
+   IF ( R := AScan( { '  ', 'WT', 'IT', 'IU', 'PN', 'WS', 'WZ', 'PZ', 'PS', ;
+      'SP', 'IZ', 'IS', 'UZ', 'US' }, zSEK_CV7 ) > 0 )
+      RestScreen( 0, 16, 16, 55, scr_sekcv7 )
    ENDIF
+
    RETURN R
 
 *******************************************************
@@ -1446,19 +1446,23 @@ FUNCTION wfSEK_CV7()
    scr_sekcv7 := SaveScreen( 0, 16, 12, 55 )
    scr_kolumC := .T.
    ColInf()
-   @  0, 16 CLEAR TO 12, 55
-   @  0, 16 TO 12, 55
+   @  0, 16 CLEAR TO 16, 55
+   @  0, 16 TO 16, 55
    @  1, 17 SAY PadC( 'Podaj sekcje deklaracji VAT-7:', 30 )
    @  2, 17 SAY '   - dwie spacje - zadne z ponizszych '
    @  3, 17 SAY 'WT - wewnatrzwspolnotowe nabycie tow. '
    @  4, 17 SAY 'WZ - WNT tylko podatek naliczony      '
    @  5, 17 SAY 'WS - WNT tylko podatek nale¾ny        '
    @  6, 17 SAY 'IT - import towarow (art.33a ustawy)  '
-   @  7, 17 SAY 'IU - import uslug                     '
-   @  8, 17 SAY 'PN - dostawa tow.(podatnikiem nabywca)'
-   @  9, 17 SAY 'PZ - podat.nab. (tylko pod. naliczony)'
-   @ 10, 17 SAY 'PS - podat.nab. (tylko pod. nale¾ny)  '
-   @ 11, 17 SAY 'SP - mechanizm podzielonej pˆatno˜ci  '
+   @  7, 17 SAY 'IZ - import tow.(tylko pod. naliczony)'
+   @  8, 17 SAY 'IS - import tow.(tylko pod. nale¾ny)  '
+   @  9, 17 SAY 'IU - import uslug                     '
+   @ 10, 17 SAY 'UZ - import usl.(tylko pod. naliczony)'
+   @ 11, 17 SAY 'US - import usl.(tylko pod. nale¾ny)  '
+   @ 12, 17 SAY 'PN - dostawa tow.(podatnikiem nabywca)'
+   @ 13, 17 SAY 'PZ - podat.nab. (tylko pod. naliczony)'
+   @ 14, 17 SAY 'PS - podat.nab. (tylko pod. nale¾ny)  '
+   @ 15, 17 SAY 'SP - mechanizm podzielonej pˆatno˜ci  '
    ColStd()
    RETURN .T.
 
