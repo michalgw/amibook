@@ -979,7 +979,7 @@ public aREJSdbf := {;
    { "ZAP_TER", "N", 3, 0 },;                     //  41
    { "ZAP_DAT", "D", 8, 0 },;                     //  42
    { "ZAP_WART", "N", 11, 2 },;                   //  43
-   { "OPCJE", "C", 1, 0 },;                       //  44
+   { "OPCJE", "C", 16, 0 },;                      //  44
    { "TROJSTR", "C", 1, 0 },;                     //  45
    { "KOL36", "N", 11, 2 },;                      //  46
    { "KOL37", "N", 11, 2 },;                      //  47
@@ -987,7 +987,8 @@ public aREJSdbf := {;
    { "KOL39", "N", 11, 2 },;                      //  49
    { "KOLUMNA2", "C", 2, 0 },;                    //  50
    { "NETTO2", "N", 11, 2 },;                     //  51
-   { "DATATRAN", "D", 8, 0 } }                    //  52
+   { "DATATRAN", "D", 8, 0 },;                    //  52
+   { "PROCEDUR", "C", 32, 0 } }                   //  53
 
 // Create: REJZ.DBF
 public aREJZdbf := {;
