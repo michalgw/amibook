@@ -70,7 +70,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                           korekta with zkorekta,sek_cv7 with zsek_cv7,;
                           export with zexport,ue with zue,kraj with zkraj,detal with zdetal,;
                           symb_rej with zsymb_rej,ROZRZAPS with zROZRZAPS,ZAP_TER with zZAP_TER,ZAP_DAT  with zZAP_DAT,ZAP_WART with zZAP_WART,;
-                          datatran WITH zDATATRAN
+                          datatran WITH zDATATRAN, OPCJE WITH zOPCJE, PROCEDUR WITH zPROCEDUR
 
 #command ADDREJZ  =>  repl roks with str(year(zdatas),4),mcs with str(month(zdatas),2),;
                           dziens with str(day(zdatas),2),uwagi with zuwagi,rach with zrach,;

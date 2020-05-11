@@ -21,6 +21,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
 #include "Inkey.ch"
+#include "box.ch"
+#include "achoice.ch"
 #include "ami_book.ch"
 
 PROCEDURE KRejS()
@@ -32,7 +34,9 @@ PROCEDURE KRejS()
    PRIVATE zDataS, zKolumna, zUwagi, zWartZW, zWart08, zWart00, zWart02, zVat02
    PRIVATE zWart07, zVat07, zWart22, zVat22, zWart12, zVat12, zNetto, zExport, zUe
    PRIVATE zKraj, zSek_CV7, zRach, zDetal, zKorekta, zRozrZapS, zZap_Ter, zZap_Dat
-   PRIVATE zZap_Wart, zTrojstr, zKOL36, zKOL37, zKOL38, zKOL39, zNETTO2, zKOLUMNA2, zNETTOOrg
+   PRIVATE zZap_Wart, zTrojstr, zKOL36, zKOL37, zKOL38, zKOL39, zNETTO2, zKOLUMNA2
+   PRIVATE zNETTOOrg, zOPCJE, zPROCEDUR
+
 
    zexport := 'N'
    scr_kolumC := .F.
@@ -109,7 +113,8 @@ PROCEDURE KRejS()
             *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
             IF ins
                @  4, 78 CLEAR TO 5, 79
-               @  4, 29 CLEAR TO 7, 69
+               @  4, 29 CLEAR TO 6, 69
+               @  7, 29 CLEAR TO 7, 59
 *                 @  9,41 clear to 10,50
                @ 12, 14 CLEAR TO 19, 62
                zDZIEN := '  '
@@ -169,6 +174,8 @@ PROCEDURE KRejS()
                zNETTO2 := 0
                zKOLUMNA2 := '  '
                zDATATRAN := CToD( zROKS + '.' + zMCS + '.' + zDZIENS )
+               zOPCJE := Space( 16 )
+               zPROCEDUR := Space( 32 )
                ***********************
             ELSE
                lRyczModSys := .F.
@@ -242,6 +249,8 @@ PROCEDURE KRejS()
                zNETTO2 := NETTO2
                zKOLUMNA2 := KOLUMNA2
                zDATATRAN := DATATRAN
+               zOPCJE := AllTrim( OPCJE )
+               zPROCEDUR := AllTrim( PROCEDUR )
             ENDIF
             stan_ := -zNETTO - zNETTO2
             netprzed := zNETTO
@@ -274,7 +283,8 @@ PROCEDURE KRejS()
                @  4, 77 GET zexport   PICTURE '!' WHEN wfEXIM( 4, 78 ) VALID vfEXIM( 4, 78 )
                @  5, 77 GET zUE       PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
                @  6, 77 GET zKRAJ     PICTURE '!!'
-               @  8, 77 GET zTROJSTR  PICTURE '!' WHEN zUE == 'T' VALID Valid_RejS_Trojstr()
+               @  7, 77 GET zOPCJE    PICTURE '!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
+               @  8, 64 GET zPROCEDUR PICTURE '!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
                @  9, 77 GET zSEK_CV7  PICTURE '!!' WHEN wfsSEK_CV7( 9, 78 ) VALID vfsSEK_CV7( 9, 78 )
                IF DETALISTA <> 'T'
                   @ 12, 14 GET zWART22 PICTURE FPIC VALID SUMPODs()
@@ -1098,7 +1108,8 @@ PROCEDURE say1s()
    @  4, 77 SAY EXPORT + iif( EXPORT == 'T', 'ak', 'ie' )
    @  5, 77 SAY UE + iif( UE == 'T', 'ak', 'ie' )
    @  6, 77 SAY KRAJ
-   @  8, 77 SAY iif( TROJSTR == 'T', 'Tak', 'Nie' )
+   @  7, 77 SAY Pad( AllTrim( OPCJE ), 2 )
+   @  8, 64 SAY Pad( AllTrim( PROCEDUR ), 15 )
    @  9, 77 SAY SEK_CV7
 
    sprawdzVAT( 10, CToD( ROKS + '.' + MCS + '.' + DZIENS ) )
@@ -1762,8 +1773,8 @@ FUNCTION krejsRysujTlo()
    @  4, 0 SAY 'KONTRAH: Nr identyfik. (NIP).                                            Exp:   '
    @  5, 0 SAY '         Nazwa...............                                             UE:   '
    @  6, 0 SAY '         Adres...............                                           Kraj:   '
-   @  7, 0 SAY 'Opis zdarzenia gospodarczego.                                                   '
-   @  8, 0 SAY 'Uwagi........................                         Transakcja tr¢jstronna:   '
+   @  7, 0 SAY 'Opis zdarzenia gospodarczego.                                     Oznaczenie:   '
+   @  8, 0 SAY 'Uwagi........................                         Procedura:                '
    @  9, 0 SAY 'Data sprze.           Data wyst.           Korekta ?.    Pola sekcji C VAT-7:   '
    @ 10, 0 SAY ' ------------------------------------------------------------------------------ '
    @ 11, 0 SAY '                 N E T T O         V A T          B R U T T O                   '
@@ -1816,6 +1827,242 @@ PROCEDURE RejS_PolaDod()
    SetColor( cKolor )
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejSWhOpcje()
+
+   LOCAL lRes := .T.
+   LOCAL nElement
+   LOCAL cEkran := SaveScreen( 0, 0, MaxRow(), MaxCol() )
+   LOCAL aOpcje := { ;
+      " (brak)                                                    ", ;
+      "1  - Dostawa napoj¢w alkoholowych - alkoholu etylowego...  ", ;
+      "2  - Dostawa towar¢w, o kt¢rych mowa w art. 103 ust. 5aa   ", ;
+      "3  - Dostawa oleju opaˆowego w rozumieniu przepis¢w o p.akc", ;
+      "4  - Dostawa wyrob¢w tytoniowych, suszu tytoniowego...     ", ;
+      "5  - Dostawa odpad¢w - wyˆ¥cznie okre˜lonych w poz. 79-91..", ;
+      "6  - Dostawa urz¥dzeä elektronicznych oraz cz©˜ci i mater..", ;
+      "7  - Dostawa pojazd¢w oraz cz©˜ci samochodowych o kodach...", ;
+      "8  - Dostawa metali szlachetnych oraz nieszlachetnych...   ", ;
+      "9  - Dostawa lek¢w oraz wyrob¢w medycznych...              ", ;
+      "10 - Dostawa budynk¢w, budowli i grunt¢w                   ", ;
+      "11 - —wiadczenie usˆug w zak.przen. uprawnieä do emisji... ", ;
+      "12 - —wiadczenie usˆug o charakterze niematerialnym...     ", ;
+      "13 - —wiadczenie usˆug transportowych i gospodarki mag...  " }
+
+   IF AllTrim( zOPCJE ) == ""
+      nElement := 1
+   ELSE
+      nElement := Val( zOPCJE ) + 1
+   ENDIF
+
+   hb_DispBox( 3, 9, 18, 70, B_DOUBLE )
+   hb_DispOutAt( 3, 11, "Oznaczenie dotycz¥ce dostawy i ˜wiadczenia usˆug" )
+   KRejSWhOpcjeAChFunc( AC_IDLE, nElement )
+   nElement := AChoice( 4, 10, 17, 69, aOpcje, , "KRejSWhOpcjeAChFunc", nElement )
+
+   IF nElement > 0
+      IF nElement == 1
+         zOPCJE := Space( 16 )
+      ELSE
+         zOPCJE := Str( nElement - 1, 2 )
+      ENDIF
+   ENDIF
+
+   RestScreen( 0, 0, MaxRow(), MaxCol(), cEkran )
+
+   KEYBOARD Chr(13)
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejSWhOpcjeAChFunc( nMode, nCurElement, nRowPos )
+
+   LOCAL nRetVal := AC_CONT
+   LOCAL nKey := LastKey()
+   LOCAL nI
+   LOCAL aOpisy := { ;
+      { "(brak)                                                                          " }, ;
+      { "Dostawa napoj¢w alkoholowych - alkoholu etylowego, piwa, wina, napoj¢w          ", ;
+        "fermentowanych i wyrob¢w po˜rednich, w rozumieniu przepis¢w o podatku akcyzowym " }, ;
+      { "Dostawa towar¢w, o kt¢rych mowa w art. 103 ust. 5aa ustawy                      " }, ;
+      { "Dostawa oleju opaˆowego w rozumieniu przepis¢w o podatku akcyzowym oraz olej¢w  " , ;
+        "smarowych, pozostaˆych olej¢w o kodach CN od 2710 19 71 do 2710 19 99, z        " , ;
+        "wyˆ¥czeniem wyrob¢w o kodzie CN 2710 19 85 (oleje biaˆe, parafina ciekˆa) oraz  " , ;
+        "smar¢w plastycznych zaliczanych do kodu CN 2710 19 99, olej¢w smarowych o kodzie" , ;
+        "CN 2710 20 90, preparat¢w smarowych obj©tych pozycj¥ CN 3403, z wyˆ¥czeniem...  " }, ;
+      { "Dostawa wyrob¢w tytoniowych, suszu tytoniowego, pˆynu do papieros¢w             " , ;
+        "elektronicznych i wyrob¢w nowatorskich, w rozumieniu przepis¢w o podatku        " , ;
+        "akcyzowym                                                                       " }, ;
+      { "Dostawa odpad¢w - wyˆ¥cznie okre˜lonych w poz. 79-91 zaˆ¥cznika nr 15 do ustawy " }, ;
+      { "Dostawa urz¥dzeä elektronicznych oraz cz©˜ci i materiaˆ¢w do nich, wyˆ¥cznie    " , ;
+        "okre˜lonych w poz. 7-9, 59-63, 65, 66, 69 i 94-96 zaˆ¥cznika nr 15 do ustawy    " }, ;
+      { "Dostawa pojazd¢w oraz cz©˜ci samochodowych o kodach wyˆ¥cznie CN 8701 - 8708    " , ;
+        "oraz CN 8708 10                                                                 " }, ;
+      { "Dostawa metali szlachetnych oraz nieszlachetnych - wyˆ¥cznie okre˜lonych w poz. " , ;
+        "1-3 zaˆ¥cznika nr 12 do ustawy oraz w poz. 12-25, 33-40, 45, 46, 56 i 78        " , ;
+        "zaˆ¥cznika nr 15 do ustawy                                                      " }, ;
+      { "Dostawa lek¢w oraz wyrob¢w medycznych - produkt¢w leczniczych, ˜rodk¢w          " , ;
+        "spo¾ywczych specjalnego przeznaczenia ¾ywieniowego oraz wyrob¢w medycznych,     " , ;
+        "obj©tych obowi¥zkiem zgˆoszenia, o kt¢rym mowa w art. 37av ust. 1 ustawy z dnia " , ;
+        "6 wrze˜nia 2001 r. - Prawo farmaceutyczne (Dz. U. z 2019 r. poz.499, z p¢«n.zm.)" }, ;
+      { "Dostawa budynk¢w, budowli i grunt¢w                                             " }, ;
+      { "—wiadczenie usˆug w zakresie przenoszenia uprawnieä do emisji gaz¢w             " , ;
+        "cieplarnianych, o kt¢rych mowa w ustawie z dnia 12 czerwca 2015 r. o systemie   " , ;
+        "handlu uprawnieniami do emisji gaz¢w cieplarnianych (Dz. U. z 2018 r. poz. 1201 " , ;
+        "i 2538 oraz z 2019 r. poz. 730, 1501 i 1532)                                    " }, ;
+      { "—wiadczenie usˆug o charakterze niematerialnym -wyˆ¥cznie:doradczych,ksi©gowych," , ;
+        "prawnych, zarz¥dczych, szkoleniowych, marketingowych, firm centralnych (head    " , ;
+        "offices), reklamowych, badania rynku i opinii publicznej, w zakresie badaä      " , ;
+        "naukowych i prac rozwojowych                                                    " }, ;
+      { "—wiadczenie usˆug transportowych i gospodarki magazynowej - Sekcja H PKWiU 2015 " , ;
+        "symbol ex 49.4, ex 52.1                                                         " } }
+
+   hb_Scroll( 20, 0, 24, 79, , , CColInf )
+
+   FOR nI := 1 TO 5
+      IF Len( aOpisy[ nCurElement ] ) >= nI
+         hb_DispOutAt( 19 + nI, 0, aOpisy[ nCurElement ][ nI ], CColInf )
+      ENDIF
+   NEXT
+
+   IF nMode == AC_NOITEM
+      nRetVal := AC_ABORT
+   ELSEIF nMode == AC_EXCEPT
+      DO CASE
+      CASE nKey == K_ENTER
+         nRetVal := AC_SELECT
+      CASE nKey == K_ESC
+         nRetVal := AC_ABORT
+      CASE ( nKey >= Asc('0') .AND. nKey <= Asc('9') ) .OR. nKey == Asc(' ')
+         nRetVal := AC_GOTO
+      ENDCASE
+   ENDIF
+
+   RETURN nRetVal
+
+FUNCTION KRejSVaOpcje()
+
+   LOCAL lRes := .T.
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejSWhProcedur()
+
+   LOCAL lRes := .T.
+   LOCAL nElement
+   LOCAL cEkran := SaveScreen( 0, 0, MaxRow(), MaxCol() )
+   LOCAL aOpcje := { ;
+      " (brak)                                                    ", ;
+      "SW - Dostawa w ramach sprz. wysyˆkowej z terytorium kraju..", ;
+      "EE - —wiadczenie usˆug telekom., nadawczych i elektroniczny", ;
+      "TP - Istniej¥ce powi¥zania mi©dzy nabywc¥ a dokonuj¥cym dos", ;
+      "TT_WNT - Wewn¥trzwsp¢lnotowe nabycie towar¢w dok.przez drug", ;
+      "TT_D - Dostawa towar¢w poza terytorium kraju dokonana przez", ;
+      "MR_T - —wiadczenie usˆug turystyki opodatkowane na zas.mar¾", ;
+      "MR_UZ - Dostawa towar¢w u¾ywanych, dzieˆ sztuki, przedmiot¢", ;
+      "I_42 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 42", ;
+      "I_63 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 63", ;
+      "B_SPV - Transfer bonu jednego przeznaczenia dokonany przez ", ;
+      "B_SPV_DOSTAWA - Dostawa towar¢w oraz ˜wiadczenie usˆug, kt¢", ;
+      "B_MPV_PROWIZJA - —wiadczenie usˆug po˜rednictwa oraz innych" }
+   LOCAL aKody := { "SW", "EE", "TP", "TT_WNT", "TT_D", "MR_T", "MR_UZ", ;
+      "I_42", "I_63", "B_SPV", "B_SPV_DOSTAWA", "B_MPV_PROWIZJA" }
+
+   IF AllTrim( zPROCEDUR ) == ""
+      nElement := 1
+   ELSE
+      nElement := AScan( aKody, AllTrim( zPROCEDUR ) ) + 1
+   ENDIF
+
+   hb_DispBox( 4, 9, 18, 70, B_DOUBLE )
+   hb_DispOutAt( 4, 11, "Oznaczenia dotycz¥ce procedur" )
+   KRejSWhProcedurAChFunc( AC_IDLE, nElement )
+   nElement := AChoice( 5, 10, 17, 69, aOpcje, , "KRejSWhProcedurAChFunc", nElement )
+
+   IF nElement > 0
+      IF nElement == 1
+         zPROCEDUR := Space( 32 )
+      ELSE
+         zPROCEDUR := Pad( aKody[ nElement - 1 ], 32 )
+      ENDIF
+   ENDIF
+
+   RestScreen( 0, 0, MaxRow(), MaxCol(), cEkran )
+
+   KEYBOARD Chr(13)
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejSWhProcedurAChFunc( nMode, nCurElement, nRowPos )
+
+   LOCAL nRetVal := AC_CONT
+   LOCAL nKey := LastKey()
+   LOCAL aOpisy := { ;
+      { "(brak)                                                                          " }, ;
+      { "Dostawa w ramach sprzeda¾y wysyˆkowej z terytorium kraju, o kt¢rej mowa w art.  " , ;
+        "23 ustawy                                                                       " }, ;
+      { "—wiadczenie usˆug telekomunikacyjnych, nadawczych i elektronicznych, o kt¢rych  " , ;
+        "mowa w art. 28k ustawy                                                          " }, ;
+      { "Istniej¥ce powi¥zania mi©dzy nabywc¥ a dokonuj¥cym dostawy towar¢w lub          " , ;
+        "usˆugodawc¥, o kt¢rych mowa w art. 32 ust. 2 pkt 1 ustawy                       " }, ;
+      { "Wewn¥trzwsp¢lnotowe nabycie towar¢w dokonane przez drugiego w kolejno˜ci        " , ;
+        "podatnika VAT w ramach transakcji tr¢jstronnej w procedurze uproszczonej,       " , ;
+        "o kt¢rej mowa w dziale XII rozdziale 8 ustawy                                   " }, ;
+      { "Dostawa towar¢w poza terytorium kraju dokonana przez drugiego w kolejno˜ci      " , ;
+        "podatnika VAT w ramach transakcji tr¢jstronnej w procedurze uproszczonej,       " , ;
+        "o kt¢rej mowa w dziale XII rozdziale 8 ustawy                                   " }, ;
+      { "—wiadczenie usˆug turystyki opodatkowane na zasadach mar¾y zgodnie z art. 119   " , ;
+        "ustawy                                                                          " }, ;
+      { "Dostawa towar¢w u¾ywanych, dzieˆ sztuki, przedmiot¢w kolekcjonerskich i antyk¢w," , ;
+        "opodatkowana na zasadach mar¾y zgodnie z art. 120 ustawy                        " }, ;
+      { "Wewn¥trzwsp¢lnotowa dostawa towar¢w nast©puj¥ca po imporcie tych towar¢w        " , ;
+        "w ramach procedury celnej 42 (import)                                           " }, ;
+      { "Wewn¥trzwsp¢lnotowa dostawa towar¢w nast©puj¥ca po imporcie tych towar¢w        " , ;
+        "w ramach procedury celnej 63 (import)                                           " }, ;
+      { "Transfer bonu jednego przeznaczenia dokonany przez podatnika dziaˆaj¥cego we    " , ;
+        "wˆasnym imieniu, opodatkowany zgodnie z art. 8a ust. 1 ustawy                   " }, ;
+      { "Dostawa towar¢w oraz ˜wiadczenie usˆug, kt¢rych dotyczy bon jednego             " , ;
+        "przeznaczenia na rzecz podatnika, kt¢ry wyemitowaˆ bon zgodnie z art. 8a ust.   " , ;
+        "4 ustawy                                                                        " }, ;
+      { "—wiadczenie usˆug po˜rednictwa oraz innych usˆug dotycz¥cych transferu bonu     " , ;
+        "r¢¾nego przeznaczenia, opodatkowane zgodnie z art. 8b ust. 2 ustawy             " } }
+
+   hb_Scroll( 22, 0, 24, 79, , , CColInf )
+
+   FOR nI := 1 TO 3
+      IF Len( aOpisy[ nCurElement ] ) >= nI
+         hb_DispOutAt( 21 + nI, 0, aOpisy[ nCurElement ][ nI ], CColInf )
+      ENDIF
+   NEXT
+
+   IF nMode == AC_NOITEM
+      nRetVal := AC_ABORT
+   ELSEIF nMode == AC_EXCEPT
+      DO CASE
+      CASE nKey == K_ENTER
+         nRetVal := AC_SELECT
+      CASE nKey == K_ESC
+         nRetVal := AC_ABORT
+      CASE ! ( cKey := Upper( hb_keyChar( nKey ) ) ) == ""
+         nRetVal := AC_GOTO
+      ENDCASE
+   ENDIF
+
+   RETURN nRetVal
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejSVaProcedur()
+   LOCAL lRes := .T.
+
+   RETURN lRes
 
 /*----------------------------------------------------------------------*/
 
