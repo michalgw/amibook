@@ -9,14 +9,14 @@ object FormMain: TFormMain
   ClientWidth = 339
   OnShow = FormShow
   Position = poWorkAreaCenter
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '2.1.0.0'
   object LabelTresc: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     Left = 48
     Height = 15
     Top = 8
-    Width = 55
+    Width = 54
     BorderSpacing.Left = 48
     BorderSpacing.Top = 8
     Caption = 'LabelTresc'

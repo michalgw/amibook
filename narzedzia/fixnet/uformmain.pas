@@ -121,7 +121,9 @@ begin
         Result := Result and SprawdzWartosc('EnableOpLockForceClose', 1);
         Result := Result and SprawdzWartosc('SharingViolationDelay', 0);
         Result := Result and SprawdzWartosc('SharingViolationRetries', 0);
-        if Win32MajorVersion >= 6 then
+        if ((Win32MajorVersion = 6) and (Win32MinorVersion >= 1)) or (Win32MajorVersion > 6) then
+          Result := Result and SprawdzWartosc('DisableLeasing', 1)
+        else if (Win32MajorVersion = 6) and (Win32MinorVersion = 0) then
           Result := Result or SprawdzWartosc('SMB2', 0);
         R.CloseKey;
       end;
