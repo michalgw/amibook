@@ -1325,6 +1325,72 @@ FUNCTION infoobr( nCurEl )
 
    RETURN NIL
 
+/*----------------------------------------------------------------------*/
+
+FUNCTION ObliczSumMies( cMiesiac )
+
+   LOCAL aRes, cNr
+   LOCAL _koniec := "del#[+].or.firma#ident_fir.or.mc#cxMiesiac"
+   PRIVATE cxMiesiac := cMiesiac
+
+   SELECT 2
+   IF zRYCZALT == 'T'
+
+      aRes := hb_Hash( 'uslugi', 0, 'wyr_tow', 0, 'handel', 0, 'ry20', 0, ;
+         'ry17', 0, 'ry10', 0, 'pozycje', 0 )
+
+      DO WHILE ! Dostep( 'EWID' )
+      ENDDO
+      SetInd( 'EWID' )
+      SEEK '+' + ident_fir + cMiesiac
+
+      DO WHILE ! &_koniec
+         cNr := iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2, 20 ) , SubStr( numer, 1, 20 ) )
+         IF RTrim( cNr ) # 'REM-P' .AND. RTrim( cNr ) # 'REM-K'
+            aRes[ 'uslugi' ] += ewid->uslugi
+            aRes[ 'wyr_tow' ] += ewid->produkcja
+            aRes[ 'handel' ] += ewid->handel
+            aRes[ 'ry20' ] += ewid->ry20
+            aRes[ 'ry17' ] += ewid->ry17
+            aRes[ 'ry10' ] += ewid->ry10
+            aRes[ 'pozycje' ] := aRes[ 'pozycje' ] + 1
+         ENDIF
+         SKIP
+      ENDDO
+
+   ELSE
+
+      aRes := hb_Hash( 'uslugi', 0, 'wyr_tow', 0, 'zakup', 0, 'uboczne', 0, ;
+         'wynagr_g', 0, 'wydatki', 0, 'pozycje', 0 )
+
+      DO WHILE ! Dostep( 'OPER' )
+      ENDDO
+      SetInd( 'OPER' )
+      SEEK '+' + ident_fir + cMiesiac
+
+      DO WHILE ! &_koniec
+         cNr := iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2, 20 ) , SubStr( numer, 1, 20 ) )
+         IF RTrim( cNr ) # 'REM-P' .AND. RTrim( cNr ) # 'REM-K'
+            aRes[ 'uslugi' ] += oper->uslugi
+            aRes[ 'wyr_tow' ] += oper->wyr_tow
+            aRes[ 'zakup' ] += oper->zakup
+            aRes[ 'uboczne' ] += oper->uboczne
+            aRes[ 'wynagr_g' ] += oper->wynagr_g
+            aRes[ 'wydatki' ] += oper->wydatki
+            aRes[ 'pozycje' ] := aRes[ 'pozycje' ] + 1
+         ENDIF
+         SKIP
+      ENDDO
+
+   ENDIF
+
+   USE
+   SELECT 1
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± aktsumies ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Awaryjna aktualizacja sum miesiecznych w zbiorze SUMA_MC.dbf              ±
@@ -1335,6 +1401,9 @@ FUNCTION aktsumies( nCurEl )
    LOCAL AKTM
    LOCAL zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10
    LOCAL zZAKUP, zUBOCZNE, zWYNAGR_G, zWYDATKI, zZAMEK
+   LOCAL lPrzelicz := .F., aDane
+
+   lPrzelicz := TNEsc( , "Czy ponownie przeliczy† warto˜ci? (T/N)" )
 
    SELECT 1
    DO WHILE ! dostep( 'SUMA_MC' )
@@ -1346,13 +1415,24 @@ FUNCTION aktsumies( nCurEl )
       SET CURSOR ON
       IF zRYCZALT == 'T'
          STORE 0 TO zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10
-         zUSLUGI  := suma_mc->USLUGI
-         zWYR_TOW := suma_mc->WYR_TOW
-         zHANDEL  := suma_mc->HANDEL
-         zRY20    := suma_mc->RY20
-         zRY17    := suma_mc->RY17
-         zRY10    := suma_mc->RY10
-         zPOZYCJE := suma_mc->POZYCJE
+         IF lPrzelicz
+            aDane := ObliczSumMies( nCurEl )
+            zUSLUGI  := aDane[ 'uslugi' ]
+            zWYR_TOW := aDane[ 'wyr_tow' ]
+            zHANDEL  := aDane[ 'handel' ]
+            zRY20    := aDane[ 'ry20' ]
+            zRY17    := aDane[ 'ry17' ]
+            zRY10    := aDane[ 'ry10' ]
+            zPOZYCJE := aDane[ 'pozycje' ]
+         ELSE
+            zUSLUGI  := suma_mc->USLUGI
+            zWYR_TOW := suma_mc->WYR_TOW
+            zHANDEL  := suma_mc->HANDEL
+            zRY20    := suma_mc->RY20
+            zRY17    := suma_mc->RY17
+            zRY10    := suma_mc->RY10
+            zPOZYCJE := suma_mc->POZYCJE
+         ENDIF
          zZAMEK   := iif( suma_mc->ZAMEK, 'T', 'N' )
          @ 12, 53 GET zRY20    PICTURE FPIC
          @ 13, 53 GET zRY17    PICTURE FPIC
@@ -1374,13 +1454,24 @@ FUNCTION aktsumies( nCurEl )
       ELSE
          STORE 0 TO zUSLUGI, zWYR_TOW, zZAKUP, zUBOCZNE,;
             zWYNAGR_G, zWYDATKI, zPOZYCJE
-         zUSLUGI   := suma_mc->USLUGI
-         zWYR_TOW  := suma_mc->WYR_TOW
-         zZAKUP    := suma_mc->ZAKUP
-         zUBOCZNE  := suma_mc->UBOCZNE
-         zWYNAGR_G := suma_mc->WYNAGR_G
-         zWYDATKI  := suma_mc->WYDATKI
-         zPOZYCJE  := suma_mc->POZYCJE
+         IF lPrzelicz
+            aDane := ObliczSumMies( nCurEl )
+            zUSLUGI   := aDane[ 'uslugi' ]
+            zWYR_TOW  := aDane[ 'wyr_tow' ]
+            zZAKUP    := aDane[ 'zakup' ]
+            zUBOCZNE  := aDane[ 'uboczne' ]
+            zWYNAGR_G := aDane[ 'wynagr_g' ]
+            zWYDATKI  := aDane[ 'wydatki' ]
+            zPOZYCJE  := aDane[ 'pozycje' ]
+         ELSE
+            zUSLUGI   := suma_mc->USLUGI
+            zWYR_TOW  := suma_mc->WYR_TOW
+            zZAKUP    := suma_mc->ZAKUP
+            zUBOCZNE  := suma_mc->UBOCZNE
+            zWYNAGR_G := suma_mc->WYNAGR_G
+            zWYDATKI  := suma_mc->WYDATKI
+            zPOZYCJE  := suma_mc->POZYCJE
+         ENDIF
          zZAMEK   := iif( suma_mc->ZAMEK, 'T', 'N' )
          @ 13, 42 to 22,67
          @ 14, 43 SAY 'Wyroby i Tow            '
