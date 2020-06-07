@@ -883,4 +883,46 @@ PROCEDURE Firma_ZapiszEmail( cEmail )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION Firma_Wczytaj( aPola )
+
+   LOCAL aRes := hb_Hash()
+   LOCAL nWorkNo := Select()
+   LOCAL nI, cPole
+
+   IF DostepPro( "FIRMA", , .T., "FIRMAPO" )
+      firmapo->( dbGoto( Val( ident_fir ) ) )
+      FOR nI := 1 TO Len( aPola )
+         cPole := aPola[ nI ]
+         aRes[ aPola[ nI ] ] := firmapo->&cPole
+      NEXT
+      firmapo->( dbCloseArea() )
+   ENDIF
+
+   dbSelectArea( nWorkNo )
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Firma_Zapisz( aPola )
+
+   LOCAL aRes := hb_Hash()
+   LOCAL nWorkNo := Select()
+   LOCAL nI
+
+   IF DostepPro( "FIRMA", , .T., "FIRMAPO" )
+      firmapo->( dbGoto( Val( ident_fir ) ) )
+      firmapo->( RLock() )
+      FOR nI := 1 TO Len( aPola )
+         firmapo->&( hb_HKeyAt( aPola, nI ) ) := hb_HValueAt( aPola, nI )
+      NEXT
+      firmapo->( dbCommit() )
+      firmapo->( dbCloseArea() )
+   ENDIF
+
+   dbSelectArea( nWorkNo )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
 
