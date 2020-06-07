@@ -27,7 +27,7 @@ PROCEDURE KRejZ()
 
    PRIVATE oGetWAR2, oGetVAT2, oGetWAR7, oGetVAT7, oGetWAR12, oGetVAT12, oGetWAR22, oGetVAT22, lBlokuj := .F.
    PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE
-   PRIVATE nOrgW2, nOrgW7, nOrgW12, nOrgW22
+   PRIVATE nOrgW2, nOrgW7, nOrgW12, nOrgW22, zRODZDOW, cScrRodzDow
    PRIVATE zK16OPIS, zKOL47, zKOL48, zKOL49, zKOL50, nWartoscNetto
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou
    zexport := 'N'
@@ -119,7 +119,8 @@ PROCEDURE KRejZ()
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
             IF ins
                @  4, 78 CLEAR TO  5, 79
-               @  4, 29 CLEAR TO  7, 69
+               @  4, 29 CLEAR TO  4, 50
+               @  5, 29 CLEAR TO  7, 69
                @  9, 29 CLEAR TO  9, 38
                @  9, 78 CLEAR TO 10, 79
                @ 10, 29 SAY '   '
@@ -201,6 +202,8 @@ PROCEDURE KRejZ()
                zNETTO2 := 0
                zKOLUMNA2 := '  '
                zDATATRAN := CToD( zROKS + '.' + zMCS + '.' + zDZIENS )
+
+               zRODZDOW := Space( 6 )
                ***********************
             ELSE
                IF DocSys()
@@ -277,6 +280,8 @@ PROCEDURE KRejZ()
                zNETTO2 := NETTO2
                zKOLUMNA2 := KOLUMNA2
                zDATATRAN := DATATRAN
+
+               zRODZDOW := RODZDOW
             ENDIF
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 
@@ -292,13 +297,13 @@ PROCEDURE KRejZ()
             scr_kolumC := .F.
             SET COLOR TO ,W+/W,,,N/W
 *             @  3,2 say 'ÍÍ'+chr(16)
-            @  4, 60 SAY 'Nr ident.'
+            //@  4, 60 SAY 'Nr ident.'
             ColStd()
             @  3, 20 GET zDZIEN PICTURE "99" WHEN WERSJA4 == .T. .OR. ins VALID v1_1z()
             @  3, 38 GET zSYMB_REJ PICTURE "!!" VALID v11_1z()
             oGetSYMB_REJ := ATail( GetList )
             @  3, 59 GET zNUMER PICTURE "@S20 " + repl('!',40) VALID v1_2z()
-            @  4, 29 SAY Space( 40 )
+            @  4, 29 SAY Space( 20 )
             @  4, 29 GET zNR_IDENT PICTURE "@S20 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" VALID vv1_3z()
             @  5, 29 GET znazwa PICTURE "@S40 "+repl('!',100) valid w1_3z().and.v1_3z()
             @  6, 29 GET zADRES PICTURE "@S40 " + repl( '!', 100 ) VALID v1_4z()
@@ -308,6 +313,7 @@ PROCEDURE KRejZ()
             @  9, 29 GET zDATAS PICTURE '@D' WHEN w1_6s() VALID v1_6z()
             @  9, 56 GET zDATATRAN PICTURE '@D' WHEN w1_7s()
             @ 10, 29 GET zKOREKTA PICTURE '!' VALID zKOREKTA $ 'TN' .AND. v1_8z()
+            @  4, 73 GET zRODZDOW PICTURE '!!!!!!' WHEN KRejZWRodzDow() VALID KRejZVRodzDow()
             @  5, 77 GET zUE PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
             @  6, 77 GET zKRAJ PICTURE '!!'
             @  8, 77 GET zTROJSTR PICTURE "!" WHEN zUE == 'T' VALID Valid_RejZ_Trojstr()
@@ -680,7 +686,7 @@ PROCEDURE say1z()
    @  3, 20 SAY DZIEN
    @  3, 38 SAY SYMB_REJ
    @  3, 59 SAY iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2, 20 ), SubStr( numer, 1, 20 ) )
-   @  4, 29 SAY Space( 40 )
+   @  4, 29 SAY Space( 20 )
    @  4, 29 SAY SubStr( nr_ident, 1, 20 )
    *if left(numer,1)=chr(1).or.left(numer,1)=chr(254)
    *   @ 4,50 say space(20)
@@ -701,6 +707,7 @@ PROCEDURE say1z()
    @  9, 29 SAY ROKS + '.' + MCS + '.' + DZIENS
    @  9, 56 SAY DToC( DATATRAN )
    @ 10, 29 SAY KOREKTA + iif( KOREKTA == 'T', 'ak', 'ie' )
+   @  4, 73 SAY RODZDOW
    @  5, 77 SAY UE + iif( UE == 'T', 'ak', 'ie' )
    @  6, 77 SAY KRAJ
    @  8, 77 SAY iif( TROJSTR == 'T', 'Tak', 'Nie' )
@@ -926,7 +933,7 @@ FUNCTION Vv1_3z()
             zUE := 'N'
             ZKRAJ := 'PL'
             SET COLOR TO i
-            @ 4, 29 SAY zNR_IDENT
+            @ 4, 29 SAY SubStr( zNR_IDENT, 1, 20 )
             @ 5, 29 SAY SubStr( znazwa, 1, 40 )
             @ 6, 29 SAY SubStr( zadres, 1, 40 )
             @ 5, 77 SAY zUE + iif( zUE == 'T', 'ak', 'ie' )
@@ -954,7 +961,7 @@ FUNCTION Vv1_3z()
                zUE := 'N'
                ZKRAJ := 'PL'
                SET COLOR TO i
-               @ 4, 29 SAY zNR_IDENT
+               @ 4, 29 SAY SubStr( zNR_IDENT, 1, 20 )
                @ 5, 29 SAY SubStr( znazwa, 1, 40 )
                @ 6, 29 SAY SubStr( zadres, 1, 40 )
                @ 5, 77 SAY zUE + iif( zUE == 'T', 'ak', 'ie' )
@@ -1002,7 +1009,7 @@ FUNCTION w1_3z()
          zUE := iif( UE == ' ', 'N', UE )
          zKRAJ := iif( KRAJ == '  ', 'PL', KRAJ )
          SET COLOR TO i
-         @ 4, 29 SAY zNR_IDENT
+         @ 4, 29 SAY SubStr( zNR_IDENT, 1, 20 )
          @ 5, 29 SAY SubStr( znazwa, 1, 40 )
          @ 6, 29 SAY SubStr( zadres, 1, 40 )
          @ 5, 77 SAY zUE + iif( zUE == 'T', 'ak', 'ie' )
@@ -1630,7 +1637,7 @@ FUNCTION vZAP_DATZ()
 FUNCTION krejzRysujTlo()
    ColStd()
    @  3, 0 SAY 'Do rej. na dzieה....     Symbol rej...     Nr dowodu ksi©g...                   '
-   @  4, 0 SAY 'KONTRAH: Nr identyfik. (NIP).                                                   '
+   @  4, 0 SAY 'KONTRAH: Nr identyfik. (NIP).                              Rodzaj dowodu:       '
    @  5, 0 SAY '         Nazwa...............                                             UE:   '
    @  6, 0 SAY '         Adres...............                                           Kraj:   '
    @  7, 0 SAY 'Opis zdarzenia gospodarczego.                                                   '
@@ -1696,6 +1703,36 @@ FUNCTION Valid_RejZ_Trojstr()
    IF lRes
       ColStd()
       @ 8, 78 SAY iif( zTROJSTR == 'T', 'ak', 'ie' )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejZWRodzDow()
+
+   cScrRodzDow := SaveScreen( 5, 40, 11, 79 )
+
+   ColInf()
+   @  5, 40 CLEAR TO 11, 79
+   @  5, 40 TO 11, 79
+   @  6, 41 SAY PadC( 'Podaj rodzaj dowodu sprzeda¾y:', 30 )
+   @  7, 41 SAY '    - spacje - ¾adne z poni¾szych     '
+   @  8, 41 SAY 'MK  - Metoda kasowa rozliczeה art. 21 '
+   @  9, 41 SAY 'VAT_RR - Faktura VAT RR, art. 116     '
+   @ 10, 41 SAY 'WEW - Dokument wewn©trzny             '
+   ColStd()
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejZVRodzDow()
+
+   LOCAL lRes
+
+   IF ( lRes := AScan( { "MK", "VAT_RR", "WEW", "" }, AllTrim( zRODZDOW ) ) > 0 )
+      RestScreen(  5, 40, 11, 79, cScrRodzDow )
    ENDIF
 
    RETURN lRes

@@ -423,13 +423,10 @@ FUNCTION Ewid()
 
                   DO CASE
                      CASE zVATFORDR == '7 '
-                        verdekold := '(18)   (czyste kartki) '
+                        verdekold := 'M  (1)                    '
 
                      CASE zVATFORDR == '7K'
-                        verdekold := '(12)   (czyste kartki) '
-
-                     CASE zVATFORDR == '7D'
-                        verdekold := '(8)    (czyste kartki) '
+                        verdekold := 'K  (1)                    '
                   ENDCASE
 
                   @  8, 1 TO 22, 39
@@ -439,7 +436,7 @@ FUNCTION Ewid()
                   @ 12, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
                   @ 13, 2 PROMPT ' V - VAT-' + zVATFORDR + '   ' + verdekvat
                   @ 14, 2 PROMPT ' Y - VAT-' + zVATFORDR + '   ' + verdeknew
-                  @ 15, 2 PROMPT ' T - VAT-' + zVATFORDR + '   ' + verdekold
+                  @ 15, 2 PROMPT ' J - JPK_V7' + verdekold
     *(7-11/7K-5/7D-2)
     *             @ 15, 2 prompt [ 7 - VAT-7/7K (9/3)                  ]
                   @ 16, 2 PROMPT ' U - VAT-UE   (zestaw formularzy UE) '
@@ -606,39 +603,7 @@ FUNCTION Ewid()
                         ENDIF
 
                      CASE opcja1 == 7
-                        SET CURSOR ON
-                        ColStd()
-   *                   if zVATFORDR='7 '
-   *                      @ 16,15 say space(23)
-   *                      @ 16,22 get papier pict '!' when wKARTvOLD(16,22) valid vKARTvOLD(16,22)
-   *                      read
-   *                   else
-   //                      papier='K'
-                        papier := menuDeklaracjaDruk( 15, iif( zVATFORDR == '7 ', .T., .F. ) )
-   *                   endif
-   *                   @ 16,22 get papier pict '!' when wKARTv(16,22) valid vKARTv(16,22)
-   *                   read
-                        SET CURSOR OFF
-   //                   @ 24,0
-                        if LastKey() <> K_ESC
-                           DO CASE
-                              CASE papier == 'K'
-                                 vat_718( 0, 0, 1, 'K' )
-
-                              CASE papier == 'F'
-                                 AFill( nazform, '' )
-                                 AFill( strform, 0 )
-                                 nazform[ 1 ] := 'VAT-718'
-                                 strform[ 1 ] := 2
-                                 form( nazform, strform, 1 )
-
-                              CASE papier == 'E'
-                                 vat_718( 0, 0, 1, 'E' )
-
-                              CASE papier == 'X'
-                                 vat_718( 0, 0, 1, 'X' )
-                           ENDCASE
-                        ENDIF
+                        JPK_V7_Rob()
 
                      CASE opcja1 == 8
                         opcja11 := edekCzyKorekta( 17, 2 )

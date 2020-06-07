@@ -37,6 +37,8 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
    PRIVATE P49_50p := 0, P51_50p := 0, P49tmp, P51tmp
    PRIVATE art111u6 := 0, art89b1 := 0, art89b4 := 0
    PRIVATE KorKOL47, KorKOL48, zZwrRaVAT := 0, zAdrEMail, lSplitPayment := .F.
+   PRIVATE cJPKRodzZwrot := ' ', cJPKZwrotPod := 'N', nJPKZwrotKwota := 0, cJPKZwrotRodzZob := Space( 60 )
+   PRIVATE resdekl, cEkran
    STORE 0 TO P22, P23, P26, P35, P36
    STORE 0 TO P45, P46, P47, P48, P49, P50, P51, P52, P53, P54, P55, SEK_CV7net, SEK_CV7vat
    STORE 0 TO P56, P57, P58, P59, P60, P61, P62, P61a, P62a, P64, P64exp, P64expue, P66
@@ -182,6 +184,15 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       zzwr60dni := zwr60dni
       zzwr180dni := zwr180dni
 
+      cJPKRodzZwrot :=  ZWRKONTO
+      cJPKZwrotPod := iif( ZWRPODAT $ 'TN', ZWRPODAT, 'N' )
+      nJPKZwrotKwota := ZWRPODKW
+      cJPKZwrotRodzZob := ZWRPODRD
+      IF cJPKZwrotPod <> 'T'
+         nJPKZwrotKwota := 0
+         cJPKZwrotRodzZob := Space( 120 )
+      ENDIF
+
       zf1 := f1
       zf2 := f2
       zf3 := f3
@@ -208,29 +219,36 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          //@  7, 42 SAY ' Podatek od spisu z natury            '
          //@  8, 42 SAY ' Zapl.VAT za naby.sr.trans            '
          SET COLOR TO w+
-         @  9, 42 SAY ' '+padc('D.ROZLICZENIE PODATKU NALICZONEGO', 37, 'Ä' )
+         @  7, 42 SAY ' '+padc('D.ROZLICZENIE PODATKU NALICZONEGO', 37, 'Ä' )
          ColStd()
-         @ 10, 42 SAY ' Kwota nadw.pop.deklaracji            '
-         @ 11, 42 SAY ' Podatek od spisu z natury            '
+         @  8, 42 SAY ' Kwota nadw.pop.deklaracji            '
+         @  9, 42 SAY ' Podatek od spisu z natury            '
          //@ 12, 42 SAY ' Korekta pod.nal.od sr.trw.           '
          //@ 13, 42 SAY ' Korekta pod.nal.od pozost.           '
-         @ 12, 42 SAY '                                      '
-         @ 13, 42 SAY '                                      '
+         //@ 12, 42 SAY '                                      '
+         //@ 13, 42 SAY '                                      '
          SET COLOR TO w+
-         @ 14, 42 SAY ' ' + PadC( 'E.OBLICZENIE WYSOKO&__S.CI ZOBOWI&__A.Z.', 37, 'Ä' )
+         @ 10, 42 SAY ' ' + PadC( 'E.OBLICZENIE WYSOKO&__S.CI ZOBOWI&__A.Z.', 37, 'Ä' )
          ColStd()
-         @ 15, 42 SAY ' Do odliczenia za kasy                '
-         @ 16, 42 SAY ' Kwota objeta zaniechaniem            '
+         @ 11, 42 SAY ' Do odliczenia za kasy                '
+         @ 12, 42 SAY ' Kwota objeta zaniechaniem            '
          IF zVATFORDR == '7D'
-            @ 17, 42 SAY ' Nadplata z poprz.kwartalu            '
+            @ 13, 42 SAY ' Nadplata z poprz.kwartalu            '
          ENDIF
          SET COLOR TO w+
-         @ 18, 42 say ' ' + PadC( '(gdy nadwy&_z.ka podatku naliczonego)', 37, 'Ä' )
+         @ 14, 42 say ' ' + PadC( '(gdy nadwy&_z.ka podatku naliczonego)', 37, 'Ä' )
          ColStd()
-         @ 19, 42 SAY ' Do zwrotu za kasy w okresie          '
-         @ 20, 42 SAY ' Do zwrotu na rachunek bank.          '
-         @ 21, 42 SAY ' r. VAT               25 dni          '
-         @ 22, 42 SAY ' 60 dni              180 dni          '
+         @ 15, 42 SAY ' Do zwrotu za kasy w okresie          '
+         @ 16, 42 SAY ' Do zwrotu na rachunek bank.          '
+         IF _OU == 'J'
+            @ 17, 42 SAY ' Do zwrotu w terminie (wyb¢r 1-4)     '
+            @ 18, 42 SAY ' Zwrot pod.na poczet przysz.zob.      '
+            @ 19, 42 SAY ' Wysoko˜† do zwrotu przy.zob.         '
+            @ 20, 42 SAY ' Rodzaj przyszl.zob.podat.            '
+         ELSE
+            @ 17, 42 SAY ' r. VAT               25 dni          '
+            @ 18, 42 SAY ' 60 dni              180 dni          '
+         ENDIF
 *        set colo to w+
 *        @ 22,42 to 22,79
 *        ColStd()
@@ -244,27 +262,39 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          //@  7, 71 GET pp12 PICTURE FVPIC
          //@  8, 71 GET znowytran PICTURE FVPIC
 
-         @ 10, 71 GET pp8  PICTURE FVPIC
-         @ 11, 71 GET pp11 PICTURE FVPIC
+         @  8, 71 GET pp8  PICTURE FVPIC
+         @  9, 71 GET pp11 PICTURE FVPIC
          //@ 12, 71 GET zkorekst PICTURE FVPIC
          //@ 13, 71 GET zkorekpoz PICTURE FVPIC
 
-         @ 15, 71 GET kkasa_odl PICTURE FVPIC
-         @ 16, 71 GET pp13 PICTURE FVPIC
+         @ 11, 71 GET kkasa_odl PICTURE FVPIC
+         @ 12, 71 GET pp13 PICTURE FVPIC
          IF zVATFORDR == '7D'
-            @ 17, 71 GET zVATNADKWA PICTURE FVPIC
+            @ 13, 71 GET zVATNADKWA PICTURE FVPIC
          ENDIF
 
-         @ 19, 71 GET kkasa_zwr PICTURE FVPIC
-         @ 20, 71 GET pp10 PICTURE FVPIC
-         @ 21, 50 GET zZwrRaVAT PICTURE FVPIC
-         @ 21, 71 GET zzwr25dni PICTURE FVPIC
-         @ 22, 50 GET zzwr60dni PICTURE FVPIC
-         @ 22, 71 GET zzwr180dni PICTURE FVPIC
+         @ 15, 71 GET kkasa_zwr PICTURE FVPIC
+         @ 16, 71 GET pp10 PICTURE FVPIC
+         IF _OU == 'J'
+            @ 17, 76 GET cJPKRodzZwrot PICTURE '!' WHEN Vat720WRodzZwrot() VALID Vat720VRodzZwrot()
+            @ 18, 76 GET cJPKZwrotPod PICTURE '!' WHEN Vat720WZwrotPod() VALID Vat720VZwrotPod()
+            @ 19, 71 GET nJPKZwrotKwota PICTURE FVPIC WHEN Vat720WZwrotKwota() VALID Vat720VZwrotKwota()
+            @ 20, 71 GET cJPKZwrotRodzZob PICTURE '@S9 ' + Replicate( '!', 120 ) WHEN Vat720WZwrotRodzZob() VALID Vat720VZwrotRodzZob()
+         ELSE
+            @ 17, 50 GET zZwrRaVAT PICTURE FVPIC
+            @ 17, 71 GET zzwr25dni PICTURE FVPIC
+            @ 18, 50 GET zzwr60dni PICTURE FVPIC
+            @ 18, 71 GET zzwr180dni PICTURE FVPIC
+         ENDIF
 
          Read_()
          IF LastKey() == K_ESC
             BREAK
+         ENDIF
+
+         IF cJPKZwrotPod <> 'T'
+            nJPKZwrotKwota := 0
+            cJPKZwrotRodzZob := Space( 120 )
          ENDIF
 
          BlokadaR()
@@ -273,6 +303,8 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          REPLACE /*nowytran WITH znowytran, korekst WITH zkorekst, korekpoz WITH zkorekpoz,*/ zwr180dni WITH zzwr180dni
          REPLACE vatart129 WITH art129, zwr60dni WITH zzwr60dni, zwr25dni WITH zzwr25dni
          REPLACE VATZALMIE WITH zVATZALMIE, VATNADKWA WITH zVATNADKWA, ZWRRAVAT WITH zZwrRaVAT
+         REPLACE ZWRKONTO WITH cJPKRodzZwrot, ZWRPODAT WITH cJPKZwrotPod
+         REPLACE ZWRPODKW WITH nJPKZwrotKwota, ZWRPODRD WITH cJPKZwrotRodzZob
 
          IF Val( AllTrim( mc ) ) > kwapocz
             nNumerRec := RecNo()
@@ -1519,7 +1551,6 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             EXIT
          ENDSWITCH
       CASE _OU == 'X'
-         PRIVATE resdekl
          //IF kordek == 'K'
             //tresc_korekty_vat7 := edekOrdZuTrescPobierz( 'VAT-7', Val( AllTrim( ident_fir ) ), Val( AllTrim( miesiac ) ) )
          //ENDIF
@@ -1543,12 +1574,20 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          infov716()
       CASE _OU == 'E'
          e_vat712()
+      CASE _OU == 'J'
+         resdekl := JPK_V7_DaneDek()
+         IF kordek == 'K'
+            resdekl[ 'ORDZU' ] := aDane[ 'ORDZU' ][ 'P_13' ]
+         ENDIF
+         _czy_close := .T.
       ENDCASE
    END
+
    IF _czy_close
       close_()
    ENDIF
-   RETURN
+
+   RETURN iif( _OU == 'J', resdekl, NIL )
 
 ***************************************************
 FUNCTION wfkordek20( x, y )
@@ -1608,3 +1647,198 @@ FUNCTION wstruspr20( x, y )
    ENDIF
    @ x, y SAY zstrusprwy PICTURE '999'
    RETURN .F.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Vat720WRodzZwrot()
+
+   LOCAL cKolor := ColInf()
+
+   cEkran := SaveScreen()
+
+   @ 10, 22 CLEAR TO 16, 79
+   @ 10, 22 TO 16, 79
+   @ 11, 23 SAY ' 1 - Zwrot na rachunek VAT w terminie 25 dni'
+   @ 12, 23 SAY ' 2 - Zwrot na rachunek rozliczeniowy w terminie 25 dni'
+   @ 13, 23 SAY ' 3 - Zwrot na rachunek rozliczeniowy w terminie 60 dni'
+   @ 14, 23 SAY ' 4 - Zwrot na rachunek rozliczeniowy w terminie 180 dni'
+   @ 15, 23 SAY '   - ½adne z powy¾szych'
+
+   SetColor( cKolor )
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Vat720VRodzZwrot()
+
+   LOCAL lRes := AScan( { '1', '2', '3', '4', ' ' }, cJPKRodzZwrot ) > 0
+
+   IF lRes
+      RestScreen( , , , , cEkran )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Vat720WZwrotPod()
+
+   LOCAL cKolor := ColInf()
+
+   @ 24, 0 SAY PadC( 'Podatnik wnosi o zalicz. zwrotu pod. na poczet przyszˆych zobowi¥zaä podat.', 80 )
+   SetColor( cKolor )
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Vat720VZwrotPod()
+
+   LOCAL lRes := cJPKZwrotPod $ 'TN'
+
+   IF lRes
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Vat720WZwrotKwota()
+
+   LOCAL cKolor
+   LOCAL lRes := cJPKZwrotPod == 'T'
+
+   IF lRes
+      cKolor := ColInf()
+      @ 24, 0 SAY PadC( 'Podatnik wnosi o zalicz. zwrotu pod. na poczet przyszˆych zobowi¥zaä podat.', 80 )
+      SetColor( cKolor )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Vat720VZwrotKwota()
+
+   LOCAL lRes := nJPKZwrotKwota > 0
+
+   IF lRes
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Vat720WZwrotRodzZob()
+
+   LOCAL cKolor
+   LOCAL lRes := cJPKZwrotPod == 'T'
+
+   IF lRes
+      cKolor := ColInf()
+      @ 24, 0 SAY PadC( 'Rodzaj przyszˆego zobowi¥zania podatkowego', 80 )
+      SetColor( cKolor )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Vat720VZwrotRodzZob()
+
+   LOCAL lRes := Len( AllTrim( cJPKZwrotRodzZob ) ) > 0
+
+   IF lRes
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION JPK_V7_DaneDek( aDane )
+
+   LOCAL hDane := hb_Hash()
+
+   hDane['Rok'] := AllTrim( param_rok )
+
+   hDane['Miesiac'] := AllTrim( p5a )
+   hDane['Spolka'] := spolka_
+   IF spolka_
+      hDane['PelnaNazwa'] := str2sxml( AllTrim( P8 ) )
+   ELSE
+      hDane['ImiePierwsze'] := str2sxml( naz_imie_imie( AllTrim( P8ni ) ) )
+      hDane['Nazwisko'] := str2sxml( naz_imie_naz( AllTrim( P8ni ) ) )
+      hDane['DataUrodzenia'] := P11d
+   ENDIF
+
+   hDane['Korekta'] := kordek == 'K'
+   IF ( hDane['Kwartalnie'] := zVATFORDR == '7K' )
+      hDane['Kwartal'] := kwarta
+   ENDIF
+
+   hDane['P_10'] := Int( P64 )
+   hDane['P_11'] := Int( P64exp )
+   hDane['P_12'] := Int( P64expue )
+   hDane['P_13'] := Int( P67 )
+   hDane['P_14'] := Int( P67art129 )
+   hDane['P_15'] := Int( P61+P61a )
+   hDane['P_16'] := Int( P62+P62a )
+   hDane['P_17'] := Int( P69 )
+   hDane['P_18'] := Int( P70 )
+   hDane['P_19'] := Int( P71 )
+   hDane['P_20'] := Int( P72 )
+   hDane['P_21'] := Int( P65ue )
+   hDane['P_22'] := Int( P65 )
+   hDane['P_23'] := Int( P65dekue )
+   hDane['P_24'] := Int( P65vdekue )
+   hDane['P_25'] := Int( P65dekit )
+   hDane['P_26'] := Int( P65vdekit )
+   hDane['P_27'] := Int( P65dekus )
+   hDane['P_28'] := Int( P65vdekus )
+   hDane['P_29'] := Int( P65dekusu )
+   hDane['P_30'] := Int( P65vdekusu )
+   hDane['P_31'] := Int( SEK_CV7net )
+   hDane['P_32'] := Int( SEK_CV7vat )
+   hDane['P_33'] := Int( Pp12 )
+   hDane['P_34'] := Int( art111u6 )
+   hDane['P_35'] := Int( znowytran )
+   hDane['P_36'] := Int( zKOL39 )
+   hDane['P_37'] := Int( P75 )
+   hDane['P_38'] := Int( P76 )
+   hDane['P_39'] := Int( Pp8 )
+   hDane['P_40'] := Int( P45dek )
+   hDane['P_41'] := Int( P46dek )
+   hDane['P_42'] := Int( P49dek )
+   hDane['P_43'] := Int( P50dek )
+   hDane['P_44'] := Int( zkorekst )
+   hDane['P_45'] := Int( zkorekpoz )
+   hDane['P_46'] := Int( art89b1 )
+   hDane['P_47'] := Int( art89b4 )
+   hDane['P_48'] := Int( P79 )
+   hDane['P_49'] := Int( P98a )
+   hDane['P_50'] := Int( pp13 )
+   hDane['P_51'] := Int( P98b )
+   hDane['P_52'] := Int( P99a )
+   hDane['P_53'] := Int( P99 )
+   hDane['P_54'] := Int( P99c )
+   hDane['P_55'] := cJPKRodzZwrot == '1'
+   hDane['P_56'] := cJPKRodzZwrot == '2'
+   hDane['P_57'] := cJPKRodzZwrot == '3'
+   hDane['P_58'] := cJPKRodzZwrot == '4'
+   hDane['P_59'] := cJPKZwrotPod == 'T'
+   hDane['P_60'] := nJPKZwrotKwota
+   hDane['P_61'] := AllTrim( cJPKZwrotRodzZob )
+   hDane['P_62'] := Int( Max( 0, P99d ) )
+   hDane['P_63'] := iif( zf2 == 'T', .T., .F. )
+   hDane['P_64'] := iif( zf3 == 'T', .T., .F. )
+   hDane['P_65'] := iif( zf4 == 'T', .T., .F. )
+   hDane['P_66'] := iif( zf5 == 'T', .T., .F. )
+   hDane['P_67'] := .F.
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/

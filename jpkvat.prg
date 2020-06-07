@@ -47,47 +47,51 @@ PROCEDURE JPK_VAT_Rob()
       nMiesiacKon := aKw[ 'kwakon' ]
    ENDIF */
    aDane := JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
-   IF hb_HHasKey( aDane, 'SprzedazCtrl' ) .OR. hb_HHasKey( aDane, 'ZakupCtrl' )
-//      nKorekta := edekCzyKorekta()
-      nWersja := MenuEx( 17, 2, { "JPK_VAT wersja 3 (od 2018)", "JPK_VAT wersja 2 (do 2017)" }, 1, .T. )
-      IF nWersja > 0
-         DO CASE
-         CASE nWersja == 1
-            nKorekta := JPK_VAT_PobierzNrWer( 17, 2, JPK_VAT_WczytajWERJPKVAT(), @cAdresEmail )
-         CASE nWersja == 2
-            nKorekta := edekCzyKorekta()
-         ENDCASE
-         IF nKorekta >= 0
+   IF aDane[ 'OK' ]
+      IF hb_HHasKey( aDane, 'SprzedazCtrl' ) .OR. hb_HHasKey( aDane, 'ZakupCtrl' )
+   //      nKorekta := edekCzyKorekta()
+         nWersja := MenuEx( 17, 2, { "JPK_VAT wersja 3 (od 2018)", "JPK_VAT wersja 2 (do 2017)" }, 1, .T. )
+         IF nWersja > 0
             DO CASE
             CASE nWersja == 1
-               aDane[ 'CelZlozenia' ] := AllTrim( Str( nKorekta ) )
-               aDane[ 'Email' ] := AllTrim( cAdresEmail )
-               cDaneXML := jpk_vat3( aDane )
-               IF edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_VAT_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKVAT-3', nKorekta == 2, nMiesiacPocz )
-                  JPK_VAT_ZapiszWERJPKVAT( nKorekta + 1 )
-               ENDIF
+               nKorekta := JPK_VAT_PobierzNrWer( 17, 2, JPK_VAT_WczytajWERJPKVAT(), @cAdresEmail )
             CASE nWersja == 2
-               aDane[ 'CelZlozenia' ] := iif( nKorekta == 2, '2', '1' )
-               cDaneXML := jpk_vat( aDane )
-               edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_VAT_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKVAT-2', nKorekta == 2, nMiesiacPocz )
+               nKorekta := edekCzyKorekta()
             ENDCASE
-   /*         IF ( cPlik := win_GetSaveFileName( , , , 'xml', { {'Pliki XML', '*.xml'}, {'Wszystkie pliki', '*.*'} }, , , ;
-               normalizujNazwe( 'JPK_VAT_' + AllTrim( aDane[ 'NazwaSkr' ] ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ) ) ) ) <> ''
-               nFile := FCreate(cPlik)
-               IF nFile != -1
-                  FWrite(nFile, cDaneXML)
-                  FClose(nFile)
-                  komun('Utworzono plik JPK')
-                  IF Upper( Chr( TNEsc(.T. ,'Czy weryfikowa† eDeklaracj©? (T/N)') ) ) == 'T'
-                     edekWeryfikuj( cPlik, 'JPKVAT2', .T. )
+            IF nKorekta >= 0
+               DO CASE
+               CASE nWersja == 1
+                  aDane[ 'CelZlozenia' ] := AllTrim( Str( nKorekta ) )
+                  aDane[ 'Email' ] := AllTrim( cAdresEmail )
+                  cDaneXML := jpk_vat3( aDane )
+                  IF edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_VAT_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKVAT-3', nKorekta == 2, nMiesiacPocz )
+                     JPK_VAT_ZapiszWERJPKVAT( nKorekta + 1 )
+                  ENDIF
+               CASE nWersja == 2
+                  aDane[ 'CelZlozenia' ] := iif( nKorekta == 2, '2', '1' )
+                  cDaneXML := jpk_vat( aDane )
+                  edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_VAT_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKVAT-2', nKorekta == 2, nMiesiacPocz )
+               ENDCASE
+      /*         IF ( cPlik := win_GetSaveFileName( , , , 'xml', { {'Pliki XML', '*.xml'}, {'Wszystkie pliki', '*.*'} }, , , ;
+                  normalizujNazwe( 'JPK_VAT_' + AllTrim( aDane[ 'NazwaSkr' ] ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ) ) ) ) <> ''
+                  nFile := FCreate(cPlik)
+                  IF nFile != -1
+                     FWrite(nFile, cDaneXML)
+                     FClose(nFile)
+                     komun('Utworzono plik JPK')
+                     IF Upper( Chr( TNEsc(.T. ,'Czy weryfikowa† eDeklaracj©? (T/N)') ) ) == 'T'
+                        edekWeryfikuj( cPlik, 'JPKVAT2', .T. )
+                     ENDIF
                   ENDIF
                ENDIF
+               */
             ENDIF
-            */
          ENDIF
+      ELSE
+         komun('Brak danych')
       ENDIF
    ELSE
-      komun('Brak danych')
+      komun('Bˆ¥d podczas pobierania danych')
    ENDIF
    RETURN
 
@@ -104,7 +108,7 @@ FUNCTION JPK_NIPEU( cNrIdent, lUE, cKraj )
 /*----------------------------------------------------------------------*/
 
 FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
-   LOCAL aRes := hb_Hash()
+   LOCAL aRes := hb_Hash( 'OK', .F. )
    LOCAL aPozycje := {}
    LOCAL aPoz
    LOCAL cKoniec
@@ -115,6 +119,12 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
 
    aRes[ 'sprzedaz' ] := {}
    aRes[ 'zakup' ] := {}
+
+   IF ! JPK_Dane_Firmy( nFirma, @aRes )
+      RETURN aRes
+   ENDIF
+
+   nStruSProb := aRes[ 'strusprob' ]
 
    IF .NOT. DostepPro('REJS')
       RETURN aRes
@@ -132,6 +142,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
       RETURN aRes
    ENDIF
 */
+/*
    IF .NOT. DostepPro('FIRMA')
       close_()
       RETURN aRes
@@ -146,11 +157,11 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
       close_()
       RETURN aRes
    ENDIF
-
+*/
    aRes[ 'CelZlozenia' ] := '1'
    aRes[ 'DataWytworzeniaJPK' ] := datetime2strxml( hb_DateTime() )
    aRes[ 'DataOd' ] := hb_Date( Val( param_rok ), nMiesiacPocz, 1 )
-
+/*
    aRes[ 'NIP' ] := firma->nip
    IF firma->skarb > 0
       urzedy->( dbGoto( firma->skarb ) )
@@ -170,6 +181,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
    aRes['KodPocztowy'] := firma->kod_p
    aRes['Poczta'] := firma->poczta
    aRes['NazwaSkr'] := firma->nazwa_skr
+*/
 
    IF ( nMiesiacKon == NIL ) .OR. ( ( ValType( nMiesiacKon ) == 'N' ) .AND. ( nMiesiacKon == nMiesiacPocz ) )
       cKoniec := 'del#[+].OR.firma#"' + Str(nFirma,3,0) + '".OR.mc#"' + Str(nMiesiacPocz,2,0) + '"'
@@ -208,7 +220,8 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                ADodajNieZero( @aPoz, 'K_22', rejs->wart00 )
             ENDIF
          CASE ( rejs->sek_cv7 == 'PN' ) .OR. ( rejs->sek_cv7 == 'PU' )
-            ADodajNieZero( @aPoz, 'K_31', rejs->wart02 + rejs->wartzw + rejs->wart08 + rejs->wart07 + rejs->wart22 + rejs->wart00 + rejs->wart12 )
+            ADodajNieZero( @aPoz, 'K_31', rejs->wart02 + rejs->wartzw + rejs->wart08 + rejs->wart07 + rejs->wart22 + rejs->wart00 + rejs->wart12, 'K_32V' )
+            ADodajNieZero( @aPoz, 'K_32V', rejs->vat02 + rejs->vat07 + rejs->vat22 + rejs->vat12, 'K_31' )
          CASE ( rejs->sek_cv7 == 'DP' )
             ADodajNieZero( @aPoz, 'K_36', rejs->kol36 )
             ADodajNieZero( @aPoz, 'K_37', rejs->kol37 )
@@ -219,10 +232,61 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
       aPoz[ 'DowodSprzedazy' ] := NrDokUsunHasz( rejs->numer )
       aPoz[ 'DataWystawienia' ] := rejs->datatran //hb_Date( Val( param_rok ), Val( rejs->mc ), Val( rejs->dzien ) )
       aPoz[ 'DataSprzedazy' ] := hb_Date( Val( rejs->roks ), Val( rejs->mcs ), Val( rejs->dziens ) )
-
+      aPoz[ 'KodKrajuNadaniaTIN' ] := iif( AllTrim( rejs->kraj ) == "", "PL", rejs->kraj )
       aPoz[ 'NrKontrahenta' ] := JPK_NIPEU( rejs->nr_ident, rejs->ue == 'T', rejs->kraj )
       aPoz[ 'NazwaKontrahenta' ] := rejs->nazwa
       aPoz[ 'AdresKontrahenta' ] := rejs->adres
+      aPoz[ 'TypDokumentu' ] := AllTrim( rejs->rodzdow )
+
+      SWITCH Val( rejs->opcje )
+      CASE 1
+         aPoz[ 'GTU_01' ] := .T.
+         EXIT
+      CASE 2
+         aPoz[ 'GTU_02' ] := .T.
+         EXIT
+      CASE 3
+         aPoz[ 'GTU_03' ] := .T.
+         EXIT
+      CASE 4
+         aPoz[ 'GTU_04' ] := .T.
+         EXIT
+      CASE 5
+         aPoz[ 'GTU_05' ] := .T.
+         EXIT
+      CASE 6
+         aPoz[ 'GTU_06' ] := .T.
+         EXIT
+      CASE 7
+         aPoz[ 'GTU_07' ] := .T.
+         EXIT
+      CASE 8
+         aPoz[ 'GTU_08' ] := .T.
+         EXIT
+      CASE 9
+         aPoz[ 'GTU_09' ] := .T.
+         EXIT
+      CASE 10
+         aPoz[ 'GTU_10' ] := .T.
+         EXIT
+      CASE 11
+         aPoz[ 'GTU_11' ] := .T.
+         EXIT
+      CASE 12
+         aPoz[ 'GTU_12' ] := .T.
+         EXIT
+      CASE 13
+         aPoz[ 'GTU_13' ] := .T.
+         EXIT
+      ENDSWITCH
+
+      IF Len( AllTrim( rejs->procedur ) ) > 0
+         aPoz[ AllTrim( rejs->procedur ) ] := .T.
+      ENDIF
+
+      IF  ( rejs->sek_cv7 == 'PN' ) .OR. ( rejs->sek_cv7 == 'PU' )
+         aPoz[ 'MPP' ] := .T.
+      ENDIF
 
       IF hb_HHasKey( aPoz, 'K_10' ) .OR. hb_HHasKey( aPoz, 'K_11' ) .OR. hb_HHasKey( aPoz, 'K_12' ) .OR. hb_HHasKey( aPoz, 'K_13' ) .OR. ;
          hb_HHasKey( aPoz, 'K_14' ) .OR. hb_HHasKey( aPoz, 'K_15' ) .OR. hb_HHasKey( aPoz, 'K_16' ) .OR. hb_HHasKey( aPoz, 'K_17' ) .OR. ;
@@ -532,10 +596,10 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                + iif( rejz->sp22 == 'S' .AND. rejz->zom22 == 'O' .AND. rejz->vat22 <> 0, rejz->wart22, 0 ) ;
                + iif( rejz->sp12 == 'S' .AND. rejz->zom12 == 'O' .AND. rejz->vat12 <> 0, rejz->wart12, 0 ) ;
                + iif( rejz->sp00 == 'S' .AND. rejz->zom00 == 'O', rejz->wart00, 0 ) ;
-               + iif( rejz->sp02 == 'S' .AND. rejz->zom02 == 'M' .AND. rejz->vat02 <> 0, rejz->wart02 * ( firma->strusprob / 100 ), 0 ) ;
-               + iif( rejz->sp07 == 'S' .AND. rejz->zom07 == 'M' .AND. rejz->vat07 <> 0, rejz->wart07 * ( firma->strusprob / 100 ), 0 ) ;
-               + iif( rejz->sp22 == 'S' .AND. rejz->zom22 == 'M' .AND. rejz->vat22 <> 0, rejz->wart22 * ( firma->strusprob / 100 ), 0 ) ;
-               + iif( rejz->sp12 == 'S' .AND. rejz->zom12 == 'M' .AND. rejz->vat12 <> 0, rejz->wart12 * ( firma->strusprob / 100 ), 0 ) ;
+               + iif( rejz->sp02 == 'S' .AND. rejz->zom02 == 'M' .AND. rejz->vat02 <> 0, rejz->wart02 * ( nStruSProb / 100 ), 0 ) ;
+               + iif( rejz->sp07 == 'S' .AND. rejz->zom07 == 'M' .AND. rejz->vat07 <> 0, rejz->wart07 * ( nStruSProb / 100 ), 0 ) ;
+               + iif( rejz->sp22 == 'S' .AND. rejz->zom22 == 'M' .AND. rejz->vat22 <> 0, rejz->wart22 * ( nStruSProb / 100 ), 0 ) ;
+               + iif( rejz->sp12 == 'S' .AND. rejz->zom12 == 'M' .AND. rejz->vat12 <> 0, rejz->wart12 * ( nStruSProb / 100 ), 0 ) ;
                + iif( rejz->sp00 == 'S' .AND. rejz->zom00 == 'M', rejz->wart00, 0 ), 'K_44' )
 
             ADodajNieZero( @aPoz, 'K_44', ;
@@ -543,10 +607,10 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                + iif( rejz->sp07 == 'S' .AND. rejz->zom07 == 'O', rejz->vat07, 0 ) ;
                + iif( rejz->sp22 == 'S' .AND. rejz->zom22 == 'O', rejz->vat22, 0 ) ;
                + iif( rejz->sp12 == 'S' .AND. rejz->zom12 == 'O', rejz->vat12, 0 ) ;
-               + iif( rejz->sp02 == 'S' .AND. rejz->zom02 == 'M', rejz->vat02 * ( firma->strusprob / 100 ), 0 ) ;
-               + iif( rejz->sp07 == 'S' .AND. rejz->zom07 == 'M', rejz->vat07 * ( firma->strusprob / 100 ), 0 ) ;
-               + iif( rejz->sp22 == 'S' .AND. rejz->zom22 == 'M', rejz->vat22 * ( firma->strusprob / 100 ), 0 ) ;
-               + iif( rejz->sp12 == 'S' .AND. rejz->zom12 == 'M', rejz->vat12 * ( firma->strusprob / 100 ), 0 ), 'K_43' )
+               + iif( rejz->sp02 == 'S' .AND. rejz->zom02 == 'M', rejz->vat02 * ( nStruSProb / 100 ), 0 ) ;
+               + iif( rejz->sp07 == 'S' .AND. rejz->zom07 == 'M', rejz->vat07 * ( nStruSProb / 100 ), 0 ) ;
+               + iif( rejz->sp22 == 'S' .AND. rejz->zom22 == 'M', rejz->vat22 * ( nStruSProb / 100 ), 0 ) ;
+               + iif( rejz->sp12 == 'S' .AND. rejz->zom12 == 'M', rejz->vat12 * ( nStruSProb / 100 ), 0 ), 'K_43' )
 
             ADodajNieZero( @aPoz, 'K_45', ;
                ( iif( rejz->sp02 == 'P' .AND. rejz->zom02 == 'O' .AND. rejz->vat02 <> 0, rejz->wart02, 0 ) ;
@@ -554,10 +618,10 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'O' .AND. rejz->vat22 <> 0, rejz->wart22, 0 ) ;
                + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'O' .AND. rejz->vat12 <> 0, rejz->wart12, 0 ) ;
                + iif( rejz->sp00 == 'P' .AND. rejz->zom00 == 'O', rejz->wart00, 0 ) ;
-               + iif( rejz->sp02 == 'P' .AND. rejz->zom02 == 'M' .AND. rejz->vat02 <> 0, rejz->wart02 * ( firma->strusprob / 100 ), 0 ) ;
-               + iif( rejz->sp07 == 'P' .AND. rejz->zom07 == 'M' .AND. rejz->vat07 <> 0, rejz->wart07 * ( firma->strusprob / 100 ), 0 ) ;
-               + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'M' .AND. rejz->vat22 <> 0, rejz->wart22 * ( firma->strusprob / 100 ), 0 ) ;
-               + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M' .AND. rejz->vat12 <> 0, rejz->wart12 * ( firma->strusprob / 100 ), 0 ) ;
+               + iif( rejz->sp02 == 'P' .AND. rejz->zom02 == 'M' .AND. rejz->vat02 <> 0, rejz->wart02 * ( nStruSProb / 100 ), 0 ) ;
+               + iif( rejz->sp07 == 'P' .AND. rejz->zom07 == 'M' .AND. rejz->vat07 <> 0, rejz->wart07 * ( nStruSProb / 100 ), 0 ) ;
+               + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'M' .AND. rejz->vat22 <> 0, rejz->wart22 * ( nStruSProb / 100 ), 0 ) ;
+               + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M' .AND. rejz->vat12 <> 0, rejz->wart12 * ( nStruSProb / 100 ), 0 ) ;
                + iif( rejz->sp00 == 'P' .AND. rejz->zom00 == 'M', rejz->wart00, 0 ) ) * iif( rejz->opcje $ '27P' .AND. param_ks5d == '2', 0.5, 1 ), 'K_46' )
 
             ADodajNieZero( @aPoz, 'K_46', ;
@@ -570,7 +634,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
                + iif( rejz->sp07 == 'P' .AND. rejz->zom07 == 'M', rejz->vat07, 0 ) ;
                + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'M', rejz->vat22, 0 ) ;
                + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M', rejz->vat12, 0 ) ) * ;
-               ( firma->strusprob / 100 ) ), 'K_45' )
+               ( nStruSProb / 100 ) ), 'K_45' )
 
          ENDIF
 
@@ -584,17 +648,23 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
             aPoz[ 'DataWystawienia' ] := rejz->datatran //hb_Date( Val( param_rok ), Val( rejz->mc ), Val( rejz->dzien ) )
             aPoz[ 'DataSprzedazy' ] := hb_Date( Val( rejz->roks ), Val( rejz->mcs ), Val( rejz->dziens ) )
 
+            aPoz[ 'KodKrajuNadaniaTIN' ] := iif( AllTrim( rejz->kraj ) == "", "PL", rejz->kraj )
             aPoz[ 'NrKontrahenta' ] := JPK_NIPEU( rejz->nr_ident, rejz->ue == 'T', rejz->kraj )
             aPoz[ 'NazwaKontrahenta' ] := rejz->nazwa
             aPoz[ 'AdresKontrahenta' ] := rejz->adres
          ENDIF
+         aPoz[ 'DokumentZakupu' ] := AllTrim( rejz->rodzdow )
          aPoz[ 'DowodZakupu' ] := NrDokUsunHasz( rejz->numer )
          aPoz[ 'DataZakupu' ] := hb_Date( Val( rejz->roks ), Val( rejz->mcs ), Val( rejz->dziens ) )
          aPoz[ 'DataWplywu' ] := rejz->datatran //hb_Date( Val( param_rok ), Val( rejz->mc ), Val( rejz->dzien ) )
 
+         aPoz[ 'KodKrajuNadaniaTIN' ] := iif( AllTrim( rejz->kraj ) == "", "PL", rejz->kraj )
          aPoz[ 'NrDostawcy' ] := JPK_NIPEU( rejz->nr_ident, rejz->ue == 'T', rejz->kraj )
          aPoz[ 'NazwaDostawcy' ] := rejz->nazwa
          aPoz[ 'AdresDostawcy' ] := rejz->adres
+
+         aPoz[ 'MPP' ] := SEK_CV7 == 'PN' .OR. SEK_CV7 == 'PU' .OR. SEK_CV7 == 'PS'
+         aPoz[ 'IMP' ] := SEK_CV7 == 'IT' .OR. SEK_CV7 == 'IZ' .OR. SEK_CV7 == 'IS' .OR. SEK_CV7 == 'IU' .OR. SEK_CV7 == 'UZ' .OR. SEK_CV7 == 'US'
 
          IF lSprzedaz
             IF hb_HHasKey( aPoz, 'K_10' ) .OR. hb_HHasKey( aPoz, 'K_11' ) .OR. hb_HHasKey( aPoz, 'K_12' ) .OR. hb_HHasKey( aPoz, 'K_13' ) .OR. ;
@@ -654,6 +724,8 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
       iif( hb_HHasKey( aRow, 'K_50' ), aRow[ 'K_50' ], 0 ) } )
 
    close_()
+
+   aRes[ 'OK' ] := .T.
 
    RETURN aRes
 
@@ -1047,5 +1119,207 @@ PROCEDURE JPK_VAT_ZapiszWERJPKVAT( nWer )
    dbSelectArea( nWorkNo )
 
    RETURN
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE JPK_V7_Rob()
+
+   LOCAL aDaneVat, aDane := hb_Hash()
+   LOCAL nFirma, nMiesiacPocz, nMiesiacKon
+   LOCAL cAdresEmail, cTel
+   LOCAL cDaneXml, cMK
+   LOCAL nMenu := 1, cKolor, cEkran := SaveScreen()
+   LOCAL lKorekta := NIL
+
+   nFirma := Val( ident_fir )
+//   nMiesiacPocz := Val( miesiac )
+//   nMiesiacKon := NIL
+//   IF zVATFORDR == '7 '
+    nMiesiacPocz := Val( miesiac )
+    nMiesiacKon := NIL
+//   ELSE
+//      aKw := ObliczKwartal( Val( miesiac ) )
+//      nMiesiacPocz := aKw[ 'kwapocz' ]
+//      nMiesiacKon := aKw[ 'kwakon' ]
+//   ENDIF */
+
+   aDane[ 'Kwartalnie' ] := zVATFORDR == '7K'
+   aDane[ 'Miesiac' ] := nMiesiacPocz
+   aDane[ 'Rok' ] := Val( param_rok )
+   aDane[ 'Korekta' ] := .F.
+   aDane[ 'DataWytworzeniaJPK' ] := datetime2strxml( hb_DateTime() )
+
+   IF ! aDane[ 'Kwartalnie' ] .OR. AScan( { 3, 6, 9, 12 }, nMiesiacPocz ) > 0
+/*
+      cKolor := ColPro()
+      @ 16, 4 TO 20, 39
+      @ 17, 5 PROMPT ' J - Deklaracja + rejestry '
+      @ 18, 5 PROMPT ' D - Tylko deklaracja      '
+      @ 19, 5 PROMPT ' R - Tylko rejestry        '
+      nMenu := Menu( nMenu )
+      SetColor( cKolor )
+*/
+      aDane[ 'Kwartal' ] := ObliczKwartal( nMiesiacPocz )[ 'kwarta' ]
+      nMenu := MenuEx( 16, 4, { ' J - Deklaracja + rejestry ', ;
+         ' D - Tylko deklaracja      ', ' R - Tylko rejestry        ' }, ;
+         nMenu, .T. )
+   ELSE
+      nMenu := 3
+   ENDIF
+
+   IF nMenu == 0
+      RestScreen( , , , , cEkran )
+      RETURN NIL
+   ENDIF
+
+   IF nMenu == 1 .OR. nMenu == 2
+      aDaneVat := Vat_720( 0, 0, 1, 'J' )
+      IF HB_ISNIL( aDaneVat ) .OR. ! HB_ISHASH( aDaneVat )
+         RestScreen( , , , , cEkran )
+         RETURN NIL
+      ENDIF
+      aDane[ 'Korekta' ] := aDaneVat[ 'Korekta' ]
+   ENDIF
+
+   IF nMenu == 1 .OR. nMenu == 3
+      aDane := hb_HMerge( aDane, JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon ) )
+   ENDIF
+
+   aDane[ 'DekV7' ] := aDaneVat
+   aDane[ 'Deklaracja' ] := nMenu == 1 .OR. nMenu == 2
+   aDane[ 'Rejestry' ] := nMenu == 1 .OR. nMenu == 3
+
+   IF ! JPK_Dane_Firmy( nFirma, @aDane )
+      RETURN NIL
+   ENDIF
+
+   IF nMenu == 3
+      lKorekta := .F.
+   ENDIF
+
+   IF JPK_V7_PobierzDaneAut( 17, 2, @cAdresEmail, @cTel, @lKorekta )
+      IF HB_ISLOGICAL( lKorekta )
+         aDane[ 'Korekta' ] := lKorekta
+      ENDIF
+      aDane[ 'CelZlozenia' ] := iif( aDane[ 'Korekta' ], '2', '1' )
+      aDane[ 'Tel' ] := AllTrim( cTel )
+      aDane[ 'EMail' ] := AllTrim( cAdresEmail )
+      IF aDane[ 'Kwartalnie' ]
+         cDaneXml := jpk_v7k_1( aDane )
+      ELSE
+         cDaneXml := jpk_v7m_1( aDane )
+      ENDIF
+      cMK := iif( aDane[ 'Kwartalnie' ], 'K', 'M' )
+      edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_V7' + cMK + '_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( hb_Date( Val( param_rok ), aDane[ 'Miesiac' ], 1 ) ), wys_edeklaracja, 'JPKV7' + cMK + '-1', aDane[ 'Korekta' ], nMiesiacPocz )
+   ENDIF
+
+   RestScreen( , , , , cEkran )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION JPK_V7_PobierzDaneAut( nTop, nLeft, cAdresEmail, cTel, lKorekta )
+
+   LOCAL lRes := .F.
+   LOCAL cEkran := SaveScreen( 0, 0, MaxRow(), MaxCol() )
+   LOCAL cKolor := ColStd()
+   LOCAL aDane
+   LOCAL cKorekta, lJestKorekta := .F.
+
+   IF HB_ISLOGICAL( lKorekta )
+      lJestKorekta := .T.
+      cKorekta := iif( lKorekta, 'T', 'N' )
+   ENDIF
+
+   aDane := Firma_Wczytaj( { "TEL", "EMAIL" } )
+
+   cAdresEmail := PadR( aDane[ "EMAIL" ], 60 )
+   cTel := PadR( aDane[ "TEL" ], 10 )
+
+   @ nTop, nLeft, nTop + 3 + iif( lJestKorekta, 1, 0 ), nLeft + 77 BOX B_SINGLE + Space( 1 )
+   @ nTop + 1, nLeft + 2 SAY "Numer telefonu:" GET cTel PICTURE "9999999999"
+   @ nTop + 2, nLeft + 2 SAY "Adres e-mail:" GET cAdresEmail PICTURE "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" VALID Len( AllTrim( cAdresEmail ) ) > 0
+   IF lJestKorekta
+      @ nTop + 3, nLeft + 2 SAY "Korekta deklaracji (Tak/Nie):" GET cKorekta PICTURE "!" VALID cKorekta $ 'TN'
+   ENDIF
+   Read_()
+   IF LastKey() <> K_ESC
+      aDane[ "EMAIL" ] := cAdresEmail
+      aDane[ "TEL" ] := cTel
+      Firma_Zapisz( aDane )
+      lRes := .T.
+      IF lJestKorekta
+         lKorekta := cKorekta == 'T'
+      ENDIF
+   ENDIF
+
+   RestScreen( , , , , cEkran )
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION JPK_Dane_Firmy( nFirma, aRes )
+
+   hb_default( @aRes, hb_Hash() )
+   hb_default( @nFirma, Val( ident_fir ) )
+
+   IF .NOT. DostepPro( 'FIRMA' )
+      close_()
+      RETURN .F.
+   ENDIF
+   firma->( dbGoto( nFirma ) )
+   IF firma->( RecNo() ) <> nFirma
+      close_()
+      RETURN .F.
+   ENDIF
+
+   IF .NOT. DostepPro( 'URZEDY' )
+      close_()
+      RETURN .F.
+   ENDIF
+
+   aRes[ 'NIP' ] := firma->nip
+   IF firma->skarb > 0
+      urzedy->( dbGoto( firma->skarb ) )
+      IF urzedy->( RecNo() ) == firma->skarb
+         aRes['KodUrzedu'] := urzedy->kodurzedu
+      ENDIF
+   ENDIF
+
+   aRes['PelnaNazwa'] := firma->nazwa
+   aRes['Wojewodztwo'] := firma->param_woj
+   aRes['Powiat'] := firma->param_pow
+   aRes['Gmina'] := firma->gmina
+   aRes['Ulica'] := firma->ulica
+   aRes['NrDomu'] := firma->nr_domu
+   aRes['NrLokalu'] := firma->nr_mieszk
+   aRes['Miejscowosc'] := firma->miejsc
+   aRes['KodPocztowy'] := firma->kod_p
+   aRes['Poczta'] := firma->poczta
+   aRes['NazwaSkr'] := firma->nazwa_skr
+   aRes['Spolka'] := firma->spolka
+
+   IF ! aRes['Spolka']
+      IF .NOT. DostepPro( 'SPOLKA', , , , 'SPOLKA' )
+         close_()
+         RETURN .F.
+      ENDIF
+      spolka->( dbSeek( "+" + ident_fir + firma->nazwisko ) )
+      IF spolka->( Found() )
+         aRes[ 'Nazwisko' ] := SubStr( spolka->naz_imie, 1, At( ' ', spolka->naz_imie ) )
+         aRes[ 'ImiePierwsze' ] := SubStr( spolka->naz_imie, At( ' ', spolka->naz_imie ) + 1 )
+         aRes[ 'DataUrodzenia' ] := spolka->data_ur
+      ENDIF
+      spolka->( dbCloseArea() )
+   ENDIF
+
+   aRes['strusprob'] := firma->strusprob
+
+   firma->( dbCloseArea() )
+   urzedy->( dbCloseArea() )
+
+   RETURN .T.
 
 /*----------------------------------------------------------------------*/

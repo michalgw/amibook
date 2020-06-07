@@ -673,3 +673,760 @@ RETURN cRes
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION jpk_v7m_1( aDane )
+
+   LOCAL cRes, nl := Chr(13) + Chr(10), nI
+   LOCAL lDeklar := aDane[ 'Deklaracja' ]
+   LOCAL lRejestry := aDane[ 'Rejestry' ]
+
+   cRes := '<?xml version="1.0" encoding="UTF-8"?>' + nl
+   cRes += '<JPK xmlns="http://crd.gov.pl/wzor/2020/03/06/9196/" xmlns:tns="http://crd.gov.pl/wzor/2020/03/06/9196/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2018/08/24/eD/DefinicjeTypy/">' + nl
+   cRes += '  <Naglowek>' + nl
+   cRes += '    <KodFormularza kodSystemowy="JPK_V7M (1)" wersjaSchemy="1-1">JPK_VAT</KodFormularza>' + nl
+   cRes += '    <WariantFormularza>1</WariantFormularza>' + nl
+   cRes += '    <DataWytworzeniaJPK>' + aDane[ 'DataWytworzeniaJPK' ] + '</DataWytworzeniaJPK>' + nl
+   cRes += '    <NazwaSystemu>AMi-BOOK</NazwaSystemu>' + nl
+   cRes += '    <CelZlozenia poz="P_7">' + aDane[ 'CelZlozenia' ] + '</CelZlozenia>' + nl
+   cRes += '    <KodUrzedu>' + aDane[ 'KodUrzedu' ] + '</KodUrzedu>' + nl
+   cRes += '    <Rok>' + TNaturalny( aDane[ 'Rok' ] ) + '</Rok>' + nl
+   cRes += '    <Miesiac>' + TNaturalny( aDane[ 'Miesiac' ] ) + '</Miesiac>' + nl
+   IF lDeklar
+      cRes += '    <KodFormularzaDekl kodSystemowy="VAT-7 (21)" kodPodatku="VAT" rodzajZobowiazania="Z" wersjaSchemy="1-1E">VAT-7</KodFormularzaDekl>' + nl
+      cRes += '    <WariantFormularzaDekl>21</WariantFormularzaDekl>' + nl
+   ENDIF
+   cRes += '  </Naglowek>' + nl
+   cRes += '  <Podmiot1 rola="Podatnik">' + nl
+   IF aDane[ 'Spolka' ]
+      cRes += '    <OsobaNiefizyczna>' + nl
+      cRes += '      <etd:NIP>' + trimnip( aDane[ 'NIP' ] ) + '</etd:NIP>' + nl
+      cRes += '      <etd:PelnaNazwa>' + str2sxml( aDane[ 'PelnaNazwa' ] ) + '</etd:PelnaNazwa>' + nl
+      cRes += '      <tns:Email>' + str2sxml( aDane[ 'EMail' ] ) + '</tns:Email>' + nl
+      IF Len( AllTrim( aDane[ 'Tel' ] ) ) > 0
+         cRes += '      <tns:Telefon>' + str2sxml( aDane[ 'Tel' ] ) + '</tns:Telefon>' + nl
+      ENDIF
+      cRes += '    </OsobaNiefizyczna>' + nl
+   ELSE
+      cRes += '    <OsobaFizyczna>' + nl
+      cRes += '      <etd:NIP>' + trimnip( aDane[ 'NIP' ] ) + '</etd:NIP>' + nl
+      cRes += '      <etd:ImiePierwsze>' + str2sxml( aDane[ 'ImiePierwsze' ] ) + '</etd:ImiePierwsze>' + nl
+      cRes += '      <etd:Nazwisko>' + str2sxml( aDane[ 'Nazwisko' ] ) + '</etd:Nazwisko>' + nl
+      cRes += '      <etd:DataUrodzenia>' + date2strxml( aDane[ 'DataUrodzenia' ] ) + '</etd:DataUrodzenia>' + nl
+      cRes += '      <tns:Email>' + str2sxml( aDane[ 'EMail' ] ) + '</tns:Email>' + nl
+      IF Len( AllTrim( aDane[ 'Tel' ] ) ) > 0
+         cRes += '      <tns:Telefon>' + str2sxml( aDane[ 'Tel' ] ) + '</tns:Telefon>' + nl
+      ENDIF
+      cRes += '    </OsobaFizyczna>' + nl
+   ENDIF
+   cRes += '  </Podmiot1>' + nl
+   IF lDeklar
+      cRes += '  <Deklaracja>' + nl
+      cRes += '    <PozycjeSzczegolowe>' + nl
+      cRes += '      <P_10>' + TKwotaC( aDane[ 'DekV7' ][ 'P_10' ] ) + '</P_10>' + nl
+      cRes += '      <P_11>' + TKwotaC( aDane[ 'DekV7' ][ 'P_11' ] ) + '</P_11>' + nl
+      cRes += '      <P_12>' + TKwotaC( aDane[ 'DekV7' ][ 'P_12' ] ) + '</P_12>' + nl
+      cRes += '      <P_13>' + TKwotaC( aDane[ 'DekV7' ][ 'P_13' ] ) + '</P_13>' + nl
+      cRes += '      <P_14>' + TKwotaC( aDane[ 'DekV7' ][ 'P_14' ] ) + '</P_14>' + nl
+      cRes += '      <P_15>' + TKwotaC( aDane[ 'DekV7' ][ 'P_15' ] ) + '</P_15>' + nl
+      cRes += '      <P_16>' + TKwotaC( aDane[ 'DekV7' ][ 'P_16' ] ) + '</P_16>' + nl
+      cRes += '      <P_17>' + TKwotaC( aDane[ 'DekV7' ][ 'P_17' ] ) + '</P_17>' + nl
+      cRes += '      <P_18>' + TKwotaC( aDane[ 'DekV7' ][ 'P_18' ] ) + '</P_18>' + nl
+      cRes += '      <P_19>' + TKwotaC( aDane[ 'DekV7' ][ 'P_19' ] ) + '</P_19>' + nl
+      cRes += '      <P_20>' + TKwotaC( aDane[ 'DekV7' ][ 'P_20' ] ) + '</P_20>' + nl
+      cRes += '      <P_21>' + TKwotaC( aDane[ 'DekV7' ][ 'P_21' ] ) + '</P_21>' + nl
+      cRes += '      <P_22>' + TKwotaC( aDane[ 'DekV7' ][ 'P_22' ] ) + '</P_22>' + nl
+      cRes += '      <P_23>' + TKwotaC( aDane[ 'DekV7' ][ 'P_23' ] ) + '</P_23>' + nl
+      cRes += '      <P_24>' + TKwotaC( aDane[ 'DekV7' ][ 'P_24' ] ) + '</P_24>' + nl
+      cRes += '      <P_25>' + TKwotaC( aDane[ 'DekV7' ][ 'P_25' ] ) + '</P_25>' + nl
+      cRes += '      <P_26>' + TKwotaC( aDane[ 'DekV7' ][ 'P_26' ] ) + '</P_26>' + nl
+      cRes += '      <P_27>' + TKwotaC( aDane[ 'DekV7' ][ 'P_27' ] ) + '</P_27>' + nl
+      cRes += '      <P_28>' + TKwotaC( aDane[ 'DekV7' ][ 'P_28' ] ) + '</P_28>' + nl
+      cRes += '      <P_29>' + TKwotaC( aDane[ 'DekV7' ][ 'P_29' ] ) + '</P_29>' + nl
+      cRes += '      <P_30>' + TKwotaC( aDane[ 'DekV7' ][ 'P_30' ] ) + '</P_30>' + nl
+      cRes += '      <P_31>' + TKwotaC( aDane[ 'DekV7' ][ 'P_31' ] ) + '</P_31>' + nl
+      cRes += '      <P_32>' + TKwotaC( aDane[ 'DekV7' ][ 'P_32' ] ) + '</P_32>' + nl
+      cRes += '      <P_33>' + TKwotaC( aDane[ 'DekV7' ][ 'P_33' ] ) + '</P_33>' + nl
+      cRes += '      <P_34>' + TKwotaC( aDane[ 'DekV7' ][ 'P_34' ] ) + '</P_34>' + nl
+      cRes += '      <P_35>' + TKwotaC( aDane[ 'DekV7' ][ 'P_35' ] ) + '</P_35>' + nl
+      cRes += '      <P_36>' + TKwotaC( aDane[ 'DekV7' ][ 'P_36' ] ) + '</P_36>' + nl
+      cRes += '      <P_37>' + TKwotaC( aDane[ 'DekV7' ][ 'P_37' ] ) + '</P_37>' + nl
+      cRes += '      <P_38>' + TKwotaC( aDane[ 'DekV7' ][ 'P_38' ] ) + '</P_38>' + nl
+      cRes += '      <P_39>' + TKwotaC( aDane[ 'DekV7' ][ 'P_39' ] ) + '</P_39>' + nl
+      cRes += '      <P_40>' + TKwotaC( aDane[ 'DekV7' ][ 'P_40' ] ) + '</P_40>' + nl
+      cRes += '      <P_41>' + TKwotaC( aDane[ 'DekV7' ][ 'P_41' ] ) + '</P_41>' + nl
+      cRes += '      <P_42>' + TKwotaC( aDane[ 'DekV7' ][ 'P_42' ] ) + '</P_42>' + nl
+      cRes += '      <P_43>' + TKwotaC( aDane[ 'DekV7' ][ 'P_43' ] ) + '</P_43>' + nl
+      cRes += '      <P_44>' + TKwotaC( aDane[ 'DekV7' ][ 'P_44' ] ) + '</P_44>' + nl
+      cRes += '      <P_45>' + TKwotaC( aDane[ 'DekV7' ][ 'P_45' ] ) + '</P_45>' + nl
+      cRes += '      <P_46>' + TKwotaC( aDane[ 'DekV7' ][ 'P_46' ] ) + '</P_46>' + nl
+      cRes += '      <P_47>' + TKwotaC( aDane[ 'DekV7' ][ 'P_47' ] ) + '</P_47>' + nl
+      cRes += '      <P_48>' + TKwotaC( aDane[ 'DekV7' ][ 'P_48' ] ) + '</P_48>' + nl
+      cRes += '      <P_49>' + TKwotaC( aDane[ 'DekV7' ][ 'P_49' ] ) + '</P_49>' + nl
+      cRes += '      <P_50>' + TKwotaC( aDane[ 'DekV7' ][ 'P_50' ] ) + '</P_50>' + nl
+      cRes += '      <P_51>' + TKwotaC( aDane[ 'DekV7' ][ 'P_51' ] ) + '</P_51>' + nl
+      cRes += '      <P_52>' + TKwotaC( aDane[ 'DekV7' ][ 'P_52' ] ) + '</P_52>' + nl
+      cRes += '      <P_53>' + TKwotaC( aDane[ 'DekV7' ][ 'P_53' ] ) + '</P_53>' + nl
+      IF aDane[ 'DekV7' ][ 'P_54' ] <> 0
+         cRes += '      <P_54>' + TKwotaC( aDane[ 'DekV7' ][ 'P_54' ] ) + '</P_54>' + nl
+         IF aDane[ 'DekV7' ][ 'P_55' ]
+            cRes += '      <P_55>1</P_55>' + nl
+         ENDIF
+         IF aDane[ 'DekV7' ][ 'P_56' ]
+            cRes += '      <P_56>1</P_56>' + nl
+         ENDIF
+         IF aDane[ 'DekV7' ][ 'P_57' ]
+            cRes += '      <P_57>1</P_57>' + nl
+         ENDIF
+         IF aDane[ 'DekV7' ][ 'P_58' ]
+            cRes += '      <P_58>1</P_58>' + nl
+         ENDIF
+         IF aDane[ 'DekV7' ][ 'P_59' ]
+            cRes += '      <P_59>1</P_59>' + nl
+            cRes += '      <P_60>' + TKwotaC( aDane[ 'DekV7' ][ 'P_60' ] ) + '</P_60>' + nl
+            cRes += '      <P_61>' + str2sxml( aDane[ 'DekV7' ][ 'P_61' ] ) + '</P_61>' + nl
+         ENDIF
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_62' ] > 0
+         cRes += '      <P_62>' + TKwotaC( aDane[ 'DekV7' ][ 'P_62' ] ) + '</P_62>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'Korekta' ] .AND. Len( AllTrim( aDane[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
+         cRes += '      <P_ORDZU>' + str2sxml( aDane[ 'DekV7' ][ 'ORDZU' ] ) + '</P_ORDZU>' + nl
+      ENDIF
+      cRes += '    </PozycjeSzczegolowe>' + nl
+      cRes += '    <Pouczenia>1</Pouczenia>' + nl
+      cRes += '  </Deklaracja>' + nl
+   ENDIF
+   IF lRejestry
+      FOR nI := 1 TO Len( aDane[ 'sprzedaz' ])
+         cRes := cRes + '  <SprzedazWiersz>' + nl
+         cRes := cRes + '    <LpSprzedazy>' + AllTrim( Str( nI ) ) + '</LpSprzedazy>' + nl
+         cRes := cRes + '    <KodKrajuNadaniaTIN>' + aDane[ 'sprzedaz' ][ nI ][ 'KodKrajuNadaniaTIN' ] + '</KodKrajuNadaniaTIN>' + nl
+         cRes := cRes + '    <NrKontrahenta>' + JPKStrND( trimnip( aDane[ 'sprzedaz' ][ nI ][ 'NrKontrahenta' ] ) ) + '</NrKontrahenta>' + nl
+         cRes := cRes + '    <NazwaKontrahenta>' + JPKStrND( AllTrim( aDane[ 'sprzedaz' ][ nI ][ 'NazwaKontrahenta' ] ) ) + '</NazwaKontrahenta>' + nl
+         //cRes := cRes + '    <AdresKontrahenta>' + JPKStrND( AllTrim( aDane[ 'sprzedaz' ][ nI ][ 'AdresKontrahenta' ] ) ) + '</AdresKontrahenta>' + nl
+         cRes := cRes + '    <DowodSprzedazy>' + JPKStrND( AllTrim( UsunZnakHash( aDane[ 'sprzedaz' ][ nI ][ 'DowodSprzedazy' ] ) ) ) + '</DowodSprzedazy>' + nl
+         cRes := cRes + '    <DataWystawienia>' + date2strxml( aDane[ 'sprzedaz' ][ nI ][ 'DataWystawienia' ] ) + '</DataWystawienia>' + nl
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'DataSprzedazy' )
+            cRes := cRes + '    <DataSprzedazy>' + date2strxml( aDane[ 'sprzedaz' ][ nI ][ 'DataSprzedazy' ] ) + '</DataSprzedazy>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TypDokumentu' ) .AND. Len( AllTrim( aDane[ 'sprzedaz' ][ nI ][ 'TypDokumentu' ] ) ) > 0
+            cRes := cRes + '    <TypDokumentu>' + AllTrim( aDane[ 'sprzedaz' ][ nI ][ 'TypDokumentu' ] ) + '</TypDokumentu>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_01' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_01' ]
+            cRes := cRes + '    <GTU_01>1</GTU_01>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_02' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_02' ]
+            cRes := cRes + '    <GTU_02>1</GTU_02>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_03' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_03' ]
+            cRes := cRes + '    <GTU_03>1</GTU_03>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_04' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_04' ]
+            cRes := cRes + '    <GTU_04>1</GTU_04>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_05' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_05' ]
+            cRes := cRes + '    <GTU_05>1</GTU_05>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_06' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_06' ]
+            cRes := cRes + '    <GTU_06>1</GTU_06>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_07' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_07' ]
+            cRes := cRes + '    <GTU_07>1</GTU_07>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_08' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_08' ]
+            cRes := cRes + '    <GTU_08>1</GTU_08>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_09' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_09' ]
+            cRes := cRes + '    <GTU_09>1</GTU_09>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_10' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_10' ]
+            cRes := cRes + '    <GTU_10>1</GTU_10>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_11' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_11' ]
+            cRes := cRes + '    <GTU_11>1</GTU_11>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_12' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_12' ]
+            cRes := cRes + '    <GTU_12>1</GTU_12>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_13' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_13' ]
+            cRes := cRes + '    <GTU_13>1</GTU_13>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'SW' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'SW' ]
+            cRes := cRes + '    <SW>1</SW>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'EE' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'EE' ]
+            cRes := cRes + '    <EE>1</EE>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'TP' ]
+            cRes := cRes + '    <TP>1</TP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TT_WNT' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'TT_WNT' ]
+            cRes := cRes + '    <TT_WNT>1</TT_WNT>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TT_D' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'TT_D' ]
+            cRes := cRes + '    <TT_D>1</TT_D>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MR_T' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MR_T' ]
+            cRes := cRes + '    <MR_T>1</MR_T>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MR_UZ' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MR_UZ' ]
+            cRes := cRes + '    <MR_UZ>1</MR_UZ>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'I_42' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'I_42' ]
+            cRes := cRes + '    <I_42>1</I_42>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'I_63' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'I_63' ]
+            cRes := cRes + '    <I_63>1</I_63>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'B_SPV' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'B_SPV' ]
+            cRes := cRes + '    <B_SPV>1</B_SPV>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'B_SPV_DOSTAWA' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'B_SPV_DOSTAWA' ]
+            cRes := cRes + '    <B_SPV_DOSTAWA>1</B_SPV_DOSTAWA>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'B_MPV_PROWIZJA' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'B_MPV_PROWIZJA' ]
+            cRes := cRes + '    <B_MPV_PROWIZJA>1</B_MPV_PROWIZJA>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MPP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MPP' ]
+            cRes := cRes + '    <MPP>1</MPP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_10' )
+            cRes := cRes + '    <K_10>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_10' ] ) + '</K_10>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_11' )
+            cRes := cRes + '    <K_11>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_11' ] ) + '</K_11>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_12' )
+            cRes := cRes + '    <K_12>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_12' ] ) + '</K_12>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_13' )
+            cRes := cRes + '    <K_13>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_13' ] ) + '</K_13>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_14' )
+            cRes := cRes + '    <K_14>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_14' ] ) + '</K_14>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_15' )
+            cRes := cRes + '    <K_15>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_15' ] ) + '</K_15>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_16' )
+            cRes := cRes + '    <K_16>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_16' ] ) + '</K_16>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_17' )
+            cRes := cRes + '    <K_17>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_17' ] ) + '</K_17>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_18' )
+            cRes := cRes + '    <K_18>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_18' ] ) + '</K_18>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_19' )
+            cRes := cRes + '    <K_19>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_19' ] ) + '</K_19>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_20' )
+            cRes := cRes + '    <K_20>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_20' ] ) + '</K_20>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_21' )
+            cRes := cRes + '    <K_21>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_21' ] ) + '</K_21>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_22' )
+            cRes := cRes + '    <K_22>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_22' ] ) + '</K_22>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_23' )
+            cRes := cRes + '    <K_23>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_23' ] ) + '</K_23>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_24' )
+            cRes := cRes + '    <K_24>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_24' ] ) + '</K_24>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_25' )
+            cRes := cRes + '    <K_25>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_25' ] ) + '</K_25>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_26' )
+            cRes := cRes + '    <K_26>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_26' ] ) + '</K_26>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_27' )
+            cRes := cRes + '    <K_27>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_27' ] ) + '</K_27>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_28' )
+            cRes := cRes + '    <K_28>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_28' ] ) + '</K_28>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_29' )
+            cRes := cRes + '    <K_29>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_29' ] ) + '</K_29>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_30' )
+            cRes := cRes + '    <K_30>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_30' ] ) + '</K_30>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_31' )
+            cRes := cRes + '    <K_31>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_31' ] ) + '</K_31>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_32V' )
+            cRes := cRes + '    <K_32>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_32V' ] ) + '</K_32>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_36' )
+            cRes := cRes + '    <K_33>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_36' ] ) + '</K_33>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_37' )
+            cRes := cRes + '    <K_34>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_37' ] ) + '</K_34>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_38' )
+            cRes := cRes + '    <K_35>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_38' ] ) + '</K_35>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_39' )
+            cRes := cRes + '    <K_36>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_39' ] ) + '</K_36>' + nl
+         ENDIF
+   /*      IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_37' )
+            cRes := cRes + '    <K_37>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_37' ] ) + '</K_37>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_38' )
+            cRes := cRes + '    <K_38>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_38' ] ) + '</K_38>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_39' )
+            cRes := cRes + '    <K_39>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_39' ] ) + '</K_39>' + nl
+         ENDIF */
+         cRes := cRes + '  </SprzedazWiersz>' + nl
+      NEXT
+
+      IF hb_HHasKey( aDane, 'SprzedazCtrl' )
+         cRes := cRes + '  <SprzedazCtrl>' + nl
+         cRes := cRes + '    <LiczbaWierszySprzedazy>' + AllTrim( Str( aDane[ 'SprzedazCtrl' ][ 'LiczbaWierszySprzedazy' ] ) ) + '</LiczbaWierszySprzedazy>' + nl
+         cRes := cRes + '    <PodatekNalezny>' + TKwota2( aDane[ 'SprzedazCtrl' ][ 'PodatekNalezny' ] ) + '</PodatekNalezny>' + nl
+         cRes := cRes + '  </SprzedazCtrl>' + nl
+      ENDIF
+
+      FOR nI := 1 TO Len( aDane[ 'zakup' ])
+         cRes := cRes + '  <ZakupWiersz>' + nl
+         cRes := cRes + '    <LpZakupu>' + AllTrim( Str( nI ) ) + '</LpZakupu>' + nl
+         cRes := cRes + '    <KodKrajuNadaniaTIN>' + aDane[ 'zakup' ][ nI ][ 'KodKrajuNadaniaTIN' ] + '</KodKrajuNadaniaTIN>' + nl
+         cRes := cRes + '    <NrDostawcy>' + JPKStrND( trimnip( aDane[ 'zakup' ][ nI ][ 'NrDostawcy' ] ) ) + '</NrDostawcy>' + nl
+         cRes := cRes + '    <NazwaDostawcy>' + JPKStrND( AllTrim( aDane[ 'zakup' ][ nI ][ 'NazwaDostawcy' ] ) ) + '</NazwaDostawcy>' + nl
+         //cRes := cRes + '    <AdresDostawcy>' + JPKStrND( AllTrim( aDane[ 'zakup' ][ nI ][ 'AdresDostawcy' ] ) ) + '</AdresDostawcy>' + nl
+         cRes := cRes + '    <DowodZakupu>' + JPKStrND( AllTrim( aDane[ 'zakup' ][ nI ][ 'DowodZakupu' ] ) ) + '</DowodZakupu>' + nl
+         cRes := cRes + '    <DataZakupu>' + date2strxml( aDane[ 'zakup' ][ nI ][ 'DataZakupu' ] ) + '</DataZakupu>' + nl
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'DataWplywu' )
+            cRes := cRes + '    <DataWplywu>' + date2strxml( aDane[ 'zakup' ][ nI ][ 'DataWplywu' ] ) + '</DataWplywu>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'DokumentZakupu' ) .AND. Len( aDane[ 'zakup' ][ nI ][ 'DokumentZakupu' ] ) > 0
+            cRes := cRes + '    <DokumentZakupu>' + AllTrim( aDane[ 'zakup' ][ nI ][ 'DokumentZakupu' ] ) + '</DokumentZakupu>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'MPP' ) .AND. aDane[ 'zakup' ][ nI ][ 'MPP' ]
+            cRes := cRes + '    <MPP>1</MPP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'IMP' ) .AND. aDane[ 'zakup' ][ nI ][ 'IMP' ]
+            cRes := cRes + '    <IMP>1</IMP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_43' )
+            cRes := cRes + '    <K_40>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_43' ] ) + '</K_40>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_44' )
+            cRes := cRes + '    <K_41>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_44' ] ) + '</K_41>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_45' )
+            cRes := cRes + '    <K_42>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_45' ] ) + '</K_42>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_46' )
+            cRes := cRes + '    <K_43>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_46' ] ) + '</K_43>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_47' )
+            cRes := cRes + '    <K_44>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_47' ] ) + '</K_44>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_48' )
+            cRes := cRes + '    <K_45>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_48' ] ) + '</K_45>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_49' )
+            cRes := cRes + '    <K_46>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_49' ] ) + '</K_46>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_50' )
+            cRes := cRes + '    <K_47>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_50' ] ) + '</K_47>' + nl
+         ENDIF
+         cRes := cRes + '  </ZakupWiersz>' + nl
+      NEXT
+
+      IF hb_HHasKey( aDane, 'ZakupCtrl' )
+         cRes := cRes + '  <ZakupCtrl>' + nl
+         cRes := cRes + '    <LiczbaWierszyZakupow>' + AllTrim( Str( aDane[ 'ZakupCtrl' ][ 'LiczbaWierszyZakupow' ] ) ) + '</LiczbaWierszyZakupow>' + nl
+         cRes := cRes + '    <PodatekNaliczony>' + TKwota2( aDane[ 'ZakupCtrl' ][ 'PodatekNaliczony' ] ) + '</PodatekNaliczony>' + nl
+         cRes := cRes + '  </ZakupCtrl>' + nl
+      ENDIF
+   ENDIF
+
+   cRes := cRes + '</JPK>' + nl
+
+   RETURN cRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION jpk_v7k_1( aDane )
+
+   LOCAL cRes, nl := Chr(13) + Chr(10), nI
+   LOCAL lDeklar := aDane[ 'Deklaracja' ]
+   LOCAL lRejestry := aDane[ 'Rejestry' ]
+
+   cRes := '<?xml version="1.0" encoding="UTF-8"?>' + nl
+   cRes += '<JPK xmlns="http://crd.gov.pl/wzor/2020/03/06/9197/" xmlns:tns="http://crd.gov.pl/wzor/2020/03/06/9197/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2018/08/24/eD/DefinicjeTypy/">' + nl
+   cRes += '  <Naglowek>' + nl
+   cRes += '    <KodFormularza kodSystemowy="JPK_V7K (1)" wersjaSchemy="1-1">JPK_VAT</KodFormularza>' + nl
+   cRes += '    <WariantFormularza>1</WariantFormularza>' + nl
+   cRes += '    <DataWytworzeniaJPK>' + aDane[ 'DataWytworzeniaJPK' ] + '</DataWytworzeniaJPK>' + nl
+   cRes += '    <NazwaSystemu>AMi-BOOK</NazwaSystemu>' + nl
+   cRes += '    <CelZlozenia poz="P_7">' + aDane[ 'CelZlozenia' ] + '</CelZlozenia>' + nl
+   cRes += '    <KodUrzedu>' + aDane[ 'KodUrzedu' ] + '</KodUrzedu>' + nl
+   cRes += '    <Rok>' + TNaturalny( aDane[ 'Rok' ] ) + '</Rok>' + nl
+   cRes += '    <Miesiac>' + TNaturalny( aDane[ 'Miesiac' ] ) + '</Miesiac>' + nl
+   IF lDeklar
+      cRes += '    <Kwartal>' + TNaturalny( aDane[ 'Kwartal' ] ) + '</Kwartal>' + nl
+      cRes += '    <KodFormularzaDekl kodSystemowy="VAT-7K (15)" kodPodatku="VAT" rodzajZobowiazania="Z" wersjaSchemy="1-1E">VAT-7K</KodFormularzaDekl>' + nl
+      cRes += '    <WariantFormularzaDekl>15</WariantFormularzaDekl>' + nl
+   ENDIF
+   cRes += '  </Naglowek>' + nl
+   cRes += '  <Podmiot1 rola="Podatnik">' + nl
+   IF aDane[ 'Spolka' ]
+      cRes += '    <OsobaNiefizyczna>' + nl
+      cRes += '      <etd:NIP>' + trimnip( aDane[ 'NIP' ] ) + '</etd:NIP>' + nl
+      cRes += '      <etd:PelnaNazwa>' + str2sxml( [ 'PelnaNazwa' ] ) + '</etd:PelnaNazwa>' + nl
+      cRes += '      <tns:Email>' + str2sxml( aDane[ 'EMail' ] ) + '</tns:Email>' + nl
+      IF Len( AllTrim( aDane[ 'Tel' ] ) ) > 0
+         cRes += '      <tns:Telefon>' + str2sxml( aDane[ 'Tel' ] ) + '</tns:Telefon>' + nl
+      ENDIF
+      cRes += '    </OsobaNiefizyczna>' + nl
+   ELSE
+      cRes += '    <OsobaFizyczna>' + nl
+      cRes += '      <etd:NIP>' + trimnip( aDane[ 'NIP' ] ) + '</etd:NIP>' + nl
+      cRes += '      <etd:ImiePierwsze>' + str2sxml( aDane[ 'ImiePierwsze' ] ) + '</etd:ImiePierwsze>' + nl
+      cRes += '      <etd:Nazwisko>' + str2sxml( aDane[ 'Nazwisko' ] ) + '</etd:Nazwisko>' + nl
+      cRes += '      <etd:DataUrodzenia>' + date2strxml( aDane[ 'DataUrodzenia' ] ) + '</etd:DataUrodzenia>' + nl
+      cRes += '      <tns:Email>' + str2sxml( aDane[ 'EMail' ] ) + '</tns:Email>' + nl
+      IF Len( AllTrim( aDane[ 'Tel' ] ) ) > 0
+         cRes += '      <tns:Telefon>' + str2sxml( aDane[ 'Tel' ] ) + '</tns:Telefon>' + nl
+      ENDIF
+      cRes += '    </OsobaFizyczna>' + nl
+   ENDIF
+   cRes += '  </Podmiot1>' + nl
+   IF lDeklar
+      cRes += '  <Deklaracja>' + nl
+      cRes += '    <PozycjeSzczegolowe>' + nl
+      cRes += '      <P_10>' + TKwotaC( aDane[ 'DekV7' ][ 'P_10' ] ) + '</P_10>' + nl
+      cRes += '      <P_11>' + TKwotaC( aDane[ 'DekV7' ][ 'P_11' ] ) + '</P_11>' + nl
+      cRes += '      <P_12>' + TKwotaC( aDane[ 'DekV7' ][ 'P_12' ] ) + '</P_12>' + nl
+      cRes += '      <P_13>' + TKwotaC( aDane[ 'DekV7' ][ 'P_13' ] ) + '</P_13>' + nl
+      cRes += '      <P_14>' + TKwotaC( aDane[ 'DekV7' ][ 'P_14' ] ) + '</P_14>' + nl
+      cRes += '      <P_15>' + TKwotaC( aDane[ 'DekV7' ][ 'P_15' ] ) + '</P_15>' + nl
+      cRes += '      <P_16>' + TKwotaC( aDane[ 'DekV7' ][ 'P_16' ] ) + '</P_16>' + nl
+      cRes += '      <P_17>' + TKwotaC( aDane[ 'DekV7' ][ 'P_17' ] ) + '</P_17>' + nl
+      cRes += '      <P_18>' + TKwotaC( aDane[ 'DekV7' ][ 'P_18' ] ) + '</P_18>' + nl
+      cRes += '      <P_19>' + TKwotaC( aDane[ 'DekV7' ][ 'P_19' ] ) + '</P_19>' + nl
+      cRes += '      <P_20>' + TKwotaC( aDane[ 'DekV7' ][ 'P_20' ] ) + '</P_20>' + nl
+      cRes += '      <P_21>' + TKwotaC( aDane[ 'DekV7' ][ 'P_21' ] ) + '</P_21>' + nl
+      cRes += '      <P_22>' + TKwotaC( aDane[ 'DekV7' ][ 'P_22' ] ) + '</P_22>' + nl
+      cRes += '      <P_23>' + TKwotaC( aDane[ 'DekV7' ][ 'P_23' ] ) + '</P_23>' + nl
+      cRes += '      <P_24>' + TKwotaC( aDane[ 'DekV7' ][ 'P_24' ] ) + '</P_24>' + nl
+      cRes += '      <P_25>' + TKwotaC( aDane[ 'DekV7' ][ 'P_25' ] ) + '</P_25>' + nl
+      cRes += '      <P_26>' + TKwotaC( aDane[ 'DekV7' ][ 'P_26' ] ) + '</P_26>' + nl
+      cRes += '      <P_27>' + TKwotaC( aDane[ 'DekV7' ][ 'P_27' ] ) + '</P_27>' + nl
+      cRes += '      <P_28>' + TKwotaC( aDane[ 'DekV7' ][ 'P_28' ] ) + '</P_28>' + nl
+      cRes += '      <P_29>' + TKwotaC( aDane[ 'DekV7' ][ 'P_29' ] ) + '</P_29>' + nl
+      cRes += '      <P_30>' + TKwotaC( aDane[ 'DekV7' ][ 'P_30' ] ) + '</P_30>' + nl
+      cRes += '      <P_31>' + TKwotaC( aDane[ 'DekV7' ][ 'P_31' ] ) + '</P_31>' + nl
+      cRes += '      <P_32>' + TKwotaC( aDane[ 'DekV7' ][ 'P_32' ] ) + '</P_32>' + nl
+      cRes += '      <P_33>' + TKwotaC( aDane[ 'DekV7' ][ 'P_33' ] ) + '</P_33>' + nl
+      cRes += '      <P_34>' + TKwotaC( aDane[ 'DekV7' ][ 'P_34' ] ) + '</P_34>' + nl
+      cRes += '      <P_35>' + TKwotaC( aDane[ 'DekV7' ][ 'P_35' ] ) + '</P_35>' + nl
+      cRes += '      <P_36>' + TKwotaC( aDane[ 'DekV7' ][ 'P_36' ] ) + '</P_36>' + nl
+      cRes += '      <P_37>' + TKwotaC( aDane[ 'DekV7' ][ 'P_37' ] ) + '</P_37>' + nl
+      cRes += '      <P_38>' + TKwotaC( aDane[ 'DekV7' ][ 'P_38' ] ) + '</P_38>' + nl
+      cRes += '      <P_39>' + TKwotaC( aDane[ 'DekV7' ][ 'P_39' ] ) + '</P_39>' + nl
+      cRes += '      <P_40>' + TKwotaC( aDane[ 'DekV7' ][ 'P_40' ] ) + '</P_40>' + nl
+      cRes += '      <P_41>' + TKwotaC( aDane[ 'DekV7' ][ 'P_41' ] ) + '</P_41>' + nl
+      cRes += '      <P_42>' + TKwotaC( aDane[ 'DekV7' ][ 'P_42' ] ) + '</P_42>' + nl
+      cRes += '      <P_43>' + TKwotaC( aDane[ 'DekV7' ][ 'P_43' ] ) + '</P_43>' + nl
+      cRes += '      <P_44>' + TKwotaC( aDane[ 'DekV7' ][ 'P_44' ] ) + '</P_44>' + nl
+      cRes += '      <P_45>' + TKwotaC( aDane[ 'DekV7' ][ 'P_45' ] ) + '</P_45>' + nl
+      cRes += '      <P_46>' + TKwotaC( aDane[ 'DekV7' ][ 'P_46' ] ) + '</P_46>' + nl
+      cRes += '      <P_47>' + TKwotaC( aDane[ 'DekV7' ][ 'P_47' ] ) + '</P_47>' + nl
+      cRes += '      <P_48>' + TKwotaC( aDane[ 'DekV7' ][ 'P_48' ] ) + '</P_48>' + nl
+      cRes += '      <P_49>' + TKwotaC( aDane[ 'DekV7' ][ 'P_49' ] ) + '</P_49>' + nl
+      cRes += '      <P_50>' + TKwotaC( aDane[ 'DekV7' ][ 'P_50' ] ) + '</P_50>' + nl
+      cRes += '      <P_51>' + TKwotaC( aDane[ 'DekV7' ][ 'P_51' ] ) + '</P_51>' + nl
+      cRes += '      <P_52>' + TKwotaC( aDane[ 'DekV7' ][ 'P_52' ] ) + '</P_52>' + nl
+      cRes += '      <P_53>' + TKwotaC( aDane[ 'DekV7' ][ 'P_53' ] ) + '</P_53>' + nl
+      IF aDane[ 'DekV7' ][ 'P_54' ] <> 0
+         cRes += '      <P_54>' + TKwotaC( aDane[ 'DekV7' ][ 'P_54' ] ) + '</P_54>' + nl
+         IF aDane[ 'DekV7' ][ 'P_55' ]
+            cRes += '      <P_55>1</P_55>' + nl
+         ENDIF
+         IF aDane[ 'DekV7' ][ 'P_56' ]
+            cRes += '      <P_56>1</P_56>' + nl
+         ENDIF
+         IF aDane[ 'DekV7' ][ 'P_57' ]
+            cRes += '      <P_57>1</P_57>' + nl
+         ENDIF
+         IF aDane[ 'DekV7' ][ 'P_58' ]
+            cRes += '      <P_58>1</P_58>' + nl
+         ENDIF
+         IF aDane[ 'DekV7' ][ 'P_59' ]
+            cRes += '      <P_59>1</P_59>' + nl
+            cRes += '      <P_60>' + TKwotaC( aDane[ 'DekV7' ][ 'P_60' ] ) + '</P_60>' + nl
+            cRes += '      <P_61>' + str2sxml( aDane[ 'DekV7' ][ 'P_61' ] ) + '</P_61>' + nl
+         ENDIF
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_62' ] > 0
+         cRes += '      <P_62>' + TKwotaC( aDane[ 'DekV7' ][ 'P_62' ] ) + '</P_62>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'Korekta' ] .AND. Len( AllTrim( aDane[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
+         cRes += '      <P_ORDZU>' + TKwotaC( aDane[ 'DekV7' ][ 'ORDZU' ] ) + '</P_ORDZU>' + nl
+      ENDIF
+      cRes += '    </PozycjeSzczegolowe>' + nl
+      cRes += '    <Pouczenia>1</Pouczenia>' + nl
+      cRes += '  </Deklaracja>' + nl
+   ENDIF
+   IF lRejestry
+      FOR nI := 1 TO Len( aDane[ 'sprzedaz' ])
+         cRes := cRes + '  <SprzedazWiersz>' + nl
+         cRes := cRes + '    <LpSprzedazy>' + AllTrim( Str( nI ) ) + '</LpSprzedazy>' + nl
+         cRes := cRes + '    <KodKrajuNadaniaTIN>' + aDane[ 'sprzedaz' ][ nI ][ 'KodKrajuNadaniaTIN' ] + '</KodKrajuNadaniaTIN>' + nl
+         cRes := cRes + '    <NrKontrahenta>' + JPKStrND( trimnip( aDane[ 'sprzedaz' ][ nI ][ 'NrKontrahenta' ] ) ) + '</NrKontrahenta>' + nl
+         cRes := cRes + '    <NazwaKontrahenta>' + JPKStrND( AllTrim( aDane[ 'sprzedaz' ][ nI ][ 'NazwaKontrahenta' ] ) ) + '</NazwaKontrahenta>' + nl
+         //cRes := cRes + '    <AdresKontrahenta>' + JPKStrND( AllTrim( aDane[ 'sprzedaz' ][ nI ][ 'AdresKontrahenta' ] ) ) + '</AdresKontrahenta>' + nl
+         cRes := cRes + '    <DowodSprzedazy>' + JPKStrND( AllTrim( UsunZnakHash( aDane[ 'sprzedaz' ][ nI ][ 'DowodSprzedazy' ] ) ) ) + '</DowodSprzedazy>' + nl
+         cRes := cRes + '    <DataWystawienia>' + date2strxml( aDane[ 'sprzedaz' ][ nI ][ 'DataWystawienia' ] ) + '</DataWystawienia>' + nl
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'DataSprzedazy' )
+            cRes := cRes + '    <DataSprzedazy>' + date2strxml( aDane[ 'sprzedaz' ][ nI ][ 'DataSprzedazy' ] ) + '</DataSprzedazy>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TypDokumentu' ) .AND. Len( AllTrim( aDane[ 'sprzedaz' ][ nI ][ 'TypDokumentu' ] ) ) > 0
+            cRes := cRes + '    <TypDokumentu>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'TypDokumentu' ] ) + '</TypDokumentu>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_01' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_01' ]
+            cRes := cRes + '    <GTU_01>1</GTU_01>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_02' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_02' ]
+            cRes := cRes + '    <GTU_02>1</GTU_02>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_03' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_03' ]
+            cRes := cRes + '    <GTU_03>1</GTU_03>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_04' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_04' ]
+            cRes := cRes + '    <GTU_04>1</GTU_04>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_05' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_05' ]
+            cRes := cRes + '    <GTU_05>1</GTU_05>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_06' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_06' ]
+            cRes := cRes + '    <GTU_06>1</GTU_06>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_07' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_07' ]
+            cRes := cRes + '    <GTU_07>1</GTU_07>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_08' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_08' ]
+            cRes := cRes + '    <GTU_08>1</GTU_08>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_09' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_09' ]
+            cRes := cRes + '    <GTU_09>1</GTU_09>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_10' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_10' ]
+            cRes := cRes + '    <GTU_10>1</GTU_10>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_11' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_11' ]
+            cRes := cRes + '    <GTU_11>1</GTU_11>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_12' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_12' ]
+            cRes := cRes + '    <GTU_12>1</GTU_12>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'GTU_13' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'GTU_13' ]
+            cRes := cRes + '    <GTU_13>1</GTU_13>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'SW' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'SW' ]
+            cRes := cRes + '    <SW>1</SW>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'EE' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'EE' ]
+            cRes := cRes + '    <EE>1</EE>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'TP' ]
+            cRes := cRes + '    <TP>1</TP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TT_WNT' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'TT_WNT' ]
+            cRes := cRes + '    <TT_WNT>1</TT_WNT>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TT_D' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'TT_D' ]
+            cRes := cRes + '    <TT_D>1</TT_D>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MR_T' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MR_T' ]
+            cRes := cRes + '    <MR_T>1</MR_T>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MR_UZ' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MR_UZ' ]
+            cRes := cRes + '    <MR_UZ>1</MR_UZ>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'I_42' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'I_42' ]
+            cRes := cRes + '    <I_42>1</I_42>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'I_63' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'I_63' ]
+            cRes := cRes + '    <I_63>1</I_63>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'B_SPV' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'B_SPV' ]
+            cRes := cRes + '    <B_SPV>1</B_SPV>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'B_SPV_DOSTAWA' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'B_SPV_DOSTAWA' ]
+            cRes := cRes + '    <B_SPV_DOSTAWA>1</B_SPV_DOSTAWA>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'B_MPV_PROWIZJA' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'B_MPV_PROWIZJA' ]
+            cRes := cRes + '    <B_MPV_PROWIZJA>1</B_MPV_PROWIZJA>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MPP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MPP' ]
+            cRes := cRes + '    <MPP>1</MPP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_10' )
+            cRes := cRes + '    <K_10>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_10' ] ) + '</K_10>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_11' )
+            cRes := cRes + '    <K_11>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_11' ] ) + '</K_11>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_12' )
+            cRes := cRes + '    <K_12>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_12' ] ) + '</K_12>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_13' )
+            cRes := cRes + '    <K_13>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_13' ] ) + '</K_13>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_14' )
+            cRes := cRes + '    <K_14>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_14' ] ) + '</K_14>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_15' )
+            cRes := cRes + '    <K_15>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_15' ] ) + '</K_15>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_16' )
+            cRes := cRes + '    <K_16>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_16' ] ) + '</K_16>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_17' )
+            cRes := cRes + '    <K_17>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_17' ] ) + '</K_17>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_18' )
+            cRes := cRes + '    <K_18>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_18' ] ) + '</K_18>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_19' )
+            cRes := cRes + '    <K_19>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_19' ] ) + '</K_19>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_20' )
+            cRes := cRes + '    <K_20>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_20' ] ) + '</K_20>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_21' )
+            cRes := cRes + '    <K_21>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_21' ] ) + '</K_21>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_22' )
+            cRes := cRes + '    <K_22>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_22' ] ) + '</K_22>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_23' )
+            cRes := cRes + '    <K_23>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_23' ] ) + '</K_23>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_24' )
+            cRes := cRes + '    <K_24>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_24' ] ) + '</K_24>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_25' )
+            cRes := cRes + '    <K_25>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_25' ] ) + '</K_25>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_26' )
+            cRes := cRes + '    <K_26>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_26' ] ) + '</K_26>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_27' )
+            cRes := cRes + '    <K_27>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_27' ] ) + '</K_27>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_28' )
+            cRes := cRes + '    <K_28>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_28' ] ) + '</K_28>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_29' )
+            cRes := cRes + '    <K_29>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_29' ] ) + '</K_29>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_30' )
+            cRes := cRes + '    <K_30>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_30' ] ) + '</K_30>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_31' )
+            cRes := cRes + '    <K_31>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_31' ] ) + '</K_31>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_32V' )
+            cRes := cRes + '    <K_32>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_32V' ] ) + '</K_32>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_36' )
+            cRes := cRes + '    <K_33>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_36' ] ) + '</K_33>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_37' )
+            cRes := cRes + '    <K_34>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_37' ] ) + '</K_34>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_38' )
+            cRes := cRes + '    <K_35>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_38' ] ) + '</K_35>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_39' )
+            cRes := cRes + '    <K_36>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_39' ] ) + '</K_36>' + nl
+         ENDIF
+   /*      IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_37' )
+            cRes := cRes + '    <K_37>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_37' ] ) + '</K_37>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_38' )
+            cRes := cRes + '    <K_38>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_38' ] ) + '</K_38>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_39' )
+            cRes := cRes + '    <K_39>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_39' ] ) + '</K_39>' + nl
+         ENDIF */
+         cRes := cRes + '  </SprzedazWiersz>' + nl
+      NEXT
+
+      IF hb_HHasKey( aDane, 'SprzedazCtrl' )
+         cRes := cRes + '  <SprzedazCtrl>' + nl
+         cRes := cRes + '    <LiczbaWierszySprzedazy>' + AllTrim( Str( aDane[ 'SprzedazCtrl' ][ 'LiczbaWierszySprzedazy' ] ) ) + '</LiczbaWierszySprzedazy>' + nl
+         cRes := cRes + '    <PodatekNalezny>' + TKwota2( aDane[ 'SprzedazCtrl' ][ 'PodatekNalezny' ] ) + '</PodatekNalezny>' + nl
+         cRes := cRes + '  </SprzedazCtrl>' + nl
+      ENDIF
+
+      FOR nI := 1 TO Len( aDane[ 'zakup' ])
+         cRes := cRes + '  <ZakupWiersz>' + nl
+         cRes := cRes + '    <LpZakupu>' + AllTrim( Str( nI ) ) + '</LpZakupu>' + nl
+         cRes := cRes + '    <KodKrajuNadaniaTIN>' + aDane[ 'zakup' ][ nI ][ 'KodKrajuNadaniaTIN' ] + '</KodKrajuNadaniaTIN>' + nl
+         cRes := cRes + '    <NrDostawcy>' + JPKStrND( trimnip( aDane[ 'zakup' ][ nI ][ 'NrDostawcy' ] ) ) + '</NrDostawcy>' + nl
+         cRes := cRes + '    <NazwaDostawcy>' + JPKStrND( AllTrim( aDane[ 'zakup' ][ nI ][ 'NazwaDostawcy' ] ) ) + '</NazwaDostawcy>' + nl
+         //cRes := cRes + '    <AdresDostawcy>' + JPKStrND( AllTrim( aDane[ 'zakup' ][ nI ][ 'AdresDostawcy' ] ) ) + '</AdresDostawcy>' + nl
+         cRes := cRes + '    <DowodZakupu>' + JPKStrND( AllTrim( aDane[ 'zakup' ][ nI ][ 'DowodZakupu' ] ) ) + '</DowodZakupu>' + nl
+         cRes := cRes + '    <DataZakupu>' + date2strxml( aDane[ 'zakup' ][ nI ][ 'DataZakupu' ] ) + '</DataZakupu>' + nl
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'DataWplywu' )
+            cRes := cRes + '    <DataWplywu>' + date2strxml( aDane[ 'zakup' ][ nI ][ 'DataWplywu' ] ) + '</DataWplywu>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'DokumentZakupu' ) .AND. Len( aDane[ 'zakup' ][ nI ][ 'DokumentZakupu' ] ) > 0
+            cRes := cRes + '    <DokumentZakupu>' + AllTrim( aDane[ 'zakup' ][ nI ][ 'DokumentZakupu' ] ) + '</DokumentZakupu>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'MPP' ) .AND. aDane[ 'zakup' ][ nI ][ 'MPP' ]
+            cRes := cRes + '    <MPP>1</MPP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'IMP' ) .AND. aDane[ 'zakup' ][ nI ][ 'IMP' ]
+            cRes := cRes + '    <IMP>1</IMP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_43' )
+            cRes := cRes + '    <K_40>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_43' ] ) + '</K_40>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_44' )
+            cRes := cRes + '    <K_41>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_44' ] ) + '</K_41>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_45' )
+            cRes := cRes + '    <K_42>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_45' ] ) + '</K_42>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_46' )
+            cRes := cRes + '    <K_43>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_46' ] ) + '</K_43>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_47' )
+            cRes := cRes + '    <K_44>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_47' ] ) + '</K_44>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_48' )
+            cRes := cRes + '    <K_45>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_48' ] ) + '</K_45>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_49' )
+            cRes := cRes + '    <K_46>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_49' ] ) + '</K_46>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_50' )
+            cRes := cRes + '    <K_47>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_50' ] ) + '</K_47>' + nl
+         ENDIF
+         cRes := cRes + '  </ZakupWiersz>' + nl
+      NEXT
+
+      IF hb_HHasKey( aDane, 'ZakupCtrl' )
+         cRes := cRes + '  <ZakupCtrl>' + nl
+         cRes := cRes + '    <LiczbaWierszyZakupow>' + AllTrim( Str( aDane[ 'ZakupCtrl' ][ 'LiczbaWierszyZakupow' ] ) ) + '</LiczbaWierszyZakupow>' + nl
+         cRes := cRes + '    <PodatekNaliczony>' + TKwota2( aDane[ 'ZakupCtrl' ][ 'PodatekNaliczony' ] ) + '</PodatekNaliczony>' + nl
+         cRes := cRes + '  </ZakupCtrl>' + nl
+      ENDIF
+   ENDIF
+
+   cRes := cRes + '</JPK>' + nl
+
+   RETURN cRes
+
+/*----------------------------------------------------------------------*/
+
