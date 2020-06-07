@@ -988,7 +988,8 @@ public aREJSdbf := {;
    { "KOLUMNA2", "C", 2, 0 },;                    //  50
    { "NETTO2", "N", 11, 2 },;                     //  51
    { "DATATRAN", "D", 8, 0 },;                    //  52
-   { "PROCEDUR", "C", 32, 0 } }                   //  53
+   { "PROCEDUR", "C", 32, 0 },;                   //  53
+   { "RODZDOW", "C", 6, 0 } }                     //  54
 
 // Create: REJZ.DBF
 public aREJZdbf := {;
@@ -1057,7 +1058,8 @@ public aREJZdbf := {;
    { "KOL50", "N", 11, 2 },;                      //  63
    { "KOLUMNA2", "C", 2, 0 },;                    //  64
    { "NETTO2", "N", 11, 2 },;                     //  65
-   { "DATATRAN", "D", 8, 0 } }                    //  66
+   { "DATATRAN", "D", 8, 0 },;                    //  66
+   { "RODZDOW", "C", 6, 0 } }                     //  67
 
 // Create: RELACJE.DBF
 public aRELACJEdbf := {;
@@ -1296,7 +1298,11 @@ public aSUMA_MCdbf := {;
    { "A89B4", "N", 11, 2 },;                      //  87
    { "A111U6", "N", 11, 2 },;                     //  88
    { "WERJPKVAT", "N", 3, 0 },;                   //  89
-   { "ZWRRAVAT", "N", 11, 2 } }                   //  90
+   { "ZWRRAVAT", "N", 11, 2 },;                   //  90
+   { "ZWRKONTO", "C", 1, 0 },;                    //  91
+   { "ZWRPODAT", "C", 1, 0 },;                    //  92
+   { "ZWRPODKW", "N", 11, 2 },;                   //  93
+   { "ZWRPODRD", "C", 120, 0 } }                  //  94
 
 // Create: TABPIT4R.DBF
 public aTABPIT4Rdbf := {;

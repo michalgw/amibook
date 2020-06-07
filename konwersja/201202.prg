@@ -27,11 +27,15 @@ FUNCTION Main()
    ? 'Aktualizacja struktury danych...'
    dbfInicjujDane()
    dbfUtworzTabele( 'REJS', 'rejs.tym' )
+   dbfUtworzTabele( 'REJZ', 'rejz.tym' )
+   dbfUtworzTabele( 'SUMA_MC', 'suma_mc.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
-   
+
    ? 'Indeksowanie...'
    dbfIdxREJS()
+   dbfIdxREJZ()
+   dbfIdxSUMA_MC()
    dbCloseAll()
 
    RETURN
