@@ -435,6 +435,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4il_pod],zP4RC1a&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -492,6 +493,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4sum_zal],zP4RC1b&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -551,6 +553,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4nalzal33],zP4RC2&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -610,6 +613,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4ogrzal],zP4RC4&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -669,6 +673,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4ogrzal33],zP4RC5&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -728,6 +733,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4dodzal],zP4RC6&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -787,6 +793,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4nadzwr],zP4RC7&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -846,6 +853,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4pfron],zP4RC8&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -905,6 +913,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4aktyw],zP4RC9&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -964,6 +973,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P4zal13],zP4RC10&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -1025,6 +1035,7 @@ do while .t.
             do BLOKADAR
             repl_([P4potrac],zP4RC12a&XXa)
             repl_([P4wynagr],zP4RC12&XXa)
+            COMMIT
             unlock
          endif
          @ 9+xa,23 say zP4RC12&XXa pict '99999'

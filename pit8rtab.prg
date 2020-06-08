@@ -333,6 +333,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P8zlecry],zP8RC1&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -394,6 +395,7 @@ do while .t.
          if found()
             do BLOKADAR
             repl_([P8zlecin],zP8RC4&XXa)
+            COMMIT
             unlock
          endif
       endif
@@ -457,6 +459,7 @@ do while .t.
             do BLOKADAR
             repl_([P8potrac],zP8RC3&XXa)
             repl_([P8wynagr],zP8RC2&XXa)
+            COMMIT
             unlock
          endif
       endif

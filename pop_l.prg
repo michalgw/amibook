@@ -240,6 +240,7 @@ if miesiac>' 1'
          else
             repl zaliczkap with 0
          endif
+         COMMIT
          unlock
       endif
       go recdmc

@@ -220,6 +220,7 @@ PROCEDURE Rycz()
                IF Found()
                   BlokadaR()
                   repl_( 'stan', stan - stan_ )
+                  COMMIT
                   UNLOCK
                ENDIF
             ENDIF
@@ -227,6 +228,7 @@ PROCEDURE Rycz()
             IF Found()
                BlokadaR()
                repl_( 'stan', stan+( -zPRODUKCJA - zUSLUGI - zHANDEL - zRY20 - zRY17 - zRY10 ) )
+               COMMIT
                UNLOCK
             ENDIF
             SELECT suma_mc
@@ -250,6 +252,7 @@ PROCEDURE Rycz()
             IF ins
                repl_( 'pozycje', pozycje + 1 )
             ENDIF
+            COMMIT
             UNLOCK
             SELECT ewid
             IF ins
@@ -278,6 +281,7 @@ PROCEDURE Rycz()
             repl_( 'UWAGI', zUWAGI )
             repl_( 'zaplata', zzaplata )
             repl_( 'kwota', zkwota )
+            COMMIT
             UNLOCK
             *********************** lp
             IF param_lp == 'T'
@@ -332,6 +336,7 @@ PROCEDURE Rycz()
                   ENDIF
                ENDIF
                GO rec
+               COMMIT
                UNLOCK
                @ 24, 0
             ENDIF
@@ -384,6 +389,7 @@ PROCEDURE Rycz()
             IF Found()
                BlokadaR()
                repl_( 'stan', stan-stan_)
+               COMMIT
                UNLOCK
             ENDIF
             SELECT suma_mc
@@ -397,10 +403,12 @@ PROCEDURE Rycz()
                repl_( 'RY10', RY10 - ewid->RY10 )
             ENDIF
             repl_( 'pozycje', pozycje - 1 )
+            COMMIT
             UNLOCK
             SELECT ewid
             BlokadaR()
             del()
+            COMMIT
             UNLOCK
             SKIP
             *********************** lp
@@ -415,6 +423,7 @@ PROCEDURE Rycz()
                   SKIP
                ENDDO
                GO rec
+               COMMIT
                UNLOCK
             ENDIF
             *******************************

@@ -269,6 +269,7 @@ do while kl#27
         sele 1
         do BLOKADAR
         repl DOKUMENT with 'PRZELEW'
+        COMMIT
         unlock
         restore screen from scr_
         zPodatki=.f.
@@ -297,6 +298,7 @@ do while kl#27
         sele 1
         do BLOKADAR
         repl DOKUMENT with 'WPLATA'
+        COMMIT
         unlock
         restore screen from scr_
         zPodatki=.f.

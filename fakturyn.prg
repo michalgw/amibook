@@ -331,6 +331,7 @@ PROCEDURE FakturyN()
                IF ins
                   BlokadaR()
                   repl_( 'nr_fakt', nr_fakt + 1 )
+                  COMMIT
                   UNLOCK
                ENDIF
 
@@ -364,6 +365,7 @@ PROCEDURE FakturyN()
                repl_( 'KRAJ', zKRAJ )
                repl_( 'DATA2TYP', zDATA2TYP )
                repl_( 'FAKTTYP', zFAKTTYP )
+               COMMIT
                UNLOCK
                zident_poz := Str( rec_no, 8 )
 
@@ -469,6 +471,7 @@ PROCEDURE FakturyN()
                repl_('ZAP_DAT', zZAP_DAT )
                repl_('ZAP_WART', zZAP_WART )
                REKZAK := rec_no
+               COMMIT
                unlock
 
 
@@ -556,6 +559,7 @@ PROCEDURE FakturyN()
                   ENDIF
                   repl_( 'KOREKTA', 'N' )
                   repl_( 'UWAGI', Space( 20 ) )
+                  COMMIT
                   UNLOCK
                   razem_ := 0
                ELSE
@@ -576,6 +580,7 @@ PROCEDURE FakturyN()
                      ENDIF
                      repl_( 'KOREKTA', 'N' )
                      repl_( 'UWAGI', Space( 20 ) )
+                     COMMIT
                      UNLOCK
                      razem_ := 0
                   ENDIF
@@ -639,6 +644,7 @@ PROCEDURE FakturyN()
 *              endif
 *           endif
 *           repl_([kwota],zkwota)
+               COMMIT
                UNLOCK
                IF zRYCZALT <> 'T'
                ************* ZAPIS REJESTRU DO KSIEGI *******************
@@ -649,6 +655,7 @@ PROCEDURE FakturyN()
                      IF Found()
                         BlokadaR()
                         repl_( 'wyr_tow', wyr_tow - razem_ )
+                        COMMIT
                         UNLOCK
                      ELSE
                         *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -661,6 +668,7 @@ PROCEDURE FakturyN()
                         repl_( 'WYR_TOW', -razem_ )
     *                    repl_([zaplata],'1')
     *                   repl_([kwota],zkwota)
+                        COMMIT
                         UNLOCK
                         *********************** lp
                         SET ORDER TO 1
@@ -684,9 +692,11 @@ PROCEDURE FakturyN()
                               ENDDO
 
                               GO rec
+                              COMMIT
                               UNLOCK
                            ENDIF
                         ENDIF
+                        COMMIT
                         UNLOCK
                      ***********************
                      ENDIF
@@ -696,11 +706,13 @@ PROCEDURE FakturyN()
                   IF Found()
                      BlokadaR()
                      repl_( 'wyr_tow', wyr_tow + razem )
+                     COMMIT
                      UNLOCK
                      SELECT suma_mc
                      BlokadaR()
                      repl_( 'wyr_tow', wyr_tow - razem_ )
                      repl_( 'wyr_tow', wyr_tow + razem )
+                     COMMIT
                      UNLOCK
                   ELSE
                      *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -714,6 +726,7 @@ PROCEDURE FakturyN()
                      repl_( 'WYR_TOW', RAZEM )
     *                 repl_([zaplata],'1')
     *                repl_([kwota],zkwota)
+                     COMMIT
                      UNLOCK
                      *********************** lp
                      SET ORDER TO 1
@@ -737,9 +750,11 @@ PROCEDURE FakturyN()
                            ENDDO
 
                            GO rec
+                           COMMIT
                            UNLOCK
                         ENDIF
                      ENDIF
+                     COMMIT
                      UNLOCK
                      ***********************
                      SELECT suma_mc
@@ -747,6 +762,7 @@ PROCEDURE FakturyN()
                      repl_( 'wyr_tow', wyr_tow - razem_ )
                      repl_( 'wyr_tow', wyr_tow + razem )
                      repl_( 'pozycje', pozycje + 1 )
+                     COMMIT
                      UNLOCK
                   ENDIF
                   ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
@@ -803,10 +819,12 @@ PROCEDURE FakturyN()
                      IF Found()
                         BlokadaR()
                         repl_( 'wyr_tow', wyr_tow - razem_ )
+                        COMMIT
                         UNLOCK
                         SELECT suma_mc
                         BlokadaR()
                         repl_( 'wyr_tow', wyr_tow - razem_ )
+                        COMMIT
                         UNLOCK
                      ELSE
                         *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -819,6 +837,7 @@ PROCEDURE FakturyN()
                         repl_( 'WYR_TOW', -razem_ )
     *                    repl_([zaplata],'1')
     *                   repl_([kwota],zkwota)
+                        COMMIT
                         UNLOCK
                         *********************** lp
                         SET ORDER TO 1
@@ -842,6 +861,7 @@ PROCEDURE FakturyN()
                               ENDDO
 
                               GO rec
+                              COMMIT
                               UNLOCK
                            ENDIF
                         ENDIF
@@ -849,6 +869,7 @@ PROCEDURE FakturyN()
                         BlokadaR()
                         repl_( 'wyr_tow', wyr_tow - razem_ )
                         repl_( 'pozycje', pozycje + 1 )
+                        COMMIT
                         UNLOCK
                      ENDIF
                   ELSE
@@ -872,6 +893,7 @@ PROCEDURE FakturyN()
                                  SKIP
                               ENDDO
                               GO rec
+                              COMMIT
                               UNLOCK
                               @ 24, 0
                            ENDIF
@@ -886,6 +908,7 @@ PROCEDURE FakturyN()
                   SELECT firma
                   BlokadaR()
                   repl_( 'nr_fakt', nr_fakt - 1 )
+                  COMMIT
                   UNLOCK
                ENDIF
                SELECT pozycje
@@ -893,6 +916,7 @@ PROCEDURE FakturyN()
                DO WHILE del == '+' .AND. ident == zident_poz
                   BlokadaR()
                   del()
+                  COMMIT
                   UNLOCK
                   SKIP
                ENDDO
@@ -900,6 +924,7 @@ PROCEDURE FakturyN()
                rrrec := rec_no
                BlokadaR()
                del()
+               COMMIT
                UNLOCK
                SKIP
                commit_()
@@ -994,6 +1019,7 @@ PROCEDURE FakturyN()
                   if NR_UZYTK == 800
                      REPLACE oplskarb WITH zoplskarb, poddarow WITH zpoddarow, podcywil WITH zpodcywil
                   ENDIF
+                  COMMIT
                   UNLOCK
                   SET COLOR TO w+
                   @ 19, 6 SAY SubStr( ODBNAZWA, 1, 30 )

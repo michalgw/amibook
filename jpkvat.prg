@@ -1110,6 +1110,7 @@ PROCEDURE JPK_VAT_ZapiszWERJPKVAT( nWer )
       IF suma_mcw->( Found() )
          IF suma_mcw->( dbRLock() )
             suma_mcw->werjpkvat := nWer
+            suma_mcw->( dbCommit() )
             suma_mcw->( dbRUnlock() )
          ENDIF
       ENDIF

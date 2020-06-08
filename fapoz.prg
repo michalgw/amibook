@@ -189,6 +189,7 @@ PROCEDURE FaPoz()
          IF _disp
             BlokadaR()
             DELETE
+            COMMIT
             UNLOCK
             SKIP
             commit_()

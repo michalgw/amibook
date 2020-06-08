@@ -266,6 +266,7 @@ PROCEDURE FakturyW()
                IF ins
                   BlokadaR()
                   repl_( 'nr_faktw', nr_faktw + 1 )
+                  COMMIT
                   UNLOCK
                ENDIF
 
@@ -300,6 +301,7 @@ PROCEDURE FakturyW()
                repl_( 'KURS', zKURS )
                repl_( 'TABELA', zTABELA )
                repl_( 'KURSDATA', zKURSDATA )
+               COMMIT
                UNLOCK
                zident_poz := Str( rec_no, 8 )
 
@@ -325,6 +327,7 @@ PROCEDURE FakturyW()
                   repl_( 'ubezpiecz', zubezpiecz )
                   repl_( 'innekosz', zinnekosz )
                   repl_( 'OPISFAKT', zOPISFAKT )
+                  COMMIT
                   UNLOCK
                ENDIF
 
@@ -461,6 +464,7 @@ PROCEDURE FakturyW()
                   SELECT firma
                   BlokadaR()
                   repl_( 'nr_faktw', nr_faktw - 1 )
+                  COMMIT
                   UNLOCK
                ENDIF
                SELECT pozycjew
@@ -468,12 +472,14 @@ PROCEDURE FakturyW()
                DO WHILE del == '+' .AND. ident == zident_poz
                   BlokadaR()
                   del()
+                  COMMIT
                   UNLOCK
                   SKIP
                ENDDO
                SELECT fakturyw
                BlokadaR()
                del()
+               COMMIT
                UNLOCK
                SKIP
                commit_()

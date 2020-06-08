@@ -287,6 +287,7 @@ do while kl#27
                  next
                  repl odpis_rok with zodpis_rok,;
                       odpis_sum with zodpis_sum
+                 COMMIT
                  unlock
                  if kon
                     exit
@@ -303,6 +304,7 @@ do while kl#27
                     zodpis_mie=iif(zSPOSOB='L',_round(zliniowo/12,2),_round(iif(zliniowo>=zdegres,zliniowo/12,zdegres/12),2))
                  endif
               enddo
+              COMMIT
               unlock
               endif
            else
@@ -333,12 +335,14 @@ do while kl#27
                         ODrok=ODrok+mc&zmcn
                     next
                     repl odpis_rok with odrok,odpis_sum with umorz_akt+odrok
+                    COMMIT
                     unlock
                     skip
                     if .not.eof().and.del+ident='+'+str(idpr,5)
                        do BLOKADA
                        dele rest while del+ident='+'+str(idpr,5)
                     endif
+                    COMMIT
                     unlock
                  endif
               endif
@@ -369,6 +373,7 @@ do while kl#27
                 VATkorokr with zVATkorokr,;
                 DATA_SPRZ with zDATA_SPRZ,;
                 VATSPRZ with zVATSPRZ
+           COMMIT
            unlock
            commit_()
            *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
@@ -399,6 +404,7 @@ do while kl#27
            do while del=[+].and.ident=str(RECS,5)
               do BLOKADAR
               del()
+              COMMIT
               unlock
               skip
            enddo
@@ -407,12 +413,14 @@ do while kl#27
            do while del=[+].and.ident=str(RECS,5)
               do BLOKADAR
               del()
+              COMMIT
               unlock
               skip
            enddo
            sele KARTST
            do BLOKADAR
            del()
+           COMMIT
            unlock
            seek '+'+ident_fir
         endif

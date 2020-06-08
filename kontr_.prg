@@ -104,6 +104,7 @@ do while kl#27.and.kl#13.and.kl#32
         if _disp
            do BLOKADAR
            del()
+           COMMIT
            unlock
            skip
            commit_()

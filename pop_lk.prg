@@ -244,18 +244,21 @@ if miesiac>' 1'
       if del='+' .and. ident=zident .and. mc=str(val(miesiac_)-2,2)
          do blokadar
          repl zaliczkap with 0
+         COMMIT
          unlock
       endif
       seek '+'+zident+str(val(miesiac_)-1,2)
       if del='+' .and. ident=zident .and. mc=str(val(miesiac_)-1,2)
          do blokadar
          repl zaliczkap with 0
+         COMMIT
          unlock
       endif
       seek '+'+zident+miesiac_
       if del='+' .and. ident=zident .and. mc=miesiac_
          do blokadar
          repl zaliczkap with wartprzek_
+         COMMIT
          unlock
       endif
 

@@ -282,6 +282,7 @@ if param_lp=[T].and.zliczba#liczba
          zlp := 1
       ENDIF
    enddo
+   COMMIT
    unlock
    use
    select 1
@@ -303,6 +304,7 @@ if param_lp=[T].and.zliczba#liczba
          zlp := 1
       ENDIF
    enddo
+   COMMIT
    unlock
    use
    select 1

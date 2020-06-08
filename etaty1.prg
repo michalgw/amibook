@@ -223,6 +223,7 @@ do while .t.
             oblpl()
             do BLOKADAR
             do zapiszpla
+            COMMIT
             unlock
             _infoskl_()
          endif
@@ -480,6 +481,7 @@ do while .t.
             oblpl()
             do BLOKADAR
             do ZAPISZPLA
+            COMMIT
             unlock
          endif
          _infoskl_()

@@ -342,6 +342,7 @@ FUNCTION Dane_MC( typpit )
             IF Found()
                REPLACE zdrowie WITH zdrowie + zwar5_wuz
             ENDIF
+            COMMIT
             UNLOCK
             GO rrre
          ENDIF
@@ -354,6 +355,7 @@ FUNCTION Dane_MC( typpit )
          IF LastKey() # K_ESC
             blokadar()
             REPLACE zaliczka WITH zzzaliczka
+            COMMIT
             UNLOCK
          ENDIF
       CASE opc == 4

@@ -78,6 +78,7 @@ begin sequence
          if drukowac
             do blokadar
             repl data with zdata,nrdok with znrdok
+            COMMIT
             unlock
          endif
          skip

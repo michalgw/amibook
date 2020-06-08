@@ -199,6 +199,7 @@ do while kl#27
               do modyst with zdata_mod1,0
               do BLOKADAR
               del()
+              COMMIT
               unlock
               skip
               commit_()
@@ -331,6 +332,7 @@ if found()
                  next
                  repl odpis_rok with zodpis_rok,;
                       odpis_sum with zodpis_sum
+                 COMMIT
                  unlock
                  if kon
                     exit
@@ -347,6 +349,7 @@ if found()
                     zodpis_mie=iif(A->SPOSOB='L',_round(zliniowo/12,2),_round(iif(zliniowo>=zdegres,zliniowo/12,zdegres/12),2))
                  endif
               enddo
+              COMMIT
               unlock
 endif
 sele kartstmo

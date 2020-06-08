@@ -316,6 +316,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          ELSE
             REPLACE vat760 with pp8
          ENDIF
+         COMMIT
          UNLOCK
 
          dane_vat := 0
@@ -354,6 +355,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                   SELECT 2
                   BlokadaR()
                   REPLACE f1 WITH zf1, f2 WITH zf2, f3 WITH zf3, f4 WITH zf4, f5 WITH zf5
+                  COMMIT
                   UNLOCK
                ENDIF
             CASE dane_vat == 3
@@ -373,6 +375,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                   SELECT 3
                   BlokadaR()
                   REPLACE rokopod WITH zrokopod, rokogol WITH zrokogol, strusprwy WITH zstrusprwy ,strusprob WITH zstrusprob
+                  COMMIT
                   UNLOCK
                ENDIF
            /* CASE dane_vat == 4
@@ -1220,6 +1223,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             SKIP 1
             BlokadaR( 'SUMA_MC' )
             suma_mc->vat760 := p99d
+            COMMIT
             dbUnlock()
             SKIP -1
          ENDIF
@@ -1236,6 +1240,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             skip 1
             blokadar('SUMA_MC')
             suma_mc->vat760 := p99d */
+            COMMIT
             dbUnlock()
             dbGoto( nNumerRec )
          ENDIF

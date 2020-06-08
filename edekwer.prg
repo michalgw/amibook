@@ -608,6 +608,7 @@ FUNCTION edekZapiszTrescKor(cSymbol, nID1, nID2, cTresc)
       IF TRESCKOR->(Found())
          blokadar()
          TRESCKOR->TRESC := cTresc
+         COMMIT
          UNLOCK
       ELSE
          TRESCKOR->(dbAppend())

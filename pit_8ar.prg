@@ -280,6 +280,7 @@ for xxm=1 to 12
 *   repl_([zal13],pc10)
    repl_([Zlecrycz],pc10)
    repl_( 'nalzal', pc11 )
+   COMMIT
    unlock
    sele etaty
 next
@@ -318,6 +319,7 @@ for xxm=1 to 12
        repl_([zlecin],suma_mc->P8zlecry)
        repl_([zlecinu],suma_mc->P8zlecin)
        repl_([potrac],suma_mc->P8potrac)
+      COMMIT
       unlock
    endif
 next

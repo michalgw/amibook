@@ -196,6 +196,7 @@ PROCEDURE Oper()
             IF Found()
                BlokadaR()
                AKTPOL+ stan WITH -zWYR_TOW - zUSLUGI + zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA
+               COMMIT
                UNLOCK
             ENDIF
             SELECT SUMA_MC
@@ -206,10 +207,12 @@ PROCEDURE Oper()
             IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
                SUMY+
             ENDIF
+            COMMIT
             UNLOCK
             IF ins
                BlokadaR()
                AKTPOZ+
+               COMMIT
                UNLOCK
             ENDIF
 
@@ -252,6 +255,7 @@ PROCEDURE Oper()
             REPLACE K16WART WITH zK16WART
             REPLACE K16OPIS WITH zK16OPIS
 
+            COMMIT
             UNLOCK
             *********************** lp
             IF param_lp == 'T'
@@ -306,6 +310,7 @@ PROCEDURE Oper()
                   ENDIF
                ENDIF
                GO rec
+               COMMIT
                UNLOCK
             ENDIF
 
@@ -457,6 +462,7 @@ PROCEDURE Oper()
             IF Found()
                BlokadaR()
                STANUJ
+               COMMIT
                UNLOCK
             ENDIF
             SELECT suma_mc
@@ -465,6 +471,7 @@ PROCEDURE Oper()
                SUMY-
             ENDIF
             AKTPOZ-
+            COMMIT
             UNLOCK
             SELECT oper
             rrrec := rec_no
@@ -473,6 +480,7 @@ PROCEDURE Oper()
             SELECT oper
             BlokadaR()
             del()
+            COMMIT
             UNLOCK
             SKIP
             *********************** lp
@@ -487,6 +495,7 @@ PROCEDURE Oper()
                   SKIP
                ENDDO
                GO rec
+               COMMIT
                UNLOCK
                ColStd()
             ENDIF
@@ -526,6 +535,7 @@ PROCEDURE Oper()
          IF LastKey() <> K_ESC
             BlokadaR()
             REPLACE WYR_TOW WITH zWYR_TOW, USLUGI WITH zUSLUGI
+            COMMIT
             UNLOCK
          ENDIF
          DO &_proc
@@ -700,6 +710,7 @@ PROCEDURE Oper()
             dbGoto( rec )
    //         blokadar()
             oper->lp := nLP2
+            COMMIT
             UNLOCK
    //         setind('OPER')
    //         dbGoto( rec )
@@ -725,6 +736,7 @@ PROCEDURE Oper()
             dbGoto( rec )
    //         blokadar()
             oper->lp := nLP2
+            COMMIT
             UNLOCK
    //         setind('OPER')
    //         dbGoto( rec )
@@ -988,6 +1000,7 @@ PROCEDURE KontrApp()
          REPLACE EXPORT WITH zEXPORT
          REPLACE UE WITH zUE
          REPLACE KRAJ WITH zKRAJ
+         COMMIT
          UNLOCK
       ENDIF
    ENDIF
@@ -1133,6 +1146,7 @@ PROCEDURE WrocStan()
       IF Found()
          BlokadaR()
          STANUJ
+         COMMIT
          UNLOCK
       ENDIF
    ENDIF
@@ -1158,6 +1172,7 @@ PROCEDURE AktKol( mnoz, kolum, wart )
       CASE KOKO == 11
          AKTPOL+ ry10 WITH wart * mnoz
       ENDCASE
+      COMMIT
       UNLOCK
    ELSE
       BlokadaR()
@@ -1175,6 +1190,7 @@ PROCEDURE AktKol( mnoz, kolum, wart )
       CASE KOKO == 13 .OR. KOKO == 16
          AKTPOL+ wydatki WITH wart * mnoz
       ENDCASE
+      COMMIT
       UNLOCK
    ENDIF
    RETURN

@@ -141,6 +141,7 @@ do while kl#27
            repl_([MARKA],zMARKA)
            repl_([POJEMNOSC],zPOJEMNOSC)
            repl_([WLASCIC],zWLASCIC)
+           COMMIT
            unlock
            commit_()
            *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ

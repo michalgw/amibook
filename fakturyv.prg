@@ -299,6 +299,7 @@ PROCEDURE FakturyV()
             IF ins
                BlokadaR()
                repl_( 'nr_fakt', nr_fakt + 1 )
+               COMMIT
                UNLOCK
             ENDIF
 
@@ -329,6 +330,7 @@ PROCEDURE FakturyV()
             repl_( 'EXPORT', zEXPORT )
             repl_( 'UE', zUE )
             repl_( 'KRAJ', zKRAJ )
+            COMMIT
             UNLOCK
             zident_poz := Str( rec_no, 8 )
 
@@ -385,6 +387,7 @@ PROCEDURE FakturyV()
             repl_( 'sposob_p', zsposob_p )
             repl_( 'termin_z', ztermin_z )
             repl_( 'kwota', zkwota )
+            COMMIT
             UNLOCK
 
             KVA := ' '
@@ -474,6 +477,7 @@ PROCEDURE FakturyV()
                ENDIF
                repl_( 'KOREKTA', 'N' )
                repl_( 'UWAGI', Space( 20 ) )
+               COMMIT
                UNLOCK
                razem_ := 0
             ELSE
@@ -542,6 +546,7 @@ PROCEDURE FakturyV()
                ENDIF
             ENDIF
             repl_( 'kwota', zkwota )
+            COMMIT
             UNLOCK
             IF zRYCZALT <> 'T'
                ************* ZAPIS REJESTRU DO KSIEGI *******************
@@ -552,6 +557,7 @@ PROCEDURE FakturyV()
                   IF Found()
                      BlokadaR()
                      repl_( 'wyr_tow', wyr_tow - razem_ )
+                     COMMIT
                      UNLOCK
                   ELSE
                      *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -564,6 +570,7 @@ PROCEDURE FakturyV()
                      repl_( 'WYR_TOW', -razem_ )
                      repl_( 'zaplata', '1' )
  *                   repl_([kwota],zkwota)
+                     COMMIT
                      UNLOCK
                      *********************** lp
                      SET ORDER TO 1
@@ -587,9 +594,11 @@ PROCEDURE FakturyV()
                            ENDDO
 
                            GO rec
+                           COMMIT
                            UNLOCK
                         ENDIF
                      ENDIF
+                     COMMIT
                      UNLOCK
                   ***********************
                   ENDIF
@@ -599,11 +608,13 @@ PROCEDURE FakturyV()
                IF Found()
                   BlokadaR()
                   repl_( 'wyr_tow', wyr_tow + razem )
+                  COMMIT
                   UNLOCK
                   SELECT suma_mc
                   BlokadaR()
                   repl_( 'wyr_tow', wyr_tow - razem_ )
                   repl_( 'wyr_tow', wyr_tow + razem )
+                  COMMIT
                   UNLOCK
                ELSE
                   *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -617,6 +628,7 @@ PROCEDURE FakturyV()
                   repl_( 'WYR_TOW', RAZEM )
                   repl_( 'zaplata', '1' )
  *                repl_([kwota],zkwota)
+                  COMMIT
                   UNLOCK
                   *********************** lp
                   SET ORDER TO 1
@@ -640,9 +652,11 @@ PROCEDURE FakturyV()
                         ENDDO
 
                         GO rec
+                        COMMIT
                         UNLOCK
                      ENDIF
                   ENDIF
+                  COMMIT
                   UNLOCK
                   ***********************
                   SELECT suma_mc
@@ -650,6 +664,7 @@ PROCEDURE FakturyV()
                   repl_( 'wyr_tow', wyr_tow - razem_ )
                   repl_( 'wyr_tow', wyr_tow + razem )
                   repl_( 'pozycje', pozycje + 1 )
+                  COMMIT
                   UNLOCK
                ENDIF
                ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
@@ -705,10 +720,12 @@ PROCEDURE FakturyV()
                   IF Found()
                      BlokadaR()
                      repl_( 'wyr_tow', wyr_tow - razem_ )
+                     COMMIT
                      UNLOCK
                      SELECT suma_mc
                      BlokadaR()
                      repl_( 'wyr_tow', wyr_tow - razem_ )
+                     COMMIT
                      UNLOCK
                   ELSE
                      *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -721,6 +738,7 @@ PROCEDURE FakturyV()
                      repl_( 'WYR_TOW', -razem_ )
                      repl_( 'zaplata', '1' )
  *                   repl_([kwota],zkwota)
+                     COMMIT
                      UNLOCK
                      *********************** lp
                      SET ORDER TO 1
@@ -744,6 +762,7 @@ PROCEDURE FakturyV()
                            ENDDO
 
                            GO rec
+                           COMMIT
                            UNLOCK
                         ENDIF
                      ENDIF
@@ -751,6 +770,7 @@ PROCEDURE FakturyV()
                      BlokadaR()
                      repl_( 'wyr_tow', wyr_tow - razem_ )
                      repl_( 'pozycje', pozycje + 1 )
+                     COMMIT
                      UNLOCK
                   ENDIF
                   ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
@@ -761,6 +781,7 @@ PROCEDURE FakturyV()
                SELECT firma
                BlokadaR()
                repl_( 'nr_fakt', nr_fakt - 1 )
+               COMMIT
                UNLOCK
             ENDIF
             SELECT pozycje
@@ -768,12 +789,14 @@ PROCEDURE FakturyV()
             DO WHILE del == '+' .AND. ident == zident_poz
                BlokadaR()
                Del()
+               COMMIT
                unlock
                SKIP
             ENDDO
             SELECT faktury
             BlokadaR()
             Del()
+            COMMIT
             UNLOCK
             SKIP
             commit_()
@@ -859,6 +882,7 @@ PROCEDURE FakturyV()
                IF NR_UZYTK == 800
                   REPLACE oplskarb WITH zoplskarb, poddarow WITH zpoddarow, podcywil WITH zpodcywil
                ENDIF
+               COMMIT
                UNLOCK
                SET COLOR TO w+
                @ 17, 6 SAY SubStr( ODBNAZWA, 1, 30 )

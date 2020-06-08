@@ -1175,6 +1175,7 @@ PROCEDURE P_Dochod( _OUT )
                   REPLACE zaliczkap WITH 0
                   a_zalipodp[ 1, xxx ] := 0
                ENDIF
+               COMMIT
                UNLOCK
             ENDIF
 
@@ -1333,6 +1334,7 @@ PROCEDURE P_Dochod( _OUT )
                   REPLACE zaliczkap WITH 0
                   a_zalipodp[ 1, xxx ] := 0
                ENDIF
+               COMMIT
                UNLOCK
             ENDIF
 

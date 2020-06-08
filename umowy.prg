@@ -543,6 +543,7 @@ PROCEDURE Umowy()
                oblplu()
                BlokadaR()
                ZapiszPLAU()
+               COMMIT
                UNLOCK
             ENDIF
             _infoskl_u()

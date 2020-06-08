@@ -273,6 +273,7 @@ for xxm=1 to 12
    repl_([pfron],pc8)
    repl_([aktyw],pc9)
    repl_([zal13],pc10)
+   COMMIT
    unlock
    sele etaty
 next
@@ -309,6 +310,7 @@ for xxm=1 to 12
       repl_([zal13u],suma_mc->P4zal13)
       repl_([wynagr],suma_mc->P4potrac)
 *      repl_([wynagru],suma_mc->P4wynagr)
+      COMMIT
       unlock
    endif
 next

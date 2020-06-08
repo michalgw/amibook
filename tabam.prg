@@ -163,6 +163,7 @@ do while kl#27
                          MODYA=1
                          do BLOKADAR
                          repl PRZEL with zPRZE
+                         COMMIT
                          unlock
                       endif
                       ZPRZE=transform(zPRZE,'999.99')
@@ -175,6 +176,7 @@ do while kl#27
                          MODYA=2
                          do BLOKADAR
                          repl MC01 with NMC
+                         COMMIT
                          unlock
                       endif
                  endcase
@@ -223,6 +225,7 @@ do while kl#27
                     next
                     repl odpis_rok with zodpis_rok,;
                          odpis_sum with zodpis_sum
+                    COMMIT
                     unlock
                     odr=val(ROK)+1
                     zprzel=1
@@ -271,6 +274,7 @@ do while kl#27
                           next
                           repl odpis_rok with zodpis_rok,;
                                odpis_sum with zodpis_sum
+                          COMMIT
                           unlock
                           if kon
                              exit
@@ -286,6 +290,7 @@ do while kl#27
                              zodpis_mie=iif(zSPOSOB='L',_round(zliniowo/12,2),_round(iif(zliniowo>=zdegres,zliniowo/12,zdegres/12),2))
                           endif
                        enddo
+                       COMMIT
                        unlock
                     endif
                  endif

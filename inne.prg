@@ -299,6 +299,7 @@ endif
            repl_([n_koszty2],0)
            repl_([n_udzial2],[ 1/1  ])
         endif
+        COMMIT
         unlock
      skip
      enddo
@@ -324,6 +325,7 @@ endif
      repl_([N_MIEJSC1],zN_MIEJSC1)
      repl_([N_PRZEDM2],zN_PRZEDM2)
      repl_([N_MIEJSC2],zN_MIEJSC2)
+     COMMIT
      unlock
      commit_()
      *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ

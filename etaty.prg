@@ -216,6 +216,7 @@ FUNCTION Etaty( mieskart )
             repl_( 'WYKSZTALC', zWYKSZTALC )
             repl_( 'ZAWOD_WYU', zZAWOD_WYU )
             repl_( 'UWAGI', zUWAGI )
+            COMMIT
             UNLOCK
          ENDIF
          @ 23, 0
@@ -401,6 +402,7 @@ FUNCTION Etaty( mieskart )
                   IF Found()
                      BlokadaR()
                      repl_( 'DATA_ZAL', zD_ZAL&XX )
+                     COMMIT
                      UNLOCK
                   ENDIF
                   _pisac := tnesc( '*i', '   Czy wpisa&_c. tak&_a. sam&_a. dat&_e. innym pracownikom firmy ? (T/N)   ' )
@@ -420,6 +422,7 @@ FUNCTION Etaty( mieskart )
                               SELECT etaty
                               BlokadaR()
                               repl_( 'DATA_ZAL', zD_ZAL&XX )
+                              COMMIT
                               UNLOCK
                            ENDIF
                            SELECT etaty
@@ -659,6 +662,7 @@ FUNCTION Etaty( mieskart )
                   IF Found()
                      BlokadaR()
                      repl_( 'DO_PIT4', zDO_PIT4&XX )
+                     COMMIT
                      UNLOCK
                   ENDIF
                   _pisac := tnesc( '*i', '   Czy wpisa&_c. tak&_a. sam&_a. dat&_e. innym pracownikom firmy ? (T/N)   ' )
@@ -678,6 +682,7 @@ FUNCTION Etaty( mieskart )
                               SELECT etaty
                               BlokadaR()
                               repl_( 'DO_PIT4', zDO_PIT4&XX )
+                              COMMIT
                               UNLOCK
                            ENDIF
                            SELECT etaty

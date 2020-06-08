@@ -311,6 +311,7 @@ PROCEDURE Pracow()
                    REPLACE firma WITH ident_fir, ;
                       ident WITH Str( idpr, 5 ), ;
                       mc WITH Str( i, 2 )
+                   COMMIT
                    UNLOCK
                NEXT
                @ 24, 0
@@ -413,6 +414,7 @@ PROCEDURE Pracow()
                BlokadaR()
                del()
                *repl del with '-'
+               COMMIT
                UNLOCK
                SEEK '+' + ident_fir
 
@@ -421,6 +423,7 @@ PROCEDURE Pracow()
                DO WHILE del = '+' .AND. firma = ident_fir .AND. ident = Str( RECS, 5 )
                   BlokadaR()
                   del()
+                  COMMIT
                   UNLOCK
                   SKIP
                ENDDO
@@ -429,6 +432,7 @@ PROCEDURE Pracow()
                DO WHILE del = '+' .AND. firma = ident_fir .AND. ident = Str( RECS, 5 )
                   BlokadaR()
                   del()
+                  COMMIT
                   UNLOCK
                   SKIP
                ENDDO
@@ -437,6 +441,7 @@ PROCEDURE Pracow()
                DO WHILE del = '+' .AND. firma = ident_fir .AND. ident = Str( RECS, 5 )
                   BlokadaR()
                   del()
+                  COMMIT
                   UNLOCK
                   SKIP
                ENDDO
@@ -445,6 +450,7 @@ PROCEDURE Pracow()
                DO WHILE del = '+' .AND. firma = ident_fir .AND. ident = Str( RECS, 5 )
                   BlokadaR()
                   del()
+                  COMMIT
                   UNLOCK
                   SKIP
                ENDDO
@@ -453,6 +459,7 @@ PROCEDURE Pracow()
                DO WHILE del = '+' .AND. firma = ident_fir .AND. ident = Str( RECS, 5 )
                   BlokadaR()
                   del()
+                  COMMIT
                   UNLOCK
                   SKIP
                ENDDO

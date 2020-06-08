@@ -248,6 +248,7 @@ do while kl#27
         sele 1
         do BLOKADAR
         repl DOKUMENT with 'PRZELEW'
+        COMMIT
         unlock
         restore screen from scr_
    *############################## DRUK NOWEGO DOWODU WPLATY ###################
@@ -274,6 +275,7 @@ do while kl#27
         sele 1
         do BLOKADAR
         repl DOKUMENT with 'WPLATA'
+        COMMIT
         unlock
         restore screen from scr_
 *   *############################## DRUK PRZELEWU ###############################
@@ -331,6 +333,7 @@ do while kl#27
                       zTRESC )
         do BLOKADAR
         repl DOKUMENT with 'PRZEKAZ'
+        COMMIT
         unlock
 *   *############################## DRUK BDO ####################################
 *   case kl=66 .or. kl=98

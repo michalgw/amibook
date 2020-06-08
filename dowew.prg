@@ -167,6 +167,7 @@ do while kl#27
         if _disp
            do BLOKADAR
            dele
+           COMMIT
            unlock
            skip
            commit_()
@@ -188,6 +189,7 @@ do while kl#27
    case kl=68.or.kl=100
         do BLOKADAR
         repl drukowac with .not.drukowac
+        COMMIT
         unlock
    *################################### POMOC ##################################
    case kl=28

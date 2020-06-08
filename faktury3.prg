@@ -285,6 +285,7 @@ PROCEDURE Faktury3()
                   repl_( 'firma', ident_fir )
                   repl_( 'nazwa', znazwa )
                   repl_( 'adres', zadres )
+                  COMMIT
                   UNLOCK
                ENDIF
             ENDIF
@@ -292,6 +293,7 @@ PROCEDURE Faktury3()
             IF ins
                BlokadaR()
                repl_( 'nr_rach', nr_rach + 1 )
+               COMMIT
                UNLOCK
             ENDIF
             SELECT faktury
@@ -315,6 +317,7 @@ PROCEDURE Faktury3()
             repl_( 'sposob_p', zsposob_p )
             repl_( 'termin_z', ztermin_z )
             repl_( 'kwota', zkwota )
+            COMMIT
             UNLOCK
             zident_poz := Str( rec_no, 8 )
             SELECT pozycje
@@ -328,6 +331,7 @@ PROCEDURE Faktury3()
                      SKIP -1
                      BlokadaR()
                      repl_( 'del', '-' )
+                     COMMIT
                      UNLOCK
                      GO NR_REC
                   ENDDO
@@ -344,6 +348,7 @@ PROCEDURE Faktury3()
                   repl_( 'jm', zjm[ i ] )
                   repl_( 'cena', zcena[ i ] )
                   repl_( 'wartosc', zwartosc[ i ] )
+                  COMMIT
                   UNLOCK
                   SKIP
                ENDIF
@@ -401,6 +406,7 @@ PROCEDURE Faktury3()
                   ENDIF
                ENDIF
                repl_( 'kwota', zkwota )
+               COMMIT
                UNLOCK
                SET ORDER TO 1
                *********************** lp
@@ -454,10 +460,12 @@ PROCEDURE Faktury3()
                         ENDIF
                      ENDIF
                      GO rec
+                     COMMIT
                      UNLOCK
                   ENDIF
                ENDIF
                SET ORDER TO 3
+               COMMIT
                UNLOCK
                SELECT suma_mc
                BlokadaR()
@@ -466,6 +474,7 @@ PROCEDURE Faktury3()
                IF ins
                   repl_( 'pozycje', pozycje + 1 )
                ENDIF
+               COMMIT
                UNLOCK
                *==============================================================
             ENDIF
@@ -509,6 +518,7 @@ PROCEDURE Faktury3()
                SET ORDER TO 1
                BlokadaR()
                del()
+               COMMIT
                UNLOCK
                SKIP
                *********************** lp
@@ -522,16 +532,19 @@ PROCEDURE Faktury3()
                         SKIP
                      ENDDO
                      GO rec
+                     COMMIT
                      UNLOCK
                   ENDIF
                ENDIF
                ***********************
                SET ORDER TO 3
+               COMMIT
                UNLOCK
                SELECT suma_mc
                BlokadaR()
                repl_( 'wyr_tow', wyr_tow - razem_ )
                repl_( 'pozycje', pozycje - 1 )
+               COMMIT
                UNLOCK
                *==============================================================
             ENDIF
@@ -539,6 +552,7 @@ PROCEDURE Faktury3()
                SELECT firma
                BlokadaR()
                repl_( 'nr_rach', nr_rach - 1 )
+               COMMIT
                UNLOCK
             ENDIF
             SELECT pozycje
@@ -546,6 +560,7 @@ PROCEDURE Faktury3()
             DO WHILE del == '+' .AND. ident = zident_poz
                BlokadaR()
                del()
+               COMMIT
                UNLOCK
                SKIP
             ENDDO

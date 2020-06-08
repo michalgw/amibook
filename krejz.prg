@@ -424,6 +424,7 @@ PROCEDURE KRejZ()
             IF Found()
                BlokadaR()
                repl_( 'stan', stan - stan_ )
+               COMMIT
                UNLOCK
             ENDIF
             SELECT suma_mc
@@ -454,6 +455,7 @@ PROCEDURE KRejZ()
                   repl_( 'pozycje', pozycje - 1 )
                ENDIF
             ENDIF
+            COMMIT
             UNLOCK
             SEEK '+' + ident_fir + miesiac
 
@@ -482,6 +484,7 @@ PROCEDURE KRejZ()
                         SKIP
                      ENDDO
                      GO rec
+                     COMMIT
                      UNLOCK
                      @ 24, 0
                   ENDIF
@@ -1751,6 +1754,7 @@ PROCEDURE KRejZ_Ksieguj()
    IF Found()
       BlokadaR()
       AKTPOL+ stan WITH zNETTO + zNETTO2
+      COMMIT
       UNLOCK
    ENDIF
    SELECT suma_mc
@@ -1767,6 +1771,7 @@ PROCEDURE KRejZ_Ksieguj()
       AktKol( 1, zKOLUMNA, zNETTO )
       AktKol( 1, zKOLUMNA2, zNETTO2 )
    ENDIF
+   COMMIT
    UNLOCK
    SEEK '+' + ident_fir + miesiac
    SELECT rejz
@@ -1800,9 +1805,9 @@ PROCEDURE KRejZ_Ksieguj()
    repl_( 'NETTO2', zNETTO2 )
    repl_( 'KOLUMNA2', zKOLUMNA2 )
 
+   COMMIT
    UNLOCK
    REKZAK := RecNo()
-   COMMIT
 
    *para fZRODLO,fJAKIDOK,fNIP,fNRDOK,fDATAKS,fDATADOK,fTERMIN,fDNIPLAT,fRECNO,fKWOTA,fTRESC,fKWOTAVAT
    * JAKIDOK: FS i FZ (faktury zakupu i sprzedazy), ZS i ZZ (zaplaty za sprzedaz i zakupy)
@@ -1878,6 +1883,7 @@ PROCEDURE KRejZ_Ksieguj()
                   SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 )
                   BlokadaR()
                   repl_( 'pozycje', pozycje - 1 )
+                  COMMIT
                   UNLOCK
                   SEEK '+' + ident_fir + miesiac
                   SELECT &usebaz
@@ -1892,6 +1898,7 @@ PROCEDURE KRejZ_Ksieguj()
                         SKIP
                      ENDDO
                      GO rec
+                     COMMIT
                      UNLOCK
                      @ 24, 0
                   ENDIF
@@ -1901,10 +1908,12 @@ PROCEDURE KRejZ_Ksieguj()
                   SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 )
                   BlokadaR()
                   repl_( 'pozycje', pozycje - 1 )
+                  COMMIT
                   UNLOCK
                   SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                   BlokadaR()
                   repl_( 'pozycje', pozycje + 1 )
+                  COMMIT
                   UNLOCK
                   SEEK '+' + ident_fir + miesiac
                   SELECT &usebaz
@@ -1919,6 +1928,7 @@ PROCEDURE KRejZ_Ksieguj()
                         SKIP
                      ENDDO
                      GO rec
+                     COMMIT
                      UNLOCK
                      @ 24, 0
                   ENDIF
@@ -1954,6 +1964,7 @@ PROCEDURE KRejZ_Ksieguj()
                         repl_( 'K16OPIS', zK16OPIS )
                      ENDCASE
                   ENDIF
+                  COMMIT
                   UNLOCK
                   SET ORDER TO 1
                   *********************** lp
@@ -1975,9 +1986,11 @@ PROCEDURE KRejZ_Ksieguj()
                         SKIP
                      ENDDO
                      GO rec
+                     COMMIT
                      UNLOCK
                      @ 24,0
                   ENDIF
+                  COMMIT
                   UNLOCK
                ENDIF
                Commit_()
@@ -1990,6 +2003,7 @@ PROCEDURE KRejZ_Ksieguj()
                SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                BlokadaR()
                repl_( 'pozycje', pozycje + 1 )
+               COMMIT
                UNLOCK
                SEEK '+' + ident_fir + miesiac
                SELECT &usebaz
@@ -2057,9 +2071,11 @@ PROCEDURE KRejZ_Ksieguj()
                      SKIP
                   ENDDO
                   GO rec
+                  COMMIT
                   UNLOCK
                   @ 24, 0
                ENDIF
+               COMMIT
                UNLOCK
             ENDIF
          ENDCASE
@@ -2070,6 +2086,7 @@ PROCEDURE KRejZ_Ksieguj()
             SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
             BlokadaR()
             repl_( 'pozycje', pozycje + 1 )
+            COMMIT
             UNLOCK
             SEEK '+' + ident_fir + miesiac
             SELECT &usebaz
@@ -2138,9 +2155,11 @@ PROCEDURE KRejZ_Ksieguj()
                ENDDO
 
                GO rec
+               COMMIT
                UNLOCK
                @ 24,0
             ENDIF
+            COMMIT
             UNLOCK
          ENDIF
       ENDIF

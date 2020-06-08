@@ -396,6 +396,7 @@ PROCEDURE KRejS()
             IF Found()
                BlokadaR()
                repl_( 'stan', stan - stan_ )
+               COMMIT
                UNLOCK
             ENDIF
             SELECT suma_mc
@@ -448,6 +449,7 @@ PROCEDURE KRejS()
                   ENDCASE
                ENDIF
             ENDIF
+            COMMIT
             UNLOCK
 
             ************* ZAPIS REJESTRU DO KSIEGI *******************
@@ -480,6 +482,7 @@ PROCEDURE KRejS()
                            SKIP
                         ENDDO
                         GO rec
+                        COMMIT
                         UNLOCK
                         @ 24, 0
                      ENDIF
@@ -495,6 +498,7 @@ PROCEDURE KRejS()
                      SET ORDER TO 1
                      BlokadaR()
                      repl_( 'wyr_tow', wyr_tow - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) )
+                     COMMIT
                      UNLOCK
                   ELSE
                      SET ORDER TO 1
@@ -502,6 +506,7 @@ PROCEDURE KRejS()
                      SELECT suma_mc
                      BlokadaR()
                      repl_( 'pozycje', pozycje + 1 )
+                     COMMIT
                      UNLOCK
                      SELECT &usebaz
                      app()
@@ -512,6 +517,7 @@ PROCEDURE KRejS()
                      repl_( 'WYR_TOW', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) ) )
                      repl_( 'zaplata', '1' )
 *                      repl_([kwota],zkwota)
+                     COMMIT
                      UNLOCK
                      *********************** lp
                      IF nr_uzytk >= 0
@@ -534,10 +540,12 @@ PROCEDURE KRejS()
                            ENDDO
 
                            GO rec
+                           COMMIT
                            UNLOCK
                            @ 24, 0
                         ENDIF
                      ENDIF
+                     COMMIT
                      UNLOCK
                      ***********************
                   ENDIF
@@ -550,6 +558,7 @@ PROCEDURE KRejS()
                      SET ORDER TO 1
                      BlokadaR()
                      repl_( 'uslugi', uslugi - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) )
+                     COMMIT
                      UNLOCK
                   ELSE
                      SET ORDER TO 1
@@ -557,6 +566,7 @@ PROCEDURE KRejS()
                      SELECT suma_mc
                      BlokadaR()
                      repl_( 'pozycje', pozycje + 1 )
+                     COMMIT
                      UNLOCK
                      SELECT &usebaz
                      app()
@@ -567,6 +577,7 @@ PROCEDURE KRejS()
                      repl_( 'USLUGI', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) ) )
                      repl_( 'zaplata', '1' )
 *                      repl_([kwota],zkwota)
+                     COMMIT
                      UNLOCK
                      *********************** lp
                      IF nr_uzytk >= 0
@@ -589,10 +600,12 @@ PROCEDURE KRejS()
                            ENDDO
 
                            GO rec
+                           COMMIT
                            UNLOCK
                            @ 24, 0
                         ENDIF
                      ENDIF
+                     COMMIT
                      UNLOCK
                      ***********************
                   ENDIF
@@ -678,6 +691,7 @@ PROCEDURE KRejS()
                IF Found()
                   BlokadaR()
                   repl_( 'stan', stan - stan_ )
+                  COMMIT
                   UNLOCK
                ENDIF
                SELECT suma_mc
@@ -730,6 +744,7 @@ PROCEDURE KRejS()
                      ENDCASE
                   ENDIF
                ENDIF
+               COMMIT
                UNLOCK
 
                ************* ZAPIS REJESTRU DO KSIEGI *******************
@@ -762,6 +777,7 @@ PROCEDURE KRejS()
                               SKIP
                            ENDDO
                            GO rec
+                           COMMIT
                            UNLOCK
                            @ 24, 0
                         ENDIF
@@ -777,6 +793,7 @@ PROCEDURE KRejS()
                         SET ORDER TO 1
                         BlokadaR()
                         repl_( 'wyr_tow', wyr_tow - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) )
+                        COMMIT
                         UNLOCK
                      ELSE
                         SET ORDER TO 1
@@ -784,6 +801,7 @@ PROCEDURE KRejS()
                         SELECT suma_mc
                         BlokadaR()
                         repl_( 'pozycje', pozycje + 1 )
+                        COMMIT
                         UNLOCK
                         SELECT &usebaz
                         app()
@@ -794,6 +812,7 @@ PROCEDURE KRejS()
                         repl_( 'WYR_TOW', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) ) )
                         repl_( 'zaplata', '1' )
    *                      repl_([kwota],zkwota)
+                        COMMIT
                         UNLOCK
                         *********************** lp
                         IF nr_uzytk >= 0
@@ -816,10 +835,12 @@ PROCEDURE KRejS()
                               ENDDO
 
                               GO rec
+                              COMMIT
                               UNLOCK
                               @ 24, 0
                            ENDIF
                         ENDIF
+                        COMMIT
                         UNLOCK
                         ***********************
                      ENDIF
@@ -832,6 +853,7 @@ PROCEDURE KRejS()
                         SET ORDER TO 1
                         BlokadaR()
                         repl_( 'uslugi', uslugi - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) )
+                        COMMIT
                         UNLOCK
                      ELSE
                         SET ORDER TO 1
@@ -839,6 +861,7 @@ PROCEDURE KRejS()
                         SELECT suma_mc
                         BlokadaR()
                         repl_( 'pozycje', pozycje + 1 )
+                        COMMIT
                         UNLOCK
                         SELECT &usebaz
                         app()
@@ -849,6 +872,7 @@ PROCEDURE KRejS()
                         repl_( 'USLUGI', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) ) )
                         repl_( 'zaplata', '1' )
    *                      repl_([kwota],zkwota)
+                        COMMIT
                         UNLOCK
                         *********************** lp
                         IF nr_uzytk >= 0
@@ -871,10 +895,12 @@ PROCEDURE KRejS()
                               ENDDO
 
                               GO rec
+                              COMMIT
                               UNLOCK
                               @ 24, 0
                            ENDIF
                         ENDIF
+                        COMMIT
                         UNLOCK
                         ***********************
                      ENDIF
@@ -2113,6 +2139,7 @@ PROCEDURE KRejS_Ksieguj()
    IF Found()
       BlokadaR()
       AKTPOL+ stan WITH (-zNETTO - zNETTO2)
+      COMMIT
       UNLOCK
    ENDIF
    SELECT suma_mc
@@ -2126,6 +2153,7 @@ PROCEDURE KRejS_Ksieguj()
       AktKol( 1, zKOLUMNA, zNETTO )
       AktKol( 1, zKOLUMNA2, zNETTO2 )
    ENDIF
+   COMMIT
    UNLOCK
    SELECT rejs
    IfIns( 0 )
@@ -2133,9 +2161,9 @@ PROCEDURE KRejS_Ksieguj()
    ADDPOZ
    *WAIT zsek_cv7
    ADDREJS
+   COMMIT
    UNLOCK
    REKZAK := RecNo()
-   COMMIT
 
    *para fZRODLO,fJAKIDOK,fNIP,fNRDOK,fDATAKS,fDATADOK,fTERMIN,fDNIPLAT,fRECNO,fKWOTA,fTRESC,fKWOTAVAT
    * JAKIDOK: FS i FZ (faktury zakupu i sprzedazy), ZS i ZZ (zaplaty za sprzedaz i zakupy)
@@ -2211,11 +2239,12 @@ PROCEDURE KRejS_Ksieguj()
                   IF zNETTO == 0
                      BlokadaR()
                      DELETE
-                     UNLOCK
                      COMMIT
+                     UNLOCK
                      SELECT suma_mc
                      BlokadaR()
                      repl_( 'pozycje', pozycje - 1 )
+                     COMMIT
                      UNLOCK
                      SELECT &USEBAZ
                      SET ORDER TO 1
@@ -2230,6 +2259,7 @@ PROCEDURE KRejS_Ksieguj()
                               SKIP
                            ENDDO
                            GO rec
+                           COMMIT
                            UNLOCK
                            @ 24, 0
                         ENDIF
@@ -2267,6 +2297,7 @@ PROCEDURE KRejS_Ksieguj()
                         ENDCASE
                      ENDIF
                      repl_( 'rejzid', REKZAK )
+                     COMMIT
                      UNLOCK
                   ENDIF
                   commit_()
@@ -2277,6 +2308,7 @@ PROCEDURE KRejS_Ksieguj()
                   SELECT suma_mc
                   BlokadaR()
                   repl_( 'pozycje', pozycje + 1 )
+                  COMMIT
                   UNLOCK
                   SELECT &USEBAZ
                   SET ORDER TO 1
@@ -2333,10 +2365,12 @@ PROCEDURE KRejS_Ksieguj()
                            SKIP
                         ENDDO
                         GO rec
+                        COMMIT
                         UNLOCK
                         @ 24, 0
                      ENDIF
                   ENDIF
+                  COMMIT
                   UNLOCK
                ENDIF
             ENDCASE
@@ -2350,6 +2384,7 @@ PROCEDURE KRejS_Ksieguj()
                SET ORDER TO 1
                BlokadaR()
                AKTPOL- wyr_tow WITH  iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', netprzed, netprzed2 )
+               COMMIT
                UNLOCK
             ELSE
                SET ORDER TO 1
@@ -2357,6 +2392,7 @@ PROCEDURE KRejS_Ksieguj()
                SELECT suma_mc
                BlokadaR()
                repl_( 'pozycje', pozycje + 1 )
+               COMMIT
                UNLOCK
                SELECT &USEBAZ
                app()
@@ -2367,6 +2403,7 @@ PROCEDURE KRejS_Ksieguj()
                repl_( 'WYR_TOW', -iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', netprzed, netprzed2 ) )
                repl_( 'zaplata', '1' )
                *repl_([kwota],zkwota)
+               COMMIT
                UNLOCK
                *********************** lp
                IF nr_uzytk >= 0
@@ -2389,10 +2426,12 @@ PROCEDURE KRejS_Ksieguj()
                      ENDDO
 
                      GO rec
+                     COMMIT
                      UNLOCK
                      @ 24, 0
                   ENDIF
                ENDIF
+               COMMIT
                UNLOCK
                ***********************
             ENDIF
@@ -2405,6 +2444,7 @@ PROCEDURE KRejS_Ksieguj()
                SET ORDER TO 1
                BlokadaR()
                AKTPOL- uslugi WITH iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', netprzed, netprzed2 )
+               COMMIT
                UNLOCK
             ELSE
                SET ORDER TO 1
@@ -2412,6 +2452,7 @@ PROCEDURE KRejS_Ksieguj()
                SELECT suma_mc
                BlokadaR()
                repl_( 'pozycje', pozycje + 1 )
+               COMMIT
                UNLOCK
                SELECT &USEBAZ
                app()
@@ -2422,6 +2463,7 @@ PROCEDURE KRejS_Ksieguj()
                repl_( 'USLUGI', -iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', netprzed, netprzed2 ) )
                repl_( 'zaplata', '1' )
                * repl_([kwota],zkwota)
+               COMMIT
                UNLOCK
                *********************** lp
                IF nr_uzytk >= 0
@@ -2444,10 +2486,12 @@ PROCEDURE KRejS_Ksieguj()
                      ENDDO
 
                      GO rec
+                     COMMIT
                      UNLOCK
                      @ 24, 0
                   ENDIF
                ENDIF
+               COMMIT
                UNLOCK
             ***********************
             ENDIF
@@ -2461,6 +2505,7 @@ PROCEDURE KRejS_Ksieguj()
                SELECT suma_mc
                BlokadaR()
                repl_( 'pozycje', pozycje+1)
+               COMMIT
                unlock
                select &USEBAZ
                set orde to 1
@@ -2517,10 +2562,12 @@ PROCEDURE KRejS_Ksieguj()
                         SKIP
                      ENDDO
                      GO rec
+                     COMMIT
                      UNLOCK
                      @ 24, 0
                   ENDIF
                ENDIF
+               COMMIT
                UNLOCK
             ENDIF
          ENDIF
@@ -2537,6 +2584,7 @@ PROCEDURE KRejS_Ksieguj()
                SET ORDER TO 1
                BlokadaR()
                repl_( 'wyr_tow', wyr_tow + iif( Str( Val( zKOLUMNA ), 1 ) == '7', znetto, znetto2 ) )
+               COMMIT
                UNLOCK
             ELSE
                SET ORDER TO 1
@@ -2544,6 +2592,7 @@ PROCEDURE KRejS_Ksieguj()
                SELECT suma_mc
                BlokadaR()
                repl_( 'pozycje', pozycje+1)
+               COMMIT
                unlock
                select &USEBAZ
                app()
@@ -2554,6 +2603,7 @@ PROCEDURE KRejS_Ksieguj()
                repl_( 'WYR_TOW', iif( Str( Val( zKOLUMNA ), 1 ) == '7', znetto, znetto2 ) )
                repl_( 'zaplata', '1')
                * repl_([kwota],zkwota)
+               COMMIT
                unlock
                *********************** lp
                IF nr_uzytk >= 0
@@ -2576,10 +2626,12 @@ PROCEDURE KRejS_Ksieguj()
                      ENDDO
 
                      GO rec
+                     COMMIT
                      UNLOCK
                      @ 24, 0
                   ENDIF
                ENDIF
+               COMMIT
                UNLOCK
                ***********************
             ENDIF
@@ -2592,6 +2644,7 @@ PROCEDURE KRejS_Ksieguj()
                SET ORDER TO 1
                BlokadaR()
                repl_( 'uslugi', uslugi + iif( Str( Val( zKOLUMNA ), 1 ) == '8', znetto, znetto2 ) )
+               COMMIT
                UNLOCK
             ELSE
                SET ORDER TO 1
@@ -2599,6 +2652,7 @@ PROCEDURE KRejS_Ksieguj()
                SELECT suma_mc
                BlokadaR()
                repl_( 'pozycje', pozycje + 1 )
+               COMMIT
                UNLOCK
                SELECT &USEBAZ
                app()
@@ -2609,6 +2663,7 @@ PROCEDURE KRejS_Ksieguj()
                repl_( 'USLUGI', iif( Str( Val( zKOLUMNA ), 1 ) == '8', znetto, znetto2 ) )
                repl_( 'zaplata', '1' )
                * repl_([kwota],zkwota)
+               COMMIT
                UNLOCK
                *********************** lp
                IF nr_uzytk >= 0
@@ -2631,10 +2686,12 @@ PROCEDURE KRejS_Ksieguj()
                      ENDDO
 
                      GO rec
+                     COMMIT
                      UNLOCK
                      @ 24, 0
                   ENDIF
                ENDIF
+               COMMIT
                UNLOCK
                ***********************
             ENDIF
@@ -2653,6 +2710,7 @@ PROCEDURE KRejS_Ksieguj()
    repl_( 'KOL37', zKOL37 )
    repl_( 'KOL38', zKOL38 )
    repl_( 'KOL39', zKOL39 )
+   COMMIT
    UNLOCK
    *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
 

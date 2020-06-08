@@ -451,6 +451,7 @@ PROCEDURE Ksiega_Przenumeruj()
       ENDIF
    ENDDO
 
+   oper->( dbCommit() )
    oper->( dbUnlock() )
    oper->( dbCloseArea() )
    firma->( dbCloseArea() )
@@ -513,6 +514,7 @@ PROCEDURE UstawKwoteWolnaWFirmach()
          spolka->param_kw := m->param_kw
          spolka->param_kwd := m->param_kwd
          spolka->param_kw2 := m->param_kw2
+         spolka->( dbCommit() )
          spolka->( dbRUnlock() )
       ENDIF
       spolka->( dbSkip() )

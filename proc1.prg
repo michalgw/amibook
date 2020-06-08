@@ -1449,6 +1449,7 @@ FUNCTION aktsumies( nCurEl )
             REPLACE USLUGI WITH zUSLUGI, WYR_TOW WITH zWYR_TOW, ;
                HANDEL WITH zHANDEL, POZYCJE WITH zPOZYCJE, ;
                RY20 WITH zRY20, RY17 WITH zRY17, RY10 WITH zRY10, ZAMEK WITH iif( zZAMEK == 'T', .T., .F. )
+            COMMIT
             UNLOCK
          ENDIF
       ELSE
@@ -1497,6 +1498,7 @@ FUNCTION aktsumies( nCurEl )
             REPLACE USLUGI WITH zUSLUGI, WYR_TOW WITH zWYR_TOW, ;
                ZAKUP WITH zZAKUP, UBOCZNE WITH zUBOCZNE, WYNAGR_G WITH zWYNAGR_G, ;
                WYDATKI WITH zWYDATKI, POZYCJE WITH zPOZYCJE, ZAMEK WITH iif( zZAMEK == 'T', .T., .F. )
+            COMMIT
             UNLOCK
          ENDIF
       ENDIF
@@ -1978,6 +1980,7 @@ PROCEDURE NOTES( EDI )
       IF edi .AND. lastkey()#K_ESC
          BLOKADAR()
          repl_( 'NOTATKA', zNOTATKA )
+         COMMIT
          UNLOCK
       ENDIF
       USE
@@ -2390,6 +2393,7 @@ PROCEDURE ZAMEK()
 
    BLOKADAR()
    repl_( 'zamek', .T. )
+   COMMIT
    UNLOCK
    Tone( 200, 1 )
    close_()
@@ -2672,6 +2676,7 @@ FUNCTION ROZRAPP( fZRODLO, fJAKIDOK, fNIP, fNRDOK, fDATAKS, fDATADOK, fTERMIN, f
       REPLACE ZAKUP WITH fKWOTA * fMNOZNIK
    ENDIF
 
+   COMMIT
    UNLOCK
 
    RETURN .T.
@@ -2691,6 +2696,7 @@ function ROZRDEL( fZRODLO, fRECNO )
    ENDIF
    SET ORDER TO 1
 
+   COMMIT
    UNLOCK
 
    RETURN .T.

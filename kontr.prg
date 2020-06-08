@@ -172,6 +172,7 @@ PROCEDURE Kontr()
             repl_( 'TEL', zTEL )
             repl_( 'UE', zUE )
             repl_( 'KRAJ', zKRAJ )
+            COMMIT
             UNLOCK
             commit_()
             *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
@@ -198,6 +199,7 @@ PROCEDURE Kontr()
          IF _disp
             BlokadaR()
             del()
+            COMMIT
             UNLOCK
             SKIP
             commit_()

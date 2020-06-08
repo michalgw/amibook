@@ -309,6 +309,7 @@ if ins
             g_udzial2 with [ 1/1  ],;
             n_udzial1 with [ 1/1  ],;
             n_udzial2 with [ 1/1  ]
+       COMMIT
        unlock
    next
    @ 24,0
@@ -388,12 +389,14 @@ ColStd()
      do while del=[+].and.ident=zident
         do BLOKADAR
         del()
+        COMMIT
         unlock
         skip
      enddo
      select spolka
      do BLOKADAR
      repl del with '-'
+COMMIT
 unlock
 skip
 commit_()

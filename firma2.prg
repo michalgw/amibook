@@ -199,6 +199,7 @@ zsymbol=dos_l(zsymbol)
    repl_([TLX      ],zTLX      )
    repl_([DATA_ZAL ],zDATA_ZAL )
    repl_([SPOLKA   ],iif(zspolka='T',.t.,.f.))
+   COMMIT
    unlock
    ident=str(recno(),3)
    select suma_mc
@@ -208,6 +209,7 @@ zsymbol=dos_l(zsymbol)
    repl_([firma],ident)
    repl_([mc],str(i,2))
    zero_(5)
+   COMMIT
    unlock
    next
    endif

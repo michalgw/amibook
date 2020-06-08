@@ -198,6 +198,7 @@ zsymbol=dos_l(zsymbol)
    repl_([TLX      ],zTLX      )
    repl_([DATA_ZAL ],zDATA_ZAL )
    repl_([SPOLKA   ],iif(zspolka='T',.t.,.f.))
+   COMMIT
    unlock
    ident=str(recno(),3)
    select suma_mc
@@ -207,6 +208,7 @@ zsymbol=dos_l(zsymbol)
    repl_([firma],ident)
    repl_([mc],str(i,2))
    zero_(5)
+   COMMIT
    unlock
    next
    endif
@@ -251,6 +253,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    dele
+   COMMIT
    unlock
    skip
 enddo
@@ -262,6 +265,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -273,6 +277,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -284,6 +289,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    dele
+   COMMIT
    unlock
    skip
 enddo
@@ -295,6 +301,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    dele
+   COMMIT
    unlock
    skip
 enddo
@@ -306,6 +313,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    dele
+   COMMIT
    unlock
    skip
 enddo
@@ -318,6 +326,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    repl_([del],[-])
+   COMMIT
    unlock
    seek [+]+zident
 enddo
@@ -330,6 +339,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    repl_([del],[-])
+   COMMIT
    unlock
    seek [+]+zident
 enddo
@@ -350,12 +360,14 @@ do while del=[+].and.firma=zident
    do while del=[+].and.ident=zm
       do BLOKADAR
       del()
+      COMMIT
       unlock
       skip
    enddo
    select spolka
    do BLOKADAR
    repl_([del],[-])
+   COMMIT
    unlock
    seek [+]+zident
 enddo
@@ -384,6 +396,7 @@ do while del=[+].and.firma=zident
    do while del=[+].and.ident=zm
       do BLOKADAR
       del()
+      COMMIT
       unlock
       skip
    enddo
@@ -392,6 +405,7 @@ do while del=[+].and.firma=zident
    do while del=[+].and.firma=zident.and.ident=zm
       do BLOKADAR
       del()
+      COMMIT
       unlock
       skip
    enddo
@@ -400,12 +414,14 @@ do while del=[+].and.firma=zident
    do while del=[+].and.firma=zident.and.ident=zm
       do BLOKADAR
       del()
+      COMMIT
       unlock
       skip
    enddo
    select prac
    do BLOKADAR
    repl_([del],[-])
+   COMMIT
    unlock
    seek [+]+zident
 enddo
@@ -426,6 +442,7 @@ do while del=[+].and.firma=zident
    do while del=[+].and.ident=zm
       do BLOKADAR
       del()
+      COMMIT
       unlock
       skip
    enddo
@@ -433,6 +450,7 @@ do while del=[+].and.firma=zident
    do BLOKADAR
    del()
 *   repl_([del],[-])
+   COMMIT
    unlock
    seek [+]+zident
 enddo
@@ -453,6 +471,7 @@ do while del=[+].and.firma=zident
    do while del=[+].and.ident=zm
       do BLOKADAR
       del()
+      COMMIT
       unlock
       skip
    enddo
@@ -460,6 +479,7 @@ do while del=[+].and.firma=zident
    do BLOKADAR
    del()
 *   repl_([del],[-])
+   COMMIT
    unlock
    seek [+]+zident
 enddo
@@ -484,6 +504,7 @@ do while del=[+].and.firma=zident
    do while del=[+].and.ident=zm
       do BLOKADAR
       del()
+      COMMIT
       unlock
       skip
    enddo
@@ -492,12 +513,14 @@ do while del=[+].and.firma=zident
    do while del=[+].and.ident=zm
       do BLOKADAR
       del()
+      COMMIT
       unlock
       skip
    enddo
    select kartst
    do BLOKADAR
    del()
+   COMMIT
    unlock
    seek [+]+zident
 enddo
@@ -509,6 +532,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -520,6 +544,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -531,6 +556,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    dele
+   COMMIT
    unlock
    skip
 enddo
@@ -542,6 +568,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -553,6 +580,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -564,6 +592,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -575,6 +604,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -586,6 +616,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -597,6 +628,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -608,6 +640,7 @@ seek zident
 do while firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -619,6 +652,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -629,6 +663,7 @@ seek [+]+zident
 do while del=[+].and.firma=zident
    do BLOKADAR
    del()
+   COMMIT
    unlock
    skip
 enddo
@@ -639,6 +674,7 @@ _nrrr_rec=recno()
 skip -1
 do BLOKADAR
 repl_([del],[-])
+COMMIT
 unlock
 go _nrrr_rec
 if del#[+]

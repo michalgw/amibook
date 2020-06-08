@@ -140,6 +140,7 @@ do BLOKADAR
 repl_([SYMB_REJ],zSYMB_REJ)
 repl_([OPIS],zOPIS)
 repl_([OPCJE],zOPCJE)
+COMMIT
 unlock
 commit_()
 *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
@@ -166,6 +167,7 @@ _disp=tnesc([*i],[   Czy skasowa&_c.? (T/N)   ])
 if _disp
 do BLOKADAR
 del()
+COMMIT
 unlock
 skip
 commit_()

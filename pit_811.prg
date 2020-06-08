@@ -72,6 +72,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
          repl_( 'DATA', zdataprzy )
          repl_( 'TYP', 'P' )
          *commit_()
+         COMMIT
          UNLOCK
          SELECT prac
       ELSE
@@ -86,6 +87,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
          repl_( 'DATA', zdatazwol )
          repl_( 'TYP', 'Z' )
          *commit_()
+         COMMIT
          UNLOCK
          SELECT prac
       ELSE
@@ -103,6 +105,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
             repl_( 'DATA', umowy->data_wyp )
             repl_( 'TYP', 'U' )
             *commit_()
+            COMMIT
             UNLOCK
             SELECT umowy
          ENDIF
@@ -235,6 +238,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       REPLACE KOR_PRZY WITH zKOR_PRZY, KOR_KOSZ WITH zKOR_KOSZ, KOR_ZALI WITH zKOR_ZALI, ;
          KOR_SPOL WITH zKOR_SPOL, KOR_ZDRO WITH zKOR_ZDRO, KOR_SPOLZ WITH zKOR_SPOLZ, KOR_ZDROZ WITH zKOR_ZDROZ, ;
          KOR_ZWET WITH zKOR_ZWET, KOR_ZWEM WITH zKOR_ZWEM, KOR_ZWIN WITH zKOR_ZWIN
+      COMMIT
       UNLOCK
       SELECT 20
       USE

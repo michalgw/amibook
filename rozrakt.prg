@@ -443,6 +443,7 @@ case kl=65.or.kl=97
                  do while .not.eof().and.FIRMA+NIP+WYR==kluczstat
                     do BLOKADAR
                     repl_([STATUS],'R')
+                    COMMIT
                     unlock
                     skip
                  enddo
@@ -451,6 +452,7 @@ case kl=65.or.kl=97
                  do while .not.eof().and.FIRMA+NIP+WYR==kluczstat
                     do BLOKADAR
                     repl_([STATUS],' ')
+                    COMMIT
                     unlock
                     skip
                  enddo

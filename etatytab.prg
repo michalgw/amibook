@@ -224,6 +224,7 @@ do while kl#27
                   if found()
                      do BLOKADAR
                      repl_([PIT4RC4],zP4RC4&XX)
+                     COMMIT
                      unlock
                   endif
                   sele prac
@@ -291,6 +292,7 @@ do while kl#27
                   if found()
                      do BLOKADAR
                      repl_([PIT4RC5],zP4RC5&XX)
+                     COMMIT
                      unlock
                   endif
                   sele prac
@@ -358,6 +360,7 @@ do while kl#27
                   if found()
                      do BLOKADAR
                      repl_([PIT4RC6],zP4RC6&XX)
+                     COMMIT
                      unlock
                   endif
                   sele prac
@@ -425,6 +428,7 @@ do while kl#27
                   if found()
                      do BLOKADAR
                      repl_([PIT4RC7],zP4RC7&XX)
+                     COMMIT
                      unlock
                   endif
                   sele prac
@@ -492,6 +496,7 @@ do while kl#27
                   if found()
                      do BLOKADAR
                      repl_([PIT4RC8],zP4RC8&XX)
+                     COMMIT
                      unlock
                   endif
                   sele prac
