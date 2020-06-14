@@ -40,11 +40,12 @@ FUNCTION Zrodla()
    @  8, 0 SAY '3. תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת תתתתתתתתתתתתתת תתתתתתתתתתתתתת תתתתתת'
    IF spolka->sposob == 'L'
       @  9, 0 SAY '4. תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת תתתתתתתתתתתתתת תתתתתתתתתתתתתת תתתתתת'
+      @ 10, 0 SAY '5. תתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתתת תתתתתתתתתתתתתת תתתתתתתתתתתתתת תתתתתת'
    ELSE
       @  9, 0 SAY '                                                                                '
+      @ 10, 0 SAY '                                                                                '
    ENDIF
    IF spolka->sposob == 'L'
-      @ 10, 0 SAY '                                                                                '
       @ 11, 0 SAY '                                                                                '
       @ 12, 0 SAY '                                                                                '
       @ 13, 0 SAY '                                                                                '
@@ -106,6 +107,9 @@ FUNCTION Zrodla()
                zG_PRZYCH4 := G_PRZYCH4
                zG_KOSZTY4 := G_KOSZTY4
                zG_UDZIAL4 := G_UDZIAL4
+               zG_PRZYCH5 := G_PRZYCH5
+               zG_KOSZTY5 := G_KOSZTY5
+               zG_UDZIAL5 := G_UDZIAL5
                zN_PRZYCH1 := N_PRZYCH1
                zN_KOSZTY1 := N_KOSZTY1
                zN_UDZIAL1 := N_UDZIAL1
@@ -129,9 +133,12 @@ FUNCTION Zrodla()
                   @ 8, 74 GET zG_UDZIAL3 PICTURE "99/999" VALID v19_1a()
                ENDIF
                IF spolka->sposob == 'L' .AND. ! Empty( spolka->g_rodzaj4 )
-                  @ 9, 44 get zG_PRZYCH4 picture "   99999999.99"
-                  @ 9, 59 get zG_KOSZTY4 picture "   99999999.99"
-                  @ 9, 74 get zG_UDZIAL4 picture "99/999" valid v19_2a()
+                  @  9, 44 get zG_PRZYCH4 picture "   99999999.99"
+                  @  9, 59 get zG_KOSZTY4 picture "   99999999.99"
+                  @  9, 74 get zG_UDZIAL4 picture "99/999" valid v19_2a()
+                  @ 10, 44 get zG_PRZYCH5 picture "   99999999.99"
+                  @ 10, 59 get zG_KOSZTY5 picture "   99999999.99"
+                  @ 10, 74 get zG_UDZIAL5 picture "99/999" valid v19_3a()
                ENDIF
                IF spolka->sposob <> 'L'
                   IF ! Empty( spolka->n_przedm1 )
@@ -156,6 +163,7 @@ FUNCTION Zrodla()
                zg_udzial2 := Str( Val( Left( zg_udzial2, 2 ) ), 2 ) + '/' + dos_l( Str( Val( Right( zg_udzial2, 3 ) ), 3 ) )
                zg_udzial3 := Str( Val( Left( zg_udzial3, 2 ) ), 2 ) + '/' + dos_l( Str( Val( Right( zg_udzial3, 3 ) ), 3 ) )
                zg_udzial4 := Str( Val( Left( zg_udzial4, 2 ) ), 2 ) + '/' + dos_l( Str( Val( Right( zg_udzial4, 3 ) ), 3 ) )
+               zg_udzial5 := Str( Val( Left( zg_udzial5, 2 ) ), 2 ) + '/' + dos_l( Str( Val( Right( zg_udzial5, 3 ) ), 3 ) )
                zn_udzial1 := Str( Val( Left( zn_udzial1, 2 ) ), 2 ) + '/' + dos_l( Str( Val( Right( zn_udzial1, 3 ) ), 3 ) )
                zn_udzial2 := Str( Val( Left( zn_udzial2, 2 ) ), 2 ) + '/' + dos_l( Str( Val( Right( zn_udzial2, 3 ) ), 3 ) )
 
@@ -173,6 +181,9 @@ FUNCTION Zrodla()
                repl_( 'G_PRZYCH4', _round( zG_PRZYCH4, 2 ) )
                repl_( 'G_KOSZTY4', _round( zG_KOSZTY4, 2 ) )
                repl_( 'G_UDZIAL4', zG_UDZIAL4 )
+               repl_( 'G_PRZYCH5', _round( zG_PRZYCH5, 2 ) )
+               repl_( 'G_KOSZTY5', _round( zG_KOSZTY5, 2 ) )
+               repl_( 'G_UDZIAL5', zG_UDZIAL5 )
                repl_( 'N_PRZYCH1', _round( zN_PRZYCH1, 2 ) )
                repl_( 'N_KOSZTY1', _round( zN_KOSZTY1, 2 ) )
                repl_( 'N_UDZIAL1', zN_UDZIAL1 )
@@ -246,6 +257,12 @@ PROCEDURE say19()
       @ 9, 44 SAY G_PRZYCH4 PICTURE "999 999 999.99"
       @ 9, 59 SAY G_KOSZTY4 PICTURE "999 999 999.99"
       @ 9, 74 SAY G_UDZIAL4
+   ENDIF
+   IF spolka->sposob == 'L' .AND. ! Empty( spolka->g_rodzaj5 )
+      @ 10,  3 SAY spolka->G_RODZAJ5
+      @ 10, 44 SAY G_PRZYCH5 PICTURE "999 999 999.99"
+      @ 10, 59 SAY G_KOSZTY5 PICTURE "999 999 999.99"
+      @ 10, 74 SAY G_UDZIAL5
    ENDIF
    IF spolka->sposob <> 'L'
       IF ! Empty( spolka->n_przedm1 )
@@ -328,6 +345,24 @@ FUNCTION v19_2a()
    zm1 := Val( Left( zg_udzial4, 2 ) )
    zm2 := Val( Right( zg_udzial4, 3 ) )
    IF zm1 == 0 .OR. zm2 == 0 .OR. ' ' $ AllTrim( Right( zg_udzial4, 3 ) ) .OR. ( zm1 == zm2 .AND. zm1 # 1 )
+      RETURN .F.
+   ENDIF
+   IF zm1 > zm2
+      kom( 3, '*u', ' Udzia&_l. nie powinien by&_c. wi&_e.kszy ni&_z. 100% ' )
+      RETURN .F.
+   ENDIF
+   RETURN .T.
+
+***************************************************
+
+FUNCTION v19_3a()
+
+   IF LastKey() == K_UP
+      RETURN .T.
+   ENDIF
+   zm1 := Val( Left( zg_udzial5, 2 ) )
+   zm2 := Val( Right( zg_udzial5, 3 ) )
+   IF zm1 == 0 .OR. zm2 == 0 .OR. ' ' $ AllTrim( Right( zg_udzial5, 3 ) ) .OR. ( zm1 == zm2 .AND. zm1 # 1 )
       RETURN .F.
    ENDIF
    IF zm1 > zm2

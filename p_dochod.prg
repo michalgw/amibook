@@ -277,8 +277,8 @@ PROCEDURE P_Dochod( _OUT )
             NEXT
          NEXT
          *---Podliczenie ksiegi (OPER.dbf)------
-         dzial_g := Array( 4, 9 )
-         FOR x_y := 1 TO 4
+         dzial_g := Array( 6, 9 )
+         FOR x_y := 1 TO 6
             dzial_g[ x_y, 1 ] := Space( 26 )
             dzial_g[ x_y, 2 ] := Space( 18 )
             dzial_g[ x_y, 3 ] := Space( 32 )
@@ -374,9 +374,9 @@ PROCEDURE P_Dochod( _OUT )
          *   store 0 to prop5_doch,prop5_stra
          *   store 0 to psumzdro1
 
-         a_przygos  := Array( 3, 3, 12 )    //nr dzialalnosci, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
+         a_przygos  := Array( 5, 3, 12 )    //nr dzialalnosci, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
          a_przynaj  := Array( 2, 3, 12 )    //nr najmu, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
-         a_koszgos  := Array( 3, 3, 12 )    //nr dzialalnosci, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
+         a_koszgos  := Array( 5, 3, 12 )    //nr dzialalnosci, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
          a_kosznaj  := Array( 2, 3, 12 )    //nr najmu, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
 
          a_rentalim := Array( 3, 12 )
@@ -438,7 +438,7 @@ PROCEDURE P_Dochod( _OUT )
                   a_przynaj[ zzz, yyy, xxx ] := 0
                   a_kosznaj[ zzz, yyy, xxx ] := 0
                NEXT
-               FOR zzz := 1 TO 3
+               FOR zzz := 1 TO 5
                   a_przygos[ zzz, yyy, xxx ] := 0
                   a_koszgos[ zzz, yyy, xxx ] := 0
                NEXT
@@ -459,12 +459,18 @@ PROCEDURE P_Dochod( _OUT )
                      a_przygos[ 1, 1, i ] := a_przygos[ 1, 1, i ] + g_przych1
                      a_przygos[ 2, 1, i ] := a_przygos[ 2, 1, i ] + g_przych2
                      a_przygos[ 3, 1, i ] := a_przygos[ 3, 1, i ] + g_przych3
+                     a_przygos[ 4, 1, i ] := a_przygos[ 4, 1, i ] + g_przych4
+                     a_przygos[ 5, 1, i ] := a_przygos[ 5, 1, i ] + g_przych5
                      a_koszgos[ 1, 1, i ] := a_koszgos[ 1, 1, i ] + g_koszty1
                      a_koszgos[ 2, 1, i ] := a_koszgos[ 2, 1, i ] + g_koszty2
                      a_koszgos[ 3, 1, i ] := a_koszgos[ 3, 1, i ] + g_koszty3
+                     a_koszgos[ 4, 1, i ] := a_koszgos[ 4, 1, i ] + g_koszty4
+                     a_koszgos[ 5, 1, i ] := a_koszgos[ 5, 1, i ] + g_koszty5
                      dzial_g[ 2, 5 ] := _round( Val( Left( g_udzial1, 2 ) ) / Val( Right( g_udzial1, 3 ) ), 4 ) * 100
                      dzial_g[ 3, 5 ] := _round( Val( Left( g_udzial2, 2 ) ) / Val( Right( g_udzial2, 3 ) ), 4 ) * 100
                      dzial_g[ 4, 5 ] := _round( Val( Left( g_udzial3, 2 ) ) / Val( Right( g_udzial3, 3 ) ), 4 ) * 100
+                     dzial_g[ 5, 5 ] := _round( Val( Left( g_udzial4, 2 ) ) / Val( Right( g_udzial4, 3 ) ), 4 ) * 100
+                     dzial_g[ 6, 5 ] := _round( Val( Left( g_udzial5, 2 ) ) / Val( Right( g_udzial5, 3 ) ), 4 ) * 100
                      p122 := _round( Val( Left( n_udzial1, 2 ) ) / Val( Right( n_udzial1, 3 ) ), 4 ) * 100
                      p129 := _round( Val( Left( n_udzial1, 2 ) ) / Val( Right( n_udzial1, 3 ) ), 4 ) * 100
                      a_przynaj[ 1, 1, i ] := a_przynaj[ 1, 1, i ] + n_przych1
@@ -512,9 +518,9 @@ PROCEDURE P_Dochod( _OUT )
          *********************************************************************
          * wyliczenia w petlach
          *********************************************************************
-         a_dochgos  := Array( 3, 3, 12 )    //nr dzialalnosci, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
+         a_dochgos  := Array( 5, 3, 12 )    //nr dzialalnosci, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
          a_dochnaj  := Array( 2, 3, 12 )    //nr najmu, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
-         a_stragos  := Array( 3, 3, 12 )    //nr dzialalnosci, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
+         a_stragos  := Array( 5, 3, 12 )    //nr dzialalnosci, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
          a_stranaj  := Array( 2, 3, 12 )    //nr najmu, okres(0-miesiecznie,1-narastajaco,2-kwartalnie), miesiace
 
          a_pit566   := Array( 3, 12 )
@@ -603,7 +609,7 @@ PROCEDURE P_Dochod( _OUT )
                   a_dochnaj[ zzz, yyy, xxx ] := 0
                   a_stranaj[ zzz, yyy, xxx ] := 0
                NEXT
-               FOR zzz := 1 TO 3
+               FOR zzz := 1 TO 5
                   a_dochgos[ zzz, yyy, xxx ] := 0
                   a_stragos[ zzz, yyy, xxx ] := 0
                NEXT
@@ -614,6 +620,8 @@ PROCEDURE P_Dochod( _OUT )
             a_dochgos[ 1, 1, xxx ] := Max( 0, a_przygos[ 1, 1, xxx ] - a_koszgos[ 1, 1, xxx ] )
             a_dochgos[ 2, 1, xxx ] := Max( 0, a_przygos[ 2, 1, xxx ] - a_koszgos[ 2, 1, xxx ] )
             a_dochgos[ 3, 1, xxx ] := Max( 0, a_przygos[ 3, 1, xxx ] - a_koszgos[ 3, 1, xxx ] )
+            a_dochgos[ 4, 1, xxx ] := Max( 0, a_przygos[ 4, 1, xxx ] - a_koszgos[ 4, 1, xxx ] )
+            a_dochgos[ 5, 1, xxx ] := Max( 0, a_przygos[ 5, 1, xxx ] - a_koszgos[ 5, 1, xxx ] )
             a_dochnaj[ 1, 1, xxx ] := Max( 0, a_przynaj[ 1, 1, xxx ] - a_kosznaj[ 1, 1, xxx ] )
             a_dochnaj[ 2, 1, xxx ] := Max( 0, a_przynaj[ 2, 1, xxx ] - a_kosznaj[ 2, 1, xxx ] )
             a_pit566[ 1, xxx ] := Max( 0, a_pit5gosp[ 1, xxx ] - a_pit5gosk[ 1, xxx ] )
@@ -621,20 +629,22 @@ PROCEDURE P_Dochod( _OUT )
             a_stragos[ 1, 1, xxx ] := Abs( Max( 0, a_przygos[ 1, 1, xxx ] - a_koszgos[ 1, 1, xxx ] ) )
             a_stragos[ 2, 1, xxx ] := Abs( Max( 0, a_przygos[ 2, 1, xxx ] - a_koszgos[ 2, 1, xxx ] ) )
             a_stragos[ 3, 1, xxx ] := Abs( Max( 0, a_przygos[ 3, 1, xxx ] - a_koszgos[ 3, 1, xxx ] ) )
+            a_stragos[ 4, 1, xxx ] := Abs( Max( 0, a_przygos[ 4, 1, xxx ] - a_koszgos[ 4, 1, xxx ] ) )
+            a_stragos[ 5, 1, xxx ] := Abs( Max( 0, a_przygos[ 5, 1, xxx ] - a_koszgos[ 5, 1, xxx ] ) )
             a_stranaj[ 1, 1, xxx ] := Abs( Max( 0, a_przynaj[ 1, 1, xxx ] - a_kosznaj[ 1, 1, xxx ] ) )
             a_stranaj[ 2, 1, xxx ] := Abs( Max( 0, a_przynaj[ 2, 1, xxx ] - a_kosznaj[ 2, 1, xxx ] ) )
             a_pit5goss[ 1, xxx ] := Max( 0, a_pit5gosk[ 1, xxx ] - a_pit5gosp[ 1, xxx ] )
             a_pit5najs[ 1, xxx ] := Max( 0, a_pit5najk[ 1, xxx ] - a_pit5najp[ 1, xxx ] )
-            a_gosprzy[ 1, xxx ] := a_przygos[ 1, 1, xxx ] + a_przygos[ 2, 1, xxx ] + a_przygos[ 3, 1, xxx ] + a_pit5gosp[ 1, xxx ] + a_przywsp[ 1, xxx ]
-            a_goskosz[ 1, xxx ] := a_koszgos[ 1, 1, xxx ] + a_koszgos[ 2, 1, xxx ] + a_koszgos[ 3, 1, xxx ] + a_pit5gosk[ 1, xxx ] + a_koszwsp[ 1, xxx ] - a_rem[ 1, xxx ]
+            a_gosprzy[ 1, xxx ] := a_przygos[ 1, 1, xxx ] + a_przygos[ 2, 1, xxx ] + a_przygos[ 3, 1, xxx ] + a_przygos[ 4, 1, xxx ] + a_przygos[ 5, 1, xxx ] + a_pit5gosp[ 1, xxx ] + a_przywsp[ 1, xxx ]
+            a_goskosz[ 1, xxx ] := a_koszgos[ 1, 1, xxx ] + a_koszgos[ 2, 1, xxx ] + a_koszgos[ 3, 1, xxx ] + a_koszgos[ 4, 1, xxx ] + a_koszgos[ 5, 1, xxx ] + a_pit5gosk[ 1, xxx ] + a_koszwsp[ 1, xxx ] - a_rem[ 1, xxx ]
             a_najprzy[ 1, xxx ] := a_przynaj[ 1, 1, xxx ] + a_przynaj[ 2, 1, xxx ] + a_pit5najp[ 1, xxx ]
             a_najkosz[ 1, xxx ] := a_kosznaj[ 1, 1, xxx ] + a_kosznaj[ 2, 1, xxx ] + a_pit5najk[ 1, xxx ]
             a_gosdoch[ 1, xxx ] := Max( 0, a_gosprzy[ 1, xxx ] - a_goskosz[ 1, xxx ] )
             a_gosstra[ 1, xxx ] := Max( 0, a_goskosz[ 1, xxx ] - a_gosprzy[ 1, xxx ] )
             a_najdoch[ 1, xxx ] := Max( 0, a_najprzy[ 1, xxx ] - a_najkosz[ 1, xxx ] )
             a_najstra[ 1, xxx ] := Max( 0, a_najkosz[ 1, xxx ] - a_najprzy[ 1, xxx ] )
-            a_pro1doch[ 1, xxx ] := a_dochgos[ 1, 1, xxx ] + a_dochgos[ 2, 1, xxx ] + a_dochgos[ 3, 1, xxx ] + a_pk3[ 1, xxx ] + a_pit566[ 1, xxx ]
-            a_pro1stra[ 1, xxx ] := a_stragos[ 1, 1, xxx ] + a_stragos[ 2, 1, xxx ] + a_stragos[ 3, 1, xxx ] + a_pk4[ 1, xxx ] + a_pit5goss[ 1, xxx ]
+            a_pro1doch[ 1, xxx ] := a_dochgos[ 1, 1, xxx ] + a_dochgos[ 2, 1, xxx ] + a_dochgos[ 3, 1, xxx ] + a_dochgos[ 4, 1, xxx ] + a_dochgos[ 5, 1, xxx ] + a_pk3[ 1, xxx ] + a_pit566[ 1, xxx ]
+            a_pro1stra[ 1, xxx ] := a_stragos[ 1, 1, xxx ] + a_stragos[ 2, 1, xxx ] + a_stragos[ 3, 1, xxx ] + a_stragos[ 4, 1, xxx ] + a_stragos[ 5, 1, xxx ] + a_pk4[ 1, xxx ] + a_pit5goss[ 1, xxx ]
             a_pro2doch[ 1, xxx ] := a_dochnaj[ 1, 1, xxx ] + a_dochnaj[ 2, 1, xxx ] + a_pk3[ 1, xxx ] + a_pit567[ 1, xxx ]
             a_pro2stra[ 1, xxx ] := a_stranaj[ 1, 1, xxx ] + a_stranaj[ 2, 1, xxx ] + a_pk4[ 1, xxx ] + a_pit5najs[ 1, xxx ]
             a_p51a[ 1, xxx ] := a_STRATY[ 1, xxx ]
@@ -821,9 +831,13 @@ PROCEDURE P_Dochod( _OUT )
                a_przygos[ 1, 2, i ] := a_przygos[ 1, 2, i ] + a_przygos[ 1, 1, yyy ]
                a_przygos[ 2, 2, i ] := a_przygos[ 2, 2, i ] + a_przygos[ 2, 1, yyy ]
                a_przygos[ 3, 2, i ] := a_przygos[ 3, 2, i ] + a_przygos[ 3, 1, yyy ]
+               a_przygos[ 4, 2, i ] := a_przygos[ 4, 2, i ] + a_przygos[ 4, 1, yyy ]
+               a_przygos[ 5, 2, i ] := a_przygos[ 5, 2, i ] + a_przygos[ 5, 1, yyy ]
                a_koszgos[ 1, 2, i ] := a_koszgos[ 1, 2, i ] + a_koszgos[ 1, 1, yyy ]
                a_koszgos[ 2, 2, i ] := a_koszgos[ 2, 2, i ] + a_koszgos[ 2, 1, yyy ]
                a_koszgos[ 3, 2, i ] := a_koszgos[ 3, 2, i ] + a_koszgos[ 3, 1, yyy ]
+               a_koszgos[ 4, 2, i ] := a_koszgos[ 4, 2, i ] + a_koszgos[ 4, 1, yyy ]
+               a_koszgos[ 5, 2, i ] := a_koszgos[ 5, 2, i ] + a_koszgos[ 5, 1, yyy ]
                a_przynaj[ 1, 2, i ] := a_przynaj[ 1, 2, i ] + a_przynaj[ 1, 1, yyy ]
                a_przynaj[ 2, 2, i ] := a_przynaj[ 2, 2, i ] + a_przynaj[ 2, 1, yyy ]
                a_kosznaj[ 1, 2, i ] := a_kosznaj[ 1, 2, i ] + a_kosznaj[ 1, 1, yyy ]
@@ -864,9 +878,13 @@ PROCEDURE P_Dochod( _OUT )
                a_przygos[ 1, 3, i ] := a_przygos[ 1, 3, i ] + a_przygos[ 1, 1, yyy ]
                a_przygos[ 2, 3, i ] := a_przygos[ 2, 3, i ] + a_przygos[ 2, 1, yyy ]
                a_przygos[ 3, 3, i ] := a_przygos[ 3, 3, i ] + a_przygos[ 3, 1, yyy ]
+               a_przygos[ 4, 3, i ] := a_przygos[ 4, 3, i ] + a_przygos[ 4, 1, yyy ]
+               a_przygos[ 5, 3, i ] := a_przygos[ 5, 3, i ] + a_przygos[ 5, 1, yyy ]
                a_koszgos[ 1, 3, i ] := a_koszgos[ 1, 3, i ] + a_koszgos[ 1, 1, yyy ]
                a_koszgos[ 2, 3, i ] := a_koszgos[ 2, 3, i ] + a_koszgos[ 2, 1, yyy ]
                a_koszgos[ 3, 3, i ] := a_koszgos[ 3, 3, i ] + a_koszgos[ 3, 1, yyy ]
+               a_koszgos[ 4, 3, i ] := a_koszgos[ 4, 3, i ] + a_koszgos[ 4, 1, yyy ]
+               a_koszgos[ 5, 3, i ] := a_koszgos[ 5, 3, i ] + a_koszgos[ 5, 1, yyy ]
                a_przynaj[ 1, 3, i ] := a_przynaj[ 1, 3, i ] + a_przynaj[ 1, 1, yyy ]
                a_przynaj[ 2, 3, i ] := a_przynaj[ 2, 3, i ] + a_przynaj[ 2, 1, yyy ]
                a_kosznaj[ 1, 3, i ] := a_kosznaj[ 1, 3, i ] + a_kosznaj[ 1, 1, yyy ]
@@ -907,9 +925,13 @@ PROCEDURE P_Dochod( _OUT )
                a_przygos[ 1, 3, i ] := a_przygos[ 1, 3, i ] + a_przygos[ 1, 1, yyy ]
                a_przygos[ 2, 3, i ] := a_przygos[ 2, 3, i ] + a_przygos[ 2, 1, yyy ]
                a_przygos[ 3, 3, i ] := a_przygos[ 3, 3, i ] + a_przygos[ 3, 1, yyy ]
+               a_przygos[ 4, 3, i ] := a_przygos[ 4, 3, i ] + a_przygos[ 4, 1, yyy ]
+               a_przygos[ 5, 3, i ] := a_przygos[ 5, 3, i ] + a_przygos[ 5, 1, yyy ]
                a_koszgos[ 1, 3, i ] := a_koszgos[ 1, 3, i ] + a_koszgos[ 1, 1, yyy ]
                a_koszgos[ 2, 3, i ] := a_koszgos[ 2, 3, i ] + a_koszgos[ 2, 1, yyy ]
                a_koszgos[ 3, 3, i ] := a_koszgos[ 3, 3, i ] + a_koszgos[ 3, 1, yyy ]
+               a_koszgos[ 4, 3, i ] := a_koszgos[ 4, 3, i ] + a_koszgos[ 4, 1, yyy ]
+               a_koszgos[ 5, 3, i ] := a_koszgos[ 5, 3, i ] + a_koszgos[ 5, 1, yyy ]
                a_przynaj[ 1, 3, i ] := a_przynaj[ 1, 3, i ] + a_przynaj[ 1, 1, yyy ]
                a_przynaj[ 2, 3, i ] := a_przynaj[ 2, 3, i ] + a_przynaj[ 2, 1, yyy ]
                a_kosznaj[ 1, 3, i ] := a_kosznaj[ 1, 3, i ] + a_kosznaj[ 1, 1, yyy ]
@@ -951,9 +973,13 @@ PROCEDURE P_Dochod( _OUT )
                a_przygos[ 1, 3, i ] := a_przygos[ 1, 3, i ] + a_przygos[ 1, 1, yyy ]
                a_przygos[ 2, 3, i ] := a_przygos[ 2, 3, i ] + a_przygos[ 2, 1, yyy ]
                a_przygos[ 3, 3, i ] := a_przygos[ 3, 3, i ] + a_przygos[ 3, 1, yyy ]
+               a_przygos[ 4, 3, i ] := a_przygos[ 4, 3, i ] + a_przygos[ 4, 1, yyy ]
+               a_przygos[ 5, 3, i ] := a_przygos[ 5, 3, i ] + a_przygos[ 5, 1, yyy ]
                a_koszgos[ 1, 3, i ] := a_koszgos[ 1, 3, i ] + a_koszgos[ 1, 1, yyy ]
                a_koszgos[ 2, 3, i ] := a_koszgos[ 2, 3, i ] + a_koszgos[ 2, 1, yyy ]
                a_koszgos[ 3, 3, i ] := a_koszgos[ 3, 3, i ] + a_koszgos[ 3, 1, yyy ]
+               a_koszgos[ 4, 3, i ] := a_koszgos[ 4, 3, i ] + a_koszgos[ 4, 1, yyy ]
+               a_koszgos[ 5, 3, i ] := a_koszgos[ 5, 3, i ] + a_koszgos[ 5, 1, yyy ]
                a_przynaj[ 1, 3, i ] := a_przynaj[ 1, 3, i ] + a_przynaj[ 1, 1, yyy ]
                a_przynaj[ 2, 3, i ] := a_przynaj[ 2, 3, i ] + a_przynaj[ 2, 1, yyy ]
                a_kosznaj[ 1, 3, i ] := a_kosznaj[ 1, 3, i ] + a_kosznaj[ 1, 1, yyy ]
@@ -994,9 +1020,13 @@ PROCEDURE P_Dochod( _OUT )
                a_przygos[ 1, 3, i ] := a_przygos[ 1, 3, i ] + a_przygos[ 1, 1, yyy ]
                a_przygos[ 2, 3, i ] := a_przygos[ 2, 3, i ] + a_przygos[ 2, 1, yyy ]
                a_przygos[ 3, 3, i ] := a_przygos[ 3, 3, i ] + a_przygos[ 3, 1, yyy ]
+               a_przygos[ 4, 3, i ] := a_przygos[ 4, 3, i ] + a_przygos[ 4, 1, yyy ]
+               a_przygos[ 5, 3, i ] := a_przygos[ 5, 3, i ] + a_przygos[ 5, 1, yyy ]
                a_koszgos[ 1, 3, i ] := a_koszgos[ 1, 3, i ] + a_koszgos[ 1, 1, yyy ]
                a_koszgos[ 2, 3, i ] := a_koszgos[ 2, 3, i ] + a_koszgos[ 2, 1, yyy ]
                a_koszgos[ 3, 3, i ] := a_koszgos[ 3, 3, i ] + a_koszgos[ 3, 1, yyy ]
+               a_koszgos[ 4, 3, i ] := a_koszgos[ 4, 3, i ] + a_koszgos[ 4, 1, yyy ]
+               a_koszgos[ 5, 3, i ] := a_koszgos[ 5, 3, i ] + a_koszgos[ 5, 1, yyy ]
                a_przynaj[ 1, 3, i ] := a_przynaj[ 1, 3, i ] + a_przynaj[ 1, 1, yyy ]
                a_przynaj[ 2, 3, i ] := a_przynaj[ 2, 3, i ] + a_przynaj[ 2, 1, yyy ]
                a_kosznaj[ 1, 3, i ] := a_kosznaj[ 1, 3, i ] + a_kosznaj[ 1, 1, yyy ]
@@ -1040,6 +1070,8 @@ PROCEDURE P_Dochod( _OUT )
             a_dochgos[ 1, 2, xxx ] := Max( 0, a_przygos[ 1, 2, xxx ] - a_koszgos[ 1, 2, xxx ] )
             a_dochgos[ 2, 2, xxx ] := Max( 0, a_przygos[ 2, 2, xxx ] - a_koszgos[ 2, 2, xxx ] )
             a_dochgos[ 3, 2, xxx ] := Max( 0, a_przygos[ 3, 2, xxx ] - a_koszgos[ 3, 2, xxx ] )
+            a_dochgos[ 4, 2, xxx ] := Max( 0, a_przygos[ 4, 2, xxx ] - a_koszgos[ 4, 2, xxx ] )
+            a_dochgos[ 5, 2, xxx ] := Max( 0, a_przygos[ 5, 2, xxx ] - a_koszgos[ 5, 2, xxx ] )
             a_dochnaj[ 1, 2, xxx ] := Max( 0, a_przynaj[ 1, 2, xxx ] - a_kosznaj[ 1, 2, xxx ] )
             a_dochnaj[ 2, 2, xxx ] := Max( 0, a_przynaj[ 2, 2, xxx ] - a_kosznaj[ 2, 2, xxx ] )
             a_pit566[ 2, xxx ] := Max( 0, a_pit5gosp[ 2, xxx ] - a_pit5gosk[ 2, xxx ] )
@@ -1047,20 +1079,22 @@ PROCEDURE P_Dochod( _OUT )
             a_stragos[ 1, 2, xxx ] := Abs( Max( 0, a_przygos[ 1, 2, xxx ] - a_koszgos[ 1, 2, xxx ] ) )
             a_stragos[ 2, 2, xxx ] := Abs( Max( 0, a_przygos[ 2, 2, xxx ] - a_koszgos[ 2, 2, xxx ] ) )
             a_stragos[ 3, 2, xxx ] := Abs( Max( 0, a_przygos[ 3, 2, xxx ] - a_koszgos[ 3, 2, xxx ] ) )
+            a_stragos[ 4, 2, xxx ] := Abs( Max( 0, a_przygos[ 4, 2, xxx ] - a_koszgos[ 4, 2, xxx ] ) )
+            a_stragos[ 5, 2, xxx ] := Abs( Max( 0, a_przygos[ 5, 2, xxx ] - a_koszgos[ 5, 2, xxx ] ) )
             a_stranaj[ 1, 2, xxx ] := Abs( Max( 0, a_przynaj[ 1, 2, xxx ] - a_kosznaj[ 1, 2, xxx ] ) )
             a_stranaj[ 2, 2, xxx ] := Abs( Max( 0, a_przynaj[ 2, 2, xxx ] - a_kosznaj[ 2, 2, xxx ] ) )
             a_pit5goss[ 2, xxx ] := Max( 0, a_pit5gosk[ 2, xxx ] - a_pit5gosp[ 2, xxx ] )
             a_pit5najs[ 2, xxx ] := Max( 0, a_pit5najk[ 2, xxx ] - a_pit5najp[ 2, xxx ] )
-            a_gosprzy[ 2, xxx ] := a_przygos[ 1, 2, xxx ] + a_przygos[ 2, 2, xxx ] + a_przygos[ 3, 2, xxx ] + a_pit5gosp[ 2, xxx ] + a_przywsp[ 2, xxx ]
-            a_goskosz[ 2, xxx ] := a_koszgos[ 1, 2, xxx ] + a_koszgos[ 2, 2, xxx ] + a_koszgos[ 3, 2, xxx ] + a_pit5gosk[ 2, xxx ] + a_koszwsp[ 2, xxx ] - a_rem[ 2, xxx]
+            a_gosprzy[ 2, xxx ] := a_przygos[ 1, 2, xxx ] + a_przygos[ 2, 2, xxx ] + a_przygos[ 3, 2, xxx ] + a_przygos[ 4, 2, xxx ] + a_przygos[ 5, 2, xxx ] + a_pit5gosp[ 2, xxx ] + a_przywsp[ 2, xxx ]
+            a_goskosz[ 2, xxx ] := a_koszgos[ 1, 2, xxx ] + a_koszgos[ 2, 2, xxx ] + a_koszgos[ 3, 2, xxx ] + a_koszgos[ 4, 2, xxx ] + a_koszgos[ 5, 2, xxx ] + a_pit5gosk[ 2, xxx ] + a_koszwsp[ 2, xxx ] - a_rem[ 2, xxx]
             a_najprzy[ 2, xxx ] := a_przynaj[ 1, 2, xxx ] + a_przynaj[ 2, 2, xxx ] + a_pit5najp[ 2, xxx ]
             a_najkosz[ 2, xxx ] := a_kosznaj[ 1, 2, xxx ] + a_kosznaj[ 2, 2, xxx ] + a_pit5najk[ 2, xxx ]
             a_gosdoch[ 2, xxx ] := Max( 0, a_gosprzy[ 2, xxx ] - a_goskosz[ 2, xxx ] )
             a_gosstra[ 2, xxx ] := Max( 0, a_goskosz[ 2, xxx ] - a_gosprzy[ 2, xxx ] )
             a_najdoch[ 2, xxx ] := Max( 0, a_najprzy[ 2, xxx ] - a_najkosz[ 2, xxx ] )
             a_najstra[ 2, xxx ] := Max( 0, a_najkosz[ 2, xxx ] - a_najprzy[ 2, xxx ] )
-            a_pro1doch[ 2, xxx ] := a_dochgos[ 1, 2, xxx ] + a_dochgos[ 2, 2, xxx ] + a_dochgos[ 3, 2, xxx ] + a_pk3[ 2, xxx ] + a_pit566[ 2, xxx ]
-            a_pro1stra[ 2, xxx ] := a_stragos[ 1, 2, xxx ] + a_stragos[ 2, 2, xxx ] + a_stragos[ 3, 2, xxx ] + a_pk4[ 2, xxx ] + a_pit5goss[ 2, xxx ]
+            a_pro1doch[ 2, xxx ] := a_dochgos[ 1, 2, xxx ] + a_dochgos[ 2, 2, xxx ] + a_dochgos[ 3, 2, xxx ] + a_dochgos[ 4, 2, xxx ] + a_dochgos[ 5, 2, xxx ] + a_pk3[ 2, xxx ] + a_pit566[ 2, xxx ]
+            a_pro1stra[ 2, xxx ] := a_stragos[ 1, 2, xxx ] + a_stragos[ 2, 2, xxx ] + a_stragos[ 3, 2, xxx ] + a_stragos[ 4, 2, xxx ] + a_stragos[ 5, 2, xxx ] + a_pk4[ 2, xxx ] + a_pit5goss[ 2, xxx ]
             a_pro2doch[ 2, xxx ] := a_dochnaj[ 1, 2, xxx ] + a_dochnaj[ 2, 2, xxx ] + a_pk3[ 2, xxx ] + a_pit567[ 2, xxx ]
             a_pro2stra[ 2, xxx ] := a_stranaj[ 1, 2, xxx ] + a_stranaj[ 2, 2, xxx ] + a_pk4[ 2, xxx ] + a_pit5najs[ 2, xxx ]
             a_p51a[ 2, xxx ] := a_STRATY[ 2, xxx ]
@@ -1197,6 +1231,8 @@ PROCEDURE P_Dochod( _OUT )
             a_dochgos[ 1, 3, xxx ] := Max( 0, a_przygos[ 1, 3, xxx ] - a_koszgos[ 1, 3, xxx ] )
             a_dochgos[ 2, 3, xxx ] := Max( 0, a_przygos[ 2, 3, xxx ] - a_koszgos[ 2, 3, xxx ] )
             a_dochgos[ 3, 3, xxx ] := Max( 0, a_przygos[ 3, 3, xxx ] - a_koszgos[ 3, 3, xxx ] )
+            a_dochgos[ 4, 3, xxx ] := Max( 0, a_przygos[ 4, 3, xxx ] - a_koszgos[ 4, 3, xxx ] )
+            a_dochgos[ 5, 3, xxx ] := Max( 0, a_przygos[ 5, 3, xxx ] - a_koszgos[ 5, 3, xxx ] )
             a_dochnaj[ 1, 3, xxx ] := Max( 0, a_przynaj[ 1, 3, xxx ] - a_kosznaj[ 1, 3, xxx ] )
             a_dochnaj[ 2, 3, xxx ] := Max( 0, a_przynaj[ 2, 3, xxx ] - a_kosznaj[ 2, 3, xxx ] )
             a_pit566[ 3, xxx ] := Max( 0, a_pit5gosp[ 3, xxx ] - a_pit5gosk[ 3, xxx ] )
@@ -1204,20 +1240,22 @@ PROCEDURE P_Dochod( _OUT )
             a_stragos[ 1, 3, xxx ] := Abs( Max( 0, a_przygos[ 1, 3, xxx ] - a_koszgos[ 1, 3, xxx ] ) )
             a_stragos[ 2, 3, xxx ] := Abs( Max( 0, a_przygos[ 2, 3, xxx ] - a_koszgos[ 2, 3, xxx ] ) )
             a_stragos[ 3, 3, xxx ] := Abs( Max( 0, a_przygos[ 3, 3, xxx ] - a_koszgos[ 3, 3, xxx ] ) )
+            a_stragos[ 4, 3, xxx ] := Abs( Max( 0, a_przygos[ 4, 3, xxx ] - a_koszgos[ 4, 3, xxx ] ) )
+            a_stragos[ 5, 3, xxx ] := Abs( Max( 0, a_przygos[ 5, 3, xxx ] - a_koszgos[ 5, 3, xxx ] ) )
             a_stranaj[ 1, 3, xxx ] := Abs( Max( 0, a_przynaj[ 1, 3, xxx ] - a_kosznaj[ 1, 3, xxx ] ) )
             a_stranaj[ 2, 3, xxx ] := Abs( Max( 0, a_przynaj[ 2, 3, xxx ] - a_kosznaj[ 2, 3, xxx ] ) )
             a_pit5goss[ 3, xxx ] := Max( 0, a_pit5gosk[ 3, xxx ] - a_pit5gosp[ 3, xxx ] )
             a_pit5najs[ 3, xxx ] := Max( 0, a_pit5najk[ 3, xxx ] - a_pit5najp[ 3, xxx ] )
-            a_gosprzy[ 3, xxx ] := a_przygos[ 1, 3, xxx ] + a_przygos[ 2, 3, xxx ] + a_przygos[ 3, 3, xxx ] + a_pit5gosp[ 3, xxx ] + a_przywsp[ 3, xxx ]
-            a_goskosz[ 3, xxx ] := a_koszgos[ 1, 3, xxx ] + a_koszgos[ 2, 3, xxx ] + a_koszgos[ 3, 3, xxx ] + a_pit5gosk[ 3, xxx ] + a_koszwsp[ 3, xxx ] - a_rem[ 3, xxx ]
+            a_gosprzy[ 3, xxx ] := a_przygos[ 1, 3, xxx ] + a_przygos[ 2, 3, xxx ] + a_przygos[ 3, 3, xxx ] + a_przygos[ 4, 3, xxx ] + a_przygos[ 5, 3, xxx ] + a_pit5gosp[ 3, xxx ] + a_przywsp[ 3, xxx ]
+            a_goskosz[ 3, xxx ] := a_koszgos[ 1, 3, xxx ] + a_koszgos[ 2, 3, xxx ] + a_koszgos[ 3, 3, xxx ] + a_koszgos[ 4, 3, xxx ] + a_koszgos[ 5, 3, xxx ] + a_pit5gosk[ 3, xxx ] + a_koszwsp[ 3, xxx ] - a_rem[ 3, xxx ]
             a_najprzy[ 3, xxx ] := a_przynaj[ 1, 3, xxx ] + a_przynaj[ 2, 3, xxx ] + a_pit5najp[ 3, xxx ]
             a_najkosz[ 3, xxx ] := a_kosznaj[ 1, 3, xxx ] + a_kosznaj[ 2, 3, xxx ] + a_pit5najk[ 3, xxx ]
             a_gosdoch[ 3, xxx ] := Max( 0, a_gosprzy[ 3, xxx ] - a_goskosz[ 3, xxx ] )
             a_gosstra[ 3, xxx ] := Max( 0, a_goskosz[ 3, xxx ] - a_gosprzy[ 3, xxx ] )
             a_najdoch[ 3, xxx ] := Max( 0, a_najprzy[ 3, xxx ] - a_najkosz[ 3, xxx ] )
             a_najstra[ 3, xxx ] := Max( 0, a_najkosz[ 3, xxx ] - a_najprzy[ 3, xxx ] )
-            a_pro1doch[ 3, xxx ] := a_dochgos[ 1, 3, xxx ] + a_dochgos[ 2, 3, xxx ] + a_dochgos[ 3, 3, xxx ] + a_pk3[ 3, xxx ] + a_pit566[ 3, xxx ]
-            a_pro1stra[ 3, xxx ] := a_stragos[ 1, 3, xxx ] + a_stragos[ 2, 3, xxx ] + a_stragos[ 3, 3, xxx ] + a_pk4[ 3, xxx ] + a_pit5goss[ 3, xxx ]
+            a_pro1doch[ 3, xxx ] := a_dochgos[ 1, 3, xxx ] + a_dochgos[ 2, 3, xxx ] + a_dochgos[ 3, 3, xxx ] + a_dochgos[ 4, 3, xxx ] + a_dochgos[ 5, 3, xxx ] + a_pk3[ 3, xxx ] + a_pit566[ 3, xxx ]
+            a_pro1stra[ 3, xxx ] := a_stragos[ 1, 3, xxx ] + a_stragos[ 2, 3, xxx ] + a_stragos[ 3, 3, xxx ] + a_stragos[ 4, 3, xxx ] + a_stragos[ 5, 3, xxx ] + a_pk4[ 3, xxx ] + a_pit5goss[ 3, xxx ]
             a_pro2doch[ 3, xxx ] := a_dochnaj[ 1, 3, xxx ] + a_dochnaj[ 2, 3, xxx ] + a_pk3[ 3, xxx ] + a_pit567[ 3, xxx ]
             a_pro2stra[ 3, xxx ] := a_stranaj[ 1, 3, xxx ] + a_stranaj[ 2, 3, xxx ] + a_pk4[ 3, xxx ] + a_pit5najs[ 3, xxx ]
             a_p51a[ 3, xxx ] := a_STRATY[ 3, xxx ]
@@ -1378,7 +1416,7 @@ PROCEDURE P_Dochod( _OUT )
             *dzial_g[spol,9]=a_stragos[1,okrpod,val(miesiac)]
             SPOL++
          ENDIF
-         IF SPOL < 5
+         IF SPOL < 7
             IF ! Empty( g_rodzaj2 )
                dzial_g[ spol, 1 ] := rozrzut( g_nip2 )
                dzial_g[ spol, 2 ] := rozrzut( SubStr( g_regon2, 3, 9 ) )
@@ -1394,7 +1432,7 @@ PROCEDURE P_Dochod( _OUT )
                SPOL++
             ENDIF
          ENDIF
-         IF SPOL < 5
+         IF SPOL < 7
             IF ! Empty( g_rodzaj3 )
                dzial_g[ spol, 1 ] := rozrzut( g_nip3 )
                dzial_g[ spol, 2 ] := rozrzut( SubStr( g_regon3, 3, 9 ) )
@@ -1403,6 +1441,38 @@ PROCEDURE P_Dochod( _OUT )
                *dzial_g[spol,5]=zg_udzial3
                dzial_g[ spol, 6 ] := a_przygos[ 3, okrpod, Val( miesiac ) ]
                dzial_g[ spol, 7 ] := a_koszgos[ 3, okrpod, Val( miesiac ) ]
+               dzial_g[ spol, 8 ] := Max( 0, dzial_g[ spol, 6 ] - dzial_g[ spol, 7 ] )
+               dzial_g[ spol, 9 ] := Max( 0, dzial_g[ spol, 7 ] - dzial_g[ spol, 6 ] )
+               *dzial_g[spol,8]=a_dochgos[3,okrpod,val(miesiac)]
+               *dzial_g[spol,9]=a_stragos[3,okrpod,val(miesiac)]
+               SPOL++
+            ENDIF
+         ENDIF
+         IF SPOL < 7
+            IF ! Empty( g_rodzaj4 )
+               dzial_g[ spol, 1 ] := rozrzut( g_nip4 )
+               dzial_g[ spol, 2 ] := rozrzut( SubStr( g_regon4, 3, 9 ) )
+               dzial_g[ spol, 3 ] := g_rodzaj4
+               dzial_g[ spol, 4 ] := g_miejsc4
+               *dzial_g[spol,5]=zg_udzial3
+               dzial_g[ spol, 6 ] := a_przygos[ 4, okrpod, Val( miesiac ) ]
+               dzial_g[ spol, 7 ] := a_koszgos[ 4, okrpod, Val( miesiac ) ]
+               dzial_g[ spol, 8 ] := Max( 0, dzial_g[ spol, 6 ] - dzial_g[ spol, 7 ] )
+               dzial_g[ spol, 9 ] := Max( 0, dzial_g[ spol, 7 ] - dzial_g[ spol, 6 ] )
+               *dzial_g[spol,8]=a_dochgos[3,okrpod,val(miesiac)]
+               *dzial_g[spol,9]=a_stragos[3,okrpod,val(miesiac)]
+               SPOL++
+            ENDIF
+         ENDIF
+         IF SPOL < 7
+            IF ! Empty( g_rodzaj5 )
+               dzial_g[ spol, 1 ] := rozrzut( g_nip5 )
+               dzial_g[ spol, 2 ] := rozrzut( SubStr( g_regon5, 3, 9 ) )
+               dzial_g[ spol, 3 ] := g_rodzaj5
+               dzial_g[ spol, 4 ] := g_miejsc5
+               *dzial_g[spol,5]=zg_udzial3
+               dzial_g[ spol, 6 ] := a_przygos[ 5, okrpod, Val( miesiac ) ]
+               dzial_g[ spol, 7 ] := a_koszgos[ 5, okrpod, Val( miesiac ) ]
                dzial_g[ spol, 8 ] := Max( 0, dzial_g[ spol, 6 ] - dzial_g[ spol, 7 ] )
                dzial_g[ spol, 9 ] := Max( 0, dzial_g[ spol, 7 ] - dzial_g[ spol, 6 ] )
                *dzial_g[spol,8]=a_dochgos[3,okrpod,val(miesiac)]

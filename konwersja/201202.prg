@@ -29,6 +29,8 @@ FUNCTION Main()
    dbfUtworzTabele( 'REJS', 'rejs.tym' )
    dbfUtworzTabele( 'REJZ', 'rejz.tym' )
    dbfUtworzTabele( 'SUMA_MC', 'suma_mc.tym' )
+   dbfUtworzTabele( 'DANE_MC', 'dane_mc.tym' )
+   dbfUtworzTabele( 'SPOLKA', 'spolka.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
@@ -36,6 +38,8 @@ FUNCTION Main()
    dbfIdxREJS()
    dbfIdxREJZ()
    dbfIdxSUMA_MC()
+   dbfIdxDANE_MC()
+   dbfIdxSPOLKA()
    dbCloseAll()
 
    RETURN
