@@ -1640,6 +1640,9 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zTROJSTR := 'N'
          zSYMB_REJ := aDane[ 'Rejestr' ]
          zTRESC := aDane[ 'OpisZd' ]
+         zOPCJE := aDane[ 'Oznaczenie' ]
+         zPROCEDUR := aDane[ 'Procedura' ]
+         zRODZDOW := Space( 6 )
          zKOL36 := 0
          zKOL37 := 0
          zKOL38 := 0
@@ -1774,6 +1777,8 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zNETTO2 := 0
          zKOLUMNA2 := '  '
 
+         zRODZDOW := Space( 6 )
+
          IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'REJZ', ident_fir, miesiac, znumer, @aIstniejacyRec )
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
             AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje ju¾ dokument o tym numerze' ) )
@@ -1843,7 +1848,9 @@ FUNCTION JPKImp_VatZ_Ilosc( aDane )
 
 PROCEDURE JPKImp_VatS()
 
-   LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', 'OpisZd', Space( 30 ), 'KolRej', iif( zRYCZALT == 'T', ' 5', '7' ), 'DataRej', 'W' )
+   LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
+      'OpisZd', Space( 30 ), 'KolRej', iif( zRYCZALT == 'T', ' 5', '7' ), ;
+      'DataRej', 'W', 'Oznaczenie', Space( 16 ), 'Procedura', Space( 32 ) )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
@@ -1851,7 +1858,7 @@ PROCEDURE JPKImp_VatS()
    LOCAL aRaport, cRaport, cTN, cRej, lOk, cKolKs, cDataRej
    LOCAL nSumaImp, nLiczbaLp := 0
 
-   PRIVATE cOpisZd
+   PRIVATE cOpisZd, zOpcje, zProcedur
 
    cKolor := ColInf()
    @ 24, 0 SAY PadC( "Wybierz plik do importu", 80 )
@@ -1990,8 +1997,10 @@ PROCEDURE JPKImp_VatS()
                cOpisZd := aDane[ 'OpisZd' ]
                cKolRej := aDane[ 'KolRej' ]
                cDataRej := aDane[ 'DataRej' ]
-               @  9, 13 CLEAR TO 19, 66
-               @ 10, 15 TO 17, 64
+               zOpcje := aDane[ 'Oznaczenie' ]
+               zProcedur := aDane[ 'Procedura' ]
+               @  9, 13 CLEAR TO 20, 66
+               @ 10, 15 TO 19, 64
                @ 11, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
                @ 12, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42 ), .T. }
                @ 13, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "S" )
@@ -2001,7 +2010,9 @@ PROCEDURE JPKImp_VatS()
                   @ 14, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
                ENDIF
                @ 15, 17 SAY "Do rejestru na dzieä (S-sprzed., W-wystaw.)" GET cDataRej PICTURE "!" VALID cDataRej $ 'SW'
-               @ 16, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+               @ 16, 17 SAY "Oznaczenie dot. dostawy i ˜wiadczenia usˆug" GET zOpcje PICTURE '!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
+               @ 17, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
+               @ 18, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
                READ
                IF LastKey() <> K_ESC
                   aDane[ 'ZezwolNaDuplikaty' ] := cTN
@@ -2009,6 +2020,8 @@ PROCEDURE JPKImp_VatS()
                   aDane[ 'OpisZd' ] := cOpisZd
                   aDane[ 'KolRej' ] := cKolRej
                   aDane[ 'DataRej' ] := cDataRej
+                  aDane[ 'Oznaczenie' ] := zOpcje
+                  aDane[ 'Procedura' ] := zProcedur
                ENDIF
                RestScreen( , , , , cEkran2 )
             CASE nMenu == 4
