@@ -3744,7 +3744,7 @@ FUNCTION DaneXML_VAT7w20(oDoc, cNrRef, hNaglowek)
       hDane['P_9'] := xmlWartoscH( hPodmiot1, 'Nazwisko' ) + ', ' ;
         + xmlWartoscH( hPodmiot1, 'ImiePierwsze' )
    ELSE
-      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' ) + ',      ' + xmlWartoscH( hPodmiot1, 'NIP' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
    ENDIF
 
    IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
@@ -4621,7 +4621,7 @@ FUNCTION DaneXML_VAT7Kw14(oDoc, cNrRef, hNaglowek)
       hDane['P_9'] := xmlWartoscH( hPodmiot1, 'Nazwisko' ) + ', ' ;
         + xmlWartoscH( hPodmiot1, 'ImiePierwsze' )
    ELSE
-      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' ) + ',      ' + xmlWartoscH( hPodmiot1, 'NIP' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
    ENDIF
 
    IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
