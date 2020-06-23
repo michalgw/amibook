@@ -1902,8 +1902,6 @@ FUNCTION KRejSWhOpcje()
 
    RestScreen( 0, 0, MaxRow(), MaxCol(), cEkran )
 
-   KEYBOARD Chr(13)
-
    RETURN lRes
 
 /*----------------------------------------------------------------------*/
@@ -1964,11 +1962,19 @@ FUNCTION KRejSWhOpcjeAChFunc( nMode, nCurElement, nRowPos )
       DO CASE
       CASE nKey == K_ENTER
          nRetVal := AC_SELECT
+         KEYBOARD Chr(13)
       CASE nKey == K_ESC
          nRetVal := AC_ABORT
+         KEYBOARD Chr(13)
       CASE ( nKey >= Asc('0') .AND. nKey <= Asc('9') ) .OR. nKey == Asc(' ')
          nRetVal := AC_GOTO
-      ENDCASE
+      CASE nKey == K_LEFT
+         nRetVal := AC_SELECT
+         KEYBOARD Chr( K_UP )
+      CASE nKey == K_RIGHT
+         nRetVal := AC_SELECT
+         KEYBOARD Chr( K_DOWN )
+     ENDCASE
    ENDIF
 
    RETURN nRetVal
@@ -2024,8 +2030,6 @@ FUNCTION KRejSWhProcedur()
 
    RestScreen( 0, 0, MaxRow(), MaxCol(), cEkran )
 
-   KEYBOARD Chr(13)
-
    RETURN lRes
 
 /*----------------------------------------------------------------------*/
@@ -2078,10 +2082,18 @@ FUNCTION KRejSWhProcedurAChFunc( nMode, nCurElement, nRowPos )
       DO CASE
       CASE nKey == K_ENTER
          nRetVal := AC_SELECT
+         KEYBOARD Chr(13)
       CASE nKey == K_ESC
          nRetVal := AC_ABORT
+         KEYBOARD Chr(13)
       CASE ! ( cKey := Upper( hb_keyChar( nKey ) ) ) == ""
          nRetVal := AC_GOTO
+      CASE nKey == K_LEFT
+         nRetVal := AC_SELECT
+         KEYBOARD Chr( K_UP )
+      CASE nKey == K_RIGHT
+         nRetVal := AC_SELECT
+         KEYBOARD Chr( K_DOWN )
       ENDCASE
    ENDIF
 
