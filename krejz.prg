@@ -351,7 +351,7 @@ PROCEDURE KRejZ()
             @ 17, 57 GET zSPZW  PICTURE '!' WHEN zWARTZW <> 0 .AND. wSP() VALID SP( zSPZW )
             @ 18, 57 GET zSP12  PICTURE '!' WHEN zWART12 + zVAT12 <> 0 .AND. wSP() VALID SP( zSP12 )
             @ 18, 61 GET zZOM12 PICTURE '!' WHEN zWART12 + zVAT12 <> 0 .AND. wZOM() VALID ZOM( zZOM12 )
-            @ 20, 42 GET zVATMARZA PICTURE FPIC
+            @ 20, 42 GET zVATMARZA PICTURE FPIC WHEN param_ksv7 == 'T'
             IF zRYCZALT <> 'T'
                @ 21, 14 GET zDATAKS PICTURE '@D' WHEN w1_6kz( zKOREKTA == 'T' ) VALID v1_6kz()
                @ 21, 29 GET zNETTO PICTURE  FPIC WHEN SUMNETz() VALID vSUMNETz()
@@ -1717,6 +1717,10 @@ FUNCTION Valid_RejZ_Trojstr()
 /*----------------------------------------------------------------------*/
 
 FUNCTION KRejZWRodzDow()
+
+   IF param_ksv7 <> 'T'
+      RETURN .F.
+   ENDIF
 
    cScrRodzDow := SaveScreen( 5, 40, 11, 79 )
 

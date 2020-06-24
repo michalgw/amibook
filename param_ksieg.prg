@@ -22,7 +22,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION menuKonfigKsiega()
    LOCAL pozycje_menu, menusel
-   PRIVATE zparam_ks5v, zparam_ks5d, zparam_kslp, zparam_ksnd, zparam_kskw
+   PRIVATE zparam_ks5v, zparam_ks5d, zparam_kslp, zparam_ksnd, ;
+      zparam_kskw, zparam_ksv7
 
    IF !File('parksg.mem')
       SAVE TO parksg ALL LIKE param_ks*
@@ -31,25 +32,25 @@ FUNCTION menuKonfigKsiega()
    @  2,42 say 'ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ'
    ColStd()
    @  3,42 say ' Nliczanie 50% VAT na poj. (1/2)      '
-   @  4,42 say ' 1 - VAT: 50%                         '
-   @  5,42 say '     Ksi©ga: Netto + 50% VAT          '
-   @  6,42 say ' 2 - VAT: 50%                         '
-   @  7,42 say '     Ksi©ga: 50% Netto + 50% VAT      '
-   @  8,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-   @  9,42 say ' Obliczanie podstawy opodatkowania    '
-   @ 10,42 say ' deklaracji VAT-7 (pole 43.)          '
-   @ 11,42 say ' dla 50% VAT na pojazdy (1/2):        '
-   @ 12,42 say ' 1 - 100%     2 - 50%                 '
-   @ 13,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-   @ 14,42 say ' Sortowanie dokument¢w w ksi©dze      '
-   @ 15,42 say ' (1 - Nr dok./Dzieä, 2 - Dzieä)       '
-   @ 16,42 say ' (3 - Lp./Dzieä )                     '
-   @ 17,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-   @ 18,42 say ' Inf. o wprowadzeniu dok. z istn. nr  '
-   @ 19,42 say ' (N-nie, T-akt.miesiac, R-rok):       '
-   @ 20,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-   @ 21,42 say ' Odliczanie kwoty wolnej po przekr.   '
-   @ 22,42 say ' progu (Tak/Nie)                      '
+   @  4,42 say ' 1 - Ksi©ga: Netto + 50% VAT          '
+   @  5,42 say ' 2 - Ksi©ga: 50% Netto + 50% VAT      '
+   @  6,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
+   @  7,42 say ' Obliczanie podstawy opodatkowania    '
+   @  8,42 say ' deklaracji VAT-7 (pole 43.)          '
+   @  9,42 say ' dla 50% VAT na pojazdy (1/2):        '
+   @ 10,42 say ' 1 - 100%     2 - 50%                 '
+   @ 11,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
+   @ 12,42 say ' Sortowanie dokument¢w w ksi©dze      '
+   @ 13,42 say ' (1 - Nr dok./Dzieä, 2 - Dzieä)       '
+   @ 14,42 say ' (3 - Lp./Dzieä )                     '
+   @ 15,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
+   @ 16,42 say ' Inf. o wprowadzeniu dok. z istn. nr  '
+   @ 17,42 say ' (N-nie, T-akt.miesiac, R-rok):       '
+   @ 18,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
+   @ 19,42 say ' Odliczanie kwoty wolnej po przekr.   '
+   @ 20,42 say ' progu (Tak/Nie)                      '
+   @ 21,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
+   @ 22,42 say ' Obsˆuga p¢l JPK_V7 (Tak/Nie)         '
    menuKonfigKsiegaPokaz()
    kl=0
    DO WHILE kl#27
@@ -72,12 +73,14 @@ FUNCTION menuKonfigKsiega()
                  zparam_kslp := param_kslp
                  zparam_ksnd := param_ksnd
                  zparam_kskw := param_kskw
+                 zparam_ksv7 := param_ksv7
                  *ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ GET ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ
                  @  3, 76 get zparam_ks5v PICTURE '!' VALID menuKonfigKsiegaPolKS5V()
-                 @ 11, 76 get zparam_ks5d PICTURE '!' VALID menuKonfigKsiegaPolKS5D()
-                 @ 16, 62 get zparam_kslp PICTURE '!' VALID menuKonfigKsiegaPolKSLP()
-                 @ 19, 74 get zparam_ksnd PICTURE '!' VALID menuKonfigKsiegaPolKSND()
-                 @ 22, 72 get zparam_kskw PICTURE '!' VALID menuKonfigKsiegaPolKSKW()
+                 @  9, 76 get zparam_ks5d PICTURE '!' VALID menuKonfigKsiegaPolKS5D()
+                 @ 14, 62 get zparam_kslp PICTURE '!' VALID menuKonfigKsiegaPolKSLP()
+                 @ 17, 74 get zparam_ksnd PICTURE '!' VALID menuKonfigKsiegaPolKSND()
+                 @ 20, 72 get zparam_kskw PICTURE '!' VALID menuKonfigKsiegaPolKSKW()
+                 @ 22, 72 get zparam_ksv7 PICTURE '!' VALID menuKonfigKsiegaPolKSV7()
                  ****************************
                  clear type
                  read_()
@@ -90,6 +93,7 @@ FUNCTION menuKonfigKsiega()
                  param_kslp := zparam_kslp
                  param_ksnd := zparam_ksnd
                  param_kskw := zparam_kskw
+                 param_ksv7 := zparam_ksv7
                  save TO parksg all like param_ks*
                  SWITCH param_kslp
                  CASE '1'
@@ -181,13 +185,13 @@ FUNCTION menuKonfigKsiegaPolKSLP()
    set colo to w+
    SWITCH zparam_kslp
    CASE '1'
-      @ 16, 63 SAY ' - Nr dok./Dzieä        '
+      @ 14, 63 SAY ' - Nr dok./Dzieä        '
       EXIT
    CASE '2'
-      @ 16, 63 SAY ' - Dzieä'
+      @ 14, 63 SAY ' - Dzieä'
       EXIT
    CASE '3'
-      @ 16, 63 SAY ' - Lp/Dzieä     '
+      @ 14, 63 SAY ' - Lp/Dzieä     '
       EXIT
    ENDSWITCH
    ColStd()
@@ -199,9 +203,10 @@ PROCEDURE menuKonfigKsiegaPokaz()
    clear type
    set colo to w+
    @  3, 76 SAY param_ks5v
-   @ 11, 76 SAY param_ks5d
-   @ 19, 74 SAY param_ksnd
-   @ 22, 72 SAY iif(param_kskw == 'T', 'Tak', 'Nie')
+   @  9, 76 SAY param_ks5d
+   @ 17, 74 SAY param_ksnd
+   @ 20, 72 SAY iif(param_kskw == 'T', 'Tak', 'Nie')
+   @ 22, 72 SAY iif(param_ksv7 == 'T', 'Tak', 'Nie')
    SWITCH param_kslp
    CASE '1'
       @ 16, 62 SAY '1 - Nr dok./Dzieä'
@@ -238,7 +243,20 @@ FUNCTION menuKonfigKsiegaPolKSKW()
          zparam_kskw = param_kskw
          RETURN .F.
       ENDIF
-   @ 22, 73 SAY iif(param_kskw == 'T', 'ak', 'ie')
+   @ 20, 73 SAY iif(zparam_kskw == 'T', 'ak', 'ie')
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION menuKonfigKsiegaPolKSV7()
+   IF LastKey()=5
+      RETURN .T.
+   ENDIF
+      IF !zparam_ksv7$'TN'
+         zparam_ksv7 = param_ksv7
+         RETURN .F.
+      ENDIF
+   @ 22, 73 SAY iif(zparam_ksv7 == 'T', 'ak', 'ie')
    RETURN .T.
 
 /*----------------------------------------------------------------------*/

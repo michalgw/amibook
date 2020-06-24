@@ -316,7 +316,7 @@ PROCEDURE KRejS()
                   @ 17, 48 GET zBRUTZW PICTURE FPIC VALID SUMPODd()
                   @ 18, 48 GET zBRUT08 PICTURE FPIC VALID SUMPODd()
                ENDIF
-            @ 20, 48 GET zVATMARZA PICTURE FPIC
+            @ 20, 48 GET zVATMARZA PICTURE FPIC WHEN param_ksv7 == 'T'
             ENDIF
             @ 21, 14 GET zNETTO PICTURE FPIC WHEN SUMNETs( lRyczModSys ) VALID vSUMNETs()
             IF zRYCZALT == 'T'
@@ -1884,6 +1884,10 @@ FUNCTION KRejSWhOpcje()
       "12 - —wiadczenie usˆug o charakterze niematerialnym...     ", ;
       "13 - —wiadczenie usˆug transportowych i gospodarki mag...  " }
 
+   IF param_ksv7 <> 'T'
+      RETURN .F.
+   ENDIF
+
    IF AllTrim( zOPCJE ) == ""
       nElement := 1
    ELSE
@@ -2012,6 +2016,10 @@ FUNCTION KRejSWhProcedur()
    LOCAL aKody := { "SW", "EE", "TP", "TT_WNT", "TT_D", "MR_T", "MR_UZ", ;
       "I_42", "I_63", "B_SPV", "B_SPV_DOSTAWA", "B_MPV_PROWIZJA" }
 
+   IF param_ksv7 <> 'T'
+      RETURN .F.
+   ENDIF
+
    IF AllTrim( zPROCEDUR ) == ""
       nElement := 1
    ELSE
@@ -2113,6 +2121,10 @@ FUNCTION KRejSVaProcedur()
 /*----------------------------------------------------------------------*/
 
 FUNCTION KRejSWRodzDow()
+
+   IF param_ksv7 <> 'T'
+      RETURN .F.
+   ENDIF
 
    cScrRodzDow := SaveScreen( 5, 40, 11, 79 )
 
