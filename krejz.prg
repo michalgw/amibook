@@ -28,7 +28,7 @@ PROCEDURE KRejZ()
    PRIVATE oGetWAR2, oGetVAT2, oGetWAR7, oGetVAT7, oGetWAR12, oGetVAT12, oGetWAR22, oGetVAT22, lBlokuj := .F.
    PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE
    PRIVATE nOrgW2, nOrgW7, nOrgW12, nOrgW22, zRODZDOW, cScrRodzDow
-   PRIVATE zK16OPIS, zKOL47, zKOL48, zKOL49, zKOL50, nWartoscNetto
+   PRIVATE zK16OPIS, zKOL47, zKOL48, zKOL49, zKOL50, nWartoscNetto, zVATMARZA
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou
    zexport := 'N'
    scr_kolumL := .F.
@@ -128,7 +128,7 @@ PROCEDURE KRejZ()
 *                @ 10,77 say '   '
                @ 13,  8 CLEAR TO 13, 79
                @ 14, 40 CLEAR TO 14, 79
-               @ 15,  8 CLEAR TO 20, 79
+               @ 15,  8 CLEAR TO 19, 79
  *                @ 13,57 clear to 19,79
                zDZIEN := '  '
                znazwa := Space( 100 )
@@ -204,6 +204,7 @@ PROCEDURE KRejZ()
                zDATATRAN := CToD( zROKS + '.' + zMCS + '.' + zDZIENS )
 
                zRODZDOW := Space( 6 )
+               zVATMARZA := 0
                ***********************
             ELSE
                IF DocSys()
@@ -282,14 +283,15 @@ PROCEDURE KRejZ()
                zDATATRAN := DATATRAN
 
                zRODZDOW := RODZDOW
+               zVATMARZA := VATMARZA
             ENDIF
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 
             sprawdzVAT( 10, CToD( param_rok + '.' + StrTran( miesiac, ' ', '0' ) + '.01' ) )
             @ 13, 2 SAY Str( vat_A, 2 )
-            @ 15, 2 SAY Str( vat_B, 2 )
-            @ 16, 2 SAY Str( vat_C, 2 )
-            @ 19, 2 SAY Str( vat_D, 2 )
+            @ 14, 2 SAY Str( vat_B, 2 )
+            @ 15, 2 SAY Str( vat_C, 2 )
+            @ 18, 2 SAY Str( vat_D, 2 )
 
             stan_ := zNETTO + zNETTO2
             zRACH := 'F'
@@ -324,31 +326,32 @@ PROCEDURE KRejZ()
             oGetWAR22 := ATail( GetList )
             @ 13, 25 GET zVAT22  PICTURE FPIC WHEN SUMPOwz( 'zvat22' ) VALID SUMPODz()
             oGetVAT22 := ATail( GetList )
-            @ 15,  8 GET zWART07 PICTURE FPIC WHEN w1_wartosc( nOrgW7, @zWART07 ) VALID SUMPODz( zWART07, @nOrgW7 )
+            @ 14,  8 GET zWART07 PICTURE FPIC WHEN w1_wartosc( nOrgW7, @zWART07 ) VALID SUMPODz( zWART07, @nOrgW7 )
             oGetWAR7 := ATail( GetList )
-            @ 15, 25 GET zVAT07  PICTURE FPIC WHEN SUMPOwz( 'zvat07' ) VALID SUMPODz()
+            @ 14, 25 GET zVAT07  PICTURE FPIC WHEN SUMPOwz( 'zvat07' ) VALID SUMPODz()
             oGetVAT7 := ATail( GetList )
-            @ 16,  8 GET zWART02 PICTURE FPIC WHEN w1_wartosc( nOrgW2, @zWART02 ) valid SUMPODz( zWART02, @nOrgW7 )
+            @ 15,  8 GET zWART02 PICTURE FPIC WHEN w1_wartosc( nOrgW2, @zWART02 ) valid SUMPODz( zWART02, @nOrgW7 )
             oGetWAR2 := ATail( GetList )
-            @ 16, 25 GET zVAT02  PICTURE FPIC WHEN SUMPOwz( 'zvat02' ) VALID SUMPODz()
+            @ 15, 25 GET zVAT02  PICTURE FPIC WHEN SUMPOwz( 'zvat02' ) VALID SUMPODz()
             oGetVAT2 := ATail( GetList )
-            @ 17,  8 GET zWART00 PICTURE FPIC VALID SUMPODz()
-            @ 18,  8 GET zWARTZW PICTURE FPIC VALID SUMPODz()
-            @ 19,  8 GET zWART12 PICTURE FPIC WHEN w1_wartosc( nOrgW12, @zWART12 ) VALID SUMPODz( zWART12, @nOrgW12 )
+            @ 16,  8 GET zWART00 PICTURE FPIC VALID SUMPODz()
+            @ 17,  8 GET zWARTZW PICTURE FPIC VALID SUMPODz()
+            @ 18,  8 GET zWART12 PICTURE FPIC WHEN w1_wartosc( nOrgW12, @zWART12 ) VALID SUMPODz( zWART12, @nOrgW12 )
             oGetWAR12 := ATail( GetList )
-            @ 19, 25 GET zVAT12  PICTURE FPIC WHEN SUMPOwz( 'zvat12' ) VALID SUMPODz()
+            @ 18, 25 GET zVAT12  PICTURE FPIC WHEN SUMPOwz( 'zvat12' ) VALID SUMPODz()
             oGetVAT12 := ATail( GetList )
             @ 13, 57 GET zSP22  PICTURE '!' WHEN zWART22 + zVAT22<> 0 .AND. wSP() VALID SP(zSP22)
             @ 13, 61 GET zZOM22 PICTURE '!' WHEN zWART22 + zVAT22<> 0 .AND. wZOM() VALID ZOM(zZOM22)
-            @ 15, 57 GET zSP07  PICTURE '!' WHEN zWART07 + zVAT07<> 0 .AND. wSP() VALID SP(zSP07)
-            @ 15, 61 GET zZOM07 PICTURE '!' WHEN zWART07 + zVAT07<> 0 .AND. wZOM() VALID ZOM(zZOM07)
-            @ 16, 57 GET zSP02  PICTURE '!' WHEN zWART02 + zVAT02<> 0 .AND. wSP() VALID SP(zSP02)
-            @ 16, 61 GET zZOM02 PICTURE '!' WHEN zWART02 + zVAT02<> 0 .AND. wZOM() VALID ZOM(zZOM02)
-            @ 17, 57 GET zSP00  PICTURE '!' WHEN zWART00 <> 0 .AND. wSP() VALID SP( zSP00 )
-            @ 17, 61 GET zZOM00 PICTURE '!' WHEN zWART00 <> 0 .AND. wZOM() VALID ZOM( zZOM00 )
-            @ 18, 57 GET zSPZW  PICTURE '!' WHEN zWARTZW <> 0 .AND. wSP() VALID SP( zSPZW )
-            @ 19, 57 GET zSP12  PICTURE '!' WHEN zWART12 + zVAT12 <> 0 .AND. wSP() VALID SP( zSP12 )
-            @ 19, 61 GET zZOM12 PICTURE '!' WHEN zWART12 + zVAT12 <> 0 .AND. wZOM() VALID ZOM( zZOM12 )
+            @ 14, 57 GET zSP07  PICTURE '!' WHEN zWART07 + zVAT07<> 0 .AND. wSP() VALID SP(zSP07)
+            @ 14, 61 GET zZOM07 PICTURE '!' WHEN zWART07 + zVAT07<> 0 .AND. wZOM() VALID ZOM(zZOM07)
+            @ 15, 57 GET zSP02  PICTURE '!' WHEN zWART02 + zVAT02<> 0 .AND. wSP() VALID SP(zSP02)
+            @ 15, 61 GET zZOM02 PICTURE '!' WHEN zWART02 + zVAT02<> 0 .AND. wZOM() VALID ZOM(zZOM02)
+            @ 16, 57 GET zSP00  PICTURE '!' WHEN zWART00 <> 0 .AND. wSP() VALID SP( zSP00 )
+            @ 16, 61 GET zZOM00 PICTURE '!' WHEN zWART00 <> 0 .AND. wZOM() VALID ZOM( zZOM00 )
+            @ 17, 57 GET zSPZW  PICTURE '!' WHEN zWARTZW <> 0 .AND. wSP() VALID SP( zSPZW )
+            @ 18, 57 GET zSP12  PICTURE '!' WHEN zWART12 + zVAT12 <> 0 .AND. wSP() VALID SP( zSP12 )
+            @ 18, 61 GET zZOM12 PICTURE '!' WHEN zWART12 + zVAT12 <> 0 .AND. wZOM() VALID ZOM( zZOM12 )
+            @ 20, 42 GET zVATMARZA PICTURE FPIC
             IF zRYCZALT <> 'T'
                @ 21, 14 GET zDATAKS PICTURE '@D' WHEN w1_6kz( zKOREKTA == 'T' ) VALID v1_6kz()
                @ 21, 29 GET zNETTO PICTURE  FPIC WHEN SUMNETz() VALID vSUMNETz()
@@ -719,39 +722,39 @@ PROCEDURE say1z()
 
    sprawdzVAT( 10, CToD( ROKS + '.' + MCS + '.' + DZIENS ) )
    @ 13,  2 SAY Str( vat_A, 2 )
-   @ 15,  2 SAY Str( vat_B, 2 )
-   @ 16,  2 SAY Str( vat_C, 2 )
+   @ 14,  2 SAY Str( vat_B, 2 )
+   @ 15,  2 SAY Str( vat_C, 2 )
 
    @ 13,  8 SAY WART22 PICTURE RPIC
-   @ 15,  8 SAY WART07 PICTURE RPIC
+   @ 14,  8 SAY WART07 PICTURE RPIC
    *@ 16,8  say WART12 pict RPIC
    *@ 17,8  say WART02 pict RPIC
    *@ 18,8  say WART00 pict RPIC
    *@ 19,8  say WARTZW pict RPIC
-   @ 16,  8 SAY WART02 PICTURE RPIC
-   @ 17,  8 SAY WART00 PICTURE RPIC
-   @ 18,  8 SAY WARTZW PICTURE RPIC
-   @ 19,  8 SAY WART12 PICTURE RPIC
+   @ 15,  8 SAY WART02 PICTURE RPIC
+   @ 16,  8 SAY WART00 PICTURE RPIC
+   @ 17,  8 SAY WARTZW PICTURE RPIC
+   @ 18,  8 SAY WART12 PICTURE RPIC
    @ 13, 25 SAY VAT22 PICTURE RPIC
-   @ 15, 25 SAY VAT07 PICTURE RPIC
+   @ 14, 25 SAY VAT07 PICTURE RPIC
    *@ 16,25 say VAT12 pict RPIC
    *@ 17,25 say VAT02 pict RPIC
-   @ 16, 25 SAY VAT02 PICTURE RPIC
-   @ 19, 25 SAY VAT12 PICTURE RPIC
+   @ 15, 25 SAY VAT02 PICTURE RPIC
+   @ 16, 25 SAY VAT12 PICTURE RPIC
    @ 13, 42 SAY WART22 + VAT22 PICTURE RPIC
-   @ 15, 42 SAY WART07 + VAT07 PICTURE RPIC
+   @ 14, 42 SAY WART07 + VAT07 PICTURE RPIC
    *@ 16,42 say WART12+VAT12 pict RPIC
    *@ 17,42 say WART02+VAT02 pict RPIC
    *@ 18,42 say WART00 pict RPIC
    *@ 19,42 say WARTZW pict RPIC
-   @ 16, 42 SAY WART02 + VAT02 PICTURE RPIC
-   @ 17, 42 SAY WART00 PICTURE RPIC
-   @ 18, 42 SAY WARTZW PICTURE RPIC
-   @ 19, 42 SAY WART12 + VAT12 PICTURE RPIC
+   @ 15, 42 SAY WART02 + VAT02 PICTURE RPIC
+   @ 16, 42 SAY WART00 PICTURE RPIC
+   @ 17, 42 SAY WARTZW PICTURE RPIC
+   @ 18, 42 SAY WART12 + VAT12 PICTURE RPIC
    @ 13, 57 SAY SP22 + iif( SP22 == 'S', 'T ', iif( SP22 == 'P', 'oz', Space( 2 ) ) )
    @ 13, 61 SAY ZOM22 + iif( ZOM22 == 'Z', 'wolni', iif( ZOM22 == 'O', 'podat', iif( ZOM22 == 'M', 'iesza', Space( 5 ) ) ) )
-   @ 15, 57 SAY SP07 + iif( SP07 == 'S', 'T ', iif( SP07 == 'P', 'oz', Space( 2 ) ) )
-   @ 15, 61 SAY ZOM07 + iif( ZOM07 == 'Z', 'wolni', iif( ZOM07 == 'O', 'podat', iif( ZOM07 == 'M', 'iesza', Space( 5 ) ) ) )
+   @ 14, 57 SAY SP07 + iif( SP07 == 'S', 'T ', iif( SP07 == 'P', 'oz', Space( 2 ) ) )
+   @ 14, 61 SAY ZOM07 + iif( ZOM07 == 'Z', 'wolni', iif( ZOM07 == 'O', 'podat', iif( ZOM07 == 'M', 'iesza', Space( 5 ) ) ) )
    *@ 16,57 say SP12+iif(SP12='S','T.',iif(SP12='P','oz',space(2)))
    *@ 16,61 say ZOM12+iif(ZOM12='Z','wolni',iif(ZOM12='O','podat',iif(ZOM12='M','iesza',space(5))))
    *@ 17,57 say SP02+iif(SP02='S','T ',iif(SP02='P','oz',space(2)))
@@ -759,26 +762,27 @@ PROCEDURE say1z()
    *@ 18,57 say SP00+iif(SP00='S','T ',iif(SP00='P','oz',space(2)))
    *@ 18,61 say ZOM00+iif(ZOM00='Z','wolni',iif(ZOM00='O','podat',iif(ZOM00='M','iesza',space(5))))
    *@ 19,57 say SPZW+iif(SPZW='S','T ',iif(SPZW='P','oz',space(2)))
-   @ 16, 57 SAY SP02 + iif( SP02 == 'S', 'T ', iif( SP02 == 'P', 'oz' ,Space( 2 ) ) )
-   @ 16, 61 SAY ZOM02 + iif( ZOM02 == 'Z', 'wolni', iif( ZOM02 == 'O', 'podat', iif( ZOM02 == 'M', 'iesza', Space( 5 ) ) ) )
-   @ 17, 57 SAY SP00 + iif( SP00 == 'S', 'T ', iif( SP00 == 'P', 'oz', Space( 2 ) ) )
-   @ 17, 61 SAY ZOM00 + iif( ZOM00 == 'Z', 'wolni', iif( ZOM00 == 'O', 'podat', iif( ZOM00 == 'M', 'iesza', Space( 5 ) ) ) )
-   @ 18, 57 SAY SPZW + iif( SPZW == 'S', 'T ', iif( SPZW == 'P', 'oz', Space( 2 ) ) )
-   @ 19, 57 SAY SP12 + iif( SP12 == 'S', 'T.', iif( SP12 == 'P', 'oz', Space( 2) ) )
-   @ 19, 61 SAY ZOM12 + iif( ZOM12 == 'Z', 'wolni', iif( ZOM12 == 'O', 'podat', iif( ZOM12 == 'M', 'iesza', Space( 5 ) ) ) )
+   @ 15, 57 SAY SP02 + iif( SP02 == 'S', 'T ', iif( SP02 == 'P', 'oz' ,Space( 2 ) ) )
+   @ 15, 61 SAY ZOM02 + iif( ZOM02 == 'Z', 'wolni', iif( ZOM02 == 'O', 'podat', iif( ZOM02 == 'M', 'iesza', Space( 5 ) ) ) )
+   @ 16, 57 SAY SP00 + iif( SP00 == 'S', 'T ', iif( SP00 == 'P', 'oz', Space( 2 ) ) )
+   @ 16, 61 SAY ZOM00 + iif( ZOM00 == 'Z', 'wolni', iif( ZOM00 == 'O', 'podat', iif( ZOM00 == 'M', 'iesza', Space( 5 ) ) ) )
+   @ 17, 57 SAY SPZW + iif( SPZW == 'S', 'T ', iif( SPZW == 'P', 'oz', Space( 2 ) ) )
+   @ 18, 57 SAY SP12 + iif( SP12 == 'S', 'T.', iif( SP12 == 'P', 'oz', Space( 2) ) )
+   @ 18, 61 SAY ZOM12 + iif( ZOM12 == 'Z', 'wolni', iif( ZOM12 == 'O', 'podat', iif( ZOM12 == 'M', 'iesza', Space( 5 ) ) ) )
 //   @ 13, 68 SAY iif( SP22 == 'S' .AND. ZOM22 == 'M', Transform( VAT22 * ( zstrusprob / 100 ), RPIC ), iif( SP22 == 'P' .AND. ZOM22 == 'M', '    zbiorczo', Space( 12 ) ) )
    @ 13, 68 SAY iif( ZOM22 == 'M', Transform( VAT22 * ( zstrusprob / 100 ), RPIC ), Space( 12 ) )
 //   @ 15, 68 SAY iif( SP07 == 'S' .AND. ZOM07 == 'M', Transform( VAT07 * ( zstrusprob / 100 ), RPIC ), iif( SP07 == 'P' .AND. ZOM07 == 'M', '    zbiorczo', Space( 12 ) ) )
-   @ 15, 68 SAY iif( ZOM07 == 'M', Transform( VAT07 * ( zstrusprob / 100 ), RPIC ), Space( 12 ) )
+   @ 14, 68 SAY iif( ZOM07 == 'M', Transform( VAT07 * ( zstrusprob / 100 ), RPIC ), Space( 12 ) )
    *@ 16,68 say iif(SP12='S'.and.ZOM12='M',transform(VAT12*(zstrusprob/100),RPIC),iif(SP12='P'.and.ZOM12='M','    zbiorczo',space(12)))
    *@ 17,68 say iif(SP02='S'.and.ZOM02='M',transform(VAT02*(zstrusprob/100),RPIC),iif(SP02='P'.and.ZOM02='M','    zbiorczo',space(12)))
 //   @ 16, 68 SAY iif( SP02 == 'S' .AND. ZOM02 == 'M', Transform( VAT02 * ( zstrusprob / 100 ), RPIC ), iif( SP02 == 'P' .AND. ZOM02 == 'M', '    zbiorczo', Space( 12 ) ) )
-   @ 16, 68 SAY iif( ZOM02 == 'M', Transform( VAT02 * ( zstrusprob / 100 ), RPIC ), Space( 12 ) )
+   @ 15, 68 SAY iif( ZOM02 == 'M', Transform( VAT02 * ( zstrusprob / 100 ), RPIC ), Space( 12 ) )
 //   @ 19, 68 SAY iif( SP12 == 'S' .AND. ZOM12 == 'M', Transform( VAT12 * ( zstrusprob / 100 ), RPIC ), iif( SP12 == 'P' .AND. ZOM12 == 'M', '    zbiorczo', Space( 12 ) ) )
-   @ 19, 68 SAY iif( ZOM12 == 'M', Transform( VAT12 * ( zstrusprob / 100 ), RPIC ), Space( 12 ) )
-   @ 20,  8 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW PICTURE RPIC
-   @ 20, 25 SAY VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
-   @ 20, 42 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW + VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
+   @ 18, 68 SAY iif( ZOM12 == 'M', Transform( VAT12 * ( zstrusprob / 100 ), RPIC ), Space( 12 ) )
+   @ 19,  8 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW PICTURE RPIC
+   @ 19, 25 SAY VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
+   @ 19, 42 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW + VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
+   @ 20, 42 SAY VATMARZA PICTURE RPIC
    IF zRYCZALT <> 'T'
       @ 21, 14 SAY DATAKS PICTURE '@D'
       @ 21, 29 SAY NETTO PICTURE RPIC
@@ -834,9 +838,9 @@ FUNCTION v1_1z()
 
    sprawdzVAT( 10, CToD( param_rok + '.' + StrTran( miesiac, ' ', '0' ) + '.' + zdzien ) )
    @ 13, 2 SAY Str( vat_A, 2 )
-   @ 15, 2 SAY Str( vat_B, 2 )
-   @ 16, 2 SAY Str( vat_C, 2 )
-   @ 19, 2 SAY Str( vat_D, 2 )
+   @ 14, 2 SAY Str( vat_B, 2 )
+   @ 15, 2 SAY Str( vat_C, 2 )
+   @ 18, 2 SAY Str( vat_D, 2 )
 
    RETURN .T.
 
@@ -1095,9 +1099,9 @@ FUNCTION v1_6z()
 
    sprawdzVAT( 10, zDATAS )
    @ 13, 2 SAY Str( vat_A, 2 )
-   @ 15, 2 SAY Str( vat_B, 2 )
-   @ 16, 2 SAY Str( vat_C, 2 )
-   @ 19, 2 SAY Str( vat_D, 2 )
+   @ 14, 2 SAY Str( vat_B, 2 )
+   @ 15, 2 SAY Str( vat_C, 2 )
+   @ 18, 2 SAY Str( vat_D, 2 )
 
    // to jest niepotrzebne
    IF LastKey() == K_UP
@@ -1187,18 +1191,18 @@ FUNCTION V1_22z()
 FUNCTION SumPodz( nWartosc, nPole )
 ***************************************************
    @ 13, 42 SAY zWART22 + zVAT22 + iif( zOPCJE $ "27P", zVAT22, 0 ) PICTURE RPIC
-   @ 15, 42 SAY zWART07 + zVAT07 + iif( zOPCJE $ "27P", zVAT07, 0 ) PICTURE RPIC
+   @ 14, 42 SAY zWART07 + zVAT07 + iif( zOPCJE $ "27P", zVAT07, 0 ) PICTURE RPIC
    *@ 16,42 say zWART12+zVAT12 pict RPIC
    *@ 17,42 say zWART02+zVAT02 pict RPIC
    *@ 18,42 say zWART00 pict RPIC
    *@ 19,42 say zWARTZW pict RPIC
-   @ 16, 42 SAY zWART02 + zVAT02 + iif( zOPCJE $ "27P", zVAT02, 0 ) PICTURE RPIC
-   @ 17, 42 SAY zWART00 PICTURE RPIC
-   @ 18, 42 SAY zWARTZW PICTURE RPIC
-   @ 19, 42 SAY zWART12 + zVAT12 + iif( zOPCJE $ "27P", zVAT12, 0 ) PICTURE RPIC
-   @ 20,  8 SAY zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW PICTURE RPIC
-   @ 20, 25 SAY zVAT22 + zVAT12 + zVAT07 + zVAT02 PICTURE RPIC
-   @ 20, 42 SAY ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 + iif( zOPCJE $ "27P", zVAT22 + zVAT12 + zVAT07 + zVAT02, 0 ) ) * iif( zOPCJE == "2", 0.2, iif( zOPCJE == "7", 0.75, 1 ) ) PICTURE RPIC
+   @ 15, 42 SAY zWART02 + zVAT02 + iif( zOPCJE $ "27P", zVAT02, 0 ) PICTURE RPIC
+   @ 16, 42 SAY zWART00 PICTURE RPIC
+   @ 17, 42 SAY zWARTZW PICTURE RPIC
+   @ 18, 42 SAY zWART12 + zVAT12 + iif( zOPCJE $ "27P", zVAT12, 0 ) PICTURE RPIC
+   @ 19,  8 SAY zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW PICTURE RPIC
+   @ 19, 25 SAY zVAT22 + zVAT12 + zVAT07 + zVAT02 PICTURE RPIC
+   @ 19, 42 SAY ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 + iif( zOPCJE $ "27P", zVAT22 + zVAT12 + zVAT07 + zVAT02, 0 ) ) * iif( zOPCJE == "2", 0.2, iif( zOPCJE == "7", 0.75, 1 ) ) PICTURE RPIC
    IF ! Empty( nWartosc )
       nPole := nWartosc
    ENDIF
@@ -1266,15 +1270,15 @@ FUNCTION SUMNETz()
       RETURN .F.
    ELSE
       @ 13, 58 SAY iif( zSP22 == 'S', 'T ', iif( zSP22 == 'P', 'oz', Space( 2 ) ) )
-      @ 15, 58 SAY iif( zSP07 == 'S', 'T ', iif( zSP07 == 'P', 'oz', Space( 2 ) ) )
+      @ 14, 58 SAY iif( zSP07 == 'S', 'T ', iif( zSP07 == 'P', 'oz', Space( 2 ) ) )
    *  @ 16,58 say iif(zSP12='S','T ',iif(zSP12='P','oz',space(2)))
    *  @ 17,58 say iif(zSP02='S','T ',iif(zSP02='P','oz',space(2)))
    *  @ 18,58 say iif(zSP00='S','T ',iif(zSP00='P','oz',space(2)))
    *  @ 19,58 say iif(zSPZW='S','T ',iif(zSPZW='P','oz',space(2)))
-      @ 16, 58 SAY iif( zSP02 == 'S', 'T ', iif( zSP02 == 'P', 'oz', Space( 2 ) ) )
-      @ 17, 58 SAY iif( zSP00 == 'S', 'T ', iif( zSP00 == 'P', 'oz', Space( 2 ) ) )
-      @ 18, 58 SAY iif( zSPZW == 'S', 'T ', iif( zSPZW == 'P', 'oz', Space( 2 ) ) )
-      @ 19, 58 SAY iif( zSP12 == 'S', 'T ', iif( zSP12 == 'P', 'oz', Space( 2 ) ) )
+      @ 15, 58 SAY iif( zSP02 == 'S', 'T ', iif( zSP02 == 'P', 'oz', Space( 2 ) ) )
+      @ 16, 58 SAY iif( zSP00 == 'S', 'T ', iif( zSP00 == 'P', 'oz', Space( 2 ) ) )
+      @ 17, 58 SAY iif( zSPZW == 'S', 'T ', iif( zSPZW == 'P', 'oz', Space( 2 ) ) )
+      @ 18, 58 SAY iif( zSP12 == 'S', 'T ', iif( zSP12 == 'P', 'oz', Space( 2 ) ) )
       IF ins
          zNETTO := _round( iif( zSPZW == 'S', 0, zWARTZW ) + ;
             iif( zSP00 == 'S', 0, zWART00 ) + iif( ( zZOM00 == 'Z' .OR. zRACH == 'R' ) .AND. zSP00 == 'P', 0, 0 ) + ;
@@ -1486,22 +1490,22 @@ FUNCTION SP( VSP )
       @ 24, 0
    ENDIF
    @ 13, 58 SAY iif( zSP22 == 'S', 'T ', iif( zSP22 == 'P', 'oz', Space( 2 ) ) )
-   @ 15, 58 SAY iif( zSP07 == 'S', 'T ', iif( zSP07 == 'P', 'oz', Space( 2 ) ) )
+   @ 14, 58 SAY iif( zSP07 == 'S', 'T ', iif( zSP07 == 'P', 'oz', Space( 2 ) ) )
    *@ 16,58 say iif(zSP12='S','T ',iif(zSP12='P','oz',space(2)))
    *@ 17,58 say iif(zSP02='S','T ',iif(zSP02='P','oz',space(2)))
    *@ 18,58 say iif(zSP00='S','T ',iif(zSP00='P','oz',space(2)))
    *@ 19,58 say iif(zSPZW='S','T ',iif(zSPZW='P','oz',space(2)))
-   @ 16, 58 SAY iif( zSP02 == 'S', 'T ', iif( zSP02 == 'P', 'oz', Space( 2 ) ) )
-   @ 17, 58 SAY iif( zSP00 == 'S', 'T ', iif( zSP00 == 'P', 'oz', Space( 2 ) ) )
-   @ 18, 58 SAY iif( zSPZW == 'S', 'T ', iif( zSPZW == 'P', 'oz', Space( 2 ) ) )
-   @ 19, 58 SAY iif( zSP12 == 'S', 'T ', iif( zSP12 == 'P', 'oz', Space( 2 ) ) )
+   @ 15, 58 SAY iif( zSP02 == 'S', 'T ', iif( zSP02 == 'P', 'oz', Space( 2 ) ) )
+   @ 16, 58 SAY iif( zSP00 == 'S', 'T ', iif( zSP00 == 'P', 'oz', Space( 2 ) ) )
+   @ 17, 58 SAY iif( zSPZW == 'S', 'T ', iif( zSPZW == 'P', 'oz', Space( 2 ) ) )
+   @ 18, 58 SAY iif( zSP12 == 'S', 'T ', iif( zSP12 == 'P', 'oz', Space( 2 ) ) )
    SET COLOR TO +w
    @ 13, 68 SAY iif( zSP22 == 'S' .AND. zZOM22 == 'M', Transform( zVAT22 * ( zstrusprob / 100 ), RPIC ), iif( zSP22 == 'P' .AND. zZOM22 == 'M', '    zbiorczo', Space( 12 ) ) )
-   @ 15, 68 SAY iif( zSP07 == 'S' .AND. zZOM07 == 'M', Transform( zVAT07 * ( zstrusprob / 100 ), RPIC ), iif( zSP07 == 'P' .AND. zZOM07 == 'M', '    zbiorczo', Space( 12 ) ) )
+   @ 14, 68 SAY iif( zSP07 == 'S' .AND. zZOM07 == 'M', Transform( zVAT07 * ( zstrusprob / 100 ), RPIC ), iif( zSP07 == 'P' .AND. zZOM07 == 'M', '    zbiorczo', Space( 12 ) ) )
    *@ 16,68 say iif(zSP12='S'.and.zZOM12='M',transform(zVAT12*(zstrusprob/100),RPIC),iif(zSP12='P'.and.zZOM12='M','    zbiorczo',space(12)))
    *@ 17,68 say iif(zSP02='S'.and.zZOM02='M',transform(zVAT02*(zstrusprob/100),RPIC),iif(zSP02='P'.and.zZOM02='M','    zbiorczo',space(12)))
-   @ 16, 68 SAY iif( zSP02 == 'S' .AND. zZOM02 == 'M', Transform( zVAT02 * ( zstrusprob / 100 ), RPIC ), iif( zSP02 == 'P' .AND. zZOM02 == 'M', '    zbiorczo', Space( 12 ) ) )
-   @ 19, 68 SAY iif( zSP12 == 'S' .AND. zZOM12 == 'M', Transform( zVAT12 * ( zstrusprob / 100 ), RPIC ), iif( zSP12 == 'P' .AND. zZOM12 == 'M', '    zbiorczo', Space( 12 ) ) )
+   @ 15, 68 SAY iif( zSP02 == 'S' .AND. zZOM02 == 'M', Transform( zVAT02 * ( zstrusprob / 100 ), RPIC ), iif( zSP02 == 'P' .AND. zZOM02 == 'M', '    zbiorczo', Space( 12 ) ) )
+   @ 18, 68 SAY iif( zSP12 == 'S' .AND. zZOM12 == 'M', Transform( zVAT12 * ( zstrusprob / 100 ), RPIC ), iif( zSP12 == 'P' .AND. zZOM12 == 'M', '    zbiorczo', Space( 12 ) ) )
    ColStd()
    RETURN .T.
 
@@ -1513,20 +1517,20 @@ FUNCTION ZOM( VZOM )
       RETURN .F.
    ENDIF
    @ 13, 62 SAY iif( zZOM22 == 'Z', 'wolni', iif( zZOM22 == 'O', 'podat', iif( zZOM22 == 'M', 'iesza', Space( 5 ) ) ) )
-   @ 15, 62 SAY iif( zZOM07 == 'Z', 'wolni', iif( zZOM07 == 'O', 'podat', iif( zZOM07 == 'M', 'iesza', Space( 5 ) ) ) )
+   @ 14, 62 SAY iif( zZOM07 == 'Z', 'wolni', iif( zZOM07 == 'O', 'podat', iif( zZOM07 == 'M', 'iesza', Space( 5 ) ) ) )
    *@ 16,62 say iif(zZOM12='Z','wolni',iif(zZOM12='O','podat',iif(zZOM12='M','iesza',space(5))))
    *@ 17,62 say iif(zZOM02='Z','wolni',iif(zZOM02='O','podat',iif(zZOM02='M','iesza',space(5))))
    *@ 18,62 say iif(zZOM00='Z','wolni',iif(zZOM00='O','podat',iif(zZOM00='M','iesza',space(5))))
-   @ 16, 62 SAY iif( zZOM02 == 'Z', 'wolni', iif( zZOM02 == 'O', 'podat', iif( zZOM02 == 'M', 'iesza', Space( 5 ) ) ) )
-   @ 17, 62 SAY iif( zZOM00 == 'Z', 'wolni', iif( zZOM00 == 'O', 'podat', iif( zZOM00 == 'M', 'iesza', Space( 5 ) ) ) )
-   @ 19, 62 SAY iif( zZOM12 == 'Z', 'wolni', iif( zZOM12 == 'O', 'podat', iif( zZOM12 == 'M', 'iesza', Space( 5 ) ) ) )
+   @ 15, 62 SAY iif( zZOM02 == 'Z', 'wolni', iif( zZOM02 == 'O', 'podat', iif( zZOM02 == 'M', 'iesza', Space( 5 ) ) ) )
+   @ 16, 62 SAY iif( zZOM00 == 'Z', 'wolni', iif( zZOM00 == 'O', 'podat', iif( zZOM00 == 'M', 'iesza', Space( 5 ) ) ) )
+   @ 18, 62 SAY iif( zZOM12 == 'Z', 'wolni', iif( zZOM12 == 'O', 'podat', iif( zZOM12 == 'M', 'iesza', Space( 5 ) ) ) )
    SET COLO TO +w
    @ 13, 68 SAY iif( zSP22 == 'S' .AND. zZOM22 == 'M', Transform( zVAT22 * ( zstrusprob / 100 ), RPIC ), iif( zSP22 == 'P' .AND. zZOM22 == 'M', '    zbiorczo', Space( 12 ) ) )
-   @ 15, 68 SAY iif( zSP07 == 'S' .AND. zZOM07 == 'M', Transform( zVAT07 * ( zstrusprob / 100 ), RPIC ), iif( zSP07 == 'P' .AND. zZOM07 == 'M', '    zbiorczo', Space( 12 ) ) )
+   @ 14, 68 SAY iif( zSP07 == 'S' .AND. zZOM07 == 'M', Transform( zVAT07 * ( zstrusprob / 100 ), RPIC ), iif( zSP07 == 'P' .AND. zZOM07 == 'M', '    zbiorczo', Space( 12 ) ) )
    *@ 16,68 say iif(zSP12='S'.and.zZOM12='M',transform(zVAT12*(zstrusprob/100),RPIC),iif(zSP12='P'.and.zZOM12='M','    zbiorczo',space(12)))
    *@ 17,68 say iif(zSP02='S'.and.zZOM02='M',transform(zVAT02*(zstrusprob/100),RPIC),iif(zSP02='P'.and.zZOM02='M','    zbiorczo',space(12)))
-   @ 16, 68 SAY iif( zSP02 == 'S' .AND. zZOM02 == 'M', Transform( zVAT02 * ( zstrusprob / 100 ), RPIC ), iif( zSP02 == 'P' .AND. zZOM02 == 'M', '    zbiorczo', Space( 12 ) ) )
-   @ 19, 68 SAY iif( zSP12 == 'S' .AND. zZOM12 == 'M', Transform( zVAT12 * ( zstrusprob / 100 ), RPIC ), iif( zSP12 == 'P' .AND. zZOM12 == 'M', '    zbiorczo', Space( 12 ) ) )
+   @ 15, 68 SAY iif( zSP02 == 'S' .AND. zZOM02 == 'M', Transform( zVAT02 * ( zstrusprob / 100 ), RPIC ), iif( zSP02 == 'P' .AND. zZOM02 == 'M', '    zbiorczo', Space( 12 ) ) )
+   @ 18, 68 SAY iif( zSP12 == 'S' .AND. zZOM12 == 'M', Transform( zVAT12 * ( zstrusprob / 100 ), RPIC ), iif( zSP12 == 'P' .AND. zZOM12 == 'M', '    zbiorczo', Space( 12 ) ) )
    ColStd()
    @ 24, 0
    RETURN .T.
@@ -1650,13 +1654,13 @@ FUNCTION krejzRysujTlo()
    @ 11, 0 SAY ' -------------------------------------------------------------------------------'
    @ 12, 0 SAY '           N E T T O         V A T          B R U T T O  ZAK DO SPR VATwgStrSprz'
    @ 13, 0 SAY '  ' + Str( vat_A, 2 ) + '%                                                                           '
-   @ 14, 0 SAY '                                                                                '
-   @ 15, 0 SAY '  ' + Str( vat_B, 2 ) + '%                                                                           '
-   @ 16, 0 SAY '  ' + Str( vat_C, 2 ) + '%                                                                           '
-   @ 17, 0 SAY '   0%                                                                           '
-   @ 18, 0 SAY '  ZW                                                                            '
-   @ 19, 0 SAY '  ' + Str( vat_D, 2 ) + '%                                                                           '
-   @ 20, 0 SAY 'RAZEM                                                                           '
+   @ 14, 0 SAY '  ' + Str( vat_B, 2 ) + '%                                                                           '
+   @ 15, 0 SAY '  ' + Str( vat_C, 2 ) + '%                                                                           '
+   @ 16, 0 SAY '   0%                                                                           '
+   @ 17, 0 SAY '  ZW                                                                            '
+   @ 18, 0 SAY '  ' + Str( vat_D, 2 ) + '%                                                                           '
+   @ 19, 0 SAY 'RAZEM                                                                           '
+   @ 20, 0 SAY '                              Zakup mar¾a                                       '
    IF zRYCZALT == 'T'
       @ 21, 0 SAY Space( 80 )
    ELSE

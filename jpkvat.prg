@@ -288,6 +288,8 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
          aPoz[ 'MPP' ] := .T.
       ENDIF
 
+      ADodajNieZero( @aPoz, 'SprzedazVAT_Marza', rejs->vatmarza )
+
       IF hb_HHasKey( aPoz, 'K_10' ) .OR. hb_HHasKey( aPoz, 'K_11' ) .OR. hb_HHasKey( aPoz, 'K_12' ) .OR. hb_HHasKey( aPoz, 'K_13' ) .OR. ;
          hb_HHasKey( aPoz, 'K_14' ) .OR. hb_HHasKey( aPoz, 'K_15' ) .OR. hb_HHasKey( aPoz, 'K_16' ) .OR. hb_HHasKey( aPoz, 'K_17' ) .OR. ;
          hb_HHasKey( aPoz, 'K_18' ) .OR. hb_HHasKey( aPoz, 'K_19' ) .OR. hb_HHasKey( aPoz, 'K_20' ) .OR. hb_HHasKey( aPoz, 'K_21' ) .OR. ;
@@ -642,6 +644,8 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
          ADodajNieZero( @aPoz, 'K_48', rejz->kol48 )
          ADodajNieZero( @aPoz, 'K_49', rejz->kol49 )
          ADodajNieZero( @aPoz, 'K_50', rejz->kol50 )
+         ADodajNieZero( @aPoz, 'ZakupVAT_Marza', rejz->vatmarza )
+
 
          IF lSprzedaz == .T.
             aPoz[ 'DowodSprzedazy' ] := NrDokUsunHasz( rejz->numer )

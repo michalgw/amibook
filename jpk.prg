@@ -979,6 +979,9 @@ FUNCTION jpk_v7m_1( aDane )
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_39' )
             cRes := cRes + '    <K_39>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_39' ] ) + '</K_39>' + nl
          ENDIF */
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'SprzedazVAT_Marza' )
+            cRes := cRes + '    <SprzedazVAT_Marza>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'SprzedazVAT_Marza' ] ) + '</SprzedazVAT_Marza>' + nl
+         ENDIF
          cRes := cRes + '  </SprzedazWiersz>' + nl
       NEXT
 
@@ -1033,6 +1036,9 @@ FUNCTION jpk_v7m_1( aDane )
          ENDIF
          IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_50' )
             cRes := cRes + '    <K_47>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_50' ] ) + '</K_47>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'ZakupVAT_Marza' )
+            cRes := cRes + '    <ZakupVAT_Marza>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'ZakupVAT_Marza' ] ) + '</ZakupVAT_Marza>' + nl
          ENDIF
          cRes := cRes + '  </ZakupWiersz>' + nl
       NEXT
@@ -1358,6 +1364,9 @@ FUNCTION jpk_v7k_1( aDane )
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_39' )
             cRes := cRes + '    <K_39>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_39' ] ) + '</K_39>' + nl
          ENDIF */
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'SprzedazVAT_Marza' )
+            cRes := cRes + '    <SprzedazVAT_Marza>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'SprzedazVAT_Marza' ] ) + '</SprzedazVAT_Marza>' + nl
+         ENDIF
          cRes := cRes + '  </SprzedazWiersz>' + nl
       NEXT
 
@@ -1412,6 +1421,9 @@ FUNCTION jpk_v7k_1( aDane )
          ENDIF
          IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'K_50' )
             cRes := cRes + '    <K_47>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'K_50' ] ) + '</K_47>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'zakup' ][ nI ], 'ZakupVAT_Marza' )
+            cRes := cRes + '    <ZakupVAT_Marza>' + TKwota2( aDane[ 'zakup' ][ nI ][ 'ZakupVAT_Marza' ] ) + '</ZakupVAT_Marza>' + nl
          ENDIF
          cRes := cRes + '  </ZakupWiersz>' + nl
       NEXT

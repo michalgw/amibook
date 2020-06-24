@@ -35,7 +35,7 @@ PROCEDURE KRejS()
    PRIVATE zWart07, zVat07, zWart22, zVat22, zWart12, zVat12, zNetto, zExport, zUe
    PRIVATE zKraj, zSek_CV7, zRach, zDetal, zKorekta, zRozrZapS, zZap_Ter, zZap_Dat
    PRIVATE zZap_Wart, zTrojstr, zKOL36, zKOL37, zKOL38, zKOL39, zNETTO2, zKOLUMNA2
-   PRIVATE zNETTOOrg, zOPCJE, zPROCEDUR, zRODZDOW, cScrRodzDow
+   PRIVATE zNETTOOrg, zOPCJE, zPROCEDUR, zRODZDOW, cScrRodzDow, zVATMARZA
 
 
    zexport := 'N'
@@ -177,6 +177,7 @@ PROCEDURE KRejS()
                zOPCJE := Space( 16 )
                zPROCEDUR := Space( 32 )
                zRODZDOW := Space( 6 )
+               zVATMARZA := 0
                ***********************
             ELSE
                lRyczModSys := .F.
@@ -253,6 +254,7 @@ PROCEDURE KRejS()
                zOPCJE := AllTrim( OPCJE )
                zPROCEDUR := AllTrim( PROCEDUR )
                zRODZDOW := RODZDOW
+               zVATMARZA := VATMARZA
             ENDIF
             stan_ := -zNETTO - zNETTO2
             netprzed := zNETTO
@@ -314,7 +316,7 @@ PROCEDURE KRejS()
                   @ 17, 48 GET zBRUTZW PICTURE FPIC VALID SUMPODd()
                   @ 18, 48 GET zBRUT08 PICTURE FPIC VALID SUMPODd()
                ENDIF
-
+            @ 20, 48 GET zVATMARZA PICTURE FPIC
             ENDIF
             @ 21, 14 GET zNETTO PICTURE FPIC WHEN SUMNETs( lRyczModSys ) VALID vSUMNETs()
             IF zRYCZALT == 'T'
@@ -1168,6 +1170,7 @@ PROCEDURE say1s()
    @ 19, 14 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW + WART08 PICTURE RPIC
    @ 19, 31 SAY VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
    @ 19, 48 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW + WART08 + VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
+   @ 20, 48 SAY VATMARZA PICTURE RPIC
    @ 21, 14 SAY NETTO PICTURE RPIC
    @ 21, 41 SAY KOLUMNA PICTURE '99'
    @ 21, 51 SAY NETTO2 PICTURE RPIC
@@ -1816,7 +1819,7 @@ FUNCTION krejsRysujTlo()
    @ 17, 0 SAY '        ZW                                                                      '
    @ 18, 0 SAY '        NP                                                                      '
    @ 19, 0 SAY '      RAZEM                                                                     '
-   @ 20, 0 SAY '              **************                                                    '
+   @ 20, 0 SAY '              **************     Sprzeda¾ mar¾a                                 '
    @ 21, 0 SAY 'Zaksi©gowa†                  zˆ. do kol.     |                   zˆ. do kol.    '
    @ 22, 0 SAY 'Kontrola zaplat....  Termin zaplaty.... (..........) Juz zaplacono.             '
    @ 23, 0 SAY '                                                                                '
