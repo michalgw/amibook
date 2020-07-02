@@ -280,9 +280,13 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
          EXIT
       ENDSWITCH
 
+      aPoz[ 'GTU' ] := AllTrim( rejs->opcje )
+
       IF Len( AllTrim( rejs->procedur ) ) > 0
          aPoz[ AllTrim( rejs->procedur ) ] := .T.
       ENDIF
+
+      aPoz[ 'Procedura' ] := AllTrim( rejs->procedur )
 
       IF  ( rejs->sek_cv7 == 'PN' ) .OR. ( rejs->sek_cv7 == 'PU' )
          aPoz[ 'MPP' ] := .T.
@@ -1133,7 +1137,7 @@ PROCEDURE JPK_V7_Rob()
    LOCAL nFirma, nMiesiacPocz, nMiesiacKon
    LOCAL cAdresEmail, cTel
    LOCAL cDaneXml, cMK
-   LOCAL nMenu := 1, cKolor, cEkran := SaveScreen()
+   LOCAL nMenu := 1, cKolor, cEkran := SaveScreen(), nMenuDekDruk := 1
    LOCAL lKorekta := NIL
 
    nFirma := Val( ident_fir )
@@ -1154,16 +1158,15 @@ PROCEDURE JPK_V7_Rob()
    aDane[ 'Korekta' ] := .F.
    aDane[ 'DataWytworzeniaJPK' ] := datetime2strxml( hb_DateTime() )
 
-   IF ! aDane[ 'Kwartalnie' ] .OR. AScan( { 3, 6, 9, 12 }, nMiesiacPocz ) > 0
-/*
-      cKolor := ColPro()
-      @ 16, 4 TO 20, 39
-      @ 17, 5 PROMPT ' J - Deklaracja + rejestry '
-      @ 18, 5 PROMPT ' D - Tylko deklaracja      '
-      @ 19, 5 PROMPT ' R - Tylko rejestry        '
-      nMenu := Menu( nMenu )
-      SetColor( cKolor )
-*/
+   nMenuDekDruk := MenuEx( 16, 4, { ' D - Wydruk      ', ' E - eDeklaracja ' }, ;
+      nMenuDekDruk, .T. )
+
+   IF nMenuDekDruk == 0
+      RestScreen( , , , , cEkran )
+      RETURN NIL
+   ENDIF
+
+   IF ! aDane[ 'Kwartalnie' ] .OR. AScan( { 3, 6, 9, 12 }, nMiesiacPocz ) > 0 .OR. nMenuDekDruk == 1
       aDane[ 'Kwartal' ] := ObliczKwartal( nMiesiacPocz )[ 'kwarta' ]
       nMenu := MenuEx( 16, 4, { ' J - Deklaracja + rejestry ', ;
          ' D - Tylko deklaracja      ', ' R - Tylko rejestry        ' }, ;
@@ -1202,20 +1205,24 @@ PROCEDURE JPK_V7_Rob()
       lKorekta := .F.
    ENDIF
 
-   IF JPK_V7_PobierzDaneAut( 17, 2, @cAdresEmail, @cTel, @lKorekta )
-      IF HB_ISLOGICAL( lKorekta )
-         aDane[ 'Korekta' ] := lKorekta
+   IF nMenuDekDruk == 1
+      DeklarDrukuj( 'JPKV7' + iif( aDane[ 'Kwartalnie' ], 'K', 'M' ) + '-1', aDane )
+   ELSE
+      IF JPK_V7_PobierzDaneAut( 17, 2, @cAdresEmail, @cTel, @lKorekta )
+         IF HB_ISLOGICAL( lKorekta )
+            aDane[ 'Korekta' ] := lKorekta
+         ENDIF
+         aDane[ 'CelZlozenia' ] := iif( aDane[ 'Korekta' ], '2', '1' )
+         aDane[ 'Tel' ] := AllTrim( cTel )
+         aDane[ 'EMail' ] := AllTrim( cAdresEmail )
+         IF aDane[ 'Kwartalnie' ]
+            cDaneXml := jpk_v7k_1( aDane )
+         ELSE
+            cDaneXml := jpk_v7m_1( aDane )
+         ENDIF
+         cMK := iif( aDane[ 'Kwartalnie' ], 'K', 'M' )
+         edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_V7' + cMK + '_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( hb_Date( Val( param_rok ), aDane[ 'Miesiac' ], 1 ) ), wys_edeklaracja, 'JPKV7' + cMK + '-1', aDane[ 'Korekta' ], nMiesiacPocz )
       ENDIF
-      aDane[ 'CelZlozenia' ] := iif( aDane[ 'Korekta' ], '2', '1' )
-      aDane[ 'Tel' ] := AllTrim( cTel )
-      aDane[ 'EMail' ] := AllTrim( cAdresEmail )
-      IF aDane[ 'Kwartalnie' ]
-         cDaneXml := jpk_v7k_1( aDane )
-      ELSE
-         cDaneXml := jpk_v7m_1( aDane )
-      ENDIF
-      cMK := iif( aDane[ 'Kwartalnie' ], 'K', 'M' )
-      edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_V7' + cMK + '_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( hb_Date( Val( param_rok ), aDane[ 'Miesiac' ], 1 ) ), wys_edeklaracja, 'JPKV7' + cMK + '-1', aDane[ 'Korekta' ], nMiesiacPocz )
    ENDIF
 
    RestScreen( , , , , cEkran )

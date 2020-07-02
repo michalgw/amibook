@@ -138,16 +138,19 @@ FUNCTION JPKImp_WczytajPodm( oDoc )
       IF ! Empty( oVal )
          aRes[ 'NIP' ] := sxml2str( oVal:cData )
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)PelnaNazwa|(^PelnaNazwa))' )
       IF ! Empty( oVal )
          aRes[ 'PelnaNazwa' ] := sxml2str( oVal:cData )
       ELSE
+         oIter:Rewind()
          oVal := oIter:Find( '(([\w]*:)ImiePierwsze|(^ImiePierwsze))' )
          IF ! Empty( oVal )
             aRes[ 'PelnaNazwa' ] := sxml2str( oVal:cData )
          ELSE
             aRes[ 'PelnaNazwa' ] := ''
          ENDIF
+         oIter:Rewind()
          oVal := oIter:Find( '(([\w]*:)Nazwisko|(^Nazwisko))' )
          IF ! Empty( oVal )
             aRes[ 'PelnaNazwa' ] := aRes[ 'PelnaNazwa' ] + ' ' + sxml2str( oVal:cData )
