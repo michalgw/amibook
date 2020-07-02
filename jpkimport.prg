@@ -75,38 +75,47 @@ FUNCTION JPKImp_WczytajNagl( oDoc )
             aRes[ 'KodFormularza' ] := SubStr( aRes[ 'KodSystemowy' ], 1, 7 )
          ENDIF
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)WariantFormularza|(^WariantFormularza))' )
       IF ! Empty( oVal )
          aRes[ 'WariantFormularza' ] := oVal:cData
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)DataWytworzeniaJPK|(^DataWytworzeniaJPK))' )
       IF ! Empty( oVal )
          aRes[ 'DataWytworzeniaJPK' ] := oVal:cData
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)CelZlozenia|(^CelZlozenia))' )
       IF ! Empty( oVal )
          aRes[ 'CelZlozenia' ] := oVal:cData
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)DataOd|(^DataOd))' )
       IF ! Empty( oVal )
          aRes[ 'DataOd' ] := sxml2date( oVal:cData )
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)DataDo|(^DataDo))' )
       IF ! Empty( oVal )
          aRes[ 'DataDo' ] := sxml2date( oVal:cData )
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)DomyslnyKodWaluty|(^DomyslnyKodWaluty))' )
       IF ! Empty( oVal )
          aRes[ 'DomyslnyKodWaluty' ] := oVal:cData
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)KodUrzedu|(^KodUrzedu))' )
       IF ! Empty( oVal )
          aRes[ 'KodUrzedu' ] := oVal:cData
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)Rok|(^Rok))' )
       IF ! Empty( oVal )
          aRes[ 'Rok' ] := oVal:cData
       ENDIF
+      oIter:Rewind()
       oVal := oIter:Find( '(([\w]*:)Miesiac|(^Miesiac))' )
       IF ! Empty( oVal )
          aRes[ 'Miesiac' ] := oVal:cData
