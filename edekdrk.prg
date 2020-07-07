@@ -5455,6 +5455,231 @@ FUNCTION DaneXML_VATUEKw4(oDoc, cNrRef, hNaglowek)
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION DaneXML_VATUEw5(oDoc, cNrRef, hNaglowek)
+   LOCAL hPodmiot1, cTmp, aGrupa1, aGrupa2, aGrupa3, aGrupa4
+   LOCAL hDane := hb_Hash()
+   IF !HB_ISHASH( hNaglowek )
+      hNaglowek := edekXmlNaglowek( oDoc )
+   ENDIF
+   hPodmiot1 := edekXmlPodmiot1( oDoc )
+
+   hPozycje := edekXmlGrupa( oDoc, 'PozycjeSzczegolowe' )
+   aGrupa1 := edekXmlGrupaTab( oDoc, 'PozycjeSzczegolowe', 'Grupa1' )
+   aGrupa2 := edekXmlGrupaTab( oDoc, 'PozycjeSzczegolowe', 'Grupa2' )
+   aGrupa3 := edekXmlGrupaTab( oDoc, 'PozycjeSzczegolowe', 'Grupa3' )
+   aGrupa4 := edekXmlGrupaTab( oDoc, 'PozycjeSzczegolowe', 'Grupa4' )
+
+   hDane['P_1'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
+   hDane['P_2'] := iif( HB_ISSTRING( cNrRef ), cNrRef, '' )
+   hDane['P_4'] := sxml2num( xmlWartoscH( hNaglowek, 'Miesiac' ) )
+   hDane['P_6'] := sxml2num( xmlWartoscH( hNaglowek, 'Rok' ) )
+   cTmp := xmlWartoscH( hNaglowek, 'KodUrzedu' )
+   hDane['P_7'] := iif( cTmp != '', KodUS2Nazwa( cTmp ), '' )
+   hDane['P_8_1'] := iif( !xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   hDane['P_8_2'] := iif( xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' ) + ', ' ;
+        + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' ) + ',      ' + xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+   ELSE
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' ) + ',      ' + xmlWartoscH( hPodmiot1, 'etd:REGON' )
+   ENDIF
+
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane['P_8_N'] := ''
+      hDane['P_8_R'] := ''
+      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' )
+      hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' )
+      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+   ELSE
+      hDane['P_8_N'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' )
+      hDane['P_8_R'] := xmlWartoscH( hPodmiot1, 'etd:REGON' )
+      hDane['P_9_N'] := ''
+      hDane['P_9_I'] := ''
+      hDane['P_9_D'] := ''
+   ENDIF
+
+   AEval(aGrupa1, {|hPoz|
+      hPoz['pusty'] := '0'
+      IF hPoz['P_Dd'] == '2'
+         hPoz['P_Dd1'] := '1'
+      ELSE
+         hPoz['P_Dd1'] := '0'
+      ENDIF
+   })
+   AAdd(aGrupa1, hb_Hash('pusty', '1', 'P_Da', '', 'P_Db', '', 'P_Dc', '', 'P_Dd', '0', 'P_Dd1', '0'))
+   hDane['Grupa1'] := aGrupa1
+
+   AEval(aGrupa2, {|hPoz|
+      hPoz['pusty'] := '0'
+      IF hPoz['P_Nd'] == '2'
+         hPoz['P_Nd1'] := '1'
+      ELSE
+         hPoz['P_Nd1'] := '0'
+      ENDIF
+   })
+   AAdd(aGrupa2, hb_Hash('pusty', '1', 'P_Na', '', 'P_Nb', '', 'P_Nc', '', 'P_Nd', '0', 'P_Nd1', '0'))
+   hDane['Grupa2'] := aGrupa2
+
+   AEval(aGrupa3, {|hPoz|
+      hPoz['pusty'] := '0'
+   })
+   AAdd(aGrupa3, hb_Hash('pusty', '1', 'P_Ua', '', 'P_Ub', '', 'P_Uc', ''))
+   hDane['Grupa3'] := aGrupa3
+
+   AEval(aGrupa4, {|hPoz|
+      hPoz['pusty'] := '0'
+      IF hPoz['P_Cd'] == '2'
+         hPoz['P_Cdl'] := '1'
+      ELSE
+         hPoz['P_Cdl'] := '0'
+      ENDIF
+   })
+   AAdd(aGrupa4, hb_Hash('pusty', '1', 'P_Ca', '', 'P_Cb', '', 'P_Cc', '', 'P_Cd', '0', 'P_Cdl', '0'))
+   hDane['Grupa4'] := aGrupa4
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneXML_VATUEKw5(oDoc, cNrRef, hNaglowek)
+   LOCAL hPodmiot1, cTmp, aGrupa1, aGrupa2, aGrupa3, aGrupa4
+   LOCAL hDane := hb_Hash()
+   IF !HB_ISHASH( hNaglowek )
+      hNaglowek := edekXmlNaglowek( oDoc )
+   ENDIF
+   hPodmiot1 := edekXmlPodmiot1( oDoc )
+
+   hPozycje := edekXmlGrupa( oDoc, 'PozycjeSzczegolowe' )
+   aGrupa1 := edekXmlGrupaTab( oDoc, 'PozycjeSzczegolowe', 'Grupa1' )
+   aGrupa2 := edekXmlGrupaTab( oDoc, 'PozycjeSzczegolowe', 'Grupa2' )
+   aGrupa3 := edekXmlGrupaTab( oDoc, 'PozycjeSzczegolowe', 'Grupa3' )
+   aGrupa4 := edekXmlGrupaTab( oDoc, 'PozycjeSzczegolowe', 'Grupa4' )
+
+   hDane['P_1'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
+   hDane['P_2'] := iif( HB_ISSTRING( cNrRef ), cNrRef, '' )
+   hDane['P_4'] := sxml2num( xmlWartoscH( hNaglowek, 'Miesiac' ) )
+   hDane['P_6'] := sxml2num( xmlWartoscH( hNaglowek, 'Rok' ) )
+   cTmp := xmlWartoscH( hNaglowek, 'KodUrzedu' )
+   hDane['P_7'] := iif( cTmp != '', KodUS2Nazwa( cTmp ), '' )
+   hDane['P_8_1'] := iif( !xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   hDane['P_8_2'] := iif( xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' ) + ', ' ;
+        + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' ) + ',      ' + xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+   ELSE
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' ) + ',      ' + xmlWartoscH( hPodmiot1, 'etd:REGON' )
+   ENDIF
+
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane['P_8_N'] := ''
+      hDane['P_8_R'] := ''
+      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' )
+      hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' )
+      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+   ELSE
+      hDane['P_8_N'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' )
+      hDane['P_8_R'] := xmlWartoscH( hPodmiot1, 'etd:REGON' )
+      hDane['P_9_N'] := ''
+      hDane['P_9_I'] := ''
+      hDane['P_9_D'] := ''
+   ENDIF
+
+   AEval(aGrupa1, {|hPoz|
+      hPoz['pusty'] := '0'
+      hPoz['P_DBa'] := xmlWartoscH( hPoz, 'P_DBa' )
+      hPoz['P_DBb'] := xmlWartoscH( hPoz, 'P_DBb' )
+      hPoz['P_DBc'] := xmlWartoscH( hPoz, 'P_DBc' )
+      hPoz['P_DBd'] := xmlWartoscH( hPoz, 'P_DBd' )
+      hPoz['P_DJa'] := xmlWartoscH( hPoz, 'P_DJa' )
+      hPoz['P_DJb'] := xmlWartoscH( hPoz, 'P_DJb' )
+      hPoz['P_DJc'] := xmlWartoscH( hPoz, 'P_DJc' )
+      hPoz['P_DJd'] := xmlWartoscH( hPoz, 'P_DJd' )
+      IF hPoz['P_DBd'] == '2'
+         hPoz['P_DBd1'] := '1'
+      ELSE
+         hPoz['P_DBd1'] := '0'
+      ENDIF
+      IF hPoz['P_DJd'] == '2'
+         hPoz['P_DJd1'] := '1'
+      ELSE
+         hPoz['P_DJd1'] := '0'
+      ENDIF
+   })
+   IF Len( aGrupa1 ) == 0
+      AAdd(aGrupa1, hb_Hash( 'pusty', '1', 'P_DBa', '', 'P_DBb', '', 'P_DBc', '', 'P_DBd', '0', 'P_DBd1', '0', 'P_DJa', '', 'P_DJb', '', 'P_DJc', '', 'P_DJd', '0', 'P_DJd1', '0' ) )
+   ENDIF
+   hDane['Grupa1'] := aGrupa1
+
+   AEval(aGrupa2, {|hPoz|
+      hPoz['pusty'] := '0'
+      hPoz['P_NBa'] := xmlWartoscH( hPoz, 'P_NBa' )
+      hPoz['P_NBb'] := xmlWartoscH( hPoz, 'P_NBb' )
+      hPoz['P_NBc'] := xmlWartoscH( hPoz, 'P_NBc' )
+      hPoz['P_NBd'] := xmlWartoscH( hPoz, 'P_NBd' )
+      hPoz['P_NJa'] := xmlWartoscH( hPoz, 'P_NJa' )
+      hPoz['P_NJb'] := xmlWartoscH( hPoz, 'P_NJb' )
+      hPoz['P_NJc'] := xmlWartoscH( hPoz, 'P_NJc' )
+      hPoz['P_NJd'] := xmlWartoscH( hPoz, 'P_NJd' )
+      IF hPoz['P_NBd'] == '2'
+         hPoz['P_NBd1'] := '1'
+      ELSE
+         hPoz['P_NBd1'] := '0'
+      ENDIF
+      IF hPoz['P_NJd'] == '2'
+         hPoz['P_NJd1'] := '1'
+      ELSE
+         hPoz['P_NJd1'] := '0'
+      ENDIF
+   })
+   IF Len( aGrupa2 ) == 0
+      AAdd(aGrupa2, hb_Hash( 'pusty', '1', 'P_NBa', '', 'P_NBb', '', 'P_NBc', '', 'P_NBd', '0', 'P_DNd1', '0', 'P_NJa', '', 'P_NJb', '', 'P_NJc', '', 'P_NJd', '0', 'P_NJd1', '0' ) )
+   ENDIF
+   hDane['Grupa2'] := aGrupa2
+
+   AEval(aGrupa3, {|hPoz|
+      hPoz['pusty'] := '0'
+      hPoz['P_UBa'] := xmlWartoscH( hPoz, 'P_UBa' )
+      hPoz['P_UBb'] := xmlWartoscH( hPoz, 'P_UBb' )
+      hPoz['P_UBc'] := xmlWartoscH( hPoz, 'P_UBc' )
+      hPoz['P_UJa'] := xmlWartoscH( hPoz, 'P_UJa' )
+      hPoz['P_UJb'] := xmlWartoscH( hPoz, 'P_UJb' )
+      hPoz['P_UJc'] := xmlWartoscH( hPoz, 'P_UJc' )
+   })
+   IF Len( aGrupa3 ) == 0
+      AAdd(aGrupa3, hb_Hash( 'pusty', '1', 'P_UBa', '', 'P_UBb', '', 'P_UBc', '', 'P_UJa', '', 'P_UJb', '', 'P_UJc', '' ) )
+   ENDIF
+   hDane['Grupa3'] := aGrupa3
+
+   AEval(aGrupa4, {|hPoz|
+      hPoz['pusty'] := '0'
+      hPoz['P_CBa'] := xmlWartoscH( hPoz, 'P_CBa' )
+      hPoz['P_CBb'] := xmlWartoscH( hPoz, 'P_CBb' )
+      hPoz['P_CBc'] := xmlWartoscH( hPoz, 'P_CBc' )
+      hPoz['P_CBd'] := xmlWartoscH( hPoz, 'P_CBd' )
+      hPoz['P_CJa'] := xmlWartoscH( hPoz, 'P_CJa' )
+      hPoz['P_CJb'] := xmlWartoscH( hPoz, 'P_CJb' )
+      hPoz['P_CJc'] := xmlWartoscH( hPoz, 'P_CJc' )
+      hPoz['P_CJd'] := xmlWartoscH( hPoz, 'P_CJd' )
+      IF hPoz['P_CBd'] == '2'
+         hPoz['P_CBdl'] := '1'
+      ELSE
+         hPoz['P_CBdl'] := '0'
+      ENDIF
+      IF hPoz['P_CJd'] == '2'
+         hPoz['P_CJdl'] := '1'
+      ELSE
+         hPoz['P_CJdl'] := '0'
+      ENDIF
+   })
+   IF Len( aGrupa4 ) == 0
+      AAdd(aGrupa4, hb_Hash( 'pusty', '1', 'P_CBa', '', 'P_CBb', '', 'P_CBc', '', 'P_CBd', '0', 'P_CBdl', '0', 'P_CJa', '', 'P_CJb', '', 'P_CJc', '', 'P_CJd', '0', 'P_CJdl', '0' ) )
+   ENDIF
+   hDane['Grupa4'] := aGrupa4
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION DaneXML_VAT27w1(oDoc, cNrRef, hNaglowek)
    LOCAL hPodmiot1, cTmp, aGrupa1, aGrupa2
    LOCAL hDane := hb_Hash()

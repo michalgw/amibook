@@ -22,11 +22,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "Inkey.ch"
 
-PROCEDURE VUE_Info()
+PROCEDURE VUE_Info( nWersja )
 
-   *para _G,_M,_STR,_OU
    RAPORT := RAPTEMP
-   PRIVATE P4, P5, P6, P6a, P7, P8
+   PRIVATE P4, P5, P6, P6a, P7, P8, zWERVAT, aSekcjaF
    PRIVATE P11, P16, P17, P17a, P18, P19
    PRIVATE P20, P21, P22, P23, P24, P26, P29
    PRIVATE P35, P36, P37, P38, P39
@@ -41,9 +40,18 @@ PROCEDURE VUE_Info()
    _czy_close := .F.
    spolka_ := .F.
 
+   aSekcjaF := {}
+
    *#################################     VAT_7      #############################
    BEGIN SEQUENCE
-      zWERVAT := '(2) '
+      SWITCH nWersja
+      CASE 1
+         zWERVAT := '(5) '
+         EXIT
+      CASE 2
+         zWERVAT := '(4) '
+         EXIT
+      ENDSWITCH
       _koniec := "del#[+].or.firma#ident_fir.or.mc#miesiac"
 
       ColInb()
@@ -272,25 +280,28 @@ PROCEDURE VUE_Info()
       vmmm := Array( UEALL )
       xUE := 1
 *      if UE>0
-      vmmm[ 1 ] := ' VAT-UE       (4)                    '
+      vmmm[ 1 ] := ' VAT-UE       ' + zWERVAT + '                   '
 *      endif
       IF ROBSPR > 0
          FOR xUE := 1 + UE TO ROBSPR + UE
-            vmmm[ xUE ] := ' VAT-UE/A (' + Str( xUE - UE, 2 ) + ')(4)                    '
+            vmmm[ xUE ] := ' VAT-UE/A (' + Str( xUE - UE, 2 ) + ')' + zWERVAT + '                   '
          NEXT
       ENDIF
       IF ROBZAK > 0
          FOR xUE := 1 + UE + ROBSPR TO ROBZAK + UE + ROBSPR
-            vmmm[ xUE ] := ' VAT-UE/B (' + Str( xUE - ( UE + ROBSPR ), 2 ) + ')(4)                    '
+            vmmm[ xUE ] := ' VAT-UE/B (' + Str( xUE - ( UE + ROBSPR ), 2 ) + ')' + zWERVAT + '                   '
          NEXT
       ENDIF
       IF ROBUSL > 0
          FOR xUE := 1 + UE + ROBSPR + ROBZAK TO ROBSPR + UE + ROBZAK + ROBUSL
-            vmmm[ xUE ] := ' VAT-UE/C (' + Str( xUE - ( UE + ROBSPR + ROBZAK ), 2 ) + ')(4)                    '
+            vmmm[ xUE ] := ' VAT-UE/C (' + Str( xUE - ( UE + ROBSPR + ROBZAK ), 2 ) + ')' + zWERVAT + '                   '
          NEXT
       ENDIF
-      AAdd(vmmm, ' VAT-UE       (4)   druk graficzny   ')
-      AAdd(vmmm, ' VAT-UE       (4)   eDeklaracja      ')
+      AAdd(vmmm, ' VAT-UE       ' + zWERVAT + '  druk graficzny   ')
+      AAdd(vmmm, ' VAT-UE       ' + zWERVAT + '  eDeklaracja      ')
+      IF nWersja == 1
+         AAdd(vmmm, ' Edycja sekcji F. VAT-UE ' + zWERVAT + '        ')
+      ENDIF
 *      if UEK>0
 *         for xUE=1+UE+ROBSPR+ROBZAK to UEK+ROBZAK+UE+ROBSPR
 *             vmmm[xUE]:=[ VAT-UEK  (]+str(xUE-(UE+ROBSPR+ROBZAK),2)+[)(1)  (GZELLA VI/2004)  ]
@@ -385,7 +396,7 @@ PROCEDURE VUE_Info()
       DO WHILE .T.
          *=============================
          ColPro()
-         @ gora, 1 TO gora + 1 + UEALL + 2, 39
+         @ gora, 1 TO gora + 1 + UEALL + iif( nWersja == 1, 3, 2 ), 39
          FOR xUE := 1 TO Len( vmmm )
             @ gora + xUE, 2 PROMPT vmmm[ xUE ]
          NEXT
@@ -397,7 +408,7 @@ PROCEDURE VUE_Info()
          *=============================
          SAVE SCREEN TO scr22v
          papier := 'K'
-         IF opcja1v >= Len( vmmm ) - 1
+         IF opcja1v >= Len( vmmm ) - iif( nWersja == 1, 2, 1 )
 
             PRIVATE aUEs, aUEz, aUEu, elemUE
             // Cza przepisac dane
@@ -451,16 +462,26 @@ PROCEDURE VUE_Info()
             zDEKLIMIE := firma->DEKLIMIE
             zDEKLTEL := firma->DEKLTEL
 
-            IF opcja1v == Len( vmmm )
+            IF opcja1v == Len( vmmm ) - iif( nWersja == 1, 1, 0 )
 
                PRIVATE zawartoscXml
-               edeklaracja_plik = 'VATUE_4_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
-               zawartoscXml = edek_vatue_4()
-               edekZapiszXml( zawartoscXml, edeklaracja_plik, wys_edeklaracja, 'VATUE-4', .F., Val( miesiac ) )
+               IF nWersja == 1
+                  edeklaracja_plik = 'VATUE_5_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
+                  zawartoscXml = edek_vatue_5()
+                  edekZapiszXml( zawartoscXml, edeklaracja_plik, wys_edeklaracja, 'VATUE-5', .F., Val( miesiac ) )
+               ELSE
+                  edeklaracja_plik = 'VATUE_4_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
+                  zawartoscXml = edek_vatue_4()
+                  edekZapiszXml( zawartoscXml, edeklaracja_plik, wys_edeklaracja, 'VATUE-4', .F., Val( miesiac ) )
+               ENDIF
+
+            ELSEIF nWersja == 1 .AND. opcja1v == Len( vmmm )
+
+               VATUE_EdycjaF( @aSekcjaF )
 
             ELSE
 
-               DeklarDrukuj( 'VATUE-4' )
+               DeklarDrukuj( iif( nWersja == 1, 'VATUE-5', 'VATUE-4' ) )
 
             ENDIF
 
@@ -581,3 +602,98 @@ PROCEDURE VUE_Info()
    ENDIF
 
    RETURN
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE VATUE_EdycjaF( aDane )
+
+   LOCAL cScr
+   LOCAL xValue
+   LOCAL nElem
+   LOCAL aNaglowki := { "Kraj", "NIP kontrahenta", "NIP kontrah. zast¥p.", "Powr. przem." }
+   LOCAL aKolBlock := { ;
+      { || PadR( SubStr( aDane[ nElem ][ 'kraj' ], 1, 2 ), 2 ) }, ;
+      { || PadR( SubStr( aDane[ nElem ][ 'nip' ], 1, 16 ), 16 ) }, ;
+      { || PadR( SubStr( aDane[ nElem ][ 'nipz' ], 1, 16 ), 16 ) }, ;
+      { || iif( aDane[ nElem ][ 'powrot' ] == 'T', 'Tak', 'Nie' ) } }
+   LOCAL bGetFunc := { | b, ar, nDim, nElem |
+      LOCAL GetList := {}
+      LOCAL nRow := Row()
+      LOCAL nCol := Col()
+      DO CASE
+      CASE nDim == 1
+         xValue := PadR( ar[ nElem ][ 'kraj' ], 2 )
+         @ nRow, nCol GET xValue PICTURE "!!"
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'kraj' ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 2
+         xValue := PadR( ar[ nElem ][ 'nip' ], 30 )
+         @ nRow, nCol GET xValue PICTURE "@S30 " + Replicate( "X", 16 )
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'nip' ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 3
+         xValue := PadR( ar[ nElem ][ 'nipz' ], 30 )
+         @ nRow, nCol GET xValue PICTURE "@S30 " + Replicate( "X", 16 )
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'nipz' ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 4
+         xValue := ar[ nElem ][ 'powrot' ]
+         @ nRow, nCol GET xValue PICTURE "!" VALID xValue$'TN'
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'powrot' ] := xValue
+         ENDIF
+         b:refreshAll()
+      ENDCASE
+      @ nRow, nCol SAY ""
+      RETURN .T.
+   }
+   LOCAL bDelete := { | nEl, ar |
+      hb_ADel( ar, nEl, .T. )
+      IF Len( ar ) == 0
+         IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
+            AAdd( ar, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'nipz', Space(16), 'powrot', 'N' ) )
+         ENDIF
+      ENDIF
+      RETURN NIL
+   }
+   LOCAL bInsert := { | nEl, ar | AAdd( ar, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'nipz', Space(16), 'powrot', 'N' ) ) }
+   LOCAL bDeleteAll := { | nEl, ar |
+      DO WHILE Len( ar ) > 0
+         hb_ADel( ar, 1, .T. )
+      ENDDO
+      IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
+         AAdd( ar, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'nipz', Space(16), 'powrot', 'N' ) )
+      ENDIF
+      RETURN NIL
+   }
+   LOCAL aCustKeys := { { K_F8, bDeleteAll } }
+
+   cScr := SaveScreen()
+   IF Len( aDane ) == 0
+      IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
+         AAdd( aDane, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'nipz', Space(16), 'powrot', 'N' ) )
+      ENDIF
+   ENDIF
+   IF Len( aDane ) > 0
+      nElem := 1
+      ColStd()
+      @  3, 0 SAY PadC( "Sekcja F. - przemieszczanie towaru w proc. call-off stock", 80 )
+      @ 24, 0 SAY PadC( "Ins - dodaj pozycje    Del - usuä pozycj©    F8 - Usuä wszystko    ESC - koniec", 80 )
+      GM_ArEdit( 4, 0, 23, 79, aDane, @nElem, aNaglowki, aKolBlock, bGetFunc, bInsert, bDelete, aCustKeys )
+      @ 24, 0
+   ENDIF
+   RestScreen( , , , , cScr )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/

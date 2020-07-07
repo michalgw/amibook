@@ -198,9 +198,9 @@ FUNCTION VatUE4Oblicz()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION VatUE4KRob()
+FUNCTION VatUE4KRob( nWersja )
    LOCAL aDane
-   LOCAL nMenu := 1
+   LOCAL nMenu := 1, aPozMenu
    LOCAL nDek := 1
    LOCAL cTab
    LOCAL cDaneXML
@@ -212,6 +212,7 @@ FUNCTION VatUE4KRob()
    }
 
    aDane := VatUE4Oblicz()
+   aDane[ 'poz_f' ] := {}
 
    @ 24, 0
 
@@ -221,11 +222,15 @@ FUNCTION VatUE4KRob()
       AEval( aDane[ 'poz_d' ], bEv )
       AEval( aDane[ 'poz_e' ], bEv )
 
-      DO WHILE nMenu >= 1 .AND. nMenu <= 3
-         nMenu := MenuEx( 17, 2, { "C - Informacja o dostawach towaru  (" + AllTrim( Str( Len( aDane[ 'poz_c' ] ) ) ) + ")", ;
+      DO WHILE nMenu >= 1 .AND. nMenu <= iif( nWersja == 1, 4, 3 )
+         aPozMenu := { "C - Informacja o dostawach towaru  (" + AllTrim( Str( Len( aDane[ 'poz_c' ] ) ) ) + ")", ;
             "D - Informacja o nabyciach towar¢w (" + AllTrim( Str( Len( aDane[ 'poz_d' ] ) ) ) + ")", ;
-            "E - Informacja o ˜wiadczeniu usˆug (" + AllTrim( Str( Len( aDane[ 'poz_e' ] ) ) ) + ")", ;
-            "Z - Zatwierdzenie" }, nMenu, .F. )
+            "E - Informacja o ˜wiadczeniu usˆug (" + AllTrim( Str( Len( aDane[ 'poz_e' ] ) ) ) + ")" }
+         IF nWersja == 1
+            AAdd( aPozMenu, "F - Informacja o call-off stock    (" + AllTrim( Str( Len( aDane[ 'poz_f' ] ) ) ) + ")" )
+         ENDIF
+         AAdd( aPozMenu, "Z - Zatwierdzenie" )
+         nMenu := MenuEx( 17, 2, aPozMenu, nMenu, .F. )
          DO CASE
          CASE nMenu == 1
             VatUEEdytuj( aDane[ 'poz_c' ], "Informacja o dostawach towaru" )
@@ -233,17 +238,29 @@ FUNCTION VatUE4KRob()
             VatUEEdytuj( aDane[ 'poz_d' ], "Informacja o nabyciach towar¢w" )
          CASE nMenu == 3
             VatUEEdytuj( aDane[ 'poz_e' ], "Informacja o ˜wiadczeniu usˆug", .F. )
+         CASE nWersja == 1 .AND. nMenu == 4
+            VATUEK_EdycjaF( aDane[ 'poz_f' ] )
          ENDCASE
       ENDDO
-      IF nMenu == 4
+      IF nMenu == iif( nWersja == 1, 5, 4 )
          nDek := MenuEx( 18, 3, { "G - Druk graficzny", "E - eDeklaracja" }, nDek )
          DO CASE
          CASE nDek == 1
-            DeklarDrukuj( "VATUEK-4", aDane )
+            IF nWersja == 1
+               DeklarDrukuj( "VATUEK-5", aDane )
+            ELSE
+               DeklarDrukuj( "VATUEK-4", aDane )
+            ENDIF
          CASE nDek == 2
-            cDaneXML := edek_vatuek_4( aDane )
-            edeklaracja_plik = 'VATUEK_4_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
-            edekZapiszXml( cDaneXML, edeklaracja_plik, wys_edeklaracja, 'VATUEK-4', .F., Val( miesiac ) )
+            IF nWersja == 1
+               cDaneXML := edek_vatuek_5( aDane )
+               edeklaracja_plik = 'VATUEK_5_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
+               edekZapiszXml( cDaneXML, edeklaracja_plik, wys_edeklaracja, 'VATUEK-5', .F., Val( miesiac ) )
+            ELSE
+               cDaneXML := edek_vatuek_4( aDane )
+               edeklaracja_plik = 'VATUEK_4_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
+               edekZapiszXml( cDaneXML, edeklaracja_plik, wys_edeklaracja, 'VATUEK-4', .F., Val( miesiac ) )
+            ENDIF
          ENDCASE
       ENDIF
    ELSE
@@ -465,5 +482,142 @@ FUNCTION VatUEEdytujGet2( b, ar, nDim, nElem )
    @ nRow, nCol SAY ""
 
    RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE VATUEK_EdycjaF( aDane )
+
+   LOCAL cScr
+   LOCAL xValue
+   LOCAL nElem
+   LOCAL aNaglowki := { "BK", "B.NIP kontrahenta", "B.NIP kontrah. zast¥p.", "B.Powr. przem.", "JK", "J.NIP kontrahenta", "J.NIP kontrah. zast¥p.", "J.Powr. przem." }
+   LOCAL aKolBlock := { ;
+      { || PadR( SubStr( aDane[ nElem ][ 'bkraj' ], 1, 2 ), 2 ) }, ;
+      { || PadR( SubStr( aDane[ nElem ][ 'bnip' ], 1, 16 ), 16 ) }, ;
+      { || PadR( SubStr( aDane[ nElem ][ 'bnipz' ], 1, 16 ), 16 ) }, ;
+      { || iif( aDane[ nElem ][ 'bpowrot' ] == 'T', 'Tak', 'Nie' ) }, ;
+      { || PadR( SubStr( aDane[ nElem ][ 'jkraj' ], 1, 2 ), 2 ) }, ;
+      { || PadR( SubStr( aDane[ nElem ][ 'jnip' ], 1, 16 ), 16 ) }, ;
+      { || PadR( SubStr( aDane[ nElem ][ 'jnipz' ], 1, 16 ), 16 ) }, ;
+      { || iif( aDane[ nElem ][ 'jpowrot' ] == 'T', 'Tak', 'Nie' ) } }
+   LOCAL bGetFunc := { | b, ar, nDim, nElem |
+      LOCAL GetList := {}
+      LOCAL nRow := Row()
+      LOCAL nCol := Col()
+      DO CASE
+      CASE nDim == 1
+         xValue := PadR( ar[ nElem ][ 'bkraj' ], 2 )
+         @ nRow, nCol GET xValue PICTURE "!!"
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'bkraj' ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 2
+         xValue := PadR( ar[ nElem ][ 'bnip' ], 30 )
+         @ nRow, nCol GET xValue PICTURE "@S30 " + Replicate( "X", 16 )
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'bnip' ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 3
+         xValue := PadR( ar[ nElem ][ 'bnipz' ], 30 )
+         @ nRow, nCol GET xValue PICTURE "@S30 " + Replicate( "X", 16 )
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'bnipz' ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 4
+         xValue := ar[ nElem ][ 'bpowrot' ]
+         @ nRow, nCol GET xValue PICTURE "!" VALID xValue$'TN'
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'bpowrot' ] := xValue
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 5
+         xValue := PadR( ar[ nElem ][ 'jkraj' ], 2 )
+         @ nRow, nCol GET xValue PICTURE "!!"
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'jkraj' ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 6
+         xValue := PadR( ar[ nElem ][ 'jnip' ], 30 )
+         @ nRow, nCol GET xValue PICTURE "@S30 " + Replicate( "X", 16 )
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'jnip' ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 7
+         xValue := PadR( ar[ nElem ][ 'jnipz' ], 30 )
+         @ nRow, nCol GET xValue PICTURE "@S30 " + Replicate( "X", 16 )
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'jnipz' ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 8
+         xValue := ar[ nElem ][ 'jpowrot' ]
+         @ nRow, nCol GET xValue PICTURE "!" VALID xValue$'TN'
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem ][ 'jpowrot' ] := xValue
+         ENDIF
+         b:refreshAll()
+      ENDCASE
+      @ nRow, nCol SAY ""
+      RETURN .T.
+   }
+   LOCAL bDelete := { | nEl, ar |
+      hb_ADel( ar, nEl, .T. )
+      IF Len( ar ) == 0
+         IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
+            AAdd( ar, hb_Hash( 'bkraj', '  ', 'bnip', Space(16), 'bnipz', ;
+               Space(16), 'bpowrot', 'N', 'jkraj', '  ', 'jnip', Space(16), ;
+               'jnipz', Space(16), 'jpowrot', 'N' ) )
+         ENDIF
+      ENDIF
+      RETURN NIL
+   }
+   LOCAL bInsert := { | nEl, ar | AAdd( ar, hb_Hash( 'bkraj', '  ', 'bnip', ;
+      Space(16), 'bnipz', Space(16), 'bpowrot', 'N', 'jkraj', '  ', 'jnip', ;
+      Space(16), 'jnipz', Space(16), 'jpowrot', 'N' ) ) }
+   LOCAL bDeleteAll := { | nEl, ar |
+      DO WHILE Len( ar ) > 0
+         hb_ADel( ar, 1, .T. )
+      ENDDO
+      IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
+         AAdd( ar, hb_Hash( 'bkraj', '  ', 'bnip', Space(16), 'bnipz', ;
+            Space(16), 'bpowrot', 'N', 'jkraj', '  ', 'jnip', Space(16), ;
+            'jnipz', Space(16), 'jpowrot', 'N' ) )
+      ENDIF
+      RETURN NIL
+   }
+   LOCAL aCustKeys := { { K_F8, bDeleteAll } }
+
+   cScr := SaveScreen()
+   IF Len( aDane ) == 0
+      IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
+         AAdd( aDane, hb_Hash( 'bkraj', '  ', 'bnip', Space(16), 'bnipz', ;
+            Space(16), 'bpowrot', 'N', 'jkraj', '  ', 'jnip', Space(16), ;
+            'jnipz', Space(16), 'jpowrot', 'N' ) )
+      ENDIF
+   ENDIF
+   IF Len( aDane ) > 0
+      nElem := 1
+      ColStd()
+      @  3, 0 SAY PadC( "Sekcja F. - przemieszczanie towaru w proc. call-off stock", 80 )
+      @ 24, 0 SAY PadC( "Ins - dodaj pozycje    Del - usuä pozycj©    F8 - Usuä wszystko    ESC - koniec", 80 )
+      GM_ArEdit( 4, 0, 23, 79, aDane, @nElem, aNaglowki, aKolBlock, bGetFunc, bInsert, bDelete, aCustKeys )
+      @ 24, 0
+   ENDIF
+   RestScreen( , , , , cScr )
+
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/

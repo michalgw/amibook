@@ -606,12 +606,17 @@ FUNCTION Ewid()
                         JPK_V7_Rob()
 
                      CASE opcja1 == 8
-                        opcja11 := edekCzyKorekta( 17, 2 )
-                        IF opcja11 == 2
-                           VatUE4KRob()
-                        ELSE
-                           vue_info()
-                        ENDIF
+
+                        opcja11 := MenuEx( 17, 2, { "5 - Wersja 5 VAT-UE (5)", "4 - Wersja 4 VAT-UE (4)" } )
+
+                        SWITCH edekCzyKorekta( 17, 2 )
+                        CASE 1
+                           vue_info( opcja11 )
+                           EXIT
+                        CASE 2
+                           VatUE4KRob( opcja11 )
+                           EXIT
+                        ENDSWITCH
 
                      CASE opcja1 == 9
                         IF ( papier := menuDeklaracjaDruk(17, .F.) ) $ 'KX'

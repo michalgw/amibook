@@ -138,6 +138,14 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_VATUEKw4( xDane )
       cPlikRap := 'frf\vatuek_w4.frf'
       EXIT
+   CASE 'VATUE-5'
+      hDane := DaneDek_VATUEw5()
+      cPlikRap := 'frf\vatue_w5.frf'
+      EXIT
+   CASE 'VATUEK-5'
+      hDane := DaneDek_VATUEKw5( xDane )
+      cPlikRap := 'frf\vatuek_w5.frf'
+      EXIT
    CASE 'VAT27K-1'
    CASE 'VAT27-1'
       hDane := DaneDek_VAT27w1()
@@ -3855,6 +3863,176 @@ FUNCTION DaneDek_VATUEKw4( aDane )
    })
    IF Len( hDane[ 'Grupa3' ] ) == 0
       AAdd( hDane[ 'Grupa3' ], hb_Hash( 'pusty', '1', 'P_UBa', '', 'P_UBb', '', 'P_UBc', '',  'P_UJa', '', 'P_UJb', '', 'P_UJc', '' ) )
+   ENDIF
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_VATUEw5()
+   LOCAL hPodmiot1, cTmp, aGrupa1, aGrupa2, aGrupa3
+   LOCAL hDane := hb_Hash()
+
+   hDane['P_1'] := AllTrim(P4)
+   hDane['P_2'] := ''
+   hDane['P_4'] := AllTrim(miesiac)
+   hDane['P_6'] := AllTrim(p5b)
+   hDane['P_7'] := iif( P6a != '', KodUS2Nazwa( P6a ), '' )
+   hDane['P_8_1'] := iif( spolka_, '1', '0' )
+   hDane['P_8_2'] := iif( ! spolka_, '1', '0' )
+   IF ! spolka_
+      hDane['P_9'] := naz_imie_naz(AllTrim(P8ni)) + ', ' ;
+        + naz_imie_imie(AllTrim(P8ni)) + ',      ' + DToC( P11d )
+   ELSE
+      hDane['P_9'] := AllTrim(P8n) + ',      ' + AllTrim(P11)
+   ENDIF
+
+   hDane[ 'Grupa1' ] := {}
+   AEval( aUEs, { | aPoz |
+      LOCAL hPoz := hb_Hash()
+      hPoz['pusty'] := '0'
+      hPoz['P_Dd1'] := iif( aPoz[4], '1', '0' )
+      hPoz['P_Dd'] := iif( aPoz[4], '2', '1' )
+      hPoz['P_Da'] := AllTrim(aPoz[1])
+      hPoz['P_Db'] := edekNipUE(AllTrim(aPoz[2]))
+      hPoz['P_Dc'] := Int( aPoz[3] )
+      AAdd( hDane[ 'Grupa1' ], hPoz )
+   })
+   AAdd( hDane[ 'Grupa1' ], hb_Hash('pusty', '1', 'P_Da', '', 'P_Db', '', 'P_Dc', '', 'P_Dd', '0', 'P_Dd1', '0'))
+
+   hDane[ 'Grupa2' ] := {}
+   AEval( aUEz, { | aPoz |
+      LOCAL hPoz := hb_Hash()
+      hPoz['pusty'] := '0'
+      hPoz['P_Nd1'] := iif( aPoz[4], '1', '0' )
+      hPoz['P_Nd'] := iif( aPoz[4], '2', '1' )
+      hPoz['P_Na'] := AllTrim(aPoz[1])
+      hPoz['P_Nb'] := edekNipUE(AllTrim(aPoz[2]))
+      hPoz['P_Nc'] := Int( aPoz[3] )
+      AAdd( hDane[ 'Grupa2' ], hPoz )
+   })
+   AAdd( hDane[ 'Grupa2' ], hb_Hash('pusty', '1', 'P_Na', '', 'P_Nb', '', 'P_Nc', '', 'P_Nd', '0', 'P_Nd1', '0'))
+
+   hDane[ 'Grupa3' ] := {}
+   AEval( aUEu, { | aPoz |
+      LOCAL hPoz := hb_Hash()
+      hPoz['pusty'] := '0'
+      hPoz['P_Ua'] := AllTrim(aPoz[1])
+      hPoz['P_Ub'] := edekNipUE(AllTrim(aPoz[2]))
+      hPoz['P_Uc'] := Int( aPoz[3] )
+      AAdd( hDane[ 'Grupa3' ], hPoz )
+   })
+   AAdd( hDane[ 'Grupa3' ], hb_Hash('pusty', '1', 'P_Ua', '', 'P_Ub', '', 'P_Uc', '') )
+
+   hDane[ 'Grupa4' ] := {}
+   AEval( aSekcjaF, { | aPoz |
+      LOCAL hPoz := hb_Hash()
+      hPoz[ 'pusty' ] := '0'
+      hPoz[ 'P_Ca' ] := AllTrim( aPoz[ 'kraj' ] )
+      hPoz[ 'P_Cb' ] := edekNipUE( AllTrim( aPoz[ 'nip' ] ) )
+      hPoz[ 'P_Cc' ] := edekNipUE( AllTrim( aPoz[ 'nipz' ] ) )
+      hPoz[ 'P_Cd' ] := iif( aPoz[ 'powrot' ] == 'T', '2', '1' )
+      hPoz[ 'P_Cdl' ] := iif( aPoz[ 'powrot' ] == 'T', '1', '0' )
+      AAdd( hDane[ 'Grupa4' ], hPoz )
+   })
+   AAdd( hDane[ 'Grupa4' ], hb_Hash('pusty', '1', 'P_Ca', '', 'P_Cb', '', 'P_Cc', '', 'P_Cd', '1', 'P_Cdl', '0') )
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_VATUEKw5( aDane )
+   LOCAL hPodmiot1, cTmp
+   LOCAL hDane := hb_Hash()
+
+   hDane['P_1'] := AllTrim( aDane[ 'nip' ] )
+   hDane['P_2'] := ''
+   hDane['P_4'] := AllTrim( aDane[ 'miesiac' ] )
+   hDane['P_6'] := AllTrim( aDane[ 'rok' ] )
+   hDane['P_7'] := iif( aDane[ 'kod_urzedu' ] != '', KodUS2Nazwa( aDane[ 'kod_urzedu' ] ), '' )
+   hDane['P_8_1'] := iif( aDane[ 'spolka' ], '1', '0' )
+   hDane['P_8_2'] := iif( ! aDane[ 'spolka' ], '1', '0' )
+   IF ! aDane[ 'spolka' ]
+      hDane['P_9'] := naz_imie_naz( AllTrim( aDane[ 'nazwisko' ] ) ) + ', ' ;
+        + naz_imie_imie( AllTrim( aDane[ 'imie' ] ) ) + ',      ' + DToC( aDane[ 'data_ur' ] )
+   ELSE
+      hDane['P_9'] := AllTrim( aDane[ 'nazwa' ] ) + ',      ' + AllTrim( aDane[ 'regon' ] )
+   ENDIF
+
+   hDane[ 'Grupa1' ] := {}
+   AEval( aDane[ 'poz_c' ], { | aPoz |
+      LOCAL hPoz := hb_Hash()
+      hPoz['pusty'] := '0'
+      hPoz['P_DBd1'] := iif( aPoz[ 'trojstr' ] == 'T', '1', '0' )
+      hPoz['P_DBd'] := iif( aPoz[ 'trojstr' ] == 'T', '2', '1' )
+      hPoz['P_DBa'] := AllTrim( aPoz[ 'kraj' ] )
+      hPoz['P_DBb'] := edekNipUE( AllTrim( aPoz[ 'nip' ] ) )
+      hPoz['P_DBc'] := Int( aPoz[ 'wartosc' ] )
+      hPoz['P_DJd1'] := iif( aPoz[ 'jtrojstr' ] == 'T', '1', '0' )
+      hPoz['P_DJd'] := iif( aPoz[ 'jtrojstr' ] == 'T', '2', '1' )
+      hPoz['P_DJa'] := AllTrim( aPoz[ 'jkraj' ] )
+      hPoz['P_DJb'] := edekNipUE( AllTrim( aPoz[ 'jnip' ] ) )
+      hPoz['P_DJc'] := Int( aPoz[ 'jwartosc' ] )
+      AAdd( hDane[ 'Grupa1' ], hPoz )
+   } )
+   IF Len( hDane[ 'Grupa1' ] ) == 0
+      AAdd( hDane[ 'Grupa1' ], hb_Hash( 'pusty', '1', 'P_DBa', '', 'P_DBb', '', 'P_DBc', '', 'P_DBd', '0', 'P_DBd1', '0', 'P_DJa', '', 'P_DJb', '', 'P_DJc', '', 'P_DJd', '0', 'P_DJd1', '0') )
+   ENDIF
+
+   hDane[ 'Grupa2' ] := {}
+   AEval( aDane[ 'poz_d' ], { | aPoz |
+      LOCAL hPoz := hb_Hash()
+      hPoz['pusty'] := '0'
+      hPoz['P_NBd1'] := iif( aPoz[ 'trojstr' ] == 'T', '1', '0' )
+      hPoz['P_NBd'] := iif( aPoz[ 'trojstr' ] == 'T', '2', '1' )
+      hPoz['P_NBa'] := AllTrim( aPoz[ 'kraj' ] )
+      hPoz['P_NBb'] := edekNipUE( AllTrim( aPoz[ 'nip' ] ) )
+      hPoz['P_NBc'] := Int( aPoz[ 'wartosc' ] )
+      hPoz['P_NJd1'] := iif( aPoz[ 'jtrojstr' ] == 'T', '1', '0' )
+      hPoz['P_NJd'] := iif( aPoz[ 'jtrojstr' ] == 'T', '2', '1' )
+      hPoz['P_NJa'] := AllTrim( aPoz[ 'jkraj' ] )
+      hPoz['P_NJb'] := edekNipUE( AllTrim( aPoz[ 'jnip' ] ) )
+      hPoz['P_NJc'] := Int( aPoz[ 'jwartosc' ] )
+      AAdd( hDane[ 'Grupa2' ], hPoz )
+   })
+   IF Len( hDane[ 'Grupa2' ] ) == 0
+      AAdd( hDane[ 'Grupa2' ], hb_Hash( 'pusty', '1', 'P_NBa', '', 'P_NBb', '', 'P_NBc', '', 'P_NBd', '0', 'P_NBd1', '0', 'P_NJa', '', 'P_NJb', '', 'P_NJc', '', 'P_NJd', '0', 'P_NJd1', '0') )
+   ENDIF
+
+   hDane[ 'Grupa3' ] := {}
+   AEval( aDane[ 'poz_e' ], { | aPoz |
+      LOCAL hPoz := hb_Hash()
+      hPoz['pusty'] := '0'
+      hPoz['P_UBa'] := AllTrim( aPoz[ 'kraj' ] )
+      hPoz['P_UBb'] := edekNipUE( AllTrim( aPoz[ 'nip' ] ) )
+      hPoz['P_UBc'] := Int( aPoz[ 'wartosc' ] )
+      hPoz['P_UJa'] := AllTrim( aPoz[ 'jkraj' ] )
+      hPoz['P_UJb'] := edekNipUE( AllTrim( aPoz[ 'jnip' ] ) )
+      hPoz['P_UJc'] := Int( aPoz[ 'jwartosc' ] )
+      AAdd( hDane[ 'Grupa3' ], hPoz )
+   })
+   IF Len( hDane[ 'Grupa3' ] ) == 0
+      AAdd( hDane[ 'Grupa3' ], hb_Hash( 'pusty', '1', 'P_UBa', '', 'P_UBb', '', 'P_UBc', '',  'P_UJa', '', 'P_UJb', '', 'P_UJc', '' ) )
+   ENDIF
+
+   hDane[ 'Grupa4' ] := {}
+   AEval( aDane[ 'poz_f' ], { | aPoz |
+      LOCAL hPoz := hb_Hash()
+      hPoz['pusty'] := '0'
+      hPoz['P_CBa'] := AllTrim( aPoz[ 'bkraj' ] )
+      hPoz['P_CBb'] := edekNipUE( AllTrim( aPoz[ 'bnip' ] ) )
+      hPoz['P_CBc'] := edekNipUE( AllTrim( aPoz[ 'bnipz' ] ) )
+      hPoz['P_CBd'] := iif( aPoz[ 'bpowrot' ] == 'T', '2', '1' )
+      hPoz['P_CBdl'] := iif( aPoz[ 'bpowrot' ] == 'T', '1', '0' )
+      hPoz['P_CJa'] := AllTrim( aPoz[ 'jkraj' ] )
+      hPoz['P_CJb'] := edekNipUE( AllTrim( aPoz[ 'jnip' ] ) )
+      hPoz['P_CJc'] := edekNipUE( AllTrim( aPoz[ 'jnipz' ] ) )
+      hPoz['P_CJd'] := iif( aPoz[ 'jpowrot' ] == 'T', '2', '1' )
+      hPoz['P_CJdl'] := iif( aPoz[ 'jpowrot' ] == 'T', '1', '0' )
+      AAdd( hDane[ 'Grupa4' ], hPoz )
+   })
+   IF Len( hDane[ 'Grupa4' ] ) == 0
+      AAdd( hDane[ 'Grupa4' ], hb_Hash( 'pusty', '1', 'P_CBa', '', 'P_CBb', '', 'P_CBc', '', 'P_CBd', '0', 'P_CBdl', '0', 'P_CJa', '', 'P_CJb', '', 'P_CJc', '', 'P_CJd', '0', 'P_CJdl', '0' ) )
    ENDIF
 
    RETURN hDane

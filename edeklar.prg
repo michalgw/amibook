@@ -4655,6 +4655,217 @@ FUNCTION edek_vatuek_4( aDane )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION edek_vatue_5()
+   LOCAL r, nl
+      nl = Chr(13) + Chr(10)
+      r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
+      r = r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2020/06/24/06242/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
+      r = r + '  <Naglowek>' + nl
+      r = r + '    <KodFormularza kodSystemowy="VAT-UE (5)" wersjaSchemy="1-0E">VAT-UE</KodFormularza>' + nl
+      r = r + '    <WariantFormularza>5</WariantFormularza>' + nl
+      r = r + '    <Rok>' + AllTrim(p5b) + '</Rok>' + nl
+      r = r + '    <Miesiac>' + AllTrim(miesiac) + '</Miesiac>' + nl
+		r = r + '    <CelZlozenia>1</CelZlozenia>' + nl
+		r = r + '    <KodUrzedu>' + P6a + '</KodUrzedu>' + nl
+	   r = r + '  </Naglowek>' + nl
+   	r = r + '  <Podmiot1 rola="Podatnik">' + nl
+      IF spolka_
+         r = r + '    <etd:OsobaNiefizyczna>' + nl
+			r = r + '      <etd:NIP>' + trimnip(AllTrim(P4)) + '</etd:NIP>' + nl
+			r = r + '      <etd:PelnaNazwa>' + str2sxml(AllTrim(P8n)) + '</etd:PelnaNazwa>' + nl
+			r = r + '      <etd:REGON>' +  AllTrim(P11) + '</etd:REGON>' + nl
+		   r = r + '    </etd:OsobaNiefizyczna>' + nl
+      else
+		   r = r + '    <etd:OsobaFizyczna>' + nl
+//         IF Len(AllTrim(P30)) = 0
+            r = r + '      <etd:NIP>' + trimnip(P4) + '</etd:NIP>' + nl
+//         ELSE
+//    			r = r + '      <etd:PESEL>' + P30 + '</etd:PESEL>' + nl
+//         ENDIF
+			r = r + '      <etd:ImiePierwsze>' + str2sxml(naz_imie_imie(AllTrim(P8ni))) + '</etd:ImiePierwsze>' + nl
+			r = r + '      <etd:Nazwisko>' + str2sxml(naz_imie_naz(AllTrim(P8ni))) +'</etd:Nazwisko>' + nl
+			r = r + '      <etd:DataUrodzenia>' + date2strxml(P11d) + '</etd:DataUrodzenia>' + nl
+		   r = r + '    </etd:OsobaFizyczna>' + nl
+      ENDIF
+      r = r + '  </Podmiot1>' + nl
+      r = r + '  <PozycjeSzczegolowe>' + nl
+      IF Len(aUEs) > 0
+         FOR i := 1 TO Len(aUEs)
+            r = r + '    <Grupa1>' + nl
+            r = r + '      <P_Da>' + AllTrim(aUEs[i, 1]) + '</P_Da>' + nl
+            r = r + '      <P_Db>' + edekNipUE(AllTrim(aUEs[i, 2])) + '</P_Db>' + nl
+            r = r + '      <P_Dc>' + TKwotaC(aUEs[i, 3]) + '</P_Dc>' + nl
+            r = r + '      <P_Dd>' + iif(aUEs[i, 4], '2', '1') + '</P_Dd>' + nl
+            r = r + '    </Grupa1>' + nl
+         NEXT
+      ENDIF
+      IF Len(aUEz) > 0
+         FOR i := 1 TO Len(aUEz)
+            r = r + '    <Grupa2>' + nl
+            r = r + '      <P_Na>' + AllTrim(aUEz[i, 1]) + '</P_Na>' + nl
+            r = r + '      <P_Nb>' + edekNipUE(AllTrim(aUEz[i, 2])) + '</P_Nb>' + nl
+            r = r + '      <P_Nc>' + TKwotaC(aUEz[i, 3]) + '</P_Nc>' + nl
+            r = r + '      <P_Nd>' + iif(aUEz[i, 4], '2', '1') + '</P_Nd>' + nl
+            r = r + '    </Grupa2>' + nl
+         NEXT
+      ENDIF
+      IF Len(aUEu) > 0
+         FOR i := 1 TO Len(aUEu)
+            r = r + '    <Grupa3>' + nl
+            r = r + '      <P_Ua>' + AllTrim(aUEu[i, 1]) + '</P_Ua>' + nl
+            r = r + '      <P_Ub>' + edekNipUE(AllTrim(aUEu[i, 2])) + '</P_Ub>' + nl
+            r = r + '      <P_Uc>' + TKwotaC(aUEu[i, 3]) + '</P_Uc>' + nl
+            r = r + '    </Grupa3>' + nl
+         NEXT
+      ENDIF
+      IF Len( aSekcjaF ) > 0
+         FOR i := 1 TO Len( aSekcjaF )
+            r = r + '    <Grupa4>' + nl
+            r = r + '      <P_Ca>' + AllTrim( aSekcjaF[ i, 'kraj' ] ) + '</P_Ca>' + nl
+            r = r + '      <P_Cb>' + edekNipUE( AllTrim( aSekcjaF[ i, 'nip' ] ) ) + '</P_Cb>' + nl
+            r = r + '      <P_Cc>' + edekNipUE( AllTrim( aSekcjaF[ i, 'nipz' ] ) ) + '</P_Cc>' + nl
+            r = r + '      <P_Cd>' + iif( aSekcjaF[ i, 'nipz' ] == 'T', '2', '1') + '</P_Cd>' + nl
+            r = r + '    </Grupa4>' + nl
+         NEXT
+      ENDIF
+      r = r + '  </PozycjeSzczegolowe>' + nl
+		r = r + '  <Pouczenie>1</Pouczenie>' + nl
+      r = r + '</Deklaracja>'
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION edek_vatuek_5( aDane )
+   LOCAL r, nl
+      nl = Chr(13) + Chr(10)
+      r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
+      r = r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2020/06/24/06241/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
+      r = r + '  <Naglowek>' + nl
+      r = r + '    <KodFormularza kodSystemowy="VATUEK (5)" wersjaSchemy="1-0E">VAT-UEK</KodFormularza>' + nl
+      r = r + '    <WariantFormularza>5</WariantFormularza>' + nl
+      r = r + '    <Rok>' + aDane[ 'rok' ] + '</Rok>' + nl
+      r = r + '    <Miesiac>' + aDane[ 'miesiac' ] + '</Miesiac>' + nl
+		r = r + '    <CelZlozenia>1</CelZlozenia>' + nl
+		r = r + '    <KodUrzedu>' + aDane[ 'kod_urzedu' ] + '</KodUrzedu>' + nl
+	   r = r + '  </Naglowek>' + nl
+   	r = r + '  <Podmiot1 rola="Podatnik">' + nl
+      IF aDane[ 'spolka' ]
+         r = r + '    <etd:OsobaNiefizyczna>' + nl
+			r = r + '      <etd:NIP>' + trimnip( aDane[ 'nip' ] ) + '</etd:NIP>' + nl
+			r = r + '      <etd:PelnaNazwa>' + str2sxml( aDane[ 'nazwa' ] ) + '</etd:PelnaNazwa>' + nl
+			r = r + '      <etd:REGON>' +  AllTrim( aDane[ 'regon' ] ) + '</etd:REGON>' + nl
+		   r = r + '    </etd:OsobaNiefizyczna>' + nl
+      else
+		   r = r + '    <etd:OsobaFizyczna>' + nl
+//         IF Len(AllTrim(P30)) = 0
+            r = r + '      <etd:NIP>' + trimnip( aDane[ 'nip' ] ) + '</etd:NIP>' + nl
+//         ELSE
+//    			r = r + '      <etd:PESEL>' + P30 + '</etd:PESEL>' + nl
+//         ENDIF
+			r = r + '      <etd:ImiePierwsze>' + str2sxml( naz_imie_imie( AllTrim( aDane[ 'imie' ] ) ) ) + '</etd:ImiePierwsze>' + nl
+			r = r + '      <etd:Nazwisko>' + str2sxml( naz_imie_naz( AllTrim( aDane[ 'nazwisko' ] ) ) ) +'</etd:Nazwisko>' + nl
+			r = r + '      <etd:DataUrodzenia>' + date2strxml( aDane[ 'data_ur' ] ) + '</etd:DataUrodzenia>' + nl
+		   r = r + '    </etd:OsobaFizyczna>' + nl
+      ENDIF
+      r = r + '  </Podmiot1>' + nl
+      r = r + '  <PozycjeSzczegolowe>' + nl
+      IF Len( aDane[ 'poz_c' ] ) > 0
+         FOR i := 1 TO Len( aDane[ 'poz_c' ] )
+            r = r + '    <Grupa1>' + nl
+            IF ! Empty( AllTrim( aDane[ 'poz_c' ][ i ][ 'kraj' ] ) ) .AND. ;
+               ! Empty( AllTrim( aDane[ 'poz_c' ][ i ][ 'nip' ] ) )
+
+               r = r + '      <P_DBa>' + AllTrim( aDane[ 'poz_c' ][ i ][ 'kraj' ] ) + '</P_DBa>' + nl
+               r = r + '      <P_DBb>' + edekNipUE( AllTrim( aDane[ 'poz_c' ][ i ][ 'nip' ] ) ) + '</P_DBb>' + nl
+               r = r + '      <P_DBc>' + TKwotaC( aDane[ 'poz_c' ][ i ][ 'wartosc' ] ) + '</P_DBc>' + nl
+               r = r + '      <P_DBd>' + iif( aDane[ 'poz_c' ][ i ][ 'trojstr' ] == 'T', '2', '1' ) + '</P_DBd>' + nl
+            ENDIF
+
+            IF ! Empty( AllTrim( aDane[ 'poz_c' ][ i ][ 'jkraj' ] ) ) .AND. ;
+               ! Empty( AllTrim( aDane[ 'poz_c' ][ i ][ 'jnip' ] ) )
+
+               r = r + '      <P_DJa>' + AllTrim( aDane[ 'poz_c' ][ i ][ 'jkraj' ] ) + '</P_DJa>' + nl
+               r = r + '      <P_DJb>' + edekNipUE( AllTrim( aDane[ 'poz_c' ][ i ][ 'jnip' ] ) ) + '</P_DJb>' + nl
+               r = r + '      <P_DJc>' + TKwotaC( aDane[ 'poz_c' ][ i ][ 'jwartosc' ] ) + '</P_DJc>' + nl
+               r = r + '      <P_DJd>' + iif( aDane[ 'poz_c' ][ i ][ 'jtrojstr' ] == 'T', '2', '1' ) + '</P_DJd>' + nl
+            ENDIF
+            r = r + '    </Grupa1>' + nl
+         NEXT
+      ENDIF
+      IF Len( aDane[ 'poz_d' ] ) > 0
+         FOR i := 1 TO Len( aDane[ 'poz_d' ] )
+            r = r + '    <Grupa2>' + nl
+            IF ! Empty( AllTrim( aDane[ 'poz_d' ][ i ][ 'kraj' ] ) ) .AND. ;
+               ! Empty( AllTrim( aDane[ 'poz_d' ][ i ][ 'nip' ] ) )
+
+               r = r + '      <P_NBa>' + AllTrim( aDane[ 'poz_d' ][ i ][ 'kraj' ] ) + '</P_NBa>' + nl
+               r = r + '      <P_NBb>' + edekNipUE( AllTrim( aDane[ 'poz_d' ][ i ][ 'nip' ] ) ) + '</P_NBb>' + nl
+               r = r + '      <P_NBc>' + TKwotaC( aDane[ 'poz_d' ][ i ][ 'wartosc' ] ) + '</P_NBc>' + nl
+               r = r + '      <P_NBd>' + iif( aDane[ 'poz_d' ][ i ][ 'trojstr' ] == 'T', '2', '1' ) + '</P_NBd>' + nl
+            ENDIF
+
+            IF ! Empty( AllTrim( aDane[ 'poz_d' ][ i ][ 'jkraj' ] ) ) .AND. ;
+               ! Empty( AllTrim( aDane[ 'poz_d' ][ i ][ 'jnip' ] ) )
+
+               r = r + '      <P_NJa>' + AllTrim( aDane[ 'poz_d' ][ i ][ 'jkraj' ] ) + '</P_NJa>' + nl
+               r = r + '      <P_NJb>' + edekNipUE( AllTrim( aDane[ 'poz_d' ][ i ][ 'jnip' ] ) ) + '</P_NJb>' + nl
+               r = r + '      <P_NJc>' + TKwotaC( aDane[ 'poz_d' ][ i ][ 'jwartosc' ] ) + '</P_NJc>' + nl
+               r = r + '      <P_NJd>' + iif( aDane[ 'poz_d' ][ i ][ 'jtrojstr' ] == 'T', '2', '1' ) + '</P_NJd>' + nl
+            ENDIF
+            r = r + '    </Grupa2>' + nl
+         NEXT
+      ENDIF
+      IF Len( aDane[ 'poz_e' ] ) > 0
+         FOR i := 1 TO Len( aDane[ 'poz_e' ] )
+            r = r + '    <Grupa3>' + nl
+            IF ! Empty( AllTrim( aDane[ 'poz_e' ][ i ][ 'kraj' ] ) ) .AND. ;
+               ! Empty( AllTrim( aDane[ 'poz_e' ][ i ][ 'nip' ] ) )
+
+               r = r + '      <P_UBa>' + AllTrim( aDane[ 'poz_e' ][ i ][ 'kraj' ] ) + '</P_UBa>' + nl
+               r = r + '      <P_UBb>' + edekNipUE( AllTrim( aDane[ 'poz_e' ][ i ][ 'nip' ] ) ) + '</P_UBb>' + nl
+               r = r + '      <P_UBc>' + TKwotaC( aDane[ 'poz_e' ][ i ][ 'wartosc' ] ) + '</P_UBc>' + nl
+            ENDIF
+
+            IF ! Empty( AllTrim( aDane[ 'poz_e' ][ i ][ 'jkraj' ] ) ) .AND. ;
+               ! Empty( AllTrim( aDane[ 'poz_e' ][ i ][ 'jnip' ] ) )
+
+               r = r + '      <P_UJa>' + AllTrim( aDane[ 'poz_e' ][ i ][ 'jkraj' ] ) + '</P_UJa>' + nl
+               r = r + '      <P_UJb>' + edekNipUE( AllTrim( aDane[ 'poz_e' ][ i ][ 'jnip' ] ) ) + '</P_UJb>' + nl
+               r = r + '      <P_UJc>' + TKwotaC( aDane[ 'poz_e' ][ i ][ 'jwartosc' ] ) + '</P_UJc>' + nl
+            ENDIF
+            r = r + '    </Grupa3>' + nl
+         NEXT
+      ENDIF
+      IF Len( aDane[ 'poz_f' ] ) > 0
+         FOR i := 1 TO Len( aDane[ 'poz_f' ] )
+            r = r + '    <Grupa4>' + nl
+            IF ! Empty( AllTrim( aDane[ 'poz_f' ][ i ][ 'bkraj' ] ) ) .AND. ;
+               ! Empty( AllTrim( aDane[ 'poz_f' ][ i ][ 'bnip' ] ) )
+
+               r = r + '      <P_CBa>' + AllTrim( aDane[ 'poz_f' ][ i ][ 'bkraj' ] ) + '</P_CBa>' + nl
+               r = r + '      <P_CBb>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'bnip' ] ) ) + '</P_CBb>' + nl
+               r = r + '      <P_CBc>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'bnipz' ] ) ) + '</P_CBc>' + nl
+               r = r + '      <P_CBd>' + iif( aDane[ 'poz_f' ][ i ][ 'bpowrot' ] == 'T', '2', '1' ) + '</P_CBd>' + nl
+            ENDIF
+
+            IF ! Empty( AllTrim( aDane[ 'poz_f' ][ i ][ 'jkraj' ] ) ) .AND. ;
+               ! Empty( AllTrim( aDane[ 'poz_f' ][ i ][ 'jnip' ] ) )
+
+               r = r + '      <P_CJa>' + AllTrim( aDane[ 'poz_f' ][ i ][ 'jkraj' ] ) + '</P_CJa>' + nl
+               r = r + '      <P_CJb>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'jnip' ] ) ) + '</P_CJb>' + nl
+               r = r + '      <P_CJc>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'jnipz' ] ) ) + '</P_CJc>' + nl
+               r = r + '      <P_CJd>' + iif( aDane[ 'poz_f' ][ i ][ 'bpowrot' ] == 'T', '2', '1' ) + '</P_CJd>' + nl
+            ENDIF
+            r = r + '    </Grupa4>' + nl
+         NEXT
+      ENDIF
+      r = r + '  </PozycjeSzczegolowe>' + nl
+		r = r + '  <Pouczenie>1</Pouczenie>' + nl
+      r = r + '</Deklaracja>'
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION edek_vat27_1(hDane)
    LOCAL r, nl
       nl = Chr(13) + Chr(10)
