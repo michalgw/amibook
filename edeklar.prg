@@ -4659,7 +4659,7 @@ FUNCTION edek_vatue_5()
    LOCAL r, nl
       nl = Chr(13) + Chr(10)
       r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
-      r = r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2020/06/24/06242/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
+      r = r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2020/07/03/9690/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
       r = r + '  <Naglowek>' + nl
       r = r + '    <KodFormularza kodSystemowy="VAT-UE (5)" wersjaSchemy="1-0E">VAT-UE</KodFormularza>' + nl
       r = r + '    <WariantFormularza>5</WariantFormularza>' + nl
@@ -4673,7 +4673,7 @@ FUNCTION edek_vatue_5()
          r = r + '    <etd:OsobaNiefizyczna>' + nl
 			r = r + '      <etd:NIP>' + trimnip(AllTrim(P4)) + '</etd:NIP>' + nl
 			r = r + '      <etd:PelnaNazwa>' + str2sxml(AllTrim(P8n)) + '</etd:PelnaNazwa>' + nl
-			r = r + '      <etd:REGON>' +  AllTrim(P11) + '</etd:REGON>' + nl
+			//r = r + '      <etd:REGON>' +  AllTrim(P11) + '</etd:REGON>' + nl
 		   r = r + '    </etd:OsobaNiefizyczna>' + nl
       else
 		   r = r + '    <etd:OsobaFizyczna>' + nl
@@ -4723,8 +4723,11 @@ FUNCTION edek_vatue_5()
             r = r + '    <Grupa4>' + nl
             r = r + '      <P_Ca>' + AllTrim( aSekcjaF[ i, 'kraj' ] ) + '</P_Ca>' + nl
             r = r + '      <P_Cb>' + edekNipUE( AllTrim( aSekcjaF[ i, 'nip' ] ) ) + '</P_Cb>' + nl
-            r = r + '      <P_Cc>' + edekNipUE( AllTrim( aSekcjaF[ i, 'nipz' ] ) ) + '</P_Cc>' + nl
-            r = r + '      <P_Cd>' + iif( aSekcjaF[ i, 'nipz' ] == 'T', '2', '1') + '</P_Cd>' + nl
+            IF Len( AllTrim( aSekcjaF[ i, 'nipz' ] ) ) > 0
+               r = r + '      <P_Cc>' + edekNipUE( AllTrim( aSekcjaF[ i, 'nipz' ] ) ) + '</P_Cc>' + nl
+            ELSEIF aSekcjaF[ i, 'powrot' ] $ "TN"
+               r = r + '      <P_Cd>' + iif( aSekcjaF[ i, 'powrot' ] == 'T', '2', '1') + '</P_Cd>' + nl
+            ENDIF
             r = r + '    </Grupa4>' + nl
          NEXT
       ENDIF
@@ -4739,7 +4742,7 @@ FUNCTION edek_vatuek_5( aDane )
    LOCAL r, nl
       nl = Chr(13) + Chr(10)
       r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
-      r = r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2020/06/24/06241/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
+      r = r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2020/07/03/9689/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
       r = r + '  <Naglowek>' + nl
       r = r + '    <KodFormularza kodSystemowy="VATUEK (5)" wersjaSchemy="1-0E">VAT-UEK</KodFormularza>' + nl
       r = r + '    <WariantFormularza>5</WariantFormularza>' + nl
@@ -4753,7 +4756,7 @@ FUNCTION edek_vatuek_5( aDane )
          r = r + '    <etd:OsobaNiefizyczna>' + nl
 			r = r + '      <etd:NIP>' + trimnip( aDane[ 'nip' ] ) + '</etd:NIP>' + nl
 			r = r + '      <etd:PelnaNazwa>' + str2sxml( aDane[ 'nazwa' ] ) + '</etd:PelnaNazwa>' + nl
-			r = r + '      <etd:REGON>' +  AllTrim( aDane[ 'regon' ] ) + '</etd:REGON>' + nl
+			//r = r + '      <etd:REGON>' +  AllTrim( aDane[ 'regon' ] ) + '</etd:REGON>' + nl
 		   r = r + '    </etd:OsobaNiefizyczna>' + nl
       else
 		   r = r + '    <etd:OsobaFizyczna>' + nl
@@ -4844,8 +4847,11 @@ FUNCTION edek_vatuek_5( aDane )
 
                r = r + '      <P_CBa>' + AllTrim( aDane[ 'poz_f' ][ i ][ 'bkraj' ] ) + '</P_CBa>' + nl
                r = r + '      <P_CBb>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'bnip' ] ) ) + '</P_CBb>' + nl
-               r = r + '      <P_CBc>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'bnipz' ] ) ) + '</P_CBc>' + nl
-               r = r + '      <P_CBd>' + iif( aDane[ 'poz_f' ][ i ][ 'bpowrot' ] == 'T', '2', '1' ) + '</P_CBd>' + nl
+               IF Len( AllTrim( aDane[ 'poz_f' ][ i ][ 'bnipz' ] ) ) > 0
+                  r = r + '      <P_CBc>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'bnipz' ] ) ) + '</P_CBc>' + nl
+               ELSEIF aDane[ 'poz_f' ][ i ][ 'bpowrot' ] $ "TN"
+                  r = r + '      <P_CBd>' + iif( aDane[ 'poz_f' ][ i ][ 'bpowrot' ] == 'T', '2', '1' ) + '</P_CBd>' + nl
+               ENDIF
             ENDIF
 
             IF ! Empty( AllTrim( aDane[ 'poz_f' ][ i ][ 'jkraj' ] ) ) .AND. ;
@@ -4853,8 +4859,11 @@ FUNCTION edek_vatuek_5( aDane )
 
                r = r + '      <P_CJa>' + AllTrim( aDane[ 'poz_f' ][ i ][ 'jkraj' ] ) + '</P_CJa>' + nl
                r = r + '      <P_CJb>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'jnip' ] ) ) + '</P_CJb>' + nl
-               r = r + '      <P_CJc>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'jnipz' ] ) ) + '</P_CJc>' + nl
-               r = r + '      <P_CJd>' + iif( aDane[ 'poz_f' ][ i ][ 'bpowrot' ] == 'T', '2', '1' ) + '</P_CJd>' + nl
+               IF Len( AllTrim( aDane[ 'poz_f' ][ i ][ 'jnipz' ] ) ) > 0
+                  r = r + '      <P_CJc>' + edekNipUE( AllTrim( aDane[ 'poz_f' ][ i ][ 'jnipz' ] ) ) + '</P_CJc>' + nl
+               ELSEIF aDane[ 'poz_f' ][ i ][ 'bpowrot' ] $ "TN"
+                  r = r + '      <P_CJd>' + iif( aDane[ 'poz_f' ][ i ][ 'bpowrot' ] == 'T', '2', '1' ) + '</P_CJd>' + nl
+               ENDIF
             ENDIF
             r = r + '    </Grupa4>' + nl
          NEXT

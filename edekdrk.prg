@@ -206,6 +206,16 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\vatuek_w4.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'VATUE-5'
+      hDane := DaneXML_VATUEw5( oDoc, cNrRef )
+      cPlikRap := 'frf\vatue_w5.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
+   CASE 'VATUEK-5'
+      hDane := DaneXML_VATUEKw5( oDoc, cNrRef )
+      cPlikRap := 'frf\vatuek_w5.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'VAT27K-1'
    CASE 'VAT27-1'
       hDane := DaneXML_VAT27w1( oDoc, cNrRef )
@@ -5528,6 +5538,12 @@ FUNCTION DaneXML_VATUEw5(oDoc, cNrRef, hNaglowek)
 
    AEval(aGrupa4, {|hPoz|
       hPoz['pusty'] := '0'
+      IF ! hb_HHasKey( hPoz, 'P_Cc' )
+         hPoz[ 'P_Cc' ] := ""
+      ENDIF
+      IF ! hb_HHasKey( hPoz, 'P_Cd' )
+         hPoz[ 'P_Cd' ] := '1'
+      ENDIF
       IF hPoz['P_Cd'] == '2'
          hPoz['P_Cdl'] := '1'
       ELSE
@@ -5654,12 +5670,12 @@ FUNCTION DaneXML_VATUEKw5(oDoc, cNrRef, hNaglowek)
       hPoz['pusty'] := '0'
       hPoz['P_CBa'] := xmlWartoscH( hPoz, 'P_CBa' )
       hPoz['P_CBb'] := xmlWartoscH( hPoz, 'P_CBb' )
-      hPoz['P_CBc'] := xmlWartoscH( hPoz, 'P_CBc' )
-      hPoz['P_CBd'] := xmlWartoscH( hPoz, 'P_CBd' )
+      hPoz['P_CBc'] := xmlWartoscH( hPoz, 'P_CBc', "" )
+      hPoz['P_CBd'] := xmlWartoscH( hPoz, 'P_CBd', "1" )
       hPoz['P_CJa'] := xmlWartoscH( hPoz, 'P_CJa' )
       hPoz['P_CJb'] := xmlWartoscH( hPoz, 'P_CJb' )
-      hPoz['P_CJc'] := xmlWartoscH( hPoz, 'P_CJc' )
-      hPoz['P_CJd'] := xmlWartoscH( hPoz, 'P_CJd' )
+      hPoz['P_CJc'] := xmlWartoscH( hPoz, 'P_CJc', "" )
+      hPoz['P_CJd'] := xmlWartoscH( hPoz, 'P_CJd', "1" )
       IF hPoz['P_CBd'] == '2'
          hPoz['P_CBdl'] := '1'
       ELSE
