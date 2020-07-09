@@ -424,7 +424,7 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
 
       aRow[ 'wartosc_vat' ] := aRow[ 'zak_zwol_vat' ] + aRow[ 'zak_op_vat' ] + aRow[ 'zak_mi_vat' ] + aRow[ 'pojazdy' ]
 
-      IF aRow[ 'wartosc_netto' ] <> 0 ;
+      IF ( aRow[ 'wartosc_netto' ] <> 0 .OR. aRow[ 'wartosc_vat' ] <> 0 ) ;
          .AND. rejz->korekta == iif( ewid_rzk == 'N', 'N', iif( ewid_rzk == 'T', 'T', rejz->korekta ) ) ;
          .AND. iif( ewid_rzi <> '**', rejz->symb_rej == ewid_rzi, .T. ) ;
          .AND. iif( ! lTylkoUE, ( ewid_rzz$'NW' .OR. ( ewid_rzz == 'D' .AND. rejz->zaplata$'23' ) .OR. ( ewid_rzz == 'Z' .AND. rejz->zaplata == '1') ), .T. ) ;
