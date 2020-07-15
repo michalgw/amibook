@@ -112,7 +112,7 @@ begin sequence
          k4=dochod
          k5=dochod+s0_4
          k6=podatek
-         k61=war_puzo
+         k61=iif( war_puzo == 0 .AND. OSWIAD26R == 'T', war_puz, war_puzo )
          k7=podatek+s0_6
          k8=data_zal
          k9=kod_tytu
