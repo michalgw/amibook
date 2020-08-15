@@ -904,7 +904,7 @@ FUNCTION OperNrIdentV()
       RETURN .T.
    ENDIF
 
-   IF ( ins .AND. Len( AllTrim( znr_ident ) ) > 0 ) .OR. ( ! ins .AND. znr_ident # rejz->nr_ident )
+   IF ( ins .AND. Len( AllTrim( znr_ident ) ) > 0 ) .OR. ( ! ins .AND. znr_ident # oper->nr_ident )
       IF  KontrahZnajdz( znr_ident, @aDane )
          znazwa := Pad( aDane[ 'nazwa' ], 200 )
          zadres := Pad( aDane[ 'adres' ], 200 )
