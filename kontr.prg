@@ -120,8 +120,8 @@ PROCEDURE Kontr()
          DO WHILE .T.
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
             IF ins
-               zNAZWA := Space( 100 )
-               zADRES := Space( 100 )
+               zNAZWA := Space( 200 )
+               zADRES := Space( 200 )
                zNR_IDENT := Space( 30 )
                zEXPORT := 'N'
                zBANK := Space( 28 )
@@ -141,8 +141,8 @@ PROCEDURE Kontr()
                zKRAJ := KRAJ
             ENDIF
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
-            @ wiersz,  1 GET zNAZWA PICTURE "@S32 " + Repl( '!', 100 ) VALID v13_1()
-            @ wiersz, 34 GET zADRES PICTURE "@S32 " + Repl( '!', 100 ) VALID v13_2()
+            @ wiersz,  1 GET zNAZWA PICTURE "@S32 " + Repl( '!', 200 ) VALID v13_1()
+            @ wiersz, 34 GET zADRES PICTURE "@S32 " + Repl( '!', 200 ) VALID v13_2()
             @ wiersz, 67 GET zNR_IDENT PICTURE "@S12 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             @ 21,  9 GET zTEL    PICTURE Repl( '!', 20 )
             @ 21, 42 GET zEXPORT PICTURE "!" WHEN wfEXIM( 21, 43 ) VALID vfEXIM( 21, 43 )
@@ -467,3 +467,173 @@ FUNCTION vfUE( x, y )
 
 ***************************************************
 *############################################################################
+
+FUNCTION KontrahZnajdzRegonNip( xNip )
+
+   LOCAL aRes := {}
+   LOCAL nTryb := -1
+   LOCAL nRes, cRes, aResAll
+   LOCAL cNip := ""
+   LOCAL nI, cKolor, cEkr := SaveScreen( 24, 0, 24, 79 )
+
+   cKolor := ColInf()
+   @ 24, 0 SAY PadC( '... pobieranie danych z bazy REGON ...', 80 )
+   SetColor( cKolor )
+
+   IF HB_ISARRAY( xNip ) .AND. Len( xNip ) > 0
+      FOR nI := 1 TO Len( xNip )
+         IF amiWeryfikujNip( xNip[ nI ] ) == 0
+            IF Len( cNip ) > 0
+               cNip := cNip + ','
+            ENDIF
+            cNip := cNip + xNip[ nI ]
+         ENDIF
+      NEXT
+      IF Len( cNip ) > 0
+         nTryb := 1
+      ENDIF
+   ELSEIF HB_ISCHAR( xNip ) .AND. amiWeryfikujNip( xNip ) == 0
+      cNip := xNip
+      nTryb := 0
+   ENDIF
+
+   IF nTryb >= 0 .AND. Len( cNip ) > 0
+      nRes := amiRegonNip( cNip, nTryb )
+      IF HB_ISNUMERIC( nRes )
+         DO CASE
+         CASE nRes == 0 .OR. nRes >= 100
+            cRes := amiRestResponse()
+            hb_jsonDecode( cRes, @aResAll )
+            IF nRes == 0
+               IF hb_HHasKey( aResAll, 'dane' ) .AND. HB_ISARRAY( aResAll[ 'dane' ] )
+                  aRes := aResAll[ 'dane' ]
+               ENDIF
+            ELSE
+               IF hb_HHasKey( aResAll, 'komunikat' ) .AND. HB_ISCHAR( aResAll[ 'komunikat' ] )
+                  komun( 'Bˆ¥d serwera: ' + aResAll[ 'komunikat' ] )
+               ENDIF
+            ENDIF
+         CASE nRes == 1
+            Komun( 'Brak licencji' )
+         CASE nRes == 2
+            Komun( 'Nie mo¾na poˆ¥czy† si© z usˆug¥. Sprawd«, czy stanowisko zostaˆo zarejestrowane.' )
+         CASE nRes == 3
+            Komun( 'Puste zapytanie' )
+         CASE nRes == 4
+            Komun( 'Nieprawidˆowy nr NIP' )
+         ENDCASE
+      ENDIF
+   ENDIF
+
+   RestScreen( 24, 0, 24, 79, cEkr )
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KontrahGenerujAdres( aDane )
+
+   LOCAL cRes := ""
+
+   IF hb_HHasKey( aDane, 'street' ) .AND. Len( AllTrim( aDane[ 'street' ] ) ) > 0
+      cRes := aDane[ 'street' ]
+   ELSEIF hb_HHasKey( aDane, 'city' ) .AND. Len( AllTrim( aDane[ 'city' ] ) ) > 0
+      cRes := aDane[ 'city' ]
+   ENDIF
+
+   IF hb_HHasKey( aDane, 'propertyNumber' ) .AND. Len( AllTrim( aDane[ 'propertyNumber' ] ) ) > 0
+      IF Len( cRes ) > 0
+         cRes := cRes + " "
+      ENDIF
+      cRes := cRes + aDane[ 'propertyNumber' ]
+   ENDIF
+
+   IF hb_HHasKey( aDane, 'apartmentNumber' ) .AND. Len( AllTrim( aDane[ 'apartmentNumber' ] ) ) > 0
+      IF Len( cRes ) > 0
+         cRes := cRes + "/"
+      ENDIF
+      cRes := cRes + aDane[ 'apartmentNumber' ]
+   ENDIF
+
+   IF hb_HHasKey( aDane, 'zipCode' ) .AND. Len( AllTrim( aDane[ 'zipCode' ] ) ) > 0
+      IF Len( cRes ) > 0
+         cRes := cRes + ", "
+      ENDIF
+      cRes := cRes + aDane[ 'zipCode' ]
+   ENDIF
+
+   IF hb_HHasKey( aDane, 'city' ) .AND. Len( AllTrim( aDane[ 'city' ] ) ) > 0
+      IF Len( cRes ) > 0
+         cRes := cRes + " "
+      ENDIF
+      cRes := cRes + aDane[ 'city' ]
+   ENDIF
+
+   RETURN cRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KontrahZnajdz( cNip, aPola, ncWrkplcNo )
+
+   LOCAL lRes := .F.
+   LOCAL lFound := .F.
+   LOCAL aDane
+   LOCAL nAktWorkspace := Select()
+
+   hb_default( @ncWrkplcNo, 'kontr' )
+   hb_default( @aPola, hb_Hash() )
+
+   IF Len( AllTrim( cNip ) ) > 0
+      SELECT ( ncWrkplcNo )
+      SET ORDER TO 2
+      SEEK '+' + ident_fir + cNip
+      lFound := Found()
+      IF lFound
+         IF olparam_ra .AND. ( zrodlo != 'R' .OR. dataspr < Date() - olparam_rd )
+            lRes := .F.
+         ELSE
+            aPola[ 'nazwa' ] := nazwa
+            aPola[ 'adres' ] := adres
+            aPola[ 'export' ] := iif( EXPORT == ' ', 'N', EXPORT )
+            aPola[ 'ue' ] := iif( UE == ' ', 'N', UE )
+            aPola[ 'kraj' ] := iif( KRAJ == '  ', 'PL', KRAJ )
+            lRes := .T.
+         ENDIF
+      ENDIF
+      IF ! lRes .AND. olparam_ra
+         aDane := KontrahZnajdzRegonNip( cNip )
+         IF Len( aDane ) > 0
+            IF hb_HHasKey( aDane[ 1 ], 'name' )
+               aPola[ 'nazwa' ] := aDane[ 1 ][ 'name' ]
+               aPola[ 'adres' ] := KontrahGenerujAdres( aDane[ 1 ] )
+               aPola[ 'export' ] := 'N'
+               aPola[ 'ue' ] := 'N'
+               aPola[ 'kraj' ] := 'PL'
+               IF lFound
+                  BlokadaR()
+               ELSE
+                  app()
+               ENDIF
+               kontr->firma := ident_fir
+               kontr->nr_ident := cNip
+               kontr->nazwa := aPola[ 'nazwa' ]
+               kontr->adres := aPola[ 'adres' ]
+               kontr->export := 'N'
+               kontr->ue := 'N'
+               kontr->kraj := 'PL'
+               kontr->zrodlo := 'R'
+               kontr->dataspr := Date()
+               COMMIT
+               UNLOCK
+               lRes := .T.
+            ENDIF
+         ENDIF
+      ENDIF
+      SET ORDER TO 1
+      SELECT ( nAktWorkspace )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+

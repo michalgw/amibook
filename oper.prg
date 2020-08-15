@@ -79,10 +79,10 @@ PROCEDURE Oper()
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
             IF ins
                zDZIEN := '  '
-               znazwa := Space( 100 )
+               znazwa := Space( 200 )
                zNR_IDENT := Space( 30 )
                zNUMER := Space( 40 )
-               zADRES := Space( 100 )
+               zADRES := Space( 200 )
                zTRESC := Space( 30 )
                zWYR_TOW := 0
                zUSLUGI := 0
@@ -135,9 +135,9 @@ PROCEDURE Oper()
             ColStd()
             @  3, 27 GET zDZIEN PICTURE "99" WHEN PolePaliwoStop() .AND. ( WERSJA4 == .T. .OR. ins ) VALID v1_1()
             @  4, 27 GET zNUMER PICTURE "@S40 " + repl( '!', 40 ) WHEN PolePaliwoStop() VALID v1_2()
-            @  5, 27 GET zNAZWA PICTURE "@S52 " + repl( '!', 100 ) WHEN PolePaliwoStop() VALID w1_3()
-            @  6, 27 GET zADRES PICTURE "@S52 " + repl( '!', 100 ) WHEN PolePaliwoStop()
-            @  7, 27 GET zNR_IDENT PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" WHEN PolePaliwoStop()
+            @  5, 27 GET zNR_IDENT PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" WHEN PolePaliwoStop() VALID OperNrIdentV()
+            @  6, 27 GET zNAZWA PICTURE "@S52 " + repl( '!', 200 ) WHEN PolePaliwoStop() VALID w1_3()
+            @  7, 27 GET zADRES PICTURE "@S52 " + repl( '!', 200 ) WHEN PolePaliwoStop()
             @  8, 37 GET zTRESC WHEN PolePaliwoStop() VALID v1_5()
             @ 10, 67 GET zWYR_TOW  PICTURE FPIC WHEN PolePaliwoStop() VALID iif( zWYR_TOW # 0, vKONIEC(), .T. )
             @ 11, 67 GET zUSLUGI   PICTURE FPIC WHEN PolePaliwoStop() VALID iif( zUSLUGI # 0, vKONIEC(), .T. )
@@ -801,9 +801,9 @@ PROCEDURE say1()
    *        endcase
    *   endcase
    *endif
-   @  5, 27 SAY SubStr( nazwa, 1, 52 )
-   @  6, 27 SAY SubStr( ADRES, 1, 52 )
-   @  7, 27 SAY NR_IDENT
+   @  5, 27 SAY NR_IDENT
+   @  6, 27 SAY SubStr( nazwa, 1, 52 )
+   @  7, 27 SAY SubStr( ADRES, 1, 52 )
    @  8, 37 SAY TRESC
    @ 10, 67 SAY wyr_tow  PICTURE RPIC
    @ 11, 67 SAY uslugi   PICTURE RPIC
@@ -895,6 +895,42 @@ FUNCTION V1_2()
    RETURN .T.
 
 ***************************************************
+
+FUNCTION OperNrIdentV()
+
+   LOCAL aDane := hb_Hash()
+
+   IF LastKey() == K_UP
+      RETURN .T.
+   ENDIF
+
+   IF ( ins .AND. Len( AllTrim( znr_ident ) ) > 0 ) .OR. ( ! ins .AND. znr_ident # rejz->nr_ident )
+      IF  KontrahZnajdz( znr_ident, @aDane )
+         znazwa := Pad( aDane[ 'nazwa' ], 200 )
+         zadres := Pad( aDane[ 'adres' ], 200 )
+         zexport := aDane[ 'export' ]
+         zue := aDane[ 'ue' ]
+         zkraj := aDane[ 'kraj' ]
+         KEYBOARD Chr( K_ENTER )
+      ELSE
+         znazwa := Space( 200 )
+         zadres := Space( 200 )
+         zexport := 'N'
+         zUE := 'N'
+         ZKRAJ := 'PL'
+         SET COLOR TO i
+         @ 5, 27 SAY SubStr( zNR_IDENT, 1, 20 )
+         @ 6, 27 SAY SubStr( znazwa, 1, 52 )
+         @ 7, 27 SAY SubStr( zadres, 1, 40 )
+         SET COLOR TO
+      ENDIF
+   ENDIF
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+***************************************************
 FUNCTION w1_3()
 ***************************************************
    SAVE SCREEN TO scr2
@@ -934,9 +970,9 @@ FUNCTION w1_3()
          zUE := UE
          zKRAJ := KRAJ
          SET COLOR TO i
-         @ 5, 27 SAY SubStr( znazwa, 1, 52 )
-         @ 6, 27 SAY SubStr( zadres, 1, 40 )
-         @ 7, 27 SAY zNR_IDENT
+         @ 5, 27 SAY zNR_IDENT
+         @ 6, 27 SAY SubStr( znazwa, 1, 52 )
+         @ 7, 27 SAY SubStr( zadres, 1, 40 )
          SET COLOR TO
          KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER )
       ENDIF
@@ -1249,9 +1285,9 @@ PROCEDURE operRysujTlo()
    ColStd()
    @  3, 0 say 'Ú (2) Dzie&_n. miesi&_a.ca.......                                                     '
    @  4, 0 say '³ (3) Nr dowodu ksi&_e.gowego.                                                     '
-   @  5, 0 say '³ (4) Kontrahent: nazwa....                                                     '
-   @  6, 0 say '³ (5)             adres....                                                     '
-   @  7, 0 say '³                   NIP....                                                     '
+   @  5, 0 say '³     Kontrahent:   NIP....                                                     '
+   @  6, 0 say '³ (4)             nazwa....                                                     '
+   @  7, 0 say '³ (5)             adres....                                                     '
    @  8, 0 say 'À (6) Opis zdarzenia gospodarczego....                                          '
    @  9, 0 say 'Ú ----------------------------------PRZYCHODY---------------------------------- '
    @ 10, 0 say 'P (7) Warto&_s.&_c. sprzedanych towar&_o.w i us&_l.ug..........................             '

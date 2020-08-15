@@ -131,10 +131,10 @@ PROCEDURE KRejZ()
                @ 15,  8 CLEAR TO 19, 79
  *                @ 13,57 clear to 19,79
                zDZIEN := '  '
-               znazwa := Space( 100 )
+               znazwa := Space( 200 )
                zNR_IDENT := Space( 30 )
                zNUMER := Space( 37 )
-               zADRES := Space( 100 )
+               zADRES := Space( 200 )
                zTRESC := Space( 30 )
                zROKS := '    '
                zMCS := '  '
@@ -307,8 +307,8 @@ PROCEDURE KRejZ()
             @  3, 59 GET zNUMER PICTURE "@S20 " + repl('!',40) VALID v1_2z()
             @  4, 29 SAY Space( 20 )
             @  4, 29 GET zNR_IDENT PICTURE "@S20 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" VALID vv1_3z()
-            @  5, 29 GET znazwa PICTURE "@S40 "+repl('!',100) valid w1_3z().and.v1_3z()
-            @  6, 29 GET zADRES PICTURE "@S40 " + repl( '!', 100 ) VALID v1_4z()
+            @  5, 29 GET znazwa PICTURE "@S40 " + repl( '!', 200 ) valid w1_3z() .AND. v1_3z()
+            @  6, 29 GET zADRES PICTURE "@S40 " + repl( '!', 200 ) VALID v1_4z()
             @  7, 29 GET zTRESC VALID v1_5z()
             oGetTRESC := ATail( GetList )
             @  8, 29 GET zUWAGI PICTURE '@K' WHEN w1_21z() VALID v1_21z()
@@ -918,9 +918,37 @@ FUNCTION V1_2z()
 ***************************************************
 FUNCTION Vv1_3z()
 ***************************************************
+
+   LOCAL aDane := hb_Hash()
+
    IF LastKey() == K_UP
       RETURN .T.
    ENDIF
+
+   IF ( ins .AND. Len( AllTrim( znr_ident ) ) > 0 ) .OR. ( ! ins .AND. znr_ident # rejz->nr_ident )
+      IF  KontrahZnajdz( znr_ident, @aDane )
+         znazwa := Pad( aDane[ 'nazwa' ], 200 )
+         zadres := Pad( aDane[ 'adres' ], 200 )
+         zexport := aDane[ 'export' ]
+         zue := aDane[ 'ue' ]
+         zkraj := aDane[ 'kraj' ]
+         KEYBOARD Chr( K_ENTER )
+      ELSE
+         znazwa := Space( 200 )
+         zadres := Space( 200 )
+         zexport := 'N'
+         zUE := 'N'
+         ZKRAJ := 'PL'
+         SET COLOR TO i
+         @ 4, 29 SAY SubStr( zNR_IDENT, 1, 20 )
+         @ 5, 29 SAY SubStr( znazwa, 1, 40 )
+         @ 6, 29 SAY SubStr( zadres, 1, 40 )
+         @ 5, 77 SAY zUE + iif( zUE == 'T', 'ak', 'ie' )
+         @ 6, 77 SAY zKRAJ
+         SET COLOR TO
+      ENDIF
+   ENDIF
+/*
    IF Len( AllTrim( znr_ident ) ) # 0
       IF ins
          SELECT kontr
@@ -934,8 +962,8 @@ FUNCTION Vv1_3z()
             zKRAJ := iif( KRAJ == '  ', 'PL', KRAJ )
             KEYBOARD Chr( K_ENTER )
          ELSE
-            znazwa := Space( 100 )
-            zadres := Space( 100 )
+            znazwa := Space( 200 )
+            zadres := Space( 200 )
             zexport := 'N'
             zUE := 'N'
             ZKRAJ := 'PL'
@@ -962,8 +990,8 @@ FUNCTION Vv1_3z()
                zKRAJ := iif( KRAJ == '  ', 'PL', KRAJ )
                KEYBOARD Chr( K_ENTER )
             ELSE
-               znazwa := Space( 100 )
-               zadres := Space( 100 )
+               znazwa := Space( 200 )
+               zadres := Space( 200 )
                zexport := 'N'
                zUE := 'N'
                ZKRAJ := 'PL'
@@ -980,6 +1008,8 @@ FUNCTION Vv1_3z()
          ENDIF
       ENDIF
    ENDIF
+   */
+
    RETURN .T.
 
 ***************************************************

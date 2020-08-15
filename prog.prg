@@ -753,6 +753,8 @@ FUNCTION Main()
    PUBLIC LPTASMY := 1
 
    PUBLIC olparam_sa := .T.
+   PUBLIC olparam_ra := .F.
+   PUBLIC olparam_rd := 180
 
    // Parametry on-line
    IF File( 'olparam.mem' )
@@ -1907,7 +1909,7 @@ FUNCTION _bo()
 
    LOCAL nRes
 
-   nRes := amiKlientKonfig( @olparam_sa )
+   nRes := amiKlientKonfig( @olparam_sa, @olparam_ra, @olparam_rd )
 
    CLEAR TYPEAHEAD
 

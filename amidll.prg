@@ -473,7 +473,7 @@ FUNCTION amiInstalujLicencje()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION amiKlientKonfig( lSprAkt )
+FUNCTION amiKlientKonfig( lSprAkt, lRegonAkt, nRegonDni )
 
    IF Empty( amiDllH )
       RETURN 5
@@ -481,7 +481,8 @@ FUNCTION amiKlientKonfig( lSprAkt )
 
    RETURN hb_DynCall( { 'kliKonfiguracja', amiDllH, ;
       hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
-      HB_DYN_CTYPE_BOOL }, @lSprAkt )
+      HB_DYN_CTYPE_BOOL, HB_DYN_CTYPE_BOOL, HB_DYN_CTYPE_INT }, ;
+      @lSprAkt, @lRegonAkt, @nRegonDni )
 
 /*----------------------------------------------------------------------*/
 
@@ -564,3 +565,27 @@ FUNCTION amiRestResponse()
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION amiRegonNip( cNip, nRodzaj )
+
+   IF Empty( amiDllH )
+      RETURN NIL
+   ENDIF
+
+   RETURN hb_DynCall( { 'uslRegonNip', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), ;
+      HB_DYN_CTYPE_INT }, cNip, nRodzaj )
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION amiWeryfikujNip( cNip )
+
+   IF Empty( amiDllH )
+      RETURN NIL
+   ENDIF
+
+   RETURN hb_DynCall( { 'amiWeryfikujNIP', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ) }, cNip )
+
+/*----------------------------------------------------------------------*/
