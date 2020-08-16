@@ -920,3 +920,20 @@ PROCEDURE WydrukProsty( cTresc, cTytul )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION NormalizujNipPL( cNip )
+
+   LOCAL cRes := '', nI, cC
+
+   cNip := AllTrim( cNip )
+
+   FOR nI := 1 TO Len( cNip )
+      cC := SubStr( cNip, nI, 1 )
+      IF cC $ '0123456789'
+         cRes := cRes + cC
+      ENDIF
+   NEXT
+
+   RETURN cRes
+
+/*----------------------------------------------------------------------*/
+

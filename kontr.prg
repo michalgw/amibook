@@ -637,3 +637,104 @@ FUNCTION KontrahZnajdz( cNip, aPola, ncWrkplcNo )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION KontrahZnajdzA( aNipy, aDane, ncWrkplcNo )
+   LOCAL lRes := .F.
+   LOCAL lFound := .F.
+   LOCAL aDaneRegon
+   LOCAL nAktWorkspace := Select()
+   LOCAL aPola
+   LOCAL nI, nJ, nK
+   LOCAL aNipyRegon := {}
+   LOCAL aNipyRegonWys
+
+   hb_default( @ncWrkplcNo, 'kontr' )
+   hb_default( @aDane, {} )
+
+   SELECT ( ncWrkplcNo )
+   SET ORDER TO 2
+
+   FOR nI := 1 TO Len( aNipy )
+      IF Len( AllTrim( aNipy[ nI ] ) ) > 0
+         SEEK '+' + ident_fir + aNipy[ nI ]
+         lFound := Found()
+         IF lFound
+            aPola := hb_Hash()
+            IF olparam_ra .AND. ( zrodlo != 'R' .OR. dataspr < Date() - olparam_rd )
+               aPola[ 'nip' ] := aNipy[ nI ]
+               aPola[ 'jestwdb' ] := .T.
+               aPola[ 'recno' ] := RecNo()
+               AAdd( aNipyRegon, aPola )
+               lRes := .F.
+            ELSE
+               aPola[ 'nip' ] := aNipy[ nI ]
+               aPola[ 'nazwa' ] := nazwa
+               aPola[ 'adres' ] := adres
+               aPola[ 'export' ] := iif( EXPORT == ' ', 'N', EXPORT )
+               aPola[ 'ue' ] := iif( UE == ' ', 'N', UE )
+               aPola[ 'kraj' ] := iif( KRAJ == '  ', 'PL', KRAJ )
+               AAdd( aDane, aPola )
+               lRes := .T.
+            ENDIF
+         ELSE
+            AAdd( aNipyRegon, hb_Hash( 'nip', aNipy[ nI ], 'jestwdb', .F. ) )
+         ENDIF
+      ENDIF
+   NEXT
+
+   IF Len( aNipyRegon ) > 0 .AND. olparam_ra
+
+      aNipyRegonWys := {}
+
+      FOR nI := 1 TO Len( aNipyRegon )
+         AAdd( aNipyRegonWys, aNipyRegon[ nI ][ 'nip' ] )
+         IF Len( aNipyRegonWys ) == 20 .OR. nI == Len( aNipyRegon )
+            aDaneRegon := KontrahZnajdzRegonNip( aNipyRegonWys )
+            FOR nJ := 1 TO Len( aDaneRegon )
+               nK := AScan( aNipyRegon, { | aPoz |
+                  LOCAL lRes := .F.
+                  IF aPoz[ 'nip' ] == aDaneRegon[ nJ ][ 'nip' ]
+                     lRes := .T.
+                  ENDIF
+                  RETURN lRes
+               } )
+               aPola := hb_Hash()
+               aPola[ 'nip' ] := aDaneRegon[ nJ ][ 'nip' ]
+               aPola[ 'nazwa' ] := aDaneRegon[ nJ ][ 'name' ]
+               aPola[ 'adres' ] := KontrahGenerujAdres( aDaneRegon[ nJ ] )
+               aPola[ 'export' ] := 'N'
+               aPola[ 'ue' ] := 'N'
+               aPola[ 'kraj' ] := 'PL'
+               AAdd( aDane, aPola )
+               IF nK > 0
+                  IF aNipyRegon[ nK ][ 'jestwdb' ]
+                     dbGoto( aNipyRegon[ nK ][ 'recno' ] )
+                     BlokadaR()
+                  ELSE
+                     app()
+                  ENDIF
+                  kontr->firma := ident_fir
+                  kontr->nr_ident := aPola[ 'nip' ]
+                  kontr->nazwa := aPola[ 'nazwa' ]
+                  kontr->adres := aPola[ 'adres' ]
+                  kontr->export := 'N'
+                  kontr->ue := 'N'
+                  kontr->kraj := 'PL'
+                  kontr->zrodlo := 'R'
+                  kontr->dataspr := Date()
+                  COMMIT
+                  UNLOCK
+               ENDIF
+            NEXT
+            aNipyRegonWys := {}
+         ENDIF
+      NEXT
+
+   ENDIF
+
+   SET ORDER TO 1
+   SELECT ( nAktWorkspace )
+
+   RETURN Len( aDane )
+
+/*----------------------------------------------------------------------*/
+
