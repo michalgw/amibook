@@ -350,7 +350,7 @@ FUNCTION Ewid()
                         ENDIF
 
                      CASE opcja1 == 2
-                        vat_719( 0, 0, 1, 'I' )
+                        vat_720( 0, 0, 1, 'I' )
    *                  do p_vat
 
                      CASE opcja1 == 3
