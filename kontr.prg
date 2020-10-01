@@ -504,14 +504,18 @@ FUNCTION KontrahZnajdzRegonNip( xNip )
          CASE nRes == 0 .OR. nRes >= 100
             cRes := amiRestResponse()
             hb_jsonDecode( cRes, @aResAll )
-            IF nRes == 0
-               IF hb_HHasKey( aResAll, 'dane' ) .AND. HB_ISARRAY( aResAll[ 'dane' ] )
-                  aRes := aResAll[ 'dane' ]
+            IF HB_ISHASH( aResAll )
+               IF nRes == 0
+                  IF hb_HHasKey( aResAll, 'dane' ) .AND. HB_ISARRAY( aResAll[ 'dane' ] )
+                     aRes := aResAll[ 'dane' ]
+                  ENDIF
+               ELSE
+                  IF hb_HHasKey( aResAll, 'komunikat' ) .AND. HB_ISCHAR( aResAll[ 'komunikat' ] )
+                     komun( 'Bˆ¥d serwera: ' + aResAll[ 'komunikat' ] )
+                  ENDIF
                ENDIF
             ELSE
-               IF hb_HHasKey( aResAll, 'komunikat' ) .AND. HB_ISCHAR( aResAll[ 'komunikat' ] )
-                  komun( 'Bˆ¥d serwera: ' + aResAll[ 'komunikat' ] )
-               ENDIF
+               Komun( 'Nieprawidˆowa odpowied« serwera' )
             ENDIF
          CASE nRes == 1
             Komun( 'Brak licencji' )
