@@ -288,7 +288,7 @@ PROCEDURE KRejS()
                @  4, 77 GET zexport   PICTURE '!' WHEN wfEXIM( 4, 78 ) VALID vfEXIM( 4, 78 )
                @  5, 77 GET zUE       PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
                @  6, 77 GET zKRAJ     PICTURE '!!'
-               @  7, 77 GET zOPCJE    PICTURE '!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
+               @  7, 71 GET zOPCJE    PICTURE '@S8 !!!!!!!!!!!!!!!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
                @  8, 64 GET zPROCEDUR PICTURE '!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
                @  9, 77 GET zSEK_CV7  PICTURE '!!' WHEN wfsSEK_CV7( 9, 78 ) VALID vfsSEK_CV7( 9, 78 )
                IF DETALISTA <> 'T'
@@ -1140,7 +1140,7 @@ PROCEDURE say1s()
    @  4, 77 SAY EXPORT + iif( EXPORT == 'T', 'ak', 'ie' )
    @  5, 77 SAY UE + iif( UE == 'T', 'ak', 'ie' )
    @  6, 77 SAY KRAJ
-   @  7, 77 SAY Pad( AllTrim( OPCJE ), 2 )
+   @  7, 71 SAY Pad( SubStr( OPCJE, 1, 8 ), 8 )
    @  8, 64 SAY Pad( AllTrim( PROCEDUR ), 15 )
    @  9, 77 SAY SEK_CV7
 
@@ -1843,7 +1843,7 @@ FUNCTION krejsRysujTlo()
    @  4, 0 SAY 'KONTRAH: Nr identyfik. (NIP).                          Rodzaj dowodu:    Exp:   '
    @  5, 0 SAY '         Nazwa...............                                             UE:   '
    @  6, 0 SAY '         Adres...............                                           Kraj:   '
-   @  7, 0 SAY 'Opis zdarzenia gospodarczego.                                     Oznaczenie:   '
+   @  7, 0 SAY 'Opis zdarzenia gospodarczego.                               Oznaczenie:         '
    @  8, 0 SAY 'Uwagi........................                         Procedura:                '
    @  9, 0 SAY 'Data sprze.           Data wyst.           Korekta ?.    Pola sekcji C VAT-7:   '
    @ 10, 0 SAY ' ------------------------------------------------------------------------------ '
@@ -1900,26 +1900,59 @@ PROCEDURE RejS_PolaDod()
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION KRejSWhOpcjeParsuj( cTekst )
+
+   LOCAL aRes := AFill( Array( 13 ), .F. )
+   LOCAL aTok := hb_ATokens( cTekst, "," )
+
+   AEval( aTok, { | cTok |
+      LOCAL nI
+      IF AllTrim( cTok ) <> ""
+         nI := Val( cTok )
+         IF nI > 0
+            aRes[ nI ] := .T.
+         ENDIF
+      ENDIF
+   } )
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE KRejSWhOpcjeAkt( aOpcjeStr, aOpcjeSel )
+
+   LOCAL nI
+
+   FOR nI := 1 TO 13
+      aOpcjeStr[ nI + 1 ] := SubStr( aOpcjeStr[ nI + 1 ], 1, 4 ) + iif( aOpcjeSel[ nI ], 'X', ' ' ) + SubStr( aOpcjeStr[ nI + 1 ], 6 )
+   NEXT
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION KRejSWhOpcje()
 
    LOCAL lRes := .T.
-   LOCAL nElement
+   LOCAL nElement, nI
    LOCAL cEkran := SaveScreen( 0, 0, MaxRow(), MaxCol() )
+   LOCAL lDzialaj := .T.
+   LOCAL aOpcjeSel := KRejSWhOpcjeParsuj( zOPCJE )
    LOCAL aOpcje := { ;
-      " (brak)                                                    ", ;
-      "1  - Dostawa napoj¢w alkoholowych - alkoholu etylowego...  ", ;
-      "2  - Dostawa towar¢w, o kt¢rych mowa w art. 103 ust. 5aa   ", ;
-      "3  - Dostawa oleju opaˆowego w rozumieniu przepis¢w o p.akc", ;
-      "4  - Dostawa wyrob¢w tytoniowych, suszu tytoniowego...     ", ;
-      "5  - Dostawa odpad¢w - wyˆ¥cznie okre˜lonych w poz. 79-91..", ;
-      "6  - Dostawa urz¥dzeä elektronicznych oraz cz©˜ci i mater..", ;
-      "7  - Dostawa pojazd¢w oraz cz©˜ci samochodowych o kodach...", ;
-      "8  - Dostawa metali szlachetnych oraz nieszlachetnych...   ", ;
-      "9  - Dostawa lek¢w oraz wyrob¢w medycznych...              ", ;
-      "10 - Dostawa budynk¢w, budowli i grunt¢w                   ", ;
-      "11 - —wiadczenie usˆug w zak.przen. uprawnieä do emisji... ", ;
-      "12 - —wiadczenie usˆug o charakterze niematerialnym...     ", ;
-      "13 - —wiadczenie usˆug transportowych i gospodarki mag...  " }
+      " (brak)                                                        ", ;
+      "1  [ ] - Dostawa napoj¢w alkoholowych - alkoholu etylowego...  ", ;
+      "2  [ ] - Dostawa towar¢w, o kt¢rych mowa w art. 103 ust. 5aa   ", ;
+      "3  [ ] - Dostawa oleju opaˆowego w rozumieniu przepis¢w o p.akc", ;
+      "4  [ ] - Dostawa wyrob¢w tytoniowych, suszu tytoniowego...     ", ;
+      "5  [ ] - Dostawa odpad¢w - wyˆ¥cznie okre˜lonych w poz. 79-91..", ;
+      "6  [ ] - Dostawa urz¥dzeä elektronicznych oraz cz©˜ci i mater..", ;
+      "7  [ ] - Dostawa pojazd¢w oraz cz©˜ci samochodowych o kodach...", ;
+      "8  [ ] - Dostawa metali szlachetnych oraz nieszlachetnych...   ", ;
+      "9  [ ] - Dostawa lek¢w oraz wyrob¢w medycznych...              ", ;
+      "10 [ ] - Dostawa budynk¢w, budowli i grunt¢w                   ", ;
+      "11 [ ] - —wiadczenie usˆug w zak.przen. uprawnieä do emisji... ", ;
+      "12 [ ] - —wiadczenie usˆug o charakterze niematerialnym...     ", ;
+      "13 [ ] - —wiadczenie usˆug transportowych i gospodarki mag...  " }
 
    IF param_ksv7 <> 'T'
       RETURN .F.
@@ -1928,20 +1961,36 @@ FUNCTION KRejSWhOpcje()
    IF AllTrim( zOPCJE ) == ""
       nElement := 1
    ELSE
-      nElement := Val( zOPCJE ) + 1
+      nElement := AScan( aOpcjeSel, .T. ) + 1
    ENDIF
 
-   hb_DispBox( 3, 9, 18, 70, B_DOUBLE )
-   hb_DispOutAt( 3, 11, "Oznaczenie dotycz¥ce dostawy i ˜wiadczenia usˆug" )
+   hb_DispBox( 3, 7, 18, 72, B_DOUBLE )
+   hb_DispOutAt(  3, 11, " Oznaczenie dotycz¥ce dostawy i ˜wiadczenia usˆug " )
+   hb_DispOutAt( 18, 11, " Spacja - zaznacz, Enter/Esc - zakoäcz, " + Chr( 27 ) + "/" + Chr( 26 ) + " - powr¢t/dalej " )
    KRejSWhOpcjeAChFunc( AC_IDLE, nElement )
-   nElement := AChoice( 4, 10, 17, 69, aOpcje, , "KRejSWhOpcjeAChFunc", nElement )
 
-   IF nElement > 0
-      IF nElement == 1
-         zOPCJE := Space( 16 )
-      ELSE
-         zOPCJE := Str( nElement - 1, 2 )
+   DO WHILE lDzialaj
+      KRejSWhOpcjeAkt( @aOpcje, aOpcjeSel )
+      nElement := AChoice( 4, 8, 17, 71, aOpcje, , "KRejSWhOpcjeAChFunc", nElement )
+      lDzialaj := nElement > 1 .AND. AScan( { K_ENTER, K_LEFT, K_RIGHT }, LastKey() ) == 0
+      IF lDzialaj
+         aOpcjeSel[ nElement - 1 ] := .NOT. aOpcjeSel[ nElement - 1 ]
       ENDIF
+   ENDDO
+
+   IF nElement == 1
+      zOPCJE := Space( 16 )
+   ELSE
+      zOPCJE := ""
+      FOR nI := 1 TO 13
+         IF aOpcjeSel[ nI ]
+            IF Len( zOPCJE ) > 0
+               zOPCJE := zOPCJE + ','
+            ENDIF
+            zOPCJE := zOPCJE + AllTrim( Str( nI ) )
+         ENDIF
+      NEXT
+      zOPCJE := Pad( zOPCJE, 16 )
    ENDIF
 
    RestScreen( 0, 0, MaxRow(), MaxCol(), cEkran )
@@ -2010,7 +2059,7 @@ FUNCTION KRejSWhOpcjeAChFunc( nMode, nCurElement, nRowPos )
       CASE nKey == K_ESC
          nRetVal := AC_ABORT
          KEYBOARD Chr(13)
-      CASE ( nKey >= Asc('0') .AND. nKey <= Asc('9') ) .OR. nKey == Asc(' ')
+      CASE nKey >= Asc('0') .AND. nKey <= Asc('9')
          nRetVal := AC_GOTO
       CASE nKey == K_LEFT
          nRetVal := AC_SELECT
@@ -2018,6 +2067,8 @@ FUNCTION KRejSWhOpcjeAChFunc( nMode, nCurElement, nRowPos )
       CASE nKey == K_RIGHT
          nRetVal := AC_SELECT
          KEYBOARD Chr( K_DOWN )
+      CASE nKey == Asc(' ')
+         nRetVal := AC_SELECT
      ENDCASE
    ENDIF
 

@@ -238,47 +238,49 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
       aPoz[ 'AdresKontrahenta' ] := rejs->adres
       aPoz[ 'TypDokumentu' ] := AllTrim( rejs->rodzdow )
 
-      SWITCH Val( rejs->opcje )
-      CASE 1
-         aPoz[ 'GTU_01' ] := .T.
-         EXIT
-      CASE 2
-         aPoz[ 'GTU_02' ] := .T.
-         EXIT
-      CASE 3
-         aPoz[ 'GTU_03' ] := .T.
-         EXIT
-      CASE 4
-         aPoz[ 'GTU_04' ] := .T.
-         EXIT
-      CASE 5
-         aPoz[ 'GTU_05' ] := .T.
-         EXIT
-      CASE 6
-         aPoz[ 'GTU_06' ] := .T.
-         EXIT
-      CASE 7
-         aPoz[ 'GTU_07' ] := .T.
-         EXIT
-      CASE 8
-         aPoz[ 'GTU_08' ] := .T.
-         EXIT
-      CASE 9
-         aPoz[ 'GTU_09' ] := .T.
-         EXIT
-      CASE 10
-         aPoz[ 'GTU_10' ] := .T.
-         EXIT
-      CASE 11
-         aPoz[ 'GTU_11' ] := .T.
-         EXIT
-      CASE 12
-         aPoz[ 'GTU_12' ] := .T.
-         EXIT
-      CASE 13
-         aPoz[ 'GTU_13' ] := .T.
-         EXIT
-      ENDSWITCH
+      AEval( hb_ATokens( rejs->opcje, ',' ), { | aElem |
+         SWITCH Val( aElem )
+         CASE 1
+            aPoz[ 'GTU_01' ] := .T.
+            EXIT
+         CASE 2
+            aPoz[ 'GTU_02' ] := .T.
+            EXIT
+         CASE 3
+            aPoz[ 'GTU_03' ] := .T.
+            EXIT
+         CASE 4
+            aPoz[ 'GTU_04' ] := .T.
+            EXIT
+         CASE 5
+            aPoz[ 'GTU_05' ] := .T.
+            EXIT
+         CASE 6
+            aPoz[ 'GTU_06' ] := .T.
+            EXIT
+         CASE 7
+            aPoz[ 'GTU_07' ] := .T.
+            EXIT
+         CASE 8
+            aPoz[ 'GTU_08' ] := .T.
+            EXIT
+         CASE 9
+            aPoz[ 'GTU_09' ] := .T.
+            EXIT
+         CASE 10
+            aPoz[ 'GTU_10' ] := .T.
+            EXIT
+         CASE 11
+            aPoz[ 'GTU_11' ] := .T.
+            EXIT
+         CASE 12
+            aPoz[ 'GTU_12' ] := .T.
+            EXIT
+         CASE 13
+            aPoz[ 'GTU_13' ] := .T.
+            EXIT
+         ENDSWITCH
+      } )
 
       aPoz[ 'GTU' ] := AllTrim( rejs->opcje )
 
