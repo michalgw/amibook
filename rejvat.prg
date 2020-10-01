@@ -776,6 +776,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
    LOCAL aDane := hb_Hash()
    LOCAL aRow
    LOCAL nRekZak, cKluczStat, nFS, nZS, nLp := 1
+   LOCAL cOpisDod
 
    aDane[ 'pozycje' ] := {}
    aDane[ 'rok' ] := param_rok
@@ -851,12 +852,18 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
 
       aRow := hb_Hash()
 
+      cOpisDod := ""
+      cOpisDod := iif( AllTrim( rejs->rodzdow ) == "", '', 'RD:' + AllTrim( rejs->rodzdow ) + ";" ) + ;
+         iif( AllTrim( rejs->opcje ) == "", "", "GTU:" + AllTrim( rejs->opcje ) + ";" ) + ;
+         iif( AllTrim( rejs->procedur ) == "", "", "Pr:" + AllTrim( rejs->procedur ) + ";" ) + ;
+         iif( rejs->sek_cv7 == 'PN' .OR. rejs->sek_cv7 =='PU', "MPP", "" )
+
       aRow[ 'kolumna' ] := iif( rejs->kolumna == ' 0', '  ', rejs->kolumna )
       aRow[ 'rodzaj' ] := iif( rejs->rach == 'R', 'Rachunek', 'Faktura' )
       aRow[ 'numer' ] := AllTrim( iif( Left( rejs->numer, 1 ) == Chr( 1 ) .OR. Left( rejs->numer, 1 ) == Chr( 254 ), SubStr( rejs->numer, 2 ) + ' ', rejs->numer ) )
       aRow[ 'nazwa' ] := AllTrim( rejs->nazwa )
       aRow[ 'nr_ident' ] := AllTrim( rejs->nr_ident )
-      aRow[ 'tresc' ] := AllTrim( rejs->tresc )
+      aRow[ 'tresc' ] := AllTrim( rejs->tresc ) + iif( cOpisDod <> "", "(" + cOpisDod + ")", "" )
       aRow[ 'symb_rej' ] := AllTrim( rejs->symb_rej )
       aRow[ 'dzien' ] := StrTran( rejs->dzien, ' ', '0' ) + '.' + StrTran( cMiesiac, ' ', '0' )
       aRow[ 'data_sprzedazy' ] := rejs->roks + '.' + StrTran( rejs->mcs, ' ' , '0' ) + '.' + StrTran( rejs->dziens, ' ', '0' )
@@ -864,32 +871,71 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       aRow[ 'korekta' ] := iif( rejs->korekta == 'T', '1', '0' )
       aRow[ 'uwagi' ] := AllTrim( rejs->uwagi )
 
-      aRow[ 'netto_a' ] := rejs->wart22
-      aRow[ 'vat_a' ] := rejs->vat22
-      aRow[ 'netto_b' ] := rejs->wart07
-      aRow[ 'vat_b' ] := rejs->vat07
-      aRow[ 'netto_c' ] := rejs->wart02
-      aRow[ 'vat_c' ] := rejs->vat02
-      aRow[ 'netto_d' ] := rejs->wart12
-      aRow[ 'vat_d' ] := rejs->vat12
+      aRow[ 'dnetto_a' ] := rejs->wart22
+      aRow[ 'dvat_a' ] := rejs->vat22
+      aRow[ 'dnetto_b' ] := rejs->wart07
+      aRow[ 'dvat_b' ] := rejs->vat07
+      aRow[ 'dnetto_c' ] := rejs->wart02
+      aRow[ 'dvat_c' ] := rejs->vat02
+      aRow[ 'dnetto_d' ] := rejs->wart12
+      aRow[ 'dvat_d' ] := rejs->vat12
 
-      aRow[ 'netto_zr_kraj' ] := 0
-      aRow[ 'netto_zr_eksp' ] := 0
-      aRow[ 'netto_zr_wdt' ] := 0
+      IF AllTrim( rejs->rodzdow ) == "FP"
+         aRow[ 'netto_a' ] := 0
+         aRow[ 'vat_a' ] := 0
+         aRow[ 'netto_b' ] := 0
+         aRow[ 'vat_b' ] := 0
+         aRow[ 'netto_c' ] := 0
+         aRow[ 'vat_c' ] := 0
+         aRow[ 'netto_d' ] := 0
+         aRow[ 'vat_d' ] := 0
+      ELSE
+         aRow[ 'netto_a' ] := rejs->wart22
+         aRow[ 'vat_a' ] := rejs->vat22
+         aRow[ 'netto_b' ] := rejs->wart07
+         aRow[ 'vat_b' ] := rejs->vat07
+         aRow[ 'netto_c' ] := rejs->wart02
+         aRow[ 'vat_c' ] := rejs->vat02
+         aRow[ 'netto_d' ] := rejs->wart12
+         aRow[ 'vat_d' ] := rejs->vat12
+      ENDIF
+
+      aRow[ 'dnetto_zr_kraj' ] := 0
+      aRow[ 'dnetto_zr_eksp' ] := 0
+      aRow[ 'dnetto_zr_wdt' ] := 0
       IF rejs->wart00 <> 0
          IF rejs->ue == 'T'
-            aRow[ 'netto_zr_wdt' ] := rejs->wart00
+            aRow[ 'dnetto_zr_wdt' ] := rejs->wart00
          ENDIF
          IF rejs->ue <> 'T' .AND. rejs->export == 'T'
-            aRow[ 'netto_zr_eksp' ] := rejs->wart00
+            aRow[ 'dnetto_zr_eksp' ] := rejs->wart00
          ENDIF
          IF rejs->ue <> 'T' .AND. rejs->export <> 'T'
-            aRow[ 'netto_zr_kraj' ] := rejs->wart00
+            aRow[ 'dnetto_zr_kraj' ] := rejs->wart00
          ENDIF
       ENDIF
 
-      aRow[ 'netto_zw' ] := rejs->wartzw
-      aRow[ 'netto_np' ] := rejs->wart08
+      IF AllTrim( rejs->rodzdow ) == "FP"
+         aRow[ 'netto_zr_kraj' ] := 0
+         aRow[ 'netto_zr_eksp' ] := 0
+         aRow[ 'netto_zr_wdt' ] := 0
+      ELSE
+         aRow[ 'netto_zr_kraj' ] := aRow[ 'dnetto_zr_kraj' ]
+         aRow[ 'netto_zr_eksp' ] := aRow[ 'dnetto_zr_eksp' ]
+         aRow[ 'netto_zr_wdt' ] := aRow[ 'dnetto_zr_wdt' ]
+      ENDIF
+
+
+      aRow[ 'dnetto_zw' ] := rejs->wartzw
+      aRow[ 'dnetto_np' ] := rejs->wart08
+
+      IF AllTrim( rejs->rodzdow ) == "FP"
+         aRow[ 'netto_zw' ] := rejs->wartzw
+         aRow[ 'netto_np' ] := rejs->wart08
+      ELSE
+         aRow[ 'netto_zw' ] := rejs->wartzw
+         aRow[ 'netto_np' ] := rejs->wart08
+      ENDIF
 
       aRow[ 'pn_netto_a' ] := 0
       aRow[ 'pn_vat_a' ] := 0
@@ -941,11 +987,19 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       aRow[ 'kwota' ] := rejs->kwota
       aRow[ 'rach' ] := rejs->rach
 
-      aRow[ 'wartosc_netto' ] := aRow[ 'netto_a' ] + aRow[ 'netto_b' ] + aRow[ 'netto_c' ] ;
-         + aRow[ 'netto_d' ] + aRow[ 'netto_zr_wdt' ] + aRow[ 'netto_zr_eksp' ] ;
-         + aRow[ 'netto_zr_kraj' ] + aRow[ 'netto_zw' ] + aRow[ 'netto_np' ]
+      aRow[ 'dwartosc_netto' ] := aRow[ 'dnetto_a' ] + aRow[ 'dnetto_b' ] + aRow[ 'dnetto_c' ] ;
+         + aRow[ 'dnetto_d' ] + aRow[ 'dnetto_zr_wdt' ] + aRow[ 'dnetto_zr_eksp' ] ;
+         + aRow[ 'dnetto_zr_kraj' ] + aRow[ 'dnetto_zw' ] + aRow[ 'dnetto_np' ]
 
-      aRow[ 'wartosc_vat' ] := aRow[ 'vat_a' ] + aRow[ 'vat_b' ] + aRow[ 'vat_c' ] + aRow[ 'vat_d' ]
+      aRow[ 'dwartosc_vat' ] := aRow[ 'dvat_a' ] + aRow[ 'dvat_b' ] + aRow[ 'dvat_c' ] + aRow[ 'dvat_d' ]
+
+      IF AllTrim( rejs->rodzdow ) == "FP"
+         aRow[ 'wartosc_netto' ] := 0
+         aRow[ 'wartosc_vat' ] := 0
+      ELSE
+         aRow[ 'wartosc_netto' ] := aRow[ 'dwartosc_netto' ]
+         aRow[ 'wartosc_vat' ] := aRow[ 'dwartosc_vat' ]
+      ENDIF
 
       aRow[ 'pn_wartosc_netto' ] := aRow[ 'pn_netto_a' ] + aRow[ 'pn_netto_b' ] + aRow[ 'pn_netto_c' ] ;
          + aRow[ 'pn_netto_d' ] + aRow[ 'pn_netto_zr_wdt' ] + aRow[ 'pn_netto_zr_eksp' ] ;

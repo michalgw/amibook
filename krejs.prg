@@ -1678,17 +1678,22 @@ FUNCTION SUMNETs( lRyczModSys )
       RejS_PolaDod()
    ENDIF
 
-   zNETTOOrg := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
-
-   IF ins
-      IF zNETTO == 0
-         zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
-      ENDIF
+   IF AllTrim( zRODZDOW ) = 'FP'
+      zNETTOOrg := 0
+      zNETTO := 0
    ELSE
-      IF zNETTO <> 0 .OR. lRyczModSys
-         zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+      zNETTOOrg := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+      IF ins
+         IF zNETTO == 0
+            zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+         ENDIF
+      ELSE
+         IF zNETTO <> 0 .OR. lRyczModSys
+            zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+         ENDIF
       ENDIF
    ENDIF
+
    RETURN .T.
 
 *******************************************************

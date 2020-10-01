@@ -507,7 +507,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       DO WHILE ! &_koniec
          ILS++
          DO CASE
-         CASE SEK_CV7 == '  ' .OR. SEK_CV7 == 'SP'
+         CASE ( SEK_CV7 == '  ' .OR. SEK_CV7 == 'SP' ) .AND. AllTrim( RODZDOW ) <> 'FP'
             IF SEK_CV7 == 'SP'
                lSplitPayment := .T.
             ENDIF
@@ -537,10 +537,10 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                   p67 := p67 + rejs->WART00
                ENDIF
             ENDIF
-         CASE SEK_CV7=='PN'.OR.SEK_CV7=='PU'
+         CASE ( SEK_CV7=='PN' .OR. SEK_CV7=='PU' ) .AND. AllTrim( RODZDOW ) <> 'FP'
             SEK_CV7net := SEK_CV7net + WART02 + WARTZW + WART08 + WART07 + WART22 + WART00 + WART12
             SEK_CV7vat := SEK_CV7vat + VAT02 + VAT07 + VAT22 + VAT12
-         CASE SEK_CV7 == 'DP'
+         CASE SEK_CV7 == 'DP' .AND. AllTrim( RODZDOW ) <> 'FP'
             art111u6 := art111u6 + KOL37
             pp12 := pp12 + KOL36
             znowytran := znowytran + KOL38

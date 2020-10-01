@@ -696,30 +696,33 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
       rejz->( dbSkip() )
    ENDDO
 
-   IF Len( aRes[ 'sprzedaz' ] ) == 0
-      AAdd( aRes[ 'sprzedaz' ], hb_Hash( 'DowodSprzedazy', 'BRAK', 'DataWystawienia', hb_Date(), 'NrKontrahenta', 'BRAK', 'NazwaKontrahenta', 'BRAK', 'AdresKontrahenta', 'BRAK' ) )
-   ENDIF
+//   IF Len( aRes[ 'sprzedaz' ] ) == 0
+//      AAdd( aRes[ 'sprzedaz' ], hb_Hash( 'DowodSprzedazy', 'BRAK', 'DataWystawienia', hb_Date(), 'NrKontrahenta', 'BRAK', 'NazwaKontrahenta', 'BRAK', 'AdresKontrahenta', 'BRAK' ) )
+//   ENDIF
    ASort( aRes[ 'sprzedaz' ], , , { |x, y| x[ 'DataWystawienia' ] < y[ 'DataWystawienia' ] } )
    aRes[ 'SprzedazCtrl' ] := hb_Hash( 'LiczbaWierszySprzedazy', Len( aRes[ 'sprzedaz' ] ), 'PodatekNalezny', 0 )
-   AEval( aRes[ 'sprzedaz' ], { | aRow | ;
-      aRes[ 'SprzedazCtrl' ][ 'PodatekNalezny' ] := aRes[ 'SprzedazCtrl' ][ 'PodatekNalezny' ] + ;
-      iif( hb_HHasKey( aRow, 'K_16' ), aRow[ 'K_16' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_18' ), aRow[ 'K_18' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_20' ), aRow[ 'K_20' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_24' ), aRow[ 'K_24' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_26' ), aRow[ 'K_26' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_28' ), aRow[ 'K_28' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_30' ), aRow[ 'K_30' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_33' ), aRow[ 'K_33' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_35' ), aRow[ 'K_35' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_36' ), aRow[ 'K_36' ], 0 ) + ;
-      iif( hb_HHasKey( aRow, 'K_37' ), aRow[ 'K_37' ], 0 ) - ;
-      iif( hb_HHasKey( aRow, 'K_38' ), aRow[ 'K_38' ], 0 ) - ;
-      iif( hb_HHasKey( aRow, 'K_39' ), aRow[ 'K_39' ], 0 ) } )
+   AEval( aRes[ 'sprzedaz' ], { | aRow |
+      IF aPoz[ 'TypDokumentu' ] <> "FP"
+         aRes[ 'SprzedazCtrl' ][ 'PodatekNalezny' ] := aRes[ 'SprzedazCtrl' ][ 'PodatekNalezny' ] + ;
+         iif( hb_HHasKey( aRow, 'K_16' ), aRow[ 'K_16' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_18' ), aRow[ 'K_18' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_20' ), aRow[ 'K_20' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_24' ), aRow[ 'K_24' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_26' ), aRow[ 'K_26' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_28' ), aRow[ 'K_28' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_30' ), aRow[ 'K_30' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_33' ), aRow[ 'K_33' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_35' ), aRow[ 'K_35' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_36' ), aRow[ 'K_36' ], 0 ) + ;
+         iif( hb_HHasKey( aRow, 'K_37' ), aRow[ 'K_37' ], 0 ) - ;
+         iif( hb_HHasKey( aRow, 'K_38' ), aRow[ 'K_38' ], 0 ) - ;
+         iif( hb_HHasKey( aRow, 'K_39' ), aRow[ 'K_39' ], 0 )
+      ENDIF
+   } )
 
-   IF Len( aRes[ 'zakup' ] ) == 0
-      AAdd( aRes[ 'zakup' ], hb_Hash( 'DowodZakupu', 'BRAK', 'DataZakupu', hb_Date(), 'NrDostawcy', 'BRAK', 'NazwaDostawcy', 'BRAK', 'AdresDostawcy', 'BRAK' ) )
-   ENDIF
+//   IF Len( aRes[ 'zakup' ] ) == 0
+//      AAdd( aRes[ 'zakup' ], hb_Hash( 'DowodZakupu', 'BRAK', 'DataZakupu', hb_Date(), 'NrDostawcy', 'BRAK', 'NazwaDostawcy', 'BRAK', 'AdresDostawcy', 'BRAK' ) )
+//   ENDIF
    ASort( aRes[ 'zakup' ], , , { |x, y| x[ 'DataZakupu' ] < y[ 'DataZakupu' ] } )
    aRes[ 'ZakupCtrl' ] := hb_Hash( 'LiczbaWierszyZakupow', Len( aRes[ 'zakup' ] ), 'PodatekNaliczony', 0 )
    AEval( aRes[ 'zakup' ] , { | aRow | ;
