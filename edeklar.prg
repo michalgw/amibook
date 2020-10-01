@@ -1887,9 +1887,9 @@ FUNCTION edek_pit11_25()
          tmp_cel = '2'
       ENDIF
       r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
-      r = r + '<Deklaracja  xmlns="http://crd.gov.pl/wzor/2019/12/19/8981/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2018/08/24/eD/DefinicjeTypy/">' + nl
+      r = r + '<Deklaracja  xmlns="http://crd.gov.pl/wzor/2020/07/10/9720/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/07/06/eD/DefinicjeTypy/">' + nl
       r = r + '  <Naglowek>' + nl
-      r = r + '    <KodFormularza kodPodatku="PIT" kodSystemowy="PIT-11 (25)" rodzajZobowiazania="Z" wersjaSchemy="1-0E">PIT-11</KodFormularza>' + nl
+      r = r + '    <KodFormularza kodPodatku="PIT" kodSystemowy="PIT-11 (25)" rodzajZobowiazania="Z" wersjaSchemy="1-1E">PIT-11</KodFormularza>' + nl
       r = r + '    <WariantFormularza>25</WariantFormularza>' + nl
 		r = r + '    <CelZlozenia poz="P_7">' + tmp_cel + '</CelZlozenia>' + nl
       r = r + '    <Rok>' + AllTrim(Str(Year(p4d))) + '</Rok>' + nl
