@@ -687,7 +687,7 @@ FUNCTION edekPodpiszDeklaracje( cPlikWej, cPlikWyj, cRodzaj )
    ENDIF
 
    IF Upper( SubStr( cRodzaj, 1, 3 ) ) == 'JPK'
-      nRes := amiJpkPodpisz( cPlikWej, aWybranyCertyfikat[ 'indeks' ], param_ejts == 'T', aWybranyCertyfikat[ 'serialno' ] )
+      nRes := amiJpkPodpisz2( cPlikWej, aWybranyCertyfikat[ 'indeks' ], param_ejts == 'T', .F., aWybranyCertyfikat[ 'serialno' ] )
    ELSE
       nRes := amiEdekPodpisz( cPlikWej, cPlikWyj, aWybranyCertyfikat[ 'indeks' ], aWybranyCertyfikat[ 'serialno' ] )
    ENDIF
@@ -701,7 +701,7 @@ FUNCTION edekPodpiszDeklaracje( cPlikWej, cPlikWyj, cRodzaj )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION edekPodpiszDeklaracjeAut( cPlikWej, cPlikWyj, cNIP, cImie, cNazwisko, dDataUr, nKwota, cEMail, cRodzaj )
+FUNCTION edekPodpiszDeklaracjeAut( cPlikWej, cPlikWyj, cNIP, cImie, cNazwisko, dDataUr, nKwota, cRodzaj )
 
    LOCAL nRes
 
@@ -710,8 +710,8 @@ FUNCTION edekPodpiszDeklaracjeAut( cPlikWej, cPlikWyj, cNIP, cImie, cNazwisko, d
    ENDIF
 
    IF Upper( SubStr( cRodzaj, 1, 3 ) ) == 'JPK'
-      nRes := amiJpkMicroPodpisz( cPlikWej, cPlikWyj, trimnip( cNIP ), AllTrim( cImie ), ;
-         AllTrim( cNazwisko ), date2strxml( dDataUr ), TKwota2( nKwota ), cEMail )
+      nRes := amiJpkPodpiszAut( cPlikWej, param_ejts == 'T', .F., trimnip( cNIP ), AllTrim( cImie ), ;
+         AllTrim( cNazwisko ), date2strxml( dDataUr ), TKwota2( nKwota ) )
    ELSE
       nRes := amiEdekPodpiszAut( cPlikWej, cPlikWyj, trimnip( cNIP ), AllTrim( cImie ), ;
          AllTrim( cNazwisko ), date2strxml( dDataUr ), TKwota2( nKwota ) )

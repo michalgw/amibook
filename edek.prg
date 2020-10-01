@@ -439,11 +439,14 @@ METHOD PodpiszAut() CLASS TEDeklaracje
          edeklar->(dbGoto(::aWybrane[nI]))
          IF !edeklar->podpisany .AND. edekPodpiszDeklaracjeAut( ;
             edekNazwaPliku(edeklar->id), edekNazwaPliku(edeklar->id, '.xml.sig'), ;
-            cNIP, cImie, cNazwisko, dDataUr, nKwota, '', edeklar->rodzaj )
+            cNIP, cImie, cNazwisko, dDataUr, nKwota, edeklar->rodzaj )
 
             blokadar('edeklar')
             edeklar->podpisany := .T.
             edeklar->podpiscer := .F.
+            IF Upper( SubStr( edeklar->rodzaj, 1, 3 ) ) == 'JPK' .AND. param_ejts == 'T'
+               edeklar->test := .T.
+            ENDIF
             edeklar->(dbCommit())
             edeklar->(dbUnlock())
 
@@ -462,14 +465,14 @@ METHOD PodpiszAut() CLASS TEDeklaracje
       ENDIF
       IF edekPodpiszDeklaracjeAut(edekNazwaPliku(edeklar->id), ;
          edekNazwaPliku(edeklar->id, '.xml.sig'), ;
-         cNIP, cImie, cNazwisko, dDataUr, nKwota, '', edeklar->rodzaj )
+         cNIP, cImie, cNazwisko, dDataUr, nKwota, edeklar->rodzaj )
 
          blokadar('edeklar')
          edeklar->podpisany := .T.
          edeklar->podpiscer := .F.
-//         IF Upper( SubStr( edeklar->rodzaj, 1, 3 ) ) == 'JPK' .AND. param_ejts == 'T'
-//            edeklar->test := .T.
-//         ENDIF
+         IF Upper( SubStr( edeklar->rodzaj, 1, 3 ) ) == 'JPK' .AND. param_ejts == 'T'
+            edeklar->test := .T.
+         ENDIF
          edeklar->(dbCommit())
          edeklar->(dbUnlock())
 
@@ -568,19 +571,13 @@ METHOD Wyslij() CLASS TEdeklaracje
             edeklar->(dbGoto(::aWybrane[nI]))
             IF Empty(edeklar->wyslano) .AND. Len(AllTrim(edeklar->skrot)) == 0 .AND. edeklar->podpisany
                IF Upper( SubStr( edeklar->rodzaj, 1, 3 ) ) == 'JPK'
-                  IF edeklar->podpiscer == .T.
-                     nStatus := amiJpkWyslij( edekNazwaPliku(edeklar->id, '.xml.env.sig'), param_ejts == 'T', @cRefId, @nRefLen )
-                     nRes := 0
-                  ELSE
-                     nRes := amiJpkMicroWyslij( edekNazwaPliku( edeklar->id, '.xml.sig' ), ::lBramkaTestowa, @cRefId, @nStatus, @cStatusOpis )
-                  ENDIF
-                  IF nStatus == 200 .AND. nRes == 0
+                  nStatus := amiJpkWyslij( edekNazwaPliku(edeklar->id, '.xml.env.sig'), edeklar->test, @cRefId, @nRefLen )
+                  IF nStatus == 200
                      blokadar('edeklar')
                      edeklar->wyslano := hb_DateTime()
                      edeklar->skrot := AllTrim( cRefId )
 //                     edeklar->status := Str(nStatus, 6, 0)
                      edeklar->statopis := 'Dokument zostaˆ wysˆany'
-                     edeklar->test := iif( edeklar->podpiscer == .T., param_ejts == 'T', ::lBramkaTestowa )
                      edeklar->(dbCommit())
                      edeklar->(dbUnlock())
                      aRaport['wyslano'] := aRaport['wyslano'] + 1
@@ -649,7 +646,7 @@ METHOD Wyslij() CLASS TEdeklaracje
          RETURN .F.
       ENDIF
    ELSE
-      IF Upper( SubStr( edeklar->rodzaj, 1, 3 ) ) == 'JPK' .AND. edeklar->podpiscer == .T.
+      IF Upper( SubStr( edeklar->rodzaj, 1, 3 ) ) == 'JPK'
 
       ELSE
          ::lBramkaTestowa := .T.
@@ -670,19 +667,13 @@ METHOD Wyslij() CLASS TEdeklaracje
          RETURN .F.
       ENDIF
       IF Upper( SubStr( edeklar->rodzaj, 1, 3 ) ) == 'JPK'
-         IF edeklar->podpiscer == .T.
-            nStatus := amiJpkWyslij( edekNazwaPliku(edeklar->id, '.xml.env.sig'), param_ejts == 'T', @cRefId, @nRefLen )
-            nRes := 0
-         ELSE
-            nRes := amiJpkMicroWyslij( edekNazwaPliku( edeklar->id, '.xml.sig' ), ::lBramkaTestowa, @cRefId, @nStatus, @cStatusOpis )
-         ENDIF
-         IF nStatus == 200 .AND. nRes == 0
+         nStatus := amiJpkWyslij( edekNazwaPliku(edeklar->id, '.xml.env.sig'), edeklar->test, @cRefId, @nRefLen )
+         IF nStatus == 200
             blokadar('edeklar')
             edeklar->wyslano := hb_DateTime()
             edeklar->skrot := AllTrim( cRefId )
             //edeklar->status := Str(nStatus, 6, 0)
             edeklar->statopis := 'Dokument zostaˆ wysˆany'
-            edeklar->test := iif( edeklar->podpiscer == .T., param_ejts == 'T', ::lBramkaTestowa )
             edeklar->(dbCommit())
             edeklar->(dbUnlock())
             aRaport['wyslano'] := aRaport['wyslano'] + 1
@@ -776,13 +767,9 @@ METHOD PobierzUPO() CLASS TEDeklaracje
             edeklar->(dbGoto(::aWybrane[nI]))
             IF !edeklar->jest_upo
                IF Upper( SubStr( edeklar->rodzaj, 1, 3 ) ) == 'JPK'
-                  IF edeklar->podpiscer == .T.
-                     nStatus := amiJpkPobierzUPO( AllTrim( edeklar->skrot ), edekNazwaPliku(edeklar->id, '.upo.xml'), ::lBramkaTestowa )
-                     cStatusOpis := amiEdekBladTekst()
-                     nRes := iif( nStatus >= 100 .AND. nStatus < 400, 0, 1 )
-                  ELSE
-                     nRes := amiJpkMicroPobierzUPO( edekNazwaPliku(edeklar->id, '.upo.xml'), AllTrim( edeklar->skrot ), ::lBramkaTestowa, @nStatus, @cStatusOpis )
-                  ENDIF
+                  nStatus := amiJpkPobierzUPO( AllTrim( edeklar->skrot ), edekNazwaPliku(edeklar->id, '.upo.xml'), ::lBramkaTestowa )
+                  cStatusOpis := amiEdekBladTekst()
+                  nRes := iif( nStatus >= 100 .AND. nStatus < 400, 0, 1 )
                   IF nRes == 0
                      blokadar('edeklar')
                      edeklar->status := Str(nStatus, 6, 0)
@@ -871,13 +858,9 @@ METHOD PobierzUPO() CLASS TEDeklaracje
          RETURN .F.
       ENDIF
       IF Upper( SubStr( edeklar->rodzaj, 1, 3 ) ) == 'JPK'
-         IF edeklar->podpiscer == .T.
-            nStatus := amiJpkPobierzUPO( AllTrim( edeklar->skrot ), edekNazwaPliku(edeklar->id, '.upo.xml'), ::lBramkaTestowa )
-            cStatusOpis := amiEdekBladTekst()
-            nRes := iif( nStatus >= 100 .AND. nStatus < 400, 0, 1 )
-         ELSE
-            nRes := amiJpkMicroPobierzUPO( edekNazwaPliku(edeklar->id, '.upo.xml'), AllTrim( edeklar->skrot ), ::lBramkaTestowa, @nStatus, @cStatusOpis )
-         ENDIF
+         nStatus := amiJpkPobierzUPO( AllTrim( edeklar->skrot ), edekNazwaPliku(edeklar->id, '.upo.xml'), ::lBramkaTestowa )
+         cStatusOpis := amiEdekBladTekst()
+         nRes := iif( nStatus >= 100 .AND. nStatus < 400, 0, 1 )
          IF nRes == 0
             blokadar('edeklar')
             edeklar->status := Str(nStatus, 6, 0)

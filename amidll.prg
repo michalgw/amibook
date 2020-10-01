@@ -291,6 +291,40 @@ FUNCTION amiJpkPodpisz( cPlikWej, nCertIndeks, lTestowa, cCertSerialNo )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION amiJpkPodpisz2( cPlikWej, nCertIndeks, lTestowa, lDoraznie, cCertSerialNo )
+
+   IF Empty( amiDllH )
+      RETURN 1
+   ENDIF
+
+   RETURN hb_DynCall( { 'jpkPodpisz2', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF16 ), ;
+      HB_DYN_CTYPE_INT, HB_DYN_CTYPE_BOOL, HB_DYN_CTYPE_BOOL, ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF16 ) }, cPlikWej, ;
+      nCertIndeks, lTestowa, lDoraznie, cCertSerialNo )
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION amiJpkPodpiszAut( cPlikWej, lTestowa, lDoraznie, cNIP, cImie, cNazwisko, cDataUr, cKwota )
+
+   IF Empty( amiDllH )
+      RETURN 1
+   ENDIF
+
+   RETURN hb_DynCall( { 'jpkPodpiszAut', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF16 ), ;
+      HB_DYN_CTYPE_BOOL, HB_DYN_CTYPE_BOOL, ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF16 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF16 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF16 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF16 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF16 ) }, ;
+      cPlikWej, lTestowa, lDoraznie, cNIP, cImie, cNazwisko, cDataUr, cKwota )
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION amiJpkWyslij( cPlikWej, lTestowa, cNrRef, nNrRefLen )
 
    IF Empty( amiDllH )
