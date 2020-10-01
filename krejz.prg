@@ -2032,6 +2032,8 @@ PROCEDURE KRejZ_Ksieguj()
                   UNLOCK
                ENDIF
                Commit_()
+            ELSE
+               ins := .T.
             ENDIF
 
          CASE stan_ == 0
@@ -2117,7 +2119,8 @@ PROCEDURE KRejZ_Ksieguj()
                UNLOCK
             ENDIF
          ENDCASE
-      ELSE
+      ENDIF
+      IF ins
          *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
          IF zNETTO <> 0
             SELECT suma_mc
