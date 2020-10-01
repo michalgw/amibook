@@ -702,7 +702,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
    ASort( aRes[ 'sprzedaz' ], , , { |x, y| x[ 'DataWystawienia' ] < y[ 'DataWystawienia' ] } )
    aRes[ 'SprzedazCtrl' ] := hb_Hash( 'LiczbaWierszySprzedazy', Len( aRes[ 'sprzedaz' ] ), 'PodatekNalezny', 0 )
    AEval( aRes[ 'sprzedaz' ], { | aRow |
-      IF aPoz[ 'TypDokumentu' ] <> "FP"
+      IF ! hb_HHasKey( aPoz, 'TypDokumentu' ) .OR. aPoz[ 'TypDokumentu' ] <> "FP"
          aRes[ 'SprzedazCtrl' ][ 'PodatekNalezny' ] := aRes[ 'SprzedazCtrl' ][ 'PodatekNalezny' ] + ;
          iif( hb_HHasKey( aRow, 'K_16' ), aRow[ 'K_16' ], 0 ) + ;
          iif( hb_HHasKey( aRow, 'K_18' ), aRow[ 'K_18' ], 0 ) + ;

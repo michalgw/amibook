@@ -694,11 +694,11 @@ FUNCTION jpk_v7m_1( aDane )
    cRes += '  <Podmiot1 rola="Podatnik">' + nl
    IF aDane[ 'Spolka' ]
       cRes += '    <OsobaNiefizyczna>' + nl
-      cRes += '      <etd:NIP>' + trimnip( aDane[ 'NIP' ] ) + '</etd:NIP>' + nl
-      cRes += '      <etd:PelnaNazwa>' + str2sxml( aDane[ 'PelnaNazwa' ] ) + '</etd:PelnaNazwa>' + nl
-      cRes += '      <tns:Email>' + str2sxml( aDane[ 'EMail' ] ) + '</tns:Email>' + nl
+      cRes += '      <NIP>' + trimnip( aDane[ 'NIP' ] ) + '</NIP>' + nl
+      cRes += '      <PelnaNazwa>' + str2sxml( aDane[ 'PelnaNazwa' ] ) + '</PelnaNazwa>' + nl
+      cRes += '      <Email>' + str2sxml( aDane[ 'EMail' ] ) + '</Email>' + nl
       IF Len( AllTrim( aDane[ 'Tel' ] ) ) > 0
-         cRes += '      <tns:Telefon>' + str2sxml( aDane[ 'Tel' ] ) + '</tns:Telefon>' + nl
+         cRes += '      <Telefon>' + str2sxml( aDane[ 'Tel' ] ) + '</Telefon>' + nl
       ENDIF
       cRes += '    </OsobaNiefizyczna>' + nl
    ELSE
@@ -1080,11 +1080,11 @@ FUNCTION jpk_v7k_1( aDane )
    cRes += '  <Podmiot1 rola="Podatnik">' + nl
    IF aDane[ 'Spolka' ]
       cRes += '    <OsobaNiefizyczna>' + nl
-      cRes += '      <etd:NIP>' + trimnip( aDane[ 'NIP' ] ) + '</etd:NIP>' + nl
-      cRes += '      <etd:PelnaNazwa>' + str2sxml( [ 'PelnaNazwa' ] ) + '</etd:PelnaNazwa>' + nl
-      cRes += '      <tns:Email>' + str2sxml( aDane[ 'EMail' ] ) + '</tns:Email>' + nl
+      cRes += '      <NIP>' + trimnip( aDane[ 'NIP' ] ) + '</NIP>' + nl
+      cRes += '      <PelnaNazwa>' + str2sxml( [ 'PelnaNazwa' ] ) + '</PelnaNazwa>' + nl
+      cRes += '      <Email>' + str2sxml( aDane[ 'EMail' ] ) + '</Email>' + nl
       IF Len( AllTrim( aDane[ 'Tel' ] ) ) > 0
-         cRes += '      <tns:Telefon>' + str2sxml( aDane[ 'Tel' ] ) + '</tns:Telefon>' + nl
+         cRes += '      <Telefon>' + str2sxml( aDane[ 'Tel' ] ) + '</Telefon>' + nl
       ENDIF
       cRes += '    </OsobaNiefizyczna>' + nl
    ELSE
