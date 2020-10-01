@@ -680,9 +680,9 @@ FUNCTION jpk_v7m_1( aDane )
    LOCAL lRejestry := aDane[ 'Rejestry' ]
 
    cRes := '<?xml version="1.0" encoding="UTF-8"?>' + nl
-   cRes += '<JPK xmlns="http://crd.gov.pl/wzor/2020/03/06/9196/" xmlns:tns="http://crd.gov.pl/wzor/2020/03/06/9196/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2018/08/24/eD/DefinicjeTypy/">' + nl
+   cRes += '<JPK xmlns="http://crd.gov.pl/wzor/2020/05/08/9393/" xmlns:tns="http://crd.gov.pl/wzor/2020/05/08/9393/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
    cRes += '  <Naglowek>' + nl
-   cRes += '    <KodFormularza kodSystemowy="JPK_V7M (1)" wersjaSchemy="1-1">JPK_VAT</KodFormularza>' + nl
+   cRes += '    <KodFormularza kodSystemowy="JPK_V7M (1)" wersjaSchemy="1-2E">JPK_VAT</KodFormularza>' + nl
    cRes += '    <WariantFormularza>1</WariantFormularza>' + nl
    cRes += '    <DataWytworzeniaJPK>' + aDane[ 'DataWytworzeniaJPK' ] + '</DataWytworzeniaJPK>' + nl
    cRes += '    <NazwaSystemu>AMi-BOOK</NazwaSystemu>' + nl
@@ -690,10 +690,6 @@ FUNCTION jpk_v7m_1( aDane )
    cRes += '    <KodUrzedu>' + aDane[ 'KodUrzedu' ] + '</KodUrzedu>' + nl
    cRes += '    <Rok>' + TNaturalny( aDane[ 'Rok' ] ) + '</Rok>' + nl
    cRes += '    <Miesiac>' + TNaturalny( aDane[ 'Miesiac' ] ) + '</Miesiac>' + nl
-   IF lDeklar
-      cRes += '    <KodFormularzaDekl kodSystemowy="VAT-7 (21)" kodPodatku="VAT" rodzajZobowiazania="Z" wersjaSchemy="1-1E">VAT-7</KodFormularzaDekl>' + nl
-      cRes += '    <WariantFormularzaDekl>21</WariantFormularzaDekl>' + nl
-   ENDIF
    cRes += '  </Naglowek>' + nl
    cRes += '  <Podmiot1 rola="Podatnik">' + nl
    IF aDane[ 'Spolka' ]
@@ -720,6 +716,10 @@ FUNCTION jpk_v7m_1( aDane )
    cRes += '  </Podmiot1>' + nl
    IF lDeklar
       cRes += '  <Deklaracja>' + nl
+      cRes += '    <Naglowek>' + nl
+      cRes += '      <KodFormularzaDekl kodSystemowy="VAT-7 (21)" kodPodatku="VAT" rodzajZobowiazania="Z" wersjaSchemy="1-2E">VAT-7</KodFormularzaDekl>' + nl
+      cRes += '      <WariantFormularzaDekl>21</WariantFormularzaDekl>' + nl
+      cRes += '    </Naglowek>' + nl
       cRes += '    <PozycjeSzczegolowe>' + nl
       cRes += '      <P_10>' + TKwotaC( aDane[ 'DekV7' ][ 'P_10' ] ) + '</P_10>' + nl
       cRes += '      <P_11>' + TKwotaC( aDane[ 'DekV7' ][ 'P_11' ] ) + '</P_11>' + nl
@@ -796,6 +796,7 @@ FUNCTION jpk_v7m_1( aDane )
       cRes += '  </Deklaracja>' + nl
    ENDIF
    IF lRejestry
+      cRes := cRes + '  <Ewidencja>' + nl
       FOR nI := 1 TO Len( aDane[ 'sprzedaz' ])
          cRes := cRes + '  <SprzedazWiersz>' + nl
          cRes := cRes + '    <LpSprzedazy>' + AllTrim( Str( nI ) ) + '</LpSprzedazy>' + nl
@@ -992,7 +993,7 @@ FUNCTION jpk_v7m_1( aDane )
          cRes := cRes + '  </SprzedazCtrl>' + nl
       ENDIF
 
-      FOR nI := 1 TO Len( aDane[ 'zakup' ])
+      FOR nI := 1 TO Len( aDane[ 'zakup' ] )
          cRes := cRes + '  <ZakupWiersz>' + nl
          cRes := cRes + '    <LpZakupu>' + AllTrim( Str( nI ) ) + '</LpZakupu>' + nl
          cRes := cRes + '    <KodKrajuNadaniaTIN>' + aDane[ 'zakup' ][ nI ][ 'KodKrajuNadaniaTIN' ] + '</KodKrajuNadaniaTIN>' + nl
@@ -1049,6 +1050,7 @@ FUNCTION jpk_v7m_1( aDane )
          cRes := cRes + '    <PodatekNaliczony>' + TKwota2( aDane[ 'ZakupCtrl' ][ 'PodatekNaliczony' ] ) + '</PodatekNaliczony>' + nl
          cRes := cRes + '  </ZakupCtrl>' + nl
       ENDIF
+      cRes := cRes + '  </Ewidencja>' + nl
    ENDIF
 
    cRes := cRes + '</JPK>' + nl
@@ -1064,9 +1066,9 @@ FUNCTION jpk_v7k_1( aDane )
    LOCAL lRejestry := aDane[ 'Rejestry' ]
 
    cRes := '<?xml version="1.0" encoding="UTF-8"?>' + nl
-   cRes += '<JPK xmlns="http://crd.gov.pl/wzor/2020/03/06/9197/" xmlns:tns="http://crd.gov.pl/wzor/2020/03/06/9197/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2018/08/24/eD/DefinicjeTypy/">' + nl
+   cRes += '<JPK xmlns="http://crd.gov.pl/wzor/2020/05/08/9394/" xmlns:tns="http://crd.gov.pl/wzor/2020/05/08/9394/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
    cRes += '  <Naglowek>' + nl
-   cRes += '    <KodFormularza kodSystemowy="JPK_V7K (1)" wersjaSchemy="1-1">JPK_VAT</KodFormularza>' + nl
+   cRes += '    <KodFormularza kodSystemowy="JPK_V7K (1)" wersjaSchemy="1-2E">JPK_VAT</KodFormularza>' + nl
    cRes += '    <WariantFormularza>1</WariantFormularza>' + nl
    cRes += '    <DataWytworzeniaJPK>' + aDane[ 'DataWytworzeniaJPK' ] + '</DataWytworzeniaJPK>' + nl
    cRes += '    <NazwaSystemu>AMi-BOOK</NazwaSystemu>' + nl
@@ -1074,11 +1076,6 @@ FUNCTION jpk_v7k_1( aDane )
    cRes += '    <KodUrzedu>' + aDane[ 'KodUrzedu' ] + '</KodUrzedu>' + nl
    cRes += '    <Rok>' + TNaturalny( aDane[ 'Rok' ] ) + '</Rok>' + nl
    cRes += '    <Miesiac>' + TNaturalny( aDane[ 'Miesiac' ] ) + '</Miesiac>' + nl
-   IF lDeklar
-      cRes += '    <Kwartal>' + TNaturalny( aDane[ 'Kwartal' ] ) + '</Kwartal>' + nl
-      cRes += '    <KodFormularzaDekl kodSystemowy="VAT-7K (15)" kodPodatku="VAT" rodzajZobowiazania="Z" wersjaSchemy="1-1E">VAT-7K</KodFormularzaDekl>' + nl
-      cRes += '    <WariantFormularzaDekl>15</WariantFormularzaDekl>' + nl
-   ENDIF
    cRes += '  </Naglowek>' + nl
    cRes += '  <Podmiot1 rola="Podatnik">' + nl
    IF aDane[ 'Spolka' ]
@@ -1105,6 +1102,11 @@ FUNCTION jpk_v7k_1( aDane )
    cRes += '  </Podmiot1>' + nl
    IF lDeklar
       cRes += '  <Deklaracja>' + nl
+      cRes += '    <Naglowek>' + nl
+      cRes += '      <KodFormularzaDekl kodSystemowy="VAT-7K (15)" kodPodatku="VAT" rodzajZobowiazania="Z" wersjaSchemy="1-2E">VAT-7K</KodFormularzaDekl>' + nl
+      cRes += '      <WariantFormularzaDekl>15</WariantFormularzaDekl>' + nl
+      cRes += '      <Kwartal>' + TNaturalny( aDane[ 'Kwartal' ] ) + '</Kwartal>' + nl
+      cRes += '    </Naglowek>' + nl
       cRes += '    <PozycjeSzczegolowe>' + nl
       cRes += '      <P_10>' + TKwotaC( aDane[ 'DekV7' ][ 'P_10' ] ) + '</P_10>' + nl
       cRes += '      <P_11>' + TKwotaC( aDane[ 'DekV7' ][ 'P_11' ] ) + '</P_11>' + nl
@@ -1181,6 +1183,7 @@ FUNCTION jpk_v7k_1( aDane )
       cRes += '  </Deklaracja>' + nl
    ENDIF
    IF lRejestry
+      cRes := cRes + '  <Ewidencja>' + nl
       FOR nI := 1 TO Len( aDane[ 'sprzedaz' ])
          cRes := cRes + '  <SprzedazWiersz>' + nl
          cRes := cRes + '    <LpSprzedazy>' + AllTrim( Str( nI ) ) + '</LpSprzedazy>' + nl
@@ -1434,6 +1437,7 @@ FUNCTION jpk_v7k_1( aDane )
          cRes := cRes + '    <PodatekNaliczony>' + TKwota2( aDane[ 'ZakupCtrl' ][ 'PodatekNaliczony' ] ) + '</PodatekNaliczony>' + nl
          cRes := cRes + '  </ZakupCtrl>' + nl
       ENDIF
+      cRes := cRes + '  </Ewidencja>' + nl
    ENDIF
 
    cRes := cRes + '</JPK>' + nl
