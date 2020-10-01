@@ -738,43 +738,43 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                      ENDIF
                      aW[ 'Oznaczenie' ] := ''
                      IF hb_HHasKey( aW, 'GTU_01' ) .AND. HB_ISCHAR( aW[ 'GTU_01' ] ) .AND. sxmlTrim( aW[ 'GTU_01' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := ' 1'
+                        aW[ 'Oznaczenie' ] := '1'
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_02' ) .AND. HB_ISCHAR( aW[ 'GTU_02' ] ) .AND. sxmlTrim( aW[ 'GTU_02' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := ' 2'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '2', ',2' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_03' ) .AND. HB_ISCHAR( aW[ 'GTU_03' ] ) .AND. sxmlTrim( aW[ 'GTU_03' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := ' 3'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '3', ',3' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_04' ) .AND. HB_ISCHAR( aW[ 'GTU_04' ] ) .AND. sxmlTrim( aW[ 'GTU_04' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := ' 4'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '4', ',4' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_05' ) .AND. HB_ISCHAR( aW[ 'GTU_05' ] ) .AND. sxmlTrim( aW[ 'GTU_05' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := ' 5'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '5', ',5' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_06' ) .AND. HB_ISCHAR( aW[ 'GTU_06' ] ) .AND. sxmlTrim( aW[ 'GTU_06' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := ' 6'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '6', ',6' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_07' ) .AND. HB_ISCHAR( aW[ 'GTU_07' ] ) .AND. sxmlTrim( aW[ 'GTU_07' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := ' 7'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '7', ',7' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_08' ) .AND. HB_ISCHAR( aW[ 'GTU_08' ] ) .AND. sxmlTrim( aW[ 'GTU_08' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := ' 8'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '8', ',8' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_09' ) .AND. HB_ISCHAR( aW[ 'GTU_09' ] ) .AND. sxmlTrim( aW[ 'GTU_09' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := ' 9'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '9', ',9' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_10' ) .AND. HB_ISCHAR( aW[ 'GTU_10' ] ) .AND. sxmlTrim( aW[ 'GTU_10' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := '10'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '10', ',10' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_11' ) .AND. HB_ISCHAR( aW[ 'GTU_11' ] ) .AND. sxmlTrim( aW[ 'GTU_11' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := '11'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '11', ',11' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_12' ) .AND. HB_ISCHAR( aW[ 'GTU_12' ] ) .AND. sxmlTrim( aW[ 'GTU_12' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := '12'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '12', ',12' )
                      ENDIF
                      IF hb_HHasKey( aW, 'GTU_13' ) .AND. HB_ISCHAR( aW[ 'GTU_13' ] ) .AND. sxmlTrim( aW[ 'GTU_13' ] ) == '1'
-                        aW[ 'Oznaczenie' ] := '13'
+                        aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '13', ',13' )
                      ENDIF
                      aW[ 'Procedura' ] := ''
                      IF hb_HHasKey( aW, 'SW' ) .AND. HB_ISCHAR( aW[ 'SW' ] ) .AND. sxmlTrim( aW[ 'SW' ] ) == '1'
