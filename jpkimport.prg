@@ -2530,7 +2530,11 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zBRUT07 := zWart07 + zVat07
          zBRUT22 := zWart22 + zVat22
          zBRUT12 := zWart12 + zVat12
-         zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+         IF AllTrim( HGetDefault( aPoz, 'RodzDow', '' ) ) <> "FP"
+            zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+         ELSE
+            zNETTO := 0
+         ENDIF
          zExPORT := aPoz[ 'zexport' ]
          zUE := aPoz[ 'zue' ]
          zKRAJ := aPoz[ 'zkraj' ]
