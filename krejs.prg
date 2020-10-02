@@ -174,7 +174,7 @@ PROCEDURE KRejS()
                zNETTO2 := 0
                zKOLUMNA2 := '  '
                zDATATRAN := CToD( zROKS + '.' + zMCS + '.' + zDZIENS )
-               zOPCJE := Space( 16 )
+               zOPCJE := Space( 32 )
                zPROCEDUR := Space( 32 )
                zRODZDOW := Space( 6 )
                zVATMARZA := 0
@@ -251,8 +251,8 @@ PROCEDURE KRejS()
                zNETTO2 := NETTO2
                zKOLUMNA2 := KOLUMNA2
                zDATATRAN := DATATRAN
-               zOPCJE := AllTrim( OPCJE )
-               zPROCEDUR := AllTrim( PROCEDUR )
+               zOPCJE := OPCJE
+               zPROCEDUR := PROCEDUR
                zRODZDOW := RODZDOW
                zVATMARZA := VATMARZA
             ENDIF
@@ -288,8 +288,8 @@ PROCEDURE KRejS()
                @  4, 77 GET zexport   PICTURE '!' WHEN wfEXIM( 4, 78 ) VALID vfEXIM( 4, 78 )
                @  5, 77 GET zUE       PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
                @  6, 77 GET zKRAJ     PICTURE '!!'
-               @  7, 71 GET zOPCJE    PICTURE '@S8 !!!!!!!!!!!!!!!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
-               @  8, 64 GET zPROCEDUR PICTURE '!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
+               @  7, 71 GET zOPCJE    PICTURE '@S8 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
+               @  8, 64 GET zPROCEDUR PICTURE '@S15 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
                @  9, 77 GET zSEK_CV7  PICTURE '!!' WHEN wfsSEK_CV7( 9, 78 ) VALID vfsSEK_CV7( 9, 78 )
                IF DETALISTA <> 'T'
                   @ 12, 14 GET zWART22 PICTURE FPIC VALID SUMPODs()
@@ -1979,7 +1979,7 @@ FUNCTION KRejSWhOpcje()
    ENDDO
 
    IF nElement == 1
-      zOPCJE := Space( 16 )
+      zOPCJE := Space( 32 )
    ELSE
       zOPCJE := ""
       FOR nI := 1 TO 13
@@ -1990,7 +1990,7 @@ FUNCTION KRejSWhOpcje()
             zOPCJE := zOPCJE + AllTrim( Str( nI ) )
          ENDIF
       NEXT
-      zOPCJE := Pad( zOPCJE, 16 )
+      zOPCJE := Pad( zOPCJE, 32 )
    ENDIF
 
    RestScreen( 0, 0, MaxRow(), MaxCol(), cEkran )
