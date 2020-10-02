@@ -420,7 +420,9 @@ public aFAKTURYdbf := {;
    { "ZAP_TER", "N", 3, 0 },;                     //  36
    { "ZAP_DAT", "D", 8, 0 },;                     //  37
    { "ZAP_WART", "N", 11, 2 },;                   //  38
-   { "SPLITPAY", "C", 1, 0 } }                     //  39
+   { "SPLITPAY", "C", 1, 0 },;                    //  39
+   { "OPCJE", "C", 32, 0 },;                      //  40
+   { "PROCEDUR", "C", 32, 0 } }                   //  41
 
 // Create: FAKTURYW.DBF
 public aFAKTURYWdbf := {;
@@ -984,7 +986,7 @@ public aREJSdbf := {;
    { "ZAP_TER", "N", 3, 0 },;                     //  41
    { "ZAP_DAT", "D", 8, 0 },;                     //  42
    { "ZAP_WART", "N", 11, 2 },;                   //  43
-   { "OPCJE", "C", 16, 0 },;                      //  44
+   { "OPCJE", "C", 32, 0 },;                      //  44
    { "TROJSTR", "C", 1, 0 },;                     //  45
    { "KOL36", "N", 11, 2 },;                      //  46
    { "KOL37", "N", 11, 2 },;                      //  47
