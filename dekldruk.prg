@@ -4408,9 +4408,9 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
 
    IF aDaneZrd[ 'Rejestry' ]
 
+      aDane[ 'Sprzedaz' ] := {}
       IF Len( aDaneZrd[ 'sprzedaz' ] ) > 0
          aDane[ 'JestSprzedaz' ] := .T.
-         aDane[ 'Sprzedaz' ] := {}
          nI := 1
          AEval( aDaneZrd[ 'sprzedaz' ], { | aPoz |
             aPoz[ 'LpSprzedazy' ] := nI
@@ -4461,9 +4461,9 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
          aDane[ 'JestSprzedaz' ] := .F.
       ENDIF
 
+      aDane[ 'Zakup' ] := {}
       IF Len( aDaneZrd[ 'zakup' ] ) > 0
          aDane[ 'JestZakup' ] := .T.
-         aDane[ 'Zakup' ] := {}
          nI := 1
          AEval( aDaneZrd[ 'zakup' ], { | aPoz |
             aPoz[ 'LpZakupu' ] := nI
