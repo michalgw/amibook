@@ -46,7 +46,7 @@ PROCEDURE JPK_VAT_Rob()
       nMiesiacPocz := aKw[ 'kwapocz' ]
       nMiesiacKon := aKw[ 'kwakon' ]
    ENDIF */
-   aDane := JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
+   aDane := JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, .F. )
    IF aDane[ 'OK' ]
       IF hb_HHasKey( aDane, 'SprzedazCtrl' ) .OR. hb_HHasKey( aDane, 'ZakupCtrl' )
    //      nKorekta := edekCzyKorekta()
@@ -107,7 +107,7 @@ FUNCTION JPK_NIPEU( cNrIdent, lUE, cKraj )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
+FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
    LOCAL aRes := hb_Hash( 'OK', .F. )
    LOCAL aPozycje := {}
    LOCAL aPoz
@@ -698,9 +698,9 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
       rejz->( dbSkip() )
    ENDDO
 
-//   IF Len( aRes[ 'sprzedaz' ] ) == 0
-//      AAdd( aRes[ 'sprzedaz' ], hb_Hash( 'DowodSprzedazy', 'BRAK', 'DataWystawienia', hb_Date(), 'NrKontrahenta', 'BRAK', 'NazwaKontrahenta', 'BRAK', 'AdresKontrahenta', 'BRAK' ) )
-//   ENDIF
+   IF Len( aRes[ 'sprzedaz' ] ) == 0 .AND. ! lV7
+      AAdd( aRes[ 'sprzedaz' ], hb_Hash( 'DowodSprzedazy', 'BRAK', 'DataWystawienia', hb_Date(), 'NrKontrahenta', 'BRAK', 'NazwaKontrahenta', 'BRAK', 'AdresKontrahenta', 'BRAK' ) )
+   ENDIF
    ASort( aRes[ 'sprzedaz' ], , , { |x, y| x[ 'DataWystawienia' ] < y[ 'DataWystawienia' ] } )
    aRes[ 'SprzedazCtrl' ] := hb_Hash( 'LiczbaWierszySprzedazy', Len( aRes[ 'sprzedaz' ] ), 'PodatekNalezny', 0 )
    AEval( aRes[ 'sprzedaz' ], { | aRow |
@@ -722,9 +722,9 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon )
       ENDIF
    } )
 
-//   IF Len( aRes[ 'zakup' ] ) == 0
-//      AAdd( aRes[ 'zakup' ], hb_Hash( 'DowodZakupu', 'BRAK', 'DataZakupu', hb_Date(), 'NrDostawcy', 'BRAK', 'NazwaDostawcy', 'BRAK', 'AdresDostawcy', 'BRAK' ) )
-//   ENDIF
+   IF Len( aRes[ 'zakup' ] ) == 0 .AND. ! lV7
+      AAdd( aRes[ 'zakup' ], hb_Hash( 'DowodZakupu', 'BRAK', 'DataZakupu', hb_Date(), 'NrDostawcy', 'BRAK', 'NazwaDostawcy', 'BRAK', 'AdresDostawcy', 'BRAK' ) )
+   ENDIF
    ASort( aRes[ 'zakup' ], , , { |x, y| x[ 'DataZakupu' ] < y[ 'DataZakupu' ] } )
    aRes[ 'ZakupCtrl' ] := hb_Hash( 'LiczbaWierszyZakupow', Len( aRes[ 'zakup' ] ), 'PodatekNaliczony', 0 )
    AEval( aRes[ 'zakup' ] , { | aRow | ;
@@ -1195,7 +1195,7 @@ PROCEDURE JPK_V7_Rob()
    ENDIF
 
    IF nMenu == 1 .OR. nMenu == 3
-      aDane := hb_HMerge( aDane, JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon ) )
+      aDane := hb_HMerge( aDane, JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, .T. ) )
    ENDIF
 
    aDane[ 'DekV7' ] := aDaneVat
