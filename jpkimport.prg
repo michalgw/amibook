@@ -2200,9 +2200,9 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
          aPozDek[ 'SprzedazPoz' ] := aPoz
 
          aPozDek[ 'VATMarza' ] := HGetDefault( aPoz, 'SprzedazVAT_Marza', 0 )
-         aPozDek[ 'RodzDow' ] := aPoz[ 'TypDokumentu' ]
-         aPozDek[ 'Procedura' ] := aPoz[ 'Procedura' ]
-         aPozDek[ 'Oznaczenie' ] := aPoz[ 'Oznaczenie' ]
+         aPozDek[ 'RodzDow' ] := HGetDefault( aPoz, 'TypDokumentu', '' )
+         aPozDek[ 'Procedura' ] := HGetDefault( aPoz, 'Procedura', '' )
+         aPozDek[ 'Oznaczenie' ] := HGetDefault( aPoz, 'Oznaczenie', '' )
 
          AAdd( aRes, aPozDek )
 
@@ -2549,9 +2549,9 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zTROJSTR := 'N'
          zSYMB_REJ := aDane[ 'Rejestr' ]
          zTRESC := aDane[ 'OpisZd' ]
-         zOPCJE := aDane[ 'Oznaczenie' ]
-         zPROCEDUR := HGetDefault( aPoz, 'Procedura', '' )
-         zRODZDOW :=  HGetDefault( aPoz, 'RodzDow', '' )
+         zOPCJE := iif( AllTrim( aPoz[ 'Oznaczenie' ] ) <> "", aPoz[ 'Oznaczenie' ], aDane[ 'Oznaczenie' ] )
+         zPROCEDUR := iif( AllTrim( aPoz[ 'Procedura' ] ) <> "", aPoz[ 'Procedura' ], aDane[ 'Procedura' ] )
+         zRODZDOW := iif( AllTrim( aPoz[ 'RodzDow' ] ) <> "", aPoz[ 'RodzDow' ], aDane[ 'RodzDow' ] )
          zKOL36 := 0
          zKOL37 := 0
          zKOL38 := 0
@@ -2859,7 +2859,7 @@ PROCEDURE JPKImp_VatS()
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
       'OpisZd', Space( 30 ), 'KolRej', iif( zRYCZALT == 'T', ' 5', '7' ), ;
       'DataRej', 'W', 'Oznaczenie', Space( 16 ), 'Procedura', Space( 32 ), ;
-      'SprawdzRegon', iif( olparam_ra, 'T', 'N' ) )
+      'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'RodzDow', Space( 6 ) )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
@@ -2867,7 +2867,7 @@ PROCEDURE JPKImp_VatS()
    LOCAL aRaport, cRaport, cTN, cRej, lOk, cKolKs, cDataRej, cRegon
    LOCAL nSumaImp, nLiczbaLp := 0
 
-   PRIVATE cOpisZd, zOpcje, zProcedur
+   PRIVATE cOpisZd, zOpcje, zProcedur, zRodzDow
 
    cKolor := ColInf()
    @ 24, 0 SAY PadC( "Wybierz plik do importu", 80 )
@@ -3025,19 +3025,21 @@ PROCEDURE JPKImp_VatS()
                zOpcje := aDane[ 'Oznaczenie' ]
                zProcedur := aDane[ 'Procedura' ]
                cRegon := aDane[ 'SprawdzRegon' ]
-               @  7, 13 CLEAR TO 20, 66
-               @  8, 15 TO 19, 64
-               @  9, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
-               @ 10, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42 ), .T. }
-               @ 11, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "S" )
+               zRodzDow := aDane[ 'RodzDow' ]
+               @  6, 13 CLEAR TO 20, 66
+               @  7, 15 TO 19, 64
+               @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
+               @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42 ), .T. }
+               @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "S" )
                IF zRYCZALT == 'T'
-                  @ 12, 17 SAY "Domy˜lna kolumna ewidencji (5,6,7,8,9,11)" GET cKolRej PICTURE '@K 99' VALID AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '11'
+                  @ 11, 17 SAY "Domy˜lna kolumna ewidencji (5,6,7,8,9,11)" GET cKolRej PICTURE '@K 99' VALID AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '11'
                ELSE
-                  @ 12, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
+                  @ 11, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
                ENDIF
-               @ 13, 17 SAY "Do rejestru na dzieä (S-sprzed., W-wystaw.)" GET cDataRej PICTURE "!" VALID cDataRej $ 'SW'
-               @ 14, 17 SAY "Oznaczenie dot. dostawy i ˜wiadczenia usˆug" GET zOpcje PICTURE '!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
-               @ 15, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
+               @ 12, 17 SAY "Do rejestru na dzieä (S-sprzed., W-wystaw.)" GET cDataRej PICTURE "!" VALID cDataRej $ 'SW'
+               @ 13, 17 SAY "Oznaczenie dot. dostawy i ˜wiadczenia usˆug" GET zOpcje PICTURE '!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
+               @ 14, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
+               @ 15, 17 SAY "Rodzaj dowodu sprzeda¾y" GET zRodzDow PICTURE '!!!' WHEN KRejSWRodzDow() VALID KRejSVRodzDow()
                @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
                @ 18, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
                READ
@@ -3050,6 +3052,7 @@ PROCEDURE JPKImp_VatS()
                   aDane[ 'Oznaczenie' ] := zOpcje
                   aDane[ 'Procedura' ] := zProcedur
                   aDane[ 'SprawdzRegon' ] := cRegon
+                  aDane[ 'RodzDow' ] := zRodzDow
                ENDIF
                RestScreen( , , , , cEkran2 )
             CASE nMenu == 4
