@@ -290,7 +290,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
 
       aPoz[ 'Procedura' ] := AllTrim( rejs->procedur )
 
-      IF  ( rejs->sek_cv7 == 'PN' ) .OR. ( rejs->sek_cv7 == 'PU' )
+      IF  ( rejs->sek_cv7 == 'PN' ) .OR. ( rejs->sek_cv7 == 'PU' ) .OR. ( rejs->sek_cv7 == 'SP' )
          aPoz[ 'MPP' ] := .T.
       ENDIF
 
@@ -673,7 +673,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
          aPoz[ 'NazwaDostawcy' ] := rejz->nazwa
          aPoz[ 'AdresDostawcy' ] := rejz->adres
 
-         aPoz[ 'MPP' ] := SEK_CV7 == 'PN' .OR. SEK_CV7 == 'PU' .OR. SEK_CV7 == 'PS'
+         aPoz[ 'MPP' ] := SEK_CV7 == 'PN' .OR. SEK_CV7 == 'PU' .OR. SEK_CV7 == 'PS' .OR. SEK_CV7 == 'SP'
          aPoz[ 'IMP' ] := SEK_CV7 == 'IT' .OR. SEK_CV7 == 'IZ' .OR. SEK_CV7 == 'IS' .OR. SEK_CV7 == 'IU' .OR. SEK_CV7 == 'UZ' .OR. SEK_CV7 == 'US'
 
          IF lSprzedaz
