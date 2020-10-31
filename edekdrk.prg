@@ -6546,83 +6546,83 @@ FUNCTION DaneXML_JPKV7w1( oDoc, cNrRef, hNaglowek )
          aPoz[ 'KodKrajuNadaniaTIN' ] := xmlWartoscH( aPoz, 'KodKrajuNadaniaTIN' )
          aPoz[ 'TypDokumentu' ] := xmlWartoscH( aPoz, 'TypDokumentu' )
          aPoz[ 'GTU' ] := ''
-         IF ( aPoz[ 'GTU_01' ] := iif( xmlWartoscH( hPozycje, 'GTU_01' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_01' ] := iif( xmlWartoscH( aPoz, 'GTU_01' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_01 '
          ENDIF
-         IF ( aPoz[ 'GTU_02' ] := iif( xmlWartoscH( hPozycje, 'GTU_02' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_02' ] := iif( xmlWartoscH( aPoz, 'GTU_02' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_02 '
          ENDIF
-         IF ( aPoz[ 'GTU_03' ] := iif( xmlWartoscH( hPozycje, 'GTU_03' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_03' ] := iif( xmlWartoscH( aPoz, 'GTU_03' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_03 '
          ENDIF
-         IF ( aPoz[ 'GTU_04' ] := iif( xmlWartoscH( hPozycje, 'GTU_04' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_04' ] := iif( xmlWartoscH( aPoz, 'GTU_04' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_04 '
          ENDIF
-         IF ( aPoz[ 'GTU_05' ] := iif( xmlWartoscH( hPozycje, 'GTU_05' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_05' ] := iif( xmlWartoscH( aPoz, 'GTU_05' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_05 '
          ENDIF
-         IF ( aPoz[ 'GTU_06' ] := iif( xmlWartoscH( hPozycje, 'GTU_06' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_06' ] := iif( xmlWartoscH( aPoz, 'GTU_06' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_06 '
          ENDIF
-         IF ( aPoz[ 'GTU_07' ] := iif( xmlWartoscH( hPozycje, 'GTU_07' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_07' ] := iif( xmlWartoscH( aPoz, 'GTU_07' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_07 '
          ENDIF
-         IF ( aPoz[ 'GTU_08' ] := iif( xmlWartoscH( hPozycje, 'GTU_08' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_08' ] := iif( xmlWartoscH( aPoz, 'GTU_08' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_08 '
          ENDIF
-         IF ( aPoz[ 'GTU_09' ] := iif( xmlWartoscH( hPozycje, 'GTU_09' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_09' ] := iif( xmlWartoscH( aPoz, 'GTU_09' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_09 '
          ENDIF
-         IF ( aPoz[ 'GTU_10' ] := iif( xmlWartoscH( hPozycje, 'GTU_10' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_10' ] := iif( xmlWartoscH( aPoz, 'GTU_10' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_10 '
          ENDIF
-         IF ( aPoz[ 'GTU_11' ] := iif( xmlWartoscH( hPozycje, 'GTU_11' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_11' ] := iif( xmlWartoscH( aPoz, 'GTU_11' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_11 '
          ENDIF
-         IF ( aPoz[ 'GTU_12' ] := iif( xmlWartoscH( hPozycje, 'GTU_12' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_12' ] := iif( xmlWartoscH( aPoz, 'GTU_12' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_12 '
          ENDIF
-         IF ( aPoz[ 'GTU_13' ] := iif( xmlWartoscH( hPozycje, 'GTU_13' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'GTU_13' ] := iif( xmlWartoscH( aPoz, 'GTU_13' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_13 '
          ENDIF
          aPoz[ 'Procedura' ] := ''
-         IF ( aPoz[ 'SW' ] := iif( xmlWartoscH( hPozycje, 'SW' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'SW' ] := iif( xmlWartoscH( aPoz, 'SW' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'SW '
          ENDIF
-         IF ( aPoz[ 'EE' ] := iif( xmlWartoscH( hPozycje, 'EE' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'EE' ] := iif( xmlWartoscH( aPoz, 'EE' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'EE '
          ENDIF
-         IF ( aPoz[ 'TP' ] := iif( xmlWartoscH( hPozycje, 'TP' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'TP' ] := iif( xmlWartoscH( aPoz, 'TP' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'TP '
          ENDIF
-         IF ( aPoz[ 'TT_WNT' ] := iif( xmlWartoscH( hPozycje, 'TT_WNT' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'TT_WNT' ] := iif( xmlWartoscH( aPoz, 'TT_WNT' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'TT_WNT '
          ENDIF
-         IF ( aPoz[ 'TT_D' ] := iif( xmlWartoscH( hPozycje, 'TT_D' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'TT_D' ] := iif( xmlWartoscH( aPoz, 'TT_D' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'TT_D '
          ENDIF
-         IF ( aPoz[ 'MR_T' ] := iif( xmlWartoscH( hPozycje, 'MR_T' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'MR_T' ] := iif( xmlWartoscH( aPoz, 'MR_T' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'MR_T '
          ENDIF
-         IF ( aPoz[ 'MR_UZ' ] := iif( xmlWartoscH( hPozycje, 'MR_UZ' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'MR_UZ' ] := iif( xmlWartoscH( aPoz, 'MR_UZ' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'MR_UZ '
          ENDIF
-         IF ( aPoz[ 'I_42' ] := iif( xmlWartoscH( hPozycje, 'I_42' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'I_42' ] := iif( xmlWartoscH( aPoz, 'I_42' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'I_42 '
          ENDIF
-         IF ( aPoz[ 'I_63' ] := iif( xmlWartoscH( hPozycje, 'I_63' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'I_63' ] := iif( xmlWartoscH( aPoz, 'I_63' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'I_63 '
          ENDIF
-         IF ( aPoz[ 'B_SPV' ] := iif( xmlWartoscH( hPozycje, 'B_SPV' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'B_SPV' ] := iif( xmlWartoscH( aPoz, 'B_SPV' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'B_SPV '
          ENDIF
-         IF ( aPoz[ 'B_SPV_DOSTAWA' ] := iif( xmlWartoscH( hPozycje, 'B_SPV_DOSTAWA' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'B_SPV_DOSTAWA' ] := iif( xmlWartoscH( aPoz, 'B_SPV_DOSTAWA' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'B_SPV_DOSTAWA '
          ENDIF
-         IF ( aPoz[ 'B_MPV_PROWIZJA' ] := iif( xmlWartoscH( hPozycje, 'B_MPV_PROWIZJA' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'B_MPV_PROWIZJA' ] := iif( xmlWartoscH( aPoz, 'B_MPV_PROWIZJA' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'B_MPV_PROWIZJA '
          ENDIF
-         IF ( aPoz[ 'MPP' ] := iif( xmlWartoscH( hPozycje, 'MPP' ) == '1', '1', '0' ) ) == '1'
+         IF ( aPoz[ 'MPP' ] := iif( xmlWartoscH( aPoz, 'MPP' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'MPP '
          ENDIF
          aPoz[ 'KorektaPodstawyOpodt' ] := sxml2num( xmlWartoscH( aPoz, 'KorektaPodstawyOpodt' ), 0 )
@@ -6668,8 +6668,8 @@ FUNCTION DaneXML_JPKV7w1( oDoc, cNrRef, hNaglowek )
       AEval( hDane[ 'Zakup' ], { | aPoz |
          aPoz[ 'KodKrajuNadaniaTIN' ] := xmlWartoscH( aPoz, 'KodKrajuNadaniaTIN' )
          aPoz[ 'DokumentZakupu' ] := xmlWartoscH( aPoz, 'DokumentZakupu' )
-         aPoz[ 'MPP' ] := iif( xmlWartoscH( hPozycje, 'MPP' ) == '1', '1', '0' )
-         aPoz[ 'IMP' ] := iif( xmlWartoscH( hPozycje, 'IMP' ) == '1', '1', '0' )
+         aPoz[ 'MPP' ] := iif( xmlWartoscH( aPoz, 'MPP' ) == '1', '1', '0' )
+         aPoz[ 'IMP' ] := iif( xmlWartoscH( aPoz, 'IMP' ) == '1', '1', '0' )
          aPoz[ 'K_40' ] := sxml2num( xmlWartoscH( aPoz, 'K_43' ), 0 )
          aPoz[ 'K_41' ] := sxml2num( xmlWartoscH( aPoz, 'K_44' ), 0 )
          aPoz[ 'K_42' ] := sxml2num( xmlWartoscH( aPoz, 'K_45' ), 0 )

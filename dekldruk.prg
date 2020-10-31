@@ -4390,11 +4390,11 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
       aDane[ 'P_60' ] := aDaneZrd[ 'DekV7' ][ 'P_60' ]
       aDane[ 'P_61' ] := aDaneZrd[ 'DekV7' ][ 'P_61' ]
       aDane[ 'P_62' ] := aDaneZrd[ 'DekV7' ][ 'P_62' ]
-      aDane[ 'P_63' ] := '0'
-      aDane[ 'P_64' ] := '0'
-      aDane[ 'P_65' ] := '0'
-      aDane[ 'P_66' ] := '0'
-      aDane[ 'P_67' ] := '0'
+      aDane[ 'P_63' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_63' ], '1', '0' )
+      aDane[ 'P_64' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_64' ], '1', '0' )
+      aDane[ 'P_65' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_65' ], '1', '0' )
+      aDane[ 'P_66' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_66' ], '1', '0' )
+      aDane[ 'P_67' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_67' ], '1', '0' )
       aDane[ 'P_68' ] := 0
       aDane[ 'P_69' ] := 0
       IF aDaneZrd[ 'DekV7' ][ 'Korekta' ] .AND. Len( AllTrim( aDaneZrd[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
