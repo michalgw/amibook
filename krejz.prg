@@ -1220,19 +1220,19 @@ FUNCTION V1_22z()
 ***************************************************
 FUNCTION SumPodz( nWartosc, nPole )
 ***************************************************
-   @ 13, 42 SAY zWART22 + zVAT22 + iif( zOPCJE $ "27P", zVAT22, 0 ) PICTURE RPIC
-   @ 14, 42 SAY zWART07 + zVAT07 + iif( zOPCJE $ "27P", zVAT07, 0 ) PICTURE RPIC
+   @ 13, 42 SAY zWART22 + zVAT22 + iif( zOPCJE $ "257P", zVAT22, 0 ) PICTURE RPIC
+   @ 14, 42 SAY zWART07 + zVAT07 + iif( zOPCJE $ "257P", zVAT07, 0 ) PICTURE RPIC
    *@ 16,42 say zWART12+zVAT12 pict RPIC
    *@ 17,42 say zWART02+zVAT02 pict RPIC
    *@ 18,42 say zWART00 pict RPIC
    *@ 19,42 say zWARTZW pict RPIC
-   @ 15, 42 SAY zWART02 + zVAT02 + iif( zOPCJE $ "27P", zVAT02, 0 ) PICTURE RPIC
+   @ 15, 42 SAY zWART02 + zVAT02 + iif( zOPCJE $ "257P", zVAT02, 0 ) PICTURE RPIC
    @ 16, 42 SAY zWART00 PICTURE RPIC
    @ 17, 42 SAY zWARTZW PICTURE RPIC
-   @ 18, 42 SAY zWART12 + zVAT12 + iif( zOPCJE $ "27P", zVAT12, 0 ) PICTURE RPIC
+   @ 18, 42 SAY zWART12 + zVAT12 + iif( zOPCJE $ "257P", zVAT12, 0 ) PICTURE RPIC
    @ 19,  8 SAY zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW PICTURE RPIC
    @ 19, 25 SAY zVAT22 + zVAT12 + zVAT07 + zVAT02 PICTURE RPIC
-   @ 19, 42 SAY ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 + iif( zOPCJE $ "27P", zVAT22 + zVAT12 + zVAT07 + zVAT02, 0 ) ) * iif( zOPCJE == "2", 0.2, iif( zOPCJE == "7", 0.75, 1 ) ) PICTURE RPIC
+   @ 19, 42 SAY ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 + iif( zOPCJE $ "257P", zVAT22 + zVAT12 + zVAT07 + zVAT02, 0 ) ) * iif( zOPCJE == "2", 0.2, iif( zOPCJE == "5", 0.5, iif( zOPCJE == "7", 0.75, 1 ) ) ) PICTURE RPIC
    IF ! Empty( nWartosc )
       nPole := nWartosc
    ENDIF
@@ -1270,7 +1270,7 @@ FUNCTION SUMPOwz( vari )
    CASE &variM == &vvariM
       &vari := &vvari
    ENDCASE
-   IF zOPCJE $ "27P"
+   IF zOPCJE $ "257P"
       lBlokuj := .T.
       procvat := Val( SubStr( vari, 5, 2 ) )
       SWITCH procvat
@@ -1312,12 +1312,14 @@ FUNCTION SUMNETz()
       IF ins
          zNETTO := _round( iif( zSPZW == 'S', 0, zWARTZW ) + ;
             iif( zSP00 == 'S', 0, zWART00 ) + iif( ( zZOM00 == 'Z' .OR. zRACH == 'R' ) .AND. zSP00 == 'P', 0, 0 ) + ;
-            iif( zSP07 == 'S', 0, zWART07 * iif( ( zOPCJE $ "27P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM07 == 'Z' .OR. zRACH == 'R' ) .AND. zSP07 == 'P' ) .OR. ( zOPCJE $ "27P" ), zVAT07, 0 ) + ;
-            iif( zSP02 == 'S', 0, zWART02 * iif( ( zOPCJE $ "27P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM02 == 'Z' .OR. zRACH == 'R' ) .AND. zSP02 == 'P' ) .OR. ( zOPCJE $ "27P" ), zVAT02, 0 ) + ;
-            iif( zSP12 == 'S', 0, zWART12 * iif( ( zOPCJE $ "27P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM12 == 'Z' .OR. zRACH == 'R' ) .AND. zSP12 == 'P' ) .OR. ( zOPCJE $ "27P" ), zVAT12, 0 ) + ;
-            iif( zSP22 == 'S', 0, ( zWART22 * iif( ( zOPCJE $ "27P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + zPALIWA + zPOJAZDY ) + iif( ( ( zZOM22 == 'Z' .OR. zRACH == 'R' ) .AND. zSP22 == 'P') .OR. ( zOPCJE $ "27P" ), zVAT22, 0 ), 2 )
+            iif( zSP07 == 'S', 0, zWART07 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM07 == 'Z' .OR. zRACH == 'R' ) .AND. zSP07 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT07, 0 ) + ;
+            iif( zSP02 == 'S', 0, zWART02 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM02 == 'Z' .OR. zRACH == 'R' ) .AND. zSP02 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT02, 0 ) + ;
+            iif( zSP12 == 'S', 0, zWART12 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM12 == 'Z' .OR. zRACH == 'R' ) .AND. zSP12 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT12, 0 ) + ;
+            iif( zSP22 == 'S', 0, ( zWART22 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + zPALIWA + zPOJAZDY ) + iif( ( ( zZOM22 == 'Z' .OR. zRACH == 'R' ) .AND. zSP22 == 'P') .OR. ( zOPCJE $ "257P" ), zVAT22, 0 ), 2 )
          IF zOPCJE == "2"
             zNETTO := zNETTO * 0.2
+         ELSEIF zOPCJE == "5"
+            zNETTO := zNETTO * 0.5
          ELSEIF zOPCJE == "7"
             zNETTO := zNETTO * 0.75
          ENDIF
@@ -1326,12 +1328,14 @@ FUNCTION SUMNETz()
          IF zNETTO <> 0
             zNETTO := _round( iif( zSPZW == 'S', 0, zWARTZW ) + ;
                iif( zSP00 == 'S', 0, zWART00 ) + iif( ( zZOM00 == 'Z' .OR. zRACH == 'R' ) .AND. zSP00 == 'P', 0, 0 ) + ;
-               iif( zSP07 == 'S', 0, zWART07 * iif( ( zOPCJE $ "27P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM07 == 'Z' .OR. zRACH == 'R' ) .AND. zSP07 == 'P' ) .OR. ( zOPCJE $ "27P" ), zVAT07, 0 ) + ;
-               iif( zSP02 == 'S', 0, zWART02 * iif( ( zOPCJE $ "27P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM02 == 'Z' .OR. zRACH == 'R' ) .AND. zSP02 == 'P' ) .OR. ( zOPCJE $ "27P" ), zVAT02, 0 ) + ;
-               iif( zSP12 == 'S', 0, zWART12 * iif( ( zOPCJE $ "27P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM12 == 'Z' .OR. zRACH == 'R' ) .AND. zSP12 == 'P' ) .OR. ( zOPCJE $ "27P" ), zVAT12, 0 ) + ;
-               iif( zSP22 == 'S', 0, ( zWART22 * iif( ( zOPCJE $ "27P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + zPALIWA + zPOJAZDY ) + iif( ( ( zZOM22 == 'Z' .OR. zRACH == 'R' ) .AND. zSP22 == 'P') .OR. ( zOPCJE $ "27P" ), zVAT22, 0 ), 2 )
+               iif( zSP07 == 'S', 0, zWART07 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM07 == 'Z' .OR. zRACH == 'R' ) .AND. zSP07 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT07, 0 ) + ;
+               iif( zSP02 == 'S', 0, zWART02 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM02 == 'Z' .OR. zRACH == 'R' ) .AND. zSP02 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT02, 0 ) + ;
+               iif( zSP12 == 'S', 0, zWART12 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM12 == 'Z' .OR. zRACH == 'R' ) .AND. zSP12 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT12, 0 ) + ;
+               iif( zSP22 == 'S', 0, ( zWART22 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + zPALIWA + zPOJAZDY ) + iif( ( ( zZOM22 == 'Z' .OR. zRACH == 'R' ) .AND. zSP22 == 'P') .OR. ( zOPCJE $ "257P" ), zVAT22, 0 ), 2 )
             IF zOPCJE == "2"
                zNETTO := zNETTO * 0.2
+            ELSEIF zOPCJE == "5"
+               zNETTO := zNETTO * 0.5
             ELSEIF zOPCJE == "7"
                zNETTO := zNETTO * 0.75
             ENDIF
@@ -1706,7 +1710,7 @@ FUNCTION krejzRysujTlo()
 FUNCTION w1_opcje()
 
    ColInf()
-   @ 24, 0 SAY PadC( 'Opcje:  P - pojazdy 100%, 7 - pojazdy 75%, 2 - pojazdy 20% lub puste - inne', 80, ' ' )
+   @ 24, 0 SAY PadC( 'Opcje:  P - pojazdy 100%, 7 - poj.75%, 5 - poj.50%, 2 - poj.20% lub puste - inne', 80, ' ' )
    ColStd()
    RETURN .T.
 
@@ -1714,7 +1718,7 @@ FUNCTION w1_opcje()
 
 FUNCTION v1_opcje()
 
-   LOCAL lResult := zOPCJE $ " 27P"
+   LOCAL lResult := zOPCJE $ " 257P"
 
    IF lResult
       ColStd()

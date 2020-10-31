@@ -630,7 +630,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
                + iif( rejz->sp07 == 'P' .AND. rejz->zom07 == 'M' .AND. rejz->vat07 <> 0, rejz->wart07 * ( nStruSProb / 100 ), 0 ) ;
                + iif( rejz->sp22 == 'P' .AND. rejz->zom22 == 'M' .AND. rejz->vat22 <> 0, rejz->wart22 * ( nStruSProb / 100 ), 0 ) ;
                + iif( rejz->sp12 == 'P' .AND. rejz->zom12 == 'M' .AND. rejz->vat12 <> 0, rejz->wart12 * ( nStruSProb / 100 ), 0 ) ;
-               + iif( rejz->sp00 == 'P' .AND. rejz->zom00 == 'M', rejz->wart00, 0 ) ) * iif( rejz->opcje $ '27P' .AND. param_ks5d == '2', 0.5, 1 ), 'K_46' )
+               + iif( rejz->sp00 == 'P' .AND. rejz->zom00 == 'M', rejz->wart00, 0 ) ) * iif( rejz->opcje $ '257P' .AND. param_ks5d == '2', 0.5, 1 ), 'K_46' )
 
             ADodajNieZero( @aPoz, 'K_46', ;
                ( iif( rejz->sp02 == 'P' .AND. rejz->zom02 == 'O', rejz->vat02, 0 ) ;

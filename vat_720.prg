@@ -594,7 +594,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                   iif( SP12 == 'P' .AND. ZOM12 == 'M' .AND. VAT12 <> 0, WART12 * ( zstrusprob / 100 ), 0 ) + ;
                   iif( SP00 == 'P' .AND. ZOM00 == 'M', WART00 * ( zstrusprob / 100 ), 0 )
                p51 := p51 + P51tmp
-               IF OPCJE $ '27P'
+               IF OPCJE $ '257P'
                   P49_50p := P49_50p + P49tmp * 0.5
                   P51_50p := P51_50p + P51tmp * 0.5
                ENDIF
