@@ -662,6 +662,10 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
             aPoz[ 'NrKontrahenta' ] := JPK_NIPEU( rejz->nr_ident, rejz->ue == 'T', rejz->kraj )
             aPoz[ 'NazwaKontrahenta' ] := rejz->nazwa
             aPoz[ 'AdresKontrahenta' ] := rejz->adres
+            aPoz[ 'TypDokumentu' ] := ""
+            aPoz[ 'GTU' ] := ""
+            aPoz[ 'Procedura' ] := ""
+            aPoz[ 'MPP' ] := .F.
          ENDIF
          aPoz[ 'DokumentZakupu' ] := AllTrim( rejz->rodzdow )
          aPoz[ 'DowodZakupu' ] := NrDokUsunHasz( rejz->numer )
