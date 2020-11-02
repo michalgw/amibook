@@ -4303,8 +4303,8 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
 
    aDane[ 'NIP' ] := aDaneZrd[ 'NIP' ]
 
-   aDane[ 'CelZlozenia1' ] := iif( aDaneZrd[ 'CelZlozenia' ] == '1', '1', '0' )
-   aDane[ 'CelZlozenia2' ] := iif( aDaneZrd[ 'CelZlozenia' ] == '2', '1', '0' )
+   aDane[ 'CelZlozenia1' ] := iif( aDaneZrd[ 'Korekta' ], '1', '0' )
+   aDane[ 'CelZlozenia2' ] := iif( ! aDaneZrd[ 'Korekta' ], '1', '0' )
    aDane[ 'PodmiotSpolka' ] := iif( aDaneZrd[ 'Spolka' ], '1', '0' )
    aDane[ 'PodmiotOsoba' ] := iif( ! aDaneZrd[ 'Spolka' ], '1', '0' )
    IF ! aDaneZrd[ 'Spolka' ]
