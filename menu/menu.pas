@@ -197,6 +197,8 @@ var
   Coord: TCoord;
   hMenuHandle: HMENU;
 begin
+  CreateMutex(nil, False, 'GMSystemsAmiBookMenuOld');
+
   SprawdzGTWVT;
   AllocConsole();
 
