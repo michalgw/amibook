@@ -693,8 +693,11 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
                AAdd( aRes[ 'sprzedaz' ], aPoz )
             ENDIF
          ENDIF
-         IF hb_HHasKey( aPoz, 'K_43' ) .OR. hb_HHasKey( aPoz, 'K_44' ) .OR. hb_HHasKey( aPoz, 'K_45' ) .OR. hb_HHasKey( aPoz, 'K_46' ) .OR. ;
-            hb_HHasKey( aPoz, 'K_47' ) .OR. hb_HHasKey( aPoz, 'K_48' ) .OR. hb_HHasKey( aPoz, 'K_49' ) .OR. hb_HHasKey( aPoz, 'K_50' )
+         IF hb_HHasKey( aPoz, 'K_43' ) .OR. hb_HHasKey( aPoz, 'K_44' ) .OR. ;
+            hb_HHasKey( aPoz, 'K_45' ) .OR. hb_HHasKey( aPoz, 'K_46' ) .OR. ;
+            hb_HHasKey( aPoz, 'K_47' ) .OR. hb_HHasKey( aPoz, 'K_48' ) .OR. ;
+            hb_HHasKey( aPoz, 'K_49' ) .OR. hb_HHasKey( aPoz, 'K_50' ) .OR. ;
+            hb_HHasKey( aPoz, 'ZakupVAT_Marza' )
 
             AAdd( aRes[ 'zakup' ], aPoz )
          ENDIF
