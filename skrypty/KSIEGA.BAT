@@ -8,7 +8,7 @@ if errorlevel 1 goto oldy
 goto ramka
 :oldy
 call _cd
-call ksiega %1 %2 %3
+call ksiega.bat %1 %2 %3
 cd ..
 goto ramka
 :ksiega
