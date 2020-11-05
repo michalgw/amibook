@@ -2530,7 +2530,8 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zBRUT07 := zWart07 + zVat07
          zBRUT22 := zWart22 + zVat22
          zBRUT12 := zWart12 + zVat12
-         IF AllTrim( HGetDefault( aPoz, 'RodzDow', '' ) ) <> "FP"
+         zRODZDOW := iif( AllTrim( aPoz[ 'RodzDow' ] ) <> "", aPoz[ 'RodzDow' ], aDane[ 'RodzDow' ] )
+         IF AllTrim( zRODZDOW ) <> "FP"
             zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
          ELSE
             zNETTO := 0
@@ -2551,7 +2552,6 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zTRESC := aDane[ 'OpisZd' ]
          zOPCJE := iif( AllTrim( aPoz[ 'Oznaczenie' ] ) <> "", aPoz[ 'Oznaczenie' ], aDane[ 'Oznaczenie' ] )
          zPROCEDUR := iif( AllTrim( aPoz[ 'Procedura' ] ) <> "", aPoz[ 'Procedura' ], aDane[ 'Procedura' ] )
-         zRODZDOW := iif( AllTrim( aPoz[ 'RodzDow' ] ) <> "", aPoz[ 'RodzDow' ], aDane[ 'RodzDow' ] )
          zKOL36 := 0
          zKOL37 := 0
          zKOL38 := 0
