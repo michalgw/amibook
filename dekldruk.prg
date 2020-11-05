@@ -4286,7 +4286,6 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
    aDane[ 'WariantFormularza' ] := '1'
    aDane[ 'KodFormularzaDekl' ] := 'VAT-7' + iif( aDaneZrd[ 'Kwartalnie' ], 'K', 'M' )
    aDane[ 'WariantFormularzaDekl' ] := iif( aDaneZrd[ 'Kwartalnie' ], '15', '21' )
-   aDane[ 'CelZlozenia' ] := '1'
    aDane[ 'DataWytworzeniaJPK' ] := aDaneZrd[ 'DataWytworzeniaJPK' ]
    aDane[ 'NazwaSystemu' ] :=  'AMi-BOOK'
    aDane[ 'KodUrzedu' ] := aDaneZrd[ 'KodUrzedu' ]
@@ -4303,8 +4302,8 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
 
    aDane[ 'NIP' ] := aDaneZrd[ 'NIP' ]
 
-   aDane[ 'CelZlozenia1' ] := iif( aDaneZrd[ 'Korekta' ], '1', '0' )
-   aDane[ 'CelZlozenia2' ] := iif( ! aDaneZrd[ 'Korekta' ], '1', '0' )
+   aDane[ 'CelZlozenia1' ] := iif( ! aDaneZrd[ 'Korekta' ], '1', '0' )
+   aDane[ 'CelZlozenia2' ] := iif( aDaneZrd[ 'Korekta' ], '1', '0' )
    aDane[ 'PodmiotSpolka' ] := iif( aDaneZrd[ 'Spolka' ], '1', '0' )
    aDane[ 'PodmiotOsoba' ] := iif( ! aDaneZrd[ 'Spolka' ], '1', '0' )
    IF ! aDaneZrd[ 'Spolka' ]
