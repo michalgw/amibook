@@ -1093,7 +1093,7 @@ FUNCTION jpk_v7k_1( aDane )
    IF aDane[ 'Spolka' ]
       cRes += '    <OsobaNiefizyczna>' + nl
       cRes += '      <NIP>' + trimnip( aDane[ 'NIP' ] ) + '</NIP>' + nl
-      cRes += '      <PelnaNazwa>' + str2sxml( [ 'PelnaNazwa' ] ) + '</PelnaNazwa>' + nl
+      cRes += '      <PelnaNazwa>' + str2sxml( aDane[ 'PelnaNazwa' ] ) + '</PelnaNazwa>' + nl
       cRes += '      <Email>' + str2sxml( aDane[ 'EMail' ] ) + '</Email>' + nl
       IF Len( AllTrim( aDane[ 'Tel' ] ) ) > 0
          cRes += '      <Telefon>' + str2sxml( aDane[ 'Tel' ] ) + '</Telefon>' + nl
