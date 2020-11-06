@@ -1323,6 +1323,9 @@ FUNCTION SUMNETz()
          ELSEIF zOPCJE == "7"
             zNETTO := zNETTO * 0.75
          ENDIF
+         IF zVATMARZA <> 0 .AND. zNETTO == 0 .AND. Month( zDATAS ) == Val( miesiac ) .AND. Year( zDATAS ) == Val( param_rok )
+            zNETTO := zVATMARZA
+         ENDIF
          nWartoscNetto := zNETTO
       ELSE
          IF zNETTO <> 0
@@ -1338,6 +1341,9 @@ FUNCTION SUMNETz()
                zNETTO := zNETTO * 0.5
             ELSEIF zOPCJE == "7"
                zNETTO := zNETTO * 0.75
+            ENDIF
+            IF zVATMARZA <> 0 .AND. ( zNETTO == 0 .OR. zNETTO == NETTO ) .AND. Month( zDATAS ) == Val( miesiac ) .AND. Year( zDATAS ) == Val( param_rok )
+               zNETTO := zVATMARZA
             ENDIF
          ENDIF
          nWartoscNetto := zNETTO
