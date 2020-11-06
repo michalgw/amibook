@@ -4454,6 +4454,11 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
             ELSE
                aPoz[ 'DataSprzedazy' ] := ""
             ENDIF
+            IF hb_HHasKey( aPoz, 'TypDokumentu' ) .AND. AllTrim( aPoz[ 'TypDokumentu' ] ) == "FP"
+               aPoz[ 'Sumuj' ] := 0
+            ELSE
+               aPoz[ 'Sumuj' ] := 1
+            ENDIF
             AAdd( aDane[ 'Sprzedaz' ], aPoz )
          } )
       ELSE

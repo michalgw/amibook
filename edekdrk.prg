@@ -6434,22 +6434,22 @@ FUNCTION DaneXML_JPKV7w1( oDoc, cNrRef, hNaglowek )
    hDane[ 'UrzadSkarbowy' ] := iif( cTmp != '', KodUS2Nazwa( cTmp ), '' )
    hDane[ 'NrRef' ] := iif( HB_ISSTRING( cNrRef ), cNrRef, '' )
 
-   hDane[ 'NIP' ] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
-
    hDane[ 'CelZlozenia1' ] := iif( xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '1', '1', '0' )
    hDane[ 'CelZlozenia2' ] := iif( xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '2', '1', '0' )
    hDane[ 'PodmiotSpolka' ] := iif( !xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
    hDane[ 'PodmiotOsoba' ] := iif( xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
    IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
       hDane[ 'PodmiotNazwa' ] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' ) + ', ' ;
-        + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' )
+        + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' ) + ', ' + xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+      hDane[ 'Email' ] := xmlWartoscH( hPodmiot1, 'tns:Email' )
+      hDane[ 'Telefon' ] := xmlWartoscH( hPodmiot1, 'tns:Telefon' )
+      hDane[ 'NIP' ] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
    ELSE
-      hDane[ 'PodmiotNazwa' ] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' ) + ',      ' + xmlWartoscH( hPodmiot1, 'etd:NIP' )
+      hDane[ 'PodmiotNazwa' ] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
+      hDane[ 'Email' ] := xmlWartoscH( hPodmiot1, 'Email' )
+      hDane[ 'Telefon' ] := xmlWartoscH( hPodmiot1, 'Telefon' )
+      hDane[ 'NIP' ] := xmlWartoscH( hPodmiot1, 'NIP' )
    ENDIF
-
-   hDane[ 'Email' ] := xmlWartoscH( hPodmiot1, 'tns:Email' )
-   hDane[ 'Telefon' ] := xmlWartoscH( hPodmiot1, 'tns:Telefon' )
-
 
    IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
       hDane[ 'P_8_N' ] := ''
@@ -6460,13 +6460,13 @@ FUNCTION DaneXML_JPKV7w1( oDoc, cNrRef, hNaglowek )
       hDane[ 'P_9_E' ] := xmlWartoscH( hPodmiot1, 'tns:Email' )
       hDane[ 'P_9_T' ] := xmlWartoscH( hPodmiot1, 'tns:Telefon' )
    ELSE
-      hDane[ 'P_8_N' ] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' )
-      hDane[ 'P_8_R' ] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
+      hDane[ 'P_8_N' ] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
+      hDane[ 'P_8_R' ] := xmlWartoscH( hPodmiot1, 'NIP' )
       hDane[ 'P_9_N' ] := ''
       hDane[ 'P_9_I' ] := ''
       hDane[ 'P_9_D' ] := ''
-      hDane[ 'P_9_E' ] := xmlWartoscH( hPodmiot1, 'tns:Email' )
-      hDane[ 'P_9_T' ] := xmlWartoscH( hPodmiot1, 'tns:Telefon' )
+      hDane[ 'P_9_E' ] := xmlWartoscH( hPodmiot1, 'Email' )
+      hDane[ 'P_9_T' ] := xmlWartoscH( hPodmiot1, 'Telefon' )
    ENDIF
 
    hPozycje := edekXmlGrupa( oDoc, 'PozycjeSzczegolowe' )
@@ -6657,6 +6657,7 @@ FUNCTION DaneXML_JPKV7w1( oDoc, cNrRef, hNaglowek )
          IF ! hb_HHasKey( aPoz, 'DataSprzedazy' )
             aPoz[ 'DataSprzedazy' ] := ""
          ENDIF
+         aPoz[ 'Sumuj' ] := iif( AllTrim( aPoz[ 'TypDokumentu' ] ) == "FP" , 0, 1 )
       } )
    ELSE
       hDane[ 'JestSprzedaz' ] := .F.
