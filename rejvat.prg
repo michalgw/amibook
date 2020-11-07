@@ -473,7 +473,7 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
          aRow[ 'zakup_ue' ] := iif( rejz->ue == 'T', '1', '0' )
          aRow[ 'przedmiot' ] := AllTrim( rejz->tresc )
          aRow[ 'sekcja' ] := AllTrim( rejz->sek_cv7 )
-         aRow[ 'kolumna' ] := AllTrim( rejz->kolumna )
+         aRow[ 'kolumna' ] := AllTrim( rejz->kolumna ) + iif( Val( rejz->kolumna2 ) > 0, ',' + rejz->kolumna2, '' )
          nLP++
          aRow[ 'lp' ] := nLP
          AAdd( aRes, aRow )
@@ -765,6 +765,145 @@ FUNCTION RejVAT_Zak_Filtr( cMemFile )
    bRes := &cRes
 
    RETURN bRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION RejVAT_Zak_Marza_Dane( cFirma, cMiesiac )
+
+   LOCAL aRes := {}, aRow
+   LOCAL aDane := hb_Hash()
+   //LOCAL cKoniec := 'rejz->del#"+" .OR. rejz->firma#cFirma .OR. rejz->mc#cMiesiac'
+   LOCAL bKoniec := { || rejz->del#"+" .OR. rejz->firma#cFirma .OR. rejz->mc#cMiesiac }
+   LOCAL nLP := 0
+
+   aDane[ 'pozycje' ] := {}
+   aDane[ 'rok' ] := param_rok
+   aDane[ 'miesiac' ] := Upper( miesiac( Val( cMiesiac ) ) )
+
+   SELECT 3
+   IF dostep( 'FIRMA' )
+      GO Val( cFirma )
+   ELSE
+      SELECT 1
+      RETURN aDane
+   ENDIF
+   // Przyjety  wskazn.odliczenia
+   zstrusprob := firma->strusprob
+
+   aDane[ 'strusprob' ] := firma->strusprob
+   aDane[ 'firma' ] := AllTrim( firma->nazwa ) + ' ' + firma->miejsc + ' ul.' + firma->ulica + ' '+ firma->nr_domu + iif( Empty( firma->nr_mieszk ),' ','/' ) + firma->nr_mieszk
+
+   SELECT 1
+   IF dostep( 'REJZ' )
+      SETIND( 'REJZ' )
+      SEEK '+' + cFirma + cMiesiac
+   ELSE
+      SELECT 1
+      RETURN aDane
+   ENDIF
+
+   IF rejz->( Eof() ) .OR. Eval( bKoniec )
+      RETURN aDane
+   ELSE
+      SEEK '+' + cFirma + cMiesiac
+      DO WHILE ! rejz->( Eof() ) .AND. ! Eval( bKoniec )
+         IF rejz->vatmarza <> 0
+            aRow := hb_Hash()
+            aRow[ 'korekta' ] := iif( rejz->korekta == 'T', '1', '0' )
+            aRow[ 'symbol_rej' ] := AllTrim( rejz->symb_rej )
+            aRow[ 'dzien' ] := StrTran( rejz->dzien, ' ', '0' ) + '.' + StrTran( cMiesiac, ' ', '0' )
+            aRow[ 'data_wystawienia' ] := rejz->roks + '.' + StrTran( rejz->mcs, ' ', '0' ) + '.' + StrTran( rejz->dziens, ' ', '0' )
+            aRow[ 'datatran' ] := DToC( rejz->datatran )
+            aRow[ 'rodzaj' ] := iif( rejz->rach == 'F', 'Faktura', 'Rachunek' )
+            aRow[ 'numer' ] := AllTrim( iif( Left( rejz->numer, 1 ) == Chr( 1 ) .OR. Left( rejz->numer, 1 ) == Chr( 254 ), SubStr( rejz->numer, 2 ), rejz->numer ) )
+            aRow[ 'nazwa' ] := AllTrim( rejz->nazwa )
+            aRow[ 'nr_ident' ] := AllTrim( rejz->nr_ident )
+            aRow[ 'zakup_ue' ] := iif( rejz->ue == 'T', '1', '0' )
+            aRow[ 'przedmiot' ] := AllTrim( rejz->tresc )
+            aRow[ 'sekcja' ] := AllTrim( rejz->sek_cv7 )
+            aRow[ 'kolumna' ] := AllTrim( rejz->kolumna ) + iif( Val( rejz->kolumna2 ) > 0, ',' + rejz->kolumna2, '' )
+            aRow[ 'vatmarza' ] := rejz->vatmarza
+            aRow[ 'netto_ksiega' ] := rejz->netto + rejz->netto2
+            nLP++
+            aRow[ 'lp' ] := nLP
+            AAdd( aRes, aRow )
+         ENDIF
+         rejz->( dbSkip() )
+      ENDDO
+
+      aDane[ 'pozycje' ] := aRes
+
+   ENDIF
+
+   close_()
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE RejVAT_Zak_Marza( cFirma, cMiesiac )
+
+   LOCAL aDane := RejVAT_Zak_Marza_Dane( cFirma, cMiesiac )
+
+   IF hb_HHasKey( aDane, 'pozycje' ) .AND. HB_ISARRAY( aDane[ 'pozycje' ] ) .AND. Len( aDane[ 'pozycje' ] ) > 0
+
+      @ 24, 0
+      @ 24, 26 PROMPT '[ Monitor ]'
+      @ 24, 44 PROMPT '[ Drukarka ]'
+      IF trybSerwisowy
+         @ 24, 70 PROMPT '[ Edytor ]'
+      ENDIF
+      CLEAR TYPE
+      menu TO nMonDruk
+      IF LastKey() == K_ESC
+         RETURN
+      ENDIF
+
+      oRap := TFreeReport():New()
+
+      oRap:LoadFromFile( 'frf\rejzm.frf' )
+
+      IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+         oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+      ENDIF
+
+      FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+         hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+
+      oRap:AddValue( 'uzytkownik', code() )
+      oRap:AddValue( 'miesiac', aDane[ 'miesiac' ] )
+      oRap:AddValue( 'rok', aDane[ 'rok' ] )
+      oRap:AddValue( 'firma', aDane[ 'firma' ] )
+      oRap:AddValue( 'strusprob', aDane[ 'strusprob' ] )
+
+      oRap:AddDataset('pozycje')
+      AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+
+      oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+      oRap:ModalPreview := .F.
+
+      SWITCH nMonDruk
+      CASE 1
+         oRap:ShowReport()
+         EXIT
+      CASE 2
+         oRap:PrepareReport()
+         oRap:PrintPreparedReport('', 1)
+         EXIT
+      CASE 3
+         oRap:DesignReport()
+         EXIT
+      ENDSWITCH
+
+      oRap := NIL
+
+   ELSE
+
+      kom( 3, '*w', 'b r a k   d a n y c h' )
+
+   ENDIF
+
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 

@@ -733,21 +733,22 @@ FUNCTION Ewid()
                DO WHILE .T.
                *=============================
                   ColPro()
-                  @ 10, 0 TO 22, 41
-                  @ 11, 1 SAY    '                    Sumy Kor ID StanZap '
-                  @ 12, 1 SAY    '   POD.NALICZONY (zakupy, nabycie, itp) '
+                  @  9, 0 TO 22, 41
+                  @ 10, 1 SAY    '                    Sumy Kor ID StanZap '
+                  @ 11, 1 SAY    '   POD.NALICZONY (zakupy, nabycie, itp) '
     *              @ 14,1 PROMPT [ 1 - &__S.RODKI TRWA&__L.E  ]+iif(ewid_rz1s='B','Brut','Nett')+[ ]+iif(ewid_rz1k='N','Nie',iif(ewid_rz1k='T','Tak','Raz'))+[ ]+ewid_rz1i+[ ]+iif(ewid_rz1z='D','Do_zapl',iif(ewid_rz1z='Z','Zaplaco',iif(ewid_rz1z='W','Wszystk','Niedruk')))+' '
     *              @ 15,1 PROMPT [ 2 - POZOSTA&__L.E      ]+iif(ewid_rz2s='B','Brut','Nett')+[ ]+iif(ewid_rz2k='N','Nie',iif(ewid_rz2k='T','Tak','Raz'))+[ ]+ewid_rz2i+[ ]+iif(ewid_rz2z='D','Do_zapl',iif(ewid_rz2z='Z','Zaplaco',iif(ewid_rz2z='W','Wszystk','Niedruk')))+' '
-                  @ 13, 1 PROMPT ' 1 - &__S.RODKI TRWA&__L.E  ' + iif( ewid_rz1s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rz1k == 'N', 'Nie', iif( ewid_rz1k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rz1i + ' ' + Space( 8 )
-                  @ 14, 1 PROMPT ' 2 - POZOSTA&__L.E      ' + iif( ewid_rz2s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rz2k == 'N', 'Nie', iif( ewid_rz2k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rz2i + ' ' + Space( 8 )
-                  @ 15, 1 PROMPT ' 3 - wg STAWEK VAT  ' + iif( ewid_rz3s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rz3k == 'N', 'Nie', iif( ewid_rz3k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rz3i + ' ' + iif( ewid_rz3z == 'D', 'Do_zapl', iif( ewid_rz3z == 'Z', 'Zaplaco', iif( ewid_rz3z == 'W', 'Wszystk', 'Niedruk' ) ) ) + ' '
+                  @ 12, 1 PROMPT ' 1 - &__S.RODKI TRWA&__L.E  ' + iif( ewid_rz1s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rz1k == 'N', 'Nie', iif( ewid_rz1k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rz1i + ' ' + Space( 8 )
+                  @ 13, 1 PROMPT ' 2 - POZOSTA&__L.E      ' + iif( ewid_rz2s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rz2k == 'N', 'Nie', iif( ewid_rz2k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rz2i + ' ' + Space( 8 )
+                  @ 14, 1 PROMPT ' 3 - wg STAWEK VAT  ' + iif( ewid_rz3s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rz3k == 'N', 'Nie', iif( ewid_rz3k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rz3i + ' ' + iif( ewid_rz3z == 'D', 'Do_zapl', iif( ewid_rz3z == 'Z', 'Zaplaco', iif( ewid_rz3z == 'W', 'Wszystk', 'Niedruk' ) ) ) + ' '
+                  @ 15, 1 PROMPT ' 4 - Zakupy do sprzeda¾y w proc. mar¾y  '
                   @ 16, 1 SAY    '   POD.NALE&__Z.NY (sprzeda&_z., dostawa, itp) '
-                  @ 17, 1 PROMPT ' 4 - SPRZEDAZ       ' + iif( ewid_rs1s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rs1k == 'N', 'Nie', iif( ewid_rs1k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rs1i + ' ' + iif( ewid_rs1z == 'D', 'Do_zapl', iif( ewid_rs1z == 'Z', 'Zaplaco', iif( ewid_rs1z == 'W', 'Wszystk', 'Niedruk' ) ) ) + ' '
-                  @ 18, 1 PROMPT ' 5 - KOREKTY SPRZ.  ' + iif( ewid_rs2s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rs2k == 'N', 'Nie', iif( ewid_rs2k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rs2i + ' ' + Space( 8 )
-                  @ 19, 1 PROMPT ' 6 - NABYCIA UE,IMP ' + iif( ewid_rs3s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rs3k == 'N', 'Nie', iif( ewid_rs3k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rs3i + ' ' + Space( 8 )
+                  @ 17, 1 PROMPT ' 5 - SPRZEDAZ       ' + iif( ewid_rs1s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rs1k == 'N', 'Nie', iif( ewid_rs1k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rs1i + ' ' + iif( ewid_rs1z == 'D', 'Do_zapl', iif( ewid_rs1z == 'Z', 'Zaplaco', iif( ewid_rs1z == 'W', 'Wszystk', 'Niedruk' ) ) ) + ' '
+                  @ 18, 1 PROMPT ' 6 - KOREKTY SPRZ.  ' + iif( ewid_rs2s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rs2k == 'N', 'Nie', iif( ewid_rs2k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rs2i + ' ' + Space( 8 )
+                  @ 19, 1 PROMPT ' 7 - NABYCIA UE,IMP ' + iif( ewid_rs3s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rs3k == 'N', 'Nie', iif( ewid_rs3k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rs3i + ' ' + Space( 8 )
     *              @ 21,1 PROMPT [ 7 - KOREKTY UE,itp ]+iif(ewid_rs4s='B','Brut','Nett')+[ ]+iif(ewid_rs4k='N','Nie',iif(ewid_rs4k='T','Tak','Raz'))+[ ]+ewid_rs4i+[ ]+space(8)
                   @ 20, 1 SAY    '   JPK                                  '
-                  @ 21, 1 PROMPT ' 7 - Jednolity Plik Kontrolny VAT       '
+                  @ 21, 1 PROMPT ' 8 - Jednolity Plik Kontrolny VAT       '
                   opcja1 := menu( opcja1 )
                   ColStd()
                   IF LastKey() == K_ESC
@@ -818,6 +819,9 @@ FUNCTION Ewid()
                         ENDIF
 
                      CASE opcja1 == 4
+                        RejVAT_Zak_Marza( ident_fir, miesiac )
+
+                     CASE opcja1 == 5
                         SET CURSOR ON
                         ColStd()
                         @ 17, 21 GET ewid_rs1s PICTURE '!' WHEN wrs1s() VALID vRS1S()
@@ -836,7 +840,7 @@ FUNCTION Ewid()
                            RESTORE FROM ewid ADDITIVE
                         ENDIF
 
-                     CASE opcja1 == 5
+                     CASE opcja1 == 6
                         SET CURSOR ON
                         ColStd()
                         @ 18, 21 GET ewid_rs2s PICTURE '!' WHEN wrs2s() VALID vRS2S()
@@ -853,7 +857,7 @@ FUNCTION Ewid()
                            RESTORE FROM ewid ADDITIVE
                         ENDIF
 
-                     CASE opcja1 == 6
+                     CASE opcja1 == 7
                         SET CURSOR ON
                         ColStd()
                         @ 19, 21 GET ewid_rs3s PICTURE '!' WHEN wrs3s() VALID vRS3S()
@@ -871,7 +875,7 @@ FUNCTION Ewid()
                            RESTORE FROM ewid ADDITIVE
                         ENDIF
 
-                     CASE opcja1 == 7
+                     CASE opcja1 == 8
                         JPK_VAT_Rob()
                   ENDCASE
                   close_()
