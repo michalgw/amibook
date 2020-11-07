@@ -2766,6 +2766,7 @@ PROCEDURE JPKImp_VatS_Kontrah( aDane )
    LOCAL aNipy := {}
    LOCAL cEkran
    LOCAL cKolor := ColInf()
+   LOCAL aRekord
 
    SAVE SCREEN TO cEkran
    @ 18, 10 CLEAR TO 20, 69
@@ -2790,14 +2791,37 @@ PROCEDURE JPKImp_VatS_Kontrah( aDane )
    } )
 
    IF Len( aNipy ) > 0 .AND. KontrahZnajdzA( aNipy, @aDaneRegon ) > 0
+
+      nI := 1
+      DO WHILE nI < Len( aDaneRegon )
+         nJ := nI + 1
+         DO WHILE nJ <= Len( aDaneRegon )
+            IF iif( HB_ISHASH( aDaneRegon[ nI ] ), aDaneRegon[ nI ][ 'nip' ], aDaneRegon[ nI ][ 1 ][ 'nip' ] ) == aDaneRegon[ nJ ][ 'nip' ]
+               IF HB_ISHASH( aDaneRegon[ nI ] )
+                  aDaneRegon[ nI ] := { aDaneRegon[ nI ] }
+               ENDIF
+               AAdd( aDaneRegon[ nI ], aDaneRegon[ nJ ] )
+               hb_ADel( aDaneRegon, nJ, .T. )
+            ELSE
+               nJ++
+            ENDIF
+         ENDDO
+         nI++
+      ENDDO
+
       FOR nI := 1 TO Len( aDaneRegon )
          FOR nJ := 1 TO Len( aDane[ 'Dekret' ] )
-            IF NormalizujNipPL( aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] ) == aDaneRegon[ nI ][ 'nip' ]
-               aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] := aDaneRegon[ nI ][ 'nip' ]
-               aDane[ 'Dekret' ][ nJ ][ 'znazwa' ] := aDaneRegon[ nI ][ 'nazwa' ]
-               aDane[ 'Dekret' ][ nJ ][ 'zadres' ] := aDaneRegon[ nI ][ 'adres' ]
-               aDane[ 'Dekret' ][ nJ ][ 'zkraj' ] := aDaneRegon[ nI ][ 'kraj' ]
-               aDane[ 'Dekret' ][ nJ ][ 'zexport' ] := aDaneRegon[ nI ][ 'export' ]
+            IF NormalizujNipPL( aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] ) == iif( HB_ISHASH( aDaneRegon[ nI ] ), aDaneRegon[ nI ][ 'nip' ], aDaneRegon[ nI ][ 1 ][ 'nip' ] )
+               IF HB_ISARRAY( aDaneRegon[ nI ] )
+                  aRekord := KontrahentWybierzRegonNip( aDaneRegon[ nI ], hb_Hash( 'nr', aDane[ 'Dekret' ][ nJ ][ 'znumer' ], 'data', DToS( aDane[ 'Dekret' ][ nJ ][ 'zdatas' ] ) ) )
+               ELSE
+                  aRekord := aDaneRegon[ nI ]
+               ENDIF
+               aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] := aRekord[ 'nip' ]
+               aDane[ 'Dekret' ][ nJ ][ 'znazwa' ] := aRekord[ 'nazwa' ]
+               aDane[ 'Dekret' ][ nJ ][ 'zadres' ] := aRekord[ 'adres' ]
+               aDane[ 'Dekret' ][ nJ ][ 'zkraj' ] := aRekord[ 'kraj' ]
+               aDane[ 'Dekret' ][ nJ ][ 'zexport' ] := aRekord[ 'export' ]
             ENDIF
          NEXT
       NEXT
@@ -2817,6 +2841,7 @@ PROCEDURE JPKImp_VatZ_Kontrah( aDane )
    LOCAL aDaneRegon
    LOCAL cEkran
    LOCAL cKolor := ColInf()
+   LOCAL aRekord
 
    SAVE SCREEN TO cEkran
    @ 18, 10 CLEAR TO 20, 69
@@ -2834,14 +2859,37 @@ PROCEDURE JPKImp_VatZ_Kontrah( aDane )
    } )
 
    IF Len( aNipy ) > 0 .AND. KontrahZnajdzA( aNipy, @aDaneRegon ) > 0
+
+      nI := 1
+      DO WHILE nI < Len( aDaneRegon )
+         nJ := nI + 1
+         DO WHILE nJ <= Len( aDaneRegon )
+            IF iif( HB_ISHASH( aDaneRegon[ nI ] ), aDaneRegon[ nI ][ 'nip' ], aDaneRegon[ nI ][ 1 ][ 'nip' ] ) == aDaneRegon[ nJ ][ 'nip' ]
+               IF HB_ISHASH( aDaneRegon[ nI ] )
+                  aDaneRegon[ nI ] := { aDaneRegon[ nI ] }
+               ENDIF
+               AAdd( aDaneRegon[ nI ], aDaneRegon[ nJ ] )
+               hb_ADel( aDaneRegon, nJ, .T. )
+            ELSE
+               nJ++
+            ENDIF
+         ENDDO
+         nI++
+      ENDDO
+
       FOR nI := 1 TO Len( aDaneRegon )
          FOR nJ := 1 TO Len( aDane[ 'Dekret' ] )
-            IF NormalizujNipPL( aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] ) == aDaneRegon[ nI ][ 'nip' ]
-               aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] := aDaneRegon[ nI ][ 'nip' ]
-               aDane[ 'Dekret' ][ nJ ][ 'znazwa' ] := aDaneRegon[ nI ][ 'nazwa' ]
-               aDane[ 'Dekret' ][ nJ ][ 'zadres' ] := aDaneRegon[ nI ][ 'adres' ]
-               aDane[ 'Dekret' ][ nJ ][ 'zkraj' ] := aDaneRegon[ nI ][ 'kraj' ]
-               aDane[ 'Dekret' ][ nJ ][ 'zexport' ] := aDaneRegon[ nI ][ 'export' ]
+            IF NormalizujNipPL( aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] ) == iif( HB_ISHASH( aDaneRegon[ nI ] ), aDaneRegon[ nI ][ 'nip' ], aDaneRegon[ nI ][ 1 ][ 'nip' ] )
+               IF HB_ISARRAY( aDaneRegon[ nI ] )
+                  aRekord := KontrahentWybierzRegonNip( aDaneRegon[ nI ], hb_Hash( 'nr', aDane[ 'Dekret' ][ nJ ][ 'znumer' ], 'data', DToS( aDane[ 'Dekret' ][ nJ ][ 'zdatas' ] ) ) )
+               ELSE
+                  aRekord := aDaneRegon[ nI ]
+               ENDIF
+               aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] := aRekord[ 'nip' ]
+               aDane[ 'Dekret' ][ nJ ][ 'znazwa' ] := aRekord[ 'nazwa' ]
+               aDane[ 'Dekret' ][ nJ ][ 'zadres' ] := aRekord[ 'adres' ]
+               aDane[ 'Dekret' ][ nJ ][ 'zkraj' ] := aRekord[ 'kraj' ]
+               aDane[ 'Dekret' ][ nJ ][ 'zexport' ] := aRekord[ 'export' ]
             ENDIF
          NEXT
       NEXT

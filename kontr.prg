@@ -577,11 +577,54 @@ FUNCTION KontrahGenerujAdres( aDane )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION KontrahentWybierzRegonNip( aLista, aDaneDok )
+
+   LOCAL cEkran
+   LOCAL nIndeks := 0
+   LOCAL cKolor
+   LOCAL aChLista := {}
+
+   IF HB_ISHASH( aDaneDok )
+      AEval( aLista, { | aPoz |
+         AAdd( aChLista, iif( AllTrim( aPoz[ 'nip' ] ) == "", "", AllTrim( aPoz[ 'nip' ] ) + " " ) ;
+            + iif( AllTrim( aPoz[ 'nazwa' ] ) == "", "", AllTrim( aPoz[ 'nazwa' ] ) + " " ) ;
+            + aPoz[ 'adres' ] )
+      } )
+   ELSE
+      AEval( aLista, { | aPoz |
+         AAdd( aChLista, iif( AllTrim( aPoz[ 'nip' ] ) == "", "", AllTrim( aPoz[ 'nip' ] ) + " " ) ;
+            + iif( AllTrim( aPoz[ 'name' ] ) == "", "", AllTrim( aPoz[ 'name' ] ) + " " ) ;
+            + KontrahGenerujAdres( aPoz ) )
+      } )
+   ENDIF
+
+   SAVE SCREEN TO cEkran
+   cKolor := ColDlg()
+
+   @ 8,  0 CLEAR TO 8 + 2 + Len( aLista ) - 1 + iif( HB_ISHASH( aDaneDok ), 2, 0 ), 79
+   @ 8,  0 TO 8 + 2 + Len( aLista ) - 1 , 79
+   @ 8, 15 SAY "Wyszukiwanie w bazie REGON - Wybierz podmiot"
+   IF HB_ISHASH( aDaneDok )
+      @ 10 + Len( aLista ), 4 SAY "Nr dokumentu: " + aDaneDok[ 'nr' ]
+      @ 11 + Len( aLista ), 4 SAY "Data wystawienia: " + aDaneDok[ 'data' ]
+   ENDIF
+
+   DO WHILE nIndeks == 0
+      nIndeks := AChoice( 9, 1, 9 + Len( aLista ) - 1, 78, aChLista )
+   ENDDO
+
+   RESTORE SCREEN FROM cEkran
+   SetColor( cKolor )
+
+   RETURN aLista[ iif( nIndeks == 0, 1, nIndeks ) ]
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION KontrahZnajdz( cNip, aPola, ncWrkplcNo )
 
    LOCAL lRes := .F.
    LOCAL lFound := .F.
-   LOCAL aDane
+   LOCAL aDane, aRekord
    LOCAL nAktWorkspace := Select()
 
    hb_default( @ncWrkplcNo, 'kontr' )
@@ -607,9 +650,16 @@ FUNCTION KontrahZnajdz( cNip, aPola, ncWrkplcNo )
       IF ! lRes .AND. olparam_ra
          aDane := KontrahZnajdzRegonNip( cNip )
          IF Len( aDane ) > 0
-            IF hb_HHasKey( aDane[ 1 ], 'name' )
-               aPola[ 'nazwa' ] := aDane[ 1 ][ 'name' ]
-               aPola[ 'adres' ] := KontrahGenerujAdres( aDane[ 1 ] )
+
+            IF Len( aDane ) > 1
+               aRekord := KontrahentWybierzRegonNip( aDane )
+            ELSE
+               aRekord := aDane[ 1 ]
+            ENDIF
+
+            IF hb_HHasKey( aRekord, 'name' )
+               aPola[ 'nazwa' ] := aRekord[ 'name' ]
+               aPola[ 'adres' ] := KontrahGenerujAdres( aRekord )
                aPola[ 'export' ] := 'N'
                aPola[ 'ue' ] := 'N'
                aPola[ 'kraj' ] := 'PL'
