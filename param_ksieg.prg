@@ -204,18 +204,18 @@ PROCEDURE menuKonfigKsiegaPokaz()
    set colo to w+
    @  3, 76 SAY param_ks5v
    @  9, 76 SAY param_ks5d
-   @ 17, 74 SAY param_ksnd
+   @ 14, 74 SAY param_ksnd
    @ 20, 72 SAY iif(param_kskw == 'T', 'Tak', 'Nie')
    @ 22, 72 SAY iif(param_ksv7 == 'T', 'Tak', 'Nie')
    SWITCH param_kslp
    CASE '1'
-      @ 16, 62 SAY '1 - Nr dok./Dzieä'
+      @ 14, 62 SAY '1 - Nr dok./Dzieä'
       EXIT
    CASE '2'
-      @ 16, 62 SAY '2 - Dzieä        '
+      @ 14, 62 SAY '2 - Dzieä        '
       EXIT
    CASE '3'
-      @ 16, 62 SAY '3 - Lp/Dzieä     '
+      @ 14, 62 SAY '3 - Lp/Dzieä     '
       EXIT
    ENDSWITCH
    RETURN
