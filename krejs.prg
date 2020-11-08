@@ -1682,14 +1682,26 @@ FUNCTION SUMNETs( lRyczModSys )
       zNETTOOrg := 0
       zNETTO := 0
    ELSE
-      zNETTOOrg := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+      IF zVATMARZA > 0
+         zNETTOOrg := _round( zVATMarza - ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ), 2 )
+      ELSE
+         zNETTOOrg := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+      ENDIF
       IF ins
          IF zNETTO == 0
-            zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+            IF zVATMarza > 0
+               zNETTO := _round( zVATMarza - ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ), 2 )
+            ELSE
+               zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+            ENDIF
          ENDIF
       ELSE
          IF zNETTO <> 0 .OR. lRyczModSys
-            zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+            IF zVATMarza > 0
+               zNETTO := _round( zVATMarza - ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ), 2 )
+            ELSE
+               zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+            ENDIF
          ENDIF
       ENDIF
    ENDIF
@@ -1719,6 +1731,9 @@ FUNCTION KRejSWZNetto2()
 
    IF lRes .AND. zNETTOOrg <> 0 .AND. zNETTO <> zNETTOOrg
       zNETTO2 := zNETTOOrg - zNETTO
+      IF zNETTO2 < 0
+         zNETTO2 := 0
+      ENDIF
    ENDIF
 
    RETURN lRes

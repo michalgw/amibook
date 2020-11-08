@@ -2531,8 +2531,13 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zBRUT22 := zWart22 + zVat22
          zBRUT12 := zWart12 + zVat12
          zRODZDOW := iif( AllTrim( aPoz[ 'RodzDow' ] ) <> "", aPoz[ 'RodzDow' ], aDane[ 'RodzDow' ] )
+         zVATMARZA := HGetDefault( aPoz, 'VATMarza', 0 )
          IF AllTrim( zRODZDOW ) <> "FP"
-            zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+            IF zVATMARZA > 0
+               zNETTO := _round( zVATMARZA - ( zVat02 + zVat07 + zVat22 + zVat12 ), 2 )
+            ELSE
+               zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+            ENDIF
          ELSE
             zNETTO := 0
          ENDIF
@@ -2558,7 +2563,6 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zKOL39 := 0
          zNETTO2 := 0
          zKOLUMNA2 := '  '
-         zVATMARZA := HGetDefault( aPoz, 'VATMarza', 0 )
 
          IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'REJS', ident_fir, miesiac, znumer, @aIstniejacyRec )
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
