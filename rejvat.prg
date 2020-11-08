@@ -907,7 +907,7 @@ PROCEDURE RejVAT_Zak_Marza( cFirma, cMiesiac )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi, ewid_rsz )
+FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi, ewid_rsz, aFiltr )
 
    LOCAL bKoniec := { || rejs->del#'+' .OR. rejs->firma#cFirma .OR. rejs->mc#cMiesiac }
    LOCAL cOpisRej := ''
@@ -1019,7 +1019,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       aRow[ 'dnetto_d' ] := rejs->wart12
       aRow[ 'dvat_d' ] := rejs->vat12
 
-      IF AllTrim( rejs->rodzdow ) == "FP"
+      IF AllTrim( rejs->rodzdow ) == "FP" .AND. ! aFiltr[ 'sumujFP' ]
          aRow[ 'netto_a' ] := 0
          aRow[ 'vat_a' ] := 0
          aRow[ 'netto_b' ] := 0
@@ -1054,7 +1054,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
          ENDIF
       ENDIF
 
-      IF AllTrim( rejs->rodzdow ) == "FP"
+      IF AllTrim( rejs->rodzdow ) == "FP" .AND. ! aFiltr[ 'sumujFP' ]
          aRow[ 'netto_zr_kraj' ] := 0
          aRow[ 'netto_zr_eksp' ] := 0
          aRow[ 'netto_zr_wdt' ] := 0
@@ -1068,7 +1068,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       aRow[ 'dnetto_zw' ] := rejs->wartzw
       aRow[ 'dnetto_np' ] := rejs->wart08
 
-      IF AllTrim( rejs->rodzdow ) == "FP"
+      IF AllTrim( rejs->rodzdow ) == "FP" .AND. ! aFiltr[ 'sumujFP' ]
          aRow[ 'netto_zw' ] := rejs->wartzw
          aRow[ 'netto_np' ] := rejs->wart08
       ELSE
@@ -1132,7 +1132,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
 
       aRow[ 'dwartosc_vat' ] := aRow[ 'dvat_a' ] + aRow[ 'dvat_b' ] + aRow[ 'dvat_c' ] + aRow[ 'dvat_d' ]
 
-      IF AllTrim( rejs->rodzdow ) == "FP"
+      IF AllTrim( rejs->rodzdow ) == "FP" .AND. ! aFiltr[ 'sumujFP' ]
          aRow[ 'wartosc_netto' ] := 0
          aRow[ 'wartosc_vat' ] := 0
       ELSE
@@ -1148,6 +1148,8 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
 
       aRow[ 'netto_op' ] := aRow[ 'netto_a' ] + aRow[ 'netto_b' ] + aRow[ 'netto_c' ] ;
          + aRow[ 'netto_d' ] + rejs->wart00
+
+      aRow[ 'vatmarza' ] := rejs->vatmarza
 
       nFS := 0
       nZS := 0
@@ -1181,7 +1183,10 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
 
       IF iif( ewid_rsk <> 'R', rejs->korekta == ewid_rsk, .T. ) ;
          .AND. iif( ewid_rsi <> '**', rejs->symb_rej == ewid_rsi, .T. ) ;
-         .AND. ( ewid_rsz$'NW' .OR. ( ewid_rsz == 'D' .AND. ( nFS + nZS ) <> 0.0 ) .OR. ( ewid_rsz == 'Z' .AND. ( nFS + nZS ) == 0 ) )
+         .AND. ( ewid_rsz$'NW' .OR. ( ewid_rsz == 'D' .AND. ( nFS + nZS ) <> 0.0 ) .OR. ( ewid_rsz == 'Z' .AND. ( nFS + nZS ) == 0 ) ) ;
+         .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
+         .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], hb_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
+         .AND. ( aFiltr[ 'procedura' ] == "" .OR. ( AllTrim( rejs->procedur ) == aFiltr[ 'procedura' ] ) )
 
          aRow[ 'lp' ] := nLp
          AAdd( aDane[ 'pozycje' ], aRow )
@@ -1201,11 +1206,17 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
 
 FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi, ewid_rzz )
 
-   LOCAL aDane
+   LOCAL aDane, aFiltr
 
    SAVE TO ewid ALL LIKE ewid_*
    ColStd()
    @ 24, 0
+
+   aFiltr := RejVAT_Sp_Filtr()
+
+   IF ! HB_ISHASH( aFiltr )
+      RETURN
+   ENDIF
 
    IF ( nDruk := MenuEx( 14, 2, { "T - Druk tekstowy", "P - Druk graficzny A4 (poziomo)" } ) ) > 0
       SWITCH nDruk
@@ -1223,7 +1234,7 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
          EXIT
       CASE 2
 
-         aDane := RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi, ewid_rzz )
+         aDane := RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi, ewid_rzz, aFiltr )
 
          IF Len( aDane[ 'pozycje' ] ) > 0
 
@@ -1264,6 +1275,17 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
             oRap:AddValue( 'jaki_rej', aDane[ 'jaki_rej' ] )
             oRap:AddValue( 'opis_rej', aDane[ 'opis_rej' ] )
             oRap:AddValue( 'kol_netto_brutto', ewid_rss )
+            oRap:AddValue( 'rodzdowodu', iif( aFiltr[ 'rodzaj' ] == "*", 'wszystkie', iif( aFiltr[ 'rodzaj' ] == "", "bez rodzaju", aFiltr[ 'rodzaj' ] ) ) )
+            PRIVATE cRes := ""
+            AEval( aFiltr[ 'opcje' ], { | cItem |
+               IF cRes <> ""
+                  cRes := cRes + ','
+               ENDIF
+               cRes := cRes + cItem
+            } )
+            oRap:AddValue( 'oznaczenia', iif( Len( aFiltr[ 'opcje' ] ) == 0, "wszystkie", cRes ) )
+            oRap:AddValue( 'procedura', iif( aFiltr[ 'procedura' ] == "", "wszystkie", aFiltr[ 'procedura' ] ) )
+            oRap:AddValue( 'sumuj', iif( aFiltr[ 'sumujFP' ], 'TAK', 'NIE' ) )
 
             oRap:AddDataset('pozycje')
             AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
@@ -1297,6 +1319,61 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
    ENDIF
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION RejVAT_Sp_Filtr()
+
+   LOCAL aDane
+   LOCAL cEkran
+   LOCAL cKolor
+   LOCAL cRodzDow := '*' + Space( 5 )
+   LOCAL aGTU := {}
+   LOCAL cSumujFP := "N"
+
+   LOCAL bRodzDowV := { | cWartosc |
+      LOCAL lRes := AScan( { "RO", "WEW", "FP", "*", "" }, AllTrim( cWartosc ) ) > 0
+      IF lRes
+         @ 24, 0
+      ENDIF
+      RETURN lRes
+   }
+   LOCAL bRodzDowW := { ||
+      LOCAL cKolor := ColInf()
+      @ 24, 0 SAY '* - wszystk, RO - Dok.z kas rej., WEW - Dok.wewn, FP - fa.do parag, puste - inne'
+      SetColor( cKolor )
+      RETURN .T.
+   }
+
+   PRIVATE zOpcje := Space( 32 )
+   PRIVATE zProcedur := Space( 32 )
+
+   SAVE SCREEN TO cEkran
+   cKolor := ColStd()
+
+   @  3, 42 CLEAR TO 22, 79
+   @ 10, 42 TO 15, 79
+   @  9, 54 SAY "-- Parametry --"
+   @ 11, 43 SAY "     Rodzaj dowodu" GET cRodzDow PICTURE '!!!' WHEN Eval( bRodzDowW ) VALID Eval( bRodzDowV, cRodzDow )
+   @ 12, 43 SAY "        Oznaczenie" GET zOpcje PICTURE '!!!!!!!!!!!!!!!!' WHEN KRejSWhOpcje()
+   @ 13, 43 SAY "         Procedura" GET zProcedur PICTURE '!!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur()
+   @ 14, 43 SAY "Sumuj dokumenty FP" GET cSumujFP PICTURE '!' VALID cSumujFP $ 'NT'
+   READ
+
+   RESTORE SCREEN FROM cEkran
+   SetColor( cKolor )
+
+   IF LastKey() == K_ESC
+      RETURN NIL
+   ENDIF
+
+   aDane := hb_Hash()
+   aDane[ 'rodzaj' ] := AllTrim( cRodzDow )
+   aDane[ 'opcje' ] := iif( AllTrim( zOpcje ) <> "", hb_ATokens( AllTrim( zOpcje, ',' ) ), {} )
+   aDane[ 'procedura' ] := AllTrim( zProcedur )
+   aDane[ 'sumujFP' ] := cSumujFP == 'T'
+
+   RETURN aDane
 
 /*----------------------------------------------------------------------*/
 

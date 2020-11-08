@@ -937,3 +937,16 @@ FUNCTION NormalizujNipPL( cNip )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION AMerge( aArr1, aArr2 )
+
+   LOCAL aRes := {}, nI
+
+   FOR nI := 1 TO Len( aArr1 )
+      IF AScan( aArr2, aArr1[ nI ] ) > 0
+         AAdd( aRes, aArr1[ nI ] )
+      ENDIF
+   NEXT
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
