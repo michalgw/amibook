@@ -2192,9 +2192,13 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
             aPozDek[ 'zue' ] := 'T'
          ENDIF
 
-         IF HGetDefault( aPoz, 'K_31', 0 ) <> 0 .OR. aPoz[ 'MPP' ]
+         IF HGetDefault( aPoz, 'K_31', 0 ) <> 0
             aPozDek[ 'zsek_cv7' ] := 'PN'
             //aPozDek[ 'zwart08' ] := aPoz[ 'K_31' ]
+         ENDIF
+
+         IF aPoz[ 'MPP' ]
+            aPozDek[ 'zsek_cv7' ] := 'SP'
          ENDIF
 
          aPozDek[ 'SprzedazPoz' ] := aPoz
@@ -2299,7 +2303,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
          ENDCASE
 
          IF aPoz[ 'MPP' ]
-            aPozDek[ 'zsek_cv7' ] := 'PN'
+            aPozDek[ 'zsek_cv7' ] := 'SP'
          ENDIF
 
          nRodzajVat := VATObliczStawkaRodzaj( nWNetto, nWVat )
