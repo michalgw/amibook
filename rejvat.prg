@@ -995,7 +995,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       cOpisDod := iif( AllTrim( rejs->rodzdow ) == "", '', 'RD:' + AllTrim( rejs->rodzdow ) + ";" ) + ;
          iif( AllTrim( rejs->opcje ) == "", "", "GTU:" + AllTrim( rejs->opcje ) + ";" ) + ;
          iif( AllTrim( rejs->procedur ) == "", "", "Pr:" + AllTrim( rejs->procedur ) + ";" ) + ;
-         iif( rejs->sek_cv7 == 'PN' .OR. rejs->sek_cv7 =='PU', "MPP", "" )
+         iif( rejs->sek_cv7 == 'PN' .OR. rejs->sek_cv7 =='PU' .OR. rejs->sek_cv7 == "SP", "MPP", "" )
 
       aRow[ 'kolumna' ] := iif( rejs->kolumna == ' 0', '  ', rejs->kolumna )
       aRow[ 'rodzaj' ] := iif( rejs->rach == 'R', 'Rachunek', 'Faktura' )
@@ -1092,7 +1092,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       aRow[ 'pn_netto_zw' ] := 0
       aRow[ 'pn_netto_np' ] := 0
 
-      IF rejs->sek_cv7 == 'PN' .OR. rejs->sek_cv7 =='PU'
+      IF rejs->sek_cv7 == 'PN' .OR. rejs->sek_cv7 =='PU' .OR. rejs->sek_cv7 =='SP'
 
          aRow[ 'pn_netto_a' ] := rejs->wart22
          aRow[ 'pn_vat_a' ] := rejs->vat22
@@ -1186,7 +1186,8 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
          .AND. ( ewid_rsz$'NW' .OR. ( ewid_rsz == 'D' .AND. ( nFS + nZS ) <> 0.0 ) .OR. ( ewid_rsz == 'Z' .AND. ( nFS + nZS ) == 0 ) ) ;
          .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
          .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], hb_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
-         .AND. ( aFiltr[ 'procedura' ] == "" .OR. ( AllTrim( rejs->procedur ) == aFiltr[ 'procedura' ] ) )
+         .AND. ( aFiltr[ 'procedura' ] == "" .OR. aFiltr[ 'procedura' ] == "MPP" .OR. ( AllTrim( rejs->procedur ) == aFiltr[ 'procedura' ] ) ) ;
+         .AND. ( aFiltr[ 'procedura' ] <> "MPP" .OR. rejs->sek_cv7 == "SP" )
 
          aRow[ 'lp' ] := nLp
          AAdd( aDane[ 'pozycje' ], aRow )
@@ -1224,10 +1225,10 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
 
          SWITCH nRaport
          CASE 1
-            rejs( ewid_rs1s, ewid_rs1k, ewid_rs1i, ewid_rs1z )
+            rejs( ewid_rs1s, ewid_rs1k, ewid_rs1i, ewid_rs1z, aFiltr )
             EXIT
          CASE 2
-            rejsKNEW( ewid_rs2s, ewid_rs2k, ewid_rs2i )
+            rejsKNEW( ewid_rs2s, ewid_rs2k, ewid_rs2i, aFiltr )
             EXIT
          ENDSWITCH
 
@@ -1356,7 +1357,7 @@ FUNCTION RejVAT_Sp_Filtr()
    @  9, 54 SAY "-- Parametry --"
    @ 11, 43 SAY "     Rodzaj dowodu" GET cRodzDow PICTURE '!!!' WHEN Eval( bRodzDowW ) VALID Eval( bRodzDowV, cRodzDow )
    @ 12, 43 SAY "        Oznaczenie" GET zOpcje PICTURE '!!!!!!!!!!!!!!!!' WHEN KRejSWhOpcje()
-   @ 13, 43 SAY "         Procedura" GET zProcedur PICTURE '!!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur()
+   @ 13, 43 SAY "         Procedura" GET zProcedur PICTURE '!!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur( .T. )
    @ 14, 43 SAY "Sumuj dokumenty FP" GET cSumujFP PICTURE '!' VALID cSumujFP $ 'NT'
    READ
 

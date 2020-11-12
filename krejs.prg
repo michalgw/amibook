@@ -2014,7 +2014,7 @@ FUNCTION KRejSWhOpcje()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION KRejSWhOpcjeAChFunc( nMode, nCurElement, nRowPos )
+FUNCTION KRejSWhOpcjeAChFunc( nMode, nCurElement, nRowPos, lMPP )
 
    LOCAL nRetVal := AC_CONT
    LOCAL nKey := LastKey()
@@ -2097,7 +2097,7 @@ FUNCTION KRejSVaOpcje()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION KRejSWhProcedur()
+FUNCTION KRejSWhProcedur( lMPP )
 
    LOCAL lRes := .T.
    LOCAL nElement
@@ -2119,6 +2119,15 @@ FUNCTION KRejSWhProcedur()
    LOCAL aKody := { "SW", "EE", "TP", "TT_WNT", "TT_D", "MR_T", "MR_UZ", ;
       "I_42", "I_63", "B_SPV", "B_SPV_DOSTAWA", "B_MPV_PROWIZJA" }
 
+   hb_default( @lMPP, .F. )
+
+   PRIVATE plMPP := lMPP
+
+   IF lMPP
+      AAdd( aOpcje, "MPP - Mechanizm podzielonej pˆatno˜ci                      " )
+      AAdd( aKody, "MPP" )
+   ENDIF
+
    IF param_ksv7 <> 'T'
       RETURN .F.
    ENDIF
@@ -2129,10 +2138,10 @@ FUNCTION KRejSWhProcedur()
       nElement := AScan( aKody, AllTrim( zPROCEDUR ) ) + 1
    ENDIF
 
-   hb_DispBox( 4, 9, 18, 70, B_DOUBLE )
+   hb_DispBox( 4, 9, 18 + iif( lMPP, 1, 0 ), 70, B_DOUBLE )
    hb_DispOutAt( 4, 11, "Oznaczenia dotycz¥ce procedur" )
    KRejSWhProcedurAChFunc( AC_IDLE, nElement )
-   nElement := AChoice( 5, 10, 17, 69, aOpcje, , "KRejSWhProcedurAChFunc", nElement )
+   nElement := AChoice( 5, 10, 17 + iif( lMPP, 1, 0 ), 69, aOpcje, , "KRejSWhProcedurAChFunc", nElement )
 
    IF nElement > 0
       IF nElement == 1
@@ -2181,6 +2190,11 @@ FUNCTION KRejSWhProcedurAChFunc( nMode, nCurElement, nRowPos )
         "4 ustawy                                                                        " }, ;
       { "—wiadczenie usˆug po˜rednictwa oraz innych usˆug dotycz¥cych transferu bonu     " , ;
         "r¢¾nego przeznaczenia, opodatkowane zgodnie z art. 8b ust. 2 ustawy             " } }
+   aMPP = { "Mechanizm podzielonej pˆatno˜ci                                                 " }
+
+   IF plMPP
+      AAdd( aOpisy, aMPP )
+   ENDIF
 
    hb_Scroll( 22, 0, 24, 79, , , CColInf )
 

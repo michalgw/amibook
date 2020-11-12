@@ -20,7 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-FUNCTION rejsknew( ewid_rss, ewid_rsk, ewid_rsi )
+FUNCTION rejsknew( ewid_rss, ewid_rsk, ewid_rsi, aFiltr )
 
    LOCAL aNumerWiersze
 
@@ -180,7 +180,12 @@ begin sequence
       _grupa=.t.
       _numer=1
       do while .not.&_koniec
-         if (_grupa.or._grupa1#int(strona/max(1,_druk_2-12))).and.iif(ewid_rsk<>'R',rejs->korekta=ewid_rsk,.t.).and.iif(ewid_rsi<>'**',rejs->SYMB_REJ=ewid_rsi,.t.).and.iif(ewid_rsd<>'*',rejs->rach=ewid_rsd,.t.)
+         if (_grupa.or._grupa1#int(strona/max(1,_druk_2-12))).and.iif(ewid_rsk<>'R',rejs->korekta=ewid_rsk,.t.).and.iif(ewid_rsi<>'**',rejs->SYMB_REJ=ewid_rsi,.t.).and.iif(ewid_rsd<>'*',rejs->rach=ewid_rsd,.t.) ;
+            .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
+            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], hb_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( aFiltr[ 'procedura' ] == "" .OR. aFiltr[ 'procedura' ] == "MPP" .OR. ( AllTrim( rejs->procedur ) == aFiltr[ 'procedura' ] ) ) ;
+            .AND. ( aFiltr[ 'procedura' ] <> "MPP" .OR. rejs->sek_cv7 == "SP" )
+
             _grupa1=int(strona/max(1,_druk_2-12))
             _grupa=.t.
             *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
@@ -237,12 +242,17 @@ mon_drk([읕컴컴좔컴컴좔컴컴컴컴컨컴컴컴컴좔컴컴좔컴컴컴컴컨컴컴컴컴컴컴컴컴컴컴�
          k88=WART22+WART12+WART07+WART02+WART00+WARTZW+VAT22+VAT12+VAT07+VAT02
          skip
          *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-         if iif(ewid_rsk<>'R',zkorekta=ewid_rsk,.t.).and.iif(ewid_rsi<>'**',zSYMB_REJ=ewid_rsi,.t.).and.iif(ewid_rsd<>'*',zrach=ewid_rsd,.t.)
+         if iif(ewid_rsk<>'R',zkorekta=ewid_rsk,.t.).and.iif(ewid_rsi<>'**',zSYMB_REJ=ewid_rsi,.t.).and.iif(ewid_rsd<>'*',zrach=ewid_rsd,.t.) ;
+            .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
+            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], hb_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( aFiltr[ 'procedura' ] == "" .OR. aFiltr[ 'procedura' ] == "MPP" .OR. ( AllTrim( rejs->procedur ) == aFiltr[ 'procedura' ] ) ) ;
+            .AND. ( aFiltr[ 'procedura' ] <> "MPP" .OR. rejs->sek_cv7 == "SP" )
+
             strona=strona+1
             liczba=liczba+1
             k1=dos_c(str(liczba,5))
             k7=k1
-            if left(znumer,1)#chr(1).and.left(znumer,1)#chr(254)
+            if left(znumer,1)#chr(1).and.left(znumer,1)#chr(254) .AND. ( AllTrim( rejs->rodzdow ) <> "FP" .OR. aFiltr[ 'sumujFP' ] )
                if ewid_rss='B'
                   s0_8=s0_8+k88
                else
