@@ -767,23 +767,23 @@ FUNCTION jpk_v7m_1( aDane )
       cRes += '      <P_53>' + TKwotaC( aDane[ 'DekV7' ][ 'P_53' ] ) + '</P_53>' + nl
       IF aDane[ 'DekV7' ][ 'P_54' ] <> 0
          cRes += '      <P_54>' + TKwotaC( aDane[ 'DekV7' ][ 'P_54' ] ) + '</P_54>' + nl
-         IF aDane[ 'DekV7' ][ 'P_55' ]
-            cRes += '      <P_55>1</P_55>' + nl
-         ENDIF
-         IF aDane[ 'DekV7' ][ 'P_56' ]
-            cRes += '      <P_56>1</P_56>' + nl
-         ENDIF
-         IF aDane[ 'DekV7' ][ 'P_57' ]
-            cRes += '      <P_57>1</P_57>' + nl
-         ENDIF
-         IF aDane[ 'DekV7' ][ 'P_58' ]
-            cRes += '      <P_58>1</P_58>' + nl
-         ENDIF
-         IF aDane[ 'DekV7' ][ 'P_59' ]
-            cRes += '      <P_59>1</P_59>' + nl
-            cRes += '      <P_60>' + TKwotaC( aDane[ 'DekV7' ][ 'P_60' ] ) + '</P_60>' + nl
-            cRes += '      <P_61>' + str2sxml( aDane[ 'DekV7' ][ 'P_61' ] ) + '</P_61>' + nl
-         ENDIF
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_55' ]
+         cRes += '      <P_55>1</P_55>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_56' ]
+         cRes += '      <P_56>1</P_56>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_57' ]
+         cRes += '      <P_57>1</P_57>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_58' ]
+         cRes += '      <P_58>1</P_58>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_59' ]
+         cRes += '      <P_59>1</P_59>' + nl
+         cRes += '      <P_60>' + TKwotaC( aDane[ 'DekV7' ][ 'P_60' ] ) + '</P_60>' + nl
+         cRes += '      <P_61>' + str2sxml( aDane[ 'DekV7' ][ 'P_61' ] ) + '</P_61>' + nl
       ENDIF
       IF aDane[ 'DekV7' ][ 'P_62' ] > 0
          cRes += '      <P_62>' + TKwotaC( aDane[ 'DekV7' ][ 'P_62' ] ) + '</P_62>' + nl
@@ -1166,23 +1166,23 @@ FUNCTION jpk_v7k_1( aDane )
       cRes += '      <P_53>' + TKwotaC( aDane[ 'DekV7' ][ 'P_53' ] ) + '</P_53>' + nl
       IF aDane[ 'DekV7' ][ 'P_54' ] <> 0
          cRes += '      <P_54>' + TKwotaC( aDane[ 'DekV7' ][ 'P_54' ] ) + '</P_54>' + nl
-         IF aDane[ 'DekV7' ][ 'P_55' ]
-            cRes += '      <P_55>1</P_55>' + nl
-         ENDIF
-         IF aDane[ 'DekV7' ][ 'P_56' ]
-            cRes += '      <P_56>1</P_56>' + nl
-         ENDIF
-         IF aDane[ 'DekV7' ][ 'P_57' ]
-            cRes += '      <P_57>1</P_57>' + nl
-         ENDIF
-         IF aDane[ 'DekV7' ][ 'P_58' ]
-            cRes += '      <P_58>1</P_58>' + nl
-         ENDIF
-         IF aDane[ 'DekV7' ][ 'P_59' ]
-            cRes += '      <P_59>1</P_59>' + nl
-            cRes += '      <P_60>' + TKwotaC( aDane[ 'DekV7' ][ 'P_60' ] ) + '</P_60>' + nl
-            cRes += '      <P_61>' + str2sxml( aDane[ 'DekV7' ][ 'P_61' ] ) + '</P_61>' + nl
-         ENDIF
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_55' ]
+         cRes += '      <P_55>1</P_55>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_56' ]
+         cRes += '      <P_56>1</P_56>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_57' ]
+         cRes += '      <P_57>1</P_57>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_58' ]
+         cRes += '      <P_58>1</P_58>' + nl
+      ENDIF
+      IF aDane[ 'DekV7' ][ 'P_59' ]
+         cRes += '      <P_59>1</P_59>' + nl
+         cRes += '      <P_60>' + TKwotaC( aDane[ 'DekV7' ][ 'P_60' ] ) + '</P_60>' + nl
+         cRes += '      <P_61>' + str2sxml( aDane[ 'DekV7' ][ 'P_61' ] ) + '</P_61>' + nl
       ENDIF
       IF aDane[ 'DekV7' ][ 'P_62' ] > 0
          cRes += '      <P_62>' + TKwotaC( aDane[ 'DekV7' ][ 'P_62' ] ) + '</P_62>' + nl
