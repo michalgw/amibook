@@ -760,9 +760,9 @@ FUNCTION Ewid()
                      CASE opcja1 == 1
                         SET CURSOR ON
                         ColStd()
-                        @ 13, 21 GET ewid_rz1s PICTURE '!' WHEN wrz1s() VALID vRz1S()
-                        @ 13, 26 GET ewid_rz1k PICTURE '!' WHEN wrz1k() VALID vRz1K()
-                        @ 13, 30 GET ewid_rz1i PICTURE '!!' WHEN wrzi( 'rz1', 13, 30 )
+                        @ 12, 21 GET ewid_rz1s PICTURE '!' WHEN wrz1s() VALID vRz1S()
+                        @ 12, 26 GET ewid_rz1k PICTURE '!' WHEN wrz1k() VALID vRz1K()
+                        @ 12, 30 GET ewid_rz1i PICTURE '!!' WHEN wrzi( 'rz1', 12, 30 )
                         ewid_rz1z := 'N'
    *                    @ 14,33 get ewid_rz1z pict '!' when wrz1z() valid vRz1z()
                         READ
@@ -782,9 +782,9 @@ FUNCTION Ewid()
                      CASE opcja1 == 2
                         SET CURSOR ON
                         ColStd()
-                        @ 14, 21 GET ewid_rz2s PICTURE '!' WHEN wrz2s() VALID vRz2S()
-                        @ 14, 26 GET ewid_rz2k PICTURE '!' WHEN wrz2k() VALID vRz2K()
-                        @ 14, 30 GET ewid_rz2i PICTURE '!!' WHEN wrzi( 'rz2', 14, 30 )
+                        @ 13, 21 GET ewid_rz2s PICTURE '!' WHEN wrz2s() VALID vRz2S()
+                        @ 13, 26 GET ewid_rz2k PICTURE '!' WHEN wrz2k() VALID vRz2K()
+                        @ 13, 30 GET ewid_rz2i PICTURE '!!' WHEN wrzi( 'rz2', 13, 30 )
                         ewid_rz2z := 'N'
     *                   @ 15,33 get ewid_rz2z pict '!' when wrz2z() valid vRz2z()
                         READ
@@ -802,10 +802,10 @@ FUNCTION Ewid()
                      CASE opcja1 == 3
                         SET CURSOR ON
                         ColStd()
-                        @ 15, 21 GET ewid_rz3s PICTURE '!' WHEN wrz3s() VALID vRz3S()
-                        @ 15, 26 GET ewid_rz3k PICTURE '!' WHEN wrz3k() VALID vRz3K()
-                        @ 15, 30 GET ewid_rz3i PICTURE '!!' WHEN wrzi( 'rz3', 15, 30 )
-                        @ 15, 33 GET ewid_rz3z PICTURE '!' WHEN wrz3z() VALID vRz3z()
+                        @ 14, 21 GET ewid_rz3s PICTURE '!' WHEN wrz3s() VALID vRz3S()
+                        @ 14, 26 GET ewid_rz3k PICTURE '!' WHEN wrz3k() VALID vRz3K()
+                        @ 14, 30 GET ewid_rz3i PICTURE '!!' WHEN wrzi( 'rz3', 14, 30 )
+                        @ 14, 33 GET ewid_rz3z PICTURE '!' WHEN wrz3z() VALID vRz3z()
                         READ
                         SET CURSOR OFF
                         IF LastKey() <> K_ESC
@@ -986,7 +986,7 @@ FUNCTION wRz1S()
    ColInf()
    @ 24,  0 SAY PadC( 'Wpisz: B - rejestr z kolumn&_a. "SUMA BRUTTO" , N - rejestr z kolumn&_a. "SUMA NETTO"', 80, ' ' )
    ColStd()
-   @ 13, 22 SAY iif( ewid_rz1s == 'B', 'rut', 'ett' )
+   @ 12, 22 SAY iif( ewid_rz1s == 'B', 'rut', 'ett' )
    RETURN .T.
 
 *************************************
@@ -995,7 +995,7 @@ FUNCTION wRz1K()
    ColInf()
    @ 24,  0 SAY PadC( 'Wpisz: T - tylko KOREKTY , N - bez KOREKT , R - ZAKUPY z KOREKTAMI', 80, ' ' )
    ColStd()
-   @ 13, 27 SAY iif( ewid_rz1k == 'N', 'ie', iif( ewid_rz1k == 'T', 'ak', 'az' ) )
+   @ 12, 27 SAY iif( ewid_rz1k == 'N', 'ie', iif( ewid_rz1k == 'T', 'ak', 'az' ) )
    RETURN .T.
 
 *************************************
@@ -1013,7 +1013,7 @@ FUNCTION wRz2z()
    ColInf()
    @ 24,  0 SAY PadC( 'Wpisz: D-do zaplaty , Z-zaplacone , W-wszystkie, N-nie drukowac stanu zaplat', 80, ' ' )
    ColStd()
-   @ 14, 34 SAY iif( ewid_rz2z == 'D', 'o_zapl', iif( ewid_rz2z == 'Z', 'aplaco', iif( ewid_rz2z == 'W', 'szystk', 'iedruk' ) ) )
+   @ 13, 34 SAY iif( ewid_rz2z == 'D', 'o_zapl', iif( ewid_rz2z == 'Z', 'aplaco', iif( ewid_rz2z == 'W', 'szystk', 'iedruk' ) ) )
    RETURN .T.
 
 *************************************
@@ -1022,7 +1022,7 @@ FUNCTION wRz3z()
    ColInf()
    @ 24,  0 SAY PadC( 'Wpisz: D-do zaplaty , Z-zaplacone , W-wszystkie, N-nie drukowac stanu zaplat', 80, ' ' )
    ColStd()
-   @ 15, 34 SAY iif( ewid_rz3z == 'D', 'o_zapl', iif( ewid_rz3z == 'Z', 'aplaco', iif( ewid_rz3z == 'W', 'szystk', 'iedruk' ) ) )
+   @ 14, 34 SAY iif( ewid_rz3z == 'D', 'o_zapl', iif( ewid_rz3z == 'Z', 'aplaco', iif( ewid_rz3z == 'W', 'szystk', 'iedruk' ) ) )
    RETURN .T.
 
 *************************************
@@ -1049,7 +1049,7 @@ FUNCTION vRz1S()
    R := .F.
    IF ewid_rz1s $ 'BN'
       ColStd()
-      @ 13, 22 SAY iif( ewid_rz1s == 'B', 'rut', 'ett' )
+      @ 12, 22 SAY iif( ewid_rz1s == 'B', 'rut', 'ett' )
       R := .T.
    ENDIF
    RETURN R
@@ -1060,7 +1060,7 @@ FUNCTION vRz1K()
    R := .F.
    IF ewid_rz1k $ 'TNR'
       ColStd()
-      @ 13, 27 SAY iif( ewid_rz1k == 'N', 'ie', iif( ewid_rz1k == 'T', 'ak', 'az' ) )
+      @ 12, 27 SAY iif( ewid_rz1k == 'N', 'ie', iif( ewid_rz1k == 'T', 'ak', 'az' ) )
       R := .T.
    ENDIF
    RETURN R
@@ -1093,7 +1093,7 @@ FUNCTION vRz3z()
    R := .F.
    IF ewid_rz3z $ 'DZWN'
       ColStd()
-      @ 15, 34 SAY iif( ewid_rz3z == 'D', 'o_zapl', iif( ewid_rz3z == 'Z', 'aplaco', iif( ewid_rz3z == 'W', 'szystk', 'iedruk' ) ) )
+      @ 14, 34 SAY iif( ewid_rz3z == 'D', 'o_zapl', iif( ewid_rz3z == 'Z', 'aplaco', iif( ewid_rz3z == 'W', 'szystk', 'iedruk' ) ) )
       R := .T.
    ENDIF
    RETURN R
@@ -1126,7 +1126,7 @@ FUNCTION wRz2S()
    ColInf()
    @ 24,  0 SAY PadC( 'Wpisz: B - rejestr z kolumn&_a. "SUMA BRUTTO" , N - rejestr z kolumn&_a. "SUMA NETTO"', 80, ' ' )
    ColStd()
-   @ 14, 22 SAY iif( ewid_rz2s == 'B', 'rut', 'ett' )
+   @ 13, 22 SAY iif( ewid_rz2s == 'B', 'rut', 'ett' )
    RETURN .T.
 
 *************************************
@@ -1135,7 +1135,7 @@ FUNCTION wRz2K()
    ColInf()
    @ 24,  0 SAY PadC( 'Wpisz: T - tylko KOREKTY , N - bez KOREKT , R - ZAKUPY z KOREKTAMI', 80, ' ' )
    ColStd()
-   @ 14, 27 SAY iif( ewid_rz2k == 'N', 'ie', iif( ewid_rz2k == 'T', 'ak', 'az' ) )
+   @ 13, 27 SAY iif( ewid_rz2k == 'N', 'ie', iif( ewid_rz2k == 'T', 'ak', 'az' ) )
    RETURN .T.
 
 *************************************
@@ -1144,7 +1144,7 @@ FUNCTION vRz2S()
    R := .F.
    IF ewid_rz2s $ 'BN'
       ColStd()
-      @ 14, 22 SAY iif( ewid_rz2s == 'B', 'rut', 'ett' )
+      @ 13, 22 SAY iif( ewid_rz2s == 'B', 'rut', 'ett' )
       R := .T.
    ENDIF
    RETURN R
@@ -1155,7 +1155,7 @@ FUNCTION vRz2K()
    R := .F.
    IF ewid_rz2k $ 'TNR'
       ColStd()
-      @ 14, 27 SAY iif( ewid_rz2k == 'N', 'ie', iif( ewid_rz2k == 'T', 'ak', 'az' ) )
+      @ 13, 27 SAY iif( ewid_rz2k == 'N', 'ie', iif( ewid_rz2k == 'T', 'ak', 'az' ) )
       R := .T.
    ENDIF
    RETURN R
@@ -1166,7 +1166,7 @@ FUNCTION wRz3S()
    ColInf()
    @ 24,  0 SAY PadC( 'Wpisz: B - rejestr z kolumn&_a. "SUMA BRUTTO" , N - rejestr z kolumn&_a. "SUMA NETTO"', 80, ' ' )
    ColStd()
-   @ 15, 22 SAY iif( ewid_rz3s == 'B', 'rut', 'ett' )
+   @ 14, 22 SAY iif( ewid_rz3s == 'B', 'rut', 'ett' )
    RETURN .T.
 
 *************************************
@@ -1175,7 +1175,7 @@ FUNCTION wRz3K()
    ColInf()
    @ 24,  0 SAY PadC( 'Wpisz: T - tylko KOREKTY , N - bez KOREKT , R - ZAKUPY z KOREKTAMI', 80, ' ' )
    ColStd()
-   @ 15, 27 SAY iif( ewid_rz3k == 'N', 'ie', iif( ewid_rz3k == 'T', 'ak', 'az' ) )
+   @ 14, 27 SAY iif( ewid_rz3k == 'N', 'ie', iif( ewid_rz3k == 'T', 'ak', 'az' ) )
    RETURN .T.
 
 *************************************
@@ -1184,7 +1184,7 @@ FUNCTION vRz3S()
    R := .F.
    if ewid_rz3s $ 'BN'
       ColStd()
-      @ 15, 22 SAY iif( ewid_rz3s == 'B', 'rut', 'ett' )
+      @ 14, 22 SAY iif( ewid_rz3s == 'B', 'rut', 'ett' )
       R := .T.
    ENDIF
    RETURN R
@@ -1195,7 +1195,7 @@ FUNCTION vRz3K()
    R := .F.
    if ewid_rz3k $ 'TNR'
       ColStd()
-      @ 15, 27 SAY iif( ewid_rz3k == 'N', 'ie', iif( ewid_rz3k == 'T', 'ak', 'az' ) )
+      @ 14, 27 SAY iif( ewid_rz3k == 'N', 'ie', iif( ewid_rz3k == 'T', 'ak', 'az' ) )
       R := .T.
    ENDIF
    RETURN R
