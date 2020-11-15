@@ -170,6 +170,24 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
       aRow[ 'pojazdy' ] := iif( rejz->sp22 $ cRodzaj .AND. rejz->wart22 <> 0.00 .AND. rejz->pojazdy <> 0.00, rejz->pojazdy, 0 )
       aRow[ 'paliwa' ] := iif( rejz->sp22 $ cRodzaj .AND. rejz->wart22 <> 0.00 .AND. rejz->paliwa <> 0.00, rejz->paliwa, 0 )
 
+      aRow[ 'rodzdow' ] := AllTrim( rejz->rodzdow )
+      aRow[ 'mpp' ] := rejz->sek_cv7 == 'SP'
+      aRow[ 'imp' ] := rejz->sek_cv7 == 'IT' .OR. rejz->sek_cv7 == 'IZ' .OR. rejz->sek_cv7 == 'IS' .OR. rejz->sek_cv7 == 'IU' .OR. rejz->sek_cv7 == 'UZ' .OR. rejz->sek_cv7 == 'US'
+
+      aRow[ 'oznaczenia' ] := aRow[ 'rodzdow' ]
+      IF aRow[ 'mpp' ]
+         IF aRow[ 'oznaczenia' ] <> ""
+            aRow[ 'oznaczenia' ] := aRow[ 'oznaczenia' ] + ";"
+         ENDIF
+         aRow[ 'oznaczenia' ] := aRow[ 'oznaczenia' ] + "MPP"
+      ENDIF
+      IF aRow[ 'imp' ]
+         IF aRow[ 'oznaczenia' ] <> ""
+            aRow[ 'oznaczenia' ] := aRow[ 'oznaczenia' ] + ";"
+         ENDIF
+         aRow[ 'oznaczenia' ] := aRow[ 'oznaczenia' ] + "IMP"
+      ENDIF
+
       DO CASE
       CASE rejz->rach == 'R'
 
@@ -824,6 +842,22 @@ FUNCTION RejVAT_Zak_Marza_Dane( cFirma, cMiesiac )
             aRow[ 'kolumna' ] := AllTrim( rejz->kolumna ) + iif( Val( rejz->kolumna2 ) > 0, ',' + rejz->kolumna2, '' )
             aRow[ 'vatmarza' ] := rejz->vatmarza
             aRow[ 'netto_ksiega' ] := rejz->netto + rejz->netto2
+            aRow[ 'rodzdow' ] := AllTrim( rejz->rodzdow )
+            aRow[ 'mpp' ] := rejz->sek_cv7 == 'SP'
+            aRow[ 'imp' ] := rejz->sek_cv7 == 'IT' .OR. rejz->sek_cv7 == 'IZ' .OR. rejz->sek_cv7 == 'IS' .OR. rejz->sek_cv7 == 'IU' .OR. rejz->sek_cv7 == 'UZ' .OR. rejz->sek_cv7 == 'US'
+            aRow[ 'oznaczenia' ] := aRow[ 'rodzdow' ]
+            IF aRow[ 'mpp' ]
+               IF aRow[ 'oznaczenia' ] <> ""
+                  aRow[ 'oznaczenia' ] := aRow[ 'oznaczenia' ] + ";"
+               ENDIF
+               aRow[ 'oznaczenia' ] := aRow[ 'oznaczenia' ] + "MPP"
+            ENDIF
+            IF aRow[ 'imp' ]
+               IF aRow[ 'oznaczenia' ] <> ""
+                  aRow[ 'oznaczenia' ] := aRow[ 'oznaczenia' ] + ";"
+               ENDIF
+               aRow[ 'oznaczenia' ] := aRow[ 'oznaczenia' ] + "IMP"
+            ENDIF
             nLP++
             aRow[ 'lp' ] := nLP
             AAdd( aRes, aRow )
