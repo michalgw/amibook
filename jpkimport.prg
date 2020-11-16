@@ -724,7 +724,17 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                      aW[ 'Aktywny' ] := .F.
                      aW[ 'Importuj' ] := .F.
                      aW[ 'DataWystawienia' ] := sxml2date( aW[ 'DataWystawienia' ] )
-                     aW[ 'NazwaKontrahenta' ] := sxmlTrim( aW[ 'NazwaKontrahenta' ] )
+                     IF ! hb_HHasKey( aW, 'NazwaKontrahenta' )
+                        aW[ 'NazwaKontrahenta' ] := "BRAK"
+                     ELSE
+                        aW[ 'NazwaKontrahenta' ] := sxmlTrim( aW[ 'NazwaKontrahenta' ] )
+                     ENDIF
+                     IF ! hb_HHasKey( aW, 'KodKrajuNadaniaTIN' )
+                        aW[ 'KodKrajuNadaniaTIN' ] := "PL"
+                     ENDIF
+                     IF ! hb_HHasKey( aW, 'NrKontrahenta' )
+                        aW[ 'NrKontrahenta' ] := "BRAK"
+                     ENDIF
                      //aW[ 'AdresKontrahenta' ] := sxmlTrim( aW[ 'AdresKontrahenta' ] )
                      IF ! hb_HHasKey( aW, 'DataSprzedazy' ) .OR. AllTrim( aW[ 'DataSprzedazy' ] ) == ""
                         aW[ 'DataSprzedazy' ] := aW[ 'DataWystawienia' ]
@@ -974,8 +984,18 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                         aW[ 'Aktywny' ] := .F.
                         aW[ 'Importuj' ] := .F.
                         aW[ 'DataZakupu' ] := sxml2date( aW[ 'DataZakupu' ] )
-                        aW[ 'NazwaDostawcy' ] := sxmlTrim( aW[ 'NazwaDostawcy' ] )
+                        IF ! hb_HHasKey( aW, 'NazwaDostawcy' )
+                           aW[ 'NazwaDostawcy' ] := "BRAK"
+                        ELSE
+                           aW[ 'NazwaDostawcy' ] := sxmlTrim( aW[ 'NazwaDostawcy' ] )
+                        ENDIF
                         //aW[ 'AdresDostawcy' ] := sxmlTrim( aW[ 'AdresDostawcy' ] )
+                        IF ! hb_HHasKey( aW, 'KodKrajuNadaniaTIN' )
+                           aW[ 'KodKrajuNadaniaTIN' ] := "PL"
+                        ENDIF
+                        IF ! hb_HHasKey( aW, 'NrDostawcy' )
+                           aW[ 'NrDostawcy' ] := "BRAK"
+                        ENDIF
                         IF ! hb_HHasKey( aW, 'DataWplywu' ) .OR. AllTrim( aW[ 'DataWplywu' ] ) == ""
                            aW[ 'DataWplywu' ] := aW[ 'DataZakupu' ]
                         ELSE
