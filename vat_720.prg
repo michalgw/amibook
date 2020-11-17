@@ -1828,7 +1828,7 @@ FUNCTION JPK_V7_DaneDek( aDane )
    hDane['P_50'] := Int( pp13 )
    hDane['P_51'] := Int( P98b )
    hDane['P_52'] := Int( P99a )
-   hDane['P_53'] := Int( P99 )
+   hDane['P_53'] := _round( P99, 0 )
    hDane['P_54'] := Int( P99c )
    hDane['P_55'] := cJPKRodzZwrot == '1'
    hDane['P_56'] := cJPKRodzZwrot == '2'
