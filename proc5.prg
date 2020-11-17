@@ -950,3 +950,14 @@ FUNCTION AMerge( aArr1, aArr2 )
    RETURN aRes
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION KrajUE( cKraj )
+
+   LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
+       "ES", "FI", "FR", "GB", "HR", "HU", "IE", "IT", "LV", "LT", "LU", ;
+       "MT", "NL", "PT", "RO", "SE", "SI", "SK" }
+
+   RETURN AScan( aKrajeUE, cKraj ) > 0
+
+/*----------------------------------------------------------------------*/
+
