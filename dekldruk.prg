@@ -4473,6 +4473,7 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
             aPoz[ 'LpZakupu' ] := nI
             nI++
             aPoz[ 'DataZakupu' ] := date2strxml( aPoz[ 'DataZakupu' ] )
+            aPoz[ 'DokumentZakupu' ] := HGetDefault( aPoz, 'DokumentZakupu', '' )
             aPoz[ 'MPP' ] := iif( aPoz[ 'MPP' ], '1', '0' )
             aPoz[ 'IMP' ] := iif( aPoz[ 'IMP' ], '1', '0' )
             aPoz[ 'K_40' ] := HGetDefault( aPoz, 'K_43', 0 )
