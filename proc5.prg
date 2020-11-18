@@ -961,3 +961,35 @@ FUNCTION KrajUE( cKraj )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION gm_ATokens( cDane, cSeparator )
+
+   LOCAL aRes := hb_ATokens( cDane, cSeparator )
+   LOCAL nI
+
+   FOR nI := Len( aRes ) TO 1 STEP -1
+      aRes[ nI ] := AllTrim( aRes[ nI ] )
+      IF Len( aRes[ nI ] ) == 0
+         hb_ADel( aRes, nI, .T. )
+      ENDIF
+   NEXT
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION gm_AStrTok( aTab )
+
+   LOCAL cRes := ""
+
+   AEval( aTab, { | cElem |
+      IF Len( AllTrim( cElem ) ) > 0
+         IF cRes <> ""
+            cRes := cRes + ','
+         ENDIF
+         cRes := cRes + AllTrim( cElem )
+      ENDIF
+   } )
+
+   RETURN cRes
+
+/*----------------------------------------------------------------------*/

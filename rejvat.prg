@@ -1219,9 +1219,9 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
          .AND. iif( ewid_rsi <> '**', rejs->symb_rej == ewid_rsi, .T. ) ;
          .AND. ( ewid_rsz$'NW' .OR. ( ewid_rsz == 'D' .AND. ( nFS + nZS ) <> 0.0 ) .OR. ( ewid_rsz == 'Z' .AND. ( nFS + nZS ) == 0 ) ) ;
          .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
-         .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], hb_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
-         .AND. ( aFiltr[ 'procedura' ] == "" .OR. aFiltr[ 'procedura' ] == "MPP" .OR. ( AllTrim( rejs->procedur ) == aFiltr[ 'procedura' ] ) ) ;
-         .AND. ( aFiltr[ 'procedura' ] <> "MPP" .OR. rejs->sek_cv7 == "SP" )
+         .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], gm_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
+         .AND. ( Len( aFiltr[ 'procedura' ] ) == 0 .OR. AScan( aFiltr[ 'procedura' ], "MPP" ) > 0 .OR. ( AllTrim( rejs->procedur ) <> "" .AND. Len( AMerge( aFiltr[ 'procedura' ], gm_ATokens( AllTrim( rejs->procedur ), ',' ) ) ) > 0 ) ) ;
+         .AND. ( AScan( aFiltr[ 'procedura' ], "MPP" ) == 0 .OR. rejs->sek_cv7 == "SP" )
 
          aRow[ 'lp' ] := nLp
          AAdd( aDane[ 'pozycje' ], aRow )
@@ -1319,7 +1319,7 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
                cRes := cRes + cItem
             } )
             oRap:AddValue( 'oznaczenia', iif( Len( aFiltr[ 'opcje' ] ) == 0, "wszystkie", cRes ) )
-            oRap:AddValue( 'procedura', iif( aFiltr[ 'procedura' ] == "", "wszystkie", aFiltr[ 'procedura' ] ) )
+            oRap:AddValue( 'procedura', iif( Len( aFiltr[ 'procedura' ] ) == 0, "wszystkie", gm_AStrTok( aFiltr[ 'procedura' ] ) ) )
             oRap:AddValue( 'sumuj', iif( aFiltr[ 'sumujFP' ], 'TAK', 'NIE' ) )
 
             oRap:AddDataset('pozycje')
@@ -1365,6 +1365,7 @@ FUNCTION RejVAT_Sp_Filtr()
    LOCAL cRodzDow := '*' + Space( 5 )
    LOCAL aGTU := {}
    LOCAL cSumujFP := "N"
+   LOCAL nI
 
    LOCAL bRodzDowV := { | cWartosc |
       LOCAL lRes := AScan( { "RO", "WEW", "FP", "*", "" }, AllTrim( cWartosc ) ) > 0
@@ -1404,9 +1405,13 @@ FUNCTION RejVAT_Sp_Filtr()
 
    aDane := hb_Hash()
    aDane[ 'rodzaj' ] := AllTrim( cRodzDow )
-   aDane[ 'opcje' ] := iif( AllTrim( zOpcje ) <> "", hb_ATokens( AllTrim( zOpcje, ',' ) ), {} )
-   aDane[ 'procedura' ] := AllTrim( zProcedur )
+   aDane[ 'opcje' ] := iif( AllTrim( zOpcje ) <> "", hb_ATokens( AllTrim( zOpcje ), ',' ), {} )
+   aDane[ 'procedura' ] := iif( AllTrim( zProcedur ) <> "", hb_ATokens( AllTrim( zProcedur ), ',' ), {} )
    aDane[ 'sumujFP' ] := cSumujFP == 'T'
+
+   FOR nI := 1 TO Len( aDane[ 'procedura' ] )
+      aDane[ 'procedura' ][ nI ] := AllTrim( aDane[ 'procedura' ][ nI ] )
+   NEXT
 
    RETURN aDane
 

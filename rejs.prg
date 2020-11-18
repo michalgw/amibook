@@ -199,9 +199,9 @@ begin sequence
       do while .not.&_koniec
          if (_grupa.or._grupa1#int(strona/max(1,_druk_2-11))).and.iif(ewid_rsk<>'R',rejs->korekta=ewid_rsk,.t.).and.iif(ewid_rsi<>'**',rejs->SYMB_REJ=ewid_rsi,.t.).and.zapzap=1 ;
             .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
-            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], hb_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
-            .AND. ( aFiltr[ 'procedura' ] == "" .OR. aFiltr[ 'procedura' ] == "MPP" .OR. ( AllTrim( rejs->procedur ) == aFiltr[ 'procedura' ] ) ) ;
-            .AND. ( aFiltr[ 'procedura' ] <> "MPP" .OR. rejs->sek_cv7 == "SP" )
+            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], gm_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( Len( aFiltr[ 'procedura' ] ) == 0 .OR. AScan( aFiltr[ 'procedura' ], "MPP" ) > 0 .OR. ( AllTrim( rejs->procedur ) <> "" .AND. Len( AMerge( aFiltr[ 'procedura' ], gm_ATokens( AllTrim( rejs->procedur ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( AScan( aFiltr[ 'procedura' ], "MPP" ) == 0 .OR. rejs->sek_cv7 == "SP" )
 
             _grupa1=int(strona/max(1,_druk_2-11))
             _grupa=.t.
@@ -374,9 +374,9 @@ mon_drk([읕컴컴좔컴컴좔컴컴컴컴컨컴컴컴컨컴컨컴컴컴컴컴좔컴컴컴컴컴컴컴컴컴컴컴�
          *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          if iif(ewid_rsk<>'R',zkorekta=ewid_rsk,.t.).and.iif(ewid_rsi<>'**',zSYMB_REJ=ewid_rsi,.t.).and.(ewid_rzz$'NW'.or.(ewid_rzz='D'.and.(FS+ZS)<>0.0).or.(ewid_rzz='Z'.and.(FS+ZS)=0.0)) ;
             .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
-            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], hb_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
-            .AND. ( aFiltr[ 'procedura' ] == "" .OR. aFiltr[ 'procedura' ] == "MPP" .OR. ( AllTrim( rejs->procedur ) == aFiltr[ 'procedura' ] ) ) ;
-            .AND. ( aFiltr[ 'procedura' ] <> "MPP" .OR. rejs->sek_cv7 == "SP" )
+            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], gm_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( Len( aFiltr[ 'procedura' ] ) == 0 .OR. AScan( aFiltr[ 'procedura' ], "MPP" ) > 0 .OR. ( AllTrim( rejs->procedur ) <> "" .AND. Len( AMerge( aFiltr[ 'procedura' ], gm_ATokens( AllTrim( rejs->procedur ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( AScan( aFiltr[ 'procedura' ], "MPP" ) == 0 .OR. rejs->sek_cv7 == "SP" )
 
             strona=strona+1
             liczba=liczba+1

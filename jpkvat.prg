@@ -284,11 +284,15 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
 
       aPoz[ 'GTU' ] := AllTrim( rejs->opcje )
 
-      IF Len( AllTrim( rejs->procedur ) ) > 0
-         aPoz[ AllTrim( rejs->procedur ) ] := .T.
-      ENDIF
 
       aPoz[ 'Procedura' ] := AllTrim( rejs->procedur )
+      IF Len( AllTrim( rejs->procedur ) ) > 0
+         AEval( hb_ATokens( rejs->procedur, ',' ), { | cElem |
+            IF Len( AllTrim( cElem ) ) > 0
+               aPoz[ AllTrim( cElem ) ] := .T.
+            ENDIF
+         } )
+      ENDIF
 
       IF  ( rejs->sek_cv7 == 'PN' ) .OR. ( rejs->sek_cv7 == 'PU' ) .OR. ( rejs->sek_cv7 == 'SP' )
          aPoz[ 'MPP' ] := .T.

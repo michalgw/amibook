@@ -2097,25 +2097,60 @@ FUNCTION KRejSVaOpcje()
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION KRejSWhProcedurParsuj( cTekst, aKody )
+
+   LOCAL aRes := AFill( Array( Len( aKody ) ), .F. )
+   LOCAL aTok := hb_ATokens( cTekst, "," )
+
+   AEval( aTok, { | cTok |
+      LOCAL nI
+      IF AllTrim( cTok ) <> ""
+         nI := AScan( aKody, cTok )
+         IF nI > 0
+            aRes[ nI ] := .T.
+         ENDIF
+      ENDIF
+   } )
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE KRejSWhProcedurAkt( aOpcjeStr, aOpcjeSel, lMPP )
+
+   LOCAL nI
+
+   hb_default( @lMPP, .F. )
+
+   FOR nI := 1 TO iif( lMPP, 13, 12 )
+      aOpcjeStr[ nI + 1 ] := SubStr( aOpcjeStr[ nI + 1 ], 1, 4 ) + iif( aOpcjeSel[ nI ], 'X', ' ' ) + SubStr( aOpcjeStr[ nI + 1 ], 6 )
+   NEXT
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION KRejSWhProcedur( lMPP )
 
    LOCAL lRes := .T.
-   LOCAL nElement
+   LOCAL nElement, nI
    LOCAL cEkran := SaveScreen( 0, 0, MaxRow(), MaxCol() )
+   LOCAL lDzialaj := .T.
+   LOCAL aOpcjeSel
    LOCAL aOpcje := { ;
-      " (brak)                                                    ", ;
-      "SW - Dostawa w ramach sprz. wysyˆkowej z terytorium kraju..", ;
-      "EE - —wiadczenie usˆug telekom., nadawczych i elektroniczny", ;
-      "TP - Istniej¥ce powi¥zania mi©dzy nabywc¥ a dokonuj¥cym dos", ;
-      "TT_WNT - Wewn¥trzwsp¢lnotowe nabycie towar¢w dok.przez drug", ;
-      "TT_D - Dostawa towar¢w poza terytorium kraju dokonana przez", ;
-      "MR_T - —wiadczenie usˆug turystyki opodatkowane na zas.mar¾", ;
-      "MR_UZ - Dostawa towar¢w u¾ywanych, dzieˆ sztuki, przedmiot¢", ;
-      "I_42 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 42", ;
-      "I_63 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 63", ;
-      "B_SPV - Transfer bonu jednego przeznaczenia dokonany przez ", ;
-      "B_SPV_DOSTAWA - Dostawa towar¢w oraz ˜wiadczenie usˆug, kt¢", ;
-      "B_MPV_PROWIZJA - —wiadczenie usˆug po˜rednictwa oraz innych" }
+      " (brak)                                                           ", ;
+      "1  [ ] SW - Dostawa w ramach sprz. wysyˆkowej z terytorium kraju..", ;
+      "2  [ ] EE - —wiadczenie usˆug telekom., nadawczych i elektroniczny", ;
+      "3  [ ] TP - Istniej¥ce powi¥zania mi©dzy nabywc¥ a dokonuj¥cym dos", ;
+      "4  [ ] TT_WNT - Wewn¥trzwsp¢lnotowe nabycie towar¢w dok.przez drug", ;
+      "5  [ ] TT_D - Dostawa towar¢w poza terytorium kraju dokonana przez", ;
+      "6  [ ] MR_T - —wiadczenie usˆug turystyki opodatkowane na zas.mar¾", ;
+      "7  [ ] MR_UZ - Dostawa towar¢w u¾ywanych, dzieˆ sztuki, przedmiot¢", ;
+      "8  [ ] I_42 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 42", ;
+      "9  [ ] I_63 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 63", ;
+      "10 [ ] B_SPV - Transfer bonu jednego przeznaczenia dokonany przez ", ;
+      "11 [ ] B_SPV_DOSTAWA - Dostawa towar¢w oraz ˜wiadczenie usˆug, kt¢", ;
+      "12 [ ] B_MPV_PROWIZJA - —wiadczenie usˆug po˜rednictwa oraz innych" }
    LOCAL aKody := { "SW", "EE", "TP", "TT_WNT", "TT_D", "MR_T", "MR_UZ", ;
       "I_42", "I_63", "B_SPV", "B_SPV_DOSTAWA", "B_MPV_PROWIZJA" }
 
@@ -2124,7 +2159,7 @@ FUNCTION KRejSWhProcedur( lMPP )
    PRIVATE plMPP := lMPP
 
    IF lMPP
-      AAdd( aOpcje, "MPP - Mechanizm podzielonej pˆatno˜ci                      " )
+      AAdd( aOpcje, "13 [ ] MPP - Mechanizm podzielonej pˆatno˜ci                      " )
       AAdd( aKody, "MPP" )
    ENDIF
 
@@ -2132,23 +2167,41 @@ FUNCTION KRejSWhProcedur( lMPP )
       RETURN .F.
    ENDIF
 
+   aOpcjeSel := KRejSWhProcedurParsuj( zPROCEDUR, aKody )
+
    IF AllTrim( zPROCEDUR ) == ""
       nElement := 1
    ELSE
-      nElement := AScan( aKody, AllTrim( zPROCEDUR ) ) + 1
+      nElement := AScan( aOpcjeSel, .T. ) + 1
    ENDIF
 
-   hb_DispBox( 4, 9, 18 + iif( lMPP, 1, 0 ), 70, B_DOUBLE )
+   hb_DispBox( 4, 6, 18 + iif( lMPP, 1, 0 ), 74, B_DOUBLE )
    hb_DispOutAt( 4, 11, "Oznaczenia dotycz¥ce procedur" )
+   hb_DispOutAt( 18 + iif( lMPP, 1, 0 ), 11, " Spacja - zaznacz, Enter/Esc - zakoäcz, " + Chr( 27 ) + "/" + Chr( 26 ) + " - powr¢t/dalej " )
    KRejSWhProcedurAChFunc( AC_IDLE, nElement )
-   nElement := AChoice( 5, 10, 17 + iif( lMPP, 1, 0 ), 69, aOpcje, , "KRejSWhProcedurAChFunc", nElement )
 
-   IF nElement > 0
-      IF nElement == 1
-         zPROCEDUR := Space( 32 )
-      ELSE
-         zPROCEDUR := Pad( aKody[ nElement - 1 ], 32 )
+   DO WHILE lDzialaj
+      KRejSWhProcedurAkt( @aOpcje, aOpcjeSel, lMPP )
+      nElement := AChoice( 5, 7, 17 + iif( lMPP, 1, 0 ), 73, aOpcje, , "KRejSWhProcedurAChFunc", nElement )
+      lDzialaj := nElement > 1 .AND. AScan( { K_ENTER, K_LEFT, K_RIGHT }, LastKey() ) == 0
+      IF lDzialaj
+         aOpcjeSel[ nElement - 1 ] := .NOT. aOpcjeSel[ nElement - 1 ]
       ENDIF
+   ENDDO
+
+   IF nElement == 1
+      zPROCEDUR := Space( 32 )
+   ELSE
+      zPROCEDUR := ""
+      FOR nI := 1 TO iif( lMPP, 13, 12 )
+         IF aOpcjeSel[ nI ]
+            IF Len( zPROCEDUR ) > 0
+               zPROCEDUR := zPROCEDUR + ','
+            ENDIF
+            zPROCEDUR := zPROCEDUR + aKody[ nI ]
+         ENDIF
+      NEXT
+      zPROCEDUR := Pad( zPROCEDUR, 32 )
    ENDIF
 
    RestScreen( 0, 0, MaxRow(), MaxCol(), cEkran )
@@ -2214,7 +2267,7 @@ FUNCTION KRejSWhProcedurAChFunc( nMode, nCurElement, nRowPos )
       CASE nKey == K_ESC
          nRetVal := AC_ABORT
          KEYBOARD Chr(13)
-      CASE ! ( cKey := Upper( hb_keyChar( nKey ) ) ) == ""
+      CASE nKey >= Asc('0') .AND. nKey <= Asc('9')
          nRetVal := AC_GOTO
       CASE nKey == K_LEFT
          nRetVal := AC_SELECT
@@ -2222,7 +2275,9 @@ FUNCTION KRejSWhProcedurAChFunc( nMode, nCurElement, nRowPos )
       CASE nKey == K_RIGHT
          nRetVal := AC_SELECT
          KEYBOARD Chr( K_DOWN )
-      ENDCASE
+      CASE nKey == Asc(' ')
+         nRetVal := AC_SELECT
+     ENDCASE
    ENDIF
 
    RETURN nRetVal
