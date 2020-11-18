@@ -540,37 +540,37 @@ FUNCTION KontrahGenerujAdres( aDane )
    LOCAL cRes := ""
 
    IF hb_HHasKey( aDane, 'street' ) .AND. Len( AllTrim( aDane[ 'street' ] ) ) > 0
-      cRes := aDane[ 'street' ]
+      cRes := Upper( aDane[ 'street' ] )
    ELSEIF hb_HHasKey( aDane, 'city' ) .AND. Len( AllTrim( aDane[ 'city' ] ) ) > 0
-      cRes := aDane[ 'city' ]
+      cRes := Upper( aDane[ 'city' ] )
    ENDIF
 
    IF hb_HHasKey( aDane, 'propertyNumber' ) .AND. Len( AllTrim( aDane[ 'propertyNumber' ] ) ) > 0
       IF Len( cRes ) > 0
          cRes := cRes + " "
       ENDIF
-      cRes := cRes + aDane[ 'propertyNumber' ]
+      cRes := cRes + Upper( aDane[ 'propertyNumber' ] )
    ENDIF
 
    IF hb_HHasKey( aDane, 'apartmentNumber' ) .AND. Len( AllTrim( aDane[ 'apartmentNumber' ] ) ) > 0
       IF Len( cRes ) > 0
          cRes := cRes + "/"
       ENDIF
-      cRes := cRes + aDane[ 'apartmentNumber' ]
+      cRes := cRes + Upper( aDane[ 'apartmentNumber' ] )
    ENDIF
 
    IF hb_HHasKey( aDane, 'zipCode' ) .AND. Len( AllTrim( aDane[ 'zipCode' ] ) ) > 0
       IF Len( cRes ) > 0
          cRes := cRes + ", "
       ENDIF
-      cRes := cRes + aDane[ 'zipCode' ]
+      cRes := cRes + Upper( aDane[ 'zipCode' ] )
    ENDIF
 
    IF hb_HHasKey( aDane, 'city' ) .AND. Len( AllTrim( aDane[ 'city' ] ) ) > 0
       IF Len( cRes ) > 0
          cRes := cRes + " "
       ENDIF
-      cRes := cRes + aDane[ 'city' ]
+      cRes := cRes + Upper( aDane[ 'city' ] )
    ENDIF
 
    RETURN cRes
@@ -658,7 +658,7 @@ FUNCTION KontrahZnajdz( cNip, aPola, ncWrkplcNo )
             ENDIF
 
             IF hb_HHasKey( aRekord, 'name' )
-               aPola[ 'nazwa' ] := aRekord[ 'name' ]
+               aPola[ 'nazwa' ] := Upper( aRekord[ 'name' ] )
                aPola[ 'adres' ] := KontrahGenerujAdres( aRekord )
                aPola[ 'export' ] := 'N'
                aPola[ 'ue' ] := 'N'
@@ -752,8 +752,15 @@ FUNCTION KontrahZnajdzA( aNipy, aDane, ncWrkplcNo )
                   RETURN lRes
                } )
                aPola := hb_Hash()
-               aPola[ 'nip' ] := aDaneRegon[ nJ ][ 'nip' ]
-               aPola[ 'nazwa' ] := aDaneRegon[ nJ ][ 'name' ]
+               AEval( aNipy, { | cNip |
+                  IF NormalizujNipPL( cNip ) == aDaneRegon[ nJ ][ 'nip' ]
+                     aPola[ 'nip' ] := cNip
+                  ENDIF
+               } )
+               IF ! hb_HHasKey( aPola, 'nip' )
+                  aPola[ 'nip' ] := aDaneRegon[ nJ ][ 'nip' ]
+               ENDIF
+               aPola[ 'nazwa' ] := Upper( aDaneRegon[ nJ ][ 'name' ] )
                aPola[ 'adres' ] := KontrahGenerujAdres( aDaneRegon[ nJ ] )
                aPola[ 'export' ] := 'N'
                aPola[ 'ue' ] := 'N'
