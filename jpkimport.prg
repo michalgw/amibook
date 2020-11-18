@@ -791,37 +791,70 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                         aW[ 'Procedura' ] := 'SW'
                      ENDIF
                      IF hb_HHasKey( aW, 'EE' ) .AND. HB_ISCHAR( aW[ 'EE' ] ) .AND. sxmlTrim( aW[ 'EE' ] ) == '1'
-                        aW[ 'Procedura' ] := 'EE'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'EE'
                      ENDIF
                      IF hb_HHasKey( aW, 'TP' ) .AND. HB_ISCHAR( aW[ 'TP' ] ) .AND. sxmlTrim( aW[ 'TP' ] ) == '1'
-                        aW[ 'Procedura' ] := 'TP'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'TP'
                      ENDIF
                      IF hb_HHasKey( aW, 'TT_WNT' ) .AND. HB_ISCHAR( aW[ 'TT_WNT' ] ) .AND. sxmlTrim( aW[ 'TT_WNT' ] ) == '1'
-                        aW[ 'Procedura' ] := 'TT_WNT'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'TT_WNT'
                      ENDIF
                      IF hb_HHasKey( aW, 'TT_D' ) .AND. HB_ISCHAR( aW[ 'TT_D' ] ) .AND. sxmlTrim( aW[ 'TT_D' ] ) == '1'
-                        aW[ 'Procedura' ] := 'TT_D'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'TT_D'
                      ENDIF
                      IF hb_HHasKey( aW, 'MR_T' ) .AND. HB_ISCHAR( aW[ 'MR_T' ] ) .AND. sxmlTrim( aW[ 'MR_T' ] ) == '1'
-                        aW[ 'Procedura' ] := 'MR_T'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'MR_T'
                      ENDIF
                      IF hb_HHasKey( aW, 'MR_UZ' ) .AND. HB_ISCHAR( aW[ 'MR_UZ' ] ) .AND. sxmlTrim( aW[ 'MR_UZ' ] ) == '1'
-                        aW[ 'Procedura' ] := 'MR_UZ'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'MR_UZ'
                      ENDIF
                      IF hb_HHasKey( aW, 'I_42' ) .AND. HB_ISCHAR( aW[ 'I_42' ] ) .AND. sxmlTrim( aW[ 'I_42' ] ) == '1'
-                        aW[ 'Procedura' ] := 'I_42'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'I_42'
                      ENDIF
                      IF hb_HHasKey( aW, 'I_63' ) .AND. HB_ISCHAR( aW[ 'I_63' ] ) .AND. sxmlTrim( aW[ 'I_63' ] ) == '1'
-                        aW[ 'Procedura' ] := 'I_63'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'I_63'
                      ENDIF
                      IF hb_HHasKey( aW, 'B_SPV' ) .AND. HB_ISCHAR( aW[ 'B_SPV' ] ) .AND. sxmlTrim( aW[ 'B_SPV' ] ) == '1'
-                        aW[ 'Procedura' ] := 'B_SPV'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'B_SPV'
                      ENDIF
                      IF hb_HHasKey( aW, 'B_SPV_DOSTAWA' ) .AND. HB_ISCHAR( aW[ 'B_SPV_DOSTAWA' ] ) .AND. sxmlTrim( aW[ 'B_SPV_DOSTAWA' ] ) == '1'
-                        aW[ 'Procedura' ] := 'B_SPV_DOSTAWA'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'B_SPV_DOSTAWA'
                      ENDIF
                      IF hb_HHasKey( aW, 'B_MPV_PROWIZJA' ) .AND. HB_ISCHAR( aW[ 'B_MPV_PROWIZJA' ] ) .AND. sxmlTrim( aW[ 'B_MPV_PROWIZJA' ] ) == '1'
-                        aW[ 'Procedura' ] := 'B_MPV_PROWIZJA'
+                        IF aW[ 'Procedura' ] <> ''
+                           aW[ 'Procedura' ] := aW[ 'Procedura' ] + ','
+                        ENDIF
+                        aW[ 'Procedura' ] := aW[ 'Procedura' ] + 'B_MPV_PROWIZJA'
                      ENDIF
                      IF hb_HHasKey( aW, 'MPP' ) .AND. HB_ISCHAR( aW[ 'MPP' ] ) .AND. sxmlTrim( aW[ 'MPP' ] ) == '1'
                         aW[ 'MPP' ] := .T.
