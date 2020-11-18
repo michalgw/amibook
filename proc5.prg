@@ -963,7 +963,7 @@ FUNCTION KrajUE( cKraj )
 
 FUNCTION gm_ATokens( cDane, cSeparator )
 
-   LOCAL aRes := hb_ATokens( cDane, cSeparator )
+   LOCAL aRes := hb_ATokens( AllTrim( cDane ), cSeparator )
    LOCAL nI
 
    FOR nI := Len( aRes ) TO 1 STEP -1
