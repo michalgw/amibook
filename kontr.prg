@@ -486,14 +486,14 @@ FUNCTION KontrahZnajdzRegonNip( xNip )
             IF Len( cNip ) > 0
                cNip := cNip + ','
             ENDIF
-            cNip := cNip + xNip[ nI ]
+            cNip := cNip + NormalizujNipPL( xNip[ nI ] )
          ENDIF
       NEXT
       IF Len( cNip ) > 0
          nTryb := 1
       ENDIF
    ELSEIF HB_ISCHAR( xNip ) .AND. amiWeryfikujNip( xNip ) == 0
-      cNip := xNip
+      cNip := NormalizujNipPL( xNip )
       nTryb := 0
    ENDIF
 
