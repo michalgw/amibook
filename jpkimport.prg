@@ -2878,7 +2878,7 @@ PROCEDURE JPKImp_VatS_Kontrah( aDane )
                ELSE
                   aRekord := aDaneRegon[ nI ]
                ENDIF
-               aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] := aRekord[ 'nip' ]
+               //aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] := aRekord[ 'nip' ]
                aDane[ 'Dekret' ][ nJ ][ 'znazwa' ] := aRekord[ 'nazwa' ]
                aDane[ 'Dekret' ][ nJ ][ 'zadres' ] := aRekord[ 'adres' ]
                aDane[ 'Dekret' ][ nJ ][ 'zkraj' ] := aRekord[ 'kraj' ]
@@ -2946,7 +2946,7 @@ PROCEDURE JPKImp_VatZ_Kontrah( aDane )
                ELSE
                   aRekord := aDaneRegon[ nI ]
                ENDIF
-               aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] := aRekord[ 'nip' ]
+               //aDane[ 'Dekret' ][ nJ ][ 'znr_ident' ] := aRekord[ 'nip' ]
                aDane[ 'Dekret' ][ nJ ][ 'znazwa' ] := aRekord[ 'nazwa' ]
                aDane[ 'Dekret' ][ nJ ][ 'zadres' ] := aRekord[ 'adres' ]
                aDane[ 'Dekret' ][ nJ ][ 'zkraj' ] := aRekord[ 'kraj' ]
