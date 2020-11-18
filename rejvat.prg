@@ -844,7 +844,7 @@ FUNCTION RejVAT_Zak_Marza_Dane( cFirma, cMiesiac )
             aRow[ 'netto_ksiega' ] := rejz->netto + rejz->netto2
             aRow[ 'rodzdow' ] := AllTrim( rejz->rodzdow )
             aRow[ 'mpp' ] := rejz->sek_cv7 == 'SP'
-            aRow[ 'imp' ] := rejz->sek_cv7 == 'IT' .OR. rejz->sek_cv7 == 'IZ' .OR. rejz->sek_cv7 == 'IS' .OR. rejz->sek_cv7 == 'IU' .OR. rejz->sek_cv7 == 'UZ' .OR. rejz->sek_cv7 == 'US'
+            aRow[ 'imp' ] := rejz->sek_cv7 == 'IT' .OR. rejz->sek_cv7 == 'IZ' .OR. rejz->sek_cv7 == 'IS' .OR. ( rejz->kraj <> "" .AND. rejz->kraj <> "PL" .AND. ! KrajUE( rejz->kraj ) .AND. rejz->sek_cv7 <> 'IU' .AND. rejz->sek_cv7 <> 'UZ' .AND. rejz->sek_cv7 <> 'US' )
             aRow[ 'oznaczenia' ] := aRow[ 'rodzdow' ]
             IF aRow[ 'mpp' ]
                IF aRow[ 'oznaczenia' ] <> ""

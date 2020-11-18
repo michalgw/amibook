@@ -678,7 +678,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
          aPoz[ 'AdresDostawcy' ] := rejz->adres
 
          aPoz[ 'MPP' ] := SEK_CV7 == 'PN' .OR. SEK_CV7 == 'PU' .OR. SEK_CV7 == 'PS' .OR. SEK_CV7 == 'SP'
-         aPoz[ 'IMP' ] := SEK_CV7 == 'IT' .OR. SEK_CV7 == 'IZ' .OR. SEK_CV7 == 'IS' .OR. SEK_CV7 == 'IU' .OR. SEK_CV7 == 'UZ' .OR. SEK_CV7 == 'US' .OR. ( rejz->kraj <> "" .AND. rejz->kraj <> "PL" .AND. ! KrajUE( rejz->kraj ) )
+         aPoz[ 'IMP' ] := SEK_CV7 == 'IT' .OR. SEK_CV7 == 'IZ' .OR. SEK_CV7 == 'IS' .OR. ( rejz->kraj <> "" .AND. rejz->kraj <> "PL" .AND. ! KrajUE( rejz->kraj ) .AND. SEK_CV7 <> 'IU' .AND. SEK_CV7 <> 'UZ' .AND. SEK_CV7 <> 'US' )
 
          IF lSprzedaz
             IF hb_HHasKey( aPoz, 'K_10' ) .OR. hb_HHasKey( aPoz, 'K_11' ) .OR. hb_HHasKey( aPoz, 'K_12' ) .OR. hb_HHasKey( aPoz, 'K_13' ) .OR. ;
