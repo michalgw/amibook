@@ -342,7 +342,17 @@ public aETATYdbf := {;
    { "PIT4RC7", "N", 8, 2 },;                     // 110
    { "PIT4RC8", "N", 8, 2 },;                     // 111
    { "OSWIAD26R", "C", 1, 0 },;                   // 112
-   { "STAW_PODA2", "N", 5, 2 } }                  // 113
+   { "STAW_PODA2", "N", 5, 2 },;                  // 113
+   { "PPK", "C", 1, 0 },;                         // 114 PPK aktywne
+   { "PPKZS1", "N", 5, 2 },;                      // 115 PPK Wpˆata podstawowa pracownik¢w - stawka
+   { "PPKZK1", "N", 8, 2 },;                      // 116 PPK Wpˆata podstawowa pracownik¢w - kwota
+   { "PPKZS2", "N", 5, 2 },;                      // 117 PPK Wpˆata dodatkowa pracownik¢w - stawka
+   { "PPKZK2", "N", 8, 2 },;                      // 118 PPK Wpˆata dodatkowa pracownik¢w - kwota
+   { "PPKPS1", "N", 5, 2 },;                      // 119 PPK Wpˆata podstawowa pracodawcy - stawka
+   { "PPKPK1", "N", 8, 2 },;                      // 120 PPK Wpˆata podstawowa pracodawcy - kwota
+   { "PPKPS2", "N", 5, 2 },;                      // 121 PPK Wpˆata dodatkowa pracodawcy - stawka
+   { "PPKPK2", "N", 8, 2 },;                      // 122 PPK Wpˆata dodatkowa pracodawcy - kwota
+   { "PPKPPM", "N", 8, 2 } }                      // 123 PPK Wpˆaty pracodawcy z pop. miesi¥ca
 
 // Create: EWID.DBF
 public aEWIDdbf := {;
@@ -862,7 +872,10 @@ public aPRACdbf := {;
    { "ZAGRNRID", "C", 20, 0 },;                   //  77
    { "DOKIDROZ", "C", 1, 0 },;                    //  78
    { "DOKIDKRAJ", "C", 2, 0 },;                   //  79
-   { "OSWIAD26R", "C", 1, 0 } }                   //  80
+   { "OSWIAD26R", "C", 1, 0 },;                   //  80
+   { "PPK", "C", 1, 0 },;                         //  81 PPK wˆ¥czone
+   { "PPKZS2", "N", 5, 2 },;                      //  82 PPK Wpˆata dodatkowa pracownik¢w - stawka
+   { "PPKPS2", "N", 5, 2 } }                      //  83 PPK Wpˆata dodatkowa pracodawcy - stawka
 
 // Create: PROFIL.DBF
 public aPROFILdbf := { ;

@@ -44,7 +44,7 @@ FUNCTION Etaty( mieskart )
    *################################# GRAFIKA ##################################
    @  3,  0 SAY '        K A R T O T E K I   W Y N A G R O D Z E &__N.   P R A C O W N I K &__O. W       '
    @  4,  0 SAY 'ÚÄÄÄÄÄWyp&_l.a&_c. wszystkim...ÄÄÄÄÄ¿ Przyj&_e.to:             Zwolniono.:               '
-   @  5,  0 SAY '³                             ³ Odlicza&_c. podatek:        O˜wiadczenie <26r.:    '
+   @  5,  0 SAY '³                             ³ Odlicza&_c. podatek:     O˜wi. <26r.:     PPK:     '
    @  6,  0 SAY '³                             ³ Wykszta&_l.c:                                      '
    @  7,  0 SAY '³                             ³ Zaw&_o.d....:                                      '
    @  8,  0 SAY '³                             ³ M-c PRZYCH. DO WYP&__L.A. Wyp&_l.aty Wp&_l..podat. Do PIT4'
@@ -194,13 +194,17 @@ FUNCTION Etaty( mieskart )
          zDATA_ZWOL := DATA_ZWOL
          zODLICZENIE := ODLICZENIE
          zOSWIAD26R := iif( OSWIAD26R == ' ', 'N', OSWIAD26R )
+         zPPK := iif( PPK == ' ', 'N', PPK )
          zWYKSZTALC := WYKSZTALC
          zZAWOD_WYU := ZAWOD_WYU
          zUWAGI := UWAGI
+         zPPKZS2 := PPKZS2
+         zPPKPS2 := PPKPS2
          @  4, 42 GET zdata_przy PICTURE '@D' VALID .NOT. Empty( zdata_przy )
          @  4, 68 GET zdata_zwol PICTURE '@D'
          @  5, 49 GET zodliczenie PICTURE '!' VALID vodlicz()
-         @  5, 76 GET zOSWIAD26R PICTURE '!' VALID voswiad26r()
+         @  5, 66 GET zOSWIAD26R PICTURE '!' VALID voswiad26r()
+         @  5, 75 GET zPPK PICTURE '!' VALID etatyvppk()
          @  6, 43 GET zwyksztalc PICTURE '@S37 ' + repl( 'X', 40 )
          @  7, 43 GET zzawod_wyu PICTURE '@S37 ' + repl( 'X', 40 )
          @ 22,  8 GET zuwagi
@@ -213,9 +217,12 @@ FUNCTION Etaty( mieskart )
             repl_( 'DATA_ZWOL', zDATA_ZWOL )
             repl_( 'ODLICZENIE', zODLICZENIE )
             repl_( 'OSWIAD26R', zOSWIAD26R )
+            repl_( 'PPK', zPPK )
             repl_( 'WYKSZTALC', zWYKSZTALC )
             repl_( 'ZAWOD_WYU', zZAWOD_WYU )
             repl_( 'UWAGI', zUWAGI )
+            repl_( 'PPKZS2', zPPKZS2 )
+            repl_( 'PPKPS2', zPPKPS2 )
             COMMIT
             UNLOCK
          ENDIF
@@ -720,7 +727,8 @@ PROCEDURE say41es()
    @  4, 42 SAY data_przy
    @  4, 68 SAY data_zwol
    @  5, 49 SAY iif( odliczenie = 'T', 'Tak', 'Nie' )
-   @  5, 76 SAY iif( oswiad26r = 'T', 'Tak', 'Nie' )
+   @  5, 66 SAY iif( oswiad26r = 'T', 'Tak', 'Nie' )
+   @  5, 75 SAY iif( ppk = 'T', 'Tak', 'Nie' )
    @  6, 43 SAY SubStr( wyksztalc, 1, 37 )
    @  7, 43 SAY SubStr( zawod_wyu, 1, 37 )
    zidp := Str( rec_no, 5 )
@@ -777,10 +785,35 @@ FUNCTION vodlicz()
 FUNCTION voswiad26r()
 
    R := .F.
-   IF zodliczenie $ 'TN'
-      @ 5, 77 SAY iif( zodliczenie = 'T', 'ak', 'ie' )
+   IF zOSWIAD26R $ 'TN'
+      @ 5, 67 SAY iif( zOSWIAD26R == 'T', 'ak', 'ie' )
       R := .T.
    ENDIF
+   RETURN R
+
+FUNCTION etatyvppk()
+
+   LOCAL GetList := {}
+   LOCAL R := .F.
+   LOCAL cEkran
+
+   IF zPPK $ 'TN'
+      @ 5, 76 SAY iif( zPPK == 'T', 'ak', 'ie' )
+      R := .T.
+      IF zPPK == 'T'
+         SAVE SCREEN TO cEkran
+         @ 6, 41 CLEAR TO 9, 79
+         @ 6, 41 TO 9, 79
+         @ 6, 43 SAY 'PPK - wpˆaty dodatkowe'
+         @ 7, 43 SAY 'Wpˆata dodatkowa pracownika       %'
+         @ 8, 43 SAY 'Wpˆata dodatkowa pracodawcy       %'
+         @ 7, 71 GET zPPKZS2 PICTURE '99.99'
+         @ 8, 71 GET zPPKPS2 PICTURE '99.99'
+         READ
+         RESTORE SCREEN FROM cEkran
+      ENDIF
+   ENDIF
+
    RETURN R
 
 ***************************************************

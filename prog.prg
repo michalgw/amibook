@@ -513,6 +513,13 @@ FUNCTION Main()
 
    // ---
 
+   // PPK - Wpˆata podstawowa pracownik¢w (stawka %)
+   PUBLIC parpk_sz := 2
+   // PPK - Wpˆata podstawowa pracodawcy (stawka %)
+   PUBLIC parpk_sp := 1.5
+
+   // ---
+
    // Parametry eksportu do platnika i starej edeklaracji
 
    // Katalog wysciowy pliku
@@ -621,6 +628,10 @@ FUNCTION Main()
    ELSE
       //DO param_p
       Param_P()
+   ENDIF
+
+   IF File( 'param_ppk.mem' )
+      RESTORE FROM param_ppk ADDITIVE
    ENDIF
 
    // Parametry obliczania korekt

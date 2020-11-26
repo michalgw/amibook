@@ -112,7 +112,7 @@ PROCEDURE SpecPlac()
 
             STORE 0 TO zdochod,zstaw_podat,zbrut_zasad,zbrut_premi,zdopl_opod,zdopl_bzus,zstaw_pue,zstaw_pur,zstaw_puc,zwar_psum,zwar_pue,zwar_pur,zwar_puc,zzasil_rodz,ziloso_rodz,zzasil_piel,ziloso_piel,zstaw_fue,zwar_fue,zstaw_fur, ;
                zwar_fur,zstaw_fuw,zwar_fuw,zwolu,zwolc,zwolz,zwolo,zwolb,zwolm,zwolw,zwoln,zwoli,zwar_pf3,zstaw_ffp,zwar_ffp,zbrut_razem,zkoszt,zstaw_puz,zodlicz,zpodatek,znetto,zwar_puz,zwar_puzo,zdopl_nieop,zodl_nieop,zdo_wyplaty, ;
-               zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat
+               zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat,zppkppm,zppkzs1,zppkzk1,zppkzs2,zppkzk2,zppkps1,zppkpk1,zppkps2,zppkpk2
 
             REC := rec_no
 
@@ -227,6 +227,15 @@ PROCEDURE SpecPlac()
                      zzus_zascho := zus_zascho
                      zzus_rkch := zus_rkch
                      zzus_podat := zus_podat
+                     zppkppm := zppkppm + ppkppm
+                     zppkzs1 := ppkzs1
+                     zppkzk1 := zppkzk1 + ppkzk1
+                     zppkzs2 := ppkzs2
+                     zppkzk2 := zppkzk2 + ppkzk2
+                     zppkps1 := ppkps1
+                     zppkpk1 := zppkpk1 + ppkpk1
+                     zppkps2 := ppkps2
+                     zppkpk2 := zppkpk2 + ppkpk2
                   ENDIF
                NEXT
                mm := mcdo - mcod
@@ -300,6 +309,17 @@ PROCEDURE SpecPlac()
                   iif( zwolW # 0, 'W=' + Alltrim( Str( zwolW, 3 ) ) + ' ', '' ) + ;
                   iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' )
 
+               aWiersz[ 'ppkppm' ] := zppkppm
+               aWiersz[ 'ppkzs1' ] := zppkzs1
+               aWiersz[ 'ppkzk1' ] := zppkzk1
+               aWiersz[ 'ppkzs2' ] := zppkzs2
+               aWiersz[ 'ppkzk2' ] := zppkzk2
+               aWiersz[ 'ppkps1' ] := zppkps1
+               aWiersz[ 'ppkpk1' ] := zppkpk1
+               aWiersz[ 'ppkps2' ] := zppkps2
+               aWiersz[ 'ppkpk2' ] := zppkpk2
+               aWiersz[ 'ppkzs' ] := iif( mm == 0, '(' + Str( zppkzs1 + zppkzs2, 4, 2 ) + '%)', '' )
+               aWiersz[ 'ppkps' ] := iif( mm == 0, '(' + Str( zppkps1 + zppkps2, 4, 2 ) + '%)', '' )
                AAdd( aDane[ 'wiersze' ], aWiersz )
 
             ENDIF

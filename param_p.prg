@@ -32,6 +32,10 @@ if .not.file([param_p.mem])
    save to param_p all like parap_*
    return
 endif
+if .not.file([param_ppk.mem])
+   save to param_ppk all like parpk_*
+   return
+endif
 *################################# GRAFIKA ##################################
 @  3,42 say ' Parametry og&_o.lne                     '
 @  4,42 say '-koszt uzyskania przychodu            '
@@ -55,8 +59,8 @@ set colo to
 @ 18,42 say ' Na fundusze:                         '
 @ 19,42 say '-Fundusz Pracy                        '
 @ 20,42 say '-Fundusz G&__S.P                          '
-@ 21,42 say 'ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ'
-@ 22,42 say ' Domy&_s.lny symbol Kasy Chorych         '
+@ 21,42 say ' Domy&_s.lny symbol Kasy Chorych         '
+@ 22,42 say ' PPK st.pracow.     % st.pracod.     %'
 *################################# OPERACJE #################################
 do say_pr
 kl=0
@@ -101,6 +105,8 @@ zparap_ffp=parap_ffp
 zparap_ffg=parap_ffg
 zparap_ff3=parap_ff3
 zparap_rkc=parap_rkc
+zparpk_sz := parpk_sz
+zparpk_sp := parpk_sp
 *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 @  4,73 get zparap_kos picture "9999.99" range 0,9999
 @  5,73 get zparap_odl picture "9999.99" range 0,9999
@@ -126,7 +132,9 @@ zparap_rkc=parap_rkc
 @ 17,75 get zparap_ff3 picture "99.99"
 @ 19,75 get zparap_ffp picture "99.99"
 @ 20,75 get zparap_ffg picture "99.99"
-@ 22,75 get zparap_rkc picture "99!"
+@ 21,75 get zparap_rkc picture "99!"
+@ 22,57 get zparpk_sz picture "99.99"
+@ 22,74 get zparpk_sp picture "99.99"
 ****************************
 clear type
 read_()
@@ -166,8 +174,11 @@ parap_ffp=zparap_ffp
 parap_ffg=zparap_ffg
 parap_ff3=zparap_ff3
 parap_rkc=zparap_rkc
+parpk_sz := zparpk_sz
+parpk_sp := zparpk_sp
 ****************************
 save to param_p all like parap_*
+save to param_ppk all like parpk_*
 *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
                              end
 do say_pr
@@ -232,6 +243,8 @@ set colo to w+
 @ 17,75 say parap_ff3 picture "99.99"
 @ 19,75 say parap_ffp picture "99.99"
 @ 20,75 say parap_ffg picture "99.99"
-@ 22,75 say parap_rkc picture "99!"
+@ 21,75 say parap_rkc picture "99!"
+@ 22,57 say parpk_sz picture "99.99"
+@ 22,74 say parpk_sp picture "99.99"
 ColStd()
 *############################################################################

@@ -114,7 +114,16 @@ store 0 to zBRUT_ZASAD,;
            B62        ,;
            EDI        ,;
            zKW_PRZELEW,;
-           zPRZEL_NAKO
+           zPRZEL_NAKO,;
+           zPPKZS1    ,;
+           zPPKZK1    ,;
+           zPPKZS2    ,;
+           zPPKZK2    ,;
+           zPPKPS1    ,;
+           zPPKPK1    ,;
+           zPPKPS2    ,;
+           zPPKPK2    ,;
+           zPPKPPM
 *           zNADPL_KWO
 *           zZAOPOD    ,;
 zJAKI_PRZEL=' '
@@ -124,6 +133,7 @@ zKOD_TYTU='      '
 *zNADPL_SPO='N'
 zSTANOWISKO=space(40)
 zOSWIAD26R := ' '
+zPPK := iif( etaty->ppk $ 'TN', etaty->ppk, 'N' )
 //002 ostatnia zmienna jest nowa
 
 mmm=array(12)
@@ -154,11 +164,11 @@ CURR=ColStd()
 @ 11,19 say 'Za chorobowe(do 33dni) =           Przych&_o.d brutto =         '
 @ 12,19 say 'Koszt uzyskania        =           Podstawa sk&_l.adek=         '
 @ 13,19 say 'Sk&_l.adki na ubezpieczen.=           Podstawa podatku=         '
-@ 14,19 say 'Podatek+Ubezp.Zdrowotne=           Doch&_o.d netto    =         '
+@ 14,19 say 'Pracownicze plany kapit=           Doch&_o.d netto    =         '
 //002 podniesiona wyplata i dwie nowe pozycje
-@ 15,19 say 'Zasi&_l.ki z ZUS          =           DO WYP&__L.ATY      =         '
-@ 16,19 say 'Dopl.i potrac.po opodat=           w tym przelew   =         '
-@ 17,19 say '                                   got&_o.wka         =         '
+@ 15,19 say 'Podatek+Ubezp.Zdrowotne=           DO WYP&__L.ATY      =         '
+@ 16,19 say 'Zasi&_l.ki z ZUS          =           w tym przelew   =         '
+@ 17,19 say 'Dopl.i potrac.po opodat=           got&_o.wka         =         '
 @ 18,19 say '-------------------------------------------------------------'
 @ 19,19 say 'Sk&_l.adki na ZUS         =           (     %)                  '
 @ 20,19 say 'Wyp&_l.aty z ZUS          =           RKCH=       podat.=       '
@@ -260,9 +270,10 @@ do while .t.
          @ 11,18 prompt ' Za chorobowe(do 33dni) '
          @ 12,18 prompt ' Koszt uzyskania        '
          @ 13,18 prompt ' Sk&_l.adki na ubezpieczen.'
-         @ 14,18 prompt ' Podatek+Ubezp.Zdrowotne'
-         @ 15,18 prompt ' Zasi&_l.ki z ZUS          '
-         @ 16,18 prompt ' Dop&_l..i potr&_a.c.po opodat'
+         @ 14,18 prompt ' Pracownicze plany kapit'
+         @ 15,18 prompt ' Podatek+Ubezp.Zdrowotne'
+         @ 16,18 prompt ' Zasi&_l.ki z ZUS          '
+         @ 17,18 prompt ' Dop&_l..i potr&_a.c.po opodat'
 //002 nowa linia
 *         @ 17,18 prompt ' Rozlicz.roku ubieg&_l..'
          @ 19,18 prompt ' Sk&_l.adki na ZUS         '
@@ -369,6 +380,27 @@ do while .t.
          case skladn=7
               save scre to scr_sklad
               set curs on
+              @ 11,42 clear TO 21,77
+              @ 11,42 TO 21,77
+              @ 12,43 say 'Udziaà pracownika w PPK' get zPPK pict '!' valid Eval( { || zPPK $ 'TN' } ) .AND. OBLPL()
+              @ 13,43 say 'WPùATY PRACOWNIKA'
+              @ 14,43 say 'Podst. stawka' get zPPKZS1 pict '99.99' when zPPK == 'T' valid OBLPL()
+              @ 14,62 say '% kwota' get zPPKZK1 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
+              @ 15,43 say 'Dodat. stawka' get zPPKZS2 pict '99.99' when zPPK == 'T' valid OBLPL()
+              @ 15,62 say '% kwota' get zPPKZK2 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
+              @ 16,43 say 'WPùATY PRACODAWCY'
+              @ 17,43 say 'Podst. stawka' get zPPKPS1 pict '99.99' when zPPK == 'T' valid OBLPL()
+              @ 17,62 say '% kwota' get zPPKPK1 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
+              @ 18,43 say 'Dodat. stawka' get zPPKPS2 pict '99.99' when zPPK == 'T' valid OBLPL()
+              @ 18,62 say '% kwota' get zPPKPK2 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
+              @ 20,43 say 'Dolicz do podstawy opodat.' get zPPKPPM pict '9999.99' when Eval( { || zPPKPPM := zPPKPK1 + zPPKPK2, .T. } ) valid OBLPL()
+              read
+              inkey(0)
+              set curs off
+              rest scre from scr_sklad
+         case skladn=8
+              save scre to scr_sklad
+              set curs on
               @  9,42 clear to 21,79
               @  9,42 to 21,79
               @ 10,43 say 'Oòw. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) VALID zOSWIAD26R $ 'TN' .AND. oblpl()
@@ -393,27 +425,27 @@ do while .t.
               inkey(0)
               set curs off
               rest scre from scr_sklad
-         case skladn=8
-              save scre to scr_sklad
-              set curs on
-              @ 14,37 clear to 17,79
-              @ 14,37 to 17,79
-              @ 15,38 say 'Zasi&_l.ek rodzinny.....          dla   os&_o.b'
-              @ 15,60 get zZASIL_RODZ pict '99999.99' valid oblpl()
-              @ 15,73 get zILOSO_RODZ pict '9' valid oblpl()
-              @ 16,38 say 'Zasi&_l.ek piel&_e.gnacyjny          dla   os&_o.b'
-              @ 16,60 get zZASIL_PIEL pict '99999.99' valid oblpl()
-              @ 16,73 get zILOSO_PIEL pict '9' valid oblpl()
-              read
-              set curs off
-              rest scre from scr_sklad
          case skladn=9
               save scre to scr_sklad
               set curs on
-              @ 15,42 clear to 18,76
-              @ 15,42 to 18,76
-              @ 16,43 say 'Dop&_l.aty nieopodatkowane:' get zDOPL_NIEOP pict '99999.99' valid oblpl()
-              @ 17,43 say 'Potr&_a.cenia po opodatkow:' get zODL_NIEOP pict '99999.99' valid oblpl()
+              @ 15,37 clear to 18,79
+              @ 15,37 to 18,79
+              @ 16,38 say 'Zasi&_l.ek rodzinny.....          dla   os&_o.b'
+              @ 16,60 get zZASIL_RODZ pict '99999.99' valid oblpl()
+              @ 16,73 get zILOSO_RODZ pict '9' valid oblpl()
+              @ 17,38 say 'Zasi&_l.ek piel&_e.gnacyjny          dla   os&_o.b'
+              @ 17,60 get zZASIL_PIEL pict '99999.99' valid oblpl()
+              @ 17,73 get zILOSO_PIEL pict '9' valid oblpl()
+              read
+              set curs off
+              rest scre from scr_sklad
+         case skladn=10
+              save scre to scr_sklad
+              set curs on
+              @ 16,42 clear to 19,76
+              @ 16,42 to 19,76
+              @ 17,43 say 'Dop&_l.aty nieopodatkowane:' get zDOPL_NIEOP pict '99999.99' valid oblpl()
+              @ 18,43 say 'Potr&_a.cenia po opodatkow:' get zODL_NIEOP pict '99999.99' valid oblpl()
               read
               set curs off
               rest scre from scr_sklad
@@ -426,7 +458,7 @@ do while .t.
 *              set curs off
 *              rest scre from scr_sklad
 //002 nowy case, nast©pne numery +1
-         case skladn=10
+         case skladn=11
               EDI=1
               save scre to scr_sklad
               set curs on
@@ -451,7 +483,7 @@ do while .t.
               set curs off
               rest scre from scr_sklad
               EDI=0
-         case skladn=11
+         case skladn=12
               save scre to scr_sklad
               set curs on
               @ 20,43 get zZUS_ZASCHO pict ' 99999.99' valid oblpl()
@@ -460,7 +492,7 @@ do while .t.
               read
               set curs off
               rest scre from scr_sklad
-         case skladn=12
+         case skladn=13
               save scre to scr_sklad
               set curs on
 *             @ 8,64 get zSTAW_PF3 pict '9' valid OBLPL()
@@ -468,7 +500,7 @@ do while .t.
               read
               set curs off
               rest scre from scr_sklad
-         case skladn=13
+         case skladn=14
               save scre to scr_sklad
               set curs on
               @ 16,71 get zPRZEL_NAKO pict ' 99999.99' valid spr_przel().and.oblpl()
@@ -494,9 +526,10 @@ do while .t.
       @ 11,18 say ' Za chorobowe(do 33dni) '
       @ 12,18 say ' Koszt uzyskania        '
       @ 13,18 say ' Sk&_l.adki na ubezpieczen.'
-      @ 14,18 say ' Podatek+Ubezp.Zdrowotne'
-      @ 15,18 say ' Zasi&_l.ki z ZUS          '
-      @ 16,18 say ' Dop&_l..i potr&_a.c.po opodat'
+      @ 14,18 say ' Pracownicze plany kapit'
+      @ 15,18 say ' Podatek+Ubezp.Zdrowotne'
+      @ 16,18 say ' Zasi&_l.ki z ZUS          '
+      @ 17,18 say ' Dop&_l..i potr&_a.c.po opodat'
 //002 nowa linia
       @ 16,53 say ' w tym przelew     '
 *      @ 17,18 say ' Rozlicz.roku ubieg&_l..'
@@ -619,10 +652,11 @@ func _infoskl_
      @ 13,43 say WAR_PSUM pict '99 999.99'
      set color to w+
      @ 13,71 say DOCHODPOD pict '99 999.99'
-     @ 14,43 say PODATEK+WAR_PUZ pict '99 999.99'
+     @ 14,43 say PPKPK1 + PPKPK2 + PPKZK1 + PPKZK2 pict '99 999.99'
      @ 14,71 say NETTO pict '99 999.99'
-     @ 15,43 say ZASIL_RODZ+ZASIL_PIEL pict '99 999.99'
-     @ 16,43 say DOPL_NIEOP-ODL_NIEOP pict '99 999.99'
+     @ 15,43 say PODATEK+WAR_PUZ pict '99 999.99'
+     @ 16,43 say ZASIL_RODZ+ZASIL_PIEL pict '99 999.99'
+     @ 17,43 say DOPL_NIEOP-ODL_NIEOP pict '99 999.99'
 *     @ 17,39 say iif(NADPL_SPO='N','Nad',iif(NADPL_SPO='Z','Zwr','Dod'))
 *     @ 17,43 say NADPL_KWO pict '99 999.99'
 //002 dwa pi©tra wyæej:
@@ -724,8 +758,24 @@ func oblpl
       endif
       zWAR_PSUM=zWAR_PUE+zWAR_PUR+zWAR_PUC
       zDOCHOD=max(0,zBRUT_RAZEM-(zKOSZT+zWAR_PSUM))
-      zDOCHODPOD=_round(zDOCHOD,0)
-
+      zDOCHODPOD=_round(zDOCHOD + zPPKPPM,0)
+      IF zPPK == 'T'
+         IF zPPKZS1 == 0
+            zPPKZS1 := parpk_sz
+         ENDIF
+         IF zPPKPS1 == 0
+            zPPKPS1 := parpk_sp
+         ENDIF
+         zPPKZK1 := zPENSJA * ( zPPKZS1 / 100 )
+         zPPKZK2 := zPENSJA * ( zPPKZS2 / 100 )
+         zPPKPK1 := zPENSJA * ( zPPKPS1 / 100 )
+         zPPKPK2 := zPENSJA * ( zPPKPS2 / 100 )
+      ELSE
+         zPPKZK1 := 0
+         zPPKZK2 := 0
+         zPPKPK1 := 0
+         zPPKPK2 := 0
+      ENDIF
       IF zOSWIAD26R == 'T'
          B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(parap_pod/100)
          zWAR_PUZ=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)))
@@ -760,7 +810,7 @@ func oblpl
          zPODATEK=max(0,_round(B5-(zWAR_PUZO+zODLICZ),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
       ENDIF
-      zDO_WYPLATY=zNETTO+zZASIL_RODZ+zZASIL_PIEL+zDOPL_NIEOP-zODL_NIEOP
+      zDO_WYPLATY=zNETTO+zZASIL_RODZ+zZASIL_PIEL+zDOPL_NIEOP-zODL_NIEOP-zPPKZK1-zPPKZK2
       zzWAR_FUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUE/100),2)
       zzWAR_FUR=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUR/100),2)
       zzWAR_FUW=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUW/100),2)
@@ -926,6 +976,18 @@ zWYMIARM=WYMIARM
 zKW_PRZELEW=KW_PRZELEW
 zJAKI_PRZEL=JAKI_PRZEL
 zPRZEL_NAKO=PRZEL_NAKO
+
+zPPKZS1 := PPKZS1
+zPPKZK1 := PPKZK1
+zPPKZS2 := PPKZS2
+zPPKZK2 := PPKZK2
+zPPKPS1 := PPKPS1
+zPPKPK1 := PPKPK1
+zPPKPS2 := PPKPS2
+zPPKPK2 := PPKPK2
+zPPKPPM := PPKPPM
+zPPK := PPK
+
 zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) .AND. prac->oswiad26r == 'T', 'T', 'N' ), OSWIAD26R )
 if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    skip -1
@@ -1095,6 +1157,26 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
            zKW_PRZELEW=prac->KW_PRZELEW
            zPRZEL_NAKO=prac->KW_PRZELEW
       endcase
+      zPPK := iif( prac->ppk $ 'TN', prac->ppk, 'N' )
+      IF zPPK == 'T'
+         zPPKZS1 := parpk_sz
+         zPPKZK1 := zPENSJA * ( zPPKZS1 / 100 )
+         zPPKPS1 := parpk_sp
+         zPPKPK1 := zPENSJA * ( zPPKPS1 / 100 )
+         zPPKZS2 := prac->ppkzs2
+         zPPKZK2 := zPENSJA * ( zPPKZS2 / 100 )
+         zPPKPS2 := prac->ppkzs2
+         zPPKPK2 := zPENSJA * ( zPPKPS2 / 100 )
+      ELSE
+         zPPKZS1 := 0
+         zPPKZK1 := 0
+         zPPKPS1 := 0
+         zPPKPK1 := 0
+         zPPKZS2 := 0
+         zPPKZK2 := 0
+         zPPKPS2 := 0
+         zPPKPK2 := 0
+      ENDIF
    endif
 endif
       zzWAR_PUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUE/100),2)
@@ -1193,6 +1275,17 @@ repl_('PRZEL_NAKO',zPRZEL_NAKO)
 *repl_('NADPL_SPO',zNADPL_SPO)
 *repl_('NADPL_KWO',zNADPL_KWO)
 repl_( 'OSWIAD26R', zOSWIAD26R )
+
+repl_( 'PPKZS1', zPPKZS1 )
+repl_( 'PPKZK1', zPPKZK1 )
+repl_( 'PPKZS2', zPPKZS2 )
+repl_( 'PPKZK2', zPPKZK2 )
+repl_( 'PPKPS1', zPPKPS1 )
+repl_( 'PPKPK1', zPPKPK1 )
+repl_( 'PPKPS2', zPPKPS2 )
+repl_( 'PPKPK2', zPPKPK2 )
+repl_( 'PPKPPM', zPPKPPM )
+repl_( 'PPK', zPPK )
 
 ***************************************************************************
 func spr_przel
