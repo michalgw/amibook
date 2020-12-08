@@ -686,17 +686,17 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                tresc_korekty_pit11 := edekOrdZuTrescPobierz('PIT-11', Val(ident_fir), id_pracownika)
             ENDIF
             IF JAKICEL != 'K' .OR. ValType(tresc_korekty_pit11) == "C"
-               edeklaracja_plik = 'PIT_11_25_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(Str(Year(p4d))) + '_' + AllTrim(P31) + '_' + AllTrim(P32)
+               edeklaracja_plik = 'PIT_11_26_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(Str(Year(p4d))) + '_' + AllTrim(P31) + '_' + AllTrim(P32)
                private danedeklar
-               danedeklar = edek_pit11_25()
-               edekZapiszXml(danedeklar, edeklaracja_plik, wys_edeklaracja, 'PIT11-25', JAKICEL == 'K', 0, id_pracownika)
+               danedeklar = edek_pit11_26()
+               edekZapiszXml(danedeklar, edeklaracja_plik, wys_edeklaracja, 'PIT11-26', JAKICEL == 'K', 0, id_pracownika)
             ENDIF
          CASE _OU='K'
               SWITCH GraficznyCzyTekst()
               CASE 0
                  EXIT
               CASE 1
-                 DeklarDrukuj('PIT11-25')
+                 DeklarDrukuj('PIT11-26')
                  EXIT
               CASE 2
                  do kpit_811
