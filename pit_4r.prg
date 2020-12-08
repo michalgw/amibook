@@ -352,7 +352,7 @@ for xxxmm=1 to 12
        z9&xxm=Aktyw+Aktywu
        z10&xxm=Zal13+Zal13u
        z3&xxm=z1b&xxm+z2&xxm+z10&xxm+z9&xxm
-       z11&xxm=max(0,(z3&xxm+z5&xxm+z6&xxm)-(z4&xxm+z7&xxm+z8&xxm))
+       z11&xxm=max(0,(z3&xxm+z5&xxm+z6&xxm)-(z4&xxm/*+z7&xxm*/+z8&xxm))
        z12&xxm=_round(z11&xxm*(Wynagr/100),0)
        z13&xxm=_round(max(0,z11&xxm-z12&xxm),0)
     endif
@@ -469,11 +469,12 @@ next
            for x=1 to 9
                rl()
            next
-           rl(space(_M)+space(16)+tran(z701,rRPIC1)+tran(z702,rRPIC1)+tran(z703,rRPIC1)+tran(z704,rRPIC1)+tran(z705,rRPIC1)+tran(z706,rRPIC1))
+/*           rl(space(_M)+space(16)+tran(z701,rRPIC1)+tran(z702,rRPIC1)+tran(z703,rRPIC1)+tran(z704,rRPIC1)+tran(z705,rRPIC1)+tran(z706,rRPIC1))
            for x=1 to 3
                rl()
            next
            rl(space(_M)+space(16)+tran(z707,rRPIC1)+tran(z708,rRPIC1)+tran(z709,rRPIC1)+tran(z710,rRPIC1)+tran(z711,rRPIC1)+tran(z712,rRPIC1))
+*/
       case _STR=3
            for x=1 to _G
                rl()
@@ -684,7 +685,7 @@ next
       repl linia_l with ''
       appe blan
       repl linia_l with '=========================================================================='
-      appe blan
+/*      appe blan
       repl linia_l with '7.Nadplaty wynikajace z rozliczenia za rok ubiegly oraz zwrot nadplat'
       appe blan
       repl linia_l with '  w gotowce zaliczone na poczet naleznej zaliczki'
@@ -702,6 +703,7 @@ next
       repl linia_l with 'w gotow.'+kwota(z707,10,0)+' '+kwota(z708,10,0)+' '+kwota(z709,10,0)+' '+kwota(z710,10,0)+' '+kwota(z711,10,0)+' '+kwota(z712,10,0)
       appe blan
       repl linia_l with '=========================================================================='
+*/
       appe blan
       repl linia_l with '8.Pobrany podatek, przekazany na PFRON oraz zakladowy fundusz rehabilitacji'
       appe blan
@@ -807,7 +809,7 @@ next
       appe blan
       repl linia_l with '        '+kwota(z1307,10,0)+' '+kwota(z1308,10,0)+' '+kwota(z1309,10,0)+' '+kwota(z1310,10,0)+' '+kwota(z1311,10,0)+' '+kwota(z1312,10,0)
    CASE _OU == 'X'
-        edeklaracja_plik = 'PIT_4R_9_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
+        edeklaracja_plik = 'PIT_4R_10_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
         IF ( zCzyKorekta := edekCzyKorekta() ) > 0
            IF zCzyKorekta == 2
               rodzaj_korekty := edekRodzajKorekty()
@@ -816,8 +818,8 @@ next
            ENDIF
            IF zDEKLKOR != 'K' .OR. (zDEKLKOR == 'K' .AND. ValType(tresc_korekty_pit4r) == "C")
               private danedekl
-              danedekl = edek_pit4r_9()
-              edekZapiszXml(danedekl, edeklaracja_plik, wys_edeklaracja, 'PIT4R-9', zDEKLKOR == 'K')
+              danedekl = edek_pit4r_10()
+              edekZapiszXml(danedekl, edeklaracja_plik, wys_edeklaracja, 'PIT4R-10', zDEKLKOR == 'K')
            ENDIF
         ENDIF
    other //_OU='K'
@@ -826,7 +828,7 @@ next
         CASE 0
            EXIT
         CASE 1
-           DeklarDrukuj( 'PIT4R-9' )
+           DeklarDrukuj( 'PIT4R-10' )
            EXIT
         CASE 2
            do kpit_4r

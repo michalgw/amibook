@@ -106,9 +106,9 @@ next
 P4menu=Array(5)
 P4menu[1]:=' Sekcja C.1 do C.2 - ilo&_s.&_c. podatnik&_o.w, nale&_z.ne zaliczki                   '
 P4menu[2]:=' Sekcja C.3 do C.5 - dzia&_l.alno&_s.&_c. z art.13, aktywizacja i suma             '
-P4menu[3]:=' Sekcje C.6 do C.9 - ograniczenia, dodatkowe pobrania, nadp&_l.aty i zwroty  '
-P4menu[4]:=' Sekcje C.10 i C.11 - PFRON i suma                                        '
-P4menu[5]:=' Sekcje C.12 i C.13 - wynagrodzenie za terminow&_a. wp&_l.at&_e. i kwota do wp&_l.aty '
+P4menu[3]:=' Sekcje C.6 do C.8 - ograniczenia, dodatkowe pobrania                     '
+P4menu[4]:=' Sekcje C.9 i C.10 - PFRON i suma                                         '
+P4menu[5]:=' Sekcje C.11 i C.12 - wynagrodzenie za terminow&_a. wp&_l.at&_e. i kwota do wp&_l.aty '
 
 @ 1,47 say [          ]
 *################################# GRAFIKA ##################################
@@ -191,10 +191,10 @@ func P4infosek(nMode,nCurEl,nRowPos)
         case nCurEl=3.and.nKey=56
               do PrcP4RC6
               nRetVal:=AC_CONT
-        case nCurEl=3.and.nKey=57
-              do PrcP4RC7
-              nRetVal:=AC_CONT
-        case nCurEl=4.and.nKey=48
+//        case nCurEl=3.and.nKey=57
+//              do PrcP4RC7
+//              nRetVal:=AC_CONT
+        case nCurEl=4.and.nKey=57
               do PrcP4RC8
               nRetVal:=AC_CONT
 //        case nCurEl=4.and.nKey=48
@@ -332,13 +332,13 @@ case nCurEl=2
      @ 22,32 say szP4RC9 pict '99999'
      @ 22,41 say szP4RC1b+stP4RC1b+szP4RC2+stP4RC2+szP4RC9+stP4RC9+szP4RC10+stP4RC10 pict '99999'
 case nCurEl=3
-     @ 9,5 say 'SekcjaC6 SekcjaC6 SekcjaC7 SekcjaC7 SekcjaC8 SekcjaC8 SekcjaC9 SekcjaC9    '
+     @ 9,5 say 'SekcjaC6 SekcjaC6 SekcjaC7 SekcjaC7 SekcjaC8 SekcjaC8                      '
 
      ColInf()
      @ 9,21 say '6'
      @ 9,39 say '7'
      @ 9,57 say '8'
-     @ 9,75 say '9'
+//     @ 9,75 say '9'
      set colo to w+
 
      for xa=1 to 12
@@ -349,8 +349,8 @@ case nCurEl=3
          @ 9+xa,32 say zP4RC5&XXa pict '99999'
          @ 9+xa,41 say tP4RC6&XXa pict '99999'
          @ 9+xa,50 say zP4RC6&XXa pict '99999'
-         @ 9+xa,59 say tP4RC7&XXa pict '99999'
-         @ 9+xa,68 say zP4RC7&XXa pict '99999'
+//         @ 9+xa,59 say tP4RC7&XXa pict '99999'
+//         @ 9+xa,68 say zP4RC7&XXa pict '99999'
      next
      @ 22,5  say stP4RC4 pict '99999'
      @ 22,14 say szP4RC4 pict '99999'
@@ -358,13 +358,13 @@ case nCurEl=3
      @ 22,32 say szP4RC5 pict '99999'
      @ 22,41 say stP4RC6 pict '99999'
      @ 22,50 say szP4RC6 pict '99999'
-     @ 22,59 say stP4RC7 pict '99999'
-     @ 22,68 say szP4RC7 pict '99999'
+//     @ 22,59 say stP4RC7 pict '99999'
+//     @ 22,68 say szP4RC7 pict '99999'
 case nCurEl=4
-     @ 9,5 say 'SekcjC10 SekcjC10 SekcjC11                                                 '
+     @ 9,5 say 'SekcjC9  SekcjC9  SekcjC10                                                 '
 
      ColInf()
-     @ 9,21 say '0'
+     @ 9,20 say '9'
      set colo to w+
 
      for xa=1 to 12
@@ -377,7 +377,7 @@ case nCurEl=4
      @ 22,14 say szP4RC8 pict '99999'
      @ 22,23 say ((szP4RC1b+stP4RC1b+szP4RC2+stP4RC2)+(szP4RC5+stP4RC5+szP4RC6+stP4RC6+szP4RC9+stP4RC9+szP4RC10+stP4RC10))-(szP4RC4+stP4RC4+szP4RC7+stP4RC7+szP4RC8+stP4RC8) pict '99999'
 case nCurEl=5
-     @ 9,5 say 'SekcjC11 % wynagr SekcjC12 SekcjC13                                                 '
+     @ 9,5 say 'SekcjC10 % wynagr SekcjC11 SekcjC12                                                 '
 
      ColInf()
      @ 9,14 say '%'

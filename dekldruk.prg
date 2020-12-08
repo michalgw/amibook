@@ -38,6 +38,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_PIT4Rw9()
       cPlikRap := 'frf\pit4r_w9.frf'
       EXIT
+   CASE 'PIT4R-10'
+      hDane := DaneDek_PIT4Rw10()
+      cPlikRap := 'frf\pit4r_w10.frf'
+      EXIT
    CASE 'PIT8AR-6'
       hDane := DaneDek_PIT8ARw6()
       cPlikRap := 'frf\pit8ar_w6.frf'
@@ -840,6 +844,177 @@ FUNCTION DaneDek_PIT4Rw9()
    hDane['P_168'] := z1311
    hDane['P_169'] := z1312
    hDane['P_170'] := ''
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_PIT4Rw10()
+   LOCAL hDane := hb_Hash()
+
+   hDane['P_2'] := ''
+   hDane['P_4'] := AllTrim(p4r)
+   hDane['P_5'] := iif( AllTrim(p6k) != '', KodUS2Nazwa( AllTrim(p6k) ), '' )
+   hDane['P_6_1'] := iif( zDEKLKOR == 'D', '1', '0' )
+   hDane['P_6_2'] := iif( zDEKLKOR <> 'D', '1', '0' )
+   hDane['P_8_1'] := iif( spolka_, '1', '0' )
+   hDane['P_8_2'] := iif( ! spolka_, '1', '0' )
+   hDane['P_1'] := P1
+   hDane['P_9'] := AllTrim(P8)
+   hDane['P_7_1'] := iif(rodzaj_korekty == 1, '1', '0' )
+   hDane['P_7_2'] := iif(rodzaj_korekty == 2, '1', '0' )
+   hDane['P_10']  := z1a01
+   hDane['P_11'] := z1a02
+   hDane['P_12'] := z1a03
+   hDane['P_13'] := z1a04
+   hDane['P_14'] := z1a05
+   hDane['P_15'] := z1a06
+   hDane['P_16'] := z1b01
+   hDane['P_17'] := z1b02
+   hDane['P_18'] := z1b03
+   hDane['P_19'] := z1b04
+   hDane['P_20'] := z1b05
+   hDane['P_21'] := z1b06
+   hDane['P_22'] := z1a07
+   hDane['P_23'] := z1a08
+   hDane['P_24'] := z1a09
+   hDane['P_25'] := z1a10
+   hDane['P_26'] := z1a11
+   hDane['P_27'] := z1a12
+   hDane['P_28'] := z1b07
+   hDane['P_29'] := z1b08
+   hDane['P_30'] := z1b09
+   hDane['P_31'] := z1b10
+   hDane['P_32'] := z1b11
+   hDane['P_33'] := z1b12
+   hDane['P_34'] := z201
+   hDane['P_35'] := z202
+   hDane['P_36'] := z203
+   hDane['P_37'] := z204
+   hDane['P_38'] := z205
+   hDane['P_39'] := z206
+   hDane['P_40'] := z207
+   hDane['P_41'] := z208
+   hDane['P_42'] := z209
+   hDane['P_43'] := z210
+   hDane['P_44'] := z211
+   hDane['P_45'] := z212
+   hDane['P_46'] := z1001
+   hDane['P_47'] := z1002
+   hDane['P_48'] := z1003
+   hDane['P_49'] := z1004
+   hDane['P_50'] := z1005
+   hDane['P_51'] := z1006
+   hDane['P_52'] := z1007
+   hDane['P_53'] := z1008
+   hDane['P_54'] := z1009
+   hDane['P_55'] := z1010
+   hDane['P_56'] := z1011
+   hDane['P_57'] := z1012
+   hDane['P_58'] := z901
+   hDane['P_59'] := z902
+   hDane['P_60'] := z903
+   hDane['P_61'] := z904
+   hDane['P_62'] := z905
+   hDane['P_63'] := z906
+   hDane['P_64'] := z907
+   hDane['P_65'] := z908
+   hDane['P_66'] := z909
+   hDane['P_67'] := z910
+   hDane['P_68'] := z911
+   hDane['P_69'] := z912
+   hDane['P_70'] := z301
+   hDane['P_71'] := z302
+   hDane['P_72'] := z303
+   hDane['P_73'] := z304
+   hDane['P_74'] := z305
+   hDane['P_75'] := z306
+   hDane['P_76'] := z307
+   hDane['P_77'] := z308
+   hDane['P_78'] := z309
+   hDane['P_79'] := z310
+   hDane['P_80'] := z311
+   hDane['P_81'] := z312
+   hDane['P_82'] := z401
+   hDane['P_83'] := z402
+   hDane['P_84'] := z403
+   hDane['P_85'] := z404
+   hDane['P_86'] := z405
+   hDane['P_87'] := z406
+   hDane['P_88'] := z407
+   hDane['P_89'] := z408
+   hDane['P_90'] := z409
+   hDane['P_91'] := z410
+   hDane['P_92'] := z411
+   hDane['P_93'] := z412
+   hDane['P_94'] := z501
+   hDane['P_95'] := z502
+   hDane['P_96'] := z503
+   hDane['P_97'] := z504
+   hDane['P_98'] := z505
+   hDane['P_99'] := z506
+   hDane['P_100'] := z507
+   hDane['P_101'] := z508
+   hDane['P_102'] := z509
+   hDane['P_103'] := z510
+   hDane['P_104'] := z511
+   hDane['P_105'] := z512
+   hDane['P_106'] := z601
+   hDane['P_107'] := z602
+   hDane['P_108'] := z603
+   hDane['P_109'] := z604
+   hDane['P_110'] := z801
+   hDane['P_111'] := z802
+   hDane['P_112'] := z803
+   hDane['P_113'] := z804
+   hDane['P_114'] := z805
+   hDane['P_115'] := z806
+   hDane['P_116'] := z807
+   hDane['P_117'] := z808
+   hDane['P_118'] := z809
+   hDane['P_119'] := z810
+   hDane['P_120'] := z811
+   hDane['P_121'] := z812
+   hDane['P_122'] := z1101
+   hDane['P_123'] := z1102
+   hDane['P_124'] := z1103
+   hDane['P_125'] := z1104
+   hDane['P_126'] := z1105
+   hDane['P_127'] := z1106
+   hDane['P_128'] := z1107
+   hDane['P_129'] := z1108
+   hDane['P_130'] := z1109
+   hDane['P_131'] := z1110
+   hDane['P_132'] := z1111
+   hDane['P_133'] := z1112
+   hDane['P_134'] := z1201
+   hDane['P_135'] := z1202
+   hDane['P_136'] := z1203
+   hDane['P_137'] := z1204
+   hDane['P_138'] := z1205
+   hDane['P_139'] := z1206
+   hDane['P_140'] := z1207
+   hDane['P_141'] := z1208
+   hDane['P_142'] := z1209
+   hDane['P_143'] := z1210
+   hDane['P_144'] := z1211
+   hDane['P_145'] := z1212
+   hDane['P_146'] := z1301
+   hDane['P_147'] := z1302
+   hDane['P_148'] := z1303
+   hDane['P_149'] := z1304
+   hDane['P_150'] := z1305
+   hDane['P_151'] := z1306
+   hDane['P_152'] := z1307
+   hDane['P_153'] := z1308
+   hDane['P_154'] := z1309
+   hDane['P_155'] := z1310
+   hDane['P_156'] := z1311
+   hDane['P_157'] := z1312
+   hDane['P_158'] := ''
+   hDane['P_159'] := '0'
+   hDane['P_160'] := '0'
+   hDane['P_161'] := '0'
 
    RETURN hDane
 
