@@ -20,83 +20,87 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-opc=0
-RR=0
-ColStd()
-@ 11,42 CLEAR TO 22,79
-do while .t.
-   set colo to w+
-*   @ 12,43 say    [ÄÄÄÄÄ Czyje dane eksportowa&_c. ? ÄÄÄÄÄÄ]
-*   @ 12,43 say    [ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ]
-   @ 15,43 say    [ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ]
+FUNCTION ZUS_Zglo()
+
+   opc := 0
+   RR := 0
    ColStd()
-   @ 17,43 say    [      Gdzie zapisywa&_c. pliki dla      ]
-   @ 18,43 say    [          Programu P&_l.atnika          ]
-   @ 19,43 say    [ dysk:\katalog\                      ]
-   set colo to w+
-   @ 20,47 say    substr(paraz_cel,1,33)
-   set colo to w
-*  ColPro()
-*  @ 13,43 prompt [        TYLKO WYBRANEJ OSOBY         ]
-*  @ 14,43 prompt [      WSZYSTKICH OS&__O.B Z LISTY        ]
-   @ 14,43 prompt [          TWORZENIE PLIKU            ]
-   @ 16,43 prompt [     ZMIANA PARAMETR&__O.W EKSPORTU      ]
-   RR=0
-   opc=menu(opc)
-   ColStd()
-   if lastkey()=27
-      exit
-   endif
-*   save screen to _scr22
-   do case
-   case opc=1
-        razem=0
-        zparspr=alltrim(paraz_cel)+'*.*'
-        katal=directory(zparspr,'HSDV')
-        aeval(katal,{|zbi|RAZEM++})
-        if razem=0
-           do komun with 'Brak podanego katalogu z danymi do Platnika. Podaj inny'
-*          zparaz_cel=paraz_cel
-           RR=0
-        else
-           RR=1
-        endif
-        exit
-*  case opc=2
-*       RR=2
-*       exit
-   case opc=2
-        zparaz_cel=paraz_cel
-        do while .t.
-           *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
-           @ 20,47 get zparaz_cel picture repl([!],60)
-           set curs on
-           read
-           set curs off
-           if lastkey()#27
-              if substr(alltrim(zparaz_cel),len(alltrim(zparaz_cel)),1)#'\'
-                 zparaz_cel=alltrim(zparaz_cel)+'\'+space(60-len(alltrim(zparaz_cel)))
-              endif
-              razem=0
-              zparspr=alltrim(zparaz_cel)+'*.*'
-              katal=directory(zparspr,'HSDV')
-              aeval(katal,{|zbi|RAZEM++})
-              if razem=0
-                 do komun with 'Brak podanego katalogu. Podaj inny'
-                 zparaz_cel=paraz_cel
-              else
-                 paraz_cel=zparaz_cel
-                 save to param_zu all like paraz_*
-                 exit
-              endif
-           endif
-        enddo
-   endcase
-*   restore screen from _scr22
-enddo
-@ 11,42 clear to 22,79
-return RR
+   @ 11, 42 CLEAR TO 22,79
+   DO WHILE .T.
+      SET COLOR TO w+
+      *@ 12,43 say    [ÄÄÄÄÄ Czyje dane eksportowa&_c. ? ÄÄÄÄÄÄ]
+      *@ 12,43 say    [ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ]
+      @ 15, 43 SAY    'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
+      ColStd()
+      @ 17, 43 SAY    '      Gdzie zapisywa&_c. pliki dla      '
+      @ 18, 43 SAY    '          Programu P&_l.atnika          '
+      @ 19, 43 SAY    ' dysk:\katalog\                      '
+      SET COLOR TO w+
+      @ 20, 47 SAY    SubStr( paraz_cel, 1, 33 )
+      SET COLOR TO w
+      *ColPro()
+      *@ 13,43 prompt [        TYLKO WYBRANEJ OSOBY         ]
+      *@ 14,43 prompt [      WSZYSTKICH OS&__O.B Z LISTY        ]
+      @ 14, 43 PROMPT '          TWORZENIE PLIKU            '
+      @ 16, 43 PROMPT '     ZMIANA PARAMETR&__O.W EKSPORTU      '
+
+      RR:= 0
+      opc := menu( opc )
+      ColStd()
+      IF LastKey() == 27
+         EXIT
+      ENDIF
+      *save screen to _scr22
+      DO CASE
+      CASE opc == 1
+         razem := 0
+         zparspr := AllTrim( paraz_cel ) + '*.*'
+         katal := Directory( zparspr, 'HSDV' )
+         AEval( katal, { | zbi | RAZEM++ } )
+         IF razem == 0
+            Komun( 'Brak podanego katalogu z danymi do Platnika. Podaj inny' )
+            *zparaz_cel=paraz_cel
+            RR := 0
+         ELSE
+            RR := 1
+         ENDIF
+         EXIT
+         *case opc=2
+         *  RR=2
+         *  exit
+      CASE opc == 2
+         zparaz_cel := paraz_cel
+         DO WHILE .T.
+            *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
+            @ 20, 47 GET zparaz_cel PICTURE repl( '!', 60 )
+            SET CURSOR ON
+            READ
+            SET CURSOR OFF
+            IF LastKey() # 27
+               IF SubStr( AllTrim( zparaz_cel ), Len( AllTrim( zparaz_cel ) ), 1 ) # '\'
+                  zparaz_cel := AllTrim( zparaz_cel ) + '\' + Space( 60 - Len( AllTrim( zparaz_cel ) ) )
+               ENDIF
+               razem := 0
+               zparspr := AllTrim( zparaz_cel ) + '*.*'
+               katal := Directory( zparspr, 'HSDV' )
+               AEval( katal, { | zbi | RAZEM++ } )
+               IF razem == 0
+                  Komun( 'Brak podanego katalogu. Podaj inny' )
+                  zparaz_cel := paraz_cel
+               ELSE
+                  paraz_cel := zparaz_cel
+                  SAVE TO param_zu ALL LIKE paraz_*
+                  EXIT
+               ENDIF
+            ENDIF
+         ENDDO
+      ENDCASE
+      *restore screen from _scr22
+   ENDDO
+   @ 11, 42 CLEAR TO 22, 79
+   RETURN RR
+
 ***********************************************************
-func vcel_zus
+*func vcel_zus
 ***********************************************************
-para zparaz_cel
+*para zparaz_cel

@@ -27,17 +27,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Param_ZU()
 
-*############################# PARAMETRY POCZATKOWE #########################
-if .not.file([param_zu.mem])
-   save to param_zu all like paraz_*
-   return
-endif
-              razem=0
-              zparspr=alltrim(paraz_cel)+'*.*'
-              katal=directory(zparspr,'HSDV')
-              aeval(katal,{|zbi|RAZEM++})
-              if razem=0
-                 do komun with 'Brak podanego katalogu z danymi do Platnika. Podaj inny'
-*                 zparaz_cel=paraz_cel
-              endif
-return
+   *############################# PARAMETRY POCZATKOWE #########################
+   IF .NOT. File( 'param_zu.mem' )
+      SAVE TO param_zu ALL LIKE paraz_*
+      RETURN
+   ENDIF
+
+   razem := 0
+   zparspr := AllTrim( paraz_cel ) + '*.*'
+   katal := Directory( zparspr, 'HSDV' )
+   AEval( katal, { | zbi | RAZEM++ } )
+   IF razem == 0
+      Komun( 'Brak podanego katalogu z danymi do Platnika. Podaj inny' )
+      *zparaz_cel=paraz_cel
+   ENDIF
+
+   RETURN
