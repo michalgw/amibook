@@ -457,7 +457,7 @@ FUNCTION Ewid()
                   papier := 'K'
                   DO CASE
                      CASE opcja1 == 1
-                        papier := menuDeklaracjaDruk( 12, .F. )
+                        papier := menuDeklaracjaDruk( 8, .F. )
                         IF LastKey() == K_ESC .OR. papier == ''
 
                         ELSE
@@ -503,7 +503,7 @@ FUNCTION Ewid()
    *                  endif
 
                      CASE opcja1 == 2
-                        papier := menuDeklaracjaDruk( 13, .F. )
+                        papier := menuDeklaracjaDruk( 9, .F. )
                         IF LastKey() == K_ESC .OR. papier == ''
 
                         ELSE
@@ -546,7 +546,7 @@ FUNCTION Ewid()
                       endif*/
    *                   @ 15,22 get papier pict '!' when wKARTv(15,22) valid vKARTv(15,22)
    *                   read
-                        papier := menuDeklaracjaDruk( 14, iif( zVATFORDR == '7 ', .T., .F. ) )
+                        papier := menuDeklaracjaDruk( 12, iif( zVATFORDR == '7 ', .T., .F. ) )
                         SET CURSOR OFF
     //                  @ 24,0
                         IF LastKey() <> K_ESC
@@ -578,7 +578,7 @@ FUNCTION Ewid()
    *                      read
    *                   else
    //                      papier='K'
-                        papier := menuDeklaracjaDruk( 15, iif( zVATFORDR == '7 ', .T., .F. ) )
+                        papier := menuDeklaracjaDruk( 13, iif( zVATFORDR == '7 ', .T., .F. ) )
    *                   endif
    *                   @ 16,22 get papier pict '!' when wKARTv(16,22) valid vKARTv(16,22)
    *                   read
@@ -609,9 +609,9 @@ FUNCTION Ewid()
 
                      CASE opcja1 == 8
 
-                        opcja11 := MenuEx( 17, 2, { "5 - Wersja 5 VAT-UE (5)", "4 - Wersja 4 VAT-UE (4)" } )
+                        opcja11 := MenuEx( 14, 2, { "5 - Wersja 5 VAT-UE (5)", "4 - Wersja 4 VAT-UE (4)" } )
 
-                        SWITCH edekCzyKorekta( 17, 2 )
+                        SWITCH edekCzyKorekta( 15, 2 )
                         CASE 1
                            vue_info( opcja11 )
                            EXIT
@@ -621,7 +621,7 @@ FUNCTION Ewid()
                         ENDSWITCH
 
                      CASE opcja1 == 9
-                        IF ( papier := menuDeklaracjaDruk(17, .F.) ) $ 'KX'
+                        IF ( papier := menuDeklaracjaDruk( 16, .F.) ) $ 'KX'
                            IF ( opcja11 := edekCzyKorekta( 17, 2 ) ) > 0
                               DO CASE
                                  CASE papier == 'K'
@@ -638,9 +638,9 @@ FUNCTION Ewid()
                         DO WHILE .T.
                         *=============================
                            ColPro()
-                           @ 19, 11 TO 22, 33
-                           @ 20, 12 PROMPT ' 1 - Pracownicy      '
-                           @ 21, 12 PROMPT ' 2 - Z w&_l.a&_s.cicielami '
+                           @ 18, 11 TO 21, 33
+                           @ 19, 12 PROMPT ' 1 - Pracownicy      '
+                           @ 20, 12 PROMPT ' 2 - Z w&_l.a&_s.cicielami '
                            opcja11 := menu( opcja11 )
                            ColStd()
                            IF LastKey() == K_ESC
@@ -721,7 +721,7 @@ FUNCTION Ewid()
                         RESTORE SCREEN FROM ROBSO11
 
                      CASE opcja1 == 13
-                        opcja11 := MenuEx( 20, 6, { "S - Deklaracja skˆadki", "K - Korekta skˆadki" } )
+                        opcja11 := MenuEx( 19, 6, { "S - Deklaracja skˆadki", "K - Korekta skˆadki" } )
                         DO CASE
                         CASE opcja11 == 1
                            PPK_Skladka()

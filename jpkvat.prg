@@ -1174,7 +1174,7 @@ PROCEDURE JPK_V7_Rob()
    aDane[ 'Korekta' ] := .F.
    aDane[ 'DataWytworzeniaJPK' ] := datetime2strxml( hb_DateTime() )
 
-   nMenuDekDruk := MenuEx( 16, 4, { ' D - Wydruk      ', ' E - eDeklaracja ' }, ;
+   nMenuDekDruk := MenuEx( 14, 4, { ' D - Wydruk      ', ' E - eDeklaracja ' }, ;
       nMenuDekDruk, .T. )
 
    IF nMenuDekDruk == 0
