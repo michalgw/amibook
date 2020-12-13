@@ -352,7 +352,8 @@ public aETATYdbf := {;
    { "PPKPK1", "N", 8, 2 },;                      // 120 PPK Wpˆata podstawowa pracodawcy - kwota
    { "PPKPS2", "N", 5, 2 },;                      // 121 PPK Wpˆata dodatkowa pracodawcy - stawka
    { "PPKPK2", "N", 8, 2 },;                      // 122 PPK Wpˆata dodatkowa pracodawcy - kwota
-   { "PPKPPM", "N", 8, 2 } }                      // 123 PPK Wpˆaty pracodawcy z pop. miesi¥ca
+   { "PPKPPM", "N", 8, 2 },;                      // 123 PPK Wpˆaty pracodawcy z pop. miesi¥ca
+   { "PPKIDEPPK", "C", 50, 0 } }                  // 124 PPK Identyfikator ewidencji PPK uczestnika PPK
 
 // Create: EWID.DBF
 public aEWIDdbf := {;
