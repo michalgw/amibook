@@ -87,44 +87,43 @@ METHOD WczytajDane( lPPKAktywni ) CLASS TPPK
       etaty->( ordSetFocus( 2 ) )
    ENDIF
 
-   DO WHILE ! prac->( Eof() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir ;
-      .AND. prac->status <= 'U' .AND. prac->ppk $ iif( lPPKAktywni, 'T', ' N' )
+   DO WHILE ! prac->( Eof() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
+      IF prac->status $ 'EU' .AND. prac->ppk $ iif( lPPKAktywni, 'T', ' N' )
+         aPrac := hb_Hash( 'wybrany', .F. )
+         aPrac[ 'id' ] := prac->rec_no
+         aPrac[ 'imie' ] := AllTrim( prac->imie1 )
+         aPrac[ 'imie2' ] := AllTrim( prac->imie2 )
+         aPrac[ 'nazwisko' ] := AllTrim( prac->nazwisko )
+         aPrac[ 'plec' ] := iif( prac->plec $ 'MK', prac->plec, 'N' )
+         aPrac[ 'pesel' ] := AllTrim( prac->pesel )
+         aPrac[ 'data_urodzenia' ] := prac->data_ur
+         aPrac[ 'rodzaj_dowodu' ] := prac->rodz_dok
+         aPrac[ 'numer_dowodu' ] := prac->dowod_osob
+         aPrac[ 'kraj' ] := iif( prac->dokidkraj == '  ', 'PL', prac->dokidkraj )
+         aPrac[ 'kod_pocztowy' ] := AllTrim( prac->kod_poczt )
+         aPrac[ 'poczta' ] := AllTrim( prac->poczta )
+         aPrac[ 'miejscowosc' ] := AllTrim( prac->miejsc_zam )
+         aPrac[ 'ulica' ] := AllTrim( prac->ulica )
+         aPrac[ 'nr_domu' ] := AllTrim( prac->nr_domu )
+         aPrac[ 'nr_mieszkania' ] := AllTrim( prac->nr_mieszk )
+         aPrac[ 'pracodawca_dod_proc' ] := prac->ppkps2
 
-      aPrac := hb_Hash( 'wybrany', .F. )
-      aPrac[ 'id' ] := prac->rec_no
-      aPrac[ 'imie' ] := AllTrim( prac->imie1 )
-      aPrac[ 'imie2' ] := AllTrim( prac->imie2 )
-      aPrac[ 'nazwisko' ] := AllTrim( prac->nazwisko )
-      aPrac[ 'plec' ] := iif( prac->plec $ 'MK', prac->plec, 'N' )
-      aPrac[ 'pesel' ] := AllTrim( prac->pesel )
-      aPrac[ 'data_urodzenia' ] := prac->data_ur
-      aPrac[ 'rodzaj_dowodu' ] := prac->rodz_dok
-      aPrac[ 'numer_dowodu' ] := prac->dowod_osob
-      aPrac[ 'kraj' ] := iif( prac->dokidkraj == '  ', 'PL', prac->dokidkraj )
-      aPrac[ 'kod_pocztowy' ] := AllTrim( prac->kod_poczt )
-      aPrac[ 'poczta' ] := AllTrim( prac->poczta )
-      aPrac[ 'miejscowosc' ] := AllTrim( prac->miejsc_zam )
-      aPrac[ 'ulica' ] := AllTrim( prac->ulica )
-      aPrac[ 'nr_domu' ] := AllTrim( prac->nr_domu )
-      aPrac[ 'nr_mieszkania' ] := AllTrim( prac->nr_mieszk )
-      aPrac[ 'pracodawca_dod_proc' ] := prac->ppkps2
-
-      IF HB_ISCHAR( ::cMiesiac )
-         etaty->( dbSeek( '+' + ident_fir + ::cMiesiac + Str( prac->rec_no, 5 ) ) )
-         IF etaty->( Found() ) .AND. etaty->ppk == 'T'
-            aPrac[ 'ppk' ] := .T.
-            aPrac[ 'okres' ] := param_rok + '-' + StrTran( ::cMiesiac, ' ', '0' )
-            aPrac[ 'wart_podst_pracownika' ] := etaty->ppkzk1
-            aPrac[ 'wart_dodat_pracownika' ] := etaty->ppkzk2
-            aPrac[ 'wart_podst_pracodawcy' ] := etaty->ppkpk1
-            aPrac[ 'wart_dodat_pracodawcy' ] := etaty->ppkpk2
-         ELSE
-            aPrac[ 'ppk' ] := .F.
+         IF HB_ISCHAR( ::cMiesiac )
+            etaty->( dbSeek( '+' + ident_fir + ::cMiesiac + Str( prac->rec_no, 5 ) ) )
+            IF etaty->( Found() ) .AND. etaty->ppk == 'T'
+               aPrac[ 'ppk' ] := .T.
+               aPrac[ 'okres' ] := param_rok + '-' + StrTran( ::cMiesiac, ' ', '0' )
+               aPrac[ 'wart_podst_pracownika' ] := etaty->ppkzk1
+               aPrac[ 'wart_dodat_pracownika' ] := etaty->ppkzk2
+               aPrac[ 'wart_podst_pracodawcy' ] := etaty->ppkpk1
+               aPrac[ 'wart_dodat_pracodawcy' ] := etaty->ppkpk2
+            ELSE
+               aPrac[ 'ppk' ] := .F.
+            ENDIF
          ENDIF
+
+         AAdd( ::aPracownicy, aPrac )
       ENDIF
-
-      AAdd( ::aPracownicy, aPrac )
-
       prac->( dbSkip() )
    ENDDO
 
