@@ -133,7 +133,7 @@ PROCEDURE ZusRza( ubezp )
 
       kedu_pocz()
       dp_pocz( 'RZA' )
-      ? '<ZUSRZA>'
+      zus_pocz( 'RZA', 1 )
       dorza( miesiac, param_rok, sumskla )
       IF zSPOLKA = 'T'
          dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
@@ -161,7 +161,7 @@ PROCEDURE ZusRza( ubezp )
       ENDDO
 
       oplr()
-      ? '</ZUSRZA>'
+      zus_kon( 'RZA' )
       dp_kon( 'RZA' )
       kedu_kon()
       SET PRINTER TO
@@ -224,7 +224,7 @@ PROCEDURE ZusRza( ubezp )
 
          kedu_pocz()
          dp_pocz( 'RZA' )
-         ? '<ZUSRZA>'
+         zus_pocz( 'RZA', 1 )
          dorza( miesiac, param_rok, sumskla )
          *dipl rozne dla spolki i osoby fizycznej
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
@@ -245,7 +245,7 @@ PROCEDURE ZusRza( ubezp )
          ENDIF
 
          oplr()
-         ? '</ZUSRZA>'
+         zus_kon( 'RZA' )
          dp_kon( 'RZA' )
          kedu_kon()
          SET PRINTER TO
@@ -340,7 +340,7 @@ PROCEDURE ZusRza( ubezp )
 
             kedu_pocz()
             dp_pocz( 'RZA' )
-            ? '<ZUSRZA>'
+            zus_pocz( 'RZA', 1 )
             dorza( miesiac, param_rok, sumskla )
             *dipl rozne dla spolki i osoby fizycznej
             subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
@@ -357,7 +357,7 @@ PROCEDURE ZusRza( ubezp )
             ENDIF
 
             oplr()
-            ? '</ZUSRZA>'
+            zus_kon( 'RZA' )
             dp_kon( 'RZA' )
             kedu_kon()
             SET PRINTER TO

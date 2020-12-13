@@ -117,7 +117,7 @@ PROCEDURE ZusRca( ubezp )
 
       kedu_pocz()
       dp_pocz( 'RCA' )
-      ?'<ZUSRCA>'
+      zus_pocz( 'RCA', 1 )
       dorca( miesiac, param_rok, 0 )
       IF zSPOLKA = 'T'
          dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
@@ -216,7 +216,7 @@ PROCEDURE ZusRca( ubezp )
       ENDDO
 
       oplr()
-      ?'</ZUSRCA>'
+      zus_kon( 'RCA' )
       dp_kon('RCA')
       kedu_kon()
       SET PRINTER TO
@@ -269,7 +269,7 @@ PROCEDURE ZusRca( ubezp )
 
       kedu_pocz()
       dp_pocz('RCA')
-      ?'<ZUSRCA>'
+      zus_pocz( 'RCA', 1 )
       dorca( miesiac, param_rok, 0 )
       IF zSPOLKA = 'T'
          dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
@@ -340,7 +340,7 @@ PROCEDURE ZusRca( ubezp )
          brakpra := .T.
       ENDIF
       oplr()
-      ?'</ZUSRCA>'
+      zus_kon( 'RCA' )
       dp_kon( 'RCA' )
       kedu_kon()
       SET PRINTER TO

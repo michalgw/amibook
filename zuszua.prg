@@ -99,7 +99,7 @@ PROCEDURE ZusZua( ubezp )
          SET PRINTER TO &aaaa
          kedu_pocz()
          dp_pocz( 'ZUA' )
-         ? '<ZUSZUA>'
+         zus_pocz( 'ZUA', 1 )
          dozua()
          *dipl rozne dla spolki i osoby fizycznej
          IF zSPOLKA = 'T'
@@ -123,7 +123,7 @@ PROCEDURE ZusZua( ubezp )
          adza()
          adkb()
          opl1()
-         ? '</ZUSZUA>'
+         zus_kon( 'ZUA' )
          dp_kon( 'ZUA' )
          kedu_kon()
          SET PRINTER TO
@@ -205,7 +205,7 @@ PROCEDURE ZusZua( ubezp )
             SET PRINTER TO &aaaa
             kedu_pocz()
             dp_pocz( 'ZUA' )
-            ? '<ZUSZUA>'
+            zus_pocz( 'ZUA', 1 )
             dozua()
             *dipl rozne dla spolki i osoby fizycznej
             IF zSPOLKA = 'T'
@@ -229,7 +229,7 @@ PROCEDURE ZusZua( ubezp )
             adza()
             adkb()
             opl1()
-            ? '</ZUSZUA>'
+            zus_kon( 'ZUA' )
             dp_kon( 'ZUA' )
             kedu_kon()
             SET PRINTER TO
@@ -354,7 +354,7 @@ PROCEDURE ZusZua( ubezp )
             SET PRINTER TO &aaaa
             kedu_pocz()
             dp_pocz( 'ZUA' )
-            ? '<ZUSZUA>'
+            zus_pocz( 'ZUA' )
             dozua()
             *dipl rozne dla spolki i osoby fizycznej
             IF zSPOLKA = 'T'
@@ -377,7 +377,7 @@ PROCEDURE ZusZua( ubezp )
             adza()
             adkb()
             opl1()
-            ? '</ZUSZUA>'
+            zus_kon( 'ZUA' )
             dp_kon( 'ZUA' )
             kedu_kon()
             SET PRINTER TO

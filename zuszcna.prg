@@ -99,7 +99,7 @@ PROCEDURE ZusZcna( ubezp )
          SET PRINTER TO &aaaa
          kedu_pocz()
          dp_pocz( 'ZCNA' )
-         ? '<ZUSZCNA>'
+         zus_pocz( 'ZCNA', 1 )
          dozcba()
          *dipl rozne dla spolki i osoby fizycznej
          IF zSPOLKA = 'T'
@@ -113,7 +113,7 @@ PROCEDURE ZusZcna( ubezp )
          dau( A->PESEL, A->NIP, A->RODZ_DOK, A->DOWOD_OSOB, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
          docra()
          opl1()
-         ? '</ZUSZCNA>'
+         zus_kon( 'ZCNA' )
          dp_kon( 'ZCNA' )
          kedu_kon()
          SET PRINTER TO
@@ -195,7 +195,7 @@ PROCEDURE ZusZcna( ubezp )
             SET PRINTER TO &aaaa
             kedu_pocz()
             dp_pocz( 'ZCNA' )
-            ? '<ZUSZCNA>'
+            zus_pocz( 'ZCNA', 1 )
             dozcba()
             *dipl rozne dla spolki i osoby fizycznej
             IF zSPOLKA = 'T'
@@ -209,7 +209,7 @@ PROCEDURE ZusZcna( ubezp )
             dau( A->PESEL, A->NIP, A->RODZ_DOK, A->DOWOD_OSOB, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
             docra()
             opl1()
-            ? '</ZUSZCNA>'
+            zus_kon( 'ZCNA' )
             dp_kon( 'ZCNA' )
             kedu_kon()
             SET PRINTER TO
@@ -334,7 +334,7 @@ PROCEDURE ZusZcna( ubezp )
             SET PRINTER TO &aaaa
             kedu_pocz()
             dp_pocz( 'ZCNA' )
-            ? '<ZUSZCNA>'
+            zus_pocz( 'ZCNA', 1 )
             dozcba()
             *dipl rozne dla spolki i osoby fizycznej
             IF zSPOLKA = 'T'
@@ -347,7 +347,7 @@ PROCEDURE ZusZcna( ubezp )
             dau( B->PESEL, B->NIP, B->RODZ_DOK, B->DOWOD_OSOB, B->NAZWISKO, B->IMIE1, B->DATA_UR )
             docra()
             opl1()
-            ? '</ZUSZCNA>'
+            zus_kon( 'ZCNA' )
             dp_kon( 'ZCNA' )
             kedu_kon()
             SET PRINTER TO

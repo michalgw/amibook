@@ -91,17 +91,17 @@ PROCEDURE ZusZpa()
       SET PRINTER TO &aaaa
       kedu_pocz()
       dp_pocz( 'ZPA' )
-      ? '<ZUSZPA>'
+      zus_pocz( 'ZPA', 1 )
       dozpf()
       daip( F->NIP, SubStr( F->NR_REGON, 3 ), F->nazwa_skr )
       dapl( F->NAZWA, F->DATA_REJ, F->NUMER_REJ, zNAZWA_ORG, F->DATA_ZAL )
       dorb( AllTrim( F->NR_KONTA ) )
       ido1()
-      aszp( F->KOD_P, F->MIEJSC, F->GMINA, F->ULICA, F->NR_DOMU, F->NR_MIESZK, F->TEL, F->FAX )
+      aszp( F->KOD_P, F->MIEJSC, F->GMINA, F->ULICA, F->NR_DOMU, F->NR_MIESZK, F->TEL, F->FAX, 'VI' )
       adkp()
       dobr( '', '', '' )
       opl2()
-      ? '</ZUSZPA>'
+      zus_kon( 'ZPA' )
       dp_kon( 'ZPA' )
       kedu_kon()
       SET PRINTER TO

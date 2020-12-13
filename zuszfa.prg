@@ -118,7 +118,7 @@ PROCEDURE ZusZfa( ubezp )
          SET PRINTER TO &aaaa
          kedu_pocz()
          dp_pocz( 'ZFA' )
-         ? '<ZUSZFA>'
+         zus_pocz( 'ZFA', 1 )
          dozpf()
          *dipl rozne dla spolki i osoby fizycznej
          subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
@@ -132,7 +132,7 @@ PROCEDURE ZusZfa( ubezp )
          adkp()
          dobr( '', '', '' )
          opl2()
-         ? '</ZUSZFA>'
+         zus_kon( 'ZFA' )
          dp_kon( 'ZFA' )
          kedu_kon()
          SET PRINTER TO
@@ -214,7 +214,7 @@ PROCEDURE ZusZfa( ubezp )
             SET PRINTER TO &aaaa
             kedu_pocz()
             dp_pocz( 'ZFA' )
-            ? '<ZUSZFA>'
+            zus_pocz( 'ZFA', 1 )
             dozpf()
             *dipl rozne dla spolki i osoby fizycznej
             subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
@@ -228,7 +228,7 @@ PROCEDURE ZusZfa( ubezp )
             adkp()
             dobr( '', '', '' )
             opl2()
-            ? '</ZUSZFA>'
+            zus_kon( 'ZFA' )
             dp_kon( 'ZFA' )
             kedu_kon()
             SET PRINTER TO
@@ -303,7 +303,7 @@ PROCEDURE ZusZfa( ubezp )
       SET PRINTER TO &aaaa
       kedu_pocz()
       dp_pocz( 'ZFA' )
-      ? '<ZUSZFA>'
+      zus_pocz( 'ZFA', 1 )
       dozpf()
       *dipl rozne dla spolki i osoby fizycznej
       subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
@@ -314,11 +314,11 @@ PROCEDURE ZusZfa( ubezp )
       dorb( '' )
       idop()
       aspl( F->KOD_P, F->MIEJSC, F->GMINA, F->ULICA, F->NR_DOMU, F->NR_MIESZK, F->TEL, F->FAX )
-      aszp( A->KOD_POCZT, A->MIEJSC_ZAM, A->GMINA, A->ULICA, A->NR_DOMU, A->NR_MIESZK, A->TELEFON, '' )
+      aszp( A->KOD_POCZT, A->MIEJSC_ZAM, A->GMINA, A->ULICA, A->NR_DOMU, A->NR_MIESZK, A->TELEFON, '', 'VII' )
       adkp()
       dobr( '', '', '' )
       opl2()
-      ? '</ZUSZFA>'
+      zus_kon( 'ZFA' )
       dp_kon( 'ZFA' )
       kedu_kon()
       SET PRINTER TO

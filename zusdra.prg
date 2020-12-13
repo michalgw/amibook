@@ -176,7 +176,7 @@ PROCEDURE ZusDra( ubezp )
 
       kedu_pocz()
       dp_pocz( 'DRA' )
-      ? '<ZUSDRA>'
+      zus_pocz( 'DRA', 1 )
       dadra( '3', miesiac, param_rok )
       IF zSPOLKA = 'T'
          dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
@@ -197,7 +197,7 @@ PROCEDURE ZusDra( ubezp )
       kndk()
       dddu( '', 0 )
       opls()
-      ? '</ZUSDRA>'
+      zus_kon( 'DRA' )
       dp_kon( 'DRA' )
       kedu_kon()
       SET PRINTER TO
@@ -247,7 +247,7 @@ PROCEDURE ZusDra( ubezp )
          SET PRINTER TO &aaaa
          kedu_pocz()
          dp_pocz( 'DRA' )
-         ? '<ZUSDRA>'
+         zus_pocz( 'DRA', 1 )
          dadra( '2', miesiac, param_rok )
          *dipl rozne dla spolki i osoby fizycznej
          subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
@@ -264,7 +264,7 @@ PROCEDURE ZusDra( ubezp )
          kndk()
          dddu( A->KOD_TYTU, d->podstawa, d->podstzdr )
          opls()
-         ? '</ZUSDRA>'
+         zus_kon( 'DRA' )
          dp_kon( 'DRA' )
          kedu_kon()
          SET PRINTER TO
@@ -350,7 +350,7 @@ PROCEDURE ZusDra( ubezp )
             SET PRINTER TO &aaaa
             kedu_pocz()
             dp_pocz('DRA')
-            ? '<ZUSDRA>'
+            zus_pocz( 'DRA' )
             dadra( '2', miesiac, param_rok )
             *dipl rozne dla spolki i osoby fizycznej
             subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
@@ -367,7 +367,7 @@ PROCEDURE ZusDra( ubezp )
             kndk()
             dddu( A->KOD_TYTU, d->podstawa, d->podstzdr )
             opls()
-            ? '</ZUSDRA>'
+            zus_kon( 'DRA' )
             dp_kon('DRA')
             kedu_kon()
             SET PRINTER TO
@@ -544,7 +544,7 @@ PROCEDURE ZusDra( ubezp )
 
       kedu_pocz()
       dp_pocz( 'DRA' )
-      ? '<ZUSDRA>'
+      zus_pocz( 'DRA', 1 )
       dadra( '3', miesiac, param_rok )
       IF zSPOLKA = 'T'
          dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
@@ -566,7 +566,7 @@ PROCEDURE ZusDra( ubezp )
       kndk()
       dddu( '', 0 )
       opls()
-      ? '</ZUSDRA>'
+      zus_kon( 'DRA' )
       dp_kon( 'DRA' )
       kedu_kon()
       SET PRINTER TO
