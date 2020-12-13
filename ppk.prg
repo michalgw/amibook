@@ -261,7 +261,7 @@ METHOD XMLDodaj( cWiersz ) CLASS TPPK
 
 METHOD XMLNaglowek() CLASS TPPK
 
-   ::XMLDodaj( '<?xml version="1.0" encoding="UTF-8"?><PPK wersja="1.0">' )
+   ::XMLDodaj( '<?xml version="1.0" encoding="UTF-8"?>' )
    ::XMLDodaj( '<PPK wersja="1.0">' )
    ::XMLDodaj( '  <WERSJA>GRUPA_PPK 2.00</WERSJA>' )
    ::XMLDodaj( '  <GENERACJA>' + hb_DToC( Date(), 'YYYY-MM-DDT' ) + ' ' + hb_TToC( hb_DateTime(), '', 'HH:MM:SS' ) + '</GENERACJA>' )
