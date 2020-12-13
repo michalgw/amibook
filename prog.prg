@@ -495,6 +495,9 @@ FUNCTION Main()
    // Domyslny symbol kasy choryc
    PUBLIC parap_rkc := '01R'
 
+   // Wersja formatu eksportu do Pˆatnika
+   PUBLIC nWersjaKEDU := 2
+
    // ---
 
    // Parametry do obliczania korekt
@@ -1299,6 +1302,7 @@ FUNCTION _ae()
    o[ 4 ] := ' I - Inne wyp&_l.aty                   '
    o[ 5 ] := ' O - Og&_o.lne parametry p&_l.acowe i ZUS '
    o[ 6 ] := ' Z - Parametry ZUS dla firmy        '
+   o[ 7 ] := ' K - Generowanie pliku PPK          '
 
    RETURN '12,2'
 
@@ -1437,6 +1441,14 @@ FUNCTION _aee()
 FUNCTION _aef()
 
    Param_PF()
+
+   RETURN ''
+
+*******************************************
+// Parametry ZUS dla firmy
+FUNCTION _aeg()
+
+   PPK_Zglos()
 
    RETURN ''
 

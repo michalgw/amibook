@@ -429,22 +429,24 @@ FUNCTION Ewid()
                         verdekold := 'K  (1)                    '
                   ENDCASE
 
-                  @  8, 1 TO 22, 39
-                  @  9, 2 PROMPT ' 4 - PIT-4R   (10)   (czyste kartki) '
-                  @ 10, 2 PROMPT ' 8 - PIT-8AR  (8)    (czyste kartki) '
-                  @ 11, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
-                  @ 12, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
-                  @ 13, 2 PROMPT ' V - VAT-' + zVATFORDR + '   ' + verdekvat
-                  @ 14, 2 PROMPT ' Y - VAT-' + zVATFORDR + '   ' + verdeknew
-                  @ 15, 2 PROMPT ' J - JPK_V7' + verdekold
+                  @  6, 1 TO 22, 39
+                  @  7, 2 PROMPT ' 4 - PIT-4R   (10)   (czyste kartki) '
+                  @  8, 2 PROMPT ' 8 - PIT-8AR  (8)    (czyste kartki) '
+                  @  9, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
+                  @ 10, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
+                  @ 11, 2 PROMPT ' V - VAT-' + zVATFORDR + '   ' + verdekvat
+                  @ 12, 2 PROMPT ' Y - VAT-' + zVATFORDR + '   ' + verdeknew
+                  @ 13, 2 PROMPT ' J - JPK_V7' + verdekold
     *(7-11/7K-5/7D-2)
     *             @ 15, 2 prompt [ 7 - VAT-7/7K (9/3)                  ]
-                  @ 16, 2 PROMPT ' U - VAT-UE   (zestaw formularzy UE) '
-                  @ 17, 2 PROMPT ' 7 - VAT-27   (2)    (czyste kartki) '
-                  @ 18, 2 TO 18, 38
-                  @ 19, 2 PROMPT ' C - RCA raport imienny              '
-                  @ 20, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '
-                  @ 21, 2 PROMPT ' D - DRA deklaracja rozliczeniowa    '
+                  @ 14, 2 PROMPT ' U - VAT-UE   (zestaw formularzy UE) '
+                  @ 15, 2 PROMPT ' 7 - VAT-27   (2)    (czyste kartki) '
+                  @ 16, 2 TO 16, 38
+                  @ 17, 2 PROMPT ' C - RCA raport imienny              '
+                  @ 18, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '
+                  @ 19, 2 PROMPT ' D - DRA deklaracja rozliczeniowa    '
+                  @ 20, 2 TO 20, 38
+                  @ 21, 2 PROMPT ' P - PPK deklaracja wpˆaty           '
                   opcja1 := menu( opcja1 )
                   ColStd()
                   IF LastKey() == K_ESC
@@ -717,6 +719,16 @@ FUNCTION Ewid()
                            RESTORE SCREEN FROM SCR222
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
+
+                     CASE opcja1 == 13
+                        opcja11 := MenuEx( 20, 6, { "S - Deklaracja skˆadki", "K - Korekta skˆadki" } )
+                        DO CASE
+                        CASE opcja11 == 1
+                           PPK_Skladka()
+                        CASE opcja11 == 2
+                           PPK_KorSkladka()
+                        ENDCASE
+
                   ENDCASE
                   close_()
                   RESTORE SCREEN FROM SCR22
