@@ -668,7 +668,7 @@ FUNCTION GM_ArEdit( nTop, nLeft, nBot, nRight, ;
       IF meth_no != 0
          Eval( tb_methods[ meth_no, BLK_ELEM ], b )
       ELSE
-         meth_no := AScan( aCustomKeys, { | elem | nKey == elem[ KEY_ELEM ] } )
+         meth_no := AScan( aCustomKeys, { | elem | iif( HB_ISARRAY( elem[ KEY_ELEM ] ), AScan( elem[ KEY_ELEM ], nKey ) > 0, nKey == elem[ KEY_ELEM ] ) } )
          IF meth_no != 0
             Eval( aCustomKeys[ meth_no, BLK_ELEM ], nElem, ar, b )
             IF Len( ar ) == 0
