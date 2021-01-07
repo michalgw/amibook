@@ -556,7 +556,14 @@ public aFIRMAdbf := {;
    { "ROZRZAPZ", "C", 1, 0 },;                    //  70
    { "ROZRZAPF", "C", 1, 0 },;                    //  71
    { "RODZNRKS", "C", 1, 0 },;                    //  72
-   { "EMAIL", "C", 60, 0 } }                      //  73
+   { "EMAIL", "C", 60, 0 },;                      //  73
+   { "PPKPS1", "N", 5, 2 },;                      //  74 PPK Wpˆata podstawowa pracodawcy - stawka
+   { "PPKPS2", "N", 5, 2 },;                      //  75 PPK Wpˆata dodatkowa pracodawcy - stawka
+   { "PPKKWGR", "N", 9, 2 },;                     //  76 PPK Kwota graniczna dla obni¾enia stawki podstawowej deklarowanej przez pracownika
+   { "PPKWPLMC", "C", 1, 0 },;                    //  77 PPK T - Wpˆata do PPK w tym samym miesi¥cu, N - wpˆata do 15 dnia kolejnego mc.
+   { "PPKEIDKADR", "C", 1, 0 },;                  //  78 PPK doˆ¥czaj pole "ID Kadrowy"
+   { "PPKEIDEPPK", "C", 1, 0 },;                  //  79 PPK doˆ¥czaj pole "ID Kadrowy"
+   { "PPKEIDPZIF", "C", 1, 0 } }                  //  80 PPK doˆ¥czaj pole "ID Kadrowy"
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;
@@ -875,8 +882,12 @@ public aPRACdbf := {;
    { "DOKIDKRAJ", "C", 2, 0 },;                   //  79
    { "OSWIAD26R", "C", 1, 0 },;                   //  80
    { "PPK", "C", 1, 0 },;                         //  81 PPK wˆ¥czone
+   { "PPKZS1", "N", 5, 2 },;                      //  82 PPK Wpˆata podstawowa pracownik¢w - stawka
    { "PPKZS2", "N", 5, 2 },;                      //  82 PPK Wpˆata dodatkowa pracownik¢w - stawka
-   { "PPKPS2", "N", 5, 2 } }                      //  83 PPK Wpˆata dodatkowa pracodawcy - stawka
+   { "PPKPS2", "N", 5, 2 },;                      //  83 PPK Wpˆata dodatkowa pracodawcy - stawka
+   { "PPKIDKADR", "C", 10, 0 },;                  //  84 PPK ID Kadrowy (wewn©trzny) Identyfikator zatrudnienia osobyaplikacji kadrowej pracodawcy.Musi by† unikalnyw ramach danej firmy.Identyfikator pomocniczy.
+   { "PPKIDEPPK", "C", 20, 0 },;                  //  85 PPK Identyfikator ewidencji PPK uczestnika PPK.
+   { "PPKIDPZIF", "C", 50, 0 } }                  //  86 PPK Unikalny numer nadany przez instytucj© finansow¥, np. Nr rachunku, kt¢ry uczestnik ma nadany przez instytucj© finansow¥.
 
 // Create: PROFIL.DBF
 public aPROFILdbf := { ;

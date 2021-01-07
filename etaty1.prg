@@ -380,20 +380,20 @@ do while .t.
          case skladn=7
               save scre to scr_sklad
               set curs on
-              @ 11,42 clear TO 21,77
-              @ 11,42 TO 21,77
-              @ 12,43 say 'Udziaˆ pracownika w PPK' get zPPK pict '!' valid Eval( { || zPPK $ 'TN' } ) .AND. OBLPL()
-              @ 13,43 say 'WPATY PRACOWNIKA'
-              @ 14,43 say 'Podst. stawka' get zPPKZS1 pict '99.99' when zPPK == 'T' valid OBLPL()
-              @ 14,62 say '% kwota' get zPPKZK1 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
-              @ 15,43 say 'Dodat. stawka' get zPPKZS2 pict '99.99' when zPPK == 'T' valid OBLPL()
-              @ 15,62 say '% kwota' get zPPKZK2 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
-              @ 16,43 say 'WPATY PRACODAWCY'
-              @ 17,43 say 'Podst. stawka' get zPPKPS1 pict '99.99' when zPPK == 'T' valid OBLPL()
-              @ 17,62 say '% kwota' get zPPKPK1 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
-              @ 18,43 say 'Dodat. stawka' get zPPKPS2 pict '99.99' when zPPK == 'T' valid OBLPL()
-              @ 18,62 say '% kwota' get zPPKPK2 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
-              @ 20,43 say 'Dolicz do podstawy opodat.' get zPPKPPM pict '9999.99' when Eval( { || zPPKPPM := zPPKPK1 + zPPKPK2, .T. } ) valid OBLPL()
+              @ 11,42 clear TO 21,79
+              @ 11,42 TO 21,79
+              @ 12,44 say 'Udziaˆ pracownika w PPK' get zPPK pict '!' valid Eval( { || zPPK $ 'TN' } ) .AND. OBLPL()
+              @ 13,44 say 'WPATY PRACOWNIKA'
+              @ 14,44 say 'Podst. stawka' get zPPKZS1 pict '99.99' when zPPK == 'T' valid OBLPL()
+              @ 14,63 say '% kwota' get zPPKZK1 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
+              @ 15,44 say 'Dodat. stawka' get zPPKZS2 pict '99.99' when zPPK == 'T' valid OBLPL()
+              @ 15,63 say '% kwota' get zPPKZK2 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
+              @ 16,44 say 'WPATY PRACODAWCY'
+              @ 17,44 say 'Podst. stawka' get zPPKPS1 pict '99.99' when zPPK == 'T' valid OBLPL()
+              @ 17,63 say '% kwota' get zPPKPK1 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
+              @ 18,44 say 'Dodat. stawka' get zPPKPS2 pict '99.99' when zPPK == 'T' valid OBLPL()
+              @ 18,63 say '% kwota' get zPPKPK2 pict '9999.99' when zPPK == 'T' .AND. OBLPL() .AND. .F.
+              @ 20,44 say 'Dolicz do podstawy opodat.' get zPPKPPM pict '9999.99' when Eval( { || zPPKPPM := zPPKPK1 + zPPKPK2, .T. } ) valid OBLPL()
               read
               inkey(0)
               set curs off
@@ -761,7 +761,7 @@ func oblpl
       zDOCHODPOD=_round(zDOCHOD + zPPKPPM,0)
       IF zPPK == 'T'
          IF zPPKZS1 == 0
-            zPPKZS1 := parpk_sz
+            zPPKZS1 := prac->ppkzs1
          ENDIF
          IF zPPKPS1 == 0
             zPPKPS1 := parpk_sp
@@ -1159,13 +1159,13 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
       endcase
       zPPK := iif( prac->ppk $ 'TN', prac->ppk, 'N' )
       IF zPPK == 'T'
-         zPPKZS1 := parpk_sz
+         zPPKZS1 := prac->ppkzs1
          zPPKZK1 := zPENSJA * ( zPPKZS1 / 100 )
          zPPKPS1 := parpk_sp
          zPPKPK1 := zPENSJA * ( zPPKPS1 / 100 )
          zPPKZS2 := prac->ppkzs2
          zPPKZK2 := zPENSJA * ( zPPKZS2 / 100 )
-         zPPKPS2 := prac->ppkzs2
+         zPPKPS2 := prac->ppkps2
          zPPKPK2 := zPENSJA * ( zPPKPS2 / 100 )
       ELSE
          zPPKZS1 := 0

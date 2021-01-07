@@ -198,8 +198,12 @@ FUNCTION Etaty( mieskart )
          zWYKSZTALC := WYKSZTALC
          zZAWOD_WYU := ZAWOD_WYU
          zUWAGI := UWAGI
+         zPPKZS1 := PPKZS1
          zPPKZS2 := PPKZS2
          zPPKPS2 := PPKPS2
+         zPPKIDKADR := iif( Len( AllTrim( PPKIDKADR ) ) == 0, Pad( AllTrim( Str( RecNo(), 10 ) ), 10 ), PPKIDKADR )
+         zPPKIDEPPK := PPKIDEPPK
+         zPPKIDPZIF := PPKIDPZIF
          @  4, 42 GET zdata_przy PICTURE '@D' VALID .NOT. Empty( zdata_przy )
          @  4, 68 GET zdata_zwol PICTURE '@D'
          @  5, 49 GET zodliczenie PICTURE '!' VALID vodlicz()
@@ -221,8 +225,12 @@ FUNCTION Etaty( mieskart )
             repl_( 'WYKSZTALC', zWYKSZTALC )
             repl_( 'ZAWOD_WYU', zZAWOD_WYU )
             repl_( 'UWAGI', zUWAGI )
+            repl_( 'PPKZS1', zPPKZS1 )
             repl_( 'PPKZS2', zPPKZS2 )
             repl_( 'PPKPS2', zPPKPS2 )
+            repl_( 'PPKIDKADR', zPPKIDKADR )
+            repl_( 'PPKIDEPPK', zPPKIDEPPK )
+            repl_( 'PPKIDPZIF', zPPKIDPZIF )
             COMMIT
             UNLOCK
          ENDIF
@@ -801,14 +809,29 @@ FUNCTION etatyvppk()
       @ 5, 76 SAY iif( zPPK == 'T', 'ak', 'ie' )
       R := .T.
       IF zPPK == 'T'
+         IF prac->ppk <> 'T' .AND. zPPKZS1 == 0
+            zPPKZS1 := parpk_sz
+         ENDIF
          SAVE SCREEN TO cEkran
-         @ 6, 41 CLEAR TO 9, 79
-         @ 6, 41 TO 9, 79
-         @ 6, 43 SAY 'PPK - wpˆaty dodatkowe'
-         @ 7, 43 SAY 'Wpˆata dodatkowa pracownika       %'
-         @ 8, 43 SAY 'Wpˆata dodatkowa pracodawcy       %'
-         @ 7, 71 GET zPPKZS2 PICTURE '99.99'
-         @ 8, 71 GET zPPKPS2 PICTURE '99.99'
+         @  6, 40 CLEAR TO 15, 79
+         @  6, 40 TO 15, 79
+         @  6, 42 SAY 'PPK - wpˆata podstawowa'
+         @  7, 42 SAY 'Wpˆata podstawowa pracownika       %'
+         @  8, 41 TO 8, 78
+         @  8, 42 SAY 'PPK - wpˆaty dodatkowe'
+         @  9, 42 SAY 'Wpˆata dodatkowa pracownika        %'
+         @ 10, 42 SAY 'Wpˆata dodatkowa pracodawcy        %'
+         @ 11, 41 TO 11, 78
+         @ 11, 42 SAY 'Numery identyfikacyjne'
+         @ 12, 42 SAY 'Nr ident. lokalny'
+         @ 13, 42 SAY 'Nr ident. ewidencji PPK'
+         @ 14, 42 SAY 'Nr ident. inst. finans.'
+         @  7, 71 GET zPPKZS1 PICTURE '99.99'
+         @  9, 71 GET zPPKZS2 PICTURE '99.99'
+         @ 10, 71 GET zPPKPS2 PICTURE '99.99'
+         @ 12, 66 GET zPPKIDKADR PICTURE '!!!!!!!!!!'
+         @ 13, 66 GET zPPKIDEPPK PICTURE '@S12 ' + Replicate( '!', 20 )
+         @ 14, 66 GET zPPKIDPZIF PICTURE '@S12 ' + Replicate( '!', 50 )
          READ
          RESTORE SCREEN FROM cEkran
       ENDIF

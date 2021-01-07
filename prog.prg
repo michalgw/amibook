@@ -1303,6 +1303,7 @@ FUNCTION _ae()
    o[ 5 ] := ' O - Og&_o.lne parametry p&_l.acowe i ZUS '
    o[ 6 ] := ' Z - Parametry ZUS dla firmy        '
    o[ 7 ] := ' K - Generowanie pliku PPK          '
+   o[ 8 ] := ' L - Parametry PPK                  '
 
    RETURN '12,2'
 
@@ -1445,10 +1446,41 @@ FUNCTION _aef()
    RETURN ''
 
 *******************************************
-// Parametry ZUS dla firmy
+// Generowanie plik¢w dla PPK
 FUNCTION _aeg()
 
+   o[ 1 ] := ' U - Zgˆoszenie uczestnik¢w PPK '
+   o[ 2 ] := ' D - Deklaracje uczetnik¢w PPK  '
+   o[ 3 ] := ' Z - Zwolnienie pracownika      '
+
+   RETURN '18,4'
+
+*******************************************
+FUNCTION _aega()
+
    PPK_Zglos()
+
+   RETURN ''
+
+*******************************************
+FUNCTION _aegb()
+
+   PPK_Deklaracja()
+
+   RETURN ''
+
+*******************************************
+FUNCTION _aegc()
+
+   PPK_Zwolnienie()
+
+   RETURN ''
+
+*******************************************
+// Parametry PPK
+FUNCTION _aeh()
+
+   Param_PPK()
 
    RETURN ''
 

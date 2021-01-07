@@ -33,6 +33,7 @@ HIDDEN:
    METHOD WczytajDane( lPPKAktywni, cMiesiac )
 
    METHOD Pokaz( nRodzaj )
+   METHOD EdytujDeklaracje( nIndeks )
    METHOD WybierzPlik( cNazwa )
 
    METHOD XMLGeneruj( nRodzaj )
@@ -46,13 +47,16 @@ HIDDEN:
    METHOD XMLZgloszenie( nIndeks )
    METHOD XMLSkladka( nIndeks )
    METHOD XMLKorSkladka( nIndeks )
-
+   METHOD XMLDeklaracja( nIndeks )
+   METHOD XMLZwolnienie( nIndeks )
 EXPORTED:
    METHOD New()
    METHOD Wykonaj( nRodzaj )
    METHOD WykonajZglos() INLINE { ::Wykonaj( 1 ) }
    METHOD WykonajSkladka() INLINE { ::Wykonaj( 2 ) }
    METHOD WykonajKorSkladka() INLINE { ::Wykonaj( 3 ) }
+   METHOD WykonajDeklaracja() INLINE { ::Wykonaj( 4 ) }
+   METHOD WykonajZwolnienie() INLINE { ::Wykonaj( 5 ) }
 ENDCLASS
 
 METHOD WczytajDane( lPPKAktywni ) CLASS TPPK
@@ -70,6 +74,10 @@ METHOD WczytajDane( lPPKAktywni ) CLASS TPPK
    ::aFirma[ 'id' ] := Val( ident_fir )
    ::aFirma[ 'nip' ] := StrTran( AllTrim( firma->nip ), '-', '' )
    ::aFirma[ 'regon' ] := SubStr( StrTran( ( AllTrim( SubStr( firma->nr_regon, 3 ) ) ), '-', '' ), 1, 9 )
+
+   ::aFirma[ 'exp_id' ] := firma->ppkeidkadr == 'T'
+   ::aFirma[ 'exp_id_eppk' ] := firma->ppkeideppk == 'T'
+   ::aFirma[ 'exp_id_pzif' ] := firma->ppkeidpzif == 'T'
 
    firma->( dbCloseArea() )
 
@@ -90,7 +98,7 @@ METHOD WczytajDane( lPPKAktywni ) CLASS TPPK
    DO WHILE ! prac->( Eof() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
       IF prac->status $ 'EU' .AND. prac->ppk $ iif( lPPKAktywni, 'T', ' N' )
          aPrac := hb_Hash( 'wybrany', .F. )
-         aPrac[ 'id' ] := prac->rec_no
+         aPrac[ 'id' ] := iif( Len( AllTrim( prac->ppkidkadr ) ) == 0, AllTrim( Str( prac->rec_no ) ), AllTrim( prac->ppkidkadr ) )
          aPrac[ 'imie' ] := AllTrim( prac->imie1 )
          aPrac[ 'imie2' ] := AllTrim( prac->imie2 )
          aPrac[ 'nazwisko' ] := AllTrim( prac->nazwisko )
@@ -107,6 +115,21 @@ METHOD WczytajDane( lPPKAktywni ) CLASS TPPK
          aPrac[ 'nr_domu' ] := AllTrim( prac->nr_domu )
          aPrac[ 'nr_mieszkania' ] := AllTrim( prac->nr_mieszk )
          aPrac[ 'pracodawca_dod_proc' ] := prac->ppkps2
+
+         aPrac[ 'data_dek' ] := Date()
+         aPrac[ 'rezygnacja' ] := .F.
+         aPrac[ 'wznowienie' ] := .F.
+         aPrac[ 'wznowienie4' ] := .F.
+         aPrac[ 'zmiana_pod' ] := .F.
+         aPrac[ 'zmiana_dod' ] := .F.
+         aPrac[ 'zmiana_pod_stawka' ] := prac->ppkzs1
+         aPrac[ 'zmiana_dod_stawka' ] := prac->ppkzs2
+
+         aPrac[ 'zwolnienie' ] := .F.
+         aPrac[ 'data_zwolnienia' ] := prac->data_zwol
+
+         aPrac[ 'id_eppk' ] := AllTrim( prac->ppkideppk )
+         aPrac[ 'id_pzif' ] := AllTrim( prac->ppkidpzif )
 
          IF HB_ISCHAR( ::cMiesiac )
             etaty->( dbSeek( '+' + ident_fir + ::cMiesiac + Str( prac->rec_no, 5 ) ) )
@@ -136,14 +159,15 @@ METHOD WczytajDane( lPPKAktywni ) CLASS TPPK
 
 METHOD Pokaz( nRodzaj ) CLASS TPPK
 
-   LOCAL aTytuly := { "REJESTRACJA UCZESTNIKA PPK", "SKùADKA PPK", "KOREKTA SKùADKI PPK" }
+   LOCAL aTytuly := { "REJESTRACJA UCZESTNIKA PPK", "SKùADKA PPK", "KOREKTA SKùADKI PPK", ;
+      "DEKLARACJE UCZESTNIKA PPK", "ZAKO„CZENIE ZATRUDNIENIAPRACOWNIKA PPK" }
    LOCAL cKolor, cEkran
    LOCAL nElem := 1
    LOCAL aNaglowki := { "Wybrany", "Nr.Ident.", "Nazwisko i imie" }
    LOCAL aBlokiKolumn := { ;
       { || iif( ::aPracownicy[ nElem ][ "wybrany" ], "Tak", "Nie" ) }, ;
-      { || Str( ::aPracownicy[ nElem ][ 'id' ], 9 ) }, ;
-      { || Pad( ::aPracownicy[ nElem ][ 'nazwisko' ] + ' ' + ::aPracownicy[ nElem ][ 'imie' ], 30 ) } }
+      { || Pad( SubStr( ::aPracownicy[ nElem ][ 'id' ], 9 ), 9 ) }, ;
+      { || Pad( SubStr( ::aPracownicy[ nElem ][ 'nazwisko' ] + ' ' + ::aPracownicy[ nElem ][ 'imie' ], 1, 25 ), 25 ) } }
    LOCAL bColorBlock := { | xVal |
       IF ::aPracownicy[ nElem ][ "wybrany" ]
          RETURN { 1, 2 }
@@ -152,29 +176,60 @@ METHOD Pokaz( nRodzaj ) CLASS TPPK
       ENDIF
    }
    LOCAL aKlawisze := { ;
-      { { K_SPACE, K_ENTER }, { | nElem, ar, b |
+      { { Asc( 'Z' ), Asc( 'z' ), K_SPACE }, { | nElem, ar, b |
          ar[ nElem ][ 'wybrany' ] := ! ar[ nElem ][ 'wybrany' ]
       } }, ;
-      { { Asc( 'Z' ), Asc( 'z' ) }, { ||
+      { { Asc( 'W' ), Asc( 'w' ) }, { ||
          AEval( ::aPracownicy, { | aEl | aEl[ 'wybrany' ] := .T. } )
       } }, ;
       { { Asc( 'N' ), Asc( 'n' ) }, { ||
          AEval( ::aPracownicy, { | aEl | aEl[ 'wybrany' ] := .F. } )
       } }, ;
       { K_F1, { ||
-         WyswietlPomoc( { ;
-            "                                            ", ;
-            "    [Z].................zaznacz wszystko    ", ;
-            "    [N].................odznacz wszystko    ", ;
-            "    [E]..............utw¢rz plik XML PPK    ", ;
-            "    [ESC]........................wyjòcie    ", ;
-            "                                            " } )
+         LOCAL aPomoc := { ;
+            "                                                    ", ;
+            "    [Z]/[SPACJA].................zaznacz/odznacz    ", ;
+            "    [W].........................zaznacz wszystko    ", ;
+            "    [N].........................odznacz wszystko    ", ;
+            "    [E]......................utw¢rz plik XML PPK    ", ;
+            "    [ESC]................................wyjòcie    ", ;
+            "                                                    " }
+         DO CASE
+         CASE nRodzaj == 1 .OR. nRodzaj == 2 .OR. nRodzaj == 3 .OR. nRodzaj == 5
+            hb_AIns( aPomoc, 2, "    [ENTER]......................zaznacz/odznacz    ", .T. )
+         CASE nRodzaj == 4
+            hb_AIns( aPomoc, 2, "    [ENTER]............edytuj pozycj© deklaracji    ", .T. )
+         ENDCASE
+         WyswietlPomoc( aPomoc )
       } }, ;
       { { Asc( 'E' ), Asc( 'e' ) }, { ||
          ::XMLGeneruj( nRodzaj )
       } } ;
    }
    LOCAL aBlokiKoloru := {}
+
+   DO CASE
+   CASE nRodzaj == 1 .OR. nRodzaj == 2 .OR. nRodzaj == 3 .OR. nRodzaj == 5
+      AAdd( aKlawisze, { K_ENTER, { | nElem, ar, b |
+         ar[ nElem ][ 'wybrany' ] := ! ar[ nElem ][ 'wybrany' ]
+      } } )
+   CASE nRodzaj == 4
+      AAdd( aNaglowki, "Data deklaracji" )
+      AAdd( aNaglowki, "Deklaracje" )
+
+      AAdd( aBlokiKolumn, { || Pad( DToS( ::aPracownicy[ nElem ][ 'data_dek' ] ) ) } )
+      AAdd( aBlokiKolumn, { || Pad( ;
+         iif( ::aPracownicy[ nElem ][ 'rezygnacja' ], "Rezygnacja ", "" ) + ;
+         iif( ::aPracownicy[ nElem ][ 'wznowienie' ], "Wznowienie ", "" ) + ;
+         iif( ::aPracownicy[ nElem ][ 'wznowienie4' ], "Wznow. po 4 latach ", "" ) + ;
+         iif( ::aPracownicy[ nElem ][ 'zmiana_pod' ], "Zmiana skà. podst. ", "" ) + ;
+         iif( ::aPracownicy[ nElem ][ 'zmiana_dod' ], "Zmiana skà. dodat.", "" ),25 ) } )
+
+      AAdd( aKlawisze, { K_ENTER, { | nElem, ar, b |
+         ::EdytujDeklaracje( nElem )
+      } } )
+   ENDCASE
+
    AEval( aBlokiKolumn, { || AAdd( aBlokiKoloru, bColorBlock ) } )
 
    SAVE SCREEN TO cEkran
@@ -182,11 +237,83 @@ METHOD Pokaz( nRodzaj ) CLASS TPPK
    @ 1, 47 SAY '[F1]-pomoc'
    ColStd()
    @ 3, 0 SAY PadC( "GENEROWANIE PLIKU PPK - " + aTytuly[ nRodzaj ], 80 )
-   GM_ArEdit( 4, 0, 22, 79, ::aPracownicy, @nElem, aNaglowki, aBlokiKolumn, NIL, NIL, NIL, aKlawisze, SetColor() + ",N+/N", aBlokiKoloru )
+   GM_ArEdit( 4, 0, 22, 79, ::aPracownicy, @nElem, aNaglowki, aBlokiKolumn, NIL, NIL, { || .F. }, aKlawisze, SetColor() + ",N+/N", aBlokiKoloru )
    RESTORE SCREEN FROM cEkran
    SetColor( cKolor )
 
    RETURN NIL
+
+METHOD EdytujDeklaracje( nIndeks ) CLASS TPPK
+
+   LOCAL cRezyg, cWznow, cWznow4, cZmPod, cZmDod
+   LOCAL dData
+   LOCAL nProcPod, nProcDod
+   LOCAL cEkran, cKolor
+   LOCAL bWyswietlTn := { | nIndeks |
+      LOCAL cKolor := SetColor( 'W' )
+      DO CASE
+      CASE nIndeks == 1
+         @ 11, 53 SAY iif( cRezyg == 'T', 'ak', 'ie' )
+      CASE nIndeks == 2
+         @ 12, 53 SAY iif( cWznow == 'T', 'ak', 'ie' )
+      CASE nIndeks == 3
+         @ 13, 53 SAY iif( cWznow4 == 'T', 'ak', 'ie' )
+      CASE nIndeks == 4
+         @ 14, 53 SAY iif( cZmPod == 'T', 'ak', 'ie' )
+      CASE nIndeks == 5
+         @ 16, 53 SAY iif( cZmDod == 'T', 'ak', 'ie' )
+      ENDCASE
+      SetColor( cKolor )
+      RETURN .T.
+   }
+
+   cRezyg := iif( ::aPracownicy[ nIndeks ][ 'rezygnacja' ], 'T', 'N' )
+   cWznow := iif( ::aPracownicy[ nIndeks ][ 'wznowienie' ], 'T', 'N' )
+   cWznow4 := iif( ::aPracownicy[ nIndeks ][ 'wznowienie4' ], 'T', 'N' )
+   cZmPod := iif( ::aPracownicy[ nIndeks ][ 'zmiana_pod' ], 'T', 'N' )
+   cZmDod := iif( ::aPracownicy[ nIndeks ][ 'zmiana_dod' ], 'T', 'N' )
+   dData := ::aPracownicy[ nIndeks ][ 'data_dek' ]
+   nProcPod := ::aPracownicy[ nIndeks ][ 'zmiana_pod_stawka' ]
+   nProcDod := ::aPracownicy[ nIndeks ][ 'zmiana_dod_stawka' ]
+
+   SAVE SCREEN TO cEkran
+   @  8, 16 CLEAR TO 18, 63
+   @  8, 16 TO 18, 63
+   Eval( bWyswietlTn, 1 )
+   Eval( bWyswietlTn, 2 )
+   Eval( bWyswietlTn, 3 )
+   Eval( bWyswietlTn, 4 )
+   Eval( bWyswietlTn, 5 )
+   @  9, 18 SAY "Pracownik: "
+   cKolor := SetColor( 'W+' )
+   @  9, 30 SAY ::aPracownicy[ nIndeks ][ 'nazwisko' ] + ' ' + ::aPracownicy[ nIndeks ][ 'imie' ]
+   SetColor( cKolor )
+   @ 10, 18 SAY "Data deklaracji:................." GET dData
+   @ 11, 18 SAY "Rezygnacja:......................" GET cRezyg PICTURE '!' VALID cRezyg $ 'TN' .AND. Eval( bWyswietlTn, 1 )
+   @ 12, 18 SAY "Wznowienie:......................" GET cWznow PICTURE '!' VALID cWznow $ 'TN' .AND. Eval( bWyswietlTn, 2 )
+   @ 13, 18 SAY "Wznowienie po 4 latach:.........." GET cWznow4 PICTURE '!' VALID cWznow4 $ 'TN' .AND. Eval( bWyswietlTn, 3 )
+   @ 14, 18 SAY "Zmiana stawki podstawowej:......." GET cZmPod PICTURE '!' VALID cZmPod $ 'TN' .AND. Eval( bWyswietlTn, 4 )
+   @ 15, 20 SAY   "Stawka podstawowa:............." GET nProcPod PICTURE '99.99' WHEN cZmPod == 'T'
+   @ 16, 18 SAY "Zmiana stawki dodatkowej:........" GET cZmDod PICTURE '!' VALID cZmDod $ 'TN' .AND. Eval( bWyswietlTn, 5 )
+   @ 17, 20 SAY   "Stawka dodatkowa:.............." GET nProcDod PICTURE '99.99' WHEN cZmDod == 'T'
+
+   READ
+
+   IF LastKey() <> K_ESC
+      ::aPracownicy[ nIndeks ][ 'rezygnacja' ] := cRezyg == 'T'
+      ::aPracownicy[ nIndeks ][ 'wznowienie' ] := cWznow == 'T'
+      ::aPracownicy[ nIndeks ][ 'wznowienie4' ] := cWznow4 == 'T'
+      ::aPracownicy[ nIndeks ][ 'zmiana_pod' ] := cZmPod == 'T'
+      ::aPracownicy[ nIndeks ][ 'zmiana_dod' ] := cZmDod == 'T'
+      ::aPracownicy[ nIndeks ][ 'zmiana_pod_stawka' ] := nProcPod
+      ::aPracownicy[ nIndeks ][ 'zmiana_dod_stawka' ] := nProcDod
+      ::aPracownicy[ nIndeks ][ 'data_dek' ] := dData
+      ::aPracownicy[ nIndeks ][ 'wybrany' ] := cRezyg == 'T' .OR. cWznow == 'T' .OR. cWznow4 == 'T' .OR. cZmPod == 'T' .OR. cZmDod == 'T'
+   ENDIF
+
+   RESTORE SCREEN FROM cEkran
+
+   RETURN
 
 METHOD WybierzPlik( cNazwa ) CLASS TPPK
 
@@ -210,6 +337,10 @@ METHOD XMLGeneruj( nRodzaj ) CLASS TPPK
       cPlik := cPlik + "SKLADKA_" + param_rok + '_' + StrTran( ::cMiesiac, ' ', '0' )
    CASE nRodzaj == 3
       cPlik := cPlik + "KOREKTA_" + param_rok + '_' + StrTran( ::cMiesiac, ' ', '0' )
+   CASE nRodzaj == 4
+      cPlik := cPlik + "DEKLARACJE"
+   CASE nRodzaj == 5
+      cPlik := cPlik + "ZWOLNIENIE"
    ENDCASE
 
    cPlik := cPlik + '.xml'
@@ -236,6 +367,10 @@ METHOD XMLGeneruj( nRodzaj ) CLASS TPPK
             ::XMLSkladka( nI )
          CASE nRodzaj == 3
             ::XMLKorSkladka( nI )
+         CASE nRodzaj == 4
+            ::XMLDeklaracja( nI )
+         CASE nRodzaj == 5
+            ::XMLZwolnienie( nI )
          ENDCASE
          ::XMLUczestnikKoniec()
       ENDIF
@@ -293,7 +428,9 @@ METHOD XMLUczestnicyKoniec() CLASS TPPK
 METHOD XMLUczestnik( nIndeks ) CLASS TPPK
 
    ::XMLDodaj( '    <UCZESTNIK>' )
-   ::XMLDodaj( '      <ID_KADRY>' + TNaturalny( ::aPracownicy[ nIndeks ][ 'id' ] ) + '</ID_KADRY>' )
+   IF ::aFirma[ 'exp_id' ] .AND. Len( ::aPracownicy[ nIndeks ][ 'id' ] ) > 0
+      ::XMLDodaj( '      <ID_KADRY>' + str2sxml( ::aPracownicy[ nIndeks ][ 'id' ] ) + '</ID_KADRY>' )
+   ENDIF
    ::XMLDodaj( '      <IMIE>' + str2sxml( ::aPracownicy[ nIndeks ][ 'imie' ] ) + '</IMIE>' )
    IF ! Empty( ::aPracownicy[ nIndeks ][ 'imie2' ] )
       ::XMLDodaj( '      <IMIE2>' + str2sxml( ::aPracownicy[ nIndeks ][ 'imie2' ] ) + '</IMIE2>' )
@@ -303,6 +440,12 @@ METHOD XMLUczestnik( nIndeks ) CLASS TPPK
    ::XMLDodaj( '      <OBYW>' + ::aPracownicy[ nIndeks ][ 'kraj' ] + '</OBYW>' )
    ::XMLDodaj( '      <NR_PESEL>' + ::aPracownicy[ nIndeks ][ 'pesel' ] + '</NR_PESEL>' )
    ::XMLDodaj( '      <DATA_UR>' + date2strxml( ::aPracownicy[ nIndeks ][ 'data_urodzenia' ] ) + '</DATA_UR>' )
+   IF ::aFirma[ 'exp_id_eppk' ] .AND. Len( ::aPracownicy[ nIndeks ][ 'id_eppk' ] ) > 0
+      ::XMLDodaj( '      <ID_PPK>' + str2sxml( ::aPracownicy[ nIndeks ][ 'id_eppk' ] ) + '</ID_PPK>' )
+   ENDIF
+   IF ::aFirma[ 'exp_id_pzif' ] .AND. Len( ::aPracownicy[ nIndeks ][ 'id_pzif' ] ) > 0
+      ::XMLDodaj( '      <PZIF_RACH_PPK>' + str2sxml( ::aPracownicy[ nIndeks ][ 'id_eppk' ] ) + '</PZIF_RACH_PPK>' )
+   ENDIF
 
    RETURN NIL
 
@@ -361,6 +504,66 @@ METHOD XMLKorSkladka( nIndeks ) CLASS TPPK
    ENDIF
    RETURN NIL
 
+METHOD XMLDeklaracja( nIndeks ) CLASS TPPK
+
+   IF ( hb_HHasKey( ::aPracownicy[ nIndeks ], 'rezygnacja' ) .AND. ::aPracownicy[ nIndeks ][ 'rezygnacja' ]  ) ;
+      .OR. ( hb_HHasKey( ::aPracownicy[ nIndeks ], 'wznowienie' ) .AND. ::aPracownicy[ nIndeks ][ 'wznowienie' ]  ) ;
+      .OR. ( hb_HHasKey( ::aPracownicy[ nIndeks ], 'wznowienie4' ) .AND. ::aPracownicy[ nIndeks ][ 'wznowienie4' ]  ) ;
+      .OR. ( hb_HHasKey( ::aPracownicy[ nIndeks ], 'zmiana_pod' ) .AND. ::aPracownicy[ nIndeks ][ 'zmiana_pod' ]  ) ;
+      .OR. ( hb_HHasKey( ::aPracownicy[ nIndeks ], 'zmiana_dod' ) .AND. ::aPracownicy[ nIndeks ][ 'zmiana_dod' ]  )
+
+      ::XMLDodaj( '      <DANE_DEKLARACJI>' )
+
+      IF hb_HHasKey( ::aPracownicy[ nIndeks ], 'rezygnacja' ) .AND. ::aPracownicy[ nIndeks ][ 'rezygnacja' ]
+         ::XMLDodaj( '        <DEKLARACJA>' )
+         ::XMLDodaj( '          <DATA_DEKLARACJI>' + date2strxml( ::aPracownicy[ nIndeks ][ 'data_dek' ] ) + '</DATA_DEKLARACJI>' )
+         ::XMLDodaj( '          <TYP_DEKLARACJI>UCZ_REZYGNACJA</TYP_DEKLARACJI>' )
+         ::XMLDodaj( '        </DEKLARACJA>' )
+      ENDIF
+
+      IF hb_HHasKey( ::aPracownicy[ nIndeks ], 'wznowienie' ) .AND. ::aPracownicy[ nIndeks ][ 'wznowienie' ]
+         ::XMLDodaj( '        <DEKLARACJA>' )
+         ::XMLDodaj( '          <DATA_DEKLARACJI>' + date2strxml( ::aPracownicy[ nIndeks ][ 'data_dek' ] ) + '</DATA_DEKLARACJI>' )
+         ::XMLDodaj( '          <TYP_DEKLARACJI>UCZ_WZNOWIENIE</TYP_DEKLARACJI>' )
+         ::XMLDodaj( '        </DEKLARACJA>' )
+      ENDIF
+
+      IF hb_HHasKey( ::aPracownicy[ nIndeks ], 'wznowienie4' ) .AND. ::aPracownicy[ nIndeks ][ 'wznowienie4' ]
+         ::XMLDodaj( '        <DEKLARACJA>' )
+         ::XMLDodaj( '          <DATA_DEKLARACJI>' + date2strxml( ::aPracownicy[ nIndeks ][ 'data_dek' ] ) + '</DATA_DEKLARACJI>' )
+         ::XMLDodaj( '          <TYP_DEKLARACJI>UCZ_WZNOWIENIE_4</TYP_DEKLARACJI>' )
+         ::XMLDodaj( '        </DEKLARACJA>' )
+      ENDIF
+
+      IF hb_HHasKey( ::aPracownicy[ nIndeks ], 'zmiana_pod' ) .AND. ::aPracownicy[ nIndeks ][ 'zmiana_pod' ]
+         ::XMLDodaj( '        <DEKLARACJA>' )
+         ::XMLDodaj( '          <DATA_DEKLARACJI>' + date2strxml( ::aPracownicy[ nIndeks ][ 'data_dek' ] ) + '</DATA_DEKLARACJI>' )
+         ::XMLDodaj( '          <TYP_DEKLARACJI>' + str2sxml( 'UCZ_ZMIANA_SKùADKI_POD' ) + '</TYP_DEKLARACJI>' )
+         ::XMLDodaj( '          <PROCENT_SKLADKI>' + TKwota2( ::aPracownicy[ nIndeks ][ 'zmiana_pod_stawka' ] ) + '</PROCENT_SKLADKI>' )
+         ::XMLDodaj( '        </DEKLARACJA>' )
+      ENDIF
+
+      IF hb_HHasKey( ::aPracownicy[ nIndeks ], 'zmiana_dod' ) .AND. ::aPracownicy[ nIndeks ][ 'zmiana_dod' ]
+         ::XMLDodaj( '        <DEKLARACJA>' )
+         ::XMLDodaj( '          <DATA_DEKLARACJI>' + date2strxml( ::aPracownicy[ nIndeks ][ 'data_dek' ] ) + '</DATA_DEKLARACJI>' )
+         ::XMLDodaj( '          <TYP_DEKLARACJI>' + str2sxml( 'UCZ_ZMIANA_SKùADKI_DOD' ) + '</TYP_DEKLARACJI>' )
+         ::XMLDodaj( '          <PROCENT_SKLADKI>' + TKwota2( ::aPracownicy[ nIndeks ][ 'zmiana_dod_stawka' ] ) + '</PROCENT_SKLADKI>' )
+         ::XMLDodaj( '        </DEKLARACJA>' )
+      ENDIF
+
+      ::XMLDodaj( '      </DANE_DEKLARACJI>' )
+   ENDIF
+   RETURN NIL
+
+METHOD XMLZwolnienie( nIndeks ) CLASS TPPK
+
+   IF ::aPracownicy[ nIndeks ][ 'zwolnienie' ]
+      ::XMLDodaj( '      <ZWOLNIENIE>' )
+      ::XMLDodaj( '        <DATA_ZWOLNIENIA>' + date2strxml( ::aPracownicy[ nIndeks ][ 'data_zwolnienia' ] ) + '<DATA_ZWOLNIENIA>' )
+      ::XMLDodaj( '      </ZWOLNIENIE>' )
+   ENDIF
+   RETURN NIL
+
 METHOD New() CLASS TPPK
 
    RETURN Self
@@ -368,10 +571,10 @@ METHOD New() CLASS TPPK
 METHOD Wykonaj( nRodzaj ) CLASS TPPK
 
    LOCAL nI
-   LOCAL lTylkoPPK := .T.
+   LOCAL lTylkoPPK := nRodzaj <> 5
 
    DO CASE
-   CASE nRodzaj == 1
+   CASE nRodzaj == 1 .OR. nRodzaj == 4 .OR. nRodzaj == 5
       ::cMiesiac := NIL
    CASE nRodzaj == 2 .OR. nRodzaj == 3
       ::cMiesiac := miesiac
@@ -422,4 +625,28 @@ PROCEDURE PPK_KorSkladka()
    oPPK := NIL
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE PPK_Deklaracja()
+
+   LOCAL oPPK := TPPK():New()
+
+   oPPK:WykonajDeklaracja()
+   oPPK := NIL
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE PPK_Zwolnienie()
+
+   LOCAL oPPK := TPPK():New()
+
+   oPPK:WykonajZwolnienie()
+   oPPK := NIL
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
 
