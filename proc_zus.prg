@@ -25,7 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 *±±±±±± NAGLOWEK KEDU ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE KEDU_POCZ()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       KEDU_POCZ2()
    ELSE
       KEDU_POCZ1()
@@ -67,7 +67,7 @@ PROCEDURE KEDU_POCZ2()
 *±±±±±± STOPKA KEDU ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE KEDU_KON()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       KEDU_KON2()
    ELSE
       KEDU_KON1()
@@ -158,7 +158,7 @@ PROCEDURE KEDU_RAPO( plik_k )
 *±±±±±± NAGLOWEK ZUS ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE ZUS_POCZ( FORMA, nNumer )
 
-   ? '<ZUS' + FORMA + iif( nWersjaKEDU == 2, ' id_dokumentu="' + AllTrim( Str( nNumer ) ) + '"', '' ) + '>'
+   ? '<ZUS' + FORMA + iif( paraz_wer == 2, ' id_dokumentu="' + AllTrim( Str( nNumer ) ) + '"', '' ) + '>'
 
    RETURN
 
@@ -172,7 +172,7 @@ PROCEDURE ZUS_KON( FORMA )
 *±±±±±± NAGLOWEK DP ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DP_POCZ( FORMA )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DP_POCZ2( FORMA )
    ELSE
       DP_POCZ1( FORMA )
@@ -200,7 +200,7 @@ PROCEDURE DP_POCZ2( FORMA, nIDDok )
 *±±±±±± STOPKA DP ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DP_KON( FORMA )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DP_KON2( FORMA )
    ELSE
       DP_KON1( FORMA )
@@ -229,7 +229,7 @@ PROCEDURE DP_KON2( FORMA )
 *±±±±±± ZUSWYMIAR    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 FUNCTION ZUSWYMIAR( WYML, WYMM )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ZUSWYMIAR2( WYML, WYMM )
    ELSE
       ZUSWYMIAR1( WYML, WYMM )
@@ -263,7 +263,7 @@ FUNCTION ZUSWYMIAR2( WYML, WYMM )
 *±±±±±± ADKB     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE ADKB()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ADKB2()
    ELSE
       ADKB1()
@@ -298,7 +298,7 @@ PROCEDURE ADKB2()
 *±±±±±± ADKP     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE ADKP()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ADKP2()
    ELSE
       ADKP1()
@@ -334,7 +334,7 @@ PROCEDURE ADKP2()
 *±±±±±± ADZA     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE ADZA()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ADZA2()
    ELSE
       ADZA1()
@@ -369,7 +369,7 @@ PROCEDURE ADZA2()
 PROCEDURE ASPL( PKOD_POCZT, PMIEJSCE, PGMINA, PULICA, PNR_DOMU, PNR_LOKAL, ;
    PTEL, PFAX )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ASPL2( PKOD_POCZT, PMIEJSCE, PGMINA, PULICA, PNR_DOMU, PNR_LOKAL, ;
          PTEL, PFAX )
    ELSE
@@ -419,7 +419,7 @@ PROCEDURE ASPL2( PKOD_POCZT, PMIEJSCE, PGMINA, PULICA, PNR_DOMU, PNR_LOKAL, ;
 PROCEDURE ASZP( PKOD_POCZT, PMIEJSCE, PGMINA, PULICA, PNR_DOMU, PNR_LOKAL, ;
    PTEL, PFAX, cNode )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ASZP2( PKOD_POCZT, PMIEJSCE, PGMINA, PULICA, PNR_DOMU, PNR_LOKAL, ;
          PTEL, PFAX, cNode )
    ELSE
@@ -471,7 +471,7 @@ PROCEDURE ASZP2( PKOD_POCZT, PMIEJSCE, PGMINA, PULICA, PNR_DOMU, PNR_LOKAL, ;
 PROCEDURE AZMO( PKOD_POCZT, PMIEJSCE, PGMINA, PULICA, PNR_DOMU, PNR_LOKAL, ;
    PTEL, PFAX )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       AZMO2( PKOD_POCZT, PMIEJSCE, PGMINA, PULICA, PNR_DOMU, PNR_LOKAL, ;
          PTEL, PFAX )
    ELSE
@@ -519,7 +519,7 @@ PROCEDURE AZMO2( PKOD_POCZT, PMIEJSCE, PGMINA, PULICA, PNR_DOMU, PNR_LOKAL, ;
 *±±±±±± DADRA    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DADRA( PTERMIN, PMM, PRRRR )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DADRA2( PTERMIN, PMM, PRRRR )
    ELSE
       DADRA1( PTERMIN, PMM, PRRRR )
@@ -558,7 +558,7 @@ PROCEDURE DADRA2( PTERMIN, PMM, PRRRR )
 *±±±±±± DAIP     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DAIP( PNIP, PREGON, PSKROT )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DAIP2( PNIP, PREGON, PSKROT )
    ELSE
       DAIP1( PNIP, PREGON, PSKROT )
@@ -599,7 +599,7 @@ PROCEDURE DAIP2( PNIP, PREGON, PSKROT )
 *±±±±±± DAPL     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DAPL( PNAZWA, PDATA_REJ, PNUMER_REJ, PORGAN, PDATA_ZAL )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DAPL2( PNAZWA, PDATA_REJ, PNUMER_REJ, PORGAN, PDATA_ZAL )
    ELSE
       DAPL1( PNAZWA, PDATA_REJ, PNUMER_REJ, PORGAN, PDATA_ZAL )
@@ -650,7 +650,7 @@ PROCEDURE DAPL2( PNAZWA, PDATA_REJ, PNUMER_REJ, PORGAN, PDATA_ZAL )
 *±±±±±± DAU      ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DAU( PPESEL, PNIP, PRODZ_DOK, PDOWOD_OSOB, PNAZWISKO, PIMIE, PDATA_UR )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DAU2( PPESEL, PNIP, PRODZ_DOK, PDOWOD_OSOB, PNAZWISKO, PIMIE, PDATA_UR )
    ELSE
       DAU1( PPESEL, PNIP, PRODZ_DOK, PDOWOD_OSOB, PNAZWISKO, PIMIE, PDATA_UR )
@@ -699,7 +699,7 @@ PROCEDURE DAU2( PPESEL, PNIP, PRODZ_DOK, PDOWOD_OSOB, PNAZWISKO, PIMIE, PDATA_UR
 *±±±±±± DDDU     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DDDU( PTYT, PPODS, PPODSZDR )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DDDU2( PTYT, PPODS, PPODSZDR )
    ELSE
       DDDU1( PTYT, PPODS, PPODSZDR )
@@ -753,7 +753,7 @@ PROCEDURE DDORCA( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
    PWAR_FUR, PWAR_FUW, PWAR_PF3, PWAR_SUM, PILOSORODZ, PWARRODZ, PILOSOPIEL, ;
    PWARPIEL, PSUM_ZAS, nNumer )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DDORCA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
          PPODSCHO, PPODSZDR, PWAR_PUE, PWAR_PUR, PWAR_PUC, PWAR_PUZ, PWAR_FUE, ;
          PWAR_FUR, PWAR_FUW, PWAR_PF3, PWAR_SUM, PILOSORODZ, PWARRODZ, PILOSOPIEL, ;
@@ -824,7 +824,9 @@ PROCEDURE DDORCA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
    ? '    <p4>' + AllTrim( PNRID ) + '</p4>'
    ? '  </A>'
    ? '  <B>'
-   ? '    <p1>' + PTYTUB + '</p1>'
+   IF ( cTmp := ZUS_KodTytulu( PTYTUB ) ) <> ""
+      ? '    <p1>' + cTmp + '</p1>'
+   ENDIF
    IF ! Empty( PWYMIAR )
       ? '    <p3>' + PWYMIAR + '</p3>'
    ENDIF
@@ -859,7 +861,7 @@ PROCEDURE DDORNA( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
    PWAR_FUR, PWAR_FUW, PWAR_PF3, PWAR_SUM, PILOSORODZ, PWARRODZ, PILOSOPIEL, ;
    PWARPIEL, PSUM_ZAS, PDATA, PZASAD, PPREMIA, PINNE, PSUMSKLA, PKODSKLA )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DDORNA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
          PPODSCHO, PPODSZDR, PWAR_PUE, PWAR_PUR, PWAR_PUC, PWAR_PUZ, PWAR_FUE, ;
          PWAR_FUR, PWAR_FUW, PWAR_PF3, PWAR_SUM, PILOSORODZ, PWARRODZ, PILOSOPIEL, ;
@@ -1086,7 +1088,7 @@ PROCEDURE DDORNA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
 *±±±±±± DDORZA   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DDORZA( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PPODSTAWA, PSUMSKLA )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DDORZA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PPODSTAWA, PSUMSKLA )
    ELSE
       DDORZA1( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PPODSTAWA, PSUMSKLA )
@@ -1135,7 +1137,7 @@ PROCEDURE DDORZA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PPODSTAWA, PSUMSKLA 
 *±±±±±± DEOZ     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DEOZ( PIMIE2, PNAZW_RODU, POBYWATEL, PPLEC )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DEOZ2( PIMIE2, PNAZW_RODU, POBYWATEL, PPLEC )
    ELSE
       DEOZ1( PIMIE2, PNAZW_RODU, POBYWATEL, PPLEC )
@@ -1176,7 +1178,7 @@ PROCEDURE DEOZ2( PIMIE2, PNAZW_RODU, POBYWATEL, PPLEC )
 *±±±±±± DEPL     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DEPL( PIMIE2, PMIEJSC_UR, POBYWATEL )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DEPL2( PIMIE2, PMIEJSC_UR, POBYWATEL )
    ELSE
       DEPL1( PIMIE2, PMIEJSC_UR, POBYWATEL )
@@ -1212,7 +1214,7 @@ PROCEDURE DEPL2( PIMIE2, PMIEJSC_UR, POBYWATEL )
 PROCEDURE DIPL( PNIP, PREGON, PPESEL, PRODZ_DOK, PDOWOD_OSOB, PSKROT, PNAZWISKO, ;
    PIMIE, PDATA_UR )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DIPL2( PNIP, PREGON, PPESEL, PRODZ_DOK, PDOWOD_OSOB, PSKROT, PNAZWISKO, ;
          PIMIE, PDATA_UR )
    ELSE
@@ -1284,7 +1286,7 @@ PROCEDURE DIPL2( PNIP, PREGON, PPESEL, PRODZ_DOK, PDOWOD_OSOB, PSKROT, PNAZWISKO
 *±±±±±± DOBR     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOBR( PNIP, PREGON, PSKROT )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOBR2( PNIP, PREGON, PSKROT )
    ELSE
       DOBR1( PNIP, PREGON, PSKROT )
@@ -1325,7 +1327,7 @@ PROCEDURE DOBR2( PNIP, PREGON, PSKROT )
 *±±±±±± DOBU     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOBU()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOBU2()
    ELSE
       DOBU1()
@@ -1366,7 +1368,7 @@ PROCEDURE DOBU2()
 *±±±±±± DOCRA   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOCRA()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOCRA2()
    ELSE
       DOCRA1()
@@ -1416,7 +1418,7 @@ PROCEDURE DOCRA2()
 *±±±±±± DOCRBA   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOCRBA()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOCRBA2()
    ELSE
       DOCRBA1()
@@ -1477,7 +1479,7 @@ PROCEDURE DOCRBA2()
 *±±±±±± DODU   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DODU()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DODU2()
    ELSE
       DODU1()
@@ -1510,7 +1512,7 @@ PROCEDURE DODU2()
 *±±±±±± DOKC     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOKC( PKOD_KASY )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOKC2( PKOD_KASY )
    ELSE
       DOKC1( PKOD_KASY )
@@ -1619,7 +1621,7 @@ PROCEDURE DOKC2( PKOD_KASY )
 *±±±±±± DOOU     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOOU()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOOU2()
    ELSE
       DOOU1()
@@ -1650,7 +1652,7 @@ PROCEDURE DOOU2()
 *±±±±±± DORB     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DORB( PKONTO )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DORB2( PKONTO )
    ELSE
       DORB1( PKONTO )
@@ -1685,7 +1687,7 @@ PROCEDURE DORB2( PKONTO )
 *±±±±±± DORCA    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DORCA( PMM, PRRRR, PSUMA )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DORCA2( PMM, PRRRR, PSUMA )
    ELSE
       DORCA1( PMM, PRRRR, PSUMA )
@@ -1720,7 +1722,7 @@ PROCEDURE DORCA2( PMM, PRRRR, PSUMA )
 *±±±±±± DORNA    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DORNA( PMM, PRRRR, PSUMA )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DORNA2( PMM, PRRRR, PSUMA )
    ELSE
       DORNA1( PMM, PRRRR, PSUMA )
@@ -1757,7 +1759,7 @@ PROCEDURE DORNA2( PMM, PRRRR, PSUMA )
 *±±±±±± DORZA    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DORZA( PMM, PRRRR, PSUMA )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DORZA2( PMM, PRRRR, PSUMA )
    ELSE
       DORZA1( PMM, PRRRR, PSUMA )
@@ -1794,7 +1796,7 @@ PROCEDURE DORZA2( PMM, PRRRR, PSUMA )
 *±±±±±± DOWP     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOWP( PWYMIAR, PUE, PUR, PUC, PUW )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOWP2( PWYMIAR, PUE, PUR, PUC, PUW )
    ELSE
       DOWP1( PWYMIAR, PUE, PUR, PUC, PUW )
@@ -1835,7 +1837,7 @@ PROCEDURE DOWP2( PWYMIAR, PUE, PUR, PUC, PUW )
 *±±±±±± DOZCBA   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOZCBA()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOZCBA2()
    ELSE
       DOZCBA1()
@@ -1868,7 +1870,7 @@ PROCEDURE DOZCBA2()
 *±±±±±± DOZPF    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOZPF()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOZPF2()
    ELSE
       DOZPF1()
@@ -1905,7 +1907,7 @@ PROCEDURE DOZPF2()
 *±±±±±± DOZUA    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE DOZUA()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       DOZUA2()
    ELSE
       DOZUA1()
@@ -1944,7 +1946,7 @@ PROCEDURE DOZUA2()
 *±±±±±± IDO1     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE IDO1()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       IDO12()
    ELSE
       IDO11()
@@ -1981,7 +1983,7 @@ PROCEDURE IDO12()
 *±±±±±± IDOP     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE IDOP()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       IDOP2()
    ELSE
       IDOP1()
@@ -2020,7 +2022,7 @@ PROCEDURE IDOP2()
 *±±±±±± INN7     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE INN7( PILUB, PILET, PSTAW_WYP )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       INN72( PILUB, PILET, PSTAW_WYP )
    ELSE
       INN71( PILUB, PILET, PSTAW_WYP )
@@ -2057,7 +2059,7 @@ PROCEDURE INN72( PILUB, PILET, PSTAW_WYP )
 *±±±±±± IODZ     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE IODZ()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       IODZ2()
    ELSE
       IODZ1()
@@ -2106,7 +2108,7 @@ PROCEDURE IODZ2()
 *±±±±±± KNDK     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE KNDK()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       KNDK2()
    ELSE
       KNDK1()
@@ -2143,7 +2145,7 @@ PROCEDURE KNDK2()
 *±±±±±± LSKD     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE LSKD( PWAR_PUZ )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       LSKD2( PWAR_PUZ )
    ELSE
       LSKD1( PWAR_PUZ )
@@ -2174,7 +2176,7 @@ PROCEDURE LSKD2( PWAR_PUZ )
 *±±±±±± OPL1     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE OPL1()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       OPL12()
    ELSE
       OPL11()
@@ -2205,7 +2207,7 @@ PROCEDURE OPL12()
 *±±±±±± OPL2     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE OPL2()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       OPL22()
    ELSE
       OPL21()
@@ -2240,7 +2242,7 @@ PROCEDURE OPL22()
 *±±±±±± OPLR     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE OPLR( PDATA )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       OPLR2( PDATA )
    ELSE
       OPLR1( PDATA )
@@ -2271,7 +2273,7 @@ PROCEDURE OPLR2( PDATA )
 *±±±±±± OPLS     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE OPLS()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       OPLS2()
    ELSE
       OPLS1()
@@ -2316,7 +2318,7 @@ PROCEDURE OPLS2()
 *±±±±±± PPDB     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE PPDB( PKOD, PNUMER_REJ, PORGAN, PDATA_REJ, PDATA_ZAL )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       PPDB2( PKOD, PNUMER_REJ, PORGAN, PDATA_REJ, PDATA_ZAL )
    ELSE
       PPDB1( PKOD, PNUMER_REJ, PORGAN, PDATA_REJ, PDATA_ZAL )
@@ -2357,7 +2359,7 @@ PROCEDURE PPDB2( PKOD, PNUMER_REJ, PORGAN, PDATA_REJ, PDATA_ZAL )
 *±±±±±± RIVDRA   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE RIVDRA()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       RIVDRA2()
    ELSE
       RIVDRA1()
@@ -2390,7 +2392,7 @@ PROCEDURE RIVDRA2()
 *±±±±±± TYUB     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE TYUB( PTYTUB )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       TYUB2( PTYTUB )
    ELSE
       TYUB1( PTYTUB )
@@ -2423,7 +2425,7 @@ PROCEDURE TYUB2( PTYTUB )
 *±±±±±± ZDRAV    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE ZDRAV( PWAR_Pfp, pwar_pfg, psum )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ZDRAV2( PWAR_Pfp, pwar_pfg, psum )
    ELSE
       ZDRAV1( PWAR_Pfp, pwar_pfg, psum )
@@ -2458,7 +2460,7 @@ PROCEDURE ZDRAV2( PWAR_Pfp, pwar_pfg, psum )
 *±±±±±± ZSDRA    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE ZSDRA( PWAR_PUZ )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ZSDRA2( PWAR_PUZ )
    ELSE
       ZSDRA1( PWAR_PUZ )
@@ -2497,7 +2499,7 @@ PROCEDURE ZSDRAI( PSUM_EME, PSUM_REN, PSUMEMEREN, PWAR_PUE, PWAR_PUR, PWARSUMP, 
    PWAR_FUE, PWAR_FUR, PWARSUMF, PSUM_CHO, PSUM_WYP, PSUMCHOWYP, PWAR_PUC, ;
    PWAR_PUW, PWARSUMPC, PWAR_FUC, PWARSUMFC, PRAZEM )
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ZSDRAI2( PSUM_EME, PSUM_REN, PSUMEMEREN, PWAR_PUE, PWAR_PUR, PWARSUMP, ;
          PWAR_FUE, PWAR_FUR, PWARSUMF, PSUM_CHO, PSUM_WYP, PSUMCHOWYP, PWAR_PUC, ;
          PWAR_PUW, PWARSUMPC, PWAR_FUC, PWARSUMFC, PRAZEM )
@@ -2598,7 +2600,7 @@ PROCEDURE ZSDRAI2( PSUM_EME, PSUM_REN, PSUMEMEREN, PWAR_PUE, PWAR_PUR, PWARSUMP,
 *±±±±±± ZWDRA    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE ZWDRA()
 
-   IF nWersjaKEDU == 2
+   IF paraz_wer == 2
       ZWDRA2()
    ELSE
       ZWDRA1()
@@ -2668,6 +2670,21 @@ FUNCTION HI36( _liczba )
 FUNCTION LO36( _liczba )
 
    RETURN _liczba - ( _int( _liczba / 35 ) * 35 )
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION ZUS_KodTytulu( cKod )
+
+   LOCAL cRes := ""
+
+   IF Len( AllTrim( cKod ) ) == 6
+      cRes := '<p1>' + SubStr( cKod, 1, 4 ) + '</p1><p2>' + SubStr( cKod, 5, 1 ) ;
+         + '<p2><p3>' + SubStr( cKod, 6, 1 ) + '</p3>'
+   ENDIF
+
+   RETURN cRes
+
+/*----------------------------------------------------------------------*/
 
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±± K O N I E C ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±

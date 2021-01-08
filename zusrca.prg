@@ -22,6 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE ZusRca( ubezp )
 
+   LOCAL nNumBlok := 1
    PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
 
    @ 1, 47 SAY '          '
@@ -171,11 +172,13 @@ PROCEDURE ZusRca( ubezp )
                   ETATY->ZASIL_RODZ, ;
                   ETATY->ILOSO_PIEL, ;
                   ETATY->ZASIL_PIEL, ;
-                  ETATY->ZASIL_PIEL + ETATY->ZASIL_RODZ )
+                  ETATY->ZASIL_PIEL + ETATY->ZASIL_RODZ, ;
+                  nNumBlok )
             ENDIF
          ENDIF
          SELECT prac
          SKIP
+         nNumBlok++
       ENDDO
 
       SELECT spolka
@@ -209,10 +212,12 @@ PROCEDURE ZusRca( ubezp )
                0, ;
                0, ;
                0, ;
-               0 )
+               0, ;
+               nNumBlok )
          ENDIF
          SELECT spolka
          SKIP
+         nNumBlok++
       ENDDO
 
       oplr()
@@ -327,7 +332,8 @@ PROCEDURE ZusRca( ubezp )
                      ETATY->ZASIL_RODZ, ;
                      ETATY->ILOSO_PIEL, ;
                      ETATY->ZASIL_PIEL, ;
-                     ETATY->ZASIL_PIEL + ETATY->ZASIL_RODZ )
+                     ETATY->ZASIL_PIEL + ETATY->ZASIL_RODZ, ;
+                     nNumBlok )
                ELSE
                   brakpra := .T.
                   EXIT
@@ -335,6 +341,7 @@ PROCEDURE ZusRca( ubezp )
             ENDIF
             SELECT prac
             SKIP
+            nNumBlok++
          ENDDO
       ELSE
          brakpra := .T.

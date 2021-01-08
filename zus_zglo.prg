@@ -22,6 +22,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION ZUS_Zglo()
 
+   LOCAL aWersje := { '1.3', '5.2' }
+
    opc := 0
    RR := 0
    ColStd()
@@ -35,8 +37,10 @@ FUNCTION ZUS_Zglo()
       @ 17, 43 SAY    '      Gdzie zapisywa&_c. pliki dla      '
       @ 18, 43 SAY    '          Programu P&_l.atnika          '
       @ 19, 43 SAY    ' dysk:\katalog\                      '
+      @ 22, 43 SAY    ' Format pliku:                       '
       SET COLOR TO w+
       @ 20, 47 SAY    SubStr( paraz_cel, 1, 33 )
+      @ 22, 58 SAY    aWersje[ paraz_wer ]
       SET COLOR TO w
       *ColPro()
       *@ 13,43 prompt [        TYLKO WYBRANEJ OSOBY         ]
@@ -70,9 +74,11 @@ FUNCTION ZUS_Zglo()
          *  exit
       CASE opc == 2
          zparaz_cel := paraz_cel
+         zparaz_wer := paraz_wer
          DO WHILE .T.
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
             @ 20, 47 GET zparaz_cel PICTURE repl( '!', 60 )
+            @ 22, 58, 22, 64 GET zparaz_wer LISTBOX aWersje DROPDOWN
             SET CURSOR ON
             READ
             SET CURSOR OFF
@@ -89,6 +95,7 @@ FUNCTION ZUS_Zglo()
                   zparaz_cel := paraz_cel
                ELSE
                   paraz_cel := zparaz_cel
+                  paraz_wer := zparaz_wer
                   SAVE TO param_zu ALL LIKE paraz_*
                   EXIT
                ENDIF

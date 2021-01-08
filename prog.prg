@@ -495,9 +495,6 @@ FUNCTION Main()
    // Domyslny symbol kasy choryc
    PUBLIC parap_rkc := '01R'
 
-   // Wersja formatu eksportu do Pˆatnika
-   PUBLIC nWersjaKEDU := 2
-
    // ---
 
    // Parametry do obliczania korekt
@@ -527,6 +524,8 @@ FUNCTION Main()
 
    // Katalog wysciowy pliku
    PUBLIC paraz_cel := '.\' + Space( 58 )
+   // Wersja KEDU ( 1 - 1.3; 2 - 5.2 )
+   PUBLIC paraz_wer := 1
 
    // Katalog zapisu edeklaracji - stare
    // TODO: Do usuniecia lacznie ze stara edeklaracja
