@@ -103,6 +103,7 @@ jpkvat.prg
 jpkimport.prg
 kartot_w.prg
 kartst.prg
+kartstmo.prg
 kasow.prg
 kat_rej.prg
 kat_rej_.prg
@@ -184,6 +185,7 @@ samocho_.prg
 specplac.prg
 spigiel.prg
 spolka.prg
+srodki.prg
 struktur.prg
 suma_mc.prg
 suma_mcr.prg
@@ -193,11 +195,13 @@ tab_poj.prg
 tab_rycz.prg
 tab_vat.prg
 tabam.prg
+tabamw.prg
 tresc.prg
 tresc_.prg
 umowa.prg
 umowy.prg
 umowysum.prg
+umorz.prg
 urzedy.prg
 urzedy_.prg
 urzedyko.prg
