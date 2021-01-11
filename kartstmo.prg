@@ -172,7 +172,7 @@ PROCEDURE KartSTMo()
                ENDIF
                * @ _row_d,_col_l say &_proc
                Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
-               @ _row_d, _col_l SAY '          ³         ³           '
+               @ _row_d, _col_l SAY '          ³          ³          '
             END
             _disp := ins .OR. LastKey() # 27
             kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
