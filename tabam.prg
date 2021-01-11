@@ -152,10 +152,15 @@ FUNCTION TabAm( mieskart )
                IF Found()
                   wybpol := 1
                   ZPRZE := Transform( PRZEL, '999.99' )
-                  NMC := MC01
-                  ZMC := Transform( MC01, '@Z 999999.99' )
+                  IF Val( ROK&swybr ) == Year( kartst->data_zak )
+                     cMCRozp := StrTran( Str( Month( kartst->data_zak ), 2 ), ' ', '0' )
+                  ELSE
+                     cMCRozp := '01'
+                  ENDIF
+                  NMC := MC&cMCRozp
+                  ZMC := Transform( NMC, '@Z 999999.99' )
                   @ 6, 44 + ( ( wybrok - 1 ) * 10 ) PROMPT Zprze
-                  @ 9, 41 + ( ( wybrok - 1 ) * 10 ) PROMPT ZMC
+                  @ 8 + Val( cMCRozp ), 41 + ( ( wybrok - 1 ) * 10 ) PROMPT ZMC
                   wybpol := menu( wybpol )
                   swybp := StrTran( Str( wybpol - 1, 2 ), ' ', '0' )
                   ColStd()
@@ -177,20 +182,20 @@ FUNCTION TabAm( mieskart )
                      ZPRZE := Transform( zPRZE, '999.99' )
                   CASE wybpol # 1 .AND. wybpol # 0
                      SET CURSOR ON
-                     @ 9, 41 + ( ( wybrok - 1 ) * 10 ) GET NMC PICTURE '999999.99' VALID NMC # 0
+                     @ 8 + Val( cMCRozp ), 41 + ( ( wybrok - 1 ) * 10 ) GET NMC PICTURE '999999.99' VALID NMC # 0
                      READ
                      SET CURSOR OFF
                      IF LastKey() # 27
                         MODYA := 2
                         BlokadaR()
-                        REPLACE MC01 WITH NMC
+                        REPLACE MC&cMCRozp WITH NMC
                         COMMIT
                         UNLOCK
                      ENDIF
                   ENDCASE
                   kon := .F.
                   IF MODYA # 0
-                     ZMC := MC01
+                     ZMC := MC&cMCRozp
                      zprzel := przel
                      zwart_pocz := WART_POCZ
                      zwart_akt := zwart_pocz * zprzel
@@ -214,7 +219,7 @@ FUNCTION TabAm( mieskart )
                         umorz_akt WITH zumorz_akt, ;
                         liniowo WITH zliniowo, ;
                         degres WITH zdegres
-                     FOR i := 1 TO 12
+                     FOR i := Val( cMCRozp ) TO 12
                         zmcn := StrTran( Str( i, 2 ), ' ', '0' )
                         IF kon
                            REPLACE mc&zmcn WITH 0
