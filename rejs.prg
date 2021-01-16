@@ -338,6 +338,10 @@ mon_drk([읕컴컴좔컴컴좔컴컴컴컴컨컴컴컴컨컴컨컴컴컴컴컴좔컴컴컴컴컴컴컴컴컴컴컴�
 *         zzaplata=zaplata
          zkwota=kwota
          znumer=numer
+         zRodzDow := rodzdow
+         zOpcje := opcje
+         zProcedur := procedur
+         zSek_cv7 := sek_cv7
          zrach=rach
          k88=rejs->WARTZW+rejs->WART08+rejs->WART00+rejs->WART02+rejs->WART07+rejs->WART22+rejs->WART12+rejs->VAT02+rejs->VAT07+rejs->VAT22+rejs->VAT12
 *         dozapl=iif(zzaplata#'1',k88-zkwota,0)
@@ -373,16 +377,16 @@ mon_drk([읕컴컴좔컴컴좔컴컴컴컴컨컴컴컴컨컴컨컴컴컴컴컴좔컴컴컴컴컴컴컴컴컴컴컴�
          skip
          *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          if iif(ewid_rsk<>'R',zkorekta=ewid_rsk,.t.).and.iif(ewid_rsi<>'**',zSYMB_REJ=ewid_rsi,.t.).and.(ewid_rzz$'NW'.or.(ewid_rzz='D'.and.(FS+ZS)<>0.0).or.(ewid_rzz='Z'.and.(FS+ZS)=0.0)) ;
-            .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
-            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], gm_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
-            .AND. ( Len( aFiltr[ 'procedura' ] ) == 0 .OR. AScan( aFiltr[ 'procedura' ], "MPP" ) > 0 .OR. ( AllTrim( rejs->procedur ) <> "" .AND. Len( AMerge( aFiltr[ 'procedura' ], gm_ATokens( AllTrim( rejs->procedur ), ',' ) ) ) > 0 ) ) ;
-            .AND. ( AScan( aFiltr[ 'procedura' ], "MPP" ) == 0 .OR. rejs->sek_cv7 == "SP" )
+            .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( zrodzdow ) ) ;
+            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( zopcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], gm_ATokens( AllTrim( zopcje ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( Len( aFiltr[ 'procedura' ] ) == 0 .OR. AScan( aFiltr[ 'procedura' ], "MPP" ) > 0 .OR. ( AllTrim( zprocedur ) <> "" .AND. Len( AMerge( aFiltr[ 'procedura' ], gm_ATokens( AllTrim( zprocedur ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( AScan( aFiltr[ 'procedura' ], "MPP" ) == 0 .OR. zsek_cv7 == "SP" )
 
             strona=strona+1
             liczba=liczba+1
             k1l=dos_c(str(liczba,5))
             k1p=k1l
-            if left(znumer,1)#chr(1).and.left(znumer,1)#chr(254) .AND. ( AllTrim( rejs->rodzdow ) <> "FP" .OR. aFiltr[ 'sumujFP' ] )
+            if left(znumer,1)#chr(1).and.left(znumer,1)#chr(254) .AND. ( AllTrim( zRodzDow ) <> "FP" .OR. aFiltr[ 'sumujFP' ] )
                if ewid_rss='B'
                   s0_8=s0_8+k88
                else

@@ -1036,7 +1036,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       aRow[ 'numer' ] := AllTrim( iif( Left( rejs->numer, 1 ) == Chr( 1 ) .OR. Left( rejs->numer, 1 ) == Chr( 254 ), SubStr( rejs->numer, 2 ) + ' ', rejs->numer ) )
       aRow[ 'nazwa' ] := AllTrim( rejs->nazwa )
       aRow[ 'nr_ident' ] := AllTrim( rejs->nr_ident )
-      aRow[ 'tresc' ] := AllTrim( rejs->tresc ) + iif( cOpisDod <> "", "(" + cOpisDod + ")", "" )
+      aRow[ 'tresc' ] := AllTrim( rejs->tresc ) + iif( cOpisDod <> "", " (" + cOpisDod + ")", "" )
       aRow[ 'symb_rej' ] := AllTrim( rejs->symb_rej )
       aRow[ 'dzien' ] := StrTran( rejs->dzien, ' ', '0' ) + '.' + StrTran( cMiesiac, ' ', '0' )
       aRow[ 'data_sprzedazy' ] := rejs->roks + '.' + StrTran( rejs->mcs, ' ' , '0' ) + '.' + StrTran( rejs->dziens, ' ', '0' )

@@ -238,21 +238,25 @@ mon_drk([읕컴컴좔컴컴좔컴컴컴컴컨컴컴컴컴좔컴컴좔컴컴컴컴컨컴컴컴컴컴컴컴컴컴컴�
          zKOREKTA=KOREKTA
          zSYMB_REJ=SYMB_REJ
          znumer=numer
+         zRodzDow := rodzdow
+         zOpcje := opcje
+         zProcedur := procedur
+         zSek_cv7 := sek_cv7
          zrach=rach
          k88=WART22+WART12+WART07+WART02+WART00+WARTZW+VAT22+VAT12+VAT07+VAT02
          skip
          *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          if iif(ewid_rsk<>'R',zkorekta=ewid_rsk,.t.).and.iif(ewid_rsi<>'**',zSYMB_REJ=ewid_rsi,.t.).and.iif(ewid_rsd<>'*',zrach=ewid_rsd,.t.) ;
-            .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
-            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], gm_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
-            .AND. ( Len( aFiltr[ 'procedura' ] ) == 0 .OR. AScan( aFiltr[ 'procedura' ], "MPP" ) > 0 .OR. ( AllTrim( rejs->procedur ) <> "" .AND. Len( AMerge( aFiltr[ 'procedura' ], gm_ATokens( AllTrim( rejs->procedur ), ',' ) ) ) > 0 ) ) ;
-            .AND. ( AScan( aFiltr[ 'procedura' ], "MPP" ) == 0 .OR. rejs->sek_cv7 == "SP" )
+            .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( zrodzdow ) ) ;
+            .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( zopcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], gm_ATokens( AllTrim( zopcje ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( Len( aFiltr[ 'procedura' ] ) == 0 .OR. AScan( aFiltr[ 'procedura' ], "MPP" ) > 0 .OR. ( AllTrim( zprocedur ) <> "" .AND. Len( AMerge( aFiltr[ 'procedura' ], gm_ATokens( AllTrim( zprocedur ), ',' ) ) ) > 0 ) ) ;
+            .AND. ( AScan( aFiltr[ 'procedura' ], "MPP" ) == 0 .OR. zsek_cv7 == "SP" )
 
             strona=strona+1
             liczba=liczba+1
             k1=dos_c(str(liczba,5))
             k7=k1
-            if left(znumer,1)#chr(1).and.left(znumer,1)#chr(254) .AND. ( AllTrim( rejs->rodzdow ) <> "FP" .OR. aFiltr[ 'sumujFP' ] )
+            if left(znumer,1)#chr(1).and.left(znumer,1)#chr(254) .AND. ( AllTrim( zRodzDow ) <> "FP" .OR. aFiltr[ 'sumujFP' ] )
                if ewid_rss='B'
                   s0_8=s0_8+k88
                else
