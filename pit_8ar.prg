@@ -27,6 +27,7 @@ private P1,P16,P17,P18,P19,p17a
 private P20,P21,P22,P23,P24,p46,p47,p48
 private P63
 private tresc_korekty_pit8ar := '', rodzaj_korekty := 0
+private aPit48Covid := { .F., .F., .F., .F., .F., .F. }
 zDEKLKOR='D'
 store 0 to P29,P30,P31,p32,p33,p34,p35
 store '' to P3,P4,P4r,P6,P1,P16,P17,P18,P19,P20,p17a,P6k
@@ -800,6 +801,7 @@ next
       appe blan
       repl linia_l with '        '+kwota(z1307,10,0)+' '+kwota(z1308,10,0)+' '+kwota(z1309,10,0)+' '+kwota(z1310,10,0)+' '+kwota(z1311,10,0)+' '+kwota(z1312,10,0)
    CASE _OU='X'
+      IF Pit48_Covid()
         edeklaracja_plik = 'PIT_8AR_10_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
         IF ( zCzyKorekta := edekCzyKorekta() ) > 0
            IF zCzyKorekta == 2
@@ -813,7 +815,9 @@ next
               edekZapiszXml(cWynikXml, edeklaracja_plik, wys_edeklaracja, 'PIT8AR-10', zDEKLKOR == 'K')
            ENDIF
         ENDIF
+      ENDIF
    other //_OU='K'
+      IF Pit48_Covid()
         DeklPodp( 'T' )
         SWITCH GraficznyCzyTekst()
         CASE 0
@@ -837,6 +841,7 @@ next
               ENDIF
            ENDIF
         ENDSWITCH
+      ENDIF
 
    endcase
 end

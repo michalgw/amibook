@@ -1227,6 +1227,24 @@ FUNCTION edek_pit4r_11()
 		r = r + '    <P_155>' + TKwotaCNieujemna(z1310) + '</P_155>' + nl
 		r = r + '    <P_156>' + TKwotaCNieujemna(z1311) + '</P_156>' + nl
 		r = r + '    <P_157>' + TKwotaCNieujemna(z1312) + '</P_157>' + nl
+      IF aPit48Covid[ 1 ]
+   		r = r + '    <P_159>1</P_159>' + nl
+      ENDIF
+      IF aPit48Covid[ 2 ]
+   		r = r + '    <P_160>1</P_160>' + nl
+      ENDIF
+      IF aPit48Covid[ 3 ]
+   		r = r + '    <P_161>1</P_161>' + nl
+      ENDIF
+      IF aPit48Covid[ 4 ]
+   		r = r + '    <P_162>1</P_162>' + nl
+      ENDIF
+      IF aPit48Covid[ 5 ]
+   		r = r + '    <P_163>1</P_163>' + nl
+      ENDIF
+      IF aPit48Covid[ 6 ]
+   		r = r + '    <P_164>1</P_164>' + nl
+      ENDIF
 		r = r + '  </PozycjeSzczegolowe>' + nl
 		r = r + '  <Pouczenia>1</Pouczenia>' + nl
       IF tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_pit4r)) > 0
@@ -1950,6 +1968,24 @@ FUNCTION edek_pit8ar_10()
 		r = r + '    <P_427>' + TKwota2Nieujemna(z510) + '</P_427>' + nl
 		r = r + '    <P_428>' + TKwota2Nieujemna(z511) + '</P_428>' + nl
 		r = r + '    <P_429>' + TKwota2Nieujemna(z512) + '</P_429>' + nl
+      IF aPit48Covid[ 1 ]
+   		r = r + '    <P_430>1</P_430>' + nl
+      ENDIF
+      IF aPit48Covid[ 2 ]
+   		r = r + '    <P_431>1</P_431>' + nl
+      ENDIF
+      IF aPit48Covid[ 3 ]
+   		r = r + '    <P_432>1</P_432>' + nl
+      ENDIF
+      IF aPit48Covid[ 4 ]
+   		r = r + '    <P_433>1</P_433>' + nl
+      ENDIF
+      IF aPit48Covid[ 5 ]
+   		r = r + '    <P_434>1</P_434>' + nl
+      ENDIF
+      IF aPit48Covid[ 6 ]
+   		r = r + '    <P_435>1</P_435>' + nl
+      ENDIF
 		r = r + '  </PozycjeSzczegolowe>' + nl
 		r = r + '  <Pouczenia>1</Pouczenia>' + nl
       IF tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_pit8ar)) > 0

@@ -1195,12 +1195,12 @@ FUNCTION DaneDek_PIT4Rw11()
    hDane['P_156'] := z1311
    hDane['P_157'] := z1312
    hDane['P_158'] := ''
-   hDane['P_159'] := '0'
-   hDane['P_160'] := '0'
-   hDane['P_161'] := '0'
-   hDane['P_162'] := '0'
-   hDane['P_163'] := '0'
-   hDane['P_164'] := '0'
+   hDane['P_159'] := iif( aPit48Covid[ 1 ], '1', '0' )
+   hDane['P_160'] := iif( aPit48Covid[ 2 ], '1', '0' )
+   hDane['P_161'] := iif( aPit48Covid[ 3 ], '1', '0' )
+   hDane['P_162'] := iif( aPit48Covid[ 4 ], '1', '0' )
+   hDane['P_163'] := iif( aPit48Covid[ 5 ], '1', '0' )
+   hDane['P_164'] := iif( aPit48Covid[ 6 ], '1', '0' )
 
    RETURN hDane
 
@@ -3087,12 +3087,12 @@ FUNCTION DaneDek_PIT8ARw10()
    hDane['P_428'] := z511
    hDane['P_429'] := z512
 
-   hDane['P_430'] := '0'
-   hDane['P_431'] := '0'
-   hDane['P_432'] := '0'
-   hDane['P_433'] := '0'
-   hDane['P_434'] := '0'
-   hDane['P_435'] := '0'
+   hDane['P_430'] := iif( aPit48Covid[ 1 ], '1', '0' )
+   hDane['P_431'] := iif( aPit48Covid[ 2 ], '1', '0' )
+   hDane['P_432'] := iif( aPit48Covid[ 3 ], '1', '0' )
+   hDane['P_433'] := iif( aPit48Covid[ 4 ], '1', '0' )
+   hDane['P_434'] := iif( aPit48Covid[ 5 ], '1', '0' )
+   hDane['P_435'] := iif( aPit48Covid[ 6 ], '1', '0' )
 
    RETURN hDane
 

@@ -20,13 +20,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-para _G,_M,_STR,_OU
+PROCEDURE Pit_4R( _G, _M, _STR, _OU )
+
 RAPORT=RAPTEMP
 private P3,P4,P4r,P6,P6k
 private P1,P16,P17,P18,P19,p17a
 private P20,P21,P22,P23,P24,p46,p47,p48
 private P63
 private tresc_korekty_pit4r := '', rodzaj_korekty := 0
+private aPit48Covid := { .F., .F., .F., .F., .F., .F. }
 zDEKLKOR='D'
 store 0 to P29,P30,P31,p32,p33,p34,p35
 store '' to P3,P4,P4r,P6,P6k,P1,P16,P17,P18,P19,P20,p17a
@@ -809,6 +811,7 @@ next
       appe blan
       repl linia_l with '        '+kwota(z1307,10,0)+' '+kwota(z1308,10,0)+' '+kwota(z1309,10,0)+' '+kwota(z1310,10,0)+' '+kwota(z1311,10,0)+' '+kwota(z1312,10,0)
    CASE _OU == 'X'
+      IF Pit48_Covid()
         edeklaracja_plik = 'PIT_4R_11_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
         IF ( zCzyKorekta := edekCzyKorekta() ) > 0
            IF zCzyKorekta == 2
@@ -822,7 +825,9 @@ next
               edekZapiszXml(danedekl, edeklaracja_plik, wys_edeklaracja, 'PIT4R-11', zDEKLKOR == 'K')
            ENDIF
         ENDIF
+      ENDIF
    other //_OU='K'
+      IF Pit48_Covid()
         DeklPodp( 'T' )
         SWITCH GraficznyCzyTekst()
         CASE 0
@@ -846,6 +851,80 @@ next
               ENDIF
            ENDIF
         ENDSWITCH
+      ENDIF
    endcase
 end
 close_()
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Pit48_Covid()
+
+   LOCAL lRes := .F., cEkran, cKolor := ColStd(), nI
+   LOCAL cCovid1, cCovid2, cCovid3, cCovid4, cCovid5, cCovid6
+   LOCAL bOdswierzTN := { | nEl |
+      LOCAL lWart, cKolor := SetColor()
+      DO CASE
+      CASE nEl == 1
+         lWart := cCovid1 == 'T'
+      CASE nEl == 2
+         lWart := cCovid2 == 'T'
+      CASE nEl == 3
+         lWart := cCovid3 == 'T'
+      CASE nEl == 4
+         lWart := cCovid4 == 'T'
+      CASE nEl == 5
+         lWart := cCovid5 == 'T'
+      CASE nEl == 6
+         lWart := cCovid6 == 'T'
+      ENDCASE
+      SET COLOR TO w+
+      @ 11 + nEl, 43 SAY iif( lWart, 'ak', 'ie' )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+
+   SAVE SCREEN TO cEkran
+
+   cCovid1 := iif( aPit48Covid[ 1 ], 'T', 'N' )
+   cCovid2 := iif( aPit48Covid[ 2 ], 'T', 'N' )
+   cCovid3 := iif( aPit48Covid[ 3 ], 'T', 'N' )
+   cCovid4 := iif( aPit48Covid[ 4 ], 'T', 'N' )
+   cCovid5 := iif( aPit48Covid[ 5 ], 'T', 'N' )
+   cCovid6 := iif( aPit48Covid[ 6 ], 'T', 'N' )
+
+   @  8, 15 CLEAR TO 18, 64
+   @  8, 15 TO 18, 64
+   @  9, 16 SAY "  COVID-19 - Przesuni©cie terminu przekazania"
+   @ 10, 16 SAY " zrycz. podatku pobranego za poni¾sze miesi¥ce"
+   @ 12, 17 SAY "          za marzec 2020" GET cCovid1 PICTURE '!' VALID cCovid1 $ 'TN' .AND. Eval( bOdswierzTN, 1 )
+   @ 13, 17 SAY "        za kwiecieä 2020" GET cCovid2 PICTURE '!' VALID cCovid2 $ 'TN' .AND. Eval( bOdswierzTN, 2 )
+   @ 14, 17 SAY "             za maj 2020" GET cCovid3 PICTURE '!' VALID cCovid3 $ 'TN' .AND. Eval( bOdswierzTN, 3 )
+   @ 15, 17 SAY "     za pa«dziernik 2020" GET cCovid4 PICTURE '!' VALID cCovid4 $ 'TN' .AND. Eval( bOdswierzTN, 4 )
+   @ 16, 17 SAY "        za listopad 2020" GET cCovid5 PICTURE '!' VALID cCovid5 $ 'TN' .AND. Eval( bOdswierzTN, 5 )
+   @ 17, 17 SAY "        za grudzieä 2020" GET cCovid6 PICTURE '!' VALID cCovid6 $ 'TN' .AND. Eval( bOdswierzTN, 6 )
+
+   FOR nI := 1 TO 6
+      Eval( bOdswierzTN, nI )
+   NEXT
+
+   read_()
+
+   IF LastKey() <> 27
+      aPit48Covid[ 1 ] := cCovid1 == 'T'
+      aPit48Covid[ 2 ] := cCovid2 == 'T'
+      aPit48Covid[ 3 ] := cCovid3 == 'T'
+      aPit48Covid[ 4 ] := cCovid4 == 'T'
+      aPit48Covid[ 5 ] := cCovid5 == 'T'
+      aPit48Covid[ 6 ] := cCovid6 == 'T'
+      lRes := .T.
+   ENDIF
+
+   RESTORE SCREEN FROM cEkran
+   SetColor( cKolor )
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
