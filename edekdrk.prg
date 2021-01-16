@@ -8109,7 +8109,11 @@ FUNCTION DaneXML_JPKV7w1( oDoc, cNrRef, hNaglowek )
          IF ! hb_HHasKey( aPoz, 'DataSprzedazy' )
             aPoz[ 'DataSprzedazy' ] := ""
          ENDIF
-         aPoz[ 'Sumuj' ] := iif( AllTrim( aPoz[ 'TypDokumentu' ] ) == "FP" , 0, 1 )
+         aPoz[ 'Sumuj' ] := iif( AllTrim( aPoz[ 'TypDokumentu' ] ) == "FP" .OR. ;
+            ( At( "MR_UZ", aPoz[ 'Procedura' ] ) > 0 .AND. ( aPoz[ 'K_10' ] < 0 .OR. ;
+            aPoz[ 'K_11' ] < 0 .OR. aPoz[ 'K_12' ] < 0 .OR. aPoz[ 'K_13' ] < 0 .OR. ;
+            aPoz[ 'K_14' ] < 0 .OR. aPoz[ 'K_15' ] < 0 .OR. aPoz[ 'K_17' ] < 0 .OR. ;
+            aPoz[ 'K_19' ] < 0 .OR. aPoz[ 'K_21' ] < 0 .OR. aPoz[ 'K_22' ] < 0 ) ), 0, 1 )
       } )
    ELSE
       hDane[ 'JestSprzedaz' ] := .F.

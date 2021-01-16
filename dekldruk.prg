@@ -5710,7 +5710,12 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
             ELSE
                aPoz[ 'DataSprzedazy' ] := ""
             ENDIF
-            IF hb_HHasKey( aPoz, 'TypDokumentu' ) .AND. AllTrim( aPoz[ 'TypDokumentu' ] ) == "FP"
+            IF ( hb_HHasKey( aPoz, 'TypDokumentu' ) .AND. AllTrim( aPoz[ 'TypDokumentu' ] ) == "FP" ) ;
+               .OR. ( At( "MR_UZ", aPoz[ 'Procedura' ] ) > 0 .AND. ( aPoz[ 'K_10' ] < 0 .OR. ;
+               aPoz[ 'K_11' ] < 0 .OR. aPoz[ 'K_12' ] < 0 .OR. aPoz[ 'K_13' ] < 0 .OR. ;
+               aPoz[ 'K_14' ] < 0 .OR. aPoz[ 'K_15' ] < 0 .OR. aPoz[ 'K_17' ] < 0 .OR. ;
+               aPoz[ 'K_19' ] < 0 .OR. aPoz[ 'K_21' ] < 0 .OR. aPoz[ 'K_22' ] < 0 ) )
+
                aPoz[ 'Sumuj' ] := 0
             ELSE
                aPoz[ 'Sumuj' ] := 1
