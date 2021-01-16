@@ -800,7 +800,7 @@ next
       appe blan
       repl linia_l with '        '+kwota(z1307,10,0)+' '+kwota(z1308,10,0)+' '+kwota(z1309,10,0)+' '+kwota(z1310,10,0)+' '+kwota(z1311,10,0)+' '+kwota(z1312,10,0)
    CASE _OU='X'
-        edeklaracja_plik = 'PIT_8AR_9_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
+        edeklaracja_plik = 'PIT_8AR_10_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
         IF ( zCzyKorekta := edekCzyKorekta() ) > 0
            IF zCzyKorekta == 2
               rodzaj_korekty := edekRodzajKorekty()
@@ -809,8 +809,8 @@ next
            ENDIF
            IF zDEKLKOR != 'K' .OR. (zDEKLKOR == 'K' .AND. ValType(tresc_korekty_pit8ar) == "C")
               PRIVATE cWynikXml := ''
-              cWynikXml = edek_pit8ar_9()
-              edekZapiszXml(cWynikXml, edeklaracja_plik, wys_edeklaracja, 'PIT8AR-9', zDEKLKOR == 'K')
+              cWynikXml = edek_pit8ar_10()
+              edekZapiszXml(cWynikXml, edeklaracja_plik, wys_edeklaracja, 'PIT8AR-10', zDEKLKOR == 'K')
            ENDIF
         ENDIF
    other //_OU='K'
@@ -819,7 +819,7 @@ next
         CASE 0
            EXIT
         CASE 1
-           DeklarDrukuj( 'PIT8AR-9' )
+           DeklarDrukuj( 'PIT8AR-10' )
            EXIT
         CASE 2
            do kpit_8ar
