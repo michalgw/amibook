@@ -35,7 +35,7 @@ begin sequence
       czesc=1
       *------------------------------
       _szerokosc=121
-      _koniec="del#[+].or.firma#ident_fir.or.strtran(mc+[.]+dzien,' ','0')<od_dnia_.or.strtran(mc+[.]+dzien,' ','0')>do_dnia_.or.alltrim(strtran(strtran(nr_ident,' ',''),'-',''))<>od_kontr"
+      _koniec="del#[+].or.firma#ident_fir.or.strtran(mc+[.]+dzien,' ','0')<od_dnia_.or.strtran(mc+[.]+dzien,' ','0')>do_dnia_.or.NormalizujNipPL(nr_ident)<>NormalizujNipPL(od_kontr)"
       *@@@@@@@@@@@@@@@@@@@@@@@@@@ ZAKRES @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       il_kontr=0
       od_dnia=ctod(param_rok+[.01.01])
@@ -76,7 +76,7 @@ begin sequence
       *@@@@@@@@@@@@@@@@@@@@ OTWARCIE BAZ DANYCH @@@@@@@@@@@@@@@@@@@@@@
       select 1
       if zRYCZALT<>'T'.and.dostepex('OPER')
-         index on del+firma+iif(strtran(mc+[.]+dzien,' ','0')>=od_dnia_.and.strtran(mc+[.]+dzien,' ','0')<=do_dnia_,[+],[-])+alltrim(strtran(strtran(nr_ident,' ',''),'-',''))+mc+dzien to &raptemp
+         index on del+firma+iif(strtran(mc+[.]+dzien,' ','0')>=od_dnia_.and.strtran(mc+[.]+dzien,' ','0')<=do_dnia_,[+],[-])+NormalizujNipPL(nr_ident)+mc+dzien to &raptemp
          if dostep('OPER')
             set inde to &raptemp
             seek [+]+ident_fir+'+'+od_kontr
@@ -85,13 +85,13 @@ begin sequence
                mon_drk([ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿])
                mon_drk([³                 O B R O T Y   Z   K S I &__E. G I                ³])
                mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ])
-               _grupa1=alltrim(strtran(strtran(nr_ident,' ',''),'-',''))
+               _grupa1=NormalizujNipPL(nr_ident)
                store [] to _t1,_t2
                _grupa=.t.
                do while .not.&_koniec
                   if substr(numer,1,3)<>'RZ-' .and. substr(numer,1,3)<>'RS-'
-                     if _grupa.or._grupa1#alltrim(strtran(strtran(nr_ident,' ',''),'-',''))
-                        _grupa1=alltrim(strtran(strtran(nr_ident,' ',''),'-',''))
+                     if _grupa.or._grupa1#NormalizujNipPL(nr_ident)
+                        _grupa1=NormalizujNipPL(nr_ident)
                         _grupa=.t.
                         *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                         il_kontr=0
@@ -140,7 +140,7 @@ begin sequence
                   endif
                   skip
                   _numer=1
-                  if (substr(numer,1,3)<>'RZ-' .and. substr(numer,1,3)<>'RS-'.and.alltrim(strtran(strtran(nr_ident,' ',''),'-',''))#_grupa1).or.&_koniec
+                  if (substr(numer,1,3)<>'RZ-' .and. substr(numer,1,3)<>'RS-'.AND.NormalizujNipPL(nr_ident)#_grupa1).or.&_koniec
                      _numer=0
                   endif
                   _grupa=.f.
@@ -163,7 +163,7 @@ begin sequence
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       select 1
       if dostepex('REJS')
-         index on del+firma+iif(strtran(mc+[.]+dzien,' ','0')>=od_dnia_.and.strtran(mc+[.]+dzien,' ','0')<=do_dnia_,[+],[-])+alltrim(strtran(strtran(nr_ident,' ',''),'-',''))+mc+dzien to &raptemp
+         index on del+firma+iif(strtran(mc+[.]+dzien,' ','0')>=od_dnia_.and.strtran(mc+[.]+dzien,' ','0')<=do_dnia_,[+],[-])+NormalizujNipPL(nr_ident)+mc+dzien to &raptemp
          if dostep('REJS')
             set inde to &raptemp
             seek [+]+ident_fir+'+'+od_kontr
@@ -172,12 +172,12 @@ begin sequence
                mon_drk([ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿])
                mon_drk([³     O B R O T Y   Z   R E J E S T R U   S P R Z E D A &__Z. Y    ³])
                mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ])
-               _grupa1=alltrim(strtran(strtran(nr_ident,' ',''),'-',''))
+               _grupa1=NormalizujNipPL(nr_ident)
                store [] to _t1,_t2
                _grupa=.t.
                do while .not.&_koniec
-                  if _grupa.or._grupa1#alltrim(strtran(strtran(nr_ident,' ',''),'-',''))
-                     _grupa1=alltrim(strtran(strtran(nr_ident,' ',''),'-',''))
+                  if _grupa.or._grupa1#NormalizujNipPL(nr_ident)
+                     _grupa1=NormalizujNipPL(nr_ident)
                      _grupa=.t.
                      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                      il_kontr=0
@@ -223,7 +223,7 @@ begin sequence
                   *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                   _numer=1
                   do case
-                  case alltrim(strtran(strtran(nr_ident,' ',''),'-',''))#_grupa1.or.&_koniec
+                  CASE NormalizujNipPL(nr_ident)#_grupa1.or.&_koniec
                        _numer=0
                   endcase
                   _grupa=.f.
@@ -246,7 +246,7 @@ begin sequence
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       select 1
       if dostepex('REJZ')
-         index on del+firma+iif(strtran(mc+[.]+dzien,' ','0')>=od_dnia_.and.strtran(mc+[.]+dzien,' ','0')<=do_dnia_,[+],[-])+alltrim(strtran(strtran(nr_ident,' ',''),'-',''))+mc+dzien to &raptemp
+         index on del+firma+iif(strtran(mc+[.]+dzien,' ','0')>=od_dnia_.and.strtran(mc+[.]+dzien,' ','0')<=do_dnia_,[+],[-])+NormalizujNipPL(nr_ident)+mc+dzien to &raptemp
          if dostep('REJZ')
             set inde to &raptemp
             seek [+]+ident_fir+'+'+od_kontr
@@ -255,12 +255,12 @@ begin sequence
                mon_drk([ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿])
                mon_drk([³       O B R O T Y   Z   R E J E S T R U   Z A K U P &__O. W      ³])
                mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ])
-               _grupa1=alltrim(strtran(strtran(nr_ident,' ',''),'-',''))
+               _grupa1=NormalizujNipPL(nr_ident)
                store [] to _t1,_t2
                _grupa=.t.
                do while .not.&_koniec
-                  if _grupa.or._grupa1#alltrim(strtran(strtran(nr_ident,' ',''),'-',''))
-                     _grupa1=alltrim(strtran(strtran(nr_ident,' ',''),'-',''))
+                  if _grupa.or._grupa1#NormalizujNipPL(nr_ident)
+                     _grupa1=NormalizujNipPL(nr_ident)
                      _grupa=.t.
                      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                      il_kontr=0
@@ -306,7 +306,7 @@ begin sequence
                   *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                   _numer=1
                   do case
-                  case alltrim(strtran(strtran(nr_ident,' ',''),'-',''))#_grupa1.or.&_koniec
+                  CASE NormalizujNipPL(nr_ident)#_grupa1.or.&_koniec
                        _numer=0
                   endcase
                   _grupa=.f.

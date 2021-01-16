@@ -80,13 +80,13 @@ begin sequence
                mon_drk([ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿])
                mon_drk([³                 O B R O T Y   Z   K S I &__E. G I                ³])
                mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ])
-               _grupa1=nazwa+adres
+               _grupa1=NormalizujNipPL(nr_ident)
                store [] to _t1,_t2
                _grupa=.t.
                do while .not.&_koniec
                   if substr(numer,1,3)<>'RZ-' .and. substr(numer,1,3)<>'RS-'
-                     if _grupa.or._grupa1#nazwa+adres
-                        _grupa1=nazwa+adres
+                     if _grupa.or._grupa1#NormalizujNipPL(nr_ident)
+                        _grupa1=NormalizujNipPL(nr_ident)
                         _grupa=.t.
                         *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                         il_kontr=0
@@ -135,7 +135,7 @@ begin sequence
                   endif
                   skip
                   _numer=1
-                  if (substr(numer,1,3)<>'RZ-' .and. substr(numer,1,3)<>'RS-'.and.nazwa+adres#_grupa1).or.&_koniec
+                  if (substr(numer,1,3)<>'RZ-' .and. substr(numer,1,3)<>'RS-'.and.NormalizujNipPL(nr_ident)#_grupa1).or.&_koniec
                      _numer=0
                   endif
                   _grupa=.f.
@@ -167,12 +167,12 @@ begin sequence
                mon_drk([ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿])
                mon_drk([³     O B R O T Y   Z   R E J E S T R U   S P R Z E D A &__Z. Y    ³])
                mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ])
-               _grupa1=nazwa+adres
+               _grupa1=NormalizujNipPL(nr_ident)
                store [] to _t1,_t2
                _grupa=.t.
                do while .not.&_koniec
-                  if _grupa.or._grupa1#nazwa+adres
-                     _grupa1=nazwa+adres
+                  if _grupa.or._grupa1#NormalizujNipPL(nr_ident)
+                     _grupa1=NormalizujNipPL(nr_ident)
                      _grupa=.t.
                      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                      il_kontr=0
@@ -218,7 +218,7 @@ begin sequence
                   *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                   _numer=1
                   do case
-                  case nazwa+adres#_grupa1.or.&_koniec
+                  CASE NormalizujNipPL(nr_ident)#_grupa1.or.&_koniec
                        _numer=0
                   endcase
                   _grupa=.f.
@@ -250,12 +250,12 @@ begin sequence
                mon_drk([ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿])
                mon_drk([³       O B R O T Y   Z   R E J E S T R U   Z A K U P &__O. W      ³])
                mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ])
-               _grupa1=nazwa+adres
+               _grupa1=NormalizujNipPL(nr_ident)
                store [] to _t1,_t2
                _grupa=.t.
                do while .not.&_koniec
-                  if _grupa.or._grupa1#nazwa+adres
-                     _grupa1=nazwa+adres
+                  if _grupa.or._grupa1#NormalizujNipPL(nr_ident)
+                     _grupa1=NormalizujNipPL(nr_ident)
                      _grupa=.t.
                      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                      il_kontr=0
@@ -301,7 +301,7 @@ begin sequence
                   *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                   _numer=1
                   do case
-                  case nazwa+adres#_grupa1.or.&_koniec
+                  CASE NormalizujNipPL(nr_ident)#_grupa1.or.&_koniec
                        _numer=0
                   endcase
                   _grupa=.f.
