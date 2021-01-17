@@ -1041,6 +1041,8 @@ if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    zWYMIARL=iif(zWYMIARL=0,WYMIARL,zWYMIARL)
    zWYMIARM=iif(zWYMIARM=0,WYMIARM,zWYMIARM)
 
+   zOSWIAD26R := OSWIAD26R
+
    //002 nowe linie
    zJAKI_PRZEL=prac->JAKI_PRZEL
    do case
