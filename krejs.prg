@@ -1075,7 +1075,7 @@ PROCEDURE KRejS()
          pppp[ 12 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO I
-         i := 11
+         i := 12
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
