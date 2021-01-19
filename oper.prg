@@ -68,6 +68,15 @@ PROCEDURE Oper()
          Kalkul()
       CASE kl == K_ALT_N
          Notes()
+      CASE kl == Asc( 'I' ) .OR. kl == Asc( 'i' )
+         // Import z JPK
+         JPKImp_VatS( 2 )
+         IF &_bot
+            SEEK '+' + ident_fir + miesiac
+         ENDIF
+         IF ! &_bot
+            DO &_proc
+         ENDIF
       CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. &_top_bot ) .AND. kl # K_ESC
          @ 1, 47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
@@ -184,217 +193,9 @@ PROCEDURE Oper()
 *                    break
 *                 endif
 *              endif
-            znumer := dos_l( znumer )
-            zdzien := Str( Val( zDZIEN ), 2 )
-            *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-            tresc_ := tresc
-            stan_ := -WYR_TOW - USLUGI + ZAKUP + UBOCZNE + WYNAGR_G + WYDATKI + PUSTA
-            obrot_ := wyr_tow
-            KontrApp()
-            WrocStan()
-            SEEK '+' + ident_fir + ztresc
-            IF Found()
-               BlokadaR()
-               AKTPOL+ stan WITH -zWYR_TOW - zUSLUGI + zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA
-               COMMIT
-               UNLOCK
-            ENDIF
-            SELECT SUMA_MC
-            BlokadaR()
-            IF ! ins .AND. Left( oper->numer, 1 ) # Chr( 1 ) .AND. Left( oper->numer, 1 ) # Chr( 254 )
-               SUMY-
-            ENDIF
-            IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
-               SUMY+
-            ENDIF
-            COMMIT
-            UNLOCK
-            IF ins
-               BlokadaR()
-               AKTPOZ+
-               COMMIT
-               UNLOCK
-            ENDIF
 
-            SELECT oper
+            Oper_Ksieguj()
 
-            IF ins
-               SET ORDER TO 2
-               Blokada()
-               GO BOTTOM
-               IDPR := rec_no + 1
-               SET ORDER TO 1
-            ELSE
-               IDPR := rec_no
-            ENDIF
-
-            ifins( IDPR )
-            DO CASE
-            CASE RTrim( znumer ) == 'REM-P'
-               znumer := Chr( 1 ) + znumer
-            CASE RTrim( znumer ) == 'REM-K'
-               zNUMER := Chr( 254 ) + znumer
-            ENDCASE
-            BlokadaR()
-            ADDPOZ
-            REPLACE WYR_TOW  WITH zWYR_TOW
-            REPLACE USLUGI   WITH zUSLUGI
-            REPLACE ZAKUP    WITH zZAKUP
-            REPLACE UBOCZNE  WITH zUBOCZNE
-            REPLACE WYNAGR_G WITH zWYNAGR_G
-            REPLACE WYDATKI  WITH zWYDATKI
-            REPLACE PUSTA    WITH zPUSTA
-            REPLACE UWAGI    WITH zUWAGI
-*              repl zaplata with zzaplata
-*              repl kwota   with zkwota
-            REPLACE ROZRZAPK WITH zROZRZAPK
-            REPLACE ZAP_TER  WITH zZAP_TER
-            REPLACE ZAP_DAT  WITH zZAP_DAT
-            REPLACE ZAP_WART WITH zZAP_WART
-
-            REPLACE K16WART WITH zK16WART
-            REPLACE K16OPIS WITH zK16OPIS
-
-            COMMIT
-            UNLOCK
-            *********************** lp
-            IF param_lp == 'T'
-               Blokada()
-               ColInb()
-               @ 24, 0 CLEAR
-               center( 24, 'Prosz&_e. czeka&_c....' )
-               SET COLOR TO
-               rec := RecNo()
-               IF ins
-                  SKIP -1
-                  IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                     zlp := liczba
-                  ELSE
-                     zlp := lp+1
-                  ENDIF
-                  GO rec
-                  DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                     REPLACE lp WITH zlp
-                     zlp := zlp + 1
-                     SKIP
-                  ENDDO
-               ELSE
-                  zlp := lp
-                  SKIP -1
-                  IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                     zlp := liczba
-                     GO rec
-                     DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                        REPLACE lp WITH zlp
-                        zlp := zlp + 1
-                        SKIP
-                     ENDDO
-                  ELSE
-                     IF lp < zlp
-                        zlp := lp + 1
-                        GO rec
-                        DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                           REPLACE lp WITH zlp
-                           zlp := zlp + 1
-                           SKIP
-                        ENDDO
-                     ELSE
-                        zlp := lp
-                        GO rec
-                        DO WHILE ! Bof() .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                           REPLACE lp WITH zlp
-                           zlp := zlp - 1
-                           SKIP -1
-                        ENDDO
-                     ENDIF
-                  ENDIF
-               ENDIF
-               GO rec
-               COMMIT
-               UNLOCK
-            ENDIF
-
-   *para fZRODLO,fJAKIDOK,fNIP,fNRDOK,fDATAKS,fDATADOK,fTERMIN,fDNIPLAT,fRECNO,fKWOTA,fTRESC,fKWOTAVAT
-   * JAKIDOK: FS i FZ (faktury zakupu i sprzedazy), ZS i ZZ (zaplaty za sprzedaz i zakupy)
-
-            SELECT rozr
-            IF ins
-               IF zROZRZAPK == 'T'
-                  dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
-                  IF zWYR_TOW + zUSLUGI <> 0.0
-                     RozrApp( 'K', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zWYR_TOW + zUSLUGI ), zTRESC, 0 )
-                  ENDIF
-                  IF zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA <> 0.0
-                     RozrApp( 'K', 'FZ', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ), zTRESC, 0 )
-                  ENDIF
-                  IF zZAP_WART > 0.0
-                     IF ( -zWYR_TOW - zUSLUGI + zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ) > 0.0
-                        dddok := 'ZZ'
-                        RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
-                     ELSE
-                        dddok := 'ZS'
-                        RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
-                     ENDIF
-                  ENDIF
-               ENDIF
-            ELSE
-               SET ORDER TO 2
-               SEEK ident_fir + param_rok + 'K' + Str( IDPR, 10 )
-               IF Found()
-                  IF zROZRZAPK == 'T'
-                     SELECT rozr
-                     RozrDel( 'K', IDPR )
-*                       select OPER
-                     IF zWYR_TOW + zUSLUGI <> 0.0
-                        dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
-                        RozrApp( 'K', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zWYR_TOW + zUSLUGI ), zTRESC, 0 )
-                     ENDIF
-                     IF zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA <> 0.0
-                        dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
-                        RozrApp( 'K', 'FZ', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ), zTRESC, 0 )
-                     ENDIF
-                     IF zZAP_WART > 0.0
-                        IF ( -zWYR_TOW - zUSLUGI + zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ) > 0.0
-                           dddok := 'ZZ'
-                           RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
-                        ELSE
-                           dddok := 'ZS'
-                           RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
-                        ENDIF
-                     ENDIF
-*                       select oper
-                  ELSE
-                     SELECT rozr
-                     RozrDel( 'K', IDPR )
-*                       SELECT OPER
-                  ENDIF
-               ELSE
-                  IF zROZRZAPK == 'T'
-                     IF zWYR_TOW + zUSLUGI <> 0.0
-                        dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
-                        RozrApp( 'K', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zWYR_TOW + zUSLUGI ), zTRESC, 0 )
-                     ENDIF
-                     IF zZAKUP + zUBOCZNE + zWYNAGR_G  + zWYDATKI + zPUSTA <> 0.0
-                        dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
-                        RozrApp( 'K', 'FZ', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ), zTRESC, 0 )
-                     ENDIF
-                     IF zZAP_WART > 0.0
-                        IF ( -zWYR_TOW - zUSLUGI + zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ) > 0.0
-                           dddok := 'ZZ'
-                           RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
-                        ELSE
-                           dddok := 'ZS'
-                           RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
-                        ENDIF
-                     ENDIF
-                  ENDIF
-               ENDIF
-            ENDIF
-
-            ***********************
-            commit_()
-            SELECT 1
-            *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
          END
          IF &_top_bot
             EXIT
@@ -665,16 +466,17 @@ PROCEDURE Oper()
          pppp[  3 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
          pppp[  4 ] := '   [Ins]...................dopisanie dokumentu          '
          pppp[  5 ] := '   [M].....................modyfikacja dokumentu        '
-         pppp[  6 ] := '   [Del]...................kasowanie dokumentu          '
-         pppp[  7 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[  8 ] := '   [F10]...................szukanie dnia                '
-         pppp[  9 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 10 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
-         pppp[ 11 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
-         pppp[ 12 ] := '                                                        '
+         pppp[  6 ] := '   [I].....................import dokument¢w z pliku    '
+         pppp[  7 ] := '   [Del]...................kasowanie dokumentu          '
+         pppp[  8 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[  9 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 10 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 11 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
+         pppp[ 12 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
+         pppp[ 13 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
-         i := 12
+         i := 13
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -1381,6 +1183,224 @@ FUNCTION PolePaliwoLicz( nWartosc, nNetto, cVat, cRodzaj )
    ENDCASE
 
    RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Oper_Ksieguj()
+
+   znumer := dos_l( znumer )
+   zdzien := Str( Val( zDZIEN ), 2 )
+   *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+   tresc_ := tresc
+   stan_ := -WYR_TOW - USLUGI + ZAKUP + UBOCZNE + WYNAGR_G + WYDATKI + PUSTA
+   obrot_ := wyr_tow
+   KontrApp()
+   WrocStan()
+   SEEK '+' + ident_fir + ztresc
+   IF Found()
+      BlokadaR()
+      AKTPOL+ stan WITH -zWYR_TOW - zUSLUGI + zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA
+      COMMIT
+      UNLOCK
+   ENDIF
+   SELECT SUMA_MC
+   BlokadaR()
+   IF ! ins .AND. Left( oper->numer, 1 ) # Chr( 1 ) .AND. Left( oper->numer, 1 ) # Chr( 254 )
+      SUMY-
+   ENDIF
+   IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
+      SUMY+
+   ENDIF
+   COMMIT
+   UNLOCK
+   IF ins
+      BlokadaR()
+      AKTPOZ+
+      COMMIT
+      UNLOCK
+   ENDIF
+
+   SELECT oper
+
+   IF ins
+      SET ORDER TO 2
+      Blokada()
+      GO BOTTOM
+      IDPR := rec_no + 1
+      SET ORDER TO 1
+   ELSE
+      IDPR := rec_no
+   ENDIF
+
+   ifins( IDPR )
+   DO CASE
+   CASE RTrim( znumer ) == 'REM-P'
+      znumer := Chr( 1 ) + znumer
+   CASE RTrim( znumer ) == 'REM-K'
+      zNUMER := Chr( 254 ) + znumer
+   ENDCASE
+   BlokadaR()
+   ADDPOZ
+   REPLACE WYR_TOW  WITH zWYR_TOW
+   REPLACE USLUGI   WITH zUSLUGI
+   REPLACE ZAKUP    WITH zZAKUP
+   REPLACE UBOCZNE  WITH zUBOCZNE
+   REPLACE WYNAGR_G WITH zWYNAGR_G
+   REPLACE WYDATKI  WITH zWYDATKI
+   REPLACE PUSTA    WITH zPUSTA
+   REPLACE UWAGI    WITH zUWAGI
+   *repl zaplata with zzaplata
+   *repl kwota   with zkwota
+   REPLACE ROZRZAPK WITH zROZRZAPK
+   REPLACE ZAP_TER  WITH zZAP_TER
+   REPLACE ZAP_DAT  WITH zZAP_DAT
+   REPLACE ZAP_WART WITH zZAP_WART
+
+   REPLACE K16WART WITH zK16WART
+   REPLACE K16OPIS WITH zK16OPIS
+
+   COMMIT
+   UNLOCK
+   *********************** lp
+   IF param_lp == 'T'
+      Blokada()
+      ColInb()
+      @ 24, 0 CLEAR
+      center( 24, 'Prosz&_e. czeka&_c....' )
+      SET COLOR TO
+      rec := RecNo()
+      IF ins
+         SKIP -1
+         IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+            zlp := liczba
+         ELSE
+            zlp := lp+1
+         ENDIF
+         GO rec
+         DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+            REPLACE lp WITH zlp
+            zlp := zlp + 1
+            SKIP
+         ENDDO
+      ELSE
+         zlp := lp
+         SKIP -1
+         IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+            zlp := liczba
+            GO rec
+            DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+               REPLACE lp WITH zlp
+               zlp := zlp + 1
+               SKIP
+            ENDDO
+         ELSE
+            IF lp < zlp
+               zlp := lp + 1
+               GO rec
+               DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                  REPLACE lp WITH zlp
+                  zlp := zlp + 1
+                  SKIP
+               ENDDO
+            ELSE
+               zlp := lp
+               GO rec
+               DO WHILE ! Bof() .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                  REPLACE lp WITH zlp
+                  zlp := zlp - 1
+                  SKIP -1
+               ENDDO
+            ENDIF
+         ENDIF
+      ENDIF
+      GO rec
+      COMMIT
+      UNLOCK
+   ENDIF
+
+   *para fZRODLO,fJAKIDOK,fNIP,fNRDOK,fDATAKS,fDATADOK,fTERMIN,fDNIPLAT,fRECNO,fKWOTA,fTRESC,fKWOTAVAT
+   * JAKIDOK: FS i FZ (faktury zakupu i sprzedazy), ZS i ZZ (zaplaty za sprzedaz i zakupy)
+
+   SELECT rozr
+   IF ins
+      IF zROZRZAPK == 'T'
+         dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+         IF zWYR_TOW + zUSLUGI <> 0.0
+            RozrApp( 'K', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zWYR_TOW + zUSLUGI ), zTRESC, 0 )
+         ENDIF
+         IF zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA <> 0.0
+            RozrApp( 'K', 'FZ', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ), zTRESC, 0 )
+         ENDIF
+         IF zZAP_WART > 0.0
+            IF ( -zWYR_TOW - zUSLUGI + zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ) > 0.0
+               dddok := 'ZZ'
+               RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
+            ELSE
+               dddok := 'ZS'
+               RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
+            ENDIF
+         ENDIF
+      ENDIF
+   ELSE
+      SET ORDER TO 2
+      SEEK ident_fir + param_rok + 'K' + Str( IDPR, 10 )
+      IF Found()
+         IF zROZRZAPK == 'T'
+            SELECT rozr
+            RozrDel( 'K', IDPR )
+            *select OPER
+            IF zWYR_TOW + zUSLUGI <> 0.0
+               dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+               RozrApp( 'K', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zWYR_TOW + zUSLUGI ), zTRESC, 0 )
+            ENDIF
+            IF zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA <> 0.0
+               dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+               RozrApp( 'K', 'FZ', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ), zTRESC, 0 )
+            ENDIF
+            IF zZAP_WART > 0.0
+               IF ( -zWYR_TOW - zUSLUGI + zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ) > 0.0
+                  dddok := 'ZZ'
+                  RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
+               ELSE
+                  dddok := 'ZS'
+                  RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
+               ENDIF
+            ENDIF
+            *select oper
+         ELSE
+            SELECT rozr
+            RozrDel( 'K', IDPR )
+            *SELECT OPER
+         ENDIF
+      ELSE
+         IF zROZRZAPK == 'T'
+            IF zWYR_TOW + zUSLUGI <> 0.0
+               dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+               RozrApp( 'K', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zWYR_TOW + zUSLUGI ), zTRESC, 0 )
+            ENDIF
+            IF zZAKUP + zUBOCZNE + zWYNAGR_G  + zWYDATKI + zPUSTA <> 0.0
+               dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+               RozrApp( 'K', 'FZ', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ), zTRESC, 0 )
+            ENDIF
+            IF zZAP_WART > 0.0
+               IF ( -zWYR_TOW - zUSLUGI + zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ) > 0.0
+                  dddok := 'ZZ'
+                  RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
+               ELSE
+                  dddok := 'ZS'
+                  RozrApp( 'K', dddok, zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, zZAP_WART, zTRESC, 0 )
+               ENDIF
+            ENDIF
+         ENDIF
+      ENDIF
+   ENDIF
+
+   ***********************
+   commit_()
+   SELECT 1
+   *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
+
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 

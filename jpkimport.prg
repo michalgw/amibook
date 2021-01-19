@@ -2645,6 +2645,82 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION JPKImp_OperS_Importuj( aDane )
+
+   LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {} )
+
+   @ 11, 15 CLEAR TO 15, 64
+   @ 11, 15 TO 15, 64 DOUBLE
+   @ 12, 16 SAY PadC( "Import sprzedaæy", 48 )
+
+   AEval( aDane[ 'Dekret' ], { | aPoz |
+
+      LOCAL aIstniejacyRec
+      LOCAL lImportuj := JPKImp_VatS_CzyImport( aDane, aPoz )
+
+      IF lImportuj
+
+         @ 13, 16 SAY PadC( AllTrim( Str( nI ) ) + " / " + AllTrim( Str( nIlosc ) ), 48 )
+         @ 14, 17 SAY ProgressBar( nI, nIlosc, 46 )
+         ins := .T.
+
+         IF aDane[ 'DataRej' ] == 'W'
+            zDZIEN := aPoz[ 'zdzien' ]
+         ELSE
+            zDZIEN := Str( Day( aPoz[ 'zdatas' ] ), 2 )
+         ENDIF
+         znazwa := iif( Upper( AllTrim( aPoz[ 'znazwa' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'znazwa' ], 100 ) )
+         zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
+         zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 40 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 40 ) )
+         zADRES := iif( Upper( AllTrim( aPoz[ 'zadres' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'zadres' ], 100 ) )
+         zTRESC := Space( 30 )
+
+         zWYR_TOW := 0
+         zUSLUGI := 0
+         STORE 0 TO zZAKUP, zUBOCZNE, zWYNAGR_G, zWYDATKI, zPUSTA
+         zident := 0
+         zuwagi := Space( 14 )
+         zROZRZAPK := 'N'
+         zZAP_TER := 0
+         zZAP_DAT := Date()
+         zZAP_WART := 0
+         zK16WART := 0
+         zK16OPIS := Space( 30 )
+
+         zNETTO := _round( aPoz[ 'zwartzw' ] + aPoz[ 'zwart08' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ], 2 )
+
+         DO CASE
+         CASE Empty( aDane[ 'KolRej' ] ) .OR. Val( aDane[ 'KolRej' ] ) == 7
+            zWYR_TOW := zNETTO
+         CASE Val( aDane[ 'KolRej' ] ) == 8
+            zUSLUGI := zNETTO
+         ENDCASE
+
+         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'OPER', ident_fir, miesiac, znumer, @aIstniejacyRec )
+            aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
+            AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje juæ dokument o tym numerze' ) )
+         ELSE
+            Oper_Ksieguj()
+            IF HGetDefault( aPoz, 'KodWaluty', 'PLN' ) <> 'PLN'
+               aRaport[ 'Waluta' ] := aRaport[ 'Waluta' ] + 1
+               AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
+            ENDIF
+            aRaport[ 'Zaimportowano' ] := aRaport[ 'Zaimportowano' ] + 1
+         ENDIF
+
+         nI++
+      ELSE
+         aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
+         AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Dokument nie zostaà zaznaczony do importu' ) )
+      ENDIF
+
+   } )
+
+   RETURN aRaport
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION JPKImp_VatZ_Importuj( aDane )
 
    LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
@@ -2963,7 +3039,9 @@ PROCEDURE JPKImp_VatZ_Kontrah( aDane )
 
 /*----------------------------------------------------------------------*/
 
-PROCEDURE JPKImp_VatS()
+// nCelImportu - 1 - rej VAT, 2 - ksi©ga, 3 - ewidencja
+
+PROCEDURE JPKImp_VatS( nCelImportu )
 
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
       'OpisZd', Space( 30 ), 'KolRej', iif( zRYCZALT == 'T', ' 5', '7' ), ;
@@ -2977,6 +3055,8 @@ PROCEDURE JPKImp_VatS()
    LOCAL nSumaImp, nLiczbaLp := 0
 
    PRIVATE cOpisZd, zOpcje, zProcedur, zRodzDow
+
+   hb_default( @nCelImportu, 1 )
 
    cKolor := ColInf()
    @ 24, 0 SAY PadC( "Wybierz plik do importu", 80 )
@@ -3070,7 +3150,14 @@ PROCEDURE JPKImp_VatS()
                      JPKImp_VatS_Kontrah( @aDane )
                   ENDIF
 
-                  aRaport := JPKImp_VatS_Importuj( aDane )
+                  DO CASE
+                  CASE nCelImportu == 1
+                     aRaport := JPKImp_VatS_Importuj( aDane )
+                  CASE nCelImportu == 2
+                     aRaport := JPKImp_OperS_Importuj( aDane )
+                  CASE nCelImportu == 3
+                     //
+                  ENDCASE
 
                   cRaport := "IMPORT ZAKO„CZONY" + hb_eol()
                   cRaport += "-----------------" + hb_eol()
@@ -3146,9 +3233,9 @@ PROCEDURE JPKImp_VatS()
                   @ 11, 17 SAY "Domyòlna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
                ENDIF
                @ 12, 17 SAY "Do rejestru na dzie‰ (S-sprzed., W-wystaw.)" GET cDataRej PICTURE "!" VALID cDataRej $ 'SW'
-               @ 13, 17 SAY "Oznaczenie dot. dostawy i òwiadczenia usàug" GET zOpcje PICTURE '!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
-               @ 14, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
-               @ 15, 17 SAY "Rodzaj dowodu sprzedaæy" GET zRodzDow PICTURE '!!!' WHEN KRejSWRodzDow() VALID KRejSVRodzDow()
+               @ 13, 17 SAY "Oznaczenie dot. dostawy i òwiadczenia usàug" GET zOpcje PICTURE '!!' WHEN nCelImportu == 1 .AND. KRejSWhOpcje() VALID KRejSVaOpcje()
+               @ 14, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN nCelImportu == 1 .AND. KRejSWhProcedur() VALID KRejSVaProcedur()
+               @ 15, 17 SAY "Rodzaj dowodu sprzedaæy" GET zRodzDow PICTURE '!!!' WHEN nCelImportu == 1 .AND. KRejSWRodzDow() VALID KRejSVRodzDow()
                @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
                @ 18, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
                READ
