@@ -797,6 +797,7 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
    LOCAL cRodzajDaty := "Z"
    LOCAL dData := Date()
    LOCAL lBtnRozpocznij := .T.
+   LOCAL cRodzajRap := "S"
    LOCAL cEkran := SaveScreen( 0, 0, MaxRow(), MaxCol() )
    LOCAL cKolor := ColStd()
    LOCAL cEkranDt
@@ -820,16 +821,31 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
          RETURN .F.
       ENDIF
    }
-   LOCAL aDane := {}
-   LOCAL aPozycja, nTmpWA, nTmpRecNo, aGrupy, cRaport := '', nCnt, nIlosc
+   LOCAL aDane := {}, aBledne := {}, aDaneRap
+   LOCAL aPozycja, nTmpWA, nTmpRecNo, aGrupy, cRaport := '', nCnt, nIlosc, nGrTx
+   LOCAL bRodzajRapW := { | x |
+      ColInf()
+      @ 24, 0 SAY PadC( "P - peˆny raport (wszystkie dokumenty) | S - Skr¢cony raport (tylko nie-vatowcy)", 80 )
+      ColStd()
+      RETURN .T.
+   }
+   LOCAL bRodzajRapV := { | x |
+      IF cRodzajRap $ 'PS'
+         @ 24, 0
+         RETURN .T.
+      ELSE
+         RETURN .F.
+      ENDIF
+   }
 
    PRIVATE lPrzerwij := .F.
 
-   @  9, 16 CLEAR TO 16, 59
-   @ 10, 18 TO 15, 57
+   @  9, 16 CLEAR TO 17, 59
+   @ 10, 18 TO 16, 57
    @ 10, 21 SAY "GRUPOWA WERYFIKACJA PODMIOTU W VAT"
    @ 12, 20 SAY "Sprawdz na dzieä:" GET cRodzajDaty PICTURE "!" WHEN Eval( bRodzajDatyW ) VALID Eval( bRodzajDatyV )
    @ 13, 20 SAY "   Stan na dzieä:" GET dData WHEN cRodzajDaty == "Z" VALID ! Empty( dData )
+   @ 14, 20 SAY "Rodzaj raportu (Peˆny/Skr¢cony):" GET cRodzajRap PICTURE "!" WHEN Eval( bRodzajRapW ) VALID Eval( bRodzajRapV )
 
    READ
 
@@ -842,38 +858,34 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
       nTmpRecNo := ( cTablica )->( RecNo() )
       DO WHILE .NOT. Eval( bEof ) .AND. ! VAT_Sprzwdz_GrpNIP_WLApi_Prz()
          IF ( ( cTablica )->kraj == 'PL' .OR. ( cTablica )->kraj == '  ' )
+            aPozycja := hb_Hash()
+            aPozycja[ 'RecNo' ] := ( cTablica )->( RecNo() )
+            aPozycja[ 'NIP' ] := TrimNip( ( cTablica )->nr_ident )
+            aPozycja[ 'NrDok' ] := AllTrim( ( cTablica )->numer )
+            aPozycja[ 'Kontrahent' ] := AllTrim( ( cTablica )->nazwa )
+            aPozycja[ 'DataDok' ] := hb_Date( Val( param_rok ), Val( ( cTablica )->mc ), Val( ( cTablica )->dzien ) )
+            SWITCH cRodzajDaty
+            CASE "Z"
+               aPozycja[ 'StanNa' ] := dData
+               EXIT
+            CASE "R"
+               aPozycja[ 'StanNa' ] := aPozycja[ 'DataDok' ]
+               EXIT
+            CASE "W"
+               aPozycja[ 'StanNa' ] := hb_Date( Val( ( cTablica )->roks ), Val( ( cTablica )->mcs ), Val( ( cTablica )->dziens ) )
+               EXIT
+            CASE "T"
+               aPozycja[ 'StanNa' ] := iif( Empty( ( cTablica )->datatran ), hb_Date( Val( ( cTablica )->roks ), Val( ( cTablica )->mcs ), Val( ( cTablica )->dziens ) ), ( cTablica )->datatran )
+               EXIT
+            OTHERWISE
+               aPozycja[ 'StanNa' ] := aPozycja[ 'DataDok' ]
+               EXIT
+            ENDSWITCH
             IF Len( TrimNip( ( cTablica )->nr_ident ) ) >= 10 .AND. SprawdzNIPSuma( TrimNip( ( cTablica )->nr_ident ) )
-               aPozycja := hb_Hash()
-               aPozycja[ 'RecNo' ] := ( cTablica )->( RecNo() )
-               aPozycja[ 'NIP' ] := TrimNip( ( cTablica )->nr_ident )
-               aPozycja[ 'NrDok' ] := AllTrim( ( cTablica )->numer )
-               aPozycja[ 'Kontrahent' ] := AllTrim( ( cTablica )->nazwa )
-               aPozycja[ 'DataDok' ] := hb_Date( Val( param_rok ), Val( ( cTablica )->mc ), Val( ( cTablica )->dzien ) )
-               SWITCH cRodzajDaty
-               CASE "Z"
-                  aPozycja[ 'StanNa' ] := dData
-                  EXIT
-               CASE "R"
-                  aPozycja[ 'StanNa' ] := aPozycja[ 'DataDok' ]
-                  EXIT
-               CASE "W"
-                  aPozycja[ 'StanNa' ] := hb_Date( Val( ( cTablica )->roks ), Val( ( cTablica )->mcs ), Val( ( cTablica )->dziens ) )
-                  EXIT
-               CASE "T"
-                  aPozycja[ 'StanNa' ] := iif( Empty( ( cTablica )->datatran ), hb_Date( Val( ( cTablica )->roks ), Val( ( cTablica )->mcs ), Val( ( cTablica )->dziens ) ), ( cTablica )->datatran )
-                  EXIT
-               OTHERWISE
-                  aPozycja[ 'StanNa' ] := aPozycja[ 'DataDok' ]
-                  EXIT
-               ENDSWITCH
                AAdd( aDane, aPozycja )
             ELSE
-               cRaport += "--------------------------------" + hb_eol()
-               cRaport += "Nr NIP: " + TrimNip( ( cTablica )->nr_ident ) + hb_eol()
-               cRaport += "Kontrahent: " + AllTrim( ( cTablica )->nazwa ) + hb_eol()
-               cRaport += "NIEPRAWIDOWA SUMA KONTROLNA NIP" + hb_eol()
-               cRaport += "Nr dokumantu: " + AllTrim( ( cTablica )->numer ) + hb_eol()
-               cRaport += "Data dokumentu: " + hb_DToC( hb_Date( Val( param_rok ), Val( ( cTablica )->mc ), Val( ( cTablica )->dzien ) ) ) + hb_eol()
+               aPozycja[ 'StatusVat' ] := 'NIEPRAWIDOWA SUMA KONTROLNA NIP'
+               AAdd( aBledne, aPozycja )
             ENDIF
          ENDIF
          ( cTablica )->( dbSkip() )
@@ -981,30 +993,60 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
       dbSelectArea( nTmpWA )
 
       CLEAR TYPEAHEAD
-      ColStd()
-      @ 24, 0
+      Restscreen( 0, 0, MaxRow(), MaxCol(), cEkran )
+
+      AEval( aBledne, { | aPoz | AAdd( aDane, aPoz ) } )
       AEval( aDane, { | aPoz |
-         IF ! hb_HHasKey( aPoz, 'StatusVat' ) .OR. Empty( aPoz[ 'StatusVat' ] ) .OR. SubStr( aPoz[ 'StatusVat' ], 1, 1 ) <> "C"
-            cRaport += "--------------------------------" + hb_eol()
-            cRaport += "Nr NIP: " + aPoz[ 'NIP' ] + hb_eol()
-            cRaport += "Kontrahent: " + aPoz[ 'Kontrahent' ] + hb_eol()
-            IF hb_HHasKey( aPoz, 'StatusVat' ) .AND. ! Empty( aPoz[ 'StatusVat' ] )
-               cRaport += "Status VAT: " + aPoz[ 'StatusVat' ] + hb_eol()
-            ELSE
-               cRaport += "Status VAT: (nieznany)" + hb_eol()
-            ENDIF
-            cRaport += "Stan na dzieä: " + hb_DToC( aPoz[ 'StanNa' ] ) + hb_eol()
-            cRaport += "Nr dokumantu: " + aPoz[ 'NrDok' ] + hb_eol()
-            cRaport += "Data dokumentu: " + hb_DToC( aPoz[ 'DataDok' ] ) + hb_eol()
+         IF ! hb_HHasKey( aPoz, 'StatusVat' )
+            aPoz[ 'StatusVat' ] := '(nieznany)'
          ENDIF
       } )
 
-      IF Len( cRaport ) > 0
-         WyswietlTekst( cRaport, , , "Raport sprawdzenia statusu VAT podmiot¢w" )
-      ELSE
-         Komun( 'Wszystkie podmioty maj¥ "czynny" status VAT' )
-      ENDIF
+      nGrTx := GraficznyCzyTekst()
 
+      DO CASE
+      CASE nGrTx == 1
+
+         IF cRodzajRap == 'S'
+            aDaneRap := {}
+            AEval( aDane, { | aPoz |
+               IF ( ! hb_HHasKey( aPoz, 'StatusVat' ) .OR. Empty( aPoz[ 'StatusVat' ] ) .OR. SubStr( aPoz[ 'StatusVat' ], 1, 1 ) <> "C" )
+                  AAdd( aDaneRap, aPoz )
+               ENDIF
+            } )
+         ELSE
+            aDaneRap := aDane
+         ENDIF
+
+         FRDrukuj( 'frf\wervat.frf', hb_Hash( 'dane', aDaneRap ) )
+
+      CASE nGrTx == 2
+
+         ColStd()
+         @ 24, 0
+         AEval( aDane, { | aPoz |
+            IF cRodzajRap == 'P' .OR. ( ! hb_HHasKey( aPoz, 'StatusVat' ) .OR. Empty( aPoz[ 'StatusVat' ] ) .OR. SubStr( aPoz[ 'StatusVat' ], 1, 1 ) <> "C" )
+               cRaport += "--------------------------------" + hb_eol()
+               cRaport += "Nr NIP: " + aPoz[ 'NIP' ] + hb_eol()
+               cRaport += "Kontrahent: " + aPoz[ 'Kontrahent' ] + hb_eol()
+               IF hb_HHasKey( aPoz, 'StatusVat' ) .AND. ! Empty( aPoz[ 'StatusVat' ] )
+                  cRaport += "Status VAT: " + aPoz[ 'StatusVat' ] + hb_eol()
+               ELSE
+                  cRaport += "Status VAT: (nieznany)" + hb_eol()
+               ENDIF
+               cRaport += "Stan na dzieä: " + hb_DToC( aPoz[ 'StanNa' ] ) + hb_eol()
+               cRaport += "Nr dokumantu: " + aPoz[ 'NrDok' ] + hb_eol()
+               cRaport += "Data dokumentu: " + hb_DToC( aPoz[ 'DataDok' ] ) + hb_eol()
+            ENDIF
+         } )
+
+         IF Len( cRaport ) > 0
+            WyswietlTekst( cRaport, , , "Raport sprawdzenia statusu VAT podmiot¢w" )
+         ELSE
+            Komun( 'Wszystkie podmioty maj¥ "czynny" status VAT' )
+         ENDIF
+
+      ENDCASE
    ENDIF
 
    Restscreen( 0, 0, MaxRow(), MaxCol(), cEkran )
