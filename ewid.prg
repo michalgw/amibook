@@ -430,8 +430,8 @@ FUNCTION Ewid()
                   ENDCASE
 
                   @  6, 1 TO 22, 39
-                  @  7, 2 PROMPT ' 4 - PIT-4R   (10)   (czyste kartki) '
-                  @  8, 2 PROMPT ' 8 - PIT-8AR  (9)    (czyste kartki) '
+                  @  7, 2 PROMPT ' 4 - PIT-4R   (11)   (czyste kartki) '
+                  @  8, 2 PROMPT ' 8 - PIT-8AR  (10)   (czyste kartki) '
                   @  9, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
                   @ 10, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
                   @ 11, 2 PROMPT ' V - VAT-' + zVATFORDR + '   ' + verdekvat
