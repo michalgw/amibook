@@ -299,6 +299,9 @@ PROCEDURE VUE_Info( nWersja )
       ENDIF
       AAdd(vmmm, ' VAT-UE       ' + zWERVAT + '  druk graficzny   ')
       AAdd(vmmm, ' VAT-UE       ' + zWERVAT + '  eDeklaracja      ')
+      AAdd(vmmm, ' Edycja sekcji C. VAT-UE ' + zWERVAT + '        ')
+      AAdd(vmmm, ' Edycja sekcji D. VAT-UE ' + zWERVAT + '        ')
+      AAdd(vmmm, ' Edycja sekcji E. VAT-UE ' + zWERVAT + '        ')
       IF nWersja == 1
          AAdd(vmmm, ' Edycja sekcji F. VAT-UE ' + zWERVAT + '        ')
       ENDIF
@@ -309,7 +312,7 @@ PROCEDURE VUE_Info( nWersja )
 *      endif
       STORE 0 TO gora
       IF UEALL < 4
-         gora := 17
+         gora := 14
       ELSE
          gora := 21 - UEALL
       ENDIF
@@ -388,6 +391,55 @@ PROCEDURE VUE_Info( nWersja )
 *     endcase
 
 
+      PRIVATE aUEs, aUEz, aUEu, elemUE
+      // Cza przepisac dane
+
+      aUEs := {}
+      SELECT 2
+      SEEK 'S'
+      DO WHILE ! Eof()
+         IF REJ == 'S' .AND. usluga == 'N'
+            elemUE := Array( 4 )
+            elemUE[ 1 ] := kraj
+            elemUE[ 2 ] := VATid
+            elemUE[ 3 ] := wartosc
+            elemUE[ 4 ] := iif( trojca == 'T', .T., .F. )
+            AAdd( aUEs, elemUE )
+         ENDIF
+         SKIP
+      ENDDO
+
+      aUEz := {}
+      SELECT 2
+      SEEK 'Z'
+      DO WHILE ! Eof()
+         IF REJ == 'Z'
+            elemUE := Array(4)
+            elemUE[ 1 ] := kraj
+            elemUE[ 2 ] := VATid
+            elemUE[ 3 ] := wartosc
+            elemUE[ 4 ] := iif( trojca == 'T', .T., .F. )
+            AAdd( aUEz, elemUE )
+         ENDIF
+         SKIP
+      ENDDO
+
+      aUEu := {}
+      SELECT 2
+      SEEK 'S'
+      DO WHILE ! Eof()
+         IF REJ == 'S' .AND. usluga == 'T'
+            elemUE := Array( 4 )
+            elemUE[1] := kraj
+            elemUE[2] := VATid
+            elemUE[3] := wartosc
+            elemUE[4] := iif( trojca == 'T', .T., .F. )
+            AAdd( aUEu, elemUE )
+         ENDIF
+         SKIP
+      ENDDO
+
+
       @ 24, 0
 
       xUE := 0
@@ -396,7 +448,7 @@ PROCEDURE VUE_Info( nWersja )
       DO WHILE .T.
          *=============================
          ColPro()
-         @ gora, 1 TO gora + 1 + UEALL + iif( nWersja == 1, 3, 2 ), 39
+         @ gora, 1 TO gora + 1 + UEALL + iif( nWersja == 1, 6, 5 ), 39
          FOR xUE := 1 TO Len( vmmm )
             @ gora + xUE, 2 PROMPT vmmm[ xUE ]
          NEXT
@@ -408,61 +460,13 @@ PROCEDURE VUE_Info( nWersja )
          *=============================
          SAVE SCREEN TO scr22v
          papier := 'K'
-         IF opcja1v >= Len( vmmm ) - iif( nWersja == 1, 2, 1 )
-
-            PRIVATE aUEs, aUEz, aUEu, elemUE
-            // Cza przepisac dane
-
-            aUEs := {}
-            SELECT 2
-            SEEK 'S'
-            DO WHILE ! Eof()
-               IF REJ == 'S' .AND. usluga == 'N'
-                  elemUE := Array( 4 )
-                  elemUE[ 1 ] := kraj
-                  elemUE[ 2 ] := VATid
-                  elemUE[ 3 ] := wartosc
-                  elemUE[ 4 ] := iif( trojca == 'T', .T., .F. )
-                  AAdd( aUEs, elemUE )
-               ENDIF
-               SKIP
-            ENDDO
-
-            aUEz := {}
-            SELECT 2
-            SEEK 'Z'
-            DO WHILE ! Eof()
-               IF REJ == 'Z'
-                  elemUE := Array(4)
-                  elemUE[ 1 ] := kraj
-                  elemUE[ 2 ] := VATid
-                  elemUE[ 3 ] := wartosc
-                  elemUE[ 4 ] := iif( trojca == 'T', .T., .F. )
-                  AAdd( aUEz, elemUE )
-               ENDIF
-               SKIP
-            ENDDO
-
-            aUEu := {}
-            SELECT 2
-            SEEK 'S'
-            DO WHILE ! Eof()
-               IF REJ == 'S' .AND. usluga == 'T'
-                  elemUE := Array( 4 )
-                  elemUE[1] := kraj
-                  elemUE[2] := VATid
-                  elemUE[3] := wartosc
-                  elemUE[4] := iif( trojca == 'T', .T., .F. )
-                  AAdd( aUEu, elemUE )
-               ENDIF
-               SKIP
-            ENDDO
+         IF opcja1v >= Len( vmmm ) - iif( nWersja == 1, 5, 1 )
 
             zDEKLNAZWI := firma->DEKLNAZWI
             zDEKLIMIE := firma->DEKLIMIE
             zDEKLTEL := firma->DEKLTEL
 
-            IF opcja1v == Len( vmmm ) - iif( nWersja == 1, 1, 0 )
+            IF opcja1v == Len( vmmm ) - iif( nWersja == 1, 4, 3 )
 
                PRIVATE zawartoscXml
                IF nWersja == 1
@@ -474,6 +478,18 @@ PROCEDURE VUE_Info( nWersja )
                   zawartoscXml = edek_vatue_4()
                   edekZapiszXml( zawartoscXml, edeklaracja_plik, wys_edeklaracja, 'VATUE-4', .F., Val( miesiac ) )
                ENDIF
+
+            ELSEIF opcja1v == Len( vmmm ) - iif( nWersja == 1, 3, 2 )
+
+               VATUE_EdycjaCDE( @aUEs, 1 )
+
+            ELSEIF opcja1v == Len( vmmm ) - iif( nWersja == 1, 2, 1 )
+
+               VATUE_EdycjaCDE( @aUEz, 2 )
+
+            ELSEIF opcja1v == Len( vmmm ) - iif( nWersja == 1, 1, 0 )
+
+               VATUE_EdycjaCDE( @aUEu, 3 )
 
             ELSEIF nWersja == 1 .AND. opcja1v == Len( vmmm )
 
@@ -602,6 +618,111 @@ PROCEDURE VUE_Info( nWersja )
    ENDIF
 
    RETURN
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE VATUE_EdycjaCDE( aDane, nSekcja )
+
+   LOCAL cScr
+   LOCAL xValue
+   LOCAL nElem, cTytul := ""
+   LOCAL aNaglowki := { "Kraj", "NIP kontrahenta", "Warto˜†" }
+   LOCAL aKolBlock := { ;
+      { || PadR( SubStr( aDane[ nElem, 1 ], 1, 2 ), 2 ) }, ;
+      { || PadR( SubStr( aDane[ nElem, 2 ], 1, 16 ), 16 ) }, ;
+      { || Transform( aDane[ nElem, 3 ], RPIC ) } }
+   LOCAL bGetFunc := { | b, ar, nDim, nElem |
+      LOCAL GetList := {}
+      LOCAL nRow := Row()
+      LOCAL nCol := Col()
+      DO CASE
+      CASE nDim == 1
+         xValue := PadR( ar[ nElem, 1 ], 2 )
+         @ nRow, nCol GET xValue PICTURE "!!"
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem, 1 ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 2
+         xValue := PadR( ar[ nElem, 2 ], 30 )
+         @ nRow, nCol GET xValue PICTURE "@S16 " + Replicate( "!", 30 )
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem, 2 ] := AllTrim( xValue )
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 3
+         xValue := ar[ nElem, 3 ]
+         @ nRow, nCol GET xValue PICTURE RPIC
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem, 3 ] := xValue
+         ENDIF
+         b:refreshAll()
+      CASE nDim == 4
+         xValue := iif( ar[ nElem, 4 ], 'T', 'N' )
+         @ nRow, nCol GET xValue PICTURE "!" VALID xValue$'TN'
+         READ
+         IF LastKey() <> K_ESC
+            ar[ nElem, 4 ] := xValue == 'T'
+         ENDIF
+         b:refreshAll()
+      ENDCASE
+      @ nRow, nCol SAY ""
+      RETURN .T.
+   }
+   LOCAL bDelete := { | nEl, ar |
+      hb_ADel( ar, nEl, .T. )
+      IF Len( ar ) == 0
+         IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
+            AAdd( ar, { '  ', Space( 16 ), 0.0, .F. } )
+         ENDIF
+      ENDIF
+      RETURN NIL
+   }
+   LOCAL bInsert := { | nEl, ar | AAdd( ar, { '  ', Space( 16 ), 0.0, .F. } ) }
+   LOCAL bDeleteAll := { | nEl, ar |
+      DO WHILE Len( ar ) > 0
+         hb_ADel( ar, 1, .T. )
+      ENDDO
+      IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
+         AAdd( ar, { '  ', Space( 16 ), 0.0, .F. } )
+      ENDIF
+      RETURN NIL
+   }
+   LOCAL aCustKeys := { { K_F8, bDeleteAll } }
+
+   IF nSekcja < 3
+      AAdd( aNaglowki, "Tr.Tr¢js." )
+      AAdd( aKolBlock, { || iif( aDane[ nElem, 4 ], 'Tak', 'Nie' ) } )
+   ENDIF
+
+   cScr := SaveScreen()
+   IF Len( aDane ) == 0
+      IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
+         AAdd( aDane, { '  ', Space( 16 ), 0.0, .F. } )
+      ENDIF
+   ENDIF
+   IF Len( aDane ) > 0
+      DO CASE
+      CASE nSekcja == 1
+         cTytul := "Sekcja C. - Wewn¥trzwsp¢lnotowa dostawa towar¢w"
+      CASE nSekcja == 2
+         cTytul := "Sekcja D. - Wewn¥trzwsp¢lnotowe nabycie towar¢w"
+      CASE nSekcja == 3
+         cTytul := "Sekcja D. - Wewn¥trzwsp¢lnotowe ˜wiadczenie usˆug"
+      ENDCASE
+      nElem := 1
+      ColStd()
+      @  3, 0 SAY PadC( cTytul, 80 )
+      @ 24, 0 SAY PadC( "Ins - dodaj pozycje    Del - usuä pozycj©    F8 - Usuä wszystko    ESC - koniec", 80 )
+      GM_ArEdit( 4, 0, 23, 79, aDane, @nElem, aNaglowki, aKolBlock, bGetFunc, bInsert, bDelete, aCustKeys )
+      @ 24, 0
+   ENDIF
+   RestScreen( , , , , cScr )
+
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 
