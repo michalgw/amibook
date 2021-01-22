@@ -550,8 +550,12 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             zKOL39 := zKOL39 + KOL39
          ENDCASE
          IF KOREKTA == 'Z'
-            K_68 := K_68 + WART02 + WART12 + WART08 + WART07 + WART22
-            K_69 := K_69 + VAT02 + VAT12 + VAT08 + VAT07 + VAT22
+            K_68 := K_68 + iif( WART02 < 0, WART02, 0 ) + iif( WART12 < 0, WART12, 0 ) ;
+               + iif( WART08 < 0, WART08, 0 ) + iif( WART07 < 0, WART07, 0 ) ;
+               + iif( WART22 < 0, WART22, 0 )
+            K_69 := K_69 + iif( VAT02 < 0, VAT02, 0 ) + iif( VAT12 < 0, VAT12, 0) ;
+               + iif( VAT08 < 0, VAT08, 0 ) + iif( VAT07 < 0, VAT07, 0 ) ;
+               + iif( VAT22 < 0, VAT22, 0 )
          ENDIF
          SKIP 1
       ENDDO
