@@ -39,7 +39,8 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
    PRIVATE KorKOL47, KorKOL48, zZwrRaVAT := 0, zAdrEMail, lSplitPayment := .F.
    PRIVATE cJPKRodzZwrot := ' ', cJPKZwrotPod := 'N', nJPKZwrotKwota := 0, cJPKZwrotRodzZob := Space( 60 )
    PRIVATE resdekl, cEkran
-   STORE 0 TO P22, P23, P26, P35, P36
+   PRIVATE K_68, K_69  // Ulga na zˆe dˆugi
+   STORE 0 TO P22, P23, P26, P35, P36, K_68, K_69
    STORE 0 TO P45, P46, P47, P48, P49, P50, P51, P52, P53, P54, P55, SEK_CV7net, SEK_CV7vat
    STORE 0 TO P56, P57, P58, P59, P60, P61, P62, P61a, P62a, P64, P64exp, P64expue, P66
    STORE '' TO P4, P5, P6, P7, P8, P11, P16, P17, P17a, P18, P19, P20, P21, P29
@@ -467,7 +468,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       ENDIF
       *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
       STORE 0 TO p45, p46, p47, p47a, p48, p49, p50, p51, p51a, p52, p61, p62, p61a, p62a, p64, p65, p65ue, p67, p69, p70, p71, p72, p75, p76, p77, p78, p79, p98, p99
-      STORE 0 TO p64exp, p64expue
+      STORE 0 TO p64exp, p64expue, K_68, K_69
       STORE 0 TO p45ue, p46ue, p47ue, p47aue, p48ue, p49ue, p50ue, p51ue, p51aue, p52ue
       STORE 0 TO p45it, p46it, p47it, p47ait, p48it, p49it, p50it, p51it, p51ait, p52it
       STORE 0 TO p45us, p46us, p47us, p47aus, p48us, p49us, p50us, p51us, p51aus, p52us
@@ -548,6 +549,10 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             znowytran := znowytran + KOL38
             zKOL39 := zKOL39 + KOL39
          ENDCASE
+         IF KOREKTA == 'Z'
+            K_68 := K_68 + WART02 + WART12 + WART08 + WART07 + WART22
+            K_69 := K_69 + VAT02 + VAT12 + VAT08 + VAT07 + VAT22
+         ENDIF
          SKIP 1
       ENDDO
       zpojazdy := 0
@@ -1845,6 +1850,8 @@ FUNCTION JPK_V7_DaneDek( aDane )
    hDane['P_65'] := iif( zf4 == 'T', .T., .F. )
    hDane['P_66'] := iif( zf5 == 'T', .T., .F. )
    hDane['P_67'] := .F.
+   hDane['P_68'] := _round( K_68, 0 )
+   hDane['P_69'] := _round( K_69, 0 )
 
    RETURN hDane
 

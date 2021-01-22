@@ -8077,7 +8077,7 @@ FUNCTION DaneXML_JPKV7w1( oDoc, cNrRef, hNaglowek )
          IF ( aPoz[ 'MPP' ] := iif( xmlWartoscH( aPoz, 'MPP' ) == '1', '1', '0' ) ) == '1'
             aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'MPP '
          ENDIF
-         aPoz[ 'KorektaPodstawyOpodt' ] := sxml2num( xmlWartoscH( aPoz, 'KorektaPodstawyOpodt' ), 0 )
+         aPoz[ 'KorektaPodstawyOpodt' ] := iif( xmlWartoscH( aPoz, 'KorektaPodstawyOpodt' ) == '1', '1', '0' )
          aPoz[ 'K_10' ] := sxml2num( xmlWartoscH( aPoz, 'K_10' ), 0 )
          aPoz[ 'K_11' ] := sxml2num( xmlWartoscH( aPoz, 'K_11' ), 0 )
          aPoz[ 'K_12' ] := sxml2num( xmlWartoscH( aPoz, 'K_12' ), 0 )

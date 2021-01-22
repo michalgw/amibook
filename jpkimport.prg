@@ -861,9 +861,10 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                      ELSE
                         aW[ 'MPP' ] := .F.
                      ENDIF
-                     IF hb_HHasKey( aW, 'KorektaPodstawyOpodt' ) .AND. HB_ISCHAR( aW[ 'KorektaPodstawyOpodt' ] )
-                        aW[ 'KorektaPodstawyOpodt' ] := sxml2num( aW[ 'KorektaPodstawyOpodt' ], 0 )
-                        aDaneJPK[ 'SprzedazSum' ][ 'KorektaPodstawyOpodt' ] += aW[ 'KorektaPodstawyOpodt' ]
+                     IF hb_HHasKey( aW, 'KorektaPodstawyOpodt' ) .AND. HB_ISCHAR( aW[ 'KorektaPodstawyOpodt' ] ) .AND. sxmlTrim( aW[ 'KorektaPodstawyOpodt' ] ) == '1'
+                        aW[ 'KorektaPodstawyOpodt' ] := .T.
+                     ELSE
+                        aW[ 'KorektaPodstawyOpodt' ] := .F.
                      ENDIF
                      IF hb_HHasKey( aW, 'K_10' ) .AND. HB_ISCHAR( aW[ 'K_10' ] )
                         aW[ 'K_10' ] := sxml2num( aW[ 'K_10' ], 0 )
@@ -2260,6 +2261,10 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
          aPozDek[ 'RodzDow' ] := HGetDefault( aPoz, 'TypDokumentu', '' )
          aPozDek[ 'Procedura' ] := HGetDefault( aPoz, 'Procedura', '' )
          aPozDek[ 'Oznaczenie' ] := HGetDefault( aPoz, 'Oznaczenie', '' )
+
+         IF HGetDefault( aPoz, 'KorektaPodstawyOpodt', '0' ) == '1'
+            aPozDek[ 'zkorekta' ] := 'Z'
+         ENDIF
 
          AAdd( aRes, aPozDek )
 

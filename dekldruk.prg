@@ -5650,8 +5650,8 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
       aDane[ 'P_65' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_65' ], '1', '0' )
       aDane[ 'P_66' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_66' ], '1', '0' )
       aDane[ 'P_67' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_67' ], '1', '0' )
-      aDane[ 'P_68' ] := 0
-      aDane[ 'P_69' ] := 0
+      aDane[ 'P_68' ] := aDaneZrd[ 'DekV7' ][ 'P_68' ]
+      aDane[ 'P_69' ] := aDaneZrd[ 'DekV7' ][ 'P_69' ]
       IF aDaneZrd[ 'DekV7' ][ 'Korekta' ] .AND. Len( AllTrim( aDaneZrd[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
          aDane[ 'P_ORDZU' ] := AllTrim( aDaneZrd[ 'DekV7' ][ 'ORDZU' ] )
       ELSE
@@ -5674,7 +5674,9 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
                aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + ' MPP'
             ENDIF
             IF ! hb_HHasKey( aPoz, 'KorektaPodstawyOpodt' )
-               aPoz[ 'KorektaPodstawyOpodt' ] := 0
+               aPoz[ 'KorektaPodstawyOpodt' ] := '0'
+            ELSE
+               aPoz[ 'KorektaPodstawyOpodt' ] := iif( aPoz[ 'KorektaPodstawyOpodt' ], '1', '0' )
             ENDIF
             aPoz[ 'DataWystawienia' ] := date2strxml( aPoz[ 'DataWystawienia' ] )
             aPoz[ 'K_10' ] := HGetDefault( aPoz, 'K_10', 0 )

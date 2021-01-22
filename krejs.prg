@@ -283,7 +283,7 @@ PROCEDURE KRejS()
                @  8, 29 GET zUWAGI    VALID v1_21s()
                @  9, 11 GET zDATAS    PICTURE '@D' WHEN w1_6s() VALID v1_6s()
                @  9, 32 GET zDATATRAN PICTURE '@D' WHEN w1_7s()
-               @  9, 53 GET zKOREKTA  PICTURE '!' VALID zKOREKTA $ 'TN' .AND. v1_8s()
+               @  9, 53 GET zKOREKTA  PICTURE '!' WHEN KRejSWKorekta() VALID zKOREKTA $ 'TNZ' .AND. v1_8s()
                @  4, 69 GET zRODZDOW  PICTURE '!!!' WHEN KRejSWRodzDow() VALID KRejSVRodzDow()
                @  4, 77 GET zexport   PICTURE '!' WHEN wfEXIM( 4, 78 ) VALID vfEXIM( 4, 78 )
                @  5, 77 GET zUE       PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
@@ -1135,7 +1135,7 @@ PROCEDURE say1s()
    @  8, 29 SAY uwagi
    @  9, 11 SAY ROKS + '.' + MCS + '.' + DZIENS
    @  9, 32 SAY DToC( DATATRAN )
-   @  9, 53 SAY KOREKTA + iif( KOREKTA == 'T', 'ak', 'ie' )
+   @  9, 53 SAY KOREKTA + iif( KOREKTA == 'T', 'ak', iif( KOREKTA == 'Z', '.D', 'ie' ) )
    @  4, 69 SAY SubStr( RODZDOW, 1, 3 )
    @  4, 77 SAY EXPORT + iif( EXPORT == 'T', 'ak', 'ie' )
    @  5, 77 SAY UE + iif( UE == 'T', 'ak', 'ie' )
@@ -1541,12 +1541,37 @@ FUNCTION w1_7s()
 ***************************************************
 FUNCTION V1_8s()
 ***************************************************
-   @ 9, 53 SAY iif( zKOREKTA == 'T', 'ak', 'ie' )
+
+   LOCAL cRodz
+
+   DO CASE
+   CASE zKOREKTA == 'T'
+      cRodz := 'ak'
+   CASE zKOREKTA == 'Z'
+      cRodz := '.D'
+   OTHERWISE
+      cRodz := 'ie'
+   ENDCASE
+
+   @ 9, 54 SAY cRodz
 
    // to jest niepotrzebne
    IF LastKey() == K_UP
       RETURN .T.
    ENDIF
+
+   @ 24, 0
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejSWKorekta()
+
+   LOCAL cKolor := ColInf()
+
+   @ 24, 0 SAY PadC( " T - Korekta       Z - Ulga na zˆe dˆugi       N - ¾adne z powy¾szych ", 80 )
+   SetColor( cKolor )
 
    RETURN .T.
 

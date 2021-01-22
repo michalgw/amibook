@@ -238,6 +238,8 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
       aPoz[ 'AdresKontrahenta' ] := rejs->adres
       aPoz[ 'TypDokumentu' ] := AllTrim( rejs->rodzdow )
 
+      aPoz[ 'KorektaPodstawyOpodt' ] := rejs->korekta == 'Z'
+
       AEval( hb_ATokens( rejs->opcje, ',' ), { | aElem |
          SWITCH Val( aElem )
          CASE 1

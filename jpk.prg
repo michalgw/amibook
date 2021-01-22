@@ -800,6 +800,10 @@ FUNCTION jpk_v7m_1( aDane )
       IF aDane[ 'DekV7' ][ 'P_66' ]
          cRes += '      <P_66>1</P_66>' + nl
       ENDIF
+      IF aDane[ 'DekV7' ][ 'P_68' ] <> 0 .OR. aDane[ 'DekV7' ][ 'P_69' ] <> 0
+         cRes += '      <P_68>' + TKwotaC( aDane[ 'DekV7' ][ 'P_68' ] ) + '</P_68>' + nl
+         cRes += '      <P_69>' + TKwotaC( aDane[ 'DekV7' ][ 'P_69' ] ) + '</P_69>' + nl
+      ENDIF
       IF aDane[ 'DekV7' ][ 'Korekta' ] .AND. Len( AllTrim( aDane[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
          cRes += '      <P_ORDZU>' + str2sxml( aDane[ 'DekV7' ][ 'ORDZU' ] ) + '</P_ORDZU>' + nl
       ENDIF
@@ -901,6 +905,9 @@ FUNCTION jpk_v7m_1( aDane )
          ENDIF
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MPP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MPP' ]
             cRes := cRes + '    <MPP>1</MPP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'KorektaPodstawyOpodt' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'KorektaPodstawyOpodt' ]
+            cRes := cRes + '    <KorektaPodstawyOpodt>1</KorektaPodstawyOpodt>' + nl
          ENDIF
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_10' )
             cRes := cRes + '    <K_10>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_10' ] ) + '</K_10>' + nl
@@ -1199,6 +1206,10 @@ FUNCTION jpk_v7k_1( aDane )
       IF aDane[ 'DekV7' ][ 'P_66' ]
          cRes += '      <P_66>1</P_66>' + nl
       ENDIF
+      IF aDane[ 'DekV7' ][ 'P_68' ] <> 0 .OR. aDane[ 'DekV7' ][ 'P_69' ] <> 0
+         cRes += '      <P_68>' + TKwotaC( aDane[ 'DekV7' ][ 'P_68' ] ) + '</P_68>' + nl
+         cRes += '      <P_69>' + TKwotaC( aDane[ 'DekV7' ][ 'P_69' ] ) + '</P_69>' + nl
+      ENDIF
       IF aDane[ 'DekV7' ][ 'Korekta' ] .AND. Len( AllTrim( aDane[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
          cRes += '      <P_ORDZU>' + TKwotaC( aDane[ 'DekV7' ][ 'ORDZU' ] ) + '</P_ORDZU>' + nl
       ENDIF
@@ -1300,6 +1311,9 @@ FUNCTION jpk_v7k_1( aDane )
          ENDIF
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MPP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MPP' ]
             cRes := cRes + '    <MPP>1</MPP>' + nl
+         ENDIF
+         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'KorektaPodstawyOpodt' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'KorektaPodstawyOpodt' ]
+            cRes := cRes + '    <KorektaPodstawyOpodt>1</KorektaPodstawyOpodt>' + nl
          ENDIF
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'K_10' )
             cRes := cRes + '    <K_10>' + TKwota2( aDane[ 'sprzedaz' ][ nI ][ 'K_10' ] ) + '</K_10>' + nl

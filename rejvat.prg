@@ -1041,7 +1041,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       aRow[ 'dzien' ] := StrTran( rejs->dzien, ' ', '0' ) + '.' + StrTran( cMiesiac, ' ', '0' )
       aRow[ 'data_sprzedazy' ] := rejs->roks + '.' + StrTran( rejs->mcs, ' ' , '0' ) + '.' + StrTran( rejs->dziens, ' ', '0' )
       aRow[ 'datatran' ] := DToC( rejs->datatran )
-      aRow[ 'korekta' ] := iif( rejs->korekta == 'T', '1', '0' )
+      aRow[ 'korekta' ] := iif( rejs->korekta == 'T', 'kor', iif( rejs->korekta == 'Z', 'z.d', '' ) )
       aRow[ 'uwagi' ] := AllTrim( rejs->uwagi )
 
       aRow[ 'dnetto_a' ] := rejs->wart22
