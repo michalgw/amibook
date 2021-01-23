@@ -309,7 +309,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
          hb_HHasKey( aPoz, 'K_26' ) .OR. hb_HHasKey( aPoz, 'K_27' ) .OR. hb_HHasKey( aPoz, 'K_28' ) .OR. hb_HHasKey( aPoz, 'K_29' ) .OR. ;
          hb_HHasKey( aPoz, 'K_30' ) .OR. hb_HHasKey( aPoz, 'K_31' ) .OR. hb_HHasKey( aPoz, 'K_32' ) .OR. hb_HHasKey( aPoz, 'K_33' ) .OR. ;
          hb_HHasKey( aPoz, 'K_34' ) .OR. hb_HHasKey( aPoz, 'K_35' ) .OR. hb_HHasKey( aPoz, 'K_36' ) .OR. hb_HHasKey( aPoz, 'K_37' ) .OR. ;
-         hb_HHasKey( aPoz, 'K_38' ) .OR. hb_HHasKey( aPoz, 'K_39' )
+         hb_HHasKey( aPoz, 'K_38' ) .OR. hb_HHasKey( aPoz, 'K_39' ) .OR. hb_HHasKey( aPoz, 'SprzedazVAT_Marza' )
 
          AAdd( aRes[ 'sprzedaz' ], aPoz )
       ENDIF
