@@ -471,7 +471,7 @@ PROCEDURE VUE_Info( nWersja )
                PRIVATE zawartoscXml
                IF nWersja == 1
                   edeklaracja_plik = 'VATUE_5_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
-                  zawartoscXml = edek_vatue_5()
+                  zawartoscXml = iif( Val( param_rok ) < 2021, edek_vatue_5(), edek_vatue_5e2() )
                   edekZapiszXml( zawartoscXml, edeklaracja_plik, wys_edeklaracja, 'VATUE-5', .F., Val( miesiac ) )
                ELSE
                   edeklaracja_plik = 'VATUE_4_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )

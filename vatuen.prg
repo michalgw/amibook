@@ -253,7 +253,7 @@ FUNCTION VatUE4KRob( nWersja )
             ENDIF
          CASE nDek == 2
             IF nWersja == 1
-               cDaneXML := edek_vatuek_5( aDane )
+               cDaneXML := iif( Val( param_rok ) < 2021, edek_vatuek_5( aDane ), edek_vatuek_5e2( aDane ) )
                edeklaracja_plik = 'VATUEK_5_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
                edekZapiszXml( cDaneXML, edeklaracja_plik, wys_edeklaracja, 'VATUEK-5', .F., Val( miesiac ) )
             ELSE
