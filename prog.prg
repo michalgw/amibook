@@ -117,6 +117,10 @@ FUNCTION Main()
    PUBLIC kod_uzytk := 'Licencja GNU GPL'
    PUBLIC nip_uzytk := ''
 
+   // Tablica z domyslnymi parametrami dla poszczegolnych lat
+   PUBLIC aDomyslneParametry := NIL
+   DomyslneParametry()
+
    * Parametry eDeklaracji - wczytywane przed inicjacja amidll
    PUBLIC param_edka, param_edpr, param_edpz, param_edpw, param_edpv, param_edmo, param_edsh, param_ejmo, param_ejts
    param_edka := PadR( 'edek', 250 ) // katalog w ktorym beda zapisane edeklaracje
@@ -388,8 +392,9 @@ FUNCTION Main()
    // Haslo do programu
    PUBLIC param_has := Space( 8 )
 
-   // Aktualny rok kalendarzowy
-   PUBLIC param_rok := '2017'
+   // Aktualny rok kalendarzowy na podstawie wersji programu
+   PUBLIC param_rok := '20' + SubStr( PadL( AllTrim( Str( wersjaprogramu ) ), 6 ), 1, 2 )
+
 
    // Sygnal o VAT - kwota
    PUBLIC param_vat := 39800
@@ -418,28 +423,28 @@ FUNCTION Main()
    // Parametry placowe
 
    // Podstawa do zus (51, 53)
-   PUBLIC parap_p51 := 1296.01
+   PUBLIC parap_p51 := 3155.40
 
    // Podstawa do zdrow. (52)
-   PUBLIC parap_p52 := 1756.19
+   PUBLIC parap_p52 := 4242.38
 
    // Koszt uzyskania przychodu
-   PUBLIC parap_kos := 102.25
+   PUBLIC parap_kos := 250
 
    // Miesieczne odliczanie podatku
-   PUBLIC parap_odl := 586.85 / 12
+   PUBLIC parap_odl := 525.12 / 12
 
    // Stawka podatku dochodowego
-   PUBLIC parap_pod := 19
+   PUBLIC parap_pod := 17
 
    // Stawka zasadnicza chorobowego (do 33 dni)
    PUBLIC parap_cho := 80
 
    // Zdrowotne do zus (ubezpieczony)
-   PUBLIC parap_puz := 8.25
+   PUBLIC parap_puz := 9
 
    // Zdrowotne do odliczen (ubezpieczony)
-   PUBLIC parap_pzk := 7.75
+   PUBLIC parap_pzk := 9
 
    // Emerytalne (ubezpieczony)
    PUBLIC parap_pue := 9.76
@@ -545,13 +550,19 @@ FUNCTION Main()
    PUBLIC staw_uslu := 0.085
 
    // Wolna zawody
-   PUBLIC staw_ry20 := 0.2
+   PUBLIC staw_ry20 := 0.17
 
    // Inne uslugi
-   PUBLIC staw_ry17 := 0.17
+   PUBLIC staw_ry17 := 0.15
 
    // Prawa maj.
    PUBLIC staw_ry10 := 0.1
+
+   // Wynajem pow. 100000
+   PUBLIC staw_rk07 := 0.125
+
+   // Art. 6 ust. 1d
+   PUBLIC staw_rk08 := 0.02
 
    // ---
 
@@ -578,10 +589,10 @@ FUNCTION Main()
    // Podczas wystawiania FAKTUR
    PUBLIC pzROZRZAPF := 'N'
 
-   PUBLIC param_kw := 556.02
+   PUBLIC param_kw := 525.12
 
    PUBLIC param_kwd := d"2019-10-01"
-   PUBLIC param_kw2 := 548.30
+   PUBLIC param_kw2 := 525.12
 
    // --
 

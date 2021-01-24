@@ -62,7 +62,7 @@ PROCEDURE Tab_Doch()
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,22,48,77,109,7,46,28'
+   _esc := '27,22,48,77,109,7,46,28,68,100'
    _top := '.F.'
    _bot := "del#'+'"
    _stop := ''
@@ -203,9 +203,10 @@ PROCEDURE Tab_Doch()
          p[ 4 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
          p[ 5 ] := '   [Ins]...................wpisywanie                   '
          p[ 6 ] := '   [M].....................modyfikacja pozycji          '
-         p[ 7 ] := '   [Del]...................kasowanie pozycji            '
-         p[ 8 ] := '   [Esc]...................wyj˜cie                      '
-         p[ 9 ] := '                                                        '
+         p[ 7 ] := '   [D].....................przywr¢† warto˜ci domy˜lne   '
+         p[ 8 ] := '   [Del]...................kasowanie pozycji            '
+         p[ 9 ] := '   [Esc]...................wyj˜cie                      '
+         p[ 10] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
          i := 20
@@ -224,6 +225,12 @@ PROCEDURE Tab_Doch()
          ENDIF
          RESTORE SCREEN FROM scr_
          _disp := .F.
+
+      CASE kl == Asc( 'D' ) .OR. kl == Asc( 'd' )
+
+         IF TNEsc( , "Czy przywr¢ci† domy˜ln¥ tabel© stawek podatku ? (Tak/Nie)" )
+            DomParPrzywroc_TabDoch( .F., DomParRok() )
+         ENDIF
 
       ******************** ENDCASE
       ENDCASE

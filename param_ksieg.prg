@@ -204,7 +204,7 @@ PROCEDURE menuKonfigKsiegaPokaz()
    set colo to w+
    @  3, 76 SAY param_ks5v
    @  9, 76 SAY param_ks5d
-   @ 14, 74 SAY param_ksnd
+   @ 17, 74 SAY param_ksnd
    @ 20, 72 SAY iif(param_kskw == 'T', 'Tak', 'Nie')
    @ 22, 72 SAY iif(param_ksv7 == 'T', 'Tak', 'Nie')
    SWITCH param_kslp

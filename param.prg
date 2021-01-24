@@ -198,10 +198,11 @@ do while kl#27
         @ 1,47 say [          ]
         declare p[20]
         *---------------------------------------
-        p[ 1]='                                             '
-        p[ 2]='     [M].....................modyfikacja     '
-        p[ 3]='     [Esc]...................wyj&_s.cie         '
-        p[ 4]='                                             '
+        p[ 1]='                                                   '
+        p[ 2]='     [M].....................modyfikacja           '
+        p[ 3]='     [D].....................przywr¢c domy˜lne     '
+        p[ 4]='     [Esc]...................wyj&_s.cie               '
+        p[ 5]='                                                   '
         *---------------------------------------
         set color to i
         i=20
@@ -221,6 +222,14 @@ do while kl#27
         restore screen from scr_
         _disp=.f.
         ******************** ENDCASE
+   CASE kl == Asc( 'D' ) .OR. kl == Asc( 'd' )
+
+      IF TNEsc( , "Czy przywr¢ci† domy˜lne parametry ? (Tak/Nie)" )
+         DomParPrzywroc_Param( .T., DomParRok() )
+         say_p()
+         _disp := .T.
+      ENDIF
+
    endcase
 enddo
 close_()
