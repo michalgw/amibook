@@ -1055,7 +1055,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
 
       IF ( AllTrim( rejs->rodzdow ) == "FP" .AND. ! aFiltr[ 'sumujFP' ] ) ;
          .OR. ( At( "MR_UZ", rejs->procedur ) > 0 .AND. ( rejs->wart22 < 0 .OR. ;
-         rejs->wart07 < 0 .OR. rejs->wart02 < 0 .OR. rejs->wart12 < 0 ) )
+         rejs->wart07 < 0 .OR. rejs->wart02 < 0 .OR. rejs->wart12 < 0 )  .AND. rejs->korekta <> 'T' )
 
          aRow[ 'netto_a' ] := 0
          aRow[ 'vat_a' ] := 0
@@ -1093,7 +1093,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
 
       IF ( AllTrim( rejs->rodzdow ) == "FP" .AND. ! aFiltr[ 'sumujFP' ] ) ;
          .OR. ( At( "MR_UZ", rejs->procedur ) > 0 .AND. ( aRow[ 'dnetto_zr_kraj' ] < 0 .OR. ;
-         aRow[ 'dnetto_zr_eksp' ] < 0 .OR. aRow[ 'dnetto_zr_wdt' ] < 0 ) )
+         aRow[ 'dnetto_zr_eksp' ] < 0 .OR. aRow[ 'dnetto_zr_wdt' ] < 0 ) .AND. rejs->korekta <> 'T' )
 
          aRow[ 'netto_zr_kraj' ] := 0
          aRow[ 'netto_zr_eksp' ] := 0
@@ -1110,7 +1110,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
 
       IF ( AllTrim( rejs->rodzdow ) == "FP" .AND. ! aFiltr[ 'sumujFP' ] ) ;
          .OR. ( At( "MR_UZ", rejs->procedur ) > 0 .AND. ( rejs->wartzw < 0 .OR. ;
-         rejs->wart08 < 0 ) )
+         rejs->wart08 < 0 ) .AND. rejs->korekta <> 'T' )
 
          aRow[ 'netto_zw' ] := rejs->wartzw
          aRow[ 'netto_np' ] := rejs->wart08
@@ -1176,7 +1176,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
       aRow[ 'dwartosc_vat' ] := aRow[ 'dvat_a' ] + aRow[ 'dvat_b' ] + aRow[ 'dvat_c' ] + aRow[ 'dvat_d' ]
 
       IF ( AllTrim( rejs->rodzdow ) == "FP" .AND. ! aFiltr[ 'sumujFP' ] ) ;
-         .OR. ( At( "MR_UZ", rejs->procedur ) > 0 .AND. aRow[ 'dwartosc_netto' ] < 0 )
+         .OR. ( At( "MR_UZ", rejs->procedur ) > 0 .AND. aRow[ 'dwartosc_netto' ] < 0 .AND. rejs->korekta <> 'T' )
 
          aRow[ 'wartosc_netto' ] := 0
          aRow[ 'wartosc_vat' ] := 0

@@ -508,7 +508,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       DO WHILE ! &_koniec
          ILS++
          DO CASE
-         CASE At( "MR_UZ", procedur ) > 0 .AND. ( WART02 < 0 .OR. WART12 < 0 .OR. WARTZW < 0 .OR. WART08 < 0 .OR. WART07 < 0 .OR. WART22 < 0 .OR. WART00 < 0 )
+         CASE At( "MR_UZ", procedur ) > 0 .AND. ( WART02 < 0 .OR. WART12 < 0 .OR. WARTZW < 0 .OR. WART08 < 0 .OR. WART07 < 0 .OR. WART22 < 0 .OR. WART00 < 0 ) .AND. KOREKTA <> 'T'
             // Pomijamy mar¾a ujemna
          CASE ( SEK_CV7 == '  ' .OR. SEK_CV7 == 'SP' ) .AND. AllTrim( RODZDOW ) <> 'FP'
             IF SEK_CV7 == 'SP'
