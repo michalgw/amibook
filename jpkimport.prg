@@ -712,7 +712,7 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                   oWiersz := oWierszIter:Next()
                ENDDO
 
-               aDaneJPK[ 'SprzedazSum' ] := hb_Hash( 'Ilosc', 0, 'KorektaPodstawyOpodt', 0, ;
+               aDaneJPK[ 'SprzedazSum' ] := hb_Hash( 'Ilosc', 0, ;
                   'K_10', 0, 'K_11', 0, 'K_12', 0, 'K_13', 0, 'K_14', 0, 'K_15', 0, 'K_16', 0, ;
                   'K_17', 0, 'K_18', 0, 'K_19', 0, 'K_20', 0, 'K_21', 0, 'K_22', 0, 'K_23', 0, ;
                   'K_24', 0, 'K_25', 0, 'K_26', 0, 'K_27', 0, 'K_28', 0, 'K_29', 0, 'K_30', 0, ;
@@ -2262,7 +2262,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
          aPozDek[ 'Procedura' ] := HGetDefault( aPoz, 'Procedura', '' )
          aPozDek[ 'Oznaczenie' ] := HGetDefault( aPoz, 'Oznaczenie', '' )
 
-         IF HGetDefault( aPoz, 'KorektaPodstawyOpodt', '0' ) == '1'
+         IF HGetDefault( aPoz, 'KorektaPodstawyOpodt', .F. )
             aPozDek[ 'zkorekta' ] := 'Z'
          ENDIF
 
