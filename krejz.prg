@@ -1588,10 +1588,10 @@ PROCEDURE RejZ_PolaKor()
    @ 14, 40 CLEAR TO 20, 79
    @ 14, 40 TO 20, 79
    @ 15, 42 SAY "Korekta podatku naliczonego"
-   @ 16, 42 SAY "K.47 - od naby† ˜r.t.  " GET zKOL47 PICTURE FPIC
-   @ 17, 42 SAY "K.48 - pozost. naby†   " GET zKOL48 PICTURE FPIC
-   @ 18, 42 SAY "K.49 - art. 89b ust. 1 " GET zKOL49 PICTURE FPIC
-   @ 19, 42 SAY "K.50 - art. 89b ust. 4 " GET zKOL50 PICTURE FPIC
+   @ 16, 42 SAY "K.44 - od naby† ˜r.t.  " GET zKOL47 PICTURE FPIC
+   @ 17, 42 SAY "K.45 - pozost. naby†   " GET zKOL48 PICTURE FPIC
+   @ 18, 42 SAY "K.46 - art. 89b ust. 1 " GET zKOL49 PICTURE FPIC
+   @ 19, 42 SAY "K.47 - art. 89b ust. 4 " GET zKOL50 PICTURE FPIC
    READ
 
    RestScreen( , , , , cEkran )

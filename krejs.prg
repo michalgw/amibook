@@ -1927,10 +1927,10 @@ PROCEDURE RejS_PolaDod()
    @ 14, 40 CLEAR TO 20, 79
    @ 14, 40 TO 20, 79
    @ 15, 42 SAY "Pola dodatkowe"
-   @ 16, 42 SAY "K.36 - spis z natury   " GET zKOL36 PICTURE FPIC
-   @ 17, 42 SAY "K.37 - zakup kas       " GET zKOL37 PICTURE FPIC
-   @ 18, 42 SAY "K.38 - nab.sr.transp.  " GET zKOL38 PICTURE FPIC
-   @ 19, 42 SAY "K.39 - nab.paliw siln. " GET zKOL39 PICTURE FPIC
+   @ 16, 42 SAY "K.33 - spis z natury   " GET zKOL36 PICTURE FPIC
+   @ 17, 42 SAY "K.34 - zakup kas       " GET zKOL37 PICTURE FPIC
+   @ 18, 42 SAY "K.35 - nab.sr.transp.  " GET zKOL38 PICTURE FPIC
+   @ 19, 42 SAY "K.36 - nab.paliw siln. " GET zKOL39 PICTURE FPIC
    READ
 
    RestScreen( , , , , cEkran )
