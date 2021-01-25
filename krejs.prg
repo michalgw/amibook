@@ -1980,19 +1980,19 @@ FUNCTION KRejSWhOpcje()
    LOCAL aOpcjeSel := KRejSWhOpcjeParsuj( zOPCJE )
    LOCAL aOpcje := { ;
       " (brak)                                                        ", ;
-      "1  [ ] - Dostawa napoj¢w alkoholowych - alkoholu etylowego...  ", ;
-      "2  [ ] - Dostawa towar¢w, o kt¢rych mowa w art. 103 ust. 5aa   ", ;
-      "3  [ ] - Dostawa oleju opaˆowego w rozumieniu przepis¢w o p.akc", ;
-      "4  [ ] - Dostawa wyrob¢w tytoniowych, suszu tytoniowego...     ", ;
-      "5  [ ] - Dostawa odpad¢w - wyˆ¥cznie okre˜lonych w poz. 79-91..", ;
-      "6  [ ] - Dostawa urz¥dzeä elektronicznych oraz cz©˜ci i mater..", ;
-      "7  [ ] - Dostawa pojazd¢w oraz cz©˜ci samochodowych o kodach...", ;
-      "8  [ ] - Dostawa metali szlachetnych oraz nieszlachetnych...   ", ;
-      "9  [ ] - Dostawa lek¢w oraz wyrob¢w medycznych...              ", ;
-      "10 [ ] - Dostawa budynk¢w, budowli i grunt¢w                   ", ;
-      "11 [ ] - —wiadczenie usˆug w zak.przen. uprawnieä do emisji... ", ;
-      "12 [ ] - —wiadczenie usˆug o charakterze niematerialnym...     ", ;
-      "13 [ ] - —wiadczenie usˆug transportowych i gospodarki mag...  " }
+      "1. [ ] - GTU_01 Dostawa napoj¢w alkoholowych - alkoholu etylowego...  ", ;
+      "2. [ ] - GTU_02 Dostawa towar¢w, o kt¢rych mowa w art. 103 ust. 5aa   ", ;
+      "3. [ ] - GTU_03 Dostawa oleju opaˆowego w rozumieniu przepis¢w o p.akc", ;
+      "4. [ ] - GTU_04 Dostawa wyrob¢w tytoniowych, suszu tytoniowego...     ", ;
+      "5. [ ] - GTU_05 Dostawa odpad¢w - wyˆ¥cznie okre˜lonych w poz. 79-91..", ;
+      "6. [ ] - GTU_06 Dostawa urz¥dzeä elektronicznych oraz cz©˜ci i mater..", ;
+      "7. [ ] - GTU_07 Dostawa pojazd¢w oraz cz©˜ci samochodowych o kodach...", ;
+      "8. [ ] - GTU_08 Dostawa metali szlachetnych oraz nieszlachetnych...   ", ;
+      "9. [ ] - GTU_09 Dostawa lek¢w oraz wyrob¢w medycznych...              ", ;
+      "0. [ ] - GTU_10 Dostawa budynk¢w, budowli i grunt¢w                   ", ;
+      "A. [ ] - GTU_11 —wiadczenie usˆug w zak.przen. uprawnieä do emisji... ", ;
+      "B. [ ] - GTU_12 —wiadczenie usˆug o charakterze niematerialnym...     ", ;
+      "C. [ ] - GTU_13 —wiadczenie usˆug transportowych i gospodarki mag...  " }
 
    IF param_ksv7 <> 'T'
       RETURN .F.
@@ -2004,14 +2004,14 @@ FUNCTION KRejSWhOpcje()
       nElement := AScan( aOpcjeSel, .T. ) + 1
    ENDIF
 
-   hb_DispBox( 3, 7, 18, 72, B_DOUBLE )
+   hb_DispBox( 3, 3, 18, 75, B_DOUBLE )
    hb_DispOutAt(  3, 11, " Oznaczenie dotycz¥ce dostawy i ˜wiadczenia usˆug " )
    hb_DispOutAt( 18, 11, " Spacja - zaznacz, Enter/Esc - zakoäcz, " + Chr( 27 ) + "/" + Chr( 26 ) + " - powr¢t/dalej " )
    KRejSWhOpcjeAChFunc( AC_IDLE, nElement )
 
    DO WHILE lDzialaj
       KRejSWhOpcjeAkt( @aOpcje, aOpcjeSel )
-      nElement := AChoice( 4, 8, 17, 71, aOpcje, , "KRejSWhOpcjeAChFunc", nElement )
+      nElement := AChoice( 4, 4, 17, 74, aOpcje, , "KRejSWhOpcjeAChFunc", nElement )
       lDzialaj := nElement > 1 .AND. AScan( { K_ENTER, K_LEFT, K_RIGHT }, LastKey() ) == 0
       IF lDzialaj
          aOpcjeSel[ nElement - 1 ] := .NOT. aOpcjeSel[ nElement - 1 ]
@@ -2099,8 +2099,9 @@ FUNCTION KRejSWhOpcjeAChFunc( nMode, nCurElement, nRowPos, lMPP )
       CASE nKey == K_ESC
          nRetVal := AC_ABORT
          KEYBOARD Chr(13)
-      CASE nKey >= Asc('0') .AND. nKey <= Asc('9')
+      CASE ( nKey >= Asc('0') .AND. nKey <= Asc('9') ) .OR. nKey == Asc( 'A' ) .OR. nKey == Asc( 'a' ) .OR. nKey == Asc( 'B' ) .OR. nKey == Asc( 'b' ) .OR. nKey == Asc( 'C' ) .OR. nKey == Asc( 'c' )
          nRetVal := AC_GOTO
+         KEYBOARD ' '
       CASE nKey == K_LEFT
          nRetVal := AC_SELECT
          KEYBOARD Chr( K_UP )
@@ -2164,18 +2165,18 @@ FUNCTION KRejSWhProcedur( lMPP )
    LOCAL aOpcjeSel
    LOCAL aOpcje := { ;
       " (brak)                                                           ", ;
-      "1  [ ] SW - Dostawa w ramach sprz. wysyˆkowej z terytorium kraju..", ;
-      "2  [ ] EE - —wiadczenie usˆug telekom., nadawczych i elektroniczny", ;
-      "3  [ ] TP - Istniej¥ce powi¥zania mi©dzy nabywc¥ a dokonuj¥cym dos", ;
-      "4  [ ] TT_WNT - Wewn¥trzwsp¢lnotowe nabycie towar¢w dok.przez drug", ;
-      "5  [ ] TT_D - Dostawa towar¢w poza terytorium kraju dokonana przez", ;
-      "6  [ ] MR_T - —wiadczenie usˆug turystyki opodatkowane na zas.mar¾", ;
-      "7  [ ] MR_UZ - Dostawa towar¢w u¾ywanych, dzieˆ sztuki, przedmiot¢", ;
-      "8  [ ] I_42 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 42", ;
-      "9  [ ] I_63 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 63", ;
-      "10 [ ] B_SPV - Transfer bonu jednego przeznaczenia dokonany przez ", ;
-      "11 [ ] B_SPV_DOSTAWA - Dostawa towar¢w oraz ˜wiadczenie usˆug, kt¢", ;
-      "12 [ ] B_MPV_PROWIZJA - —wiadczenie usˆug po˜rednictwa oraz innych" }
+      "1. [ ] SW - Dostawa w ramach sprz. wysyˆkowej z terytorium kraju..", ;
+      "2. [ ] EE - —wiadczenie usˆug telekom., nadawczych i elektroniczny", ;
+      "3. [ ] TP - Istniej¥ce powi¥zania mi©dzy nabywc¥ a dokonuj¥cym dos", ;
+      "4. [ ] TT_WNT - Wewn¥trzwsp¢lnotowe nabycie towar¢w dok.przez drug", ;
+      "5. [ ] TT_D - Dostawa towar¢w poza terytorium kraju dokonana przez", ;
+      "6. [ ] MR_T - —wiadczenie usˆug turystyki opodatkowane na zas.mar¾", ;
+      "7. [ ] MR_UZ - Dostawa towar¢w u¾ywanych, dzieˆ sztuki, przedmiot¢", ;
+      "8. [ ] I_42 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 42", ;
+      "9. [ ] I_63 - Wewn¥trzwsp¢l. dost. towar¢w w ramach proc.celnej 63", ;
+      "0. [ ] B_SPV - Transfer bonu jednego przeznaczenia dokonany przez ", ;
+      "A. [ ] B_SPV_DOSTAWA - Dostawa towar¢w oraz ˜wiadczenie usˆug, kt¢", ;
+      "B. [ ] B_MPV_PROWIZJA - —wiadczenie usˆug po˜rednictwa oraz innych" }
    LOCAL aKody := { "SW", "EE", "TP", "TT_WNT", "TT_D", "MR_T", "MR_UZ", ;
       "I_42", "I_63", "B_SPV", "B_SPV_DOSTAWA", "B_MPV_PROWIZJA" }
 
@@ -2292,8 +2293,9 @@ FUNCTION KRejSWhProcedurAChFunc( nMode, nCurElement, nRowPos )
       CASE nKey == K_ESC
          nRetVal := AC_ABORT
          KEYBOARD Chr(13)
-      CASE nKey >= Asc('0') .AND. nKey <= Asc('9')
+      CASE ( nKey >= Asc('0') .AND. nKey <= Asc('9') ) .OR. nKey == Asc( 'A' ) .OR. nKey == Asc( 'a' ) .OR. nKey == Asc( 'B' ) .OR. nKey == Asc( 'b' )
          nRetVal := AC_GOTO
+         KEYBOARD ' '
       CASE nKey == K_LEFT
          nRetVal := AC_SELECT
          KEYBOARD Chr( K_UP )
