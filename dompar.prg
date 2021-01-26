@@ -30,16 +30,6 @@ FUNCTION DomyslneParametry()
       // Rok 2021
       aPar := hb_Hash()
 
-      // Stawki rycz
-      aPar[ 'staw_hand' ] := 0.03
-      aPar[ 'staw_prod' ] := 0.055
-      aPar[ 'staw_uslu' ] := 0.085
-      aPar[ 'staw_ry20' ] := 0.17
-      aPar[ 'staw_ry17' ] := 0.15
-      aPar[ 'staw_ry10' ] := 0.1
-      aPar[ 'staw_rk07' ] := 0.125
-      aPar[ 'staw_rk08' ] := 0.02
-
       // Tabela podatku doch.
       aPar[ 'tab_doch' ] := { ;
          { 'podstawa' => 0.0,      'procent' => 17.0, 'kwotazmn' => 1360.0, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20210101, 'datado' => 0d20211231 }, ;
@@ -49,22 +39,31 @@ FUNCTION DomyslneParametry()
          { 'podstawa' => 127001.0, 'procent' => 32.0, 'kwotazmn' => 0.0,    'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20210101, 'datado' => 0d20211231 } }
 
       // Stawki rycz.
-      // Handel
-      aPar[ 'staw_hand' ] := 0.03
-      // Produkcja
-      aPar[ 'staw_prod' ] := 0.055
-      // Uslugi
-      aPar[ 'staw_uslu' ] := 0.085
       // Wolna zawody
       aPar[ 'staw_ry20' ] := 0.17
       // Inne uslugi
       aPar[ 'staw_ry17' ] := 0.15
-      // Prawa maj.
-      aPar[ 'staw_ry10' ] := 0.1
+      // Uslugi
+      aPar[ 'staw_uslu' ] := 0.125
+      // Produkcja
+      aPar[ 'staw_prod' ] := 0.1
+      // Handel
+      aPar[ 'staw_hand' ] := 0.085
       // Wynajem pow. 100000
-      aPar[ 'staw_rk07' ] := 0.125
+      aPar[ 'staw_rk07' ] := 0.055
+      // Prawa maj.
+      aPar[ 'staw_ry10' ] := 0.03
       // Art. 6 ust. 1d
       aPar[ 'staw_rk08' ] := 0.02
+
+      aPar[ 'staw_ory20' ] := 'Wolne zawody            '
+      aPar[ 'staw_ory17' ] := 'Inne usˆugi             '
+      aPar[ 'staw_ouslu' ] := 'Wynajem pow.100000zˆ    '
+      aPar[ 'staw_oprod' ] := 'Prawa maj¥tkowe         '
+      aPar[ 'staw_ohand' ] := 'Usˆugi                  '
+      aPar[ 'staw_ork07' ] := 'Produkcja               '
+      aPar[ 'staw_ory10' ] := 'Handel                  '
+      aPar[ 'staw_ork08' ] := 'Art. 6 ust. 1d          '
 
       // Kwota wolna
       aPar[ 'param_kw' ] := 525.12
@@ -79,15 +78,6 @@ FUNCTION DomyslneParametry()
 
       // Rok 2020
       aPar := hb_Hash()
-      // Stawki rycz
-      aPar[ 'staw_hand' ] := 0.03
-      aPar[ 'staw_prod' ] := 0.055
-      aPar[ 'staw_uslu' ] := 0.085
-      aPar[ 'staw_ry20' ] := 0.2
-      aPar[ 'staw_ry17' ] := 0.17
-      aPar[ 'staw_ry10' ] := 0.1
-      aPar[ 'staw_rk07' ] := 0.125
-      aPar[ 'staw_rk08' ] := 0.02
       // Tabela podatku doch.
       aPar[ 'tab_doch' ] := { ;
          { 'podstawa' => 0.0,      'procent' => 17.0, 'kwotazmn' => 1360.0, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20200101, 'datado' => 0d20201231 }, ;
@@ -113,6 +103,16 @@ FUNCTION DomyslneParametry()
       aPar[ 'staw_rk07' ] := 0.125
       // Art. 6 ust. 1d
       aPar[ 'staw_rk08' ] := 0.02
+
+      aPar[ 'staw_ory20' ] := 'Wolne zawody            '
+      aPar[ 'staw_ory17' ] := 'Inne usˆugi             '
+      aPar[ 'staw_ouslu' ] := 'Usˆugi                  '
+      aPar[ 'staw_oprod' ] := 'Produkcja               '
+      aPar[ 'staw_ohand' ] := 'Handel                  '
+      aPar[ 'staw_ork07' ] := 'Wynajem pow.100000zˆ    '
+      aPar[ 'staw_ory10' ] := 'Prawa maj¥tkowe         '
+      aPar[ 'staw_ork08' ] := 'Art. 6 ust. 1d          '
+
 
       // Kwota wolna
       aPar[ 'param_kw' ] := 525.12
@@ -198,6 +198,15 @@ PROCEDURE DomParPrzywroc_TabRycz( lPrzypiszTmp, cRok )
    staw_rk07 := aDomyslneParametry[ cRok ][ 'staw_rk07' ]
    staw_rk08 := aDomyslneParametry[ cRok ][ 'staw_rk08' ]
 
+   staw_ohand := aDomyslneParametry[ cRok ][ 'staw_ohand' ]
+   staw_oprod := aDomyslneParametry[ cRok ][ 'staw_oprod' ]
+   staw_ouslu := aDomyslneParametry[ cRok ][ 'staw_ouslu' ]
+   staw_ory20 := aDomyslneParametry[ cRok ][ 'staw_ory20' ]
+   staw_ory17 := aDomyslneParametry[ cRok ][ 'staw_ory17' ]
+   staw_ory10 := aDomyslneParametry[ cRok ][ 'staw_ory10' ]
+   staw_ork07 := aDomyslneParametry[ cRok ][ 'staw_ork07' ]
+   staw_ork08 := aDomyslneParametry[ cRok ][ 'staw_ork08' ]
+
    SAVE TO tab_rycz ALL LIKE staw_*
 
    IF lPrzypiszTmp
@@ -209,6 +218,15 @@ PROCEDURE DomParPrzywroc_TabRycz( lPrzypiszTmp, cRok )
       zstaw_ry10 := staw_ry10 * 100
       zstaw_rk07 := staw_rk07 * 100
       zstaw_rk08 := staw_rk08 * 100
+
+      zstaw_ohand := staw_ohand
+      zstaw_oprod := staw_oprod
+      zstaw_ouslu := staw_ouslu
+      zstaw_ory20 := staw_ory20
+      zstaw_ory17 := staw_ory17
+      zstaw_ory10 := staw_ory10
+      zstaw_ork07 := staw_ork07
+      zstaw_ork08 := staw_ork08
    ENDIF
 
    RETURN NIL

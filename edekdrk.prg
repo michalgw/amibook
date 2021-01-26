@@ -289,6 +289,11 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\jpkewp_w1.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'JPKEWP-2'
+      hDane := DaneXML_JPKEWPw2( oDoc, cNrRef )
+      cPlikRap := 'frf\jpkewp_w2.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'JPKV7M-1'
    CASE 'JPKV7K-1'
       hDane := DaneXML_JPKV7w1( oDoc, cNrRef )
@@ -7849,6 +7854,63 @@ FUNCTION DaneXML_JPKEWPw1( oDoc, cNrRef )
       aPoz[ 'K_10' ] := sxml2num( xmlWartoscH( aPoz, 'K_10' ), 0 )
       aPoz[ 'K_11' ] := sxml2num( xmlWartoscH( aPoz, 'K_11' ), 0 )
       aPoz[ 'K_12' ] := sxml2str( xmlWartoscH( aPoz, 'K_12', '' ) )
+   } )
+
+   aDane[ 'EWPCtrl' ] := edekXmlGrupa( oDoc, 'EWPCtrl' )
+   aDane[ 'EWPCtrl' ][ 'LiczbaWierszy' ] := sxml2num( xmlWartoscH( aDane[ 'EWPCtrl' ], 'LiczbaWierszy' ) )
+   aDane[ 'EWPCtrl' ][ 'SumaPrzychodow' ] := sxml2num( xmlWartoscH( aDane[ 'EWPCtrl' ], 'SumaPrzychodow' ) )
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneXML_JPKEWPw2( oDoc, cNrRef )
+
+   LOCAL aDane := hb_Hash()
+   LOCAL aZak, aSprz, aTemp
+
+   aDane[ 'NrRef' ] := AllTrim( cNrRef )
+
+   aTemp := edekXmlGrupa( oDoc, 'Naglowek' )
+   aDane[ 'CelZlozenia' ] := xmlWartoscH( aTemp, 'CelZlozenia' )
+   aDane[ 'DataWytworzeniaJPK' ] := xmlWartoscH( aTemp, 'DataWytworzeniaJPK' )
+   aDane[ 'DataOd' ] := xmlWartoscH( aTemp, 'DataOd' )
+   aDane[ 'DataDo' ] := xmlWartoscH( aTemp, 'DataDo' )
+   aDane[ 'DomyslnyKodWaluty' ] := xmlWartoscH( aTemp, 'DomyslnyKodWaluty' )
+   aDane[ 'KodUrzedu' ] := xmlWartoscH( aTemp, 'KodUrzedu' )
+
+   aTemp := edekXmlGrupa( oDoc, 'IdentyfikatorPodmiotu' )
+   aDane[ 'NIP' ] := xmlWartoscH( aTemp, 'etd:NIP' )
+   aDane[ 'PelnaNazwa' ] := xmlWartoscH( aTemp, 'etd:PelnaNazwa' )
+   aDane[ 'REGON' ] := xmlWartoscH( aTemp, 'etd:REGON' )
+
+   aTemp := edekXmlGrupa( oDoc, 'AdresPodmiotu' )
+   aDane[ 'KodKraju' ] := xmlWartoscH( aTemp, 'etd:KodKraju' )
+   aDane[ 'Wojewodztwo' ] := xmlWartoscH( aTemp, 'etd:Wojewodztwo' )
+   aDane[ 'Powiat' ] := xmlWartoscH( aTemp, 'etd:Powiat' )
+   aDane[ 'Gmina' ] := xmlWartoscH( aTemp, 'etd:Gmina' )
+   aDane[ 'Ulica' ] := xmlWartoscH( aTemp, 'etd:Ulica' )
+   aDane[ 'NrDomu' ] := xmlWartoscH( aTemp, 'etd:NrDomu' )
+   aDane[ 'NrLokalu' ] := xmlWartoscH( aTemp, 'etd:NrLokalu' )
+   aDane[ 'Miejscowosc' ] := xmlWartoscH( aTemp, 'etd:Miejscowosc' )
+   aDane[ 'KodPocztowy' ] := xmlWartoscH( aTemp, 'etd:KodPocztowy' )
+   //aDane[ 'Poczta' ] := xmlWartoscH( aTemp, 'etd:Poczta' )
+
+   aDane[ 'EWPWiersz' ] := edekXmlGrupaTab( oDoc, 'JPK', 'EWPWiersz' )
+   AEval( aDane[ 'EWPWiersz' ], { | aPoz |
+      aPoz[ 'K_1' ] := sxml2num( xmlWartoscH( aPoz, 'K_1' ), 0 )
+      aPoz[ 'K_2' ] := xml2date( xmlWartoscH( aPoz, 'K_2', '' ) )
+      aPoz[ 'K_3' ] := xml2date( xmlWartoscH( aPoz, 'K_3', '' ) )
+      aPoz[ 'K_4' ] := sxml2str( xmlWartoscH( aPoz, 'K_4', '' ) )
+      aPoz[ 'K_5' ] := sxml2num( xmlWartoscH( aPoz, 'K_5' ), 0 )
+      aPoz[ 'K_6' ] := sxml2num( xmlWartoscH( aPoz, 'K_6' ), 0 )
+      aPoz[ 'K_7' ] := sxml2num( xmlWartoscH( aPoz, 'K_7' ), 0 )
+      aPoz[ 'K_8' ] := sxml2num( xmlWartoscH( aPoz, 'K_8' ), 0 )
+      aPoz[ 'K_9' ] := sxml2num( xmlWartoscH( aPoz, 'K_9' ), 0 )
+      aPoz[ 'K_10' ] := sxml2num( xmlWartoscH( aPoz, 'K_10' ), 0 )
+      aPoz[ 'K_11' ] := sxml2num( xmlWartoscH( aPoz, 'K_11' ), 0 )
+      aPoz[ 'K_12' ] := sxml2num( xmlWartoscH( aPoz, 'K_12' ), 0 )
+      aPoz[ 'K_13' ] := sxml2str( xmlWartoscH( aPoz, 'K_13', '' ) )
    } )
 
    aDane[ 'EWPCtrl' ] := edekXmlGrupa( oDoc, 'EWPCtrl' )

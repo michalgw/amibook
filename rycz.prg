@@ -112,8 +112,8 @@ PROCEDURE Rycz()
                zDATAPRZY := CToD( '    .  .  ' )
                zNUMER := Space( 20 )
                zTRESC := Space( 30 )
-               STORE 0 TO zHANDEL, zPRODUKCJA, zUSLUGI, zRY20, zRY17, zRY10
-               zuwagi := Space( 14 )
+               STORE 0 TO zHANDEL, zPRODUKCJA, zUSLUGI, zRY20, zRY17, zRY10, zRYK07, zRYK08
+               zuwagi := Space( 200 )
                zzaplata := '1'
                zkwota := 0
                @ 19, 40 SAY Space( 40 )
@@ -146,6 +146,8 @@ PROCEDURE Rycz()
                zRY20 := RY20
                zRY17 := RY17
                zRY10 := RY10
+               zRYK07 := RYK07
+               zRYK08 := RYK08
                zuwagi := uwagi
                zzaplata := zaplata
                zkwota := kwota
@@ -162,9 +164,11 @@ PROCEDURE Rycz()
             @ 10, 67 GET zUSLUGI    PICTURE FPICold VALID v1_6r()
             @ 11, 67 GET zPRODUKCJA PICTURE FPICold VALID v1_7r()
             @ 12, 67 GET zHANDEL    PICTURE FPICold VALID v1_8r()
-            @ 15, 67 GET zRY10      PICTURE FPICold
+            @ 13, 67 GET zRYK07     PICTURE FPICold
+            @ 14, 67 GET zRY10      PICTURE FPICold
+            @ 15, 67 GET zRYK08     PICTURE FPICold
             SET COLOR TO i
-            @ 17, 65 SAY zUWAGI
+            @ 19, 40 SAY SubStr( zUWAGI, 1, 40 )
             SET COLOR TO
             CLEAR TYPEAHEAD
             read_()
@@ -172,7 +176,7 @@ PROCEDURE Rycz()
                BREAK
             ENDIF
             ColStd()
-            @ 17, 65 GET zUWAGI
+            @ 19, 40 GET zUWAGI PICTURE "@S40 " + Replicate( "X", 200 )
             CLEAR TYPEAHEAD
             Read_()
             IF LastKey() == K_ESC
@@ -212,8 +216,8 @@ PROCEDURE Rycz()
             zdzien := Str( Val( zDZIEN ), 2 )
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
             tresc_ := tresc
-            stan_ := -USLUGI - PRODUKCJA - HANDEL - RY20 - RY17 - RY10
-            obrot_ := USLUGI + PRODUKCJA + HANDEL + RY20 + RY17 + RY10
+            stan_ := -USLUGI - PRODUKCJA - HANDEL - RY20 - RY17 - RY10 - RYK07 - RYK08
+            obrot_ := USLUGI + PRODUKCJA + HANDEL + RY20 + RY17 + RY10 + RYK07 + RYK08
             SELECT tresc
             IF ! ins
                SEEK '+' + ident_fir + tresc_
@@ -227,7 +231,7 @@ PROCEDURE Rycz()
             SEEK '+' + ident_fir + ztresc
             IF Found()
                BlokadaR()
-               repl_( 'stan', stan+( -zPRODUKCJA - zUSLUGI - zHANDEL - zRY20 - zRY17 - zRY10 ) )
+               repl_( 'stan', stan+( -zPRODUKCJA - zUSLUGI - zHANDEL - zRY20 - zRY17 - zRY10 - zRYK07 - zRYK08 ) )
                COMMIT
                UNLOCK
             ENDIF
@@ -240,6 +244,8 @@ PROCEDURE Rycz()
                repl_( 'RY20', RY20 - ewid->RY20 )
                repl_( 'RY17', RY17 - ewid->RY17 )
                repl_( 'RY10', RY10 - ewid->RY10 )
+               repl_( 'RYK07', RYK07 - ewid->RYK07 )
+               repl_( 'RYK08', RYK08 - ewid->RYK08 )
             ENDIF
             IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
                repl_( 'wyr_tow', wyr_tow + zPRODUKCJA )
@@ -248,6 +254,8 @@ PROCEDURE Rycz()
                repl_( 'RY20', RY20 + zRY20 )
                repl_( 'RY17', RY17 + zRY17 )
                repl_( 'RY10', RY10 + zRY10 )
+               repl_( 'RYK07', RYK07 + zRYK07 )
+               repl_( 'RYK08', RYK08 + zRYK08 )
             ENDIF
             IF ins
                repl_( 'pozycje', pozycje + 1 )
@@ -278,6 +286,8 @@ PROCEDURE Rycz()
             repl_( 'RY20', zRY20 )
             repl_( 'RY17', zRY17 )
             repl_( 'RY10', zRY10 )
+            repl_( 'RYK07', zRYK07 )
+            repl_( 'RYK08', zRYK08 )
             repl_( 'UWAGI', zUWAGI )
             repl_( 'zaplata', zzaplata )
             repl_( 'kwota', zkwota )
@@ -382,8 +392,8 @@ PROCEDURE Rycz()
                BREAK
             ENDIF
             tresc_ := tresc
-            stan_ := -PRODUKCJA - USLUGI - HANDEL - RY20 - RY17 - RY10
-            obrot_ := PRODUKCJA + USLUGI + HANDEL + RY20 + RY17 + RY10
+            stan_ := -PRODUKCJA - USLUGI - HANDEL - RY20 - RY17 - RY10 - RYK07 - RYK08
+            obrot_ := PRODUKCJA + USLUGI + HANDEL + RY20 + RY17 + RY10 + RYK07 + RYK08
             SELECT tresc
             SEEK '+' + ident_fir + tresc_
             IF Found()
@@ -401,6 +411,8 @@ PROCEDURE Rycz()
                repl_( 'RY20', RY20 - ewid->RY20 )
                repl_( 'RY17', RY17 - ewid->RY17 )
                repl_( 'RY10', RY10 - ewid->RY10 )
+               repl_( 'RYK07', RYK07 - ewid->RYK07 )
+               repl_( 'RYK08', RYK08 - ewid->RYK08 )
             ENDIF
             repl_( 'pozycje', pozycje - 1 )
             COMMIT
@@ -449,7 +461,7 @@ PROCEDURE Rycz()
          Center( 23, 'S Z U K A N I E' )
          ColStd()
          f10 := '  '
-         @ 3, 65 GET f10 PICTURE "99"
+         @ 3, 40 GET f10 PICTURE "99"
          Read_()
          IF ! Empty( f10 ) .AND. LastKey() # K_ESC
             SEEK '+' + ident_fir + miesiac + Str( Val( f10 ), 2 )
@@ -663,31 +675,35 @@ PROCEDURE say1e()
    @ 10, 67 SAY uslugi PICTURE RPIC
    @ 11, 67 SAY produkcja PICTURE RPIC
    @ 12, 67 SAY handel PICTURE RPIC
-   @ 13, 67 SAY handel + produkcja + uslugi + RY20 + RY17 PICTURE RPIC
-   @ 15, 67 SAY RY10 PICTURE RPIC
-   @ 17, 65 SAY uwagi
-   @ 19, 40 SAY Space( 40 )
+   @ 13, 67 SAY RYK07 PICTURE RPIC
+   @ 14, 67 SAY RY10 PICTURE RPIC
+   IF staw_k08w
+      @ 15, 67 SAY RYK08 PICTURE RPIC
+   ENDIF
+   @ 17, 67 SAY handel + produkcja + uslugi + RY20 + RY17 + RY10 + RYK07 + RYK08 PICTURE RPIC
+   @ 19, 40 SAY SubStr( uwagi, 1, 40 )
+   @ 21, 40 SAY Space( 40 )
    DO CASE
    CASE zaplata == '1'
       DO CASE
       CASE Left( NUMER, 3 ) == 'RS-'
-         @ 19, 40 SAY 'Informacja w Rejestrze Sprzeda&_z.y'
+         @ 21, 40 SAY 'Informacja w Rejestrze Sprzeda&_z.y'
       OTHERWISE
-         @ 19, 40 SAY 'Zap&_l.acone'
+         @ 21, 40 SAY 'Zap&_l.acone'
       ENDCASE
    CASE zaplata == '2'
       DO CASE
       CASE Left( NUMER, 3 ) == 'RS-'
-         @ 19, 40 SAY 'Informacja w Rejestrze Sprzeda&_z.y'
+         @ 21, 40 SAY 'Informacja w Rejestrze Sprzeda&_z.y'
       OTHERWISE
-         @ 19, 40 SAY dos_p( 'Zap&_l.acono ' + dos_l( kwota( kwota, 14, 2 ) ) )
+         @ 21, 40 SAY dos_p( 'Zap&_l.acono ' + dos_l( kwota( kwota, 14, 2 ) ) )
       ENDCASE
    CASE zaplata == '3'
       DO CASE
       CASE Left( NUMER, 3 ) == 'RS-'
-         @ 19, 40 SAY 'Informacja w Rejestrze Sprzeda&_z.y'
+         @ 21, 40 SAY 'Informacja w Rejestrze Sprzeda&_z.y'
       OTHERWISE
-         @ 19, 40 SAY 'Niezap&_l.acone'
+         @ 21, 40 SAY 'Niezap&_l.acone'
       ENDCASE
    ENDCASE
    SET COLOR TO
@@ -779,7 +795,7 @@ FUNCTION v1_6ar()
 
    IF LastKey() == K_UP
       SET COLOR TO w+
-      @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+      @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
       SET COLOR TO
       RETURN .T.
    ENDIF
@@ -788,7 +804,7 @@ FUNCTION v1_6ar()
       KEYBOARD Chr( K_CTRL_W )
    ENDIF
    SET COLOR TO w+
-   @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+   @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
    SET COLOR TO
    RETURN .T.
 
@@ -797,7 +813,7 @@ FUNCTION v1_6br()
 
    IF LastKey() == K_UP
       set color TO w+
-      @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+      @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
       SET COLOR TO
       RETURN .T.
    ENDIF
@@ -806,7 +822,7 @@ FUNCTION v1_6br()
       KEYBOARD Chr( K_CTRL_W )
    ENDIF
    SET COLOR TO w+
-   @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+   @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
    SET COLOR TO
    RETURN .T.
 
@@ -815,7 +831,7 @@ FUNCTION v1_6r()
 
    IF LastKey() == K_UP
       SET COLOR TO w+
-      @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+      @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
       SET COLOR TO
       RETURN .T.
    ENDIF
@@ -824,7 +840,7 @@ FUNCTION v1_6r()
       KEYBOARD Chr( K_CTRL_W )
    ENDIF
    SET COLOR TO w+
-   @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+   @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
    SET COLOR TO
    RETURN .T.
 
@@ -841,7 +857,7 @@ FUNCTION V1_7r()
 ***************************************************
    IF LastKey() == K_UP
       SET COLOR TO w+
-      @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+      @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
       SET COLOR TO
       RETURN .T.
    ENDIF
@@ -850,7 +866,7 @@ FUNCTION V1_7r()
       KEYBOARD Chr( K_CTRL_W )
    ENDIF
    SET COLOR TO w+
-   @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+   @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
    SET COLOR TO
    RETURN .T.
 
@@ -859,7 +875,7 @@ FUNCTION V1_8r()
 ***************************************************
    IF LastKey() == K_UP
       SET COLOR TO w+
-      @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+      @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
       SET COLOR TO
       RETURN .T.
    ENDIF
@@ -868,7 +884,7 @@ FUNCTION V1_8r()
       KEYBOARD Chr( K_CTRL_W )
    ENDIF
    SET COLOR TO w+
-   @ 13, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17, 12, 2 ) ), Space( 12 ) )
+   @ 17, 67 SAY iif( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08 # 0, dos_l( Kwota( zhandel + zprodukcja + zuslugi + zRY20 + zRY17 + zRY10 + zRYK07 + zRYK08, 12, 2 ) ), Space( 12 ) )
    SET COLOR TO
    RETURN .T.
 
@@ -886,20 +902,28 @@ FUNCTION ryczRysujTlo()
    @  5, 0 SAY '      Opis zdarzenia....................                                        '
    @  6, 0 SAY ' ------------------------------PRZYCHODY--------------------------------------- '
    @  7, 0 SAY ' (4)  Nr fakt/rach lub dziennego zestawienia sprzeda&_z.y.............             '
-   @  8, 0 SAY ' (5)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_ry20 * 100, 5, 2 ) + '% (wolne zawody)............             '
-   @  9, 0 SAY ' (6)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_ry17 * 100, 5, 2 ) + '% (inne uslugi).............             '
-   @ 10, 0 SAY ' (7)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_uslu * 100, 5, 2 ) + '% (uslugi)..................             '
-   @ 11, 0 SAY ' (8)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_prod * 100, 5, 2 ) + '% (produkja)................             '
-   @ 12, 0 SAY ' (9)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_hand * 100, 5, 2 ) + '% (handel)..................             '
-   @ 13, 0 SAY ' (10) OG&__O.&__L.EM PRZYCH&__O.D (5+6+7+8+9)..................................             '
-   @ 14, 0 SAY ' ------------------------------------------------------------------------------ '
-   @ 15, 0 SAY ' (11) Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_ry10 * 100, 5, 2 ) + '% (prawa majatkowe).........             '
-   @ 16, 0 SAY ' ------------------------------------------------------------------------------ '
-   @ 17, 0 SAY ' (12) Uwagi......................................................               '
-   @ 18, 0 SAY ' ------------------------------------------------------------------------------ '
-   @ 19, 0 SAY '      Zap&_l.acono ?.......................                                        '
-   @ 20, 0 SAY Space( 80 )
-   @ 21, 0 SAY Space( 80 )
+   @  8, 0 SAY ' (5)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_ry20 * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_ory20 ) ) + ')', 25, '.' ) + '.             '
+   @  9, 0 SAY ' (6)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_ry17 * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_ory17 ) ) + ')', 25, '.' ) + '.             '
+   @ 10, 0 SAY ' (7)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_uslu * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_ouslu ) ) + ')', 25, '.' ) + '.             '
+   @ 11, 0 SAY ' (8)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_prod * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_oprod ) ) + ')', 25, '.' ) + '.             '
+   @ 12, 0 SAY ' (9)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_hand * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_ohand ) ) + ')', 25, '.' ) + '.             '
+   @ 13, 0 SAY ' (10) Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_rk07 * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_ork07 ) ) + ')', 25, '.' ) + '.             '
+   @ 14, 0 SAY ' (11) Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_ry10 * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_ory10 ) ) + ')', 25, '.' ) + '.             '
+   IF staw_k08w
+      @ 15, 0 SAY ' (12) Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_rk08 * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_ork08 ) ) + ')', 25, '.' ) + '.             '
+      @ 16, 0 SAY ' ------------------------------------------------------------------------------ '
+      @ 17, 0 SAY ' (13) OGאEM PRZYCHאD (5+6+7+8+9+10+11+12).........................             '
+      @ 18, 0 SAY ' ------------------------------------------------------------------------------ '
+      @ 19, 0 SAY ' (14) Uwagi......................................................               '
+   ELSE
+      @ 15, 0 SAY '                                                                                '
+      @ 16, 0 SAY ' ------------------------------------------------------------------------------ '
+      @ 17, 0 SAY ' (12) OGאEM PRZYCHאD (5+6+7+8+9+10+11)............................             '
+      @ 18, 0 SAY ' ------------------------------------------------------------------------------ '
+      @ 19, 0 SAY ' (13) Uwagi......................................................               '
+   ENDIF
+   @ 20, 0 SAY ' ------------------------------------------------------------------------------ '
+   @ 21, 0 SAY '      Zap&_l.acono ?.......................                                        '
    @ 22, 0 SAY Space( 80 )
    RETURN
 

@@ -564,6 +564,33 @@ FUNCTION Main()
    // Art. 6 ust. 1d
    PUBLIC staw_rk08 := 0.02
 
+   // Wˆ¥cz osma kolumna ( stawka 2% )
+   PUBLIC staw_k08w := .F.
+
+   // Handel K9
+   PUBLIC staw_ohand := 'Handel                  '
+
+   // Produkcja K8
+   PUBLIC staw_oprod := 'Produkcja               '
+
+   // Uslugi K7
+   PUBLIC staw_ouslu := 'Usˆugi                  '
+
+   // Wolna zawody K5
+   PUBLIC staw_ory20 := 'Wolne zawody            '
+
+   // Inne uslugi K6
+   PUBLIC staw_ory17 := 'Inne usˆugi             '
+
+   // Prawa maj. K11
+   PUBLIC staw_ory10 := 'Prawa maj¥tkowe         '
+
+   // Wynajem pow. 100000 K10
+   PUBLIC staw_ork07 := 'Wynajem pow.100000zˆ    '
+
+   // Art. 6 ust. 1d
+   PUBLIC staw_ork08 := 'Art. 6 ust. 1d          '
+
    // ---
 
    // Stawki podatku VAT

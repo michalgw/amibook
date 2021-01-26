@@ -1213,7 +1213,7 @@ FUNCTION infoobr( nCurEl )
 
    LOCAL CURR
    LOCAL um, un, pm, pn, hm, hn, zm, zn, ilpoz, ry20m, ry20n, ry17m, ry17n
-   LOCAL ry10m, ry10n, sm, sn, km, kn
+   LOCAL ry10m, ry10n, sm, sn, km, kn, ryk07m, ryk07n, ryk08m, ryk08n
 
    SELECT 1
    DO WHILE ! dostep( 'SUMA_MC' )
@@ -1226,7 +1226,8 @@ FUNCTION infoobr( nCurEl )
       SetColor( CURR )
    ELSE
       IF zRYCZALT == 'T'
-         STORE 0 TO um, un, pm, pn, hm, hn, zm, zn, ilpoz, ry20m, ry20n, ry17m, ry17n, ry10m, ry10n
+         STORE 0 TO um, un, pm, pn, hm, hn, zm, zn, ilpoz, ry20m, ry20n, ry17m, ry17n, ry10m, ry10n, ;
+            ryk07m, ryk07n, ryk08m, ryk08n
          DO WHILE suma_mc->del == '+' .AND. suma_mc->firma == ident_fir .AND. suma_mc->mc <= nCurEl
             um := suma_mc->USLUGI
             pm := suma_mc->WYR_TOW
@@ -1234,27 +1235,35 @@ FUNCTION infoobr( nCurEl )
             ry20m := suma_mc->RY20
             ry17m := suma_mc->RY17
             ry10m := suma_mc->RY10
+            ryk07m := suma_mc->RYK07
+            ryk08m := suma_mc->RYK08
             un := un + um
             pn := pn + pm
             hn := hn + hm
             ry20n := ry20n + ry20m
             ry17n := ry17n + ry17m
             ry10n := ry10n + ry10m
+            ryk07n := ryk07n + ryk07m
+            ryk08n := ryk08n + ryk08m
             ilpoz := suma_mc->pozycje
             SKIP
          ENDDO
          CURR := ColStd()
          @ 10, 43 SAY '          ZA MIESI&__A.C     NARASTAJ&__A.CO '
          @ 11, 43 SAY '-------------------------------------'
-         @ 12, 43 SAY 'Wolne zaw.                           '
-         @ 13, 43 SAY 'Inne usl..                           '
-         @ 14, 43 SAY 'Us&_l.ugi....                           '
-         @ 15, 43 SAY 'Produkcja.                           '
-         @ 16, 43 SAY 'Handel....                           '
-         @ 17, 43 SAY 'PRZYCH&__O.D..                           '
-         @ 18, 43 SAY '-------------------------------------'
-         @ 19, 43 SAY 'Prawa maj.                           '
-         @ 20, 43 SAY '-------------------------------------'
+         @ 12, 43 SAY PadR( AllTrim( SubStr( staw_ory20, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 13, 43 SAY PadR( AllTrim( SubStr( staw_ory17, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 14, 43 SAY PadR( AllTrim( SubStr( staw_ouslu, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 15, 43 SAY PadR( AllTrim( SubStr( staw_oprod, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 16, 43 SAY PadR( AllTrim( SubStr( staw_ohand, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 17, 43 SAY PadR( AllTrim( SubStr( staw_ork07, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 18, 43 SAY PadR( AllTrim( SubStr( staw_ory10, 1, 9 ) ), 9, '.' ) + '.                           '
+         IF staw_k08w
+            @ 19, 43 SAY PadR( AllTrim( SubStr( staw_ork08, 1, 9 ) ), 9, '.' ) + '.                           '
+         ELSE
+            @ 19, 43 SAY '-------------------------------------'
+         ENDIF
+         @ 20, 43 SAY 'PRZYCH&__O.D..                           '
          @ 21, 43 SAY 'Ilo&_s.&_c. dokument&_o.w w miesi&_a.cu..........'
          SET COLOR TO w+
          @ 12, 53 SAY ry20m                        PICTURE RPIC
@@ -1267,10 +1276,16 @@ FUNCTION infoobr( nCurEl )
          @ 15, 66 SAY pn                           PICTURE RPICE
          @ 16, 53 SAY hm                           PICTURE RPIC
          @ 16, 66 SAY hn                           PICTURE RPICE
-         @ 17, 53 SAY um + pm + hm + ry20m + ry17m PICTURE RPIC
-         @ 17, 66 SAY un + pn + hn + ry20n + ry17n PICTURE RPICE
-         @ 19, 53 SAY ry10m                        PICTURE RPIC
-         @ 19, 66 SAY ry10n                        PICTURE RPICE
+         @ 17, 53 SAY ryk07m                        PICTURE RPIC
+         @ 17, 66 SAY ryk07n                        PICTURE RPICE
+         @ 18, 53 SAY ry10m                        PICTURE RPIC
+         @ 18, 66 SAY ry10n                        PICTURE RPICE
+         IF staw_k08w
+            @ 19, 53 SAY ryk08m                        PICTURE RPIC
+            @ 19, 66 SAY ryk08n                        PICTURE RPICE
+         ENDIF
+         @ 20, 53 SAY um + pm + hm + ry20m + ry17m + ry10m + ryk07m + ryk08m PICTURE RPIC
+         @ 20, 66 SAY un + pn + hn + ry20n + ry17n + ry10n + ryk07n + ryk08n PICTURE RPICE
          @ 21, 75 SAY ilpoz                        PICTURE '99999'
          SetColor( CURR )
          czyobrvat( un + pn + hn )
@@ -1337,7 +1352,7 @@ FUNCTION ObliczSumMies( cMiesiac )
    IF zRYCZALT == 'T'
 
       aRes := hb_Hash( 'uslugi', 0, 'wyr_tow', 0, 'handel', 0, 'ry20', 0, ;
-         'ry17', 0, 'ry10', 0, 'pozycje', 0 )
+         'ry17', 0, 'ry10', 0, 'ryk07', 0, 'ryk08', 0, 'pozycje', 0 )
 
       DO WHILE ! Dostep( 'EWID' )
       ENDDO
@@ -1353,6 +1368,8 @@ FUNCTION ObliczSumMies( cMiesiac )
             aRes[ 'ry20' ] += ewid->ry20
             aRes[ 'ry17' ] += ewid->ry17
             aRes[ 'ry10' ] += ewid->ry10
+            aRes[ 'ryk07' ] += ewid->ryk07
+            aRes[ 'ryk08' ] += ewid->ryk08
             aRes[ 'pozycje' ] := aRes[ 'pozycje' ] + 1
          ENDIF
          SKIP
@@ -1399,7 +1416,7 @@ FUNCTION ObliczSumMies( cMiesiac )
 FUNCTION aktsumies( nCurEl )
 
    LOCAL AKTM
-   LOCAL zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10
+   LOCAL zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10, zRK07, zRK08
    LOCAL zZAKUP, zUBOCZNE, zWYNAGR_G, zWYDATKI, zZAMEK
    LOCAL lPrzelicz := .F., aDane
 
@@ -1414,7 +1431,7 @@ FUNCTION aktsumies( nCurEl )
       SAVE SCREEN TO AKTM
       SET CURSOR ON
       IF zRYCZALT == 'T'
-         STORE 0 TO zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10
+         STORE 0 TO zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10, zRYK07, zRYK08
          IF lPrzelicz
             aDane := ObliczSumMies( nCurEl )
             zUSLUGI  := aDane[ 'uslugi' ]
@@ -1423,6 +1440,8 @@ FUNCTION aktsumies( nCurEl )
             zRY20    := aDane[ 'ry20' ]
             zRY17    := aDane[ 'ry17' ]
             zRY10    := aDane[ 'ry10' ]
+            zRYK07   := aDane[ 'ryk07' ]
+            zRYK08   := aDane[ 'ryk08' ]
             zPOZYCJE := aDane[ 'pozycje' ]
          ELSE
             zUSLUGI  := suma_mc->USLUGI
@@ -1431,6 +1450,8 @@ FUNCTION aktsumies( nCurEl )
             zRY20    := suma_mc->RY20
             zRY17    := suma_mc->RY17
             zRY10    := suma_mc->RY10
+            zRYK07   := suma_mc->RYK07
+            zRYK08   := suma_mc->RYK08
             zPOZYCJE := suma_mc->POZYCJE
          ENDIF
          zZAMEK   := iif( suma_mc->ZAMEK, 'T', 'N' )
@@ -1439,7 +1460,11 @@ FUNCTION aktsumies( nCurEl )
          @ 14, 53 GET zUSLUGI  PICTURE FPIC
          @ 15, 53 GET zWYR_TOW PICTURE FPIC
          @ 16, 53 GET zHANDEL  PICTURE FPIC
-         @ 19, 53 GET zRY10    PICTURE FPIC
+         @ 17, 53 GET zRYK07   PICTURE FPIC
+         @ 18, 53 GET zRY10    PICTURE FPIC
+         IF staw_k08w
+            @ 19, 53 GET zRYK08   PICTURE FPIC
+         ENDIF
          @ 21, 75 GET zPOZYCJE PICTURE '99999'
          @ 22, 43 SAY "Miesi¥c zamkni©ty" GET zZAMEK PICTURE '!' VALID zZAMEK $ 'NT'
          READ
@@ -1448,7 +1473,8 @@ FUNCTION aktsumies( nCurEl )
             // TODO: lepiej uzycz suma_mc->pole := ... zamiast REPLACE
             REPLACE USLUGI WITH zUSLUGI, WYR_TOW WITH zWYR_TOW, ;
                HANDEL WITH zHANDEL, POZYCJE WITH zPOZYCJE, ;
-               RY20 WITH zRY20, RY17 WITH zRY17, RY10 WITH zRY10, ZAMEK WITH iif( zZAMEK == 'T', .T., .F. )
+               RY20 WITH zRY20, RY17 WITH zRY17, RY10 WITH zRY10, ;
+               RYK07 WITH zRYK07, RYK08 WITH zRYK08, ZAMEK WITH iif( zZAMEK == 'T', .T., .F. )
             COMMIT
             UNLOCK
          ENDIF

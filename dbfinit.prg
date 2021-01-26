@@ -368,7 +368,7 @@ public aEWIDdbf := {;
    { "HANDEL", "N", 11, 2 },;                     //  9
    { "PRODUKCJA", "N", 11, 2 },;                  //  10
    { "USLUGI", "N", 11, 2 },;                     //  11
-   { "UWAGI", "C", 14, 0 },;                      //  12
+   { "UWAGI", "C", 200, 0 },;                     //  12
    { "ZAPLATA", "C", 1, 0 },;                     //  13
    { "KWOTA", "N", 11, 2 },;                      //  14
    { "LP", "N", 5, 0 },;                          //  15
@@ -376,7 +376,9 @@ public aEWIDdbf := {;
    { "REJZID", "N", 5, 0 },;                      //  17
    { "RY20", "N", 11, 2 },;                       //  18
    { "RY17", "N", 11, 2 },;                       //  19
-   { "RY10", "N", 11, 2 } }                       //  20
+   { "RY10", "N", 11, 2 },;                       //  20
+   { "RYK07", "N", 11, 2 },;                      //  21
+   { "RYK08", "N", 11, 2 } }                      //  22
 
 // Create: EWIDPOJ.DBF
 public aEWIDPOJdbf := {;
@@ -1340,7 +1342,9 @@ public aSUMA_MCdbf := {;
    { "ZWRKONTO", "C", 1, 0 },;                    //  91
    { "ZWRPODAT", "C", 1, 0 },;                    //  92
    { "ZWRPODKW", "N", 11, 2 },;                   //  93
-   { "ZWRPODRD", "C", 120, 0 } }                  //  94
+   { "ZWRPODRD", "C", 120, 0 },;                  //  94
+   { "RYK07", "N", 12, 2 },;                      //  95
+   { "RYK08", "N", 12, 2 } }                      //  96
 
 // Create: TABPIT4R.DBF
 public aTABPIT4Rdbf := {;

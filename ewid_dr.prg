@@ -81,8 +81,8 @@ begin sequence
          _prawa=130
       endif
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      store 0 to s0_4,s0_4a,s0_4b,s0_4c,s0_5,s0_6,s0_7
-      store 0 to s1_4,s1_4a,s1_4b,s1_4c,s1_5,s1_6,s1_7
+      store 0 to s0_4,s0_4a,s0_4b,s0_4c,s0_5,s0_6,s0_7,s0_4d
+      store 0 to s1_4,s1_4a,s1_4b,s1_4c,s1_5,s1_6,s1_7,s1_4d
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       _grupa1=int(strona/max(1,_druk_2-18))
       _grupa=.t.
@@ -106,6 +106,16 @@ begin sequence
             k5=kwota(staw_hand*100,5,2)
             k6=kwota(staw_prod*100,5,2)
             k7=kwota(staw_uslu*100,5,2)
+            rk7 := Kwota( staw_rk07 * 100, 5, 2 )
+
+            k5opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ory20, 1, 9 ) ) ) + ')', 11 )
+            k6opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ory17, 1, 9 ) ) ) + ')', 11 )
+            k7opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ouslu, 1, 9 ) ) ) + ')', 11 )
+            k8opis := PadC( '(' + Lower( AllTrim( SubStr( staw_oprod, 1, 9 ) ) ) + ')', 11 )
+            k9opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ohand, 1, 9 ) ) ) + ')', 11 )
+            k10opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ork07, 1, 9 ) ) ) + ')', 11 )
+            k11opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ory10, 1, 9 ) ) ) + ')', 11 )
+
             p_folio1 =s1_4
             p_folio1a=s1_4a
             p_folio1b=s1_4b
@@ -113,14 +123,15 @@ begin sequence
             p_folio2 =s1_5
             p_folio3 =s1_6
             p_folio4 =s1_7
-            store 0 to s_folio1,s_folio1a,s_folio1b,s_folio1c,s_folio2,s_folio3,s_folio4
+            p_folio1d=s1_4d
+            store 0 to s_folio1,s_folio1a,s_folio1b,s_folio1c,s_folio2,s_folio3,s_folio4,s_folio1d
             mon_drk([ ]+k1+[ ]+k2+[ ]+k3+[ str.]+str(k4,3))
             mon_drk([ ]+kk3)
-            mon_drk([ÚÄÄÄÄÄÂÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿])
-            mon_drk([³     ³ Data³   Data   ³Nr dowodu ³            Kwota przychodu opodatkowana wg stawk&_a.         ³   Og&_o.&_l.em  ³Kwota przy.³   Uwagi  ³])
-            mon_drk([³ Lp. ³wpisu³uzyskania ³na podsta-ÃÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄ´  przych&_o.d ³opodatkowa.³          ³])
-            mon_drk([³     ³     ³przychodu ³wie kt&_o.re-³   ]+k4a+[   ³   ]+k4b+[   ³   ]+k7+[   ³   ]+k6+[   ³   ]+k5+[   ³   w z&_l..   ³ wg stawki ³          ³])
-            mon_drk([³     ³     ³          ³go ksi&_e.go.³(wolne zaw)³(inne uslu)³  (us&_l.ugi) ³(produkcja)³  (handel) ³  (5+6+7)  ³   ]+k4c+[   ³          ³])
+            mon_drk([ÚÄÄÄÄÄÂÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿])
+            mon_drk([³     ³ Data³   Data   ³Nr dowodu ³                      Kwota przychodu opodatkowana wg stawk&_a.                       ³   Og&_o.&_l.em ³])
+            mon_drk([³ Lp. ³wpisu³uzyskania ³na podsta-ÃÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄ´ przych&_o.d ³])
+            mon_drk([³     ³     ³przychodu ³wie kt&_o.re-³   ]+k4a+[   ³   ]+k4b+[   ³   ]+k7+[   ³   ]+k6+[   ³   ]+k5+[   ³   ]+rk7+[   ³   ]+k4c+[   ³(5+6+7+8+9³])
+            mon_drk([³     ³     ³          ³go ksi&_e.go.³] + k5opis + [³] + k6opis + [³] + k7opis + [³] + k8opis + [³] + k9opis + [³] + k10opis + [³] + k11opis + [³  +10+11) ³])
             mon_drk([³ (1) ³ (2) ³    (3)   ³    (4)   ³     (5)   ³     (6)   ³     (7)   ³    (8)    ³    (9)    ³   (10)    ³   (11)    ³   (12)   ³])
             mon_drk([ÃÄÄÄÄÄÅÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄ´])
          endif
@@ -137,12 +148,15 @@ begin sequence
          k4=uslugi
          k5=produkcja
          k6=handel
+         k4d=ryk07
 *         iif('REM-P'$k3.or.'REM-K'$k3,0,k4)
          k7=iif('REM-P'$k3.or.'REM-K'$k3,0,k4)+;
             iif('REM-P'$k3.or.'REM-K'$k3,0,k5)+;
             iif('REM-P'$k3.or.'REM-K'$k3,0,k6)+;
             iif('REM-P'$k3.or.'REM-K'$k3,0,k4a)+;
-            iif('REM-P'$k3.or.'REM-K'$k3,0,k4b)
+            iif('REM-P'$k3.or.'REM-K'$k3,0,k4b)+;
+            iif('REM-P'$k3.or.'REM-K'$k3,0,k4c)+;
+            iif('REM-P'$k3.or.'REM-K'$k3,0,k4d)
          k8=uwagi
          skip
          s_folio1 =s_folio1 +iif('REM-P'$k3.or.'REM-K'$k3,0,k4)
@@ -151,6 +165,7 @@ begin sequence
          s_folio1c=s_folio1c+iif('REM-P'$k3.or.'REM-K'$k3,0,k4c)
          s_folio2 =s_folio2 +iif('REM-P'$k3.or.'REM-K'$k3,0,k5)
          s_folio3 =s_folio3 +iif('REM-P'$k3.or.'REM-K'$k3,0,k6)
+         s_folio1d=s_folio1d+iif('REM-P'$k3.or.'REM-K'$k3,0,k4d)
          s_folio4 =s_folio4 +k7
          *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          s1_4=s1_4+iif('REM-P'$k3.or.'REM-K'$k3,0,k4)
@@ -159,6 +174,7 @@ begin sequence
          s1_4c=s1_4c+iif('REM-P'$k3.or.'REM-K'$k3,0,k4c)
          s1_5=s1_5+iif('REM-P'$k3.or.'REM-K'$k3,0,k5)
          s1_6=s1_6+iif('REM-P'$k3.or.'REM-K'$k3,0,k6)
+         s1_4d=s1_4d+iif('REM-P'$k3.or.'REM-K'$k3,0,k4d)
          s1_7=s1_7+k7
          k1=str(k1,5)
          k4=iif(k4#0,str(k4,11,2),space(11))
@@ -168,7 +184,8 @@ begin sequence
          k5=iif(k5#0,str(k5,11,2),space(11))
          k6=iif(k6#0,str(k6,11,2),space(11))
          k7=iif(k7#0,str(k7,11,2),space(11))
-         mon_drk([³]+k1+[³]+k2+[³]+k2a+[³]+k3+[³]+k4a+[³]+k4b+[³]+k4+[³]+k5+[³]+k6+[³]+k7+[³]+k4c+[³]+substr(k8,1,10)+[³])
+         k4d=iif(k4d#0,str(k4d,11,2),space(11))
+         mon_drk([³]+k1+[³]+k2+[³]+k2a+[³]+k3+[³]+k4a+[³]+k4b+[³]+k4+[³]+k5+[³]+k6+[³]+k4d+[³]+k4c+[³]+k7)
          *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          _numer=1
          do case
@@ -185,19 +202,21 @@ begin sequence
             k2 =s_folio2
             k3 =s_folio3
             k4 =s_folio4
+            k1d=s_folio1d
             k6 =p_folio1
             k6a=p_folio1a
             k6b=p_folio1b
             k6c=p_folio1c
+            k6d=p_folio1d
             k7 =p_folio2
             k8 =p_folio3
             k9 =p_folio4
             k29=dos_c(code())
-            mon_drk([ÀÄÄÄÄÄÁÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÙ])
-            mon_drk([ Podsumowanie strony              ³]+str(k1a,11,2)+[³]+str(k1b,11,2)+[³]+str(k1,11,2)+[³]+str(k2,11,2)+[³]+str(k3,11,2)+[³]+str(k4,11,2)+[³]+str(k1c,11,2)+[³])
-            mon_drk([                                  ÃÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄ´])
-            mon_drk([ Przeniesienie z poprzedniej      ³]+str(k6a,11,2)+[³]+str(k6b,11,2)+[³]+str(k6,11,2)+[³]+str(k7,11,2)+[³]+str(k8,11,2)+[³]+str(k9,11,2)+[³]+str(k6c,11,2)+[³])
-            mon_drk([ strony                           ÃÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄ´])
+            mon_drk([ÀÄÄÄÄÄÁÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄ´])
+            mon_drk([ Podsumowanie strony              ³]+str(k1a,11,2)+[³]+str(k1b,11,2)+[³]+str(k1,11,2)+[³]+str(k2,11,2)+[³]+str(k3,11,2)+[³]+str(k1d,11,2)+[³]+str(k1c,11,2)+[³]+str(k4,11,2))
+            mon_drk([                                  ÃÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄ´])
+            mon_drk([ Przeniesienie z poprzedniej      ³]+str(k6a,11,2)+[³]+str(k6b,11,2)+[³]+str(k6,11,2)+[³]+str(k7,11,2)+[³]+str(k8,11,2)+[³]+str(k6d,11,2)+[³]+str(k6c,11,2)+[³]+str(k9,11,2))
+            mon_drk([ strony                           ÃÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄ´])
             if .not.&_koniec
                sumtex='strony do przeniesienia'
                sumtex1=space(20)
@@ -205,8 +224,8 @@ begin sequence
                sumtex='przychodow za miesiac  '
                sumtex1=padr(alltrim(k28),20)
             endif
-            mon_drk([ Suma ]+sumtex+[     ³]+str(s1_4a,11,2)+[³]+str(s1_4b,11,2)+[³]+str(s1_4,11,2)+[³]+str(s1_5,11,2)+[³]+str(s1_6,11,2)+[³]+str(s1_7,11,2)+[³]+str(s1_4c,11,2)+[³])
-            mon_drk([ ]+sumtex1+[             ÀÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÙ])
+            mon_drk([ Suma ]+sumtex+[     ³]+str(s1_4a,11,2)+[³]+str(s1_4b,11,2)+[³]+str(s1_4,11,2)+[³]+str(s1_5,11,2)+[³]+str(s1_6,11,2)+[³]+str(s1_4d,11,2)+[³]+str(s1_4c,11,2)+[³]+str(s1_7,11,2))
+            mon_drk([ ]+sumtex1+[             ÀÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÙ])
             mon_drk([                 U&_z.ytkownik programu komputerowego])
             mon_drk([         ]+k29)
             s0_4=s0_4+s1_4
@@ -215,6 +234,7 @@ begin sequence
             s0_4c=s0_4c+s1_4c
             s0_5=s0_5+s1_5
             s0_6=s0_6+s1_6
+            s0_4d=s0_4d+s1_4d
             s0_7=s0_7+s1_7
          endif
       enddo
