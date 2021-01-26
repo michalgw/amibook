@@ -71,7 +71,7 @@ begin
     S := Items[I].Katalog;
     if S = '' then
       S := 'Glowny';
-    Items[I].Tryb := TTryb(Ini.ReadInteger(S, 'Tryb', 0));
+    Items[I].Tryb := TTryb(Ini.ReadInteger(S, 'Tryb', Integer(tGraficzny)));
     Items[I].Ekran := TEkran(Ini.ReadInteger(S, 'Ekran', 0));
   end;
   InstallWpis := Ini.ReadString('Install', 'Install', '(brak)');
@@ -131,7 +131,8 @@ var
 begin
   W := TWpisMenu.Create;
   W.Katalog := SR.Name;
-  W.NowyStart := FileExistsUTF8(SR.Name + '\menu2.exe');
+  W.NowyStart := FileExistsUTF8(SR.Name + '\ksiega.exe');
+  W.Tryb := tGraficzny;
   Add(W);
 end;
 
