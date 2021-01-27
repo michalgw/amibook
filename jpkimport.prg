@@ -3233,7 +3233,7 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42 ), .T. }
                @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "S" )
                IF zRYCZALT == 'T'
-                  @ 11, 17 SAY "Domy˜lna kolumna ewidencji (5,6,7,8,9,11)" GET cKolRej PICTURE '@K 99' VALID AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '11'
+                  @ 11, 17 SAY "Domy˜lna kolumna ewidencji (5,6,7,8,9,10,11)" GET cKolRej PICTURE '@K 99' VALID AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11'
                ELSE
                   @ 11, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
                ENDIF

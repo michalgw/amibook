@@ -1007,6 +1007,8 @@ PROCEDURE AktKol( mnoz, kolum, wart )
          AKTPOL+ wyr_tow WITH wart * mnoz
       CASE KOKO == 9
          AKTPOL+ handel WITH wart * mnoz
+      CASE KOKO == 10
+         AKTPOL+ ryk07 WITH wart * mnoz
       CASE KOKO == 11
          AKTPOL+ ry10 WITH wart * mnoz
       ENDCASE

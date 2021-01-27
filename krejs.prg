@@ -416,6 +416,8 @@ PROCEDURE KRejS()
                      repl_( 'wyr_tow', wyr_tow - rejs->netto )
                   CASE AllTrim( rejs->KOLUMNA ) == '9'
                      repl_( 'handel', handel - rejs->netto )
+                  CASE AllTrim( rejs->KOLUMNA ) == '10'
+                     repl_( 'ryk07', ryk07 - rejs->netto )
                   CASE AllTrim( rejs->KOLUMNA ) == '11'
                      repl_( 'ry10', ry10 - rejs->netto )
                   ENDCASE
@@ -430,10 +432,12 @@ PROCEDURE KRejS()
                      repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
                   CASE AllTrim( rejs->KOLUMNA2 ) == '9'
                      repl_( 'handel', handel - rejs->netto2 )
+                  CASE AllTrim( rejs->KOLUMNA2 ) == '10'
+                     repl_( 'ryk07', ry10 - rejs->netto2 )
                   CASE AllTrim( rejs->KOLUMNA2 ) == '11'
                      repl_( 'ry10', ry10 - rejs->netto2 )
                   ENDCASE
-                  IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '11' )
+                  IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '11' )
                      repl_( 'pozycje', pozycje - 1 )
                   ENDIF
                ELSE
@@ -711,6 +715,8 @@ PROCEDURE KRejS()
                         repl_( 'wyr_tow', wyr_tow - rejs->netto )
                      CASE AllTrim( rejs->KOLUMNA ) == '9'
                         repl_( 'handel', handel - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '10'
+                        repl_( 'ryk07', ryk07 - rejs->netto )
                      CASE AllTrim( rejs->KOLUMNA ) == '11'
                         repl_( 'ry10', ry10 - rejs->netto )
                      ENDCASE
@@ -725,6 +731,8 @@ PROCEDURE KRejS()
                         repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
                      CASE AllTrim( rejs->KOLUMNA2 ) == '9'
                         repl_( 'handel', handel - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '10'
+                        repl_( 'ryk07', ryk07 - rejs->netto2 )
                      CASE AllTrim( rejs->KOLUMNA2 ) == '11'
                         repl_( 'ry10', ry10 - rejs->netto2 )
                      ENDCASE
@@ -1772,7 +1780,7 @@ FUNCTION KRejSWZKolumna2( lRycz )
    IF lRes
       ColInf()
       IF lRycz
-         @ 24, 0 SAY PadC( 'Kolumna: 5, 6, 7, 8, 9 lub 11', 80, ' ' )
+         @ 24, 0 SAY PadC( 'Kolumna: 5, 6, 7, 8, 9, 10 lub 11', 80, ' ' )
       ELSE
          @ 24, 0 SAY PadC( 'Kolumna: 7 lub 8', 80, ' ' )
          IF Val( zKOLUMNA ) == 7
@@ -1795,7 +1803,7 @@ FUNCTION KRejSVZKolumna2( lRycz )
    LOCAL lRes := .F.
 
    IF lRycz
-      lRes := ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. zKOLUMNA2 == '11' ) .AND. ( Val( zKOLUMNA ) <> Val( zKOLUMNA2 ) )
+      lRes := ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. zKOLUMNA2 == '10' .OR. zKOLUMNA2 == '11' ) .AND. ( Val( zKOLUMNA ) <> Val( zKOLUMNA2 ) )
    ELSE
       lRes := zKOLUMNA2 $ '78' .AND. Val( zKOLUMNA2 ) <> Val( zKOLUMNA )
    ENDIF
@@ -1816,7 +1824,7 @@ FUNCTION KRejSWZKolumna( lRycz )
    IF lRes
       ColInf()
       IF lRycz
-         @ 24, 0 SAY PadC( 'Kolumna: 5, 6, 7, 8, 9 lub 11', 80, ' ' )
+         @ 24, 0 SAY PadC( 'Kolumna: 5, 6, 7, 8, 9, 10 lub 11', 80, ' ' )
       ELSE
          @ 24, 0 SAY PadC( 'Kolumna: 7 lub 8', 80, ' ' )
       ENDIF
@@ -1832,7 +1840,7 @@ FUNCTION KRejSVZKolumna( lRycz )
    LOCAL lRes := .F.
 
    IF lRycz
-      lRes := AllTrim( zKOLUMNA ) $ '56789' .OR. zKOLUMNA == '11'
+      lRes := AllTrim( zKOLUMNA ) $ '56789' .OR. zKOLUMNA == '10' .OR. zKOLUMNA == '11'
    ELSE
       lRes := AllTrim( zKOLUMNA ) $ '78'
    ENDIF
@@ -2455,8 +2463,10 @@ PROCEDURE KRejS_Ksieguj()
    SetInd( USEBAZ )
    IF ! ins
       IF zRYCZALT == 'T'
-         IF ( AllTrim( zKOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( zKOLUMNA ) == '11' .OR. AllTrim( rejs->KOLUMNA ) == '11' ) ;
-            .OR. ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. AllTrim( rejs->KOLUMNA2 ) $ '56789' .OR. AllTrim( zKOLUMNA2 ) == '11' .OR. AllTrim( rejs->KOLUMNA2 ) == '11' )
+         IF ( AllTrim( zKOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( zKOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '10' ;
+            .OR. AllTrim( zKOLUMNA ) == '11' .OR. AllTrim( rejs->KOLUMNA ) == '11' ) ;
+            .OR. ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. AllTrim( rejs->KOLUMNA2 ) $ '56789' .OR. AllTrim( zKOLUMNA2 ) == '10' .OR. AllTrim( rejs->KOLUMNA2 ) == '10' ;
+            .OR. AllTrim( zKOLUMNA2 ) == '11' .OR. AllTrim( rejs->KOLUMNA2 ) == '11' )
             DO CASE
             CASE netprzed <> 0
                SET ORDER TO 5
@@ -2505,6 +2515,7 @@ PROCEDURE KRejS_Ksieguj()
                      REPLACE  uslugi    WITH iif( AllTrim( zKOLUMNA ) == '7', znetto, 0 )
                      REPLACE  produkcja WITH iif( AllTrim( zKOLUMNA ) == '8', znetto, 0 )
                      REPLACE  handel    WITH iif( AllTrim( zKOLUMNA ) == '9', znetto, 0 )
+                     REPLACE  ryk07     WITH iif( AllTrim( zKOLUMNA ) == '10', znetto, 0 )
                      REPLACE  ry10      WITH iif( AllTrim( zKOLUMNA ) == '11', znetto, 0 )
                      IF zNETTO2 <> 0 .AND. Val( zKOLUMNA2 ) > 0
                         DO CASE
@@ -2518,6 +2529,8 @@ PROCEDURE KRejS_Ksieguj()
                            REPLACE  produkcja WITH zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '9'
                            REPLACE  handel    WITH zNETTO2
+                        CASE AllTrim( zKOLUMNA2 ) == '10'
+                           REPLACE  ryk07     WITH zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '11'
                            REPLACE  ry10      WITH zNETTO2
                         ENDCASE
@@ -2552,6 +2565,7 @@ PROCEDURE KRejS_Ksieguj()
                   REPLACE  uslugi    WITH iif( AllTrim( zKOLUMNA ) == '7', znetto, 0 )
                   REPLACE  produkcja WITH iif( AllTrim( zKOLUMNA ) == '8', znetto, 0 )
                   REPLACE  handel    WITH iif( AllTrim( zKOLUMNA ) == '9', znetto, 0 )
+                  REPLACE  ryk07     WITH iif( AllTrim( zKOLUMNA ) == '10', znetto, 0 )
                   REPLACE  ry10      WITH iif( AllTrim( zKOLUMNA ) == '11', znetto, 0 )
                   IF zNETTO2 <> 0 .AND. Val( zKOLUMNA2 ) > 0
                      DO CASE
@@ -2565,6 +2579,8 @@ PROCEDURE KRejS_Ksieguj()
                         REPLACE  produkcja WITH zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '9'
                         REPLACE  handel    WITH zNETTO2
+                     CASE AllTrim( zKOLUMNA2 ) == '10'
+                        REPLACE  ryk07     WITH zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '11'
                         REPLACE  ry10      WITH zNETTO2
                      ENDCASE
@@ -2725,7 +2741,7 @@ PROCEDURE KRejS_Ksieguj()
       ENDIF
    ELSE
       IF zRYCZALT == 'T'
-         IF ( AllTrim( zKOLUMNA ) $ '56789' .OR. AllTrim( zKOLUMNA ) == '11' ) .OR. ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. AllTrim( zKOLUMNA2 ) == '11' )
+         IF ( AllTrim( zKOLUMNA ) $ '56789' .OR. AllTrim( zKOLUMNA ) == '10' .OR. AllTrim( zKOLUMNA ) == '11' ) .OR. ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. AllTrim( zKOLUMNA2 ) == '10' .OR. AllTrim( zKOLUMNA2 ) == '11' )
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
             IF zNETTO <> 0
                SELECT suma_mc
@@ -2749,6 +2765,7 @@ PROCEDURE KRejS_Ksieguj()
                REPLACE  uslugi    WITH iif( AllTrim( zKOLUMNA ) == '7', znetto, 0 )
                REPLACE  produkcja WITH iif( AllTrim( zKOLUMNA ) == '8', znetto, 0 )
                REPLACE  handel    WITH iif( AllTrim( zKOLUMNA ) == '9', znetto, 0 )
+               REPLACE  ryk07     WITH iif( AllTrim( zKOLUMNA ) == '10', znetto, 0 )
                REPLACE  ry10      WITH iif( AllTrim( zKOLUMNA ) == '11', znetto, 0 )
                IF zNETTO2 <> 0 .AND. Val( zKOLUMNA2 ) > 0
                   DO CASE
@@ -2762,6 +2779,8 @@ PROCEDURE KRejS_Ksieguj()
                      REPLACE  produkcja WITH zNETTO2
                   CASE AllTrim( zKOLUMNA2 ) == '9'
                      REPLACE  handel    WITH zNETTO2
+                  CASE AllTrim( zKOLUMNA2 ) == '10'
+                     REPLACE  ryk07     WITH zNETTO2
                   CASE AllTrim( zKOLUMNA2 ) == '11'
                      REPLACE  ry10      WITH zNETTO2
                   ENDCASE
