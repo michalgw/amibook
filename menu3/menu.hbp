@@ -1,0 +1,25 @@
+#
+# $Id$
+#
+
+-3rd=hbide_version=1.0
+-3rd=hbide_title=menu
+-3rd=hbide_output=menu
+
+# HbIDE <Project>
+# HbIDE    <Version:2.0>
+# HbIDE       <GENERAL>
+# HbIDE          cProjPath        = D:/amisrc/amigit/amibook/menu3/menu.hbp
+# HbIDE          cProjName        = Menu
+# HbIDE          cProjType        = Executable
+# HbIDE          cOutName         = menu
+# HbIDE          cGT              = gtWIN
+# HbIDE       </GENERAL>
+# HbIDE    </Version:2.0>
+# HbIDE </Project>
+#-b
+hbwin.hbc
+
+menu.prg
+
+ 
