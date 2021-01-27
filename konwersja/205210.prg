@@ -36,6 +36,15 @@ FUNCTION Main()
    dbfIdxSUMA_MC()
    dbCloseAll()
 
+   ? 'Kopiowanie plik¢w...'
+   AEval( { "OLD2020", "OLD2019", "OLD2018", "OLD2017", "OLD2016" }, { | cKatalog |
+      IF hb_DirExists( cKatalog ) .AND. hb_FileExists( cKatalog + "\menu.exe" ) .AND. hb_FSize( cKatalog + "\menu.exe" ) > 50000
+         BEGIN SEQUENCE
+            hb_FCopy( "menu.exe", cKatalog + "\menu.exe" )
+         END
+      ENDIF
+   } )
+
    RETURN
 
 FUNCTION DodajBackslash(cSciezka)
