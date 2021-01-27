@@ -89,6 +89,8 @@ FUNCTION Main( cParam1, cParam2, cParam3, cParam4 )
    hb_gtInfo( HB_GTI_MAXIMIZED, .T. )
    hb_gtInfo( HB_GTI_WINTITLE, "AMi-BOOK - Wyb¢r roku" )
    SET INTENSITY ON
+   SET EVENTMASK TO 255
+   mSetCursor( .T. )
 
    aKatalogi := Directory( "OLD2*", "D" )
 
@@ -123,7 +125,7 @@ FUNCTION Main( cParam1, cParam2, cParam3, cParam4 )
       nIlosc := Len( aLista )
 
       SetColor( "W/N" )
-      @ 11 + nIlosc, 0 SAY PadC( "ESC - Powr¢t", 80 )
+      @ 11 + nIlosc, 0 SAY PadC( "Enter - Wybierz   /   ESC - Powr¢t", 80 )
 
       SetColor( "N/W, N/G" )
       @ 7, 19 CLEAR TO 10 + nIlosc, 59
