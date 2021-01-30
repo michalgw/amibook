@@ -43,7 +43,7 @@ set color to
 @ 19,0 say 'MIEJSC_ZAM ZATR  DOWOD KOSZT  PODATEK  $_PUC - ubezp.chorob.      Przedrostki   '
 @ 20,0 say 'DATA_WYP   KOD   NETTO BRUTTO IMIE_O   $_FUW - ubezp.wypadk.  # = spacje obciete'
 @ 21,0 say '%PODATEK   DOM   NSLOW BSLOW  IMIE_M   $_PUZ - ub.zdr.do ZUS  @ = spacje drukow.'
-@ 22,0 say '                                       $_PZK - ub.zdr.do odl                    '
+@ 22,0 say 'POTRACENIA                             $_PZK - ub.zdr.do odl                    '
 
 *@ 19,0 say '@NAZWISKO  @IMIE1  @IMIE2  @IMIE_O  @IMIE_M  @MIEJSC_UR  @DATA_UR  @DOWOD @PESEL'
 *@ 20,0 say '@ZATR  @NIP  @MIEJSC_ZAM  @KOD  @GMINA  @ULICA  @DOM  @LOKAL   @DZISIAJ   @UMOWA'

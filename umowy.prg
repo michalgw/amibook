@@ -48,12 +48,12 @@ PROCEDURE Umowy()
    @ 14, 0 SAY '³ Opis...                                                                      ³'
    @ 15, 0 SAY '³ prac...                                                                      ³'
    //002a nowe pole
-   @ 16, 0 say '³                                                                              ³'
-   @ 17, 0 say '³ Przychody opodatkowane =                 Z jakiego tytu&_l.u ?                  ³'
-   @ 18, 0 say '³ Sk&_l.adki wykonawcy      =     %             Przych&_o.d netto=                   ³'
-   @ 19, 0 say '³ Koszt uzyskania        =  %              Do opodatkowania=                   ³'
-   @ 20, 0 say '³ Wyliczenie podatku     =     %                 DO WYP&__L.ATY=                   ³'
-   @ 21, 0 say '³ Sk&_l.adki zleceniodawcy  =     %                 Fundusze  =     %             ³'
+   @ 16, 0 say '³ Przychody opodatkowane =                 Z jakiego tytu&_l.u ?                  ³'
+   @ 17, 0 say '³ Sk&_l.adki wykonawcy      =     %             Przych&_o.d netto=                   ³'
+   @ 18, 0 say '³ Koszt uzyskania        =  %              Do opodatkowania=                   ³'
+   @ 19, 0 say '³ Wyliczenie podatku     =     %                 DO WYP&__L.ATY=                   ³'
+   @ 20, 0 say '³ Sk&_l.adki zleceniodawcy  =     %                 Fundusze  =     %             ³'
+   @ 21, 0 say '³ Potr¥cenia po opodat.  =                                                     ³'
    @ 22, 0 say 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
 
    *############################### OTWARCIE BAZ ###############################
@@ -363,7 +363,8 @@ PROCEDURE Umowy()
             zDO_WYPLATY, ;
             zUWAGI     , ;
             B5         , ;
-            SKLADN
+            SKLADN     , ;
+            zPOTRACENIA
             *zZAOPOD    ,;
             *zJAKZAO='Z'
          zTYTUL := TYTUL
@@ -419,13 +420,14 @@ PROCEDURE Umowy()
 
          DO WHILE .T.
             ColStd()
-            @ 17,  1 PROMPT ' Przychody opodatkowane '
+            @ 16,  1 PROMPT ' Przychody opodatkowane '
             //002a nowa linia
-            @ 17, 42 PROMPT ' Z jakiego tytu&_l.u ?'
-            @ 18,  1 PROMPT ' Sk&_l.adki wykonawcy      '
-            @ 19,  1 PROMPT ' Koszt uzyskania        '
-            @ 20,  1 PROMPT ' Wyliczenie podatku     '
-            @ 21,  1 PROMPT ' Sk&_l.adki zleceniodawcy  '
+            @ 16, 42 PROMPT ' Z jakiego tytu&_l.u ?'
+            @ 17,  1 PROMPT ' Sk&_l.adki wykonawcy      '
+            @ 18,  1 PROMPT ' Koszt uzyskania        '
+            @ 19,  1 PROMPT ' Wyliczenie podatku     '
+            @ 20,  1 PROMPT ' Sk&_l.adki zleceniodawcy  '
+            @ 21,  1 PROMPT ' Potr¥cenia po opodat.  '
             skladn := menu( skladn )
             ColStd()
             IF LastKey() == 27
@@ -436,14 +438,14 @@ PROCEDURE Umowy()
             CASE skladn == 1
                SAVE SCREEN TO scr_sklad
                SET CURSOR ON
-               @ 17, 26 GET zBRUT_ZASAD PICTURE '999999.99' VALID oblplu()
+               @ 16, 26 GET zBRUT_ZASAD PICTURE '999999.99' VALID oblplu()
                READ
                SET CURSOR OFF
                RESTORE SCREEN FROM scr_sklad
             CASE skladn == 2
                SAVE SCREEN TO scr_sklad
                SET CURSOR ON
-               @ 17, 62 GET zTYT PICTURE '!' when jaki_tytul() VALID zTYT $ 'AZPICEFSROD'
+               @ 16, 62 GET zTYT PICTURE '!' when jaki_tytul() VALID zTYT $ 'AZPICEFSROD'
                READ
                SET CURSOR OFF
                RESTORE SCREEN FROM scr_sklad
@@ -474,9 +476,9 @@ PROCEDURE Umowy()
             CASE skladn == 4
                SAVE SCREEN TO scr_sklad
                SET CURSOR ON
-               @ 19, 26 GET zKOSZTY PICTURE '99' VALID oblplu()
-               @ 19, 30 GET zAKOSZT PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAKOSZT $ 'AR' .AND. vAUTOKOM()
-               @ 19, 33 GET zKOSZT PICTURE '999999.99' VALID oblplu()
+               @ 18, 26 GET zKOSZTY PICTURE '99' VALID oblplu()
+               @ 18, 30 GET zAKOSZT PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAKOSZT $ 'AR' .AND. vAUTOKOM()
+               @ 18, 33 GET zKOSZT PICTURE '999999.99' VALID oblplu()
                READ
                SET CURSOR OFF
                REST SCREEN FROM scr_sklad
@@ -537,6 +539,13 @@ PROCEDURE Umowy()
                read
                SET CURSOR OFF
                RESTORE SCREEN FROM scr_sklad
+            CASE skladn == 7
+               SAVE SCREEN TO scr_sklad
+               SET CURSOR ON
+               @ 21, 26 GET zPOTRACENIA PICTURE '999999.99' VALID oblplu()
+               READ
+               SET CURSOR OFF
+               RESTORE SCREEN FROM scr_sklad
             ENDCASE
             //002a zmiana skladn z 2 na 3
             IF LastKey() # 27 .OR. skladn == 3
@@ -548,13 +557,14 @@ PROCEDURE Umowy()
             ENDIF
             _infoskl_u()
          ENDDO
-         @ 17,  1 SAY ' Przychody opodatkowane '
+         @ 16,  1 SAY ' Przychody opodatkowane '
          //002a nowa linia
-         @ 17, 42 SAY ' Z jakiego tytu&_l.u ?'
-         @ 18,  1 SAY ' Sk&_l.adki wykonawcy      '
-         @ 19,  1 SAY ' Koszt uzyskania        '
-         @ 20,  1 SAY ' Wyliczenie podatku     '
-         @ 21,  1 SAY ' Sk&_l.adki zleceniodawcy  '
+         @ 16, 42 SAY ' Z jakiego tytu&_l.u ?'
+         @ 17,  1 SAY ' Sk&_l.adki wykonawcy      '
+         @ 18,  1 SAY ' Koszt uzyskania        '
+         @ 19,  1 SAY ' Wyliczenie podatku     '
+         @ 20,  1 SAY ' Sk&_l.adki zleceniodawcy  '
+         @ 21,  1 SAY ' Potr¥cenia po opodat.  '
          RESTORE SCREEN FROM scr_
       *################################### POMOC ##################################
       CASE kl == 28
@@ -753,6 +763,8 @@ PROCEDURE TRANTEK()
    TEKSTDR := StrTran( TEKSTDR, '#WAR_FFP', AllTrim( kwota( WAR_FFP, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@WAR_FFG', kwota( WAR_FFG, 11, 2 ) )
    TEKSTDR := StrTran( TEKSTDR, '#WAR_FFG', AllTrim( kwota( WAR_FFG, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@POTRACENIA', kwota( POTRACENIA, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#POTRACENIA', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
    //?tekstdr
    //ejec
    //set print off
@@ -854,7 +866,7 @@ FUNCTION _infoskl_u()
    CURR := ColStd()
    SET COLOR TO w+
    *@ 16,32 say iif(ZAOPOD=1,'Dziesiec groszy','Zlotowka       ')
-   @ 17, 26 SAY BRUT_ZASAD PICTURE '999999.99'
+   @ 16, 26 SAY BRUT_ZASAD PICTURE '999999.99'
    //002a nowe linie
    DO CASE
     *     case TYTUL='0'
@@ -883,7 +895,7 @@ FUNCTION _infoskl_u()
       zTYT := 'Z' //umowy zlecenia i o dzielo 5
    ENDCASE
 
-   @ 17, 62 SAY zTYT + iif( zTYT = 'I', 'nne             ', ;
+   @ 16, 62 SAY zTYT + iif( zTYT = 'I', 'nne             ', ;
       iif( zTYT = 'A', 'ktywizacja umowa', ;
       iif( zTYT = 'C', 'zlonkow.spoldzi.', ;
       iif( zTYT = 'E', 'meryt.i ren.zagr', ;
@@ -895,20 +907,21 @@ FUNCTION _infoskl_u()
       iif( zTYT = 'D', 'zieˆa           ', ;
       'lecenia         '))))))))))
    //002a do tad
-   @ 18, 26 SAY STAW_PSUM PICTURE '99.99'
-   @ 18, 33 SAY WAR_PSUM PICTURE '999999.99'
-   @ 18, 60 SAY BRUT_ZASAD-WAR_PSUM PICTURE '999999.99'
-   @ 19, 26 SAY KOSZTY PICTURE '99'
-   @ 19, 30 SAY AKOSZT PICTURE '!'
-   @ 19, 33 SAY KOSZT PICTURE '999999.99'
-   @ 19, 60 SAY DOCHOD PICTURE '999999.99'
-   @ 20, 26 SAY STAW_PODA2 PICTURE "99.99"
-   @ 20, 33 SAY PODATEK PICTURE "999999.99"
-   @ 20, 60 SAY DO_WYPLATY PICTURE "999999.99"
-   @ 21, 26 SAY STAW_FUE + STAW_FUR + STAW_FUW PICTURE '99.99'
-   @ 21, 33 SAY WAR_FUE + WAR_FUR + WAR_FUW PICTURE '999999.99'
-   @ 21, 60 SAY STAW_FFP + STAW_FFG PICTURE '99.99'
-   @ 21, 67 SAY WAR_FFP + WAR_FFG PICTURE '999999.99'
+   @ 17, 26 SAY STAW_PSUM PICTURE '99.99'
+   @ 17, 33 SAY WAR_PSUM PICTURE '999999.99'
+   @ 17, 60 SAY BRUT_ZASAD-WAR_PSUM PICTURE '999999.99'
+   @ 18, 26 SAY KOSZTY PICTURE '99'
+   @ 18, 30 SAY AKOSZT PICTURE '!'
+   @ 18, 33 SAY KOSZT PICTURE '999999.99'
+   @ 18, 60 SAY DOCHOD PICTURE '999999.99'
+   @ 19, 26 SAY STAW_PODA2 PICTURE "99.99"
+   @ 19, 33 SAY PODATEK PICTURE "999999.99"
+   @ 19, 60 SAY DO_WYPLATY PICTURE "999999.99"
+   @ 20, 26 SAY STAW_FUE + STAW_FUR + STAW_FUW PICTURE '99.99'
+   @ 20, 33 SAY WAR_FUE + WAR_FUR + WAR_FUW PICTURE '999999.99'
+   @ 20, 60 SAY STAW_FFP + STAW_FFG PICTURE '99.99'
+   @ 20, 67 SAY WAR_FFP + WAR_FFG PICTURE '999999.99'
+   @ 21, 26 SAY POTRACENIA PICTURE '999999.99'
    SetColor( CURR )
 
    RETURN
@@ -950,7 +963,7 @@ FUNCTION oblplu()
       zWAR_PUZO := zWAR_PZK
       zPODATEK := _round( zBRUT_RAZEM * ( zSTAW_PODAT / 100 ), 0 )
       zNETTO := zBRUT_RAZEM - ( zPODATEK + zWAR_PSUM + zWAR_PUZ )
-      zDO_WYPLATY := zNETTO
+      zDO_WYPLATY := zNETTO - zPOTRACENIA
       oWAR_FUE := _round( zPENSJA * ( zSTAW_FUE / 100 ), 2 )
       oWAR_FUR := _round( zPENSJA * ( zSTAW_FUR / 100 ), 2 )
       oWAR_FUW := _round( zPENSJA * ( zSTAW_FUW / 100 ), 2 )
@@ -1024,7 +1037,7 @@ FUNCTION oblplu()
          zPODATEK := Max( 0, _round( B5 - zWAR_PZK, 0 ) )
       ENDIF
       zNETTO := zBRUT_RAZEM - ( zPODATEK + zWAR_PSUM + zWAR_PUZ )
-      zDO_WYPLATY := zNETTO
+      zDO_WYPLATY := zNETTO - zPOTRACENIA
       oWAR_FUE := _round( zPENSJA * ( zSTAW_FUE / 100 ), 2 )
       oWAR_FUR := _round( zPENSJA * ( zSTAW_FUR / 100 ), 2 )
       oWAR_FUW := _round( zPENSJA * ( zSTAW_FUW / 100 ), 2 )
@@ -1153,6 +1166,8 @@ PROCEDURE PODSTAWu()
 
    zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
 
+   zPOTRACENIA := POTRACENIA
+
    RETURN
 
 ***************************************************************************
@@ -1248,27 +1263,29 @@ PROCEDURE ZAPISZPLAu()
 
    repl_( 'OSWIAD26R', zOSWIAD26R )
 
+   repl_( 'POTRACENIA', zPOTRACENIA )
+
    RETURN
 
 //002a nowe funkcje
 FUNCTION jaki_tytul()
    ColInf()
-   @  3, 50 CLEAR TO 16, 79
-   @  3, 50 to 16, 79
-   @  4, 51 SAY padc('Wpisz:',28)
-   @  5, 51 SAY 'Z - umowy zlecenia          '
-   @  6, 51 SAY 'D - umowy o dzieˆo          '
-   @  7, 51 SAY 'P - prawa autorskie i inne  '
+   @  2, 50 CLEAR TO 15, 79
+   @  2, 50 to 15, 79
+   @  3, 51 SAY padc('Wpisz:',28)
+   @  4, 51 SAY 'Z - umowy zlecenia          '
+   @  5, 51 SAY 'D - umowy o dzieˆo          '
+   @  6, 51 SAY 'P - prawa autorskie i inne  '
    *   @  8,51 SAY 'K - kontrakty menedzerskie  '
-   @  8, 51 SAY 'I - inne zrodla             '
-   @  9, 51 SAY 'C - czlonkowstwo w spoldziel'
-   @ 10, 51 SAY 'E - emerytury,renty zagrani.'
-   @ 11, 51 SAY 'F - swiadczenia z FP i FGSP '
-   @ 12, 51 SAY 'S - spoleczne obowiazki     '
+   @  7, 51 SAY 'I - inne zrodla             '
+   @  8, 51 SAY 'C - czlonkowstwo w spoldziel'
+   @  9, 51 SAY 'E - emerytury,renty zagrani.'
+   @ 10, 51 SAY 'F - swiadczenia z FP i FGSP '
+   @ 11, 51 SAY 'S - spoleczne obowiazki     '
    *   @ 14,51 SAY 'O - organy stanowiace       '
-   @ 13, 51 SAY 'A - aktywizacyjna umowa     '
-   @ 14, 51 SAY 'R - ryczalt do 200zl        '
-   @ 15, 51 SAY 'O - obcokrajowiec           '
+   @ 12, 51 SAY 'A - aktywizacyjna umowa     '
+   @ 13, 51 SAY 'R - ryczalt do 200zl        '
+   @ 14, 51 SAY 'O - obcokrajowiec           '
    *  @ 24,0 say padc('Wpisz: A-rtyst.dzia&_l.alno&_s.&_c.,Z-lecenia i dzie&_l.a,P-rawa autorskie,K-ontrakty,I-nne',80,' ')
 
    RETURN .T.

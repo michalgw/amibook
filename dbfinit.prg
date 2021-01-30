@@ -1543,7 +1543,8 @@ public aUMOWYdbf := {;
    { "DOCHODPOD", "N", 12, 2 },;                  //  81
    { "ZAOPOD", "N", 1, 0 },;                      //  82
    { "OSWIAD26R", "C", 1, 0 },;                   //  83
-   { "STAW_PODA2", "N", 5, 2 } }                  //  84
+   { "STAW_PODA2", "N", 5, 2 },;                  //  84
+   { "POTRACENIA", "N", 12, 2 } }                 //  85
 
 // Create: URZEDY.DBF
 public aURZEDYdbf := {;

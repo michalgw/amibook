@@ -28,12 +28,14 @@ FUNCTION Main()
    dbfInicjujDane()
    dbfUtworzTabele( 'EWID', 'ewid.tym' )
    dbfUtworzTabele( 'SUMA_MC', 'suma_mc.tym' )
+   dbfUtworzTabele( 'UMOWY', 'umowy.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
    ? 'Indeksowanie...'
    dbfIdxEWID()
    dbfIdxSUMA_MC()
+   dbfIdxUMOWY()
    dbCloseAll()
 
    ? 'Kopiowanie plik¢w...'

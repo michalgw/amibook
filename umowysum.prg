@@ -114,8 +114,8 @@ begin sequence
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 *     od_dnia_=str(month(od_dnia),2)+[-]+str(day(od_dnia),2)
 *     do_dnia_=str(month(do_dnia),2)+[-]+str(day(do_dnia),2)
-      store 0 to s0_10,s0_11,s0_12,s0_12b,s0_13,s0_14
-      store 0 to s1_10,s1_11,s1_12,s1_12b,s1_13,s1_14
+      store 0 to s0_10,s0_11,s0_12,s0_12b,s0_13,s0_14,s0_31,s0_32
+      store 0 to s1_10,s1_11,s1_12,s1_12b,s1_13,s1_14,s1_31,s1_32
       store 0 to s0_20,s0_21,s0_22,s0_23,s0_24,s0_25,s0_26,s0_27,s0_28,s0_29,s0_30
       store 0 to s1_20,s1_21,s1_22,s1_23,s1_24,s1_25,s1_26,s1_27,s1_28,s1_29,s1_30
       k1=dtoc(od_dnia)
@@ -152,14 +152,14 @@ begin sequence
       if .not.empty(od_kontr)
          mon_drk([ DLA:  ]+od_kontr)
       endif
-      mon_drk([ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿])
-      mon_drk([³                              ³Mi³                              I N F O R M A C J E   O   Z L E C E N I U                       ³])
-      mon_drk([³      Nazwisko i imiona       ³esÃÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄ´])
-      mon_drk([³                              ³¥c³Numer³]+dat1+  [³]+dat2+  [³Rodz³Przych¢d³  Koszty ³  Doch¢d  ³ZUS zdrow³ Podatek ³Do wypˆaty ³])
-      mon_drk([³                              ³  ÃÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÁÄÄÂÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÂÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄ´])
-      mon_drk([³                              ³  ³      Skladki ZUS wykonawcy        ³     Skladki ZUS zleceniodawcy     ³       Fundusze       ³])
-      mon_drk([³                              ³  ³Emeryt. ³Rentowa ³Chorob ³  SUMA   ³Emeryt. ³Rentowa ³Wypadk ³  SUMA   ³ Pracy ³  GSP ³ SUMA  ³])
-      mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÙ])
+      mon_drk([ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿])
+      mon_drk([³                    ³Mi³                                   I N F O R M A C J E   O   Z L E C E N I U                            ³])
+      mon_drk([³ Nazwisko i imiona  ³esÃÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄ´])
+      mon_drk([³                    ³¥c³Numer³]+dat1+  [³]+dat2+  [³Rodz³Przych¢d³  Koszty ³  Doch¢d  ³ZUS zdrow³ Podatek ³Potr¥ceni³Do wypˆaty ³])
+      mon_drk([³                    ³  ÃÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÁÄÄÂÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÂÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÂÄÄÄÄÄÄÄÄÄ´])
+      mon_drk([³                    ³  ³      Skladki ZUS wykonawcy        ³     Skladki ZUS zleceniodawcy     ³       Fundusze       ³  Razem  ³])
+      mon_drk([³                    ³  ³Emeryt. ³Rentowa ³Chorob ³  SUMA   ³Emeryt. ³Rentowa ³Wypadk ³  SUMA   ³ Pracy ³  GSP ³ SUMA  ³Skˆ.i fun³])
+      mon_drk([ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÙ])
       sele prac
       set exact off
       do while .not.&_koniec .and.nazwisko+imie1=klucz
@@ -169,7 +169,9 @@ begin sequence
          k3=nazwisko
          k4=imie1
          k5=imie2
-         kk3=padr(alltrim(k3)+[ ]+alltrim(k4)+[ ]+alltrim(k5),30)
+         kk3=padr(alltrim(k3)+[ ]+alltrim(k4)+[ ]+alltrim(k5),40)
+         kk3a := SubStr( kk3, 21, 20 )
+         kk3 := SubStr( kk3, 1, 20 )
 *         kk5=recno()
          kk5=rec_no
          sele umowy
@@ -252,13 +254,16 @@ begin sequence
                k28=war_ffp
                k29=war_ffg
                k30=war_ffp+war_ffg
+               k31=potracenia
+               k32 := k23 + k27 + k30
 //002a dodanie nowej zmiennej do tabeli
                if nazi=0
-                  mon_drk([ ]+kk3+[ ]+k6+[ ]+k7+[ ]+k8+[ ]+k9+[ ]+typ+[ ]+str(k10,11,2)+[ ]+str(k11,9,2)+[ ]+str(k12,10,2)+[ ]+str(k12b,9,2)+[ ]+str(k13,9,2)+[ ]+str(k14,11,2))
+                  mon_drk([ ]+kk3+[ ]+k6+[ ]+k7+[ ]+k8+[ ]+k9+[ ]+typ+[ ]+str(k10,11,2)+[ ]+str(k11,9,2)+[ ]+str(k12,10,2)+[ ]+str(k12b,9,2)+[ ]+str(k13,9,2)+[ ]+str(k31,9,2)+[ ]+str(k14,11,2))
+                  mon_drk([ ]+kk3a+[ ]+str(k20,8,2)+[ ]+str(k21,8,2)+[ ]+str(k22,7,2)+[ ]+str(k23,9,2)+[ ]+str(k24,8,2)+[ ]+str(k25,8,2)+[ ]+str(k26,7,2)+[ ]+str(k27,9,2)+[ ]+str(k28,7,2)+[ ]+str(k29,6,2)+[ ]+str(k30,7,2)+[ ]+str(k32,9,2))
                else
-                  mon_drk(Space(32)+k6+[ ]+k7+[ ]+k8+[ ]+k9+[ ]+typ+[ ]+str(k10,11,2)+[ ]+str(k11,9,2)+[ ]+str(k12,10,2)+[ ]+str(k12b,9,2)+[ ]+str(k13,9,2)+[ ]+str(k14,11,2))
+                  mon_drk(Space(22)+k6+[ ]+k7+[ ]+k8+[ ]+k9+[ ]+typ+[ ]+str(k10,11,2)+[ ]+str(k11,9,2)+[ ]+str(k12,10,2)+[ ]+str(k12b,9,2)+[ ]+str(k13,9,2)+[ ]+str(k31,9,2)+[ ]+str(k14,11,2))
+                  mon_drk(Space(25)+str(k20,8,2)+[ ]+str(k21,8,2)+[ ]+str(k22,7,2)+[ ]+str(k23,9,2)+[ ]+str(k24,8,2)+[ ]+str(k25,8,2)+[ ]+str(k26,7,2)+[ ]+str(k27,9,2)+[ ]+str(k28,7,2)+[ ]+str(k29,6,2)+[ ]+str(k30,7,2)+[ ]+str(k32,9,2))
                endif
-               mon_drk(Space(35)+str(k20,8,2)+[ ]+str(k21,8,2)+[ ]+str(k22,7,2)+[ ]+str(k23,9,2)+[ ]+str(k24,8,2)+[ ]+str(k25,8,2)+[ ]+str(k26,7,2)+[ ]+str(k27,9,2)+[ ]+str(k28,7,2)+[ ]+str(k29,6,2)+[ ]+str(k30,7,2))
                s0_10=s0_10+k10
                s0_11=s0_11+k11
                s0_12=s0_12+k12
@@ -284,6 +289,8 @@ begin sequence
                s0_28=s0_28+k28
                s0_29=s0_29+k29
                s0_30=s0_30+k30
+               s0_31=s0_31+k31
+               s0_32=s0_32+k32
 
                s1_20=s1_20+k20
                s1_21=s1_21+k21
@@ -296,6 +303,8 @@ begin sequence
                s1_28=s1_28+k28
                s1_29=s1_29+k29
                s1_30=s1_30+k30
+               s1_31=s1_31+k31
+               s1_32=s1_32+k32
 
                nazi++
             endif
@@ -303,15 +312,15 @@ begin sequence
             skip 1
          enddo
          if nazi>1
-            mon_drk([                                R A Z E M                        ]+str(s1_10,11,2)+[ ]+str(s1_11,9,2)+[ ]+str(s1_12,10,2)+[ ]+str(s1_12b,9,2)+[ ]+str(s1_13,9,2)+[ ]+str(s1_14,11,2))
-            mon_drk(Space(35)+str(s1_20,8,2)+[ ]+str(s1_21,8,2)+[ ]+str(s1_22,7,2)+[ ]+str(s1_23,9,2)+[ ]+str(s1_24,8,2)+[ ]+str(s1_25,8,2)+[ ]+str(s1_26,7,2)+[ ]+str(s1_27,9,2)+[ ]+str(s1_28,7,2)+[ ]+str(s1_29,6,2)+[ ]+str(s1_30,7,2))
-            mon_drk([                                          ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ])
+            mon_drk([                           R A Z E M                   ]+str(s1_10,11,2)+[ ]+str(s1_11,9,2)+[ ]+str(s1_12,10,2)+[ ]+str(s1_12b,9,2)+[ ]+str(s1_13,9,2)+[ ]+str(s1_31,9,2)+[ ]+str(s1_14,11,2))
+            mon_drk(Space(25)+str(s1_20,8,2)+[ ]+str(s1_21,8,2)+[ ]+str(s1_22,7,2)+[ ]+str(s1_23,9,2)+[ ]+str(s1_24,8,2)+[ ]+str(s1_25,8,2)+[ ]+str(s1_26,7,2)+[ ]+str(s1_27,9,2)+[ ]+str(s1_28,7,2)+[ ]+str(s1_29,6,2)+[ ]+str(s1_30,7,2)+[ ]+str(s1_32,9,2))
+            mon_drk([                                ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ])
          endif
          if nazi=1
-            mon_drk([                                          ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ])
+            mon_drk([                                ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ])
          endif
          store 0 to s1_10,s1_11,s1_12,s1_13,s1_14,s1_12b
-         store 0 to s1_20,s1_21,s1_22,s1_23,s1_24,s1_25,s1_26,s1_27,s1_28,s1_29,s1_30
+         store 0 to s1_20,s1_21,s1_22,s1_23,s1_24,s1_25,s1_26,s1_27,s1_28,s1_29,s1_30,s1_31,s1_32
          sele prac
          skip 1
          set exact off
@@ -320,8 +329,8 @@ begin sequence
       use
       *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
       mon_drk(repl('=',130))
-      mon_drk([                                OG&__O.&__L.EM ZA OKRES                  ]+str(s0_10,11,2)+[ ]+str(s0_11,9,2)+[ ]+str(s0_12,10,2)+[ ]+str(s0_12b,9,2)+[ ]+str(s0_13,9,2)+[ ]+str(s0_14,11,2))
-      mon_drk(Space(35)+str(s0_20,8,2)+[ ]+str(s0_21,8,2)+[ ]+str(s0_22,7,2)+[ ]+str(s0_23,9,2)+[ ]+str(s0_24,8,2)+[ ]+str(s0_25,8,2)+[ ]+str(s0_26,7,2)+[ ]+str(s0_27,9,2)+[ ]+str(s0_28,7,2)+[ ]+str(s0_29,6,2)+[ ]+str(s0_30,7,2))
+      mon_drk([                           OG&__O.&__L.EM ZA OKRES             ]+str(s0_10,11,2)+[ ]+str(s0_11,9,2)+[ ]+str(s0_12,10,2)+[ ]+str(s0_12b,9,2)+[ ]+str(s1_13,9,2)+[ ]+str(s0_31,9,2)+[ ]+str(s0_14,11,2))
+      mon_drk(Space(25)+str(s0_20,8,2)+[ ]+str(s0_21,8,2)+[ ]+str(s0_22,7,2)+[ ]+str(s0_23,9,2)+[ ]+str(s0_24,8,2)+[ ]+str(s0_25,8,2)+[ ]+str(s0_26,7,2)+[ ]+str(s0_27,9,2)+[ ]+str(s0_28,7,2)+[ ]+str(s0_29,6,2)+[ ]+str(s0_30,7,2)+[ ]+str(s0_32,9,2))
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       mon_drk([ş])
 end
