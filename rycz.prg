@@ -166,7 +166,9 @@ PROCEDURE Rycz()
             @ 12, 67 GET zHANDEL    PICTURE FPICold VALID v1_8r()
             @ 13, 67 GET zRYK07     PICTURE FPICold
             @ 14, 67 GET zRY10      PICTURE FPICold
-            @ 15, 67 GET zRYK08     PICTURE FPICold
+            IF staw_k08w
+               @ 15, 67 GET zRYK08     PICTURE FPICold
+            ENDIF
             SET COLOR TO i
             @ 19, 40 SAY SubStr( zUWAGI, 1, 40 )
             SET COLOR TO
