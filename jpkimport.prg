@@ -162,17 +162,35 @@ FUNCTION JPKImp_WczytajPodm( oDoc )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION JPKImp_Weryf( aDane, cNip, nRok, nMiesiac )
+FUNCTION JPKImp_Weryf( aDane, cNip, nRok, nMiesiac, nCelImportu )
 
    LOCAL aRes := hb_Hash( 'OK', .F. )
+   LOCAL aTmp := {}, sTmp := ""
+
+   hb_default( @nCelImportu, 1 )
 
    IF ! hb_HHasKey( aDane[ 'Naglowek' ], 'KodFormularza' )
       aRes[ 'Komunikat' ] := 'Brak kodu formularza (KodFormularza)'
       RETURN aRes
    ENDIF
-   IF AScan( { "JPK_VAT", "JPK_FA", "JPK_V7M", "JPK_V7K" }, aDane[ 'Naglowek' ][ 'KodFormularza' ] ) == 0
+
+   DO CASE
+   CASE nCelImportu == 1
+      aTmp := { "JPK_VAT", "JPK_FA", "JPK_V7M", "JPK_V7K" }
+      sTmp := "JPK_VAT, JPK_FA, JPK_V7M, JPK_V7K"
+   CASE nCelImportu == 2
+      aTmp := { "JPK_VAT", "JPK_FA", "JPK_V7M", "JPK_V7K" }
+      sTmp := "JPK_VAT, JPK_FA, JPK_V7M, JPK_V7K"
+   CASE nCelImportu == 4
+      aTmp := { "JPK_PKPIR" }
+      sTmp := "JPK_PKPIR"
+   OTHERWISE
+      aRes[ 'Komunikat' ] := "Nieobsˆugiwany cel importu: " + Str( nCelImportu )
+      RETURN aRes
+   ENDCASE
+   IF AScan( aTmp, aDane[ 'Naglowek' ][ 'KodFormularza' ] ) == 0
       aRes[ 'Komunikat' ] := 'Bˆ©dny kod formularza (odczytany: ' + aDane[ 'Naglowek' ][ 'KodFormularza' ] + ;
-         ' wymagane: JPK_VAT, JPK_FA, JPK_V7M, JPK_V7K'
+         ' wymagane: ' + sTmp
       RETURN aRes
    ENDIF
 
@@ -188,8 +206,7 @@ FUNCTION JPKImp_Weryf( aDane, cNip, nRok, nMiesiac )
    ENDIF
 */
 
-
-   IF AScan( { "JPK_VAT", "JPK_FA" }, aDane[ 'Naglowek' ][ 'KodFormularza' ] ) > 0
+   IF AScan( { "JPK_VAT", "JPK_FA", "JPK_PKPIR" }, aDane[ 'Naglowek' ][ 'KodFormularza' ] ) > 0
       IF ! hb_HHasKey( aDane[ 'Naglowek' ], 'DataOd' )
          aRes[ 'Komunikat' ] := 'Brak daty pocz¥tkowej okresu (DataOd)'
          RETURN aRes
@@ -3570,4 +3587,400 @@ FUNCTION VATObliczStawkaRodzaj( nNetto, nVAT )
 
 /*----------------------------------------------------------------------*/
 
+PROCEDURE JPKImp_PKPIR()
+
+   LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'OpisZd', Space( 30 ) )
+   LOCAL cPlik
+   LOCAL cKolor
+   LOCAL cEkran := SaveScreen()
+   LOCAL nMenu, cEkran2
+   LOCAL aRaport, cRaport, cTN, lOk
+   LOCAL nSumaImp, nLiczbaLp := 0
+
+   PRIVATE cOpisZd
+
+   cKolor := ColInf()
+   @ 24, 0 SAY PadC( "Wybierz plik do importu", 80 )
+   SetColor( cKolor )
+
+   IF ( cPlik := win_GetOpenFileName( , , , 'xml', { {'Pliki XML', '*.xml'}, {'Wszystkie pliki', '*.*'} } ) ) <> ''
+
+      IF TNEsc( , "Czy weryfikowa† plik przed importem? (T/N)" )
+         ColInf()
+         @ 24, 0 SAY PadC( "...weryfikacja dokumentu...", 80 )
+         nMenu := edekWeryfikuj( cPlik, , .T., "Ignoruj i importuj (niezalecane)", .F. )
+         IF nMenu <> 0 .AND. nMenu <> 4
+            RestScreen( , , , , cEkran )
+            SetColor( cKolor )
+            RETURN
+         ENDIF
+      ENDIF
+
+      ColInf()
+      @ 24, 0 SAY PadC( "Wczytywanie danych... Prosz© czeka†...", 80 )
+      SetColor( cKolor )
+
+      aDane[ 'JPK' ] := JPKImp_PKPIR_Wczytaj( cPlik )
+
+      IF HB_ISHASH( aDane[ 'JPK' ] )
+
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Wiersze' ] )
+
+         ColStd()
+         @ 24,  0
+         @  2,  0 CLEAR TO 22, 79
+         @  2,  2 TO 19, 77 DOUBLE
+         @  4,  3 TO  4, 76
+         @ 10,  3 TO 10, 76
+         @ 13,  3 TO 13, 76
+         @ 17,  3 TO 17, 76
+
+         @  3,  3 SAY PadC( "IMPORT SPRZEDA½Y Z PLIKU JPK", 72 )
+         PrintTextEx(  5, 4, "Rodzaj pliku JPK: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] + " (" + aDane[ 'JPK' ][ 'Naglowek' ][ 'WariantFormularza' ] + ")" )
+         PrintTextEx(  6, 4, "Data wytworzenia: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DataWytworzeniaJPK' ] )
+         PrintTextEx(  7, 4, "         Data od: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataOd' ] ) )
+         PrintTextEx(  8, 4, "         Data do: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataDo' ] ) )
+         IF hb_HHasKey( aDane[ 'JPK' ][ 'Naglowek' ], 'DomyslnyKodWaluty' )
+            PrintTextEx(  9, 4, "      Kod waluty: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DomyslnyKodWaluty' ] )
+         ENDIF
+         PrintTextEx( 11, 4, "Nazwa firmy: {w+}" + SubStr( sxmlTrim( aDane[ 'JPK' ][ 'Podmiot' ][ 'PelnaNazwa' ] ), 1, 59 ) )
+         PrintTextEx( 12, 4, "  NIP firmy: {w+}" + aDane[ 'JPK' ][ 'Podmiot' ][ 'NIP' ] )
+         PrintTextEx( 14, 4, "Liczba pozycji w pliku JPK: {w+}" + AllTrim( Str( nLiczbaLp ) ) )
+         PrintTextEx( 15, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+
+         nMenu := 1
+         DO WHILE nMenu != 0
+            @ 18,  4 PROMPT "[ Wykonaj import ]"
+            @ 18, 26 PROMPT "[ Podgl¥d zawarto˜ci ]"
+            @ 18, 52 PROMPT "[ Opcje ]"
+            @ 18, 65 PROMPT "[ Anuluj ]"
+            MENU TO nMenu
+
+            DO CASE
+            CASE nMenu == 1
+               IF TNEsc( , "Czy wykona† import danych sprzeda¾y? ( T / N )" )
+
+                  aRaport := JPKImp_PKPIR_Importuj( aDane )
+
+                  cRaport := "IMPORT ZAKOãCZONY" + hb_eol()
+                  cRaport += "-----------------" + hb_eol()
+                  cRaport += hb_eol()
+                  cRaport += "Liczba zaimportowanych pozycji: " + AllTrim( Str( aRaport[ 'Zaimportowano' ] ) ) + hb_eol()
+                  cRaport += "Liczba pomini©tych dokument¢w: " + AllTrim( Str( aRaport[ 'Pominieto' ] ) ) + hb_eol()
+                  cRaport += "Liczba dokument¢w w obej walucie: " + AllTrim( Str( aRaport[ 'Waluta' ] ) ) + hb_eol()
+                  IF aRaport[ 'Pominieto' ] > 0
+                     cRaport += hb_eol()
+                     cRaport += "POMINI¨TE DOKUMENTY" + hb_eol()
+                     cRaport += "-------------------" + hb_eol()
+                     AEval( aRaport[ 'ListaPom' ], { | aPoz |
+                        cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'K_3' ] ) + hb_eol()
+                        cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'K_4' ] ) + hb_eol()
+                        cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'K_2' ] ) + hb_eol()
+                        cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                        cRaport += "--------------------------" + hb_eol()
+                     } )
+                  ENDIF
+                  IF aRaport[ 'Waluta' ] > 0
+                     cRaport += hb_eol()
+                     cRaport += "DOKUMENTY W OBCEJ WALUCIE" + hb_eol()
+                     cRaport += "-------------------" + hb_eol()
+                     AEval( aRaport[ 'ListaWal' ], { | aPoz |
+                        cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'K_3' ] ) + hb_eol()
+                        cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'K_4' ] ) + hb_eol()
+                        cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'K_2' ] ) + hb_eol()
+                        cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                        cRaport += "--------------------------" + hb_eol()
+                     } )
+                  ENDIF
+
+                  WyswietlTekst( cRaport )
+
+                  nMenu := 0
+               ENDIF
+            CASE nMenu == 2
+               JPKImp_PKPIR_Podglad( aDane[ 'JPK' ][ 'Wiersze' ], aDane[ 'JPK' ][ 'WierszeSum' ] )
+               PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( Len( aDane[ 'JPK' ][ 'Wiersze' ] ) ) ), 72 ) )
+            CASE nMenu == 3
+               cEkran2 := SaveScreen()
+               cTN := aDane[ 'ZezwolNaDuplikaty' ]
+               cOpisZd := aDane[ 'OpisZd' ]
+               @  6, 13 CLEAR TO 13, 66
+               @  7, 15 TO 12, 64
+               @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
+               @  9, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "S" )
+               @ 11, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+               READ
+               IF LastKey() <> K_ESC
+                  aDane[ 'ZezwolNaDuplikaty' ] := cTN
+                  aDane[ 'OpisZd' ] := cOpisZd
+               ENDIF
+               RestScreen( , , , , cEkran2 )
+            CASE nMenu == 4
+               nMenu := 0
+            ENDCASE
+
+         ENDDO
+
+      ENDIF
+
+   ENDIF
+
+   RestScreen( , , , , cEkran )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION JPKImp_PKPIR_Wczytaj( cPlikJpk )
+
+   LOCAL oDoc, cAktKlucz
+   LOCAL xRes := .F.
+   LOCAL aDaneJPK := hb_Hash()
+   LOCAL aWeryf, aWiersz
+   LOCAL oWiersz, oWierszIter, oWartosc, oWartoscIter
+   LOCAL aFirma, lDaneDostepne := .F.
+
+   IF File( cPlikJpk )
+
+      oDoc := TXMLDocument():New( cPlikJpk )
+
+      IF oDoc:nError == HBXML_ERROR_NONE
+
+         aDaneJPK[ 'Naglowek' ] := JPKImp_WczytajNagl( oDoc )
+         aDaneJPK[ 'Podmiot' ] := JPKImp_WczytajPodm( oDoc )
+
+         aFirma := PobierzFirme( Val( ident_fir ) )
+         aDaneJPK[ 'Firma' ] := aFirma
+         aWeryf := JPKImp_Weryf( @aDaneJPK, TrimNip( aFirma[ 'firma' ][ 'nip' ] ), Val( param_rok ), Val( miesiac ), 4 )
+
+         IF aWeryf[ 'OK' ]
+
+            aDaneJPK[ 'Wiersze' ] := {}
+
+            oWierszIter := TXMLIteratorRegex():New( oDoc:oRoot )
+
+            oWiersz := oWierszIter:Find( '(([\w]*:)PKPIRWiersz|(^PKPIRWiersz))' )
+            DO WHILE ( oWiersz != NIL )
+               oWartoscIter := TXMLIterator():New( oWiersz )
+               aWiersz := hb_Hash()
+               DO WHILE ( oWartosc := oWartoscIter:Next() ) != NIL
+                  cAktKlucz := oWartosc:cName
+                  IF ! Empty( oWartosc:oChild ) .AND. HB_ISNIL( oWartosc:oChild:cName )
+                     oWartosc := oWartoscIter:Next()
+                  ENDIF
+                  aWiersz[ xmlUsunNamespace( cAktKlucz ) ] := sxml2str( oWartosc:cData )
+               ENDDO
+               AAdd( aDaneJPK[ 'Wiersze' ], aWiersz )
+
+               oWiersz := oWierszIter:Next()
+            ENDDO
+
+            aDaneJPK[ 'WierszeSum' ] := hb_Hash( 'Ilosc', 0, 'K_7', 0, 'K_8', 0, 'K_9', 0, ;
+               'K_10', 0, 'K_11', 0, 'K_12', 0, 'K_13', 0, 'K_14', 0, 'K_15', 0, 'K_16B', 0 )
+
+            IF Len( aDaneJPK[ 'Wiersze' ] ) > 0
+
+               AEval( aDaneJPK[ 'Wiersze' ], { | aW |
+                  aW[ 'Aktywny' ] := .T.
+                  aW[ 'Importuj' ] := .T.
+                  aW[ 'K_1' ] := sxmlTrim( aW[ 'K_1' ] )
+                  aW[ 'K_2' ] := sxml2date( aW[ 'K_2' ] )
+                  aW[ 'K_3' ] := sxmlTrim( aW[ 'K_3' ] )
+                  aW[ 'K_4' ] := sxmlTrim( aW[ 'K_4' ] )
+                  aW[ 'K_5' ] := sxmlTrim( aW[ 'K_5' ] )
+                  aW[ 'K_6' ] := sxmlTrim( aW[ 'K_6' ] )
+                  IF hb_HHasKey( aW, 'K_7' ) .AND. HB_ISCHAR( aW[ 'K_7' ] )
+                     aW[ 'K_7' ] := sxml2num( aW[ 'K_7' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_7' ] += aW[ 'K_7' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_8' ) .AND. HB_ISCHAR( aW[ 'K_8' ] )
+                     aW[ 'K_8' ] := sxml2num( aW[ 'K_8' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_8' ] += aW[ 'K_8' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_9' ) .AND. HB_ISCHAR( aW[ 'K_9' ] )
+                     aW[ 'K_9' ] := sxml2num( aW[ 'K_9' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_9' ] += aW[ 'K_9' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_10' ) .AND. HB_ISCHAR( aW[ 'K_10' ] )
+                     aW[ 'K_10' ] := sxml2num( aW[ 'K_10' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_10' ] += aW[ 'K_10' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_11' ) .AND. HB_ISCHAR( aW[ 'K_11' ] )
+                     aW[ 'K_11' ] := sxml2num( aW[ 'K_11' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_11' ] += aW[ 'K_11' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_12' ) .AND. HB_ISCHAR( aW[ 'K_12' ] )
+                     aW[ 'K_12' ] := sxml2num( aW[ 'K_12' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_12' ] += aW[ 'K_12' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_13' ) .AND. HB_ISCHAR( aW[ 'K_13' ] )
+                     aW[ 'K_13' ] := sxml2num( aW[ 'K_13' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_13' ] += aW[ 'K_13' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_14' ) .AND. HB_ISCHAR( aW[ 'K_14' ] )
+                     aW[ 'K_14' ] := sxml2num( aW[ 'K_14' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_14' ] += aW[ 'K_14' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_15' ) .AND. HB_ISCHAR( aW[ 'K_15' ] )
+                     aW[ 'K_15' ] := sxml2num( aW[ 'K_15' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_15' ] += aW[ 'K_15' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_16B' ) .AND. HB_ISCHAR( aW[ 'K_16B' ] )
+                     aW[ 'K_16B' ] := sxml2num( aW[ 'K_16B' ], 0 )
+                     aDaneJPK[ 'WierszeSum' ][ 'K_16B' ] += aW[ 'K_16B' ]
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_16A' ) .AND. HB_ISCHAR( aW[ 'K_16A' ] )
+                     aW[ 'K_16A' ] := sxmlTrim( aW[ 'K_16A' ] )
+                  ENDIF
+                  IF hb_HHasKey( aW, 'K_17' ) .AND. HB_ISCHAR( aW[ 'K_17' ] )
+                     aW[ 'K_17' ] := sxmlTrim( aW[ 'K_17' ] )
+                  ENDIF
+               } )
+
+               xRes := aDaneJPK
+
+            ELSE
+               Komun( 'Deklaracja nie zawiera pozycji' )
+            ENDIF
+         ELSE
+            Komun( aWeryf[ 'Komunikat' ] )
+         ENDIF
+      ELSE
+         Komun( 'Wyst¥piˆ bˆ¥d podczas otwierania pliku JPK. Nr bˆ©du: ' + AllTrim( Str( oDoc:nError ) ) )
+      ENDIF
+   ELSE
+      Komun( 'Brak pliku wej˜ciowego' )
+   ENDIF
+
+   RETURN xRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION JPKImp_PKPIR_Importuj( aDane )
+
+   LOCAL nI := 1, nIlosc := 0
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {} )
+
+   @ 11, 15 CLEAR TO 15, 64
+   @ 11, 15 TO 15, 64 DOUBLE
+   @ 12, 16 SAY PadC( "Import sprzeda¾y", 48 )
+
+   AEval( aDane[ 'JPK' ][ 'Wiersze' ], { | aPoz |
+      IF aPoz[ 'Importuj' ]
+         nIlosc++
+      ENDIF
+   } )
+
+   AEval( aDane[ 'JPK' ][ 'Wiersze' ], { | aPoz |
+
+      LOCAL aIstniejacyRec
+      LOCAL lImportuj := aPoz[ 'Importuj' ]
+
+      IF lImportuj
+
+         @ 13, 16 SAY PadC( AllTrim( Str( nI ) ) + " / " + AllTrim( Str( nIlosc ) ), 48 )
+         @ 14, 17 SAY ProgressBar( nI, nIlosc, 46 )
+         ins := .T.
+
+         zDZIEN := Str( Day( aPoz[ 'K_2' ] ) )
+         znazwa := iif( Upper( AllTrim( aPoz[ 'K_4' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'K_4' ], 100 ) )
+         zNR_IDENT := Space( 30 )
+         zNUMER := iif( Upper( AllTrim( aPoz[ 'K_3' ] ) ) == "BRAK", Space( 40 ), PadR( JPKImp_NrDokumentu( aPoz[ 'K_3' ] ), 40 ) )
+         zADRES := iif( Upper( AllTrim( aPoz[ 'K_5' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'K_5' ], 100 ) )
+         zTRESC := aDane[ 'OpisZd' ]
+
+         zWYR_TOW := aPoz[ 'K_7' ]
+         zUSLUGI := aPoz[ 'K_8' ]
+         zZAKUP := aPoz[ 'K_10' ]
+         zUBOCZNE := aPoz[ 'K_11' ]
+         zWYNAGR_G := aPoz[ 'K_12' ]
+         zWYDATKI := aPoz[ 'K_13' ]
+         zPUSTA := aPoz[ 'K_15' ]
+         zident := 0
+         zuwagi := HGetDefault( aPoz, 'K_17', Space( 14 ) )
+         zROZRZAPK := 'N'
+         zZAP_TER := 0
+         zZAP_DAT := Date()
+         zZAP_WART := 0
+         zK16WART := HGetDefault( aPoz, 'K_16B', 0 )
+         zK16OPIS := HGetDefault( aPoz, 'K_16A', Space( 30 ) )
+
+         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'OPER', ident_fir, miesiac, znumer, @aIstniejacyRec )
+            aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
+            AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje ju¾ dokument o tym numerze' ) )
+         ELSE
+            Oper_Ksieguj()
+            IF HGetDefault( aPoz, 'KodWaluty', 'PLN' ) <> 'PLN'
+               aRaport[ 'Waluta' ] := aRaport[ 'Waluta' ] + 1
+               AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
+            ENDIF
+            aRaport[ 'Zaimportowano' ] := aRaport[ 'Zaimportowano' ] + 1
+         ENDIF
+
+         nI++
+      ELSE
+         aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
+         AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Dokument nie zostaˆ zaznaczony do importu' ) )
+      ENDIF
+
+   } )
+
+   RETURN aRaport
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE JPKImp_PKPIR_Podglad( aDane, aSumy )
+
+   LOCAL nElem := 1
+   LOCAL aNaglowki := { "Import", "K_1", "K_2", "K_3", "K_4", "K_5", "K_6", "K_7", ;
+      "K_8", "K_9", "K_10", "K_11", "K_12", "K_13", "K_14", "K_15", "K_16A", "K_16B", "K_17" }
+
+   LOCAL aBlokiKolumn := { ;
+      { || iif( aDane[ nElem ][ "Importuj" ], "Tak", "Nie" ) }, ;
+      { || PadC( aDane[ nElem ][ "K_1" ], 6 ) }, ;
+      { || DToS( aDane[ nElem ][ "K_2" ] ) }, ;
+      { || PadR( aDane[ nElem ][ "K_3" ], 16 ) }, ;
+      { || PadR( aDane[ nElem ][ "K_4" ], 25 ) }, ;
+      { || PadR( aDane[ nElem ][ "K_5" ], 20 ) }, ;
+      { || PadR( aDane[ nElem ][ "K_6" ], 20 ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_7" ), Transform( aDane[ nElem ][ "K_7" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_8" ), Transform( aDane[ nElem ][ "K_8" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_9" ), Transform( aDane[ nElem ][ "K_9" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_10" ), Transform( aDane[ nElem ][ "K_10" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_11" ), Transform( aDane[ nElem ][ "K_11" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_12" ), Transform( aDane[ nElem ][ "K_12" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_13" ), Transform( aDane[ nElem ][ "K_13" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_14" ), Transform( aDane[ nElem ][ "K_13" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_15" ), Transform( aDane[ nElem ][ "K_13" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_16A" ), PadR( aDane[ nElem ][ "K_16A" ], 20 ), Space( 20 ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_16B" ), Transform( aDane[ nElem ][ "K_13" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_17" ), PadR( aDane[ nElem ][ "K_17" ], 20 ), Space( 20 ) ) } }
+   LOCAL bColorBlock := { | xVal |
+      IF aDane[ nElem ][ "Importuj" ]
+         RETURN { 1, 2 }
+      ELSE
+         RETURN { 6, 2 }
+      ENDIF
+   }
+   LOCAL aStopki := { "", "", "", "", "", "", "", Transform( aSumy[ "K_7" ], RPICE ), ;
+      Transform( aSumy[ "K_8" ], RPICE ), Transform( aSumy[ "K_9" ], RPICE ), ;
+      Transform( aSumy[ "K_10" ], RPICE ), Transform( aSumy[ "K_11" ], RPICE ), ;
+      Transform( aSumy[ "K_12" ], RPICE ), Transform( aSumy[ "K_13" ], RPICE ), ;
+      Transform( aSumy[ "K_14" ], RPICE ), Transform( aSumy[ "K_15" ], RPICE ), ;
+      "", Transform( aSumy[ "K_16B" ], RPICE ), "" }
+   LOCAL aKlawisze := { { K_ENTER, { | nElem, ar, b |
+      IF ar[ nElem ][ 'Aktywny' ]
+         ar[ nElem ][ 'Importuj' ] := ! ar[ nElem ][ 'Importuj' ]
+      ELSE
+         komun( "Nie mo¾na importowa† tej pozycji" )
+      ENDIF
+   } } }
+   LOCAL aBlokiKoloru := {}
+   AEval( aBlokiKolumn, { || AAdd( aBlokiKoloru, bColorBlock ) } )
+
+   GM_ArEdit( 2, 0, 22, 79, aDane, @nElem, aNaglowki, aBlokiKolumn, NIL, NIL, NIL, aKlawisze, SetColor() + ",N+/N", aBlokiKoloru, aStopki )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
 

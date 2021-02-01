@@ -25,7 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE Oper()
 
-   LOCAL nLP1, nLP2, nPozDzien, nPozMiesiac
+   LOCAL nLP1, nLP2, nPozDzien, nPozMiesiac, nMenu
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou, POZOBR
 
    POZOBR := .F.
@@ -70,7 +70,13 @@ PROCEDURE Oper()
          Notes()
       CASE kl == Asc( 'I' ) .OR. kl == Asc( 'i' )
          // Import z JPK
-         JPKImp_VatS( 2 )
+         nMenu := MenuEx( 18, 25, { "Import z pliku JPK_FA, JPK_V7", "Import z pliku JPK_PKPIR" }, 1 )
+         DO CASE
+         CASE nMenu == 1
+            JPKImp_VatS( 2 )
+         CASE nMenu == 2
+            JPKImp_PKPIR()
+         ENDCASE
          IF &_bot
             SEEK '+' + ident_fir + miesiac
          ENDIF
