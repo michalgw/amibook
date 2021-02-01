@@ -211,7 +211,7 @@ begin
           AddArr('//gtwvt', SA);
         if Wpis.Ekran = ePelnyEkran then
           AddArr('//pelnyekran', SA);
-        case Uruchom(Wpis.Katalog, 'prog.exe', SA, False) of
+        case Uruchom(Wpis.Katalog, S + 'prog.exe', SA, False) of
           0: Koniec := True;
           200: ;// Backup
           201: ;// Restore
