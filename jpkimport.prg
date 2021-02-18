@@ -3248,7 +3248,7 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                @  7, 15 TO 19, 64
                @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
                @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42 ), .T. }
-               @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "S" )
+               @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "S", "R" ) )
                IF zRYCZALT == 'T'
                   @ 11, 17 SAY "Domy˜lna kolumna ewidencji (5,6,7,8,9,10,11)" GET cKolRej PICTURE '@K 99' VALID AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11'
                ELSE
@@ -3298,8 +3298,10 @@ FUNCTION JPKImp_VatS_Tresc_V( cKatalog )
 
    IF cKatalog == 'Z'
       cTablica := 'rejz'
-   ELSE
+   ELSEIF cKatalog == 'S'
       cTablica := 'rejs'
+   ELSEIF cKatalog == 'R'
+      cTablica := 'oper'
    ENDIF
 
    IF LastKey() == K_UP
@@ -3707,7 +3709,7 @@ PROCEDURE JPKImp_PKPIR()
                @  6, 13 CLEAR TO 13, 66
                @  7, 15 TO 12, 64
                @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
-               @  9, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "S" )
+               @  9, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "R" )
                @ 11, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
                READ
                IF LastKey() <> K_ESC
