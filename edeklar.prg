@@ -5751,9 +5751,9 @@ FUNCTION edek_vatuek_5e2( aDane )
    LOCAL r, nl
       nl = Chr(13) + Chr(10)
       r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
-      r = r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2021/01/12/10294/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
+      r = r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2021/01/26/10316/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/">' + nl
       r = r + '  <Naglowek>' + nl
-      r = r + '    <KodFormularza kodSystemowy="VATUEK (5)" wersjaSchemy="2-0E">VAT-UEK</KodFormularza>' + nl
+      r = r + '    <KodFormularza kodSystemowy="VATUEK (5)" wersjaSchemy="2-1E">VAT-UEK</KodFormularza>' + nl
       r = r + '    <WariantFormularza>5</WariantFormularza>' + nl
       r = r + '    <Rok>' + aDane[ 'rok' ] + '</Rok>' + nl
       r = r + '    <Miesiac>' + aDane[ 'miesiac' ] + '</Miesiac>' + nl
