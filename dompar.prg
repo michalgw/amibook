@@ -32,11 +32,11 @@ FUNCTION DomyslneParametry()
 
       // Tabela podatku doch.
       aPar[ 'tab_doch' ] := { ;
-         { 'podstawa' => 0.0,      'procent' => 17.0, 'kwotazmn' => 1360.0, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20210101, 'datado' => 0d20211231 }, ;
-         { 'podstawa' => 8001.0,   'procent' => 17.0, 'kwotazmn' => 1360.0, 'degres' => .T., 'kwotade1' => 834.88, 'kwotade2' => 5000.0,  'dataod' => 0d20210101, 'datado' => 0d20211231 }, ;
-         { 'podstawa' => 13001.0,  'procent' => 17.0, 'kwotazmn' => 525.12, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20210101, 'datado' => 0d20211231 }, ;
-         { 'podstawa' => 85529.0,  'procent' => 32.0, 'kwotazmn' => 525.12, 'degres' => .T., 'kwotade1' => 525.12, 'kwotade2' => 41472.0, 'dataod' => 0d20210101, 'datado' => 0d20211231 }, ;
-         { 'podstawa' => 127001.0, 'procent' => 32.0, 'kwotazmn' => 0.0,    'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20210101, 'datado' => 0d20211231 } }
+         { 'podstawa' => 0.0,      'procent' => 17, 'kwotazmn' => 1360.0, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20210101, 'datado' => 0d20211231 }, ;
+         { 'podstawa' => 8001.0,   'procent' => 17, 'kwotazmn' => 1360.0, 'degres' => .T., 'kwotade1' => 834.88, 'kwotade2' => 5000.0,  'dataod' => 0d20210101, 'datado' => 0d20211231 }, ;
+         { 'podstawa' => 13001.0,  'procent' => 17, 'kwotazmn' => 525.12, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20210101, 'datado' => 0d20211231 }, ;
+         { 'podstawa' => 85529.0,  'procent' => 32, 'kwotazmn' => 525.12, 'degres' => .T., 'kwotade1' => 525.12, 'kwotade2' => 41472.0, 'dataod' => 0d20210101, 'datado' => 0d20211231 }, ;
+         { 'podstawa' => 127001.0, 'procent' => 32, 'kwotazmn' => 0.0,    'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20210101, 'datado' => 0d20211231 } }
 
       // Stawki rycz.
       // Wolna zawody
@@ -80,11 +80,11 @@ FUNCTION DomyslneParametry()
       aPar := hb_Hash()
       // Tabela podatku doch.
       aPar[ 'tab_doch' ] := { ;
-         { 'podstawa' => 0.0,      'procent' => 17.0, 'kwotazmn' => 1360.0, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20200101, 'datado' => 0d20201231 }, ;
-         { 'podstawa' => 8001.0,   'procent' => 17.0, 'kwotazmn' => 1360.0, 'degres' => .T., 'kwotade1' => 834.88, 'kwotade2' => 5000.0,  'dataod' => 0d20200101, 'datado' => 0d20201231 }, ;
-         { 'podstawa' => 13001.0,  'procent' => 17.0, 'kwotazmn' => 525.12, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20200101, 'datado' => 0d20201231 }, ;
-         { 'podstawa' => 85529.0,  'procent' => 32.0, 'kwotazmn' => 525.12, 'degres' => .T., 'kwotade1' => 525.12, 'kwotade2' => 41472.0, 'dataod' => 0d20200101, 'datado' => 0d20201231 }, ;
-         { 'podstawa' => 127001.0, 'procent' => 32.0, 'kwotazmn' => 0.0,    'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20200101, 'datado' => 0d20201231 } }
+         { 'podstawa' => 0.0,      'procent' => 17, 'kwotazmn' => 1360.0, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20200101, 'datado' => 0d20201231 }, ;
+         { 'podstawa' => 8001.0,   'procent' => 17, 'kwotazmn' => 1360.0, 'degres' => .T., 'kwotade1' => 834.88, 'kwotade2' => 5000.0,  'dataod' => 0d20200101, 'datado' => 0d20201231 }, ;
+         { 'podstawa' => 13001.0,  'procent' => 17, 'kwotazmn' => 525.12, 'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20200101, 'datado' => 0d20201231 }, ;
+         { 'podstawa' => 85529.0,  'procent' => 32, 'kwotazmn' => 525.12, 'degres' => .T., 'kwotade1' => 525.12, 'kwotade2' => 41472.0, 'dataod' => 0d20200101, 'datado' => 0d20201231 }, ;
+         { 'podstawa' => 127001.0, 'procent' => 32, 'kwotazmn' => 0.0,    'degres' => .F., 'kwotade1' => 0.0,    'kwotade2' => 0.0,     'dataod' => 0d20200101, 'datado' => 0d20201231 } }
 
       // Stawki rycz.
       // Handel
@@ -164,6 +164,7 @@ PROCEDURE DomParPrzywroc_TabDoch( lOtworz, cRok )
       tab_doch->del := '+'
       tab_doch->podstawa := aPoz[ 'podstawa' ]
       tab_doch->procent := aPoz[ 'procent' ]
+      tab_doch->procent2 := aPoz[ 'procent' ]
       tab_doch->kwotazmn := aPoz[ 'kwotazmn' ]
       tab_doch->degres := aPoz[ 'degres' ]
       tab_doch->kwotade1 := aPoz[ 'kwotade1' ]
