@@ -338,6 +338,13 @@ rest screen from scrbor
 if _czy_close
    close_()
 endif
+
+IF File( RAPTEMP + '.cdx' )
+   DELETE FILE &RAPTEMP..cdx
+ENDIF
+
+RETURN
+
 func jakitytul2
    ColInf()
    @  7,50 clear to 21,79

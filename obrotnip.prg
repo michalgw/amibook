@@ -336,3 +336,7 @@ rest screen from scrbor
 if _czy_close
    close_()
 endif
+
+IF File( RAPTEMP + '.cdx' )
+   DELETE FILE &RAPTEMP..cdx
+ENDIF

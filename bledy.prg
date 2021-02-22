@@ -169,6 +169,14 @@ STATIC FUNCTION AmiDefError( oError )
    amiDllZakoncz()
    WinPrintDone()
 
+   // Usuwamy plik tymczasowy wydruku
+   IF File( RAPTEMP + '.dbf' )
+      DELETE FILE &RAPTEMP..dbf
+   ENDIF
+   IF File( RAPTEMP + '.cdx' )
+      DELETE FILE &RAPTEMP..cdx
+   ENDIF
+
    ErrorLevel( 1 )
    QUIT
 

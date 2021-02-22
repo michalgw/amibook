@@ -723,6 +723,10 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       close_()
    ENDIF
 
+   IF File( RAPTEMP + '.cdx' )
+      DELETE FILE &RAPTEMP..cdx
+   ENDIF
+
    RETURN
 
 FUNCTION PIT11_DP28When()
