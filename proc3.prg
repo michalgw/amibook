@@ -294,8 +294,7 @@ if _konw=1
                        //set device to print
                        //set print on
                        select 100
-                       do while.not.dostepex(RAPORT)
-                       enddo
+                       USE &RAPORT VIA "ARRAYRDD"
                        go top
                        //@ 0,0 say prninit
                        buforDruku = prninit + Chr(13)
@@ -318,8 +317,7 @@ if _konw=1
                        @ 24,0 clear
                        save scre to PRZE
                        select 100
-                       do while.not.dostepex(RAPORT)
-                       enddo
+                       USE &RAPORT VIA "ARRAYRDD"
                        zap
                        rest scre from PRZE
                     //else
@@ -334,8 +332,7 @@ if _konw=1
                     @ 24,0
                     center(24,[Prosz&_e. czeka&_c....])
                     select 100
-                    do while.not.dostepex(RAPORT)
-                    enddo
+                    USE &RAPORT VIA "ARRAYRDD"
                     priv A_POLE
                     A_POLE=array(1)
                     A_POLE[1]='LINIA_L'

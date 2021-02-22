@@ -1203,8 +1203,7 @@ PROCEDURE Vat_719( _G, _M, _STR, _OU )
       ENDIF
 
       SELECT 100
-      DO WHILE ! DostepEx( RAPORT )
-      ENDDO
+      USE &RAPORT VIA "ARRAYRDD"
       DO CASE
       CASE _OU == 'D'
          DO CASE

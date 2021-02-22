@@ -35,6 +35,7 @@ REQUEST HB_GT_WIN_DEFAULT
 REQUEST HB_GT_WVT
 REQUEST DBFCDX
 //REQUEST HB_GT_WVG
+REQUEST ARRAYRDD
 
 FUNCTION Main()
 
@@ -967,17 +968,11 @@ FUNCTION Main()
    // Tworzenie tymczasowego pliku na wydruki
    IF Type( 'RAPTEMP' ) == 'L'
       RAPTEMP := '_' + StrTran( Time(), ':', '' ) + '_'
-      DO WHILE ! dostep( 'RAPORT' )
-      ENDDO
-      COPY STRUCTURE TO &RAPTEMP
-      USE
+      dbCreate( RAPTEMP, { { "LINIA_L", "C", 190, 0 }, { "LINIA_P", "C", 190, 0 } }, "ARRAYRDD" )
    ELSE
       IF Len( AllTrim( RAPTEMP ) ) == 0
          RAPTEMP := '_' + StrTran( Time(), ':', '' ) + '_'
-         DO WHILE ! dostep( 'RAPORT' )
-         ENDDO
-         COPY STRUCTURE TO &RAPTEMP
-         USE
+         dbCreate( RAPTEMP, { { "LINIA_L", "C", 190, 0 }, { "LINIA_P", "C", 190, 0 } }, "ARRAYRDD" )
       ENDIF
    ENDIF
 

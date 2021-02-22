@@ -634,8 +634,7 @@ PROCEDURE Pit_5Z( _G, _M, _STR, _OU )
       picfe := '@E 999999999 .99'
       picf1 := '@E 9 999 999 .99'
       SELECT 100
-      DO WHILE ! DostepEx( RAPORT )
-      ENDDO
+      USE &RAPORT VIA "ARRAYRDD"
       DO CASE
       CASE _OU == 'D'
          DO CASE

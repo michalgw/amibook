@@ -374,8 +374,7 @@ next
 *   p64=slownie(p35)
 *****************************
    sele 100
-   do while.not.dostepex(RAPORT)
-   enddo
+   USE &RAPORT VIA "ARRAYRDD"
    do case
    case _OU='E'
       do p_wypla

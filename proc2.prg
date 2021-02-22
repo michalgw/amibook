@@ -131,8 +131,7 @@ function mon_drk( _linia )
          @ 0, 0 SAY status()
          SET COLOR TO
          SELECT 100
-         DO WHILE ! dostepex( RAPORT )
-         ENDDO
+         USE &RAPORT VIA "ARRAYRDD"
          ZAP
          SELECT 1
          RETURN 0
@@ -276,8 +275,7 @@ function mon_drk( _linia )
          ENDDO
          SELECT 100
          USE
-         DO WHILE ! dostepex( RAPORT )
-         ENDDO
+         USE &RAPORT VIA "ARRAYRDD"
          ZAP
          SELECT 1
          RETURN 0

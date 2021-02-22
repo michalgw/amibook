@@ -108,8 +108,7 @@ zDEKLTEL=firma->DEKLTEL
 begin sequence
    *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
    sele 100
-   do while.not.dostepex(RAPORT)
-   enddo
+   USE &RAPORT VIA "ARRAYRDD"
    do case
    case _OU='D'
         do case

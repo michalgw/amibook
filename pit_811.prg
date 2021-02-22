@@ -676,8 +676,8 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       P52_5a_R262 := Max( 0, P50_5_R262 - P51_5_R262 )
 
       SELECT 100
-      DO WHILE .NOT. DostepEx( RAPORT )
-      ENDDO
+      USE &RAPORT VIA "ARRAYRDD"
+
       DO CASE
          CASE _OU='D'
          CASE _OU='P'
