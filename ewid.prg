@@ -212,11 +212,7 @@ FUNCTION Ewid()
 
                            DO CASE
                               CASE ZVAT='T'
-                                 IF param_rok > '2012'
-                                    fakturyn()
-                                 ELSE
-                                    fakturyv()
-                                 ENDIF
+                                 fakturyn()
                               OTHERWISE
                                  faktury3()
                            ENDCASE

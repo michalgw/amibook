@@ -533,10 +533,6 @@ FUNCTION Main()
    // Wersja KEDU ( 1 - 1.3; 2 - 5.2 )
    PUBLIC paraz_wer := 1
 
-   // Katalog zapisu edeklaracji - stare
-   // TODO: Do usuniecia lacznie ze stara edeklaracja
-   PUBLIC parv7_cel := '.\' + Space( 58 )
-
    // ---
 
    // Staweki podatku zrycz. przechowywane w pliku TAB_RYCZ.MEM
@@ -689,15 +685,6 @@ FUNCTION Main()
    ELSE
       //do param_zu
       Param_Zu()
-   ENDIF
-
-   // Parametry starej edeklaracji
-   // TODO: Do usuniecia
-   IF File( 'param_v7.mem' )
-      RESTORE FROM param_v7 ADDITIVE
-   ELSE
-      //do param_v7
-      Param_V7()
    ENDIF
 
    // Stawki podatku zryczaltowanego

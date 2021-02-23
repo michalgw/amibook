@@ -1533,8 +1533,8 @@ PROCEDURE Vat_719( _G, _M, _STR, _OU )
 //         ENDIF
       CASE _OU == 'I'
          infov716()
-      CASE _OU == 'E'
-         e_vat712()
+//      CASE _OU == 'E'
+//         e_vat712()
       ENDCASE
    END
    IF _czy_close

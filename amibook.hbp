@@ -63,7 +63,6 @@ dodat5l.prg
 dompar.prg
 dowew.prg
 dzienwyd.prg
-e_vat712.prg
 edek.prg
 edekdrk.prg
 edeklar.prg
@@ -77,20 +76,16 @@ ewidpojw.prg
 ewidwyp.prg
 ewid_dr.prg
 ewid_dr16.prg
-fakt2.prg
-fakt3.prg
 fakt2new.prg
 fakt2not.prg
 fakt2w.prg
+fakt3.prg
 faktury3.prg
 fakturyn.prg
-fakturyv.prg
 fakturyw.prg
-fapoz.prg
 fapozn.prg
 fapozw.prg
 firma1.prg
-firma2.prg
 gmbrowse.prg
 ift1.prg
 indeks.prg
@@ -118,7 +113,6 @@ ksieg.prg
 ksiega16.prg
 kulmar2.prg
 kvat27.prg
-kvat_718.prg
 kvat_719.prg
 kvat_720.prg
 listapla.prg
@@ -138,7 +132,6 @@ param_p.prg
 param_pf.prg
 param_ppk.prg
 param_ro.prg
-param_v7.prg
 param_zu.prg
 pit_4r.prg
 pit_811.prg
@@ -151,7 +144,6 @@ pracow.prg
 pracw_.prg
 proc5.prg
 procfr.prg
-proc_dek.prg
 proc_zus.prg
 przek.prg
 przelewy.prg
@@ -206,9 +198,7 @@ umorz.prg
 urzedy.prg
 urzedy_.prg
 urzedyko.prg
-v7_zglo.prg
 vat27.prg
-vat_718.prg
 vat_719.prg
 vat_720.prg
 vat_proc.prg

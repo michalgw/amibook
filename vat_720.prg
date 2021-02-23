@@ -1588,8 +1588,8 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
 //         ENDIF
       CASE _OU == 'I'
          infov716()
-      CASE _OU == 'E'
-         e_vat712()
+//      CASE _OU == 'E'
+//         e_vat712()
       CASE _OU == 'J'
          resdekl := JPK_V7_DaneDek()
          IF kordek == 'K'
