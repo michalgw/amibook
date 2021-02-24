@@ -726,7 +726,7 @@ func oblpl
         enddo
      endif
 *    zDNI_ZASCHO=min(wolC,max(0,33-(choC+choZ)))
-     zDNI_ZAS100=min(wolZ,max(0,33-(choC+choZ)))
+     zDNI_ZAS100=min(wolZ,max(0,parap_ldw-(choC+choZ)))
      sele etaty
       zDNI_CHOROB=wolC+wolZ+wolO+wolW+wolM
       if zDNI_BEZPL#0

@@ -37,7 +37,7 @@ if .not.file([param_ppk.mem])
    return
 endif
 *################################# GRAFIKA ##################################
-@  3,42 say ' Parametry og&_o.lne                     '
+@  3,42 say '-liczba dni wolnych finans.100%       '
 @  4,42 say '-koszt uzyskania przychodu            '
 @  5,42 say '-miesi&_e.czne odliczenie podatku        '
 @  6,42 say '-staw.zas.chorobowego (do33dni)     % '
@@ -107,7 +107,9 @@ zparap_ff3=parap_ff3
 zparap_rkc=parap_rkc
 zparpk_sz := parpk_sz
 zparpk_sp := parpk_sp
+zparap_ldw := parap_ldw
 *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
+@  3,77 get zparap_ldw picture "999" range 0,999
 @  4,73 get zparap_kos picture "9999.99" range 0,9999
 @  5,73 get zparap_odl picture "9999.99" range 0,9999
 @  6,75 get zparap_cho picture '99'
@@ -176,6 +178,7 @@ parap_ff3=zparap_ff3
 parap_rkc=zparap_rkc
 parpk_sz := zparpk_sz
 parpk_sp := zparpk_sp
+parap_ldw := zparap_ldw
 ****************************
 save to param_p all like parap_*
 save to param_ppk all like parpk_*
@@ -219,6 +222,7 @@ close_()
 procedure say_pr
 clear type
 set colo to w+
+@  3,77 say parap_ldw pict '999'
 @  4,73 say parap_kos pict '9999.99'
 @  5,73 say parap_odl pict '9999.99'
 @  6,75 say parap_cho pict [99]

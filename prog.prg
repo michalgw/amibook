@@ -501,6 +501,9 @@ FUNCTION Main()
    // Domyslny symbol kasy choryc
    PUBLIC parap_rkc := '01R'
 
+   // Liczba dni wolnych pˆatnych 100% przez pracodawc©
+   PUBLIC parap_ldw := 33
+
    // ---
 
    // Parametry do obliczania korekt
