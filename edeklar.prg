@@ -2706,14 +2706,19 @@ FUNCTION edek_pit11_26()
       r = r + '  </Podmiot1>' + nl
       r = r + '  <Podmiot2 rola="Podatnik">' + nl
       r = r + '    <OsobaFizyczna>' + nl
-      IF Len(AllTrim(P30)) = 0
+      IF Len( AllTrim( P29 ) ) > 0
          r = r + '      <etd:NIP>' + trimnip(P29) + '</etd:NIP>' + nl
-      ELSE
+      ELSEIF Len( AllTrim( P30 ) ) > 0
          r = r + '      <etd:PESEL>' + trimnip(P30) + '</etd:PESEL>' + nl
       ENDIF
       r = r + '      <etd:ImiePierwsze>' + str2sxml(AllTrim(P32)) + '</etd:ImiePierwsze>' + nl
       r = r + '      <etd:Nazwisko>' + str2sxml(AllTrim(P31)) + '</etd:Nazwisko>' + nl
       r = r + '      <etd:DataUrodzenia>' + date2strxml(P36d) + '</etd:DataUrodzenia>' + nl
+      IF Len( AllTrim( P_DokIDNr ) ) > 0
+         r = r + '      <NrId poz="P_13">' + str2sxml( AllTrim( P_DokIDNr ) ) + '</NrId>' + nl
+         r = r + '      <RodzajNrId poz="P_14">' + AllTrim( P_DokIDTyp ) + '</RodzajNrId>' + nl
+         r = r + '      <KodKrajuWydania poz="P_15A">' + AllTrim( P_KrajID ) + '</KodKrajuWydania>' + nl
+      ENDIF
       r = r + '    </OsobaFizyczna>' + nl
       r = r + '    <AdresZamieszkania rodzajAdresu="RAD">' + nl
 		r = r + '        <KodKraju poz="P_19A">' + str2sxml(P_KrajID) + '</KodKraju>' + nl
