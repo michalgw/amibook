@@ -372,14 +372,13 @@ FUNCTION Ewid()
                         verdekold := 'K  (1)                    '
                   ENDCASE
 
-                  @  8, 1 TO 22, 39
-                  @  9, 2 PROMPT ' 4 - PIT-4R   (11)                   '
-                  @ 10, 2 PROMPT ' 8 - PIT-8AR  (10)                   '
-                  @ 11, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
-                  @ 12, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
-                  @ 13, 2 PROMPT ' J - JPK_V7' + verdekold
-                  @ 14, 2 PROMPT ' U - VAT-UE                          '
-                  @ 15, 2 PROMPT ' 7 - VAT-27   (2)                    '
+                  @  9, 1 TO 22, 39
+                  @ 10, 2 PROMPT ' 4 - PIT-4R   (11)                   '
+                  @ 11, 2 PROMPT ' 8 - PIT-8AR  (10)                   '
+                  @ 12, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
+                  @ 13, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
+                  @ 14, 2 PROMPT ' J - JPK_V7' + verdekold
+                  @ 15, 2 PROMPT ' U - VAT-UE                          '
                   @ 16, 2 TO 16, 38
                   @ 17, 2 PROMPT ' C - RCA raport imienny              '
                   @ 18, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '
@@ -396,7 +395,7 @@ FUNCTION Ewid()
                   papier := 'K'
                   DO CASE
                      CASE opcja1 == 1
-                        papier := menuDeklaracjaDruk( 10, .F. )
+                        papier := menuDeklaracjaDruk( 11, .F. )
                         IF LastKey() == K_ESC .OR. papier == ''
 
                         ELSE
@@ -404,7 +403,7 @@ FUNCTION Ewid()
                         ENDIF
 
                      CASE opcja1 == 2
-                        papier := menuDeklaracjaDruk( 11, .F. )
+                        papier := menuDeklaracjaDruk( 12, .F. )
                         IF LastKey() == K_ESC .OR. papier == ''
 
                         ELSE
@@ -430,14 +429,14 @@ FUNCTION Ewid()
                         ENDIF
 
                      CASE opcja1 == 5
-                        JPK_V7_Rob()
+                        JPK_V7_Rob( 15, 4 )
 
                      CASE opcja1 == 6
 
-                        opcja11 := MenuEx( 15, 2, { "5 - Wersja 5 VAT-UE (5)", "4 - Wersja 4 VAT-UE (4)" } )
+                        opcja11 := MenuEx( 16, 2, { "5 - Wersja 5 VAT-UE (5)", "4 - Wersja 4 VAT-UE (4)" } )
 
                         IF opcja11 > 0
-                           SWITCH edekCzyKorekta( 15, 2 )
+                           SWITCH edekCzyKorekta( 16, 2 )
                            CASE 1
                               vue_info( opcja11 )
                               EXIT
@@ -448,18 +447,6 @@ FUNCTION Ewid()
                         ENDIF
 
                      CASE opcja1 == 7
-                        IF ( papier := menuDeklaracjaDruk( 16, .F.) ) $ 'KX'
-                           IF ( opcja11 := edekCzyKorekta( 17, 2 ) ) > 0
-                              DO CASE
-                                 CASE papier == 'K'
-                                    Vat27Druk( opcja11 )
-                                 CASE papier == 'X'
-                                    Vat27Edeklaracja( opcja11 )
-                              ENDCASE
-                           ENDIF
-                        ENDIF
-
-                     CASE opcja1 == 8
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -487,7 +474,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 9
+                     CASE opcja1 == 8
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -515,7 +502,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 10
+                     CASE opcja1 == 9
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -547,7 +534,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 11
+                     CASE opcja1 == 10
                         opcja11 := MenuEx( 19, 6, { "S - Deklaracja skˆadki", "K - Korekta skˆadki" } )
                         DO CASE
                         CASE opcja11 == 1

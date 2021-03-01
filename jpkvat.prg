@@ -1149,7 +1149,7 @@ PROCEDURE JPK_VAT_ZapiszWERJPKVAT( nWer )
 
 /*----------------------------------------------------------------------*/
 
-PROCEDURE JPK_V7_Rob()
+PROCEDURE JPK_V7_Rob( nR, nC )
 
    LOCAL aDaneVat, aDane := hb_Hash()
    LOCAL nFirma, nMiesiacPocz, nMiesiacKon
@@ -1157,6 +1157,9 @@ PROCEDURE JPK_V7_Rob()
    LOCAL cDaneXml, cMK
    LOCAL nMenu := 1, cKolor, cEkran := SaveScreen(), nMenuDekDruk := 1
    LOCAL lKorekta := NIL
+
+   hb_default( @nR, 15 )
+   hb_default( @nC, 4 )
 
    nFirma := Val( ident_fir )
 //   nMiesiacPocz := Val( miesiac )
@@ -1176,7 +1179,7 @@ PROCEDURE JPK_V7_Rob()
    aDane[ 'Korekta' ] := .F.
    aDane[ 'DataWytworzeniaJPK' ] := datetime2strxml( hb_DateTime() )
 
-   nMenuDekDruk := MenuEx( 14, 4, { ' D - Wydruk      ', ' E - eDeklaracja ' }, ;
+   nMenuDekDruk := MenuEx( nR, nC, { ' D - Wydruk      ', ' E - eDeklaracja ' }, ;
       nMenuDekDruk, .T. )
 
    IF nMenuDekDruk == 0
@@ -1186,7 +1189,7 @@ PROCEDURE JPK_V7_Rob()
 
    IF ! aDane[ 'Kwartalnie' ] .OR. AScan( { 3, 6, 9, 12 }, nMiesiacPocz ) > 0 .OR. nMenuDekDruk == 1
       aDane[ 'Kwartal' ] := ObliczKwartal( nMiesiacPocz )[ 'kwarta' ]
-      nMenu := MenuEx( 16, 4, { ' J - Deklaracja + rejestry ', ;
+      nMenu := MenuEx( nR, nC, { ' J - Deklaracja + rejestry ', ;
          ' D - Tylko deklaracja      ', ' R - Tylko rejestry        ' }, ;
          nMenu, .T. )
    ELSE
