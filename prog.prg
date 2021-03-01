@@ -25,16 +25,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "dbinfo.ch"
 #include "hbgtinfo.ch"
 #include "hbfr.ch"
-//#include "hbgtwvg.ch"
 #include "inkey.ch"
 
 REQUEST HB_LANG_PL
 REQUEST HB_CODEPAGE_PL852
-ANNOUNCE HB_GT_SYS
 REQUEST HB_GT_WIN_DEFAULT
 REQUEST HB_GT_WVT
 REQUEST DBFCDX
-//REQUEST HB_GT_WVG
 REQUEST ARRAYRDD
 
 FUNCTION Main()
