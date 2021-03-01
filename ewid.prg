@@ -114,14 +114,6 @@ FUNCTION Ewid()
       IF LastKey() == K_ESC
          RETURN
       ENDIF
-      ***********OMED***********
-      // Wylaczamy demo - kazdy moze robic co chce
-      /*
-      IF nr_uzytk == 0 .AND. ( miesiac < ' 7' .OR. miesiac > ' 8' )
-         kom( 4, '*u', ' Wersja demonstracyjna pozwala na prac&_e. tylko w Lipcu i Sierpniu ' )
-         LOOP
-      ENDIF
-      */
       **************************
       IF miesiac < aktualny
          IF ! tnesc( '*i', ' UWAGA ! ' + RTrim( miesiac( Val( aktualny ) ) ) + ' jest aktualnym miesi&_a.cem ewidencyjnym, jeste&_s. pewny? (T/N) ' )
@@ -220,9 +212,6 @@ FUNCTION Ewid()
                         CASE opcja1 == 2
                            fakturyw()
 
-                        *CASE opcja1 == 3
-                           *do rozpoj
-
                         CASE opcja1 == 3
                            JPK_FA_Rob()
 
@@ -279,12 +268,6 @@ FUNCTION Ewid()
                wyposaz()
 
             CASE opcja == 6
-   *           K153=K_ALT_F10
-   *           if NR_UZYTK=153
-   *              K153=0
-   *              K153=inkey(0)
-   *           endif
-   *           if K153=K_ALT_F10
                *=============================
                opcja1 := 1
                SAVE SCREEN TO ROBSO11
@@ -298,7 +281,6 @@ FUNCTION Ewid()
                   @ 18, 5 PROMPT ' R - podatku zrycza&_l.towanym     '
                   @ 19, 5 PROMPT ' S - strukturze sprzeda&_z.y-detal '
                   @ 20, 5 PROMPT ' K - % korekty VAT-zak.pozosta. '
-                  //@ 21, 5 PROMPT ' P - informacja podsumow. VAT   '
                   opcja1 := menu( opcja1 )
                   ColStd()
                   IF LastKey() == K_ESC
@@ -347,7 +329,6 @@ FUNCTION Ewid()
 
                      CASE opcja1 == 2
                         vat_720( 0, 0, 1, 'I' )
-   *                  do p_vat
 
                      CASE opcja1 == 3
                         pit_4r( 0,0,1,'E' )
@@ -361,61 +342,27 @@ FUNCTION Ewid()
                      CASE opcja1 == 6
                         info_kor()
 
-                 //CASE opcja1 == 7
-                    //VAT_InfoSum( 1, Val( ident_fir ), Val( miesiac ) )
                   ENDCASE
                   close_()
                   RESTORE SCREEN FROM SCR22
                ENDDO
                RESTORE SCREEN FROM ROBSO11
-   *           endif
 
             CASE opcja == 7
                IF zRYCZALT == 'T'
                   ewid_dr16rob()
                ELSE
                  ksiega16()
-                 //do ksiega13
                ENDIF
 
             CASE opcja == 8
-   *           K153=K_ALT_F10
-   *           if NR_UZYTK=153
-   *              K153=0
-   *              K153=inkey(0)
-   *           endif
-   *           if K153=K_ALT_F10
                *=============================
                opcja1 := 1
                SAVE SCREEN TO ROBSO11
                DO WHILE .T.
                *=============================
                   ColPro()
-                  verdekvat := '                       '
-                  verdeknew := '                       '
                   verdekold := '                       '
-
-                  DO CASE
-                     CASE zVATFORDR == '7 '
-                        verdekvat := '(20)   (czyste kartki) '
-
-                     CASE zVATFORDR == '7K'
-                        verdekvat := '(14)   (czyste kartki) '
-
-                     CASE zVATFORDR == '7D'
-                        verdekvat := '(8)    (czyste kartki) '
-                  ENDCASE
-
-                  DO CASE
-                     CASE zVATFORDR == '7 '
-                        verdeknew := '(19)   (czyste kartki) '
-
-                     CASE zVATFORDR == '7K'
-                        verdeknew := '(13)   (czyste kartki) '
-
-                     CASE zVATFORDR == '7D'
-                        verdeknew := '(8)    (czyste kartki) '
-                  ENDCASE
 
                   DO CASE
                      CASE zVATFORDR == '7 '
@@ -425,18 +372,14 @@ FUNCTION Ewid()
                         verdekold := 'K  (1)                    '
                   ENDCASE
 
-                  @  6, 1 TO 22, 39
-                  @  7, 2 PROMPT ' 4 - PIT-4R   (11)   (czyste kartki) '
-                  @  8, 2 PROMPT ' 8 - PIT-8AR  (10)   (czyste kartki) '
-                  @  9, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
-                  @ 10, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
-                  @ 11, 2 PROMPT ' V - VAT-' + zVATFORDR + '   ' + verdekvat
-                  @ 12, 2 PROMPT ' Y - VAT-' + zVATFORDR + '   ' + verdeknew
+                  @  8, 1 TO 22, 39
+                  @  9, 2 PROMPT ' 4 - PIT-4R   (11)                   '
+                  @ 10, 2 PROMPT ' 8 - PIT-8AR  (10)                   '
+                  @ 11, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
+                  @ 12, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
                   @ 13, 2 PROMPT ' J - JPK_V7' + verdekold
-    *(7-11/7K-5/7D-2)
-    *             @ 15, 2 prompt [ 7 - VAT-7/7K (9/3)                  ]
-                  @ 14, 2 PROMPT ' U - VAT-UE   (zestaw formularzy UE) '
-                  @ 15, 2 PROMPT ' 7 - VAT-27   (2)    (czyste kartki) '
+                  @ 14, 2 PROMPT ' U - VAT-UE                          '
+                  @ 15, 2 PROMPT ' 7 - VAT-27   (2)                    '
                   @ 16, 2 TO 16, 38
                   @ 17, 2 PROMPT ' C - RCA raport imienny              '
                   @ 18, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '
@@ -453,62 +396,20 @@ FUNCTION Ewid()
                   papier := 'K'
                   DO CASE
                      CASE opcja1 == 1
-                        papier := menuDeklaracjaDruk( 8, .F. )
+                        papier := menuDeklaracjaDruk( 10, .F. )
                         IF LastKey() == K_ESC .OR. papier == ''
 
                         ELSE
                            pit_4r( 0, 0, 1, papier )
                         ENDIF
 
-   *                   set curs on
-   *                   ColStd()
-   *                   @ 11,15 say space(23)
-   *                   @ 11,22 get papier pict '!' when wKART(11,22) valid vKART(11,22)
-   *                   read
-   *                   set curs off
-   *                   @ 24,0
-   *                   if lastkey()<>27
-   *                      if papier='K'
-                            //do pit_4r with 0,0,1,'K'
-   *                      else
-   *                         afill(nazform,'')
-   *                         afill(strform,0)
-   *                         nazform[1]='PIT-4R'
-   *                         strform[1]=4
-   *                         form(nazform,strform,1)
-   *                      endif
-   *                   endif
-   *             case opcja1=2
-   *                  set curs on
-   *                  ColStd()
-   *                  @ 12,15 say space(23)
-   *                  @ 12,22 get papier pict '!' when wKART(12,22) valid vKART(12,22)
-   *                  read
-   *                  set curs off
-   *                  @ 24,0
-   *                  if lastkey()<>27
-   *                     if papier='K'
-   *                        do pit_4p with 0,0,1,'K'
-   *                     else
-   *                        afill(nazform,'')
-   *                        afill(strform,0)
-   *                        nazform[1]='PIT-4p'
-   *                        strform[1]=2
-   *                        form(nazform,strform,1)
-   *                     endif
-   *                  endif
-
                      CASE opcja1 == 2
-                        papier := menuDeklaracjaDruk( 9, .F. )
+                        papier := menuDeklaracjaDruk( 11, .F. )
                         IF LastKey() == K_ESC .OR. papier == ''
 
                         ELSE
                            pit_8ar( 0, 0, 1, papier )
                         ENDIF
-                      /*@ 24,0
-                      if lastkey()<>27
-                         do pit_8ar with 0,0,1,'K'
-                      endif*/
 
                      CASE opcja1 == 3
                         IF LastKey() <> K_ESC
@@ -516,7 +417,6 @@ FUNCTION Ewid()
                               kom( 5, '+w', ' UWAGA !!! Funkcja nie jest aktywna dla p&_l.atnik&_o.w podatku zrycza&_l.towanego ' )
                            ELSE
                               p_dochod( 'W' )
-   *                         do deklar1
                            ENDIF
                         ENDIF
 
@@ -526,97 +426,28 @@ FUNCTION Ewid()
                               kom( 5, '+w', ' UWAGA !!! Funkcja nie jest aktywna dla p&_l.atnik&_o.w podatku zrycza&_l.towanego ' )
                            ELSE
                               p_dochod( 'Z' )
-   *                         do deklar1
                            ENDIF
                         ENDIF
 
                      CASE opcja1 == 5
-                        SET CURSOR ON
-                      /*ColStd()
-                      if zVATFORDR='7 '
-                         @ 15,15 say space(23)
-                         @ 15,22 get papier pict '!' when wKARTv(15,22) valid vKARTv(15,22)
-                         read
-                      else
-                         papier='K'
-                      endif*/
-   *                   @ 15,22 get papier pict '!' when wKARTv(15,22) valid vKARTv(15,22)
-   *                   read
-                        papier := menuDeklaracjaDruk( 12, iif( zVATFORDR == '7 ', .T., .F. ) )
-                        SET CURSOR OFF
-    //                  @ 24,0
-                        IF LastKey() <> K_ESC
-                           DO CASE
-                              CASE papier == 'K'
-                                 vat_720( 0, 0, 1, 'K' )
-
-                              CASE papier == 'F'
-                                 AFill( nazform, '' )
-                                 AFill( strform, 0 )
-                                 nazform[ 1 ] := 'VAT-720'
-                                 strform[ 1 ] := 2
-                                 form( nazform, strform, 1 )
-
-                              CASE papier == 'E'
-                                 vat_720( 0, 0, 1, 'E' )
-
-                              CASE papier == 'X'
-                                 vat_720( 0, 0, 1, 'X' )
-                           ENDCASE
-                        ENDIF
+                        JPK_V7_Rob()
 
                      CASE opcja1 == 6
-                        SET CURSOR ON
-                        ColStd()
-   *                   if zVATFORDR='7 '
-   *                      @ 16,15 say space(23)
-   *                      @ 16,22 get papier pict '!' when wKARTvOLD(16,22) valid vKARTvOLD(16,22)
-   *                      read
-   *                   else
-   //                      papier='K'
-                        papier := menuDeklaracjaDruk( 13, iif( zVATFORDR == '7 ', .T., .F. ) )
-   *                   endif
-   *                   @ 16,22 get papier pict '!' when wKARTv(16,22) valid vKARTv(16,22)
-   *                   read
-                        SET CURSOR OFF
-   //                   @ 24,0
-                        if LastKey() <> K_ESC
-                           DO CASE
-                              CASE papier == 'K'
-                                 vat_719( 0, 0, 1, 'K' )
 
-                              CASE papier == 'F'
-                                 AFill( nazform, '' )
-                                 AFill( strform, 0 )
-                                 nazform[ 1 ] := 'VAT-719'
-                                 strform[ 1 ] := 2
-                                 form( nazform, strform, 1 )
+                        opcja11 := MenuEx( 15, 2, { "5 - Wersja 5 VAT-UE (5)", "4 - Wersja 4 VAT-UE (4)" } )
 
-                              CASE papier == 'E'
-                                 vat_719( 0, 0, 1, 'E' )
-
-                              CASE papier == 'X'
-                                 vat_719( 0, 0, 1, 'X' )
-                           ENDCASE
+                        IF opcja11 > 0
+                           SWITCH edekCzyKorekta( 15, 2 )
+                           CASE 1
+                              vue_info( opcja11 )
+                              EXIT
+                           CASE 2
+                              VatUE4KRob( opcja11 )
+                              EXIT
+                           ENDSWITCH
                         ENDIF
 
                      CASE opcja1 == 7
-                        JPK_V7_Rob()
-
-                     CASE opcja1 == 8
-
-                        opcja11 := MenuEx( 14, 2, { "5 - Wersja 5 VAT-UE (5)", "4 - Wersja 4 VAT-UE (4)" } )
-
-                        SWITCH edekCzyKorekta( 15, 2 )
-                        CASE 1
-                           vue_info( opcja11 )
-                           EXIT
-                        CASE 2
-                           VatUE4KRob( opcja11 )
-                           EXIT
-                        ENDSWITCH
-
-                     CASE opcja1 == 9
                         IF ( papier := menuDeklaracjaDruk( 16, .F.) ) $ 'KX'
                            IF ( opcja11 := edekCzyKorekta( 17, 2 ) ) > 0
                               DO CASE
@@ -628,7 +459,7 @@ FUNCTION Ewid()
                            ENDIF
                         ENDIF
 
-                     CASE opcja1 == 10
+                     CASE opcja1 == 8
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -656,7 +487,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 11
+                     CASE opcja1 == 9
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -684,7 +515,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 12
+                     CASE opcja1 == 10
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -716,7 +547,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 13
+                     CASE opcja1 == 11
                         opcja11 := MenuEx( 19, 6, { "S - Deklaracja sk늏dki", "K - Korekta sk늏dki" } )
                         DO CASE
                         CASE opcja11 == 1
@@ -730,7 +561,6 @@ FUNCTION Ewid()
                   RESTORE SCREEN FROM SCR22
                ENDDO
                RESTORE SCREEN FROM ROBSO11
-   *           endif
 
             CASE opcja == 9
                *=============================
@@ -744,8 +574,6 @@ FUNCTION Ewid()
                   @  9, 0 TO 22, 41
                   @ 10, 1 SAY    '                    Sumy Kor ID StanZap '
                   @ 11, 1 SAY    '   POD.NALICZONY (zakupy, nabycie, itp) '
-    *              @ 14,1 PROMPT [ 1 - &__S.RODKI TRWA&__L.E  ]+iif(ewid_rz1s='B','Brut','Nett')+[ ]+iif(ewid_rz1k='N','Nie',iif(ewid_rz1k='T','Tak','Raz'))+[ ]+ewid_rz1i+[ ]+iif(ewid_rz1z='D','Do_zapl',iif(ewid_rz1z='Z','Zaplaco',iif(ewid_rz1z='W','Wszystk','Niedruk')))+' '
-    *              @ 15,1 PROMPT [ 2 - POZOSTA&__L.E      ]+iif(ewid_rz2s='B','Brut','Nett')+[ ]+iif(ewid_rz2k='N','Nie',iif(ewid_rz2k='T','Tak','Raz'))+[ ]+ewid_rz2i+[ ]+iif(ewid_rz2z='D','Do_zapl',iif(ewid_rz2z='Z','Zaplaco',iif(ewid_rz2z='W','Wszystk','Niedruk')))+' '
                   @ 12, 1 PROMPT ' 1 - &__S.RODKI TRWA&__L.E  ' + iif( ewid_rz1s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rz1k == 'N', 'Nie', iif( ewid_rz1k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rz1i + ' ' + Space( 8 )
                   @ 13, 1 PROMPT ' 2 - POZOSTA&__L.E      ' + iif( ewid_rz2s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rz2k == 'N', 'Nie', iif( ewid_rz2k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rz2i + ' ' + Space( 8 )
                   @ 14, 1 PROMPT ' 3 - wg STAWEK VAT  ' + iif( ewid_rz3s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rz3k == 'N', 'Nie', iif( ewid_rz3k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rz3i + ' ' + iif( ewid_rz3z == 'D', 'Do_zapl', iif( ewid_rz3z == 'Z', 'Zaplaco', iif( ewid_rz3z == 'W', 'Wszystk', 'Niedruk' ) ) ) + ' '
@@ -754,7 +582,6 @@ FUNCTION Ewid()
                   @ 17, 1 PROMPT ' 5 - SPRZEDAZ       ' + iif( ewid_rs1s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rs1k == 'N', 'Nie', iif( ewid_rs1k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rs1i + ' ' + iif( ewid_rs1z == 'D', 'Do_zapl', iif( ewid_rs1z == 'Z', 'Zaplaco', iif( ewid_rs1z == 'W', 'Wszystk', 'Niedruk' ) ) ) + ' '
                   @ 18, 1 PROMPT ' 6 - KOREKTY SPRZ.  ' + iif( ewid_rs2s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rs2k == 'N', 'Nie', iif( ewid_rs2k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rs2i + ' ' + Space( 8 )
                   @ 19, 1 PROMPT ' 7 - NABYCIA UE,IMP ' + iif( ewid_rs3s == 'B', 'Brut', 'Nett' ) + ' ' + iif( ewid_rs3k == 'N', 'Nie', iif( ewid_rs3k == 'T', 'Tak', 'Raz' ) ) + ' ' + ewid_rs3i + ' ' + Space( 8 )
-    *              @ 21,1 PROMPT [ 7 - KOREKTY UE,itp ]+iif(ewid_rs4s='B','Brut','Nett')+[ ]+iif(ewid_rs4k='N','Nie',iif(ewid_rs4k='T','Tak','Raz'))+[ ]+ewid_rs4i+[ ]+space(8)
                   @ 20, 1 SAY    '   JPK                                  '
                   @ 21, 1 PROMPT ' 8 - Jednolity Plik Kontrolny VAT       '
                   opcja1 := menu( opcja1 )
@@ -772,15 +599,10 @@ FUNCTION Ewid()
                         @ 12, 26 GET ewid_rz1k PICTURE '!' WHEN wrz1k() VALID vRz1K()
                         @ 12, 30 GET ewid_rz1i PICTURE '!!' WHEN wrzi( 'rz1', 12, 30 )
                         ewid_rz1z := 'N'
-   *                    @ 14,33 get ewid_rz1z pict '!' when wrz1z() valid vRz1z()
                         READ
                         SET CURSOR OFF
                         IF LastKey() <> K_ESC
 
-   //                         save to ewid all like ewid_*
-   //                         ColStd()
-   //                         @ 24,0
-   //                         do rejzst with ewid_rz1s,ewid_rz1k,ewid_rz1i,ewid_rz1z
                            RejVAT_Zak_Drukuj( 1, ident_fir, miesiac, ewid_rz1s, ewid_rz1k, ewid_rz1i, ewid_rz1z )
 
                         ELSE
@@ -794,14 +616,9 @@ FUNCTION Ewid()
                         @ 13, 26 GET ewid_rz2k PICTURE '!' WHEN wrz2k() VALID vRz2K()
                         @ 13, 30 GET ewid_rz2i PICTURE '!!' WHEN wrzi( 'rz2', 13, 30 )
                         ewid_rz2z := 'N'
-    *                   @ 15,33 get ewid_rz2z pict '!' when wrz2z() valid vRz2z()
                         READ
                         SET CURSOR OFF
                         IF LastKey() <> K_ESC
-   //                      save to ewid all like ewid_*
-   //                      ColStd()
-   //                      @ 24,0
-   //                      do rejzpz with ewid_rz2s,ewid_rz2k,ewid_rz2i,ewid_rz2z
                            RejVAT_Zak_Drukuj( 2, ident_fir, miesiac, ewid_rz2s, ewid_rz2k, ewid_rz2i, ewid_rz2z )
                         ELSE
                            RESTORE FROM ewid ADDITIVE
@@ -817,10 +634,6 @@ FUNCTION Ewid()
                         READ
                         SET CURSOR OFF
                         IF LastKey() <> K_ESC
-   //                      save to ewid all like ewid_*
-   //                      ColStd()
-   //                      @ 24,0
-   //                      do rejzs with ewid_rz3s,ewid_rz3k,ewid_rz3i,ewid_rz3z
                            RejVAT_Zak_Drukuj( 3, ident_fir, miesiac, ewid_rz3s, ewid_rz3k, ewid_rz3i, ewid_rz3z )
                         ELSE
                            rESTORE FROM ewid ADDITIVE
@@ -839,10 +652,6 @@ FUNCTION Ewid()
                         READ
                         SET CURSOR OFF
                         IF LastKey() <> K_ESC
-   //                      save to ewid all like ewid_*
-   //                      ColStd()
-   //                      @ 24,0
-   //                      do rejs with ewid_rs1s,ewid_rs1k,ewid_rs1i,ewid_rs1z
                            RejVAT_Sp_Drukuj( 1, ident_fir, miesiac, ewid_rs1s, ewid_rs1k, ewid_rs1i, ewid_rs1z )
                         ELSE
                            RESTORE FROM ewid ADDITIVE
@@ -856,10 +665,6 @@ FUNCTION Ewid()
                         READ
                         SET CURS OFF
                         IF LastKey() <> K_ESC
-   //                      save to ewid all like ewid_*
-   //                      ColStd()
-   //                      @ 24,0
-   //                      do rejsKNEW with ewid_rs2s,ewid_rs2k,ewid_rs2i
                            RejVAT_Sp_Drukuj( 2, ident_fir, miesiac, ewid_rs2s, ewid_rs2k, ewid_rs2i, 'N' )
                         ELSE
                            RESTORE FROM ewid ADDITIVE
@@ -874,10 +679,6 @@ FUNCTION Ewid()
                         READ
                         SET CURSOR OFF
                         IF LastKey() <> K_ESC
-   //                      save to ewid all like ewid_*
-   //                      ColStd()
-   //                      @ 24,0
-   //                      do rejsZUE with ewid_rs3s,ewid_rs3k,ewid_rs3i
                            RejVAT_Zak_Drukuj( 4, ident_fir, miesiac, ewid_rs3s, ewid_rs3k, ewid_rs3i, ewid_rs3z )
                         ELSE
                            RESTORE FROM ewid ADDITIVE
@@ -906,11 +707,11 @@ FUNCTION Ewid()
                   @ 16, 4 PROMPT ' O - wyp&_l.aty dokonane w okresie   '
                   @ 17, 4 PROMPT ' 4 - rozliczone w PIT-4R          '
                   @ 18, 4 PROMPT ' N - nierozliczone w PIT-4R       '
-    //002 nowa pozycja
-    //002 poprzednie pozycje wyzej
+                  //002 nowa pozycja
+                  //002 poprzednie pozycje wyzej
                   @ 19, 4 PROMPT ' P - przelewy p&_l.ac                '
                   @ 20, 4 TO 20,37
-    //002a usunieto 'zlecen'
+                  //002a usunieto 'zlecen'
                   @ 21, 4 PROMPT ' I - lista innych wyp&_l.at          '
                   opcja1 := menu( opcja1 )
                   ColStd()
@@ -941,7 +742,7 @@ FUNCTION Ewid()
                      CASE opcja1 == 7
                         nierozp4( miesiac, miesiac )
 
-    //002 obsluga nowej pozycji
+                     //002 obsluga nowej pozycji
                      CASE opcja1 == 8
                         przelpra()
 
@@ -971,7 +772,6 @@ FUNCTION Ewid()
          infofirma()
          infoobr( miesiac )
       ENDDO
-*  @ 11,6,22,35 box([같같같같�])
       RESTORE SCREEN FROM ROBSO
       ColSta()
       IF zVAT == 'T'
@@ -1333,21 +1133,17 @@ FUNCTION wKARTv( wik, kok )
 *************************************
    ColInf()
    @ 24, 0 SAY PadC( 'Wpisz: K-druk na czystych kartkach , F-zadruk formularza', 80, ' ' )
-   *@ 24,0 say padc('Wpisz: K - druk na czystych kartkach, F - zadruk formularza, E - e-deklaracja',80,' ')
    ColStd()
    @ wik, kok + 1 SAY iif( papier == 'K', 'artki   ', 'ormularz' )
-   *@ wik,kok+1 say iif(papier='K','artki   ',iif(papier='F','ormularz','-deklar.'))
    RETURN .T.
 
 *************************************
 FUNCTION vKARTv( wik, kok )
 *************************************
    R := .F.
-   *if papier$'KFE'
    IF papier $ 'KF'
       ColStd()
       @ wik, kok + 1 SAY iif( papier == 'K', 'artki   ', 'ormularz' )
-   *   @ wik,kok+1 say iif(papier='K','artki   ',iif(papier='F','ormularz','-deklar.'))
       R := .T.
    ENDIF
    RETURN R
