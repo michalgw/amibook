@@ -140,21 +140,7 @@ PROCEDURE Info_kor()
       @ 23, 0 SAY '[D lub PrintScreen]-drukowanie ekranu    [Inny klawisz]-wpisanie nowych wartosci'
       kkk := Inkey( 0 )
       IF kkk == 68 .OR. kkk == 100
-         zm := SaveScreen( 0, 0, 24, 79 )
-         zm__ := ''
-         zm__ := zm__ + &kod_res + &kod_12cp + &kod_6wc
-         zm__ := zm__ + repl( '=', 80 ) + Chr( 13 ) + Chr( 10 )
-         zm__ := zm__ + '' + Chr( 13 ) + Chr( 10 )
-         FOR j := 4 TO 22
-             FOR i := 1 TO 159 STEP 2
-                 zm__ := zm__ + substr( zm, j * 160 + i, 1 )
-             NEXT
-             zm__ := zm__ + Chr( 13 ) + Chr( 10 )
-         NEXT
-         zm__ := zm__ + '' + Chr( 13 ) + Chr( 10 )
-         zm__ := zm__ + repl( '=', 80 ) + Chr( 13 ) + Chr( 10 )
-         zm__ := zm__ + &kod_ff
-         DrukujNowyProfil( zm__ )
+         DrukujEkran()
       ENDIF
       @ 23, 0 SAY '                                                                                '
    ENDDO

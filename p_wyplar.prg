@@ -91,26 +91,7 @@ kkk=inkey(0)
 zPodatki=.t.
 do case
 case kkk=68.or.kkk=100
-
-     //x=fcreate('c:\ekrwypl.txt',0)
-     zm=savescreen(0,0,24,79)
-     zm__=''
-     zm__=zm__+&kod_res+&kod_12cp+&kod_6wc
-     zm__=zm__+repl('=',80)+chr(13)+chr(10)
-     zm__=zm__+''+chr(13)+chr(10)
-     for j=4 to 22
-         for i=1 to 159 step 2
-             zm__=zm__+substr(zm,j*160+i,1)
-         next
-         zm__=zm__+chr(13)+chr(10)
-     next
-     zm__=zm__+''+chr(13)+chr(10)
-     zm__=zm__+repl('=',80)+chr(13)+chr(10)
-     zm__=zm__+&kod_ff
-     //fwrite(x,zm__,len(zm__))
-     //fclose(x)
-     //!copy c:\ekrwypl.txt lpt1:
-     DrukujNowyProfil(zm__)
+   DrukujEkran()
 
 case kkk=87.or.kkk=119.or.kkk=66.or.kkk=98
 

@@ -123,26 +123,7 @@ do while .t.
    @ 22,0 say '[D lub PrintScreen]-drukowanie ekranu    [Inny klawisz]-wpisanie nowych wartosci'
    kkk=inkey(0)
    if kkk=68.or.kkk=100
-      //x=fcreate('c:\ekrstru.txt',0)
-      zm=savescreen(0,0,24,79)
-      zm__=''
-      zm__=zm__+&kod_res
-      zm__=zm__+&kod_12cp+&kod_6wc
-      zm__=zm__+repl('=',80)+chr(13)+chr(10)
-      zm__=zm__+''+chr(13)+chr(10)
-      for j=4 to 20
-          for i=1 to 159 step 2
-              zm__=zm__+substr(zm,j*160+i,1)
-          next
-          zm__=zm__+chr(13)+chr(10)
-      next
-      zm__=zm__+''+chr(13)+chr(10)
-      zm__=zm__+repl('=',80)+chr(13)+chr(10)
-      zm__=zm__+&kod_ff
-      //fwrite(x,zm__,len(zm__))
-      //fclose(x)
-      //!copy c:\ekrstru.txt lpt1:
-      DrukujNowyProfil(zm__)
+      DrukujEkran()
    endif
    @ 22,0 say '                                                                                '
 enddo

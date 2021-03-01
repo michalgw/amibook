@@ -772,3 +772,46 @@ FUNCTION DrukujNowyProfil(cDane)
 
 /*----------------------------------------------------------------------*/
 
+PROCEDURE DrukujEkran( xNaglowek, xStopka )
+
+   LOCAL zm, zm__
+
+   zm := SaveScreen( 0, 0, 24, 79 )
+   zm__ := ''
+   zm__ := zm__ + &kod_res + &kod_12cp + &kod_6wc
+   zm__ := zm__ + repl( '=', 80 ) + Chr( 13 ) + Chr( 10 )
+   zm__ := zm__ + Chr( 13 ) + Chr( 10 )
+   IF HB_ISCHAR( xNaglowek )
+      zm__ := zm__ + xNaglowek + Chr( 13 ) + Chr( 10 )
+   ELSEIF HB_ISARRAY( xNaglowek )
+      AEval( xNaglowek, { | cLinia |
+         IF HB_ISCHAR( cLinia )
+            zm__ := zm__ + cLinia + Chr( 13 ) + Chr( 10 )
+         ENDIF
+      } )
+   ENDIF
+   FOR j := 4 TO 22
+       FOR i := 1 TO 159 STEP 2
+           zm__ := zm__ + substr( zm, j * 160 + i, 1 )
+       NEXT
+       zm__ := zm__ + Chr( 13 ) + Chr( 10 )
+   NEXT
+   zm__ := zm__ + '' + Chr( 13 ) + Chr( 10 )
+   IF HB_ISCHAR( xStopka )
+      zm__ := zm__ + xStopka + Chr( 13 ) + Chr( 10 )
+   ELSEIF HB_ISARRAY( xStopka )
+      AEval( xStopka, { | cLinia |
+         IF HB_ISCHAR( cLinia )
+            zm__ := zm__ + cLinia + Chr( 13 ) + Chr( 10 )
+         ENDIF
+      } )
+   ENDIF
+   zm__ := zm__ + repl( '=', 80 ) + Chr( 13 ) + Chr( 10 )
+   zm__ := zm__ + &kod_ff
+
+   DrukujNowyProfil( zm__ )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+

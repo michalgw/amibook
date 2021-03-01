@@ -586,29 +586,8 @@ PROCEDURE zestaw_R( Okres )
    zPodatki := .T.
    DO CASE
    CASE kkk == Asc( 'D' ) .OR. kkk == Asc( 'd' )
-
-      //x=fcreate('c:\ekrrycz.txt',0)
-      zm := SaveScreen( 0, 0, 24, 79 )
-      zm__ := ''
-      zm__ := zm__ + &kod_res + &kod_12cp + &kod_6wc
-      zm__ := zm__ + repl( '=', 80 ) + Chr( 13 ) + Chr( 10 )
-      zm__ := zm__ + '' + Chr( 13 ) + Chr( 10 )
-      zm__ := zm__ + PadC( AllTrim( firma->nazwa ), 80 ) + Chr( 13 ) + Chr( 10 )
-      zm__ := zm__ + PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) + Chr( 13 ) + Chr( 10 )
-      zm__ := zm__ + '' + Chr( 13 ) + Chr( 10 )
-      FOR j := 4 TO 22
-         FOR i := 1 TO 159 STEP 2
-            zm__ := zm__ + SubStr( zm, j * 160 + i, 1 )
-         NEXT
-         zm__ := zm__ + Chr( 13 ) + Chr( 10 )
-      NEXT
-      zm__ := zm__ + '' + Chr( 13 ) + Chr( 10 )
-      zm__ := zm__ + repl( '=', 80 ) + Chr( 13 ) + Chr( 10 )
-      zm__ := zm__ + &kod_ff
-      //fwrite(x,zm__,len(zm__))
-      //fclose(x)
-      //!copy c:\ekrrycz.txt lpt1:
-      DrukujNowyProfil( zm__ )
+      DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), ;
+         PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) } )
 
    CASE kkk == Asc( 'W' ) .OR. kkk == Asc( 'w' ) .OR. kkk == Asc( 'B' ) .OR. kkk == Asc( 'b' )
       zNAZWA_PLA := zNAZWA_PLA + Space( 30 )
