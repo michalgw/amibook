@@ -28,258 +28,135 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Odtw()
 
-archfile=[ksiega]
-if .not.file([odtw.mem])
-   *---------------------------------------
-   @  3,42 say '                                      '
-   @  4,42 say '                                      '
-   @  5,42 say '                                      '
-   @  6,42 say '                                      '
-   @  7,42 say '                                      '
-   @  8,42 say '                                      '
-   @  9,42 say '                                      '
-   @ 10,42 say '    Opcja odtwarzania danych zamienia '
-   @ 11,42 say '    dane w komputerze na dane zawarte '
-   @ 12,42 say '    w kopii na wskazanym dysku.       '
-   @ 13,42 say '    W przypadku odtwarzania danych    '
-   @ 14,42 say '    z dyskietek, kolejno&_s.&_c. wsuwanych  '
-   @ 15,42 say '    dyskietek nie jest istotna.       '
-   @ 16,42 say '                                      '
-   @ 17,42 say '                                      '
-   @ 18,42 say '                                      '
-   @ 19,42 say '                                      '
-   @ 20,42 say '                                      '
-   @ 21,42 say '                                      '
-   @ 22,42 say '                                      '
-   *---------------------------------------
-   if .not.tnesc([*i],[ UWAGA ! Informacje w bazach danych zostan&_a. zamienione - jeste&_s. pewny? (T/N) ])
-      return
-   endif
-   @ 1,47 say space(10)
-   @ 24,7 prompt '[ Nap&_e.d A (stacja dyskietek) ]'
-   @ 24,44 prompt '[ Inny nap&_e.d (wskazany plik) ]'
-   clear type
-   naped=menu(1)
-   if lastkey()=27
-      return
-   endif
-   *------------------
-   if naped=1
-      if .not.entesc([*u],' Wsu&_n. dyskietke do nap&_e.du '+iif(naped=1,[A],[B])+' i naci&_s.nij [Enter] ')
-         return
-      endif
-      do while .t.
-         if .not.file(iif(naped=1,[a:]+archfile+[.*],[b:]+archfile+[.*]))
-            if entesc([*w],'Brak dyskietki lub kopii na dyskietce - zmie&_n. dyskietke i naci&_s.nij [Enter]')
-               loop
-            endif
-            return
-         endif
-         exit
-      enddo
-      *------------------
-      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      declare p[1]
-      store 0 to nr_dysk,il_dysk
-      do while .t.
-         ColInb()
-         @ 24,0 clear
-         center(24,[Prosz&_e. czeka&_c....])
-         set color to
-         nr_dysk=nr_dysk+1
-         adir([a:]+archfile+[.*],p)
-         if left(right(p[1],3),1)=[Z]
-            il_dysk=val(right(p[1],2))
-         endif
-         copy file ([a:]+p[1]) to (p[1])
-         if nr_dysk>=il_dysk.and.il_dysk#0
-            exit
-         endif
-         *------------------
-         if .not.entesc([*u],' Wsu&_n. nast&_e.pn&_a. dyskietke do nap&_e.du '+iif(naped=1,[A],[B])+' i naci&_s.nij [Enter] ')
-            do odtw_
-            return
-         endif
-         do while .t.
-            if .not.file([a:]+archfile+[.*])
-               if entesc([*w],'Brak dyskietki lub kopii na dyskietce - zmie&_n. dyskietke i naci&_s.nij [Enter]')
-                  loop
-               endif
-               do odtw_
-               return
-            endif
-            exit
-         enddo
-      enddo
-      *===============scalanie===============
-      ColInb()
-      @ 24,0 clear
-      center(24,[Prosz&_e. czeka&_c....])
-      set color to
-      x=fcreate([kopia.arc],0)
-      if fblad(ferror())<>0
-         return
-      endif
-      for i=1 to il_dysk
-         ColInb()
-         @ 24,0 clear
-         center(24,[Prosz&_e. czeka&_c.... Odtwarzam dyskietke nr ]+str(i,2))
-         set color to
-         zm=archfile+[.]+iif(i=il_dysk,[z],[x])+strtran(str(i,2),[ ],[0])
-         y=fopen(zm,0)
-         if fblad(ferror())<>0
-            exit
-         endif
-         size=fseek(y,0,2)
-         fseek(y,0,0)
-         pozycja=0
-         rozmem=min(50000,memory(2)*1024)
-*        wait memory(0)*1024
-         do while pozycja<size
-            inf=space(rozmem)
-            fread(y,@inf,rozmem)
-            if fblad(ferror())<>0
-               exit
-            endif
-            fwrite(x,inf,min(rozmem,size-pozycja))
-            if fblad(ferror())<>0
-               exit
-            endif
-            pozycja=pozycja+rozmem
-            rozmem=min(rozmem,size-pozycja)
-         enddo
-         rele rozmem
-*        wait memory(0)*1024
-         if fblad(ferror())<>0
-            exit
-         endif
-         fclose(y)
-         if fblad(ferror())<>0
-            exit
-         endif
-         erase (zm)
-      next
-      fclose(x)
-      if fblad(ferror())<>0
-         return
-      endif
-      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      save to odtw all like il_dysk
-      save to scr all like scr
-      if file(RAPTEMP+'.dbf')
-         dele file &RAPTEMP..dbf
-      endif
-      if file(RAPTEMP+'.cdx')
-         dele file &RAPTEMP..cdx
-      endif
-      rele all
-      hbfr_FreeLibrary()
-      amiDllZakoncz()
-      WinPrintDone()
-      cancel
-   endif
-   if naped=2
-      sciez_ar='c:\'
-      if .not.file([archpath.mem])
-         save to archpath all like sciez_ar
-      else
-         restore from archpath additive
-      endif
-      razempl=0
-      do while razempl=0
-         sciez_ar=alltrim(sciez_ar)+repl(' ',100-len(alltrim(sciez_ar)))
-         @ 24,0 clear to 24,79
-         @ 24,5 say 'Podaj dysk i folder z kopi&_a. ' get sciez_ar pict '@S30 '+repl('!',100)
-         read
-         if lastkey()=27
-            return
-         endif
+   archfile := 'ksiega'
+   IF .NOT. File( 'odtw.mem' )
+      *---------------------------------------
+      @  3,42 say '                                      '
+      @  4,42 say '                                      '
+      @  5,42 say '                                      '
+      @  6,42 say '                                      '
+      @  7,42 say '                                      '
+      @  8,42 say '                                      '
+      @  9,42 say '                                      '
+      @ 10,42 say '    Opcja odtwarzania danych zamienia '
+      @ 11,42 say '    dane w komputerze na dane zawarte '
+      @ 12,42 say '    w kopii na wskazanym dysku.       '
+      @ 13,42 say '    W przypadku odtwarzania danych    '
+      @ 14,42 say '    z dyskietek, kolejno&_s.&_c. wsuwanych  '
+      @ 15,42 say '    dyskietek nie jest istotna.       '
+      @ 16,42 say '                                      '
+      @ 17,42 say '                                      '
+      @ 18,42 say '                                      '
+      @ 19,42 say '                                      '
+      @ 20,42 say '                                      '
+      @ 21,42 say '                                      '
+      @ 22,42 say '                                      '
+      *---------------------------------------
+      IF .NOT. TNEsc( '*i', ' UWAGA ! Informacje w bazach danych zostan&_a. zamienione - jeste&_s. pewny? (T/N) ' )
+         RETURN
+      ENDIF
+      @ 1,47 say space(10)
 
-         pel_path=''
-         if substr(alltrim(sciez_ar),len(alltrim(sciez_ar)),1)='\'
-            pel_path=alltrim(sciez_ar)
-*            copy file kopia.arc to &pel_path
-         else
-            pel_path=alltrim(sciez_ar)+'\'
-*            copy file kopia.arc to &pel_path
-         endif
+      sciez_ar := 'c:\'
+      IF .NOT. File( 'archpath.mem' )
+         SAVE TO archpath ALL LIKE sciez_ar
+      ELSE
+         RESTORE FROM archpath ADDITIVE
+      ENDIF
+      razempl := 0
+      DO WHILE razempl == 0
+         sciez_ar := AllTrim( sciez_ar ) + repl( ' ', 100 - Len( AllTrim( sciez_ar ) ) )
+         @ 24, 0 CLEAR TO 24, 79
+         @ 24, 5 SAY 'Podaj dysk i folder z kopi&_a. ' GET sciez_ar PICTURE '@S30 ' + repl( '!', 100 )
+         READ
+         IF LastKey() == 27
+            RETURN
+         ENDIF
 
-         razempl=0
-         zparspr=alltrim(pel_path)+'*.z01'
-         katal=directory(zparspr,'HSD')
-         aeval(katal,{|zbi|RAZEMPL++})
+         pel_path := ''
+         if SubStr( AllTrim( sciez_ar ), Len( AllTrim( sciez_ar ) ), 1 ) == '\'
+            pel_path := AllTrim( sciez_ar )
+         ELSE
+            pel_path := AllTrim( sciez_ar ) + '\'
+         ENDIF
 
-*         do komun with 'Sortuje liste plikow'
-         ASORT( katal,,, { | x, y | x[ F_DATE ] > y[ F_DATE ] } )
-*         do komun with 'Preparuje liste plikow'
-         listaplik={}
+         razempl := 0
+         zparspr := AllTrim( pel_path ) + '*.z01'
+         katal := Directory( zparspr, 'HSD' )
+         AEval( katal,{ | zbi | RAZEMPL++ } )
+         ASort( katal, , , { | x, y | x[ F_DATE ] > y[ F_DATE ] } )
+         listaplik := {}
          FOR nItem := 1 TO razempl
-            AADD( listaplik, PADR( katal[ nItem, F_NAME ], 15 ) + ;
-                          IF( SUBSTR( katal[ nItem, F_ATTR ], ;
+            AADD( listaplik, PadR( katal[ nItem, F_NAME ], 15 ) + ;
+                          IF( SubStr( katal[ nItem, F_ATTR ], ;
                           1, 1 ) == "D", "   <dir>", ;
-                          STR( katal[ nItem, F_SIZE ], 8 ) ) + "  " + ;
-                          DTOC( katal[ nItem, F_DATE ] ) + "  " + ;
-                          SUBSTR( katal[ nItem, F_TIME ], 1, 5) + "  " + ;
-                          SUBSTR( katal[ nItem, F_ATTR ], 1, 4 ) + "  " )
+                          Str( katal[ nItem, F_SIZE ], 8 ) ) + "  " + ;
+                          DToC( katal[ nItem, F_DATE ] ) + "  " + ;
+                          SubStr( katal[ nItem, F_TIME ], 1, 5 ) + "  " + ;
+                          SubStr( katal[ nItem, F_ATTR ], 1, 4 ) + "  " )
          NEXT
 
-         if razempl=0
-            do komun with 'Brak podanego folderu lub plikow z kopiami. Podaj inny folder'
-         else
-            @ 9,29 clear to 23,79
-            @ 9,29 to 23,79
-            @ 9,39 say 'Wybierz kopi&_e. kt&_o.ra odtworzy&_c.'
-*            achoice(10,0,22,70,katal[1]+' ³ '+str(katal[2],8)+' ³ '+dtoc(katal[3])+' ³ '+katal[4]+' ³ '+katal[5]+' ³ ',.t.)
-            wybrplik=achoice(10,30,23,78,listaplik,.t.)
-            if lastkey()=13
-               pel_path=pel_path+substr(listaplik[wybrplik],1,12)
-               if tnesc(0,'Jestes pewny ze chcesz zastapic dane w bazach danymi z tej kopii ? (T/N) ')=.t.
-                  copy file &pel_path to kopia.arc
-                  il_dysk=1
-                  save to odtw all like il_dysk
-                  save to scr all like scr
-                  if file(RAPTEMP+'.dbf')
-                     dele file &RAPTEMP..dbf
-                  endif
-                  if file(RAPTEMP+'.cdx')
-                     dele file &RAPTEMP..cdx
-                  endif
-                  rele all
+         IF razempl == 0
+            komun( 'Brak podanego folderu lub plikow z kopiami. Podaj inny folder' )
+         ELSE
+            @ 9, 29 CLEAR TO 23, 79
+            @ 9, 29 TO 23, 79
+            @ 9, 39 SAY 'Wybierz kopi&_e. kt&_o.ra odtworzy&_c.'
+            wybrplik := AChoice( 10, 30, 23, 78, listaplik, .T. )
+            IF LastKey() == 13
+               pel_path := pel_path + SubStr( listaplik[ wybrplik ], 1, 12 )
+               IF TNEsc( 0, 'Jestes pewny ze chcesz zastapic dane w bazach danymi z tej kopii ? (T/N) ' ) == .T.
+                  COPY FILE &pel_path TO kopia.arc
+                  il_dysk := 1
+                  SAVE TO odtw ALL LIKE il_dysk
+                  SAVE TO scr ALL LIKE scr
+                  IF File( RAPTEMP + '.dbf' )
+                     DELETE FILE &RAPTEMP..dbf
+                  ENDIF
+                  IF File( RAPTEMP + '.cdx' )
+                     DELETE FILE &RAPTEMP..cdx
+                  ENDIF
+                  RELEASE ALL
                   hbfr_FreeLibrary()
                   amiDllZakoncz()
-                  cancel
-               else
-                  return
-               endif
-            else
-               return
-            endif
-         endif
+                  CANCEL
+               ELSE
+                  RETURN
+               ENDIF
+            ELSE
+               RETURN
+            ENDIF
+         ENDIF
 
-      enddo
-   endif
-endif
-restore from odtw additive
-restore from scr additive
-ColInb()
-@ 24,0 clear
-center(24,[Prosz&_e. czeka&_c....])
-set color to
-do odtw_
-Indeks()
-*!indeks
-do numeruj
-center(24,[- Odtwarzanie zako&_n.czone -])
-IF param_dzw='T'
-tone(500,4)
-endif
-pause(0)
-*********************
-procedure odtw_
-for i=1 to il_dysk
-    erase (archfile+[.]+iif(i=il_dysk,[z],[x])+strtran(str(i,2),[ ],[0]))
-next
-erase arch.mem
-erase odtw.mem
-erase scr.mem
-erase kopia.arc
+      ENDDO
+   ENDIF
+   RESTORE FROM odtw ADDITIVE
+   RESTORE FROM scr ADDITIVE
+   ColInb()
+   @ 24, 0 CLEAR
+   center( 24, 'Prosz&_e. czeka&_c....' )
+   SET COLOR TO
+   odtw_()
+   Indeks()
+   *!indeks
+   numeruj()
+   center( 24, '- Odtwarzanie zako&_n.czone -' )
+   IF param_dzw == 'T'
+      Tone( 500, 4 )
+   ENDIF
+   Pause( 0 )
+
+   RETURN NIL
+   *********************
+
+PROCEDURE odtw_()
+
+   FOR i := 1 TO il_dysk
+       ERASE ( archfile + '.' + iif( i == il_dysk, 'z', 'x' ) + StrTran( Str( i, 2 ), ' ', '0' ) )
+   NEXT
+   ERASE arch.mem
+   ERASE odtw.mem
+   ERASE scr.mem
+   ERASE kopia.arc
+
+   RETURN NIL
