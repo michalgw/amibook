@@ -368,7 +368,7 @@ FUNCTION Main()
    ERASE start
 
    // Sprawdzamy czy mamy wystarczajace miejsce na dysku
-   IF DiskSpace() < 1000000
+   IF ( SubStr( katalog_programu, 1, 2 ) <> '\\' ) .AND. ( DiskSpace() < 1000000 )
       CLEAR
       ColErr()
       center( 15, '                                     ' )
