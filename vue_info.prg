@@ -36,7 +36,6 @@ PROCEDURE VUE_Info( nWersja )
    STORE 0 TO P39, P40, P41, P42, P43, P44, P45, P46, P47, P48, P49, P50, P51, P52, P53, P54, P55
    STORE 0 TO P56, P57, P58, P59, P60, P61, P62, P61a, P62a, P64, P66, P68
    STORE '' TO P4, P5, P6, P7, P8, P11, P16, P17, P17a, P18, P19, P20, P21, P29
-   zWERVAT := '    '
    _czy_close := .F.
    spolka_ := .F.
 
@@ -44,14 +43,7 @@ PROCEDURE VUE_Info( nWersja )
 
    *#################################     VAT_7      #############################
    BEGIN SEQUENCE
-      SWITCH nWersja
-      CASE 1
-         zWERVAT := '(5) '
-         EXIT
-      CASE 2
-         zWERVAT := '(4) '
-         EXIT
-      ENDSWITCH
+      zWERVAT := '(5) '
       _koniec := "del#[+].or.firma#ident_fir.or.mc#miesiac"
 
       ColInb()
@@ -74,7 +66,7 @@ PROCEDURE VUE_Info( nWersja )
          kom( 5, '*u', ' Prosz&_e. wpisa&_c. w&_l.a&_s.cicieli firmy w odpowiedniej opcji ' )
          BREAK
       ENDIF
-*--------------------------------------
+      *--------------------------------------
       SELECT 6
       IF Dostep( 'URZEDY' )
          SET INDEX TO urzedy
@@ -86,7 +78,6 @@ PROCEDURE VUE_Info( nWersja )
       IF Dostep( 'REJZ' )
          SetInd( 'REJZ' )
          SEEK '+' + IDENT_FIR + miesiac
-*         KONIEC1=&_koniec
       ELSE
          BREAK
       ENDIF
@@ -119,7 +110,6 @@ PROCEDURE VUE_Info( nWersja )
       STORE 0 TO pp8, pp9, pp10, pp11, pp12, pp13, kkasa_odl, kkasa_zwr, p37, p38, p39, p40, p41, p42, p43, p44
 
       //tworzenie bazy roboczej
-      *if file('ROBVATUE.dbf')=.f.
       dbCreate( "ROBVATUE", { ;
          { "REJ",      "C", 1, 0 }, ;
          { "KOREKTA",  "C", 1, 0 }, ;
@@ -128,19 +118,13 @@ PROCEDURE VUE_Info( nWersja )
          { "VATID",    "C", 30, 0 }, ;
          { "TROJCA",   "C", 1, 0 }, ;
          { "WARTOSC",  "N", 12, 2 } } )
- *      endif
+
       SELECT 2
       IF DostepEx( 'ROBVATUE' )
-*         zap
          INDEX ON rej + kraj + vatid + usluga + trojca TO robvatue
       ELSE
          BREAK
       ENDIF
-
-*     do while .not. dostepex('ROBVATUE')
-*     enddo
-*     zap
-*     index on rej+korekta+kraj+vatid+trojca to robvatue
 
       SELECT rejs
       DO WHILE ! &_koniec
@@ -241,85 +225,20 @@ PROCEDURE VUE_Info( nWersja )
          ENDCASE
          SKIP
       ENDDO
-*      ROBZAKKOR=_int(UEZAKKOR/6)
-*      if UEZAKKOR-(ROBZAKKOR*6)>0
-*         ROBZAKKOR=ROBZAKKOR+1
-*      endif
-*      ROBSPRKOR=_int(UESPRKOR/6)
-*      if UESPRKOR-(ROBSPRKOR*6)>0
-*         ROBSPRKOR=ROBSPRKOR+1
-*      endif
-*      UEK=max(ROBSPRKOR,ROBZAKKOR)
-      UE := 1
-      IF UESPR > 0 .OR. UEZAK > 0 .OR. UEUSL > 0
-         IF UESPR > 12
-            ROBSPR := _int( ( UESPR - 12 ) / 59 )
-            IF ( UESPR + 12 ) - ( ROBSPR * 59 ) > 0
-               ROBSPR := ROBSPR + 1
-            ENDIF
-         ENDIF
-         IF UEZAK > 12
-            ROBZAK := _int( ( UEZAK - 12 ) / 59 )
-            IF ( UEZAK + 12 ) - ( ROBZAK * 59 ) > 0
-               ROBZAK := ROBZAK + 1
-            ENDIF
-         ENDIF
-         IF UEUSL > 12
-            ROBUSL := _int( ( UEUSL - 12 ) / 59 )
-            IF ( UEUSL + 12 ) - ( ROBUSL * 59 ) > 0
-               ROBUSL := ROBUSL + 1
-            ENDIF
-         ENDIF
-      ENDIF
-      UEALL := UE + ROBZAK + ROBSPR + ROBUSL
-      IF UEALL == 0
-*         kom(5,[*u],[ Nie znaleziono dokument&_o.w do formularzy VAT-UE ])
-*         break
-          UEALL := 1
-      ENDIF
-      vmmm := Array( UEALL )
-      xUE := 1
-*      if UE>0
-      vmmm[ 1 ] := ' VAT-UE       ' + zWERVAT + '                   '
-*      endif
-      IF ROBSPR > 0
-         FOR xUE := 1 + UE TO ROBSPR + UE
-            vmmm[ xUE ] := ' VAT-UE/A (' + Str( xUE - UE, 2 ) + ')' + zWERVAT + '                   '
-         NEXT
-      ENDIF
-      IF ROBZAK > 0
-         FOR xUE := 1 + UE + ROBSPR TO ROBZAK + UE + ROBSPR
-            vmmm[ xUE ] := ' VAT-UE/B (' + Str( xUE - ( UE + ROBSPR ), 2 ) + ')' + zWERVAT + '                   '
-         NEXT
-      ENDIF
-      IF ROBUSL > 0
-         FOR xUE := 1 + UE + ROBSPR + ROBZAK TO ROBSPR + UE + ROBZAK + ROBUSL
-            vmmm[ xUE ] := ' VAT-UE/C (' + Str( xUE - ( UE + ROBSPR + ROBZAK ), 2 ) + ')' + zWERVAT + '                   '
-         NEXT
-      ENDIF
+
+      vmmm := {}
       AAdd(vmmm, ' VAT-UE       ' + zWERVAT + '  druk graficzny   ')
       AAdd(vmmm, ' VAT-UE       ' + zWERVAT + '  eDeklaracja      ')
       AAdd(vmmm, ' Edycja sekcji C. VAT-UE ' + zWERVAT + '        ')
       AAdd(vmmm, ' Edycja sekcji D. VAT-UE ' + zWERVAT + '        ')
       AAdd(vmmm, ' Edycja sekcji E. VAT-UE ' + zWERVAT + '        ')
-      IF nWersja == 1
-         AAdd(vmmm, ' Edycja sekcji F. VAT-UE ' + zWERVAT + '        ')
-      ENDIF
-*      if UEK>0
-*         for xUE=1+UE+ROBSPR+ROBZAK to UEK+ROBZAK+UE+ROBSPR
-*             vmmm[xUE]:=[ VAT-UEK  (]+str(xUE-(UE+ROBSPR+ROBZAK),2)+[)(1)  (GZELLA VI/2004)  ]
-*         next
-*      endif
+      AAdd(vmmm, ' Edycja sekcji F. VAT-UE ' + zWERVAT + '        ')
+
       STORE 0 TO gora
-      IF UEALL < 4
-         gora := 14
-      ELSE
-         gora := 21 - UEALL
-      ENDIF
+      gora := 14
 
       SELECT firma
       P4 := nip
-*     P5a=miesiac
       P5b := param_rok
       SELECT urzedy
       IF firma->skarb > 0
@@ -335,7 +254,6 @@ PROCEDURE VUE_Info( nWersja )
          SELECT firma
          P8 := AllTrim( nazwa ) + ', ' + SubStr( NR_REGON, 3, 9 )
          P8n := AllTrim( nazwa )
-//         P11=space(10)
          P11 := SubStr( NR_REGON, 3, 9 )
       ELSE
          SELECT spolka
@@ -367,7 +285,6 @@ PROCEDURE VUE_Info( nWersja )
          P26 := tel
       else
          sele spolka
-*        go nr_rec
          P16 := kraj
          P17 := param_woj
          P17a := param_pow
@@ -380,15 +297,6 @@ PROCEDURE VUE_Info( nWersja )
          P24 := poczta
          P26 := telefon
       endif
-*     sele firma
-*     do case
-*     case k281=1
-*          p29=space(16)+'XXX'
-*     case k281=2
-*          p29=space(36)+'XXX'
-*     case k281=3
-*          p29=space(51)+'XXX'
-*     endcase
 
 
       PRIVATE aUEs, aUEz, aUEu, elemUE
@@ -448,7 +356,7 @@ PROCEDURE VUE_Info( nWersja )
       DO WHILE .T.
          *=============================
          ColPro()
-         @ gora, 1 TO gora + 1 + UEALL + iif( nWersja == 1, 6, 5 ), 39
+         @ gora, 1 TO gora + 7, 39
          FOR xUE := 1 TO Len( vmmm )
             @ gora + xUE, 2 PROMPT vmmm[ xUE ]
          NEXT
@@ -460,154 +368,40 @@ PROCEDURE VUE_Info( nWersja )
          *=============================
          SAVE SCREEN TO scr22v
          papier := 'K'
-         IF opcja1v >= Len( vmmm ) - iif( nWersja == 1, 5, 1 )
 
-            zDEKLNAZWI := firma->DEKLNAZWI
-            zDEKLIMIE := firma->DEKLIMIE
-            zDEKLTEL := firma->DEKLTEL
+         zDEKLNAZWI := firma->DEKLNAZWI
+         zDEKLIMIE := firma->DEKLIMIE
+         zDEKLTEL := firma->DEKLTEL
 
-            IF opcja1v == Len( vmmm ) - iif( nWersja == 1, 4, 3 )
+         IF opcja1v == 1
 
-               PRIVATE zawartoscXml
-               IF nWersja == 1
-                  edeklaracja_plik = 'VATUE_5_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
-                  zawartoscXml = iif( Val( param_rok ) < 2021, edek_vatue_5(), edek_vatue_5e2() )
-                  edekZapiszXml( zawartoscXml, edeklaracja_plik, wys_edeklaracja, 'VATUE-5', .F., Val( miesiac ) )
-               ELSE
-                  edeklaracja_plik = 'VATUE_4_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
-                  zawartoscXml = edek_vatue_4()
-                  edekZapiszXml( zawartoscXml, edeklaracja_plik, wys_edeklaracja, 'VATUE-4', .F., Val( miesiac ) )
-               ENDIF
+            DeklarDrukuj( iif( nWersja == 1, 'VATUE-5', 'VATUE-4' ) )
 
-            ELSEIF opcja1v == Len( vmmm ) - iif( nWersja == 1, 3, 2 )
+         ELSEIF opcja1v == 2
 
-               VATUE_EdycjaCDE( @aUEs, 1 )
+            PRIVATE zawartoscXml
+            edeklaracja_plik = 'VATUE_5_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( miesiac )
+            zawartoscXml = iif( Val( param_rok ) < 2021, edek_vatue_5(), edek_vatue_5e2() )
+            edekZapiszXml( zawartoscXml, edeklaracja_plik, wys_edeklaracja, 'VATUE-5', .F., Val( miesiac ) )
 
-            ELSEIF opcja1v == Len( vmmm ) - iif( nWersja == 1, 2, 1 )
+         ELSEIF opcja1v == 3
 
-               VATUE_EdycjaCDE( @aUEz, 2 )
+            VATUE_EdycjaCDE( @aUEs, 1 )
 
-            ELSEIF opcja1v == Len( vmmm ) - iif( nWersja == 1, 1, 0 )
+         ELSEIF opcja1v == 4
 
-               VATUE_EdycjaCDE( @aUEu, 3 )
+            VATUE_EdycjaCDE( @aUEz, 2 )
 
-            ELSEIF nWersja == 1 .AND. opcja1v == Len( vmmm )
+         ELSEIF opcja1v == 5
 
-               VATUE_EdycjaF( @aSekcjaF )
+            VATUE_EdycjaCDE( @aUEu, 3 )
 
-            ELSE
+         ELSEIF opcja1v == 6
 
-               DeklarDrukuj( iif( nWersja == 1, 'VATUE-5', 'VATUE-4' ) )
+            VATUE_EdycjaF( @aSekcjaF )
 
-            ENDIF
-
-         ELSE
-            IF At( 'UE  ', vmmm[ opcja1v ] ) > 0
-   *           set curs on
-   *           ColStd()
-   *           @ gora+opcja1v,15 say space(23)
-   *           @ gora+opcja1v,22 get papier pict '!' when wKART(gora+opcja1v,22) valid vKART(gora+opcja1v,22)
-   *           read
-   *           set curs off
-   *           @ 24,0
-   *           if lastkey()<>27
-   *              if papier='K'
-               vat_ue( 0, 0, 1, 'K' )
-   *              else
-   *                 afill(nazform,'')
-   *                 afill(strform,0)
-   *                 nazform[1]='VAT-UE'
-   *                 strform[1]=2
-   *                 form(nazform,strform,1)
-   *              endif
-   *           endif
-            ENDIF
-            IF At( 'UE/A', vmmm[ opcja1v ] ) > 0
-               numzal := Val( AllTrim( SubStr( vmmm[ opcja1v ], 12, 2 ) ) )
-   *           set curs on
-   *           ColStd()
-   *           @ gora+opcja1v,15 say space(23)
-   *           @ gora+opcja1v,22 get papier pict '!' when wKART(gora+opcja1v,22) valid vKART(gora+opcja1v,22)
-   *           read
-   *           set curs off
-   *           @ 24,0
-   *           if lastkey()<>27
-   *              if papier='K'
-               vat_uea( 0, 0, 1, 'K' )
-   *              else
-   *                 afill(nazform,'')
-   *                 afill(strform,0)
-   *                 nazform[1]='VAT-UEA'
-   *                 strform[1]=2
-   *                 form(nazform,strform,1)
-   *              endif
-   *           endif
-            ENDIF
-            IF At( 'UE/B', vmmm[ opcja1v ] ) > 0
-               numzal := Val( AllTrim( SubStr( vmmm[ opcja1v ], 12, 2 ) ) )
-   *            set curs on
-   *            ColStd()
-   *            @ gora+opcja1v,15 say space(23)
-   *            @ gora+opcja1v,22 get papier pict '!' when wKART(gora+opcja1v,22) valid vKART(gora+opcja1v,22)
-   *            read
-   *            set curs off
-   *            @ 24,0
-   *            if lastkey()<>27
-   *               if papier='K'
-               vat_ueb( 0, 0, 1, 'K' )
-   *               else
-   *                  afill(nazform,'')
-   *                  afill(strform,0)
-   *                  nazform[1]='VAT-UEB'
-   *                  strform[1]=2
-   *                  form(nazform,strform,1)
-   *               endif
-   *            endif
-            ENDIF
-            IF At( 'UE/C', vmmm[ opcja1v ] ) > 0
-               numzal := Val( AllTrim( SubStr( vmmm[ opcja1v ], 12, 2 ) ) )
-   *            set curs on
-   *            ColStd()
-   *            @ gora+opcja1v,15 say space(23)
-   *            @ gora+opcja1v,22 get papier pict '!' when wKART(gora+opcja1v,22) valid vKART(gora+opcja1v,22)
-   *            read
-   *            set curs off
-   *            @ 24,0
-   *            if lastkey()<>27
-   *               if papier='K'
-               vat_uec( 0, 0, 1, 'K' )
-   *               else
-   *                  afill(nazform,'')
-   *                  afill(strform,0)
-   *                  nazform[1]='VAT-UEC'
-   *                  strform[1]=2
-   *                  form(nazform,strform,1)
-   *               endif
-   *            endif
-            ENDIF
-
-   *         if at('UEK ',vmmm[opcja1v])>0
-   *            numzal=val(alltrim(substr(vmmm[opcja1v],12,2)))
-   *            set curs on
-   *            ColStd()
-   *            @ gora+opcja1v,15 say space(23)
-   *            @ gora+opcja1v,22 get papier pict '!' when wKART(gora+opcja1v,22) valid vKART(gora+opcja1v,22)
-   *            read
-   *            set curs off
-   *            @ 24,0
-   *            if lastkey()<>27
-   *               if papier='K'
-   *                  do vat_uek with 0,0,1,'K'
-   *               else
-   *                  afill(nazform,'')
-   *                  afill(strform,0)
-   *                  nazform[1]='VAT-UEK'
-   *                  strform[1]=2
-   *                  form(nazform,strform,1)
-   *               endif
-   *            endif
-   *         endif
          ENDIF
+
          RESTORE SCREEN FROM SCR22v
       ENDDO
       RESTORE SCREEN FROM ROBSO11v

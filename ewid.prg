@@ -378,7 +378,7 @@ FUNCTION Ewid()
                   @ 12, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
                   @ 13, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
                   @ 14, 2 PROMPT ' J - JPK_V7' + verdekold
-                  @ 15, 2 PROMPT ' U - VAT-UE                          '
+                  @ 15, 2 PROMPT ' U - VAT-UE   (5)                    '
                   @ 16, 2 TO 16, 38
                   @ 17, 2 PROMPT ' C - RCA raport imienny              '
                   @ 18, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '
@@ -433,18 +433,14 @@ FUNCTION Ewid()
 
                      CASE opcja1 == 6
 
-                        opcja11 := MenuEx( 16, 2, { "5 - Wersja 5 VAT-UE (5)", "4 - Wersja 4 VAT-UE (4)" } )
-
-                        IF opcja11 > 0
-                           SWITCH edekCzyKorekta( 16, 2 )
-                           CASE 1
-                              vue_info( opcja11 )
-                              EXIT
-                           CASE 2
-                              VatUE4KRob( opcja11 )
-                              EXIT
-                           ENDSWITCH
-                        ENDIF
+                        SWITCH edekCzyKorekta( 16, 2 )
+                        CASE 1
+                           vue_info( 1 )
+                           EXIT
+                        CASE 2
+                           VatUE4KRob( 1 )
+                           EXIT
+                        ENDSWITCH
 
                      CASE opcja1 == 7
                         opcja11 := 1
