@@ -365,6 +365,7 @@ FUNCTION WLApiSearchNips( aNips, dData, xDane )
    LOCAL cAdres
    LOCAL cResponse
    LOCAL cNips := ""
+   LOCAL aWpis, aWpisy
 
    AEval( aNips, { | cElement |
       IF Len( cNips ) > 0
@@ -381,18 +382,23 @@ FUNCTION WLApiSearchNips( aNips, dData, xDane )
    IF ! Empty( cResponse )
       IF nRes == 200 .OR. nRes == 400
          hb_jsonDecode( cResponse, @xDane )
-         IF nRes == 200 .AND. HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'result' ) .AND. hb_HHasKey( xDane[ 'result' ], 'subjects' )
-            AEval( xDane[ 'result' ][ 'subjects' ], { | aElem |
-               aElem[ 'stanNa' ] := dData
-               IF hb_HHasKey( xDane[ 'result' ], 'requestDateTime' ) .AND. ! Empty( xDane[ 'result' ][ 'requestDateTime' ] )
-                  aElem[ 'requestDateTime' ] := xDane[ 'result' ][ 'requestDateTime' ]
+         IF nRes == 200 .AND. HB_ISHASH( xDane ) .AND. hb_HHasKey( xDane, 'result' ) .AND. hb_HHasKey( xDane[ 'result' ], 'entries' )
+            aWpisy := {}
+            AEval( xDane[ 'result' ][ 'entries' ], { | aElem |
+               IF hb_HHasKey( aElem, 'subjects' ) .AND. Len( aElem[ 'subjects' ] ) > 0
+                  aWpis := aElem[ 'subjects' ][ 1 ]
+                  aWpis[ 'stanNa' ] := dData
+                  IF hb_HHasKey( xDane[ 'result' ], 'requestDateTime' ) .AND. ! Empty( xDane[ 'result' ][ 'requestDateTime' ] )
+                     aWpis[ 'requestDateTime' ] := xDane[ 'result' ][ 'requestDateTime' ]
+                  ENDIF
+                  IF hb_HHasKey( xDane[ 'result' ], 'requestId' ) .AND. ! Empty( xDane[ 'result' ][ 'requestId' ] )
+                     aWpis[ 'requestId' ] := xDane[ 'result' ][ 'requestId' ]
+                  ENDIF
+                  WLApiFixDate( @aWpis )
+                  AAdd( aWpisy, aWpis )
                ENDIF
-               IF hb_HHasKey( xDane[ 'result' ], 'requestId' ) .AND. ! Empty( xDane[ 'result' ][ 'requestId' ] )
-                  aElem[ 'requestId' ] := xDane[ 'result' ][ 'requestId' ]
-               ENDIF
-               WLApiFixDate( @aElem )
             } )
-            xDane := xDane[ 'result' ][ 'subjects' ]
+            xDane := aWpisy
          ENDIF
       ELSE
          xDane := cResponse
