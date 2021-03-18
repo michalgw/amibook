@@ -96,7 +96,7 @@ PROCEDURE Oper()
                zDZIEN := '  '
                znazwa := Space( 200 )
                zNR_IDENT := Space( 30 )
-               zNUMER := Space( 40 )
+               zNUMER := Space( 100 )
                zADRES := Space( 200 )
                zTRESC := Space( 30 )
                zWYR_TOW := 0
@@ -126,7 +126,7 @@ PROCEDURE Oper()
                zDZIEN := DZIEN
                znazwa := nazwa
                zNR_IDENT := NR_IDENT
-               zNUMER := iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2, 20 ) , SubStr( numer, 1, 20 ) )
+               zNUMER := iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2, 100 ) , SubStr( numer, 1, 100 ) )
                zADRES := ADRES
                zTRESC := TRESC
                zWYR_TOW := WYR_TOW
@@ -149,7 +149,7 @@ PROCEDURE Oper()
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
             ColStd()
             @  3, 27 GET zDZIEN PICTURE "99" WHEN PolePaliwoStop() .AND. ( WERSJA4 == .T. .OR. ins ) VALID v1_1()
-            @  4, 27 GET zNUMER PICTURE "@S40 " + repl( '!', 40 ) WHEN PolePaliwoStop() VALID v1_2()
+            @  4, 27 GET zNUMER PICTURE "@S40 " + repl( '!', 100 ) WHEN PolePaliwoStop() VALID v1_2()
             @  5, 27 GET zNR_IDENT PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" WHEN PolePaliwoStop() VALID OperNrIdentV()
             @  6, 27 GET zNAZWA PICTURE "@S52 " + repl( '!', 200 ) WHEN PolePaliwoStop() VALID w1_3()
             @  7, 27 GET zADRES PICTURE "@S52 " + repl( '!', 200 ) WHEN PolePaliwoStop()
@@ -414,23 +414,23 @@ PROCEDURE Oper()
             GO top
             SZUK := "del='+'.and.firma=ident_fir.and.mc=miesiac"
             SEEK '+' + ident_fir + miesiac
-            IF zDZIEN <> '  '
+            IF AllTrim( zDZIEN ) <> ""
                AA := Str( Val( zDZIEN ), 2 )
                SZUK := SZUK + '.and.DZIEN=AA'
             ENDIF
-            IF zNUMER <> Space( 40 )
+            IF AllTrim( zNUMER ) <> ""
                aNUMER := AllTrim( zNUMER )
                SZUK := SZUK + '.and.aNUMER$upper(NUMER)'
             ENDIF
-            IF zNAZWA <> Space( 100 )
+            IF AllTrim( zNAZWA ) <> ""
                aNAZWA := AllTrim( zNAZWA )
                SZUK := SZUK + '.and.aNAZWA$upper(NAZWA)'
             ENDIF
-            IF zZDARZ <> Space( 20 )
+            IF AllTrim( zZDARZ ) <> ""
                aZDARZ := AllTrim( zZDARZ )
                SZUK := SZUK + '.and.aZDARZ$upper(TRESC)'
             ENDIF
-            IF zLP <> '     '
+            IF AllTrim( zLP ) <> ""
                SZUK := SZUK + '.and.LP=val(zLP)'
             ENDIF
             IF SZUK <> "del='+'.and.firma=ident_fir.and.mc=miesiac"

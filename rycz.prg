@@ -110,7 +110,7 @@ PROCEDURE Rycz()
             IF ins
                zDZIEN := '  '
                zDATAPRZY := CToD( '    .  .  ' )
-               zNUMER := Space( 20 )
+               zNUMER := Space( 100 )
                zTRESC := Space( 30 )
                STORE 0 TO zHANDEL, zPRODUKCJA, zUSLUGI, zRY20, zRY17, zRY10, zRYK07, zRYK08
                zuwagi := Space( 200 )
@@ -158,7 +158,7 @@ PROCEDURE Rycz()
             @  3, 40 GET zDZIEN PICTURE "99" WHEN WERSJA4 == .T. .OR. ins VALID v1_1r()
             @  4, 40 GET zDATAPRZY PICTURE "@D" WHEN v1_6e()
             @  5, 40 GET zTRESC VALID v1_5r()
-            @  7, 67 GET zNUMER PICTURE "!!!!!!!!!!!!!!!!!!!!" VALID v1_2r()
+            @  7, 67 GET zNUMER PICTURE "@S20 " + Replicate( '!', 100 ) VALID v1_2r()
             @  8, 67 GET zRY20      PICTURE FPICold VALID v1_6ar()
             @  9, 67 GET zRY17      PICTURE FPICold VALID v1_6br()
             @ 10, 67 GET zUSLUGI    PICTURE FPICold VALID v1_6r()
@@ -518,19 +518,19 @@ PROCEDURE Rycz()
             GO top
             SZUK := "del='+'.and.firma=ident_fir.and.mc=miesiac"
             SEEK '+' + ident_fir + miesiac
-            IF zDZIEN <> '  '
+            IF AllTrim( zDZIEN ) <> ""
                AA := Str( Val( zDZIEN ), 2 )
                SZUK := SZUK + '.and.DZIEN=AA'
             ENDIF
-            IF zNUMER <> Space( 20 )
+            IF AllTrim( zNUMER ) <> ""
                aNUMER := AllTrim( zNUMER )
                SZUK := SZUK + '.and.aNUMER$upper(NUMER)'
             ENDIF
-            IF zZDARZ <> Space( 20 )
+            IF AllTrim( zZDARZ ) <> ""
                aZDARZ := AllTrim( zZDARZ )
                SZUK := SZUK + '.and.aZDARZ$upper(TRESC)'
             ENDIF
-            IF zLP <> '     '
+            IF AllTrim( zLP ) <> ""
                SZUK := SZUK + '.and.LP=val(zLP)'
             ENDIF
             IF SZUK <> "del='+'.and.firma=ident_fir.and.mc=miesiac"
@@ -671,7 +671,7 @@ PROCEDURE say1e()
    @  3, 40 SAY dos_l( DZIEN )
    @  4, 40 SAY DToC( DATAPRZY )
    @  5, 40 SAY TRESC
-   @  7, 67 SAY iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2 ) + ' ', numer )
+   @  7, 67 SAY SubStr( iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2 ) + ' ', numer ), 1, 20 )
    @  8, 67 SAY RY20 PICTURE RPIC
    @  9, 67 SAY RY17 PICTURE RPIC
    @ 10, 67 SAY uslugi PICTURE RPIC

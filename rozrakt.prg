@@ -123,7 +123,7 @@ case kl=22.or.kl=48
         zSZUKNIP=NIP
         zWYR=WYR
         zDATAKS=date()
-        zNRDOK='WBnr                '
+        zNRDOK= Pad( 'WBnr', 100 )
         zRODZDOK=iif(RODZDOK='FS','ZS','ZZ')
         zKWOTA=abs(DOROZL)
         zUWAGI=space(60)
@@ -138,7 +138,7 @@ case kl=22.or.kl=48
         @ 11,21 say 'Kwota.........:'
         @ 12,21 say 'Uwagi.........:'
         @  9,37 get zDATAKS picture '@D'
-        @ 10,37 get zNRDOK  picture 'XXXXXXXXXXXXXXXXXXXX'
+        @ 10,37 get zNRDOK  picture '@S20 ' + Replicate( 'X', 100 )
         @ 11,37 get zKWOTA  picture FPIC
         @ 12,37 get zUWAGI  picture '@S20 '+replicate('X',60)
         read_()
@@ -192,7 +192,7 @@ case kl=70.or.kl=102
         zDATADOK=date()
         zTERMIN=date()
         zDNIPLAT=0
-        zNRDOK=Space(20)
+        zNRDOK=Space(100)
         zRODZDOK=' '
         zKWOTA=0.0
         zUWAGI=space(60)
@@ -219,7 +219,7 @@ case kl=70.or.kl=102
         @  8,56 get zDATADOK picture '@D'
         @  9,26 get zDNIPLAT picture '999'
         @  9,35 get zTERMIN picture '@D' when wTER_ROZR() valid vTER_ROZR()
-        @ 10,20 get zNRDOK picture 'XXXXXXXXXXXXXXXXXXXX'
+        @ 10,20 get zNRDOK picture '@S10 ' + Replicate( 'X', 100 )
         @ 10,56 get zRODZDOK picture '!' when wRODZDOK(10,57) valid vRODZDOK(10,57)
         @ 11,26 get zKWOTA picture FPIC
         @ 11,56 get zKWOTAVAT picture FPIC
@@ -367,7 +367,7 @@ case kl=78.or.kl=110
         @ 10,11 say 'Szukac we wszystkich pozycjach/Od tej pozycji  (S/O ?)'
         @  7,26 get zSZUKNIP picture repl('!',13) valid vv1_3rozr()
         @  7,56 get zSZUKNAZ picture '@S13 '+repl('!',70) valid w1_3rozr()
-        @  8,26 get zSZUKFAK picture repl('!',20)
+        @  8,26 get zSZUKFAK picture '@S20 ' + repl( '!', 20 )
         @  9,66 get zSZUKOPT picture '!' valid zSZUKOPT$'DZ'
         @ 10,66 get zSZUKOPT2 picture '!' valid zSZUKOPT2$'SO'
         read_()
@@ -377,15 +377,15 @@ case kl=78.or.kl=110
         endif
         if zSZUKOPT2='S'
         do case
-        case zSZUKNIP<>space(13) .and. zSZUKFAK==Space(20)
+        case AllTrim( zSZUKNIP ) <> "" .and. AllTrim( zSZUKFAK ) == ""
              locate all for FIRMA=ident_fir .and. NIP=zSZUKNIP
-        case zSZUKNIP==space(13) .and. zSZUKFAK<>Space(20)
+        case AllTrim( zSZUKNIP ) == "" .and. AllTrim( zSZUKFAK ) <> ""
              if zSZUKOPT='Z'
                 locate all for FIRMA=ident_fir .and. alltrim(zSZUKFAK)$NRDOK
              else
                 locate all for FIRMA=ident_fir .and. NRDOK==zSZUKFAK
              endif
-        case zSZUKNIP<>space(13) .and. zSZUKFAK<>Space(20)
+        case AllTrim( zSZUKNIP ) <> "" .and. AllTrim( zSZUKFAK ) <> ""
              if zSZUKOPT='Z'
                 locate all for FIRMA=ident_fir .and. NIP=zSZUKNIP .and. alltrim(zSZUKFAK)$NRDOK
              else
@@ -394,15 +394,15 @@ case kl=78.or.kl=110
         endcase
         else
         do case
-        case zSZUKNIP<>space(13) .and. zSZUKFAK==Space(20)
+        case AllTrim( zSZUKNIP ) <> "" .and. AllTrim( zSZUKFAK ) == ""
              locate rest for FIRMA=ident_fir .and. NIP=zSZUKNIP
-        case zSZUKNIP==space(13) .and. zSZUKFAK<>Space(20)
+        case AllTrim( zSZUKNIP ) == "" .and. AllTrim( zSZUKFAK ) <> ""
              if zSZUKOPT='Z'
                 locate rest for FIRMA=ident_fir .and. alltrim(zSZUKFAK)$NRDOK
              else
                 locate rest for FIRMA=ident_fir .and. NRDOK==zSZUKFAK
              endif
-        case zSZUKNIP<>space(13) .and. zSZUKFAK<>Space(20)
+        case AllTrim( zSZUKNIP ) <> "" .and. AllTrim( zSZUKFAK ) <> ""
              if zSZUKOPT='Z'
                 locate rest for FIRMA=ident_fir .and. NIP=zSZUKNIP .and. alltrim(zSZUKFAK)$NRDOK
              else
@@ -586,7 +586,7 @@ go reccc
 @ 20,13 say str(ZS+ZZ,12,2)
 @ 21,13 say str((FS+FZ)+(ZS+ZZ),12,2)
 DOROZL=(FS+FZ)+(ZS+ZZ)
-@ 19,48 say NRDOK
+@ 19,48 say SubStr( NRDOK, 1, 10 )
 @ 20,48 say dtoc(DATAKS)
 @ 21,48 say dtoc(DATADOK)
 @ 19,70 say str(DNIPLAT,3)
