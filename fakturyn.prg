@@ -26,6 +26,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE FakturyN()
 
+   LOCAL nKsieguj
+   LOCAL aKsiegWybor := { "1. Zaksi©guj w bie¾¥cym miesi¥cu", ;
+      "2. Nie wprowadzaj do ksi©gi", "3. Zaksi©guj w poprzednim miesi¥cu" }
+
    SAVE SCREEN TO scr_1
 
    *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
@@ -35,6 +39,9 @@ PROCEDURE FakturyN()
 
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, _top, _bot, _stop, _sbot
    PRIVATE _proc, _row, _proc_spe, _disp, _cls, kl, ins, nr_rec, wiersz, f10, rec, fou, _top_bot
+
+   PRIVATE nPopKsgData, dPopDataTrans
+
    *********************** lp
    m->liczba := 1
    lpstart()
@@ -254,6 +261,7 @@ PROCEDURE FakturyN()
                   zZAP_WART := 0
                   zOPCJE := Space( 32 )
                   zPROCEDUR := Space( 32 )
+                  zKSGDATA := 1
                ELSE
                   zRACH := RACH
                   zNUMER&zRACH := NUMER
@@ -297,6 +305,9 @@ PROCEDURE FakturyN()
                   zZAP_WART := ZAP_WART
                   zOPCJE := OPCJE
                   zPROCEDUR := PROCEDUR
+                  zKSGDATA := KSGDATA
+                  nPopKsgData := KSGDATA
+                  dPopDataTrans := DATAS
     *             endif
                ENDIF
                *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
@@ -380,28 +391,26 @@ PROCEDURE FakturyN()
                FaPozN()
                SELECT faktury
 
+               nKsieguj := 0
+
+               IF zDATAS < hb_Date( Val( param_rok ), Val( miesiac ), 1 )
+                  IF Val( miesiac ) == 1 .OR. Val( miesiac ) - Month( zDATAS ) <> 1
+                     hb_ADel( aKsiegWybor, 3, .T. )
+                  ENDIF
+                  ColInf()
+                  @ 24, 0
+                  @ 24, 0 SAY PadC( 'Transakcja dokonana w poprzednim miesi¥cu. Wybierz opcje ksi©gowania.', 80 )
+                  DO WHILE nKsieguj == 0
+                     nKsieguj := MenuEx( 18, 20, aKsiegWybor, zKSGDATA + 1, .T. )
+                  ENDDO
+                  ColStd()
+                  @ 24, 0
+               ENDIF
+
+               zKSGDATA := nKsieguj - 1
+
                *-----------------------------------
 
-               KVA := ' '
-               if nr_uzytk == 35 .OR. nr_uzytk == 376 .OR. nr_uzytk == 288
-                  @ 23,0
-                  SET CURSOR ON
-                  SET CONFIRM ON
-                  jeszcze := .T.
-                  DO WHILE jeszcze
-                     @ 23, 28 SAY 'Ksi&_e.gowa&_c. VAT (T/N) ?'
-                     @ 23, 50 GET KVA PICTURE '!' VALID KVA $ 'TN'
-                     READ
-                     IF LastKey() == K_ESC
-                        jeszcze := .T.
-                     ELSE
-                        jeszcze := .F.
-                     ENDIF
-                  ENDDO
-                  SET CONFIRM OFF
-                  SET CURSOR OFF
-                  @ 23, 0
-               ENDIF
                SET COLOR TO
 
                *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -478,6 +487,7 @@ PROCEDURE FakturyN()
                repl_('ZAP_TER', zZAP_TER )
                repl_('ZAP_DAT', zZAP_DAT )
                repl_('ZAP_WART', zZAP_WART )
+               repl_( 'KSGDATA', zKSGDATA )
                REKZAK := rec_no
                COMMIT
                unlock
@@ -546,38 +556,25 @@ PROCEDURE FakturyN()
                ENDIF
 
                *========================= Ksiegowanie ========================
-               SELECT rejs
-               REC := RecNo()
-               SET INDEX TO
-               GO BOTTOM
-               ILREK := RecNo()
-               SET INDEX TO rejs2, rejs, rejs1, rejs3, rejs4
-               GO REC
-               IF ins
-                  app()
-                  repl_( 'firma', ident_fir )
-                  repl_( 'mc', miesiac )
-                  repl_( 'RACH', zRACH )
-                  repl_( 'numer', zRACH + '-' + StrTran( Str( znumer&zRACH, 5 ), ' ', '0' ) + '/' + param_rok )
-                  repl_( 'tresc', 'Sprzedaz udokumentowana' )
-                  IF zRYCZALT == 'T'
-                     repl_( 'KOLUMNA', ' 0' )
-                  ELSE
-                     repl_( 'KOLUMNA', ' 7' )
+
+               // Czy zapis do ksiegi i rejestru?
+               IF zKSGDATA <> 1
+
+                  IF  ! ins .AND. ( zKSGDATA <> nPopKsgData .OR. ( zKSGDATA == 2 .AND. Month( zDATAS ) <> Month( dPopDataTrans ) ) )
+                     Faktury_UsunKsieg( nPopKsgData, Str( Month( dPopDataTrans ), 2 ) )
                   ENDIF
-                  repl_( 'KOREKTA', 'N' )
-                  repl_( 'UWAGI', Space( 20 ) )
-                  COMMIT
-                  UNLOCK
-                  razem_ := 0
-               ELSE
-                  SEEK '+' + ident_fir + miesiac + zRACH + '-' + StrTran( Str( znumer&zRACH, 5 ), ' ', '0' ) //+ '/' + param_rok
-                  IF Found()
-                     razem_ := netto
-                  ELSE
+
+                  SELECT rejs
+                  REC := RecNo()
+                  SET INDEX TO
+                  GO BOTTOM
+                  ILREK := RecNo()
+                  SET INDEX TO rejs2, rejs, rejs1, rejs3, rejs4
+                  GO REC
+                  IF ins
                      app()
                      repl_( 'firma', ident_fir )
-                     repl_( 'mc', miesiac )
+                     repl_( 'mc', Faktury_McKsieg( zKSGDATA, miesiac ) )
                      repl_( 'RACH', zRACH )
                      repl_( 'numer', zRACH + '-' + StrTran( Str( znumer&zRACH, 5 ), ' ', '0' ) + '/' + param_rok )
                      repl_( 'tresc', 'Sprzedaz udokumentowana' )
@@ -591,93 +588,173 @@ PROCEDURE FakturyN()
                      COMMIT
                      UNLOCK
                      razem_ := 0
+                  ELSE
+                     SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac ) + zRACH + '-' + StrTran( Str( znumer&zRACH, 5 ), ' ', '0' ) //+ '/' + param_rok
+                     IF Found()
+                        razem_ := netto
+                     ELSE
+                        app()
+                        repl_( 'firma', ident_fir )
+                        repl_( 'mc', miesiac )
+                        repl_( 'RACH', zRACH )
+                        repl_( 'numer', zRACH + '-' + StrTran( Str( znumer&zRACH, 5 ), ' ', '0' ) + '/' + param_rok )
+                        repl_( 'tresc', 'Sprzedaz udokumentowana' )
+                        IF zRYCZALT == 'T'
+                           repl_( 'KOLUMNA', ' 0' )
+                        ELSE
+                           repl_( 'KOLUMNA', ' 7' )
+                        ENDIF
+                        repl_( 'KOREKTA', 'N' )
+                        repl_( 'UWAGI', Space( 20 ) )
+                        COMMIT
+                        UNLOCK
+                        razem_ := 0
+                     ENDIF
                   ENDIF
-               ENDIF
-               BlokadaR()
-               repl_( 'dzien', zdzien )
-               repl_( 'nazwa', znazwa )
-               repl_( 'adres', zadres )
-               repl_( 'NR_IDENT', zNR_IDENT )
-               repl_( 'EXPORT', zEXPORT )
-               repl_( 'UE', zUE )
-               repl_( 'KRAJ', zKRAJ )
-               repl_( 'SEK_CV7', zSEK_CV7 )
-               IF KVA <> 'N'
-                  repl_( 'WARTZW', zWARTZW)
-                  repl_( 'WART08', zWART08)
-                  repl_( 'WART00', zWART00)
-                  repl_( 'WART07', zWART07)
-                  repl_( 'WART02', zWART02)
-                  repl_( 'WART22', zWART22)
-                  repl_( 'WART12', zWART12)
-                  repl_( 'VAT07', zVAT07)
-                  repl_( 'VAT02', zVAT02)
-                  repl_( 'VAT22', zVAT22)
-                  repl_( 'VAT12', zVAT12)
-               ELSE
-                  repl_( 'WARTZW', 0)
-                  repl_( 'WART08', 0)
-                  repl_( 'WART00', 0)
-                  repl_( 'WART07', 0)
-                  repl_( 'WART02', 0)
-                  repl_( 'WART22', 0)
-                  repl_( 'WART12', 0)
-                  repl_( 'VAT07', 0)
-                  repl_( 'VAT02', 0)
-                  repl_( 'VAT22', 0)
-                  repl_( 'VAT12', 0)
-               ENDIF
-               IF zRYCZALT <> 'T'
-                  repl_( 'NETTO', razem )
-               ENDIF
-               repl_( 'ROKS', Str( Year( zDATAS ), 4 ) )
-               repl_( 'MCS', Str( Month( zDATAS ), 2 ) )
-               repl_( 'DZIENS', Str( Day( zDATAS ), 2 ) )
-               repl_( 'DATATRAN', hb_Date( Val( param_rok ), Val( miesiac ), Val( zdzien ) ) )
-               repl_( 'OPCJE', zOPCJE )
-               repl_( 'PROCEDUR', zPROCEDUR )
-*           if zsposob_p=1.or.zsposob_p=3
-*              if zsposob_p=3.and.nr_uzytk=6
-*                 repl_([zaplata],[1])
-*              else
-*                 repl_([zaplata],[3])
-*              endif
-*           else
-*              if ztermin_z=0
-*                 repl_([zaplata],[1])
-*              else
-*                 if zkwota=0
-*                    repl_([zaplata],[3])
-*                 else
-*                    repl_([zaplata],[2])
-*                 endif
-*              endif
-*           endif
-*           repl_([kwota],zkwota)
-               COMMIT
-               UNLOCK
-               IF zRYCZALT <> 'T'
-               ************* ZAPIS REJESTRU DO KSIEGI *******************
-                  SELECT oper
-                  SET ORDER TO 3
-                  IF ! ins
-                     SEEK '+' + ident_fir + miesiac + 'RS-7'
+                  BlokadaR()
+                  repl_( 'dzien', zdzien )
+                  repl_( 'nazwa', znazwa )
+                  repl_( 'adres', zadres )
+                  repl_( 'NR_IDENT', zNR_IDENT )
+                  repl_( 'EXPORT', zEXPORT )
+                  repl_( 'UE', zUE )
+                  repl_( 'KRAJ', zKRAJ )
+                  repl_( 'SEK_CV7', zSEK_CV7 )
+                  //IF KVA <> 'N'
+                     repl_( 'WARTZW', zWARTZW)
+                     repl_( 'WART08', zWART08)
+                     repl_( 'WART00', zWART00)
+                     repl_( 'WART07', zWART07)
+                     repl_( 'WART02', zWART02)
+                     repl_( 'WART22', zWART22)
+                     repl_( 'WART12', zWART12)
+                     repl_( 'VAT07', zVAT07)
+                     repl_( 'VAT02', zVAT02)
+                     repl_( 'VAT22', zVAT22)
+                     repl_( 'VAT12', zVAT12)
+                  /*ELSE
+                     repl_( 'WARTZW', 0)
+                     repl_( 'WART08', 0)
+                     repl_( 'WART00', 0)
+                     repl_( 'WART07', 0)
+                     repl_( 'WART02', 0)
+                     repl_( 'WART22', 0)
+                     repl_( 'WART12', 0)
+                     repl_( 'VAT07', 0)
+                     repl_( 'VAT02', 0)
+                     repl_( 'VAT22', 0)
+                     repl_( 'VAT12', 0)
+                  ENDIF*/
+                  IF zRYCZALT <> 'T'
+                     repl_( 'NETTO', razem )
+                  ENDIF
+                  repl_( 'ROKS', Str( Year( zDATAS ), 4 ) )
+                  repl_( 'MCS', Str( Month( zDATAS ), 2 ) )
+                  repl_( 'DZIENS', Str( Day( zDATAS ), 2 ) )
+                  repl_( 'DATATRAN', hb_Date( Val( param_rok ), Val( miesiac ), Val( zdzien ) ) )
+                  repl_( 'OPCJE', zOPCJE )
+                  repl_( 'PROCEDUR', zPROCEDUR )
+   *           if zsposob_p=1.or.zsposob_p=3
+   *              if zsposob_p=3.and.nr_uzytk=6
+   *                 repl_([zaplata],[1])
+   *              else
+   *                 repl_([zaplata],[3])
+   *              endif
+   *           else
+   *              if ztermin_z=0
+   *                 repl_([zaplata],[1])
+   *              else
+   *                 if zkwota=0
+   *                    repl_([zaplata],[3])
+   *                 else
+   *                    repl_([zaplata],[2])
+   *                 endif
+   *              endif
+   *           endif
+   *           repl_([kwota],zkwota)
+                  COMMIT
+                  UNLOCK
+                  IF zRYCZALT <> 'T'
+                  ************* ZAPIS REJESTRU DO KSIEGI *******************
+                     SELECT oper
+                     SET ORDER TO 3
+                     IF ! ins
+                        SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac ) + 'RS-7'
+                        IF Found()
+                           BlokadaR()
+                           repl_( 'wyr_tow', wyr_tow - razem_ )
+                           COMMIT
+                           UNLOCK
+                        ELSE
+                           *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                           SELECT &USEBAZ
+                           app()
+                           ADDDOC
+                           repl_( 'DZIEN', DAYM )
+                           repl_( 'NUMER', 'RS-7' )
+                           repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+                           repl_( 'WYR_TOW', -razem_ )
+       *                    repl_([zaplata],'1')
+       *                   repl_([kwota],zkwota)
+                           COMMIT
+                           UNLOCK
+                           *********************** lp
+                           SET ORDER TO 1
+                           IF nr_uzytk >= 0
+                              IF param_lp == 'T'
+                                 Blokada()
+                                 Czekaj()
+                                 rec := RecNo()
+
+                                 SKIP -1
+                                 IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Faktury_McKsieg( zKSGDATA, miesiac ), .F. )
+                                    zlp := liczba
+                                 ELSE
+                                    zlp := lp + 1
+                                 ENDIF
+                                 GO rec
+                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Faktury_McKsieg( zKSGDATA, miesiac ), .T. )
+                                    repl_( 'lp', zlp )
+                                    zlp := zlp + 1
+                                    SKIP
+                                 ENDDO
+
+                                 GO rec
+                                 COMMIT
+                                 UNLOCK
+                              ENDIF
+                           ENDIF
+                           COMMIT
+                           UNLOCK
+                        ***********************
+                        ENDIF
+                     ENDIF
+                     SET ORDER TO 3
+                     SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac ) + 'RS-7'
                      IF Found()
                         BlokadaR()
+                        repl_( 'wyr_tow', wyr_tow + razem )
+                        COMMIT
+                        UNLOCK
+                        SELECT suma_mc
+                        SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac )
+                        BlokadaR()
                         repl_( 'wyr_tow', wyr_tow - razem_ )
+                        repl_( 'wyr_tow', wyr_tow + razem )
                         COMMIT
                         UNLOCK
                      ELSE
                         *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                        SELECT &USEBAZ
+                        SELECT oper
                         app()
-                        ADDDOC
+                        repl_( 'firma', ident_fir )
+                        repl_( 'mc', Faktury_McKsieg( zKSGDATA, miesiac ) )
                         repl_( 'DZIEN', DAYM )
                         repl_( 'NUMER', 'RS-7' )
                         repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-                        repl_( 'WYR_TOW', -razem_ )
-    *                    repl_([zaplata],'1')
-    *                   repl_([kwota],zkwota)
+                        repl_( 'WYR_TOW', RAZEM )
+       *                 repl_([zaplata],'1')
+       *                repl_([kwota],zkwota)
                         COMMIT
                         UNLOCK
                         *********************** lp
@@ -689,13 +766,13 @@ PROCEDURE FakturyN()
                               rec := RecNo()
 
                               SKIP -1
-                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Faktury_McKsieg( zKSGDATA, miesiac ), .F. )
                                  zlp := liczba
                               ELSE
                                  zlp := lp + 1
                               ENDIF
                               GO rec
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Faktury_McKsieg( zKSGDATA, miesiac ), .T. )
                                  repl_( 'lp', zlp )
                                  zlp := zlp + 1
                                  SKIP
@@ -708,75 +785,19 @@ PROCEDURE FakturyN()
                         ENDIF
                         COMMIT
                         UNLOCK
-                     ***********************
+                        ***********************
+                        SELECT suma_mc
+                        SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac )
+                        BlokadaR()
+                        repl_( 'wyr_tow', wyr_tow - razem_ )
+                        repl_( 'wyr_tow', wyr_tow + razem )
+                        repl_( 'pozycje', pozycje + 1 )
+                        COMMIT
+                        UNLOCK
                      ENDIF
-                  ENDIF
-                  SET ORDER TO 3
-                  SEEK '+' + ident_fir + miesiac + 'RS-7'
-                  IF Found()
-                     BlokadaR()
-                     repl_( 'wyr_tow', wyr_tow + razem )
-                     COMMIT
-                     UNLOCK
-                     SELECT suma_mc
-                     BlokadaR()
-                     repl_( 'wyr_tow', wyr_tow - razem_ )
-                     repl_( 'wyr_tow', wyr_tow + razem )
-                     COMMIT
-                     UNLOCK
-                  ELSE
-                     *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                     SELECT oper
-                     app()
-                     repl_( 'firma', ident_fir )
-                     repl_( 'mc', miesiac )
-                     repl_( 'DZIEN', DAYM )
-                     repl_( 'NUMER', 'RS-7' )
-                     repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-                     repl_( 'WYR_TOW', RAZEM )
-    *                 repl_([zaplata],'1')
-    *                repl_([kwota],zkwota)
-                     COMMIT
-                     UNLOCK
-                     *********************** lp
+                     ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
                      SET ORDER TO 1
-                     IF nr_uzytk >= 0
-                        IF param_lp == 'T'
-                           Blokada()
-                           Czekaj()
-                           rec := RecNo()
-
-                           SKIP -1
-                           IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                              zlp := liczba
-                           ELSE
-                              zlp := lp + 1
-                           ENDIF
-                           GO rec
-                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                              repl_( 'lp', zlp )
-                              zlp := zlp + 1
-                              SKIP
-                           ENDDO
-
-                           GO rec
-                           COMMIT
-                           UNLOCK
-                        ENDIF
-                     ENDIF
-                     COMMIT
-                     UNLOCK
-                     ***********************
-                     SELECT suma_mc
-                     BlokadaR()
-                     repl_( 'wyr_tow', wyr_tow - razem_ )
-                     repl_( 'wyr_tow', wyr_tow + razem )
-                     repl_( 'pozycje', pozycje + 1 )
-                     COMMIT
-                     UNLOCK
                   ENDIF
-                  ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
-                  SET ORDER TO 1
                ENDIF
                SELECT faktury
                commit_()
@@ -810,108 +831,8 @@ PROCEDURE FakturyN()
                   BREAK
                ENDIF
                zident_poz := Str( rec_no, 8 )
-               *========================= Ksiegowanie ========================
-               SELECT rejs
-               SEEK '+' + ident_fir + miesiac + faktury->RACH + '-' + StrTran( Str( faktury->numer, 5 ), ' ', '0' ) // + '/' + param_rok
-               IF Found()
-                  razem_ := netto
-                  REKZAK := RecNo()
-                  BlokadaR()
-                  repl_( 'del', '-' )
-                  commit_()
-                  UNLOCK
-                  SKIP
-                  IF zRYCZALT <> 'T'
-                     ************* ZAPIS REJESTRU DO KSIEGI *******************
-                     SELECT oper
-                     SET ORDER TO 3
-                     SEEK '+' + ident_fir + miesiac + 'RS-7'
-                     IF Found()
-                        BlokadaR()
-                        repl_( 'wyr_tow', wyr_tow - razem_ )
-                        COMMIT
-                        UNLOCK
-                        SELECT suma_mc
-                        BlokadaR()
-                        repl_( 'wyr_tow', wyr_tow - razem_ )
-                        COMMIT
-                        UNLOCK
-                     ELSE
-                        *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                        SELECT &USEBAZ
-                        app()
-                        ADDDOC
-                        repl_( 'DZIEN', DAYM )
-                        repl_( 'NUMER', 'RS-7' )
-                        repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-                        repl_( 'WYR_TOW', -razem_ )
-    *                    repl_([zaplata],'1')
-    *                   repl_([kwota],zkwota)
-                        COMMIT
-                        UNLOCK
-                        *********************** lp
-                        SET ORDER TO 1
-                        IF nr_uzytk >= 0
-                           IF param_lp == 'T'
-                              Blokada()
-                              Czekaj()
-                              rec := RecNo()
-
-                              SKIP -1
-                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                                 zlp := liczba
-                              ELSE
-                                 zlp := lp + 1
-                              ENDIF
-                              GO rec
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                                 repl_( 'lp', zlp )
-                                 zlp := zlp + 1
-                                 SKIP
-                              ENDDO
-
-                              GO rec
-                              COMMIT
-                              UNLOCK
-                           ENDIF
-                        ENDIF
-                        SELECT suma_mc
-                        BlokadaR()
-                        repl_( 'wyr_tow', wyr_tow - razem_ )
-                        repl_( 'pozycje', pozycje + 1 )
-                        COMMIT
-                        UNLOCK
-                     ENDIF
-                  ELSE
-                     SELECT EWID
-                     SET ORDER TO 5
-                     SEEK '+' + Str( REKZAK, 5 ) + 'RS-'
-                     IF Found()
-                        BlokadaR()
-                        DELETE
-                        COMMIT
-                        UNLOCK
-                        SET ORDER TO 1
-                        *********************** lp
-                        IF nr_uzytk >= 0
-                           IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                              Blokada()
-                              Czekaj()
-                              rec := RecNo()
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                                 repl_( 'lp', lp - 1 )
-                                 SKIP
-                              ENDDO
-                              GO rec
-                              COMMIT
-                              UNLOCK
-                              @ 24, 0
-                           ENDIF
-                        ENDIF
-                        *******************************
-                     ENDIF
-                  ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
-                  ENDIF
+               IF KSGDATA <> 1
+                  Faktury_UsunKsieg( Faktury_McKsieg( KSGDATA, miesiac ) )
                ENDIF
                *==============================================================
                IF faktury->numer == firma->nr_fakt - 1
@@ -1537,6 +1458,124 @@ FUNCTION vfSplitPay()
    ENDIF
 
    RETURN R
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Faktury_McKsieg( nKsgData, cMiesiac )
+
+   RETURN iif( nKsgData == 2, Str( Val( cMiesiac ) - 1, 2 ), cMiesiac )
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Faktury_UsunKsieg( cMiesiac )
+
+   *========================= Ksiegowanie ========================
+   SELECT rejs
+   SEEK '+' + ident_fir + cMiesiac + faktury->RACH + '-' + StrTran( Str( faktury->numer, 5 ), ' ', '0' ) // + '/' + param_rok
+   IF Found()
+      razem_ := netto
+      REKZAK := RecNo()
+      BlokadaR()
+      repl_( 'del', '-' )
+      commit_()
+      UNLOCK
+      SKIP
+      IF zRYCZALT <> 'T'
+         ************* ZAPIS REJESTRU DO KSIEGI *******************
+         SELECT oper
+         SET ORDER TO 3
+         SEEK '+' + ident_fir + cMiesiac + 'RS-7'
+         IF Found()
+            BlokadaR()
+            repl_( 'wyr_tow', wyr_tow - razem_ )
+            COMMIT
+            UNLOCK
+            SELECT suma_mc
+            SEEK '+' + ident_fir + cMiesiac
+            BlokadaR()
+            repl_( 'wyr_tow', wyr_tow - razem_ )
+            COMMIT
+            UNLOCK
+         ELSE
+            *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+            SELECT &USEBAZ
+            app()
+            //ADDDOC
+            repl_( 'FIRMA', ident_fir )
+            repl_( 'MC', cMiesiac )
+            repl_( 'DZIEN', DAYM )
+            repl_( 'NUMER', 'RS-7' )
+            repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+            repl_( 'WYR_TOW', -razem_ )
+            COMMIT
+            UNLOCK
+            *********************** lp
+            SET ORDER TO 1
+            IF nr_uzytk >= 0
+               IF param_lp == 'T'
+                  Blokada()
+                  Czekaj()
+                  rec := RecNo()
+
+                  SKIP -1
+                  IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # cMiesiac, .F. )
+                     zlp := liczba
+                  ELSE
+                     zlp := lp + 1
+                  ENDIF
+                  GO rec
+                  DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == cMiesiac, .T. )
+                     repl_( 'lp', zlp )
+                     zlp := zlp + 1
+                     SKIP
+                  ENDDO
+
+                  GO rec
+                  COMMIT
+                  UNLOCK
+               ENDIF
+            ENDIF
+            SELECT suma_mc
+            SEEK '+' + ident_fir + cMiesiac
+            BlokadaR()
+            repl_( 'wyr_tow', wyr_tow - razem_ )
+            repl_( 'pozycje', pozycje + 1 )
+            COMMIT
+            UNLOCK
+         ENDIF
+      ELSE
+         SELECT EWID
+         SET ORDER TO 5
+         SEEK '+' + Str( REKZAK, 5 ) + 'RS-'
+         IF Found()
+            BlokadaR()
+            DELETE
+            COMMIT
+            UNLOCK
+            SET ORDER TO 1
+            *********************** lp
+            IF nr_uzytk >= 0
+               IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == cMiesiac, .T. )
+                  Blokada()
+                  Czekaj()
+                  rec := RecNo()
+                  DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == cMiesiac, .T. )
+                     repl_( 'lp', lp - 1 )
+                     SKIP
+                  ENDDO
+                  GO rec
+                  COMMIT
+                  UNLOCK
+                  @ 24, 0
+               ENDIF
+            ENDIF
+            *******************************
+         ENDIF
+      ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
+      ENDIF
+   ENDIF
+   SELECT FAKTURY
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 
