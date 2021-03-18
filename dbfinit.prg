@@ -363,7 +363,7 @@ public aEWIDdbf := {;
    { "MC", "C", 2, 0 },;                          //  4
    { "DZIEN", "C", 2, 0 },;                       //  5
    { "DATAPRZY", "D", 8, 0 },;                    //  6
-   { "NUMER", "C", 40, 0 },;                      //  7
+   { "NUMER", "C", 100, 0 },;                     //  7
    { "TRESC", "C", 30, 0 },;                      //  8
    { "HANDEL", "N", 11, 2 },;                     //  9
    { "PRODUKCJA", "N", 11, 2 },;                  //  10
@@ -435,7 +435,8 @@ public aFAKTURYdbf := {;
    { "ZAP_WART", "N", 11, 2 },;                   //  38
    { "SPLITPAY", "C", 1, 0 },;                    //  39
    { "OPCJE", "C", 32, 0 },;                      //  40
-   { "PROCEDUR", "C", 32, 0 } }                   //  41
+   { "PROCEDUR", "C", 32, 0 },;                   //  41
+   { "KSGDATA", "N", 1, 0 } }                     //  42 Ksi©guj: 1 - w akt. miesi¥cu, 2 - nie ksieguj, 3 - w poprzednim miesi¥cu
 
 // Create: FAKTURYW.DBF
 public aFAKTURYWdbf := {;
@@ -695,7 +696,7 @@ public aOPERdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //  3
    { "MC", "C", 2, 0 },;                          //  4
    { "DZIEN", "C", 2, 0 },;                       //  5
-   { "NUMER", "C", 40, 0 },;                      //  6
+   { "NUMER", "C", 100, 0 },;                      //  6
    { "NAZWA", "C", 200, 0 },;                     //  7
    { "ADRES", "C", 200, 0 },;                     //  8
    { "TRESC", "C", 30, 0 },;                      //  9
@@ -975,7 +976,7 @@ public aREJSdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //  3
    { "MC", "C", 2, 0 },;                          //  4
    { "DZIEN", "C", 2, 0 },;                       //  5
-   { "NUMER", "C", 40, 0 },;                      //  6
+   { "NUMER", "C", 100, 0 },;                      //  6
    { "NAZWA", "C", 200, 0 },;                     //  7
    { "ADRES", "C", 200, 0 },;                     //  8
    { "NR_IDENT", "C", 30, 0 },;                   //  9
@@ -1033,7 +1034,7 @@ public aREJZdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //  3
    { "MC", "C", 2, 0 },;                          //  4
    { "DZIEN", "C", 2, 0 },;                       //  5
-   { "NUMER", "C", 40, 0 },;                      //  6
+   { "NUMER", "C", 100, 0 },;                      //  6
    { "NAZWA", "C", 200, 0 },;                     //  7
    { "ADRES", "C", 200, 0 },;                     //  8
    { "NR_IDENT", "C", 30, 0 },;                   //  9
@@ -1146,7 +1147,7 @@ public aROZRdbf := {;
    { "DATADOK", "D", 8, 0 },;                     //  6
    { "TERMIN", "D", 8, 0 },;                      //  7
    { "DNIPLAT", "N", 3, 0 },;                     //  8
-   { "NRDOK", "C", 40, 0 },;                      //  9
+   { "NRDOK", "C", 100, 0 },;                     //  9
    { "ZRODLO", "C", 1, 0 },;                      //  10
    { "RECNOZROD", "N", 10, 0 },;                  //  11
    { "RODZDOK", "C", 2, 0 },;                     //  12
