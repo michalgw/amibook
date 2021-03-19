@@ -261,7 +261,7 @@ PROCEDURE FakturyN()
                   zZAP_WART := 0
                   zOPCJE := Space( 32 )
                   zPROCEDUR := Space( 32 )
-                  zKSGDATA := 1
+                  zKSGDATA := 0
                ELSE
                   zRACH := RACH
                   zNUMER&zRACH := NUMER
@@ -405,9 +405,11 @@ PROCEDURE FakturyN()
                   ENDDO
                   ColStd()
                   @ 24, 0
+                  zKSGDATA := nKsieguj - 1
+               ELSE
+                  zKSGDATA := 0 // Ksieguj w aktualnym miesiacu
                ENDIF
 
-               zKSGDATA := nKsieguj - 1
 
                *-----------------------------------
 
@@ -885,6 +887,9 @@ PROCEDURE FakturyN()
             END
 *     @ 23,0
             @ 24, 0
+            IF &_top_bot
+               EXIT
+            ENDIF
 
          *################################# SZUKANIE dnia#############################
          CASE kl == K_F10 .OR. kl == 247
