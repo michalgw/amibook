@@ -175,7 +175,7 @@ case kkk=68.or.kkk=100
      **** Drukowanie ekranu
    DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), iif( zVATFORDR='7 ', ;
       PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ), ;
-      PadC( 'Kwarta&_l. ' + param_rok + '.' + StrTran( PadL( p5a, 2 ), ' ', '0' ), 80 ) ) } )
+      PadC( 'Kwarta&_l. ' + param_rok + '.' + StrTran( PadL( p5a, 2 ), ' ', '0' ), 80 ) ), "" }, , 4, 24 )
 
 case kkk=87 .or. kkk=119.or.kkk=66 .or. kkk=98
      save screen to scr_

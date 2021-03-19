@@ -587,7 +587,7 @@ PROCEDURE zestaw_R( Okres )
    DO CASE
    CASE kkk == Asc( 'D' ) .OR. kkk == Asc( 'd' )
       DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), ;
-         PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) } )
+         PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) }, , 4, 22 )
 
    CASE kkk == Asc( 'W' ) .OR. kkk == Asc( 'w' ) .OR. kkk == Asc( 'B' ) .OR. kkk == Asc( 'b' )
       zNAZWA_PLA := zNAZWA_PLA + Space( 30 )

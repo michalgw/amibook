@@ -1767,7 +1767,7 @@ PROCEDURE infodoch()
 
       DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), iif( zPITOKRES == 'K', ;
          PadC( 'Kwarta&_l. ' + param_rok + '.' + StrTran( Str( pitKW, 2 ), ' ', '0' ), 80 ), ;
-         PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) ) } )
+         PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) ) }, , 4, 22 )
 
    CASE kkk == 87 .OR. kkk == 119 .OR. kkk == 66 .OR. kkk == 98
 

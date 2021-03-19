@@ -131,7 +131,7 @@ do while lastkey()<>27
    @ 21,0 say '[D lub PrintScreen]-drukowanie ekranu    [Inny klawisz]-wpisanie nowych wartosci'
    kkk=inkey(0)
    if kkk=68.or.kkk=100
-      DrukujEkran()
+      DrukujEkran( , , 5, 19 )
    endif
    @ 21,0 say '                                                                                '
 enddo

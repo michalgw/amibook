@@ -772,9 +772,12 @@ FUNCTION DrukujNowyProfil(cDane)
 
 /*----------------------------------------------------------------------*/
 
-PROCEDURE DrukujEkran( xNaglowek, xStopka )
+PROCEDURE DrukujEkran( xNaglowek, xStopka, nTopRow, nBottomRow )
 
    LOCAL zm, zm__
+
+   hb_default( @nTopRow, 4 )
+   hb_default( @nBottomRow, 22 )
 
    zm := SaveScreen( 0, 0, 24, 79 )
    zm__ := ''
@@ -790,7 +793,7 @@ PROCEDURE DrukujEkran( xNaglowek, xStopka )
          ENDIF
       } )
    ENDIF
-   FOR j := 4 TO 22
+   FOR j := nTopRow TO nBottomRow
        FOR i := 1 TO 159 STEP 2
            zm__ := zm__ + substr( zm, j * 160 + i, 1 )
        NEXT
