@@ -479,6 +479,9 @@ PROCEDURE KRejZ()
                   SET ORDER TO 1
                   *********************** lp
                   IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                     IF param_kslp == '3'
+                        SET ORDER TO 4
+                     ENDIF
                      Blokada()
                      Czekaj()
                      rec := RecNo()
@@ -489,6 +492,9 @@ PROCEDURE KRejZ()
                      GO rec
                      COMMIT
                      UNLOCK
+                     IF param_kslp == '3'
+                        SET ORDER TO 1
+                     ENDIF
                      @ 24, 0
                   ENDIF
                   *******************************
@@ -1938,6 +1944,9 @@ PROCEDURE KRejZ_Ksieguj()
                   SET ORDER TO 1
                   *********************** lp
                   IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                     IF param_kslp == '3'
+                        SET ORDER TO 4
+                     ENDIF
                      Blokada()
                      Czekaj()
                      rec := RecNo()
@@ -1948,6 +1957,9 @@ PROCEDURE KRejZ_Ksieguj()
                      GO rec
                      COMMIT
                      UNLOCK
+                     IF param_kslp == '3'
+                        SET ORDER TO 1
+                     ENDIF
                      @ 24, 0
                   ENDIF
                   *******************************
@@ -1968,6 +1980,9 @@ PROCEDURE KRejZ_Ksieguj()
                   SET ORDER TO 1
                   *********************** lp
                   IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                     IF param_kslp == '3'
+                        SET ORDER TO 4
+                     ENDIF
                      Blokada()
                      Czekaj()
                      rec := RecNo()
@@ -1978,6 +1993,9 @@ PROCEDURE KRejZ_Ksieguj()
                      GO rec
                      COMMIT
                      UNLOCK
+                     IF param_kslp == '3'
+                        SET ORDER TO 1
+                     ENDIF
                      @ 24, 0
                   ENDIF
                   *******************************
@@ -2017,6 +2035,9 @@ PROCEDURE KRejZ_Ksieguj()
                   SET ORDER TO 1
                   *********************** lp
                   IF param_lp == 'T'
+                     IF param_kslp == '3'
+                        SET ORDER TO 4
+                     ENDIF
                      Blokada()
                      Czekaj()
                      rec := RecNo()
@@ -2036,6 +2057,9 @@ PROCEDURE KRejZ_Ksieguj()
                      GO rec
                      COMMIT
                      UNLOCK
+                     IF param_kslp == '3'
+                        SET ORDER TO 1
+                     ENDIF
                      @ 24,0
                   ENDIF
                   COMMIT
@@ -2104,6 +2128,9 @@ PROCEDURE KRejZ_Ksieguj()
                UNLOCK
                *********************** lp
                IF param_lp == 'T'
+                  IF param_kslp == '3'
+                     SET ORDER TO 4
+                  ENDIF
                   Blokada()
                   Czekaj()
                   rec := RecNo()
@@ -2123,6 +2150,9 @@ PROCEDURE KRejZ_Ksieguj()
                   GO rec
                   COMMIT
                   UNLOCK
+                  IF param_kslp == '3'
+                     SET ORDER TO 1
+                  ENDIF
                   @ 24, 0
                ENDIF
                COMMIT
@@ -2188,6 +2218,9 @@ PROCEDURE KRejZ_Ksieguj()
             UNLOCK
               *********************** lp
             IF param_lp == 'T'
+               IF param_kslp == '3'
+                  SET ORDER TO 4
+               ENDIF
                Blokada()
                Czekaj()
                rec := RecNo()
@@ -2208,6 +2241,9 @@ PROCEDURE KRejZ_Ksieguj()
                GO rec
                COMMIT
                UNLOCK
+               IF param_kslp == '3'
+                  SET ORDER TO 1
+               ENDIF
                @ 24,0
             ENDIF
             COMMIT

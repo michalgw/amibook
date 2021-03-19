@@ -167,7 +167,8 @@ do while kl#27
               */
 
               IF param_lp == 'T' .AND. TNEsc( , "Czy odbudowa† numeracj© ksi©gi? (T/N)" )
-                 Ksiega_Przenumeruj()
+                 //Ksiega_Przenumeruj()
+                 numeruj()
               ENDIF
 
               IF TNEsc( , "Czy przypsa† kwot© woln¥ do wszysztkich firm? (T/N)" )
@@ -432,6 +433,10 @@ PROCEDURE Ksiega_Przenumeruj()
    IF ! DostepPro( "OPER", , , "OPER", "OPER" )
       firma->( dbCloseArea() )
       RETURN
+   ENDIF
+
+   IF param_kslp == '3'
+      oper->( dbSetOrder( 4 ) )
    ENDIF
 
    IF ! BlokadaPro( "OPER" )

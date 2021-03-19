@@ -297,6 +297,9 @@ PROCEDURE Rycz()
             UNLOCK
             *********************** lp
             IF param_lp == 'T'
+               IF param_kslp == '3'
+                  SET ORDER TO 4
+               ENDIF
                Blokada()
                ColInb()
                @ 24, 0
@@ -350,6 +353,9 @@ PROCEDURE Rycz()
                GO rec
                COMMIT
                UNLOCK
+               IF param_kslp == '3'
+                  SET ORDER TO 1
+               ENDIF
                @ 24, 0
             ENDIF
             ***********************
@@ -427,6 +433,9 @@ PROCEDURE Rycz()
             SKIP
             *********************** lp
             IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir
+               IF param_kslp == '3'
+                  SET ORDER TO 4
+               ENDIF
                Blokada()
                SET COLOR TO *w
                Center( 24, 'Prosz&_e. czeka&_c....' )
@@ -439,6 +448,9 @@ PROCEDURE Rycz()
                GO rec
                COMMIT
                UNLOCK
+               IF param_kslp == '3'
+                  SET ORDER TO 1
+               ENDIF
             ENDIF
             *******************************
             commit_()

@@ -415,6 +415,9 @@ PROCEDURE Faktury3()
                      Blokada()
                      Czekaj()
                      rec := RecNo()
+                     IF param_kslp == '3'
+                        SET ORDER TO 4
+                     ENDIF
                      IF ins
                         SKIP -1
                         IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
@@ -462,6 +465,9 @@ PROCEDURE Faktury3()
                      GO rec
                      COMMIT
                      UNLOCK
+                     IF param_kslp == '3'
+                        SET ORDER TO 1
+                     ENDIF
                   ENDIF
                ENDIF
                SET ORDER TO 3
@@ -524,6 +530,9 @@ PROCEDURE Faktury3()
                *********************** lp
                IF nr_uzytk >= 0
                   IF param_lp == 'T' .AND. del == '+' .AND. firma = ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                     IF param_kslp == '3'
+                        SET ORDER TO 4
+                     ENDIF
                      Blokada()
                      Czekaj()
                      rec := RecNo()
@@ -534,6 +543,9 @@ PROCEDURE Faktury3()
                      GO rec
                      COMMIT
                      UNLOCK
+                     IF param_kslp == '3'
+                        SET ORDER TO 1
+                     ENDIF
                   ENDIF
                ENDIF
                ***********************

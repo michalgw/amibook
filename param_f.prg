@@ -270,6 +270,9 @@ if param_lp=[T].and.zliczba#liczba
    do while.not.dostep('OPER')
    enddo
    do SETIND with 'OPER'
+   IF param_kslp == '3'
+      SET ORDER TO 4
+   ENDIF
    do BLOKADA
    seek [+]+ident_fir
    zlp=zliczba

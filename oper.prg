@@ -292,6 +292,9 @@ PROCEDURE Oper()
             SKIP
             *********************** lp
             IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir
+               IF param_kslp == '3'
+                  SET ORDER TO 4
+               ENDIF
                Blokada()
                ColInb()
                @ 24, 0 CLEAR
@@ -304,6 +307,9 @@ PROCEDURE Oper()
                GO rec
                COMMIT
                UNLOCK
+               IF param_kslp == '3'
+                  SET ORDER TO 1
+               ENDIF
                ColStd()
             ENDIF
             *******************************
@@ -1277,6 +1283,9 @@ PROCEDURE Oper_Ksieguj()
       center( 24, 'Prosz&_e. czeka&_c....' )
       SET COLOR TO
       rec := RecNo()
+      IF param_kslp == '3'
+         SET ORDER TO 4
+      ENDIF
       IF ins
          SKIP -1
          IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
@@ -1324,6 +1333,9 @@ PROCEDURE Oper_Ksieguj()
       GO rec
       COMMIT
       UNLOCK
+      IF param_kslp == '3'
+         SET ORDER TO 1
+      ENDIF
    ENDIF
 
    *para fZRODLO,fJAKIDOK,fNIP,fNRDOK,fDATAKS,fDATADOK,fTERMIN,fDNIPLAT,fRECNO,fKWOTA,fTRESC,fKWOTAVAT

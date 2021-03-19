@@ -2453,6 +2453,9 @@ PROCEDURE numeruj()
       DO WHILE ! dostepex( 'OPER' )
       ENDDO
       SETIND( 'OPER' )
+      IF param_kslp == '3'
+         SET ORDER TO 4
+      ENDIF
       zfirma := '   '
 
       DO WHILE oper->del == '+'
@@ -2468,6 +2471,7 @@ PROCEDURE numeruj()
          SKIP
       ENDDO
       close_()
+
       @ 24, 0
       center( 24, 'Trwa nadawanie liczby porz&_a.dkowej EWIDENCJI- prosz&_e. czeka&_c....' )
       SELECT 2
@@ -2477,6 +2481,9 @@ PROCEDURE numeruj()
       DO WHILE ! dostepex( 'EWID' )
       ENDDO
       SETIND( 'EWID' )
+      IF param_kslp == '3'
+         SET ORDER TO 4
+      ENDIF
       zfirma := '   '
       DO WHILE ewid->del == '+'
          IF firma#zfirma

@@ -702,6 +702,9 @@ PROCEDURE FakturyN()
                            SET ORDER TO 1
                            IF nr_uzytk >= 0
                               IF param_lp == 'T'
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 4
+                                 ENDIF
                                  Blokada()
                                  Czekaj()
                                  rec := RecNo()
@@ -722,6 +725,9 @@ PROCEDURE FakturyN()
                                  GO rec
                                  COMMIT
                                  UNLOCK
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 1
+                                 ENDIF
                               ENDIF
                            ENDIF
                            COMMIT
@@ -761,6 +767,9 @@ PROCEDURE FakturyN()
                         SET ORDER TO 1
                         IF nr_uzytk >= 0
                            IF param_lp == 'T'
+                              IF param_kslp == '3'
+                                 SET ORDER TO 4
+                              ENDIF
                               Blokada()
                               Czekaj()
                               rec := RecNo()
@@ -781,6 +790,9 @@ PROCEDURE FakturyN()
                               GO rec
                               COMMIT
                               UNLOCK
+                              IF param_kslp == '3'
+                                 SET ORDER TO 1
+                              ENDIF
                            ENDIF
                         ENDIF
                         COMMIT
@@ -1513,6 +1525,9 @@ PROCEDURE Faktury_UsunKsieg( cMiesiac )
             SET ORDER TO 1
             IF nr_uzytk >= 0
                IF param_lp == 'T'
+                  IF param_kslp == '3'
+                     SET ORDER TO 4
+                  ENDIF
                   Blokada()
                   Czekaj()
                   rec := RecNo()
@@ -1533,6 +1548,9 @@ PROCEDURE Faktury_UsunKsieg( cMiesiac )
                   GO rec
                   COMMIT
                   UNLOCK
+                  IF param_kslp == '3'
+                     SET ORDER TO 1
+                  ENDIF
                ENDIF
             ENDIF
             SELECT suma_mc
@@ -1556,6 +1574,9 @@ PROCEDURE Faktury_UsunKsieg( cMiesiac )
             *********************** lp
             IF nr_uzytk >= 0
                IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == cMiesiac, .T. )
+                  IF param_kslp == '3'
+                     SET ORDER TO 4
+                  ENDIF
                   Blokada()
                   Czekaj()
                   rec := RecNo()
@@ -1566,6 +1587,9 @@ PROCEDURE Faktury_UsunKsieg( cMiesiac )
                   GO rec
                   COMMIT
                   UNLOCK
+                  IF param_kslp == '3'
+                     SET ORDER TO 1
+                  ENDIF
                   @ 24, 0
                ENDIF
             ENDIF
