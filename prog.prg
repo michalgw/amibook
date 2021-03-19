@@ -350,11 +350,6 @@ FUNCTION Main()
    SET WRAP ON
    SET SCOREBOARD OFF
 
-   // TODO: Chyba nie jest potrzebne?
-   SET PROCEDURE TO proc1
-   SET PROCEDURE TO proc2
-   SET PROCEDURE TO proc3
-
    // Sprawdzenie czy program uruchomiony przez starter (menu.exe lub ksiega.exe)
    IF ! File( 'start' )
       @ 24, 0 SAY 'wywo&_l.anie programu - KSIEGA.BAT'
