@@ -1134,7 +1134,7 @@ PROCEDURE say260vn()
    DO WHILE del == '+' .AND. ident == zident_poz
       IF i < 3
          i := i + 1
-         @ 10 + i, 1 SAY Left( towar, 29 )
+         @ 10 + i, 1 SAY Left( towar, 38 )
          IF ilosc * 1000 == 0
             @ 10 + i, 31 SAY Space( 8 )
             @ 10 + i, 40 SAY Space( 8 )

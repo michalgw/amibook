@@ -32,6 +32,8 @@ FUNCTION Main()
    dbfUtworzTabele( 'REJS', 'rejs.tym' )
    dbfUtworzTabele( 'REJZ', 'rejz.tym' )
    dbfUtworzTabele( 'ROZR', 'rozr.tym' )
+   dbfUtworzTabele( 'POZYCJE', 'pozycje.tym' )
+   dbfUtworzTabele( 'TRESC', 'tresc.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
@@ -42,6 +44,8 @@ FUNCTION Main()
    dbfIdxREJS()
    dbfIdxREJZ()
    dbfIdxROZR()
+   dbfIdxPOZYCJE()
+   dbfIdxTRESC()
    dbCloseAll()
 
    RETURN

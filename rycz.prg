@@ -756,7 +756,7 @@ FUNCTION v1_5r()
          IF LastKey() == K_ESC
             RETURN .T.
          ENDIF
-         ztresc := tresc->tresc
+         ztresc := Left( tresc->tresc, 30 )
          SET COLOR TO i
          @ 5, 40 SAY ztresc
          SET COLOR TO

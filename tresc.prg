@@ -120,7 +120,7 @@ else
    zOPCJE := OPCJE
 endif
 *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
-@ wiersz, 2 get zTRESC valid v14_1()
+@ wiersz, 2 get zTRESC PICTURE "@S30 " + Replicate( 'X', 512 ) valid v14_1()
 @ wiersz,35 get zSTAN picture "   99999999.99"
 @ wiersz,51 get zRODZAJ PICTURE "!" WHEN w14_2() valid v14_2()
 @ wiersz,62 get zOPCJE PICTURE "!" WHEN w14_3() valid v14_3()
@@ -241,7 +241,7 @@ function linia14
       ENDIF
    ELSE
    ENDIF
-return [ ]+TRESC+[ ³ ]+kwota(STAN,14,2)+[ ³]+cRodzaj+[³]+cOpcje
+return [ ]+Left(TRESC,30)+[ ³ ]+kwota(STAN,14,2)+[ ³]+cRodzaj+[³]+cOpcje
 ***************************************************
 function v14_1
 if empty(zTRESC)

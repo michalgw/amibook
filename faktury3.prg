@@ -162,7 +162,7 @@ PROCEDURE Faktury3()
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
             DECLARE ztowar[ 15 ], zilosc[ 15 ], zjm[ 15 ], zcena[ 15 ], zwartosc[ 15 ]
             FOR I := 1 TO 15
-                ztowar[ i ] := Space( 58 )
+                ztowar[ i ] := Space( 512 )
                 zilosc[ i ] := 0
                 zjm[ i ] := Space( 5 )
                 zcena[ i ] := 0
@@ -214,7 +214,7 @@ PROCEDURE Faktury3()
             @ 1,  6 GET znazwa PICTURE repl( '!', 70 ) VALID v26_203()
             @ 2,  6 GET zADRES PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             FOR i := 1 TO 15
-                @ 5 + i,  1 GET ztowar[ i ]   PICTURE '@s28 !' + repl( 'X', 45 ) WHEN { | oGet | Fakt3WhenTowar( oGet:row - 5 ) } VALID v26_503()
+                @ 5 + i,  1 GET ztowar[ i ]   PICTURE '@s28 !' + repl( 'X', 512 ) WHEN { | oGet | Fakt3WhenTowar( oGet:row - 5 ) } VALID v26_503()
                 @ 5 + i, 30 GET zilosc[ i ]   PICTURE "  9999999.999"            VALID v26_603()
                 @ 5 + i, 44 GET zjm[ i ]      PICTURE "XXXXX"                    VALID v26_703()
                 @ 5 + i, 50 GET zcena[ i ]    PICTURE "   99999999.99"           VALID v26_803()
@@ -915,7 +915,7 @@ FUNCTION Fakt3WhenTowar( nWiersz )
          RESTORE SCREEN FROM scr2_a
          IF LastKey() == K_ENTER
             cTresc := tresc->tresc
-            zTowar[ nWiersz ] := PadR( AllTrim( cTresc ), 45 )
+            zTowar[ nWiersz ] := cTresc
          ENDIF
          SELECT faktury
       ENDIF

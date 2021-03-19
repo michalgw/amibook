@@ -3320,7 +3320,7 @@ FUNCTION JPKImp_VatS_Tresc_V( cKatalog )
          IF LastKey() == K_ESC
             RETURN .T.
          ENDIF
-         cOpisZd := tresc->tresc
+         cOpisZd := Left( tresc->tresc, 30 )
          cKolorTemp := SetColor()
          SET COLOR TO i
          @ 13, 33 SAY cOpisZd

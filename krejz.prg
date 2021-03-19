@@ -1098,7 +1098,7 @@ FUNCTION v1_5z()
          if LastKey() == K_ESC
             RETURN .T.
          ENDIF
-         ztresc := tresc->tresc
+         ztresc := Left( tresc->tresc, 30 )
          IF zOPCJE == " "
             zOPCJE := tresc->opcje
             oGetOPCJE:setFocus()

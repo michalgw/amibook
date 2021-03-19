@@ -186,5 +186,5 @@ RETURN
 
 *################################## FUNKCJE #################################
 function linia16
-RETURN " " + AllTrim(RODZAJ) + " ° " + TRESC+[     ]+kwota(STAN,14,2)+[ ]
+RETURN " " + AllTrim(RODZAJ) + " ° " + Left( TRESC, 30 ) + [     ] + kwota(STAN,14,2)+[ ]
 *############################################################################

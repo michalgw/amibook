@@ -116,7 +116,7 @@ PROCEDURE FaPozN()
          DO WHILE .T.
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
             IF ins
-               zTOWAR := Space( 60 )
+               zTOWAR := Space( 512 )
    *              zSWW := space(14)
                zILO := 0
                zJM := Space( 5 )
@@ -133,7 +133,7 @@ PROCEDURE FaPozN()
                zWARTOSC := WARTOSC
             endif
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
-            @ wiersz,  1 GET zTOWAR PICTURE '@S38 ' + repl( 'X', 40 ) WHEN w26_50vn()
+            @ wiersz,  1 GET zTOWAR PICTURE '@S38 ' + repl( 'X', 512 ) WHEN w26_50vn()
    *           @ wiersz,31 get zSWW   picture '@RS8 !!!!!!!!!!!!!!'
             IF NR_UZYTK == 204
                @ wiersz, 40 GET zILO PICTURE '999999.99' VALID vWARTOSCfn()
@@ -366,7 +366,7 @@ FUNCTION w26_50vn()
          RESTORE SCREEN FROM scr2_a
          IF LastKey() == K_ENTER
             zzz := tresc->tresc
-            ztowar := AllTrim( zzz ) + Space( 40 - Len( AllTrim( zzz ) ) )
+            ztowar := PadR( AllTrim( zzz ), 512 )
          ENDIF
          SELECT pozycje
       ENDIF
