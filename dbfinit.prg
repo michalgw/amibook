@@ -412,8 +412,8 @@ public aFAKTURYdbf := {;
    { "ZAMOWIENIE", "C", 30, 0 },;                 //  15
    { "NR_IDENT", "C", 30, 0 },;                   //  16
    { "RACH", "C", 1, 0 },;                        //  17
-   { "ODBNAZWA", "C", 60, 0 },;                   //  18
-   { "ODBADRES", "C", 40, 0 },;                   //  19
+   { "ODBNAZWA", "C", 200, 0 },;                  //  18
+   { "ODBADRES", "C", 200, 0 },;                  //  19
    { "ODBOSOBA", "C", 30, 0 },;                   //  20
    { "KOMENTARZ", "C", 60, 0 },;                  //  21
    { "OPLSKARB", "N", 12, 2 },;                   //  22
@@ -566,7 +566,8 @@ public aFIRMAdbf := {;
    { "PPKWPLMC", "C", 1, 0 },;                    //  77 PPK T - Wpˆata do PPK w tym samym miesi¥cu, N - wpˆata do 15 dnia kolejnego mc.
    { "PPKEIDKADR", "C", 1, 0 },;                  //  78 PPK doˆ¥czaj pole "ID Kadrowy"
    { "PPKEIDEPPK", "C", 1, 0 },;                  //  79 PPK doˆ¥czaj pole "ID Kadrowy"
-   { "PPKEIDPZIF", "C", 1, 0 } }                  //  80 PPK doˆ¥czaj pole "ID Kadrowy"
+   { "PPKEIDPZIF", "C", 1, 0 },;                  //  80 PPK doˆ¥czaj pole "ID Kadrowy"
+   { "RODZAJDRFV", "C", 1, 0 } }                  //  81 Rodzaj wydruku faktury: G - graficzny, T - tekstowy
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;

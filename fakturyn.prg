@@ -949,8 +949,8 @@ PROCEDURE FakturyN()
                zduplikat := 'N'
                zduplikatd := Date()
                SET CURSOR ON
-               @ 19,  6 GET zodbnazwa PICTURE '@S30 ' + repl( '!', 70 )
-               @ 20,  6 GET zodbADRES PICTURE '@S30 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+               @ 19,  6 GET zodbnazwa PICTURE '@S30 ' + repl( '!', 200 )
+               @ 20,  6 GET zodbADRES PICTURE '@S30 ' + repl( '!', 200 )
                @ 21,  0 SAY 'Duplikat (T/N) ?' GET zDUPLIKAT PICTURE '!' VALID zDUPLIKAT $ 'TN'
                @ 21, 20 SAY 'z dnia' GET zduplikatd PICTURE '@D' WHEN zduplikat == 'T'
     *           @ 21,6  get zodbosoba pict '!'+repl('X',29)
@@ -979,8 +979,8 @@ PROCEDURE FakturyN()
                      @ 21, 33 SAY zpodcywil PICTURE '999999.99'
                   ENDIF
                   SAVE SCREEN TO fff
-                  IF NR_UZYTK == 800
-                     Fakt2Not()
+                  IF firma_rodzajdrfv == 'G'
+                     FakturyN_DrukGraf()
                   ELSE
                      Fakt2New()
                   ENDIF
@@ -1604,6 +1604,146 @@ PROCEDURE Faktury_UsunKsieg( cMiesiac )
       ENDIF
    ENDIF
    SELECT FAKTURY
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE FakturyN_DrukGraf()
+
+   LOCAL aDane := {=>}, aPoz, aSuma, nIdx, nWartosc := 0
+   LOCAL cFakturyId := Str( faktury->rec_no, 8 )
+
+   aDane[ 'nr_dok' ] := faktury->rach + '-' + StrTran( Str( faktury->numer, 5 ), ' ', '0' ) + '/' + param_rok
+   aDane[ 'data_dok' ] := hb_Date( Val( param_rok ), Val( faktury->mc ), Val( faktury->dzien ) )
+   aDane[ 'data_trans' ] := faktury->datas
+   IF ! Empty( faktury->datas )
+      DO CASE
+      CASE faktury->data2typ == 'D'
+         aDane[ 'data_rodzaj' ] := 'Data dokonania dostawy towaru'
+      CASE faktury->data2typ == 'T'
+         aDane[ 'data_rodzaj' ] := 'Data zakoäczenia dostawy towaru'
+      CASE faktury->data2typ == 'U'
+         aDane[ 'data_rodzaj' ] := 'Data wykonania usˆugi'
+      CASE faktury->data2typ == 'Z'
+         aDane[ 'data_rodzaj' ] := 'Data zaliczki'
+      OTHERWISE
+         aDane[ 'data_rodzaj' ] := 'Data dokonania dostawy towaru'
+      ENDCASE
+   ELSE
+      aDane[ 'data_rodzaj' ] := ''
+   ENDIF
+   aDane[ 'k_nazwa' ] := AllTrim( faktury->nazwa )
+   aDane[ 'k_adres' ] := AllTrim( faktury->adres )
+   aDane[ 'k_nip' ] := AllTrim( faktury->nr_ident )
+   IF ( ! Empty( faktury->odbnazwa ) .AND. ! Empty( faktury->odbadres ) ) .AND. ( AllTrim( faktury->nazwa ) <> AllTrim( faktury->odbnazwa ) .OR. AllTrim( faktury->adres ) <> AllTrim( faktury->odbadres ) )
+      aDane[ 'odbiorca' ] := 1
+      aDane[ 'o_nazwa' ] := AllTrim( faktury->odbnazwa )
+      aDane[ 'o_adres' ] := AllTrim( faktury->odbadres )
+   ELSE
+      aDane[ 'odbiorca' ] := 0
+      aDane[ 'o_nazwa' ] := ""
+      aDane[ 'o_adres' ] := ""
+   ENDIF
+   aDane[ 'f_nazwa' ] := AllTrim( firma->nazwa )
+   aDane[ 'f_kod_poczt' ] := AllTrim( firma->kod_p )
+   aDane[ 'f_miejscowosc' ] := AllTrim( firma->miejsc )
+   aDane[ 'f_ulica' ] := AllTrim( firma->ulica )
+   aDane[ 'f_nr_domu' ] := AllTrim( firma->nr_domu )
+   aDane[ 'f_nr_lokalu' ] := AllTrim( firma->nr_mieszk )
+   aDane[ 'f_nip' ] := AllTrim( iif( faktury->ue == 'T', firma->nipue, firma->nip ) )
+   aDane[ 'f_tel' ] := AllTrim( firma->tel )
+   aDane[ 'f_fax' ] := AllTrim( firma->fax )
+   aDane[ 'f_regon' ] := AllTrim( SubStr( firma->nr_regon, 1, 11 ) )
+   aDane[ 'f_nr_konta' ] := AllTrim( firma->nr_konta )
+   aDane[ 'f_bank' ] := AllTrim( firma->bank )
+   aDane[ 'odebral' ] := AllTrim( faktury->odbosoba )
+   aDane[ 'uwagi' ] := AllTrim( faktury->komentarz )
+   aDane[ 'zamowienie' ] := AllTrim( faktury->zamowienie )
+   aDane[ 'rach' ] := faktury->rach
+   aDane[ 'rodzaj' ] := iif( faktury->rach == 'F', 'FAKTURA', 'RACHUNEK UPROSZCZONY' )
+   aDane[ 'typ_faktury' ] := AllTrim( faktury->fakttyp )
+   aDane[ 'duplikat' ] := iif( zduplikat == 'T', 1, 0 )
+   aDane[ 'duplikat_data' ] := iif( zduplikat == 'T', zduplikatd, Date() )
+
+   aDane[ 'pozycje' ] := {}
+   aDane[ 'sumy' ] := {}
+   pozycje->( dbSeek( '+' + cFakturyId ) )
+   DO WHILE pozycje->del == '+' .AND. pozycje->ident == cFakturyId
+      IF pozycje->wartosc == 0 .AND. Len( aDane[ 'pozycje' ] ) > 0
+         aPoz := ATail( aDane[ 'pozycje' ] )
+         aPoz[ 'towar' ] := aPoz[ 'towar' ] + hb_eol() + AllTrim( pozycje->towar )
+      ELSE
+         aPoz := {=>}
+         aPoz[ 'wartosc_netto' ] := pozycje->wartosc
+         aPoz[ 'towar' ] := AllTrim( pozycje->towar )
+         aPoz[ 'ilosc' ] := pozycje->ilosc
+         aPoz[ 'jm' ] := AllTrim( pozycje->jm )
+         aPoz[ 'cena' ] := pozycje->cena
+         //aPoz[ 'sww' ] := AllTrim( pozycje->sww )
+         aPoz[ 'vat' ] := AllTrim( pozycje->vat )
+         aPoz[ 'wartosc_vat' ] := round( ( Val( pozycje->vat ) / 100 ) * pozycje->wartosc, 2 )
+         IF ( nIdx := hb_AScan( aDane[ 'sumy' ], { | aS | aS[ 'vat' ] == AllTrim( pozycje->vat ) } ) ) > 0
+            aDane[ 'sumy' ][ nIdx ][ 'w_netto' ] := aDane[ 'sumy' ][ nIdx ][ 'w_netto' ] + pozycje->wartosc
+            aDane[ 'sumy' ][ nIdx ][ 'w_vat' ] := aDane[ 'sumy' ][ nIdx ][ 'w_vat' ] + aPoz[ 'wartosc_vat' ]
+         ELSE
+            AAdd( aDane[ 'sumy' ], { 'vat' => AllTrim( pozycje->vat ), ;
+               'w_netto' => pozycje->wartosc, 'w_vat' => aPoz[ 'wartosc_vat' ] } )
+         ENDIF
+         nWartosc := nWartosc + aPoz[ 'wartosc_netto' ] + aPoz[ 'wartosc_vat' ]
+         AAdd( aDane[ 'pozycje' ], aPoz )
+      ENDIF
+      pozycje->( dbSkip() )
+   ENDDO
+
+   aDane[ 'naglowki' ] := {}
+
+   IF aDane[ 'duplikat' ] <> 0
+      AAdd( aDane[ 'naglowki' ], { 'nazwa' => 'DUPLIKAT', 'dane' => 'wystawiono dnia ' ;
+         + DToC( aDane[ 'duplikat_data' ] ) } )
+   ENDIF
+   AAdd( aDane[ 'naglowki' ], { 'nazwa' => 'Sprzedawca', ;
+      'dane' => aDane[ 'f_nazwa' ] + hb_eol() + aDane[ 'f_kod_poczt' ] + ' ' ;
+      + aDane[ 'f_miejscowosc' ] + ', ' + aDane[ 'f_ulica' ] + ' ' + aDane[ 'f_nr_domu' ] ;
+      + iif( ! Empty( aDane[ 'f_nr_lokalu' ] ), '/' + aDane[ 'f_nr_lokalu' ], '' ) ;
+      + hb_eol() + 'NIP: ' + aDane[ 'f_nip' ] + '    REGON: ' + aDane[ 'f_regon' ] ;
+      + iif( ! Empty( aDane[ 'f_tel' ] ), '    tel.: ' + aDane[ 'f_tel' ], '' ) ;
+      + iif( ! Empty( aDane[ 'f_fax' ] ), '    fax: ' + aDane[ 'f_fax' ], '' ) } )
+   AAdd( aDane[ 'naglowki' ], { 'nazwa' => 'Nabywca', ;
+      'dane' => aDane[ 'k_nazwa' ] + hb_eol() + aDane[ 'k_adres' ] + hb_eol() ;
+      + 'NIP: ' + aDane[ 'k_nip' ] } )
+   IF aDane[ 'odbiorca' ] <> 0
+      AAdd( aDane[ 'naglowki' ], { 'nazwa' => 'Odbiorca', ;
+        'dane' => aDane[ 'o_nazwa' ] + hb_eol() + aDane[ 'o_adres' ] } )
+   ENDIF
+   IF ! Empty( aDane[ 'zamowienie' ] )
+      AAdd( aDane[ 'naglowki' ], { 'nazwa' => 'Zam¢wienie', 'dane' => aDane[ 'zamowienie' ] } )
+   ENDIF
+   IF ! Empty( aDane[ 'uwagi' ] )
+      AAdd( aDane[ 'naglowki' ], { 'nazwa' => 'Uwagi', 'dane' => aDane[ 'uwagi' ] } )
+   ENDIF
+
+   IF faktury->splitpay == 'T'
+      aDane[ 'dopisek' ] := 'Mechanizm podzielonej pˆatno˜ci'
+   ELSE
+      aDane[ 'dopisek' ] := ''
+   ENDIF
+
+   aDane[ 'wartosc' ] := nWartosc
+   aDane[ 'slownie' ] := slownie( nWartosc )
+   aDane[ 'zaplacono' ] := faktury->zap_wart
+   IF _round( nWartosc, 2 ) <> _round( faktury->zap_wart, 2 )
+      aDane[ 'do_zaplaty' ] := nWartosc - faktury->zap_wart
+   ELSE
+      aDane[ 'do_zaplaty' ] := 0
+   ENDIF
+   aDane[ 'termin' ] := faktury->zap_ter
+   aDane[ 'termin_str' ] := AllTrim( Str( faktury->zap_ter ) )
+   aDane[ 'termin_data' ] := faktury->zap_dat
+
+   aDane[ 'wystawil' ] := AllTrim( ewid_wyst )
+
+   FRDrukuj( 'frf\fv.frf', aDane )
+
    RETURN NIL
 
 /*----------------------------------------------------------------------*/

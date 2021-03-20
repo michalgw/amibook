@@ -182,6 +182,7 @@ zsymbol=dos_l(zsymbol)
       repl_([liczba],1)
       repl_([liczba_wyp],1)
       repl_( "RODZNRKS", "R" )
+      repl_( "RODZAJDRFV", "G" )
    endif
    do BLOKADAR
    repl_([symbol],zsymbol)
@@ -796,6 +797,7 @@ case kl=13
       pzROZRZAPS=ROZRZAPS
       pzROZRZAPZ=ROZRZAPZ
       pzROZRZAPF=ROZRZAPF
+      firma_rodzajdrfv := iif( rodzajdrfv $ 'GT', rodzajdrfv, 'T' )
 *      m->parap_puw=parap_puw
       m->parap_fuw=parap_fuw
       m->parap_fww=parap_fww

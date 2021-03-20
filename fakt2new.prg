@@ -216,7 +216,7 @@ sprawdzVAT(10,faktury->DATAS)
          k5=iif(k5=0,space(12),kwota(k5,12,2))
          k7=iif(k7=0,space(12),kwota(k7,12,2))
          k8=iif(k8=0,space(12),kwota(k8,12,2))
-         mon_drk([³]+substr(k1,1,40)+space(15)+[³]+k2+[³]+k3+[³]+k4+[³ ]+k5+[  ]+iif(k6=='PN' .OR. k6=='PU','  ',k6)+[ ]+space(12)+[³]+space(12)+[³])
+         mon_drk([³]+substr(k1,1,55)+[³]+k2+[³]+k3+[³]+k4+[³ ]+k5+[  ]+iif(k6=='PN' .OR. k6=='PU','  ',k6)+[ ]+k7+[³]+k8+[³])
          *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          _numer=0
          do case

@@ -34,6 +34,7 @@ FUNCTION Main()
    dbfUtworzTabele( 'ROZR', 'rozr.tym' )
    dbfUtworzTabele( 'POZYCJE', 'pozycje.tym' )
    dbfUtworzTabele( 'TRESC', 'tresc.tym' )
+   dbfUtworzTabele( 'FIRMA', 'firma.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
@@ -46,6 +47,7 @@ FUNCTION Main()
    dbfIdxROZR()
    dbfIdxPOZYCJE()
    dbfIdxTRESC()
+   dbfIdxFIRMA()
    dbCloseAll()
 
    RETURN

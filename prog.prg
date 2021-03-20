@@ -790,6 +790,8 @@ FUNCTION Main()
    PUBLIC olparam_ra := .F.
    PUBLIC olparam_rd := 180
 
+   PUBLIC firma_rodzajdrfv := 'G'
+
    // Parametry on-line
    IF File( 'olparam.mem' )
       RESTORE FROM olparam ADDITIVE

@@ -619,7 +619,11 @@ PROCEDURE Faktury3()
                ENDIF
             ENDIF
             SAVE SCREEN TO scr_
-            Fakt3( zVAT )
+            IF firma_rodzajdrfv == 'G'
+               Faktury3_DrukGraf()
+            ELSE
+               Fakt3( zVAT )
+            ENDIF
             SELECT faktury
             RESTORE SCREEN FROM scr_
          END
@@ -923,6 +927,91 @@ FUNCTION Fakt3WhenTowar( nWiersz )
    SET CONFIRM OFF
    RETURN .T.
 
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Faktury3_DrukGraf()
+
+   LOCAL aDane := {=>}, aPoz, aSuma, nIdx, nWartosc := 0
+   LOCAL cFakturyId := Str( faktury->rec_no, 8 )
+
+   aDane[ 'nr_dok' ] := 'S-' + StrTran( Str( faktury->numer, 5 ), ' ', '0' ) + '/' + param_rok
+   aDane[ 'data_dok' ] := hb_Date( Val( param_rok ), Val( faktury->mc ), Val( faktury->dzien ) )
+   aDane[ 'k_nazwa' ] := AllTrim( faktury->nazwa )
+   aDane[ 'k_adres' ] := AllTrim( faktury->adres )
+   aDane[ 'k_nip' ] := AllTrim( faktury->nr_ident )
+   aDane[ 'f_nazwa' ] := AllTrim( firma->nazwa )
+   aDane[ 'f_kod_poczt' ] := AllTrim( firma->kod_p )
+   aDane[ 'f_miejscowosc' ] := AllTrim( firma->miejsc )
+   aDane[ 'f_ulica' ] := AllTrim( firma->ulica )
+   aDane[ 'f_nr_domu' ] := AllTrim( firma->nr_domu )
+   aDane[ 'f_nr_lokalu' ] := AllTrim( firma->nr_mieszk )
+   aDane[ 'f_nip' ] := AllTrim( iif( faktury->ue == 'T', firma->nipue, firma->nip ) )
+   aDane[ 'f_tel' ] := AllTrim( firma->tel )
+   aDane[ 'f_fax' ] := AllTrim( firma->fax )
+   aDane[ 'f_regon' ] := AllTrim( SubStr( firma->nr_regon, 1, 11 ) )
+   aDane[ 'f_nr_konta' ] := AllTrim( firma->nr_konta )
+   aDane[ 'f_bank' ] := AllTrim( firma->bank )
+   aDane[ 'odebral' ] := AllTrim( faktury->odbosoba )
+   aDane[ 'uwagi' ] := AllTrim( faktury->komentarz )
+   aDane[ 'zamowienie' ] := AllTrim( faktury->zamowienie )
+   aDane[ 'rach' ] := faktury->rach
+   aDane[ 'rodzaj' ] := iif( faktury->rach == 'F', 'FAKTURA', 'RACHUNEK UPROSZCZONY' )
+   aDane[ 'typ_faktury' ] := AllTrim( faktury->fakttyp )
+
+   aDane[ 'pozycje' ] := {}
+   pozycje->( dbSeek( '+' + cFakturyId ) )
+   DO WHILE pozycje->del == '+' .AND. pozycje->ident == cFakturyId
+      IF pozycje->wartosc == 0 .AND. Len( aDane[ 'pozycje' ] ) > 0
+         aPoz := ATail( aDane[ 'pozycje' ] )
+         aPoz[ 'towar' ] := aPoz[ 'towar' ] + hb_eol() + AllTrim( pozycje->towar )
+      ELSE
+         aPoz := {=>}
+         aPoz[ 'wartosc' ] := pozycje->wartosc
+         aPoz[ 'towar' ] := AllTrim( pozycje->towar )
+         aPoz[ 'ilosc' ] := pozycje->ilosc
+         aPoz[ 'jm' ] := AllTrim( pozycje->jm )
+         aPoz[ 'cena' ] := pozycje->cena
+         nWartosc := nWartosc + aPoz[ 'wartosc' ]
+         AAdd( aDane[ 'pozycje' ], aPoz )
+      ENDIF
+      pozycje->( dbSkip() )
+   ENDDO
+
+   aDane[ 'wartosc' ] := nWartosc
+   aDane[ 'slownie' ] := slownie( nWartosc )
+   aDane[ 'sposob_p' ] := faktury->sposob_p
+   aDane[ 'termin_z' ] := faktury->termin_z
+   aDane[ 'zaplacono' ] := faktury->kwota
+   aDane[ 'do_zaplaty' ] := nWartosc - faktury->kwota
+
+   aDane[ 'wystawil' ] := AllTrim( ewid_wyst )
+
+   DO CASE
+   CASE faktury->sposob_p == 1
+      aDane[ 'zaplata' ] := 'Pˆatne przelewem w ci¥gu ' + Str( faktury->termin_z, 2 ) ;
+         + ' dni na konto ' + iif( SubStr( firma->nr_konta, 1, 2 ) == '  ', ;
+         SubStr( firma-> nr_konta, 4 ), firma->nr_konta ) + hb_eol() + firma->bank
+   CASE faktury->sposob_p == 2
+      IF faktury->termin_z == 0
+         aDane[ 'zaplata' ] := 'Zapˆacono got¢wk¥'
+      ELSE
+         IF faktury->kwota == 0
+            aDane[ 'zaplata' ] := 'Pˆatne got¢wk¥ w ci¥gu ' + Str( faktury->termin_z, 2 ) + ' dni'
+         ELSE
+            aDane[ 'zaplata' ] := 'Zapˆacono got¢wk¥ ' + LTrim( kwota( faktury->kwota, 13, 2 ) ) + hb_eol() ;
+               + 'Do zapˆaty ' + LTrim( kwota( nWartosc - faktury->kwota, 13, 2 ) ) + ' w terminie ' + Str( faktury->termin_z, 2 ) + ' dni'
+         ENDIF
+      ENDIF
+   CASE faktury->sposob_p == 3
+      aDane[ 'zaplata' ] := 'Zapˆacono czekiem'
+   OTHERWISE
+      aDane[ 'zaplata' ] := ''
+   ENDCASE
+
+   FRDrukuj( 'frf\fr.frf', aDane )
 
    RETURN NIL
 

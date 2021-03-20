@@ -46,7 +46,7 @@ ColStd()
 @ 15, 0 say '³ Platnik VAT.Tak        Formularz:VAT-      Info UE Mies/Kwart ?..            ³'
 @ 16, 0 say '³ Ryczalt...        Num.ks.(Roczn/Mies).     Pod.doch.oblicz Mies/Kwart ?..    ³'
 @ 17, 0 say '³ W rej.zak.VAT domy&_s.lna data ksi&_e.gowania do ksi&_e.gi (data Wp&_l.ywu/Dokumentu) ?. ³'
-@ 18, 0 say '³ Haslo firmy...                             Rachunki wprowadzac bruttem ?.    ³'
+@ 18, 0 say '³ Haslo firmy...            Rodz.druku FA.   Rachunki wprowadzac bruttem ?.    ³'
 @ 19, 0 say 'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´'
 @ 20, 0 say '³ Lp pocz.ewid.podstawowej...       Domy&_s.lna druga data:.                      ³'
 @ 21, 0 say '³ Lp pocz.ewid.wyposa&_z.enia...       Nr biez.fakt.VAT:.....Wew:..... Rach:..... ³'
@@ -211,6 +211,7 @@ do while kl#27
               zDATA2TYP=DATA2TYP
               zRODZNRKS := firma->rodznrks
               zAdrEMail := firma->email
+              zRodzajDrFV := iif( firma->rodzajdrfv $ 'GT', firma->rodzajdrfv, 'T' )
 *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
 *set century off
 ColStd()
@@ -246,6 +247,7 @@ ColStd()
 @ 16,75 get zPITOKRES  pict "!" valid zPITOKRES$'MK' .and. vMK(zPITOKRES,16,75)
 @ 17,78 get zDATAKS    pict "!" when wDATAKS() valid zDATAKS$'WD' .and. vDATAKS()
 @ 18,16 get zHASLO     pict 'XXXXXXXXXX'
+@ 18, 42 GET zRodzajDrFV PICTURE '!' WHEN Param_F_VRodzajDrFVW() VALID Param_F_VRodzajDrFVV()
 @ 18,75 get zDETAL     pict "!" valid zDETAL$'TN' .and. vTN(zDETAL,18,75)
 @ 20,29 get zLICZBA    pict "99999"
 @ 21,29 get zLICZBA_WYP picture "99999"
@@ -359,6 +361,8 @@ repl_([DATAKS],zDATAKS)
 repl_([DATA2TYP],zDATA2TYP)
 repl_( "RODZNRKS", zRODZNRKS )
 repl_( "EMAIL", zAdrEMail )
+repl_( "RODZAJDRFV", zRodzajDrFV )
+
 DETALISTA=DETAL
 commit_()
 unlock
@@ -367,6 +371,7 @@ ColSta()
 @ 0,3 say iif(zVAT='T','VAT-'+zVATFORDR,'')+iif(zRYCZALT='T','Rycz ','')+iif(zDETAL='T','Det ','')
 ColStd()
 Firma_RodzNrKs := zRODZNRKS
+firma_rodzajdrfv := zRodzajDrFV
 *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
                              end
 do &_proc
@@ -463,6 +468,7 @@ sele firma
 @ 16,75 say iif(PITOKRES='K','Kwa','Mie')
 @ 17,78 say iif(DATAKS='W','W','D')
 @ 18,16 say HASLO
+@ 18, 42 say iif( rodzajdrfv $ 'GT', rodzajdrfv, 'T' )
 @ 18,75 say iif(DETAL='T','Tak','Nie')
 @ 20,29 say dos_l(str(LICZBA,5))
 @ 21,29 say dos_l(str(LICZBA_WYP,5))
@@ -675,3 +681,28 @@ function vDATAKS
 @ 24,0 clear
 return .t.
 *############################################################################
+
+FUNCTION Param_F_VRodzajDrFVW()
+
+   LOCAL lRes := .T.
+   LOCAL cKolor := ColInf()
+
+   @ 24, 0 SAY PadC( "Rodzaj wydruku faktury: G - graficznu   T - tekstowy", 80 )
+   SetColor( cKolor )
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Param_F_VRodzajDrFVV()
+
+   LOCAL lRes := zRodzajDrFV $ 'GT'
+
+   IF lRes
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
