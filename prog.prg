@@ -1256,7 +1256,14 @@ FUNCTION _adc()
 // Obroty z kontrahentem (dla nazw)
 FUNCTION _add()
 
-   boramex()
+   SWITCH GraficznyCzyTekst()
+   CASE 1
+      Obroty( 2 )
+      EXIT
+   CASE 2
+      boramex()
+      EXIT
+   ENDSWITCH
 
    RETURN ''
 
@@ -1264,7 +1271,14 @@ FUNCTION _add()
 // Obroty z kontrahentem (dla NIP)
 FUNCTION _ade()
 
-   obrotnip()
+   SWITCH GraficznyCzyTekst()
+   CASE 1
+      Obroty( 1 )
+      EXIT
+   CASE 2
+      obrotnip()
+      EXIT
+   ENDSWITCH
 
    RETURN ''
 
