@@ -212,7 +212,7 @@ PROCEDURE Obroty( nRodzaj )
    LOCAL bGrupujV := { | x |
       IF cGrupuj $ 'KR'
          @ 24,  0
-         @ 22, 36 SAY iif( cGrupuj == 'K', 'ontrahenta      ', 'odzaju dokumentu' )
+         @ 22, 35 SAY iif( cGrupuj == 'K', 'ontrahenta      ', 'odzaju dokumentu' )
          RETURN .T.
       ELSE
          @ 22, 35 SAY '                '
@@ -224,12 +224,12 @@ PROCEDURE Obroty( nRodzaj )
    cKolor := ColStd()
 
    dDataOd := hb_Date( Val( param_rok ), 1, 1 )
-   dDataDo := hb_Date( Val( param_rok ), 12, 31 )
+   dDataDo := hb_Date( Val( param_rok ), Month( Date() ), Day( Date() ) )
 
-   @ 21,  2 CLEAR TO 22, 76
+   @ 20,  0 CLEAR TO 22, 79
    @ 21,  2 SAY 'Od dnia' GET dDataOd PICTURE '@D'
    @ 22,  2 SAY 'Do dnia' GET dDataDo PICTURE '@D'
-   @ 21, 21 SAY 'Dla ' + iif( nRodzaj == 1, 'nr NIP', 'nazwy kontrahenta' ) GET cFiltr PICTURE '@S40 ' + Replicate( '!', 100 )
+   @ 21, 21 SAY 'Dla ' + iif( nRodzaj == 1, 'nr NIP', 'nazwy kontrahenta' ) GET cFiltr PICTURE '@S35 ' + Replicate( '!', 100 )
    @ 22, 21 SAY 'Grupu wedˆug' GET cGrupuj PICTURE '!' WHEN Eval( bGrupujW ) VALID Eval( bGrupujV )
    @ 22, 35 SAY 'odzaju dokumentu'
    read_()
