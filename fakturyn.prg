@@ -559,12 +559,13 @@ PROCEDURE FakturyN()
 
                *========================= Ksiegowanie ========================
 
+               // Usuwamy poprzedni wpis jesli byl ksiegowany w innym miesiacu
+               IF  ! ins .AND. nPopKsgData <> 1 .AND. ( zKSGDATA <> nPopKsgData .OR. ( zKSGDATA == 2 .AND. Month( zDATAS ) <> Month( dPopDataTrans ) ) )
+                  Faktury_UsunKsieg( iif( nPopKsgData == 0, miesiac, Str( Month( dPopDataTrans ), 2 ) ) )
+               ENDIF
+
                // Czy zapis do ksiegi i rejestru?
                IF zKSGDATA <> 1
-
-                  IF  ! ins .AND. ( zKSGDATA <> nPopKsgData .OR. ( zKSGDATA == 2 .AND. Month( zDATAS ) <> Month( dPopDataTrans ) ) )
-                     Faktury_UsunKsieg( nPopKsgData, Str( Month( dPopDataTrans ), 2 ) )
-                  ENDIF
 
                   SELECT rejs
                   REC := RecNo()
@@ -597,7 +598,7 @@ PROCEDURE FakturyN()
                      ELSE
                         app()
                         repl_( 'firma', ident_fir )
-                        repl_( 'mc', miesiac )
+                        repl_( 'mc', Faktury_McKsieg( zKSGDATA, miesiac ) )
                         repl_( 'RACH', zRACH )
                         repl_( 'numer', zRACH + '-' + StrTran( Str( znumer&zRACH, 5 ), ' ', '0' ) + '/' + param_rok )
                         repl_( 'tresc', 'Sprzedaz udokumentowana' )
@@ -614,7 +615,7 @@ PROCEDURE FakturyN()
                      ENDIF
                   ENDIF
                   BlokadaR()
-                  repl_( 'dzien', zdzien )
+                  repl_( 'dzien', iif( zKSGDATA == 2, Str( Day( zDATAS ), 2 ), zdzien ) )
                   repl_( 'nazwa', znazwa )
                   repl_( 'adres', zadres )
                   repl_( 'NR_IDENT', zNR_IDENT )
