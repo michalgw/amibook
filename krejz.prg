@@ -1275,28 +1275,12 @@ FUNCTION SUMPOwz( vari )
       ENDCASE
       NN := _round( &varim * procvat, 2 )
       &vari := NN - &varim
+      IF zOPCJE $ "257P"
+         &vari := &vari * 0.5
+      ENDIF
    CASE &variM == &vvariM
       &vari := &vvari
    ENDCASE
-   IF zOPCJE $ "257P"
-      lBlokuj := .T.
-      procvat := Val( SubStr( vari, 5, 2 ) )
-      SWITCH procvat
-      CASE 2
-         zVAT02 := zVAT02 * 0.5
-         EXIT
-      CASE 7
-         zVAT07 := zVAT07 * 0.5
-         EXIT
-      CASE 12
-         zVAT12 := zVAT12 * 0.5
-         EXIT
-      CASE 22
-         zVAT22 := zVAT22 * 0.5
-         EXIT
-      ENDSWITCH
-      lBlokuj := .F.
-   ENDIF
    RETURN .T.
 
 *******************************************************
