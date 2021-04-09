@@ -867,10 +867,12 @@ FUNCTION V11_1z()
       RESTORE SCREEN FROM scr2
       IF LastKey() == K_ENTER
          zSYMB_REJ := SYMB_REJ
-         zOPCJE := OPCJE
-         oGetOPCJE:setFocus()
-         oGetOPCJE:killFocus()
-         oGetSYMB_REJ:setFocus()
+         IF ins
+            zOPCJE := OPCJE
+            oGetOPCJE:setFocus()
+            oGetOPCJE:killFocus()
+            oGetSYMB_REJ:setFocus()
+         ENDIF
          SET COLOR TO i
          @ 3, 38 SAY zSYMB_REJ
          SET COLOR TO
