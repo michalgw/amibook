@@ -1286,6 +1286,9 @@ FUNCTION SUMPOwz( vari )
 *******************************************************
 FUNCTION SUMNETz()
 *******************************************************
+
+   LOCAL nPopNetto
+
    IF zDATAKS == CToD( '    .  .  ' )
       zNETTO := 0
       nWartoscNetto := zNETTO
@@ -1321,6 +1324,7 @@ FUNCTION SUMNETz()
          nWartoscNetto := zNETTO
       ELSE
          IF zNETTO <> 0
+            nPopNetto := zNETTO
             zNETTO := _round( iif( zSPZW == 'S', 0, zWARTZW ) + ;
                iif( zSP00 == 'S', 0, zWART00 ) + iif( ( zZOM00 == 'Z' .OR. zRACH == 'R' ) .AND. zSP00 == 'P', 0, 0 ) + ;
                iif( zSP07 == 'S', 0, zWART07 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM07 == 'Z' .OR. zRACH == 'R' ) .AND. zSP07 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT07, 0 ) + ;
@@ -1336,6 +1340,9 @@ FUNCTION SUMNETz()
             ENDIF
             IF zVATMARZA <> 0 .AND. ( zNETTO == 0 .OR. zNETTO == NETTO ) .AND. Month( zDATAS ) == Val( miesiac ) .AND. Year( zDATAS ) == Val( param_rok )
                zNETTO := zVATMARZA
+            ENDIF
+            IF zNETTO == 0 .AND. nPopNetto <> 0
+               zNETTO := nPopNetto
             ENDIF
          ENDIF
          nWartoscNetto := zNETTO

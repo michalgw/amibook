@@ -1743,6 +1743,8 @@ FUNCTION SUMPOwd( vari )
 FUNCTION SUMNETs( lRyczModSys )
 *******************************************************
 
+   LOCAL nPopNetto
+
    IF zSEK_CV7 == 'DP'
       RejS_PolaDod()
    ENDIF
@@ -1765,11 +1767,15 @@ FUNCTION SUMNETs( lRyczModSys )
             ENDIF
          ENDIF
       ELSE
+         nPopNetto := zNETTO
          IF zNETTO <> 0 .OR. lRyczModSys
             IF zVATMarza > 0
                zNETTO := _round( zVATMarza - ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ), 2 )
             ELSE
                zNETTO := _round( zWARTZW + zWART08 + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+            ENDIF
+            IF zNETTO == 0 .AND. nPopNetto <> 0
+               zNETTO := nPopNetto
             ENDIF
          ENDIF
       ENDIF
