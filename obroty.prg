@@ -24,11 +24,20 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
    LOCAL aDane := { 'ok' => .F., 'pozycje' => {}, 'rodzaj' => nRodzaj, ;
-      'filtr' => cDane, 'data_od' => dDataOd, 'data_do' => dDataDo }
+      'filtr' => cDane, 'data_od' => dDataOd, 'data_do' => dDataDo, ;
+      'firma_nazwa' => '', 'firma_nip' => '' }
    LOCAL dDataDok, aPoz
    LOCAL aFiltr := { ;
       { | cTablica | Empty( cDane ) .OR. ( NormalizujNipPL( ( cTablica )->nr_ident ) == NormalizujNipPL( cDane ) ) }, ;
       { | cTablica | Empty( cDane ) .OR. ( hb_AtI( cDane, ( cTablica )->nazwa ) > 0 ) } }
+
+   IF ! Dostep( 'FIRMA' )
+      RETURN aDane
+   ENDIF
+   firma->( dbGoto( Val( ident_fir ) ) )
+   aDane[ 'firma_nazwa' ] := AllTrim( firma->nazwa )
+   aDane[ 'firma_nip' ] := AllTrim( firma->nip )
+   firma->( dbCloseArea() )
 
    IF ! Dostep( 'OPER' )
       RETURN aDane
