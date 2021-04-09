@@ -24,130 +24,130 @@ FUNCTION dbfInicjujDane()
 
 // Create: AMORT.DBF
 public  aAMORTdbf := {;
-   { "ID", "+", 4, 0 },;
-   { "DEL", "C", 1, 0 },;
-   { "FIRMA", "C", 3, 0 },;
-   { "IDENT", "C", 5, 0 },;
-   { "ROK", "C", 4, 0 },;
-   { "WART_POCZ", "N", 12, 2 },;
-   { "PRZEL", "N", 6, 2 },;
-   { "WART_MOD", "N", 12, 2 },;
-   { "WART_AKT", "N", 12, 2 },;
-   { "UMORZ_AKT", "N", 12, 2 },;
-   { "STAWKA", "N", 6, 2 },;
-   { "WSPDEG", "N", 4, 2 },;
-   { "LINIOWO", "N", 12, 2 },;
-   { "DEGRES", "N", 12, 2 },;
-   { "MC01", "N", 9, 2 },;
-   { "MC02", "N", 9, 2 },;
-   { "MC03", "N", 9, 2 },;
-   { "MC04", "N", 9, 2 },;
-   { "MC05", "N", 9, 2 },;
-   { "MC06", "N", 9, 2 },;
-   { "MC07", "N", 9, 2 },;
-   { "MC08", "N", 9, 2 },;
-   { "MC09", "N", 9, 2 },;
-   { "MC10", "N", 9, 2 },;
-   { "MC11", "N", 9, 2 },;
-   { "MC12", "N", 9, 2 },;
-   { "ODPIS_ROK", "N", 12, 2 },;
-   { "ODPIS_SUM", "N", 12, 2 } }
+   { "ID", "+", 4, 0 },;                          //  1
+   { "DEL", "C", 1, 0 },;                         //  2
+   { "FIRMA", "C", 3, 0 },;                       //  3   Numer rekordu tablicy 'firma'
+   { "IDENT", "C", 5, 0 },;                       //  4   Identyfiktaor w tabeli 'katst' w poli 'rec_no'
+   { "ROK", "C", 4, 0 },;                         //  5   Rok kalendarzowy
+   { "WART_POCZ", "N", 12, 2 },;                  //  6   Wartosc poczatkowa w roku
+   { "PRZEL", "N", 6, 2 },;                       //  7   Przelicznik w roku
+   { "WART_MOD", "N", 12, 2 },;                   //  8   Suma modyfikacji kwot z tablicy 'kartstmo'
+   { "WART_AKT", "N", 12, 2 },;                   //  9
+   { "UMORZ_AKT", "N", 12, 2 },;                  //  10
+   { "STAWKA", "N", 6, 2 },;                      //  11
+   { "WSPDEG", "N", 4, 2 },;                      //  12
+   { "LINIOWO", "N", 12, 2 },;                    //  13
+   { "DEGRES", "N", 12, 2 },;                     //  14
+   { "MC01", "N", 9, 2 },;                        //  15
+   { "MC02", "N", 9, 2 },;                        //  16
+   { "MC03", "N", 9, 2 },;                        //  17
+   { "MC04", "N", 9, 2 },;                        //  18
+   { "MC05", "N", 9, 2 },;                        //  19
+   { "MC06", "N", 9, 2 },;                        //  20
+   { "MC07", "N", 9, 2 },;                        //  21
+   { "MC08", "N", 9, 2 },;                        //  22
+   { "MC09", "N", 9, 2 },;                        //  23
+   { "MC10", "N", 9, 2 },;                        //  24
+   { "MC11", "N", 9, 2 },;                        //  25
+   { "MC12", "N", 9, 2 },;                        //  26
+   { "ODPIS_ROK", "N", 12, 2 },;                  //  27
+   { "ODPIS_SUM", "N", 12, 2 } }                  //  28
 
 // Create: DANE_MC.DBF
 public aDANE_MCdbf := {;
    { "ID", "+", 4, 0 },;                          //  1
    { "DEL", "C", 1, 0 },;                         //  2
-   { "IDENT", "C", 5, 0 },;                       //  3
-   { "MC", "C", 2, 0 },;                          //  4
-   { "G_PRZYCH1", "N", 11, 2 },;                  //  5
-   { "G_PRZYCH2", "N", 11, 2 },;                  //  6
-   { "G_PRZYCH3", "N", 11, 2 },;                  //  7
-   { "G_PRZYCH4", "N", 11, 2 },;                  //  8
-   { "G_PRZYCH5", "N", 11, 2 },;                  //  9
-   { "G_KOSZTY1", "N", 11, 2 },;                  //  10
-   { "G_KOSZTY2", "N", 11, 2 },;                  //  11
-   { "G_KOSZTY3", "N", 11, 2 },;                  //  12
-   { "G_KOSZTY4", "N", 11, 2 },;                  //  13
-   { "G_KOSZTY5", "N", 11, 2 },;                  //  14
-   { "G_UDZIAL1", "C", 6, 0 },;                   //  15
-   { "G_UDZIAL2", "C", 6, 0 },;                   //  16
-   { "G_UDZIAL3", "C", 6, 0 },;                   //  17
-   { "G_UDZIAL4", "C", 6, 0 },;                   //  18
-   { "G_UDZIAL5", "C", 6, 0 },;                   //  19
-   { "N_PRZYCH1", "N", 11, 2 },;                  //  20
-   { "N_PRZYCH2", "N", 11, 2 },;                  //  21
-   { "N_KOSZTY1", "N", 11, 2 },;                  //  22
-   { "N_KOSZTY2", "N", 11, 2 },;                  //  23
-   { "N_UDZIAL1", "C", 6, 0 },;                   //  24
-   { "N_UDZIAL2", "C", 6, 0 },;                   //  25
-   { "STRATY", "N", 11, 2 },;                     //  26
-   { "STRATY_N", "N", 11, 2 },;                   //  27
-   { "POWODZ", "N", 11, 2 },;                     //  28
-   { "RENTALIM", "N", 11, 2 },;                   //  29
-   { "SKLADKI", "N", 11, 2 },;                    //  30
-   { "SKLADKIW", "N", 11, 2 },;                   //  31
-   { "PODSTAWA", "N", 11, 2 },;                   //  32
-   { "STAW_WUE", "N", 5, 2 },;                    //  33
-   { "STAW_WUR", "N", 5, 2 },;                    //  34
-   { "STAW_WUC", "N", 5, 2 },;                    //  35
-   { "STAW_WUZ", "N", 5, 2 },;                    //  36
-   { "STAW_WUW", "N", 5, 2 },;                    //  37
-   { "STAW_WFP", "N", 5, 2 },;                    //  38
-   { "STAW_WFG", "N", 5, 2 },;                    //  39
-   { "STAW_WSUM", "N", 5, 2 },;                   //  40
-   { "WAR_WUE", "N", 8, 2 },;                     //  41
-   { "WAR_WUR", "N", 8, 2 },;                     //  42
-   { "WAR_WUC", "N", 8, 2 },;                     //  43
-   { "WAR_WUZ", "N", 8, 2 },;                     //  44
-   { "WAR_WUW", "N", 8, 2 },;                     //  45
-   { "WAR_WFP", "N", 8, 2 },;                     //  46
-   { "WAR_WFG", "N", 8, 2 },;                     //  47
-   { "WAR_WSUM", "N", 8, 2 },;                    //  48
-   { "WAR5_WUE", "N", 8, 2 },;                    //  49
-   { "WAR5_WUR", "N", 8, 2 },;                    //  50
-   { "WAR5_WUC", "N", 8, 2 },;                    //  51
-   { "WAR5_WUZ", "N", 8, 2 },;                    //  52
-   { "WAR5_WUW", "N", 8, 2 },;                    //  53
-   { "WAR5_WFP", "N", 8, 2 },;                    //  54
-   { "WAR5_WFG", "N", 8, 2 },;                    //  55
-   { "MC_WUE", "N", 2, 0 },;                      //  56
-   { "MC_WUR", "N", 2, 0 },;                      //  57
-   { "MC_WUC", "N", 2, 0 },;                      //  58
-   { "MC_WUZ", "N", 2, 0 },;                      //  59
-   { "MC_WUW", "N", 2, 0 },;                      //  60
-   { "ORGANY", "N", 11, 2 },;                     //  61
-   { "ZWROT_REN", "N", 11, 2 },;                  //  62
-   { "ZWROT_SWI", "N", 11, 2 },;                  //  63
-   { "REHAB", "N", 11, 2 },;                      //  64
-   { "KOPALINY", "N", 11, 2 },;                   //  65
-   { "DAROWIZ", "N", 11, 2 },;                    //  66
-   { "INNE", "N", 11, 2 },;                       //  67
-   { "BUDOWA", "N", 11, 2 },;                     //  68
-   { "INWEST11", "N", 11, 2 },;                   //  69
-   { "DOCHZWOL", "N", 11, 2 },;                   //  70
-   { "AAA", "N", 11, 2 },;                        //  71
-   { "BBB", "N", 11, 2 },;                        //  72
-   { "ZALICZKAP", "N", 11, 2 },;                  //  73
-   { "ZALICZKA", "N", 11, 2 },;                   //  74
-   { "PIT597", "N", 11, 2 },;                     //  75
-   { "PIT569", "N", 11, 2 },;                     //  76
-   { "PIT5104", "N", 11, 2 },;                    //  77
-   { "PIT5105", "N", 11, 2 },;                    //  78
-   { "PIT5AGOSK", "N", 11, 2 },;                  //  79
-   { "PIT5ANAJK", "N", 11, 2 },;                  //  80
-   { "PIT5AGOSP", "N", 11, 2 },;                  //  81
-   { "PIT5ANAJP", "N", 11, 2 },;                  //  82
-   { "G21", "N", 11, 2 },;                        //  83
-   { "H385", "N", 11, 2 },;                       //  84
-   { "ZDROWIE", "N", 11, 2 },;                    //  85
-   { "ZDROWIEW", "N", 11, 2 },;                   //  86
-   { "WYNAGRO", "N", 11, 2 },;                    //  87
-   { "UBIEGBUD", "N", 11, 2 },;                   //  88
-   { "UBIEGINW", "N", 11, 2 },;                   //  89
-   { "ODSEODMAJ", "N", 11, 2 },;                  //  90
-   { "STAW5_WUZ", "N", 5, 2 },;                   //  91
-   { "INNEODPOD", "N", 11, 2 },;                  //  92
-   { "PODSTZDR", "N", 11, 2 } }                   //  93
+   { "IDENT", "C", 5, 0 },;                       //  3   Nr rekordu w tablicy 'spolka'
+   { "MC", "C", 2, 0 },;                          //  4   Miesiac
+   { "G_PRZYCH1", "N", 11, 2 },;                  //  5   Przychod z dodatkowej dzialalnosci gosp. #1
+   { "G_PRZYCH2", "N", 11, 2 },;                  //  6   Przychod z dodatkowej dzialalnosci gosp. #2
+   { "G_PRZYCH3", "N", 11, 2 },;                  //  7   Przychod z dodatkowej dzialalnosci gosp. #3
+   { "G_PRZYCH4", "N", 11, 2 },;                  //  8   Przychod z dodatkowej dzialalnosci gosp. #4
+   { "G_PRZYCH5", "N", 11, 2 },;                  //  9   Przychod z dodatkowej dzialalnosci gosp. #5
+   { "G_KOSZTY1", "N", 11, 2 },;                  //  10  Koszty z dodatkowej dzialalnosci gosp. #1
+   { "G_KOSZTY2", "N", 11, 2 },;                  //  11  Koszty z dodatkowej dzialalnosci gosp. #2
+   { "G_KOSZTY3", "N", 11, 2 },;                  //  12  Koszty z dodatkowej dzialalnosci gosp. #3
+   { "G_KOSZTY4", "N", 11, 2 },;                  //  13  Koszty z dodatkowej dzialalnosci gosp. #4
+   { "G_KOSZTY5", "N", 11, 2 },;                  //  14  Koszty z dodatkowej dzialalnosci gosp. #5
+   { "G_UDZIAL1", "C", 6, 0 },;                   //  15  Udzial w dodatkowej dzialalnosci gosp. #1
+   { "G_UDZIAL2", "C", 6, 0 },;                   //  16  Udzial w dodatkowej dzialalnosci gosp. #2
+   { "G_UDZIAL3", "C", 6, 0 },;                   //  17  Udzial w dodatkowej dzialalnosci gosp. #3
+   { "G_UDZIAL4", "C", 6, 0 },;                   //  18  Udzial w dodatkowej dzialalnosci gosp. #4
+   { "G_UDZIAL5", "C", 6, 0 },;                   //  19  Udzial w dodatkowej dzialalnosci gosp. #5
+   { "N_PRZYCH1", "N", 11, 2 },;                  //  20  Przychod z najmu #1
+   { "N_PRZYCH2", "N", 11, 2 },;                  //  21  Przychod z najmu #2
+   { "N_KOSZTY1", "N", 11, 2 },;                  //  22  Koszty z najmu #1
+   { "N_KOSZTY2", "N", 11, 2 },;                  //  23  Koszty z najmu #2
+   { "N_UDZIAL1", "C", 6, 0 },;                   //  24  Udzial z najmu #1
+   { "N_UDZIAL2", "C", 6, 0 },;                   //  25  Udzial z najmu #2
+   { "STRATY", "N", 11, 2 },;                     //  26  Straty z lat ubieglych z pozarolniczej dzialalnosci gospodarczej
+   { "STRATY_N", "N", 11, 2 },;                   //  27  Straty z lat ubieglych z najmu,podnajmu,dzierzawy i innych umow
+   { "POWODZ", "N", 11, 2 },;                     //  28  Straty poniesione w wyniku powodzi z lipca 1997roku
+   { "RENTALIM", "N", 11, 2 },;                   //  29  Dochod zwolniony od podatku-na podstawie art.21 ust.1 pkt.63a ustawy
+   { "SKLADKI", "N", 11, 2 },;                    //  30  ZUS Suma skladek
+   { "SKLADKIW", "N", 11, 2 },;                   //  31  ZUS Suma skladek - modyfikator
+   { "PODSTAWA", "N", 11, 2 },;                   //  32  ZUS Podstawa do ZUS
+   { "STAW_WUE", "N", 5, 2 },;                    //  33  ZUS Stawka emerytalna
+   { "STAW_WUR", "N", 5, 2 },;                    //  34  ZUS Stawka rentowa
+   { "STAW_WUC", "N", 5, 2 },;                    //  35  ZUS Stawka chorobowa
+   { "STAW_WUZ", "N", 5, 2 },;                    //  36  ZUS Stawka zdrowotna do ZUS
+   { "STAW_WUW", "N", 5, 2 },;                    //  37  ZUS Stawka wypadkowa
+   { "STAW_WFP", "N", 5, 2 },;                    //  38  ZUS Stawka fundusz pracy
+   { "STAW_WFG", "N", 5, 2 },;                    //  39  ZUS Stawka GSP
+   { "STAW_WSUM", "N", 5, 2 },;                   //  40  NIEUZYWANE
+   { "WAR_WUE", "N", 8, 2 },;                     //  41  ZUS Wartosc emerytalna
+   { "WAR_WUR", "N", 8, 2 },;                     //  42  ZUS Wartosc rentowa
+   { "WAR_WUC", "N", 8, 2 },;                     //  43  ZUS Wartosc chorobowa
+   { "WAR_WUZ", "N", 8, 2 },;                     //  44  ZUS Wartosc zdrowotna do ZUS
+   { "WAR_WUW", "N", 8, 2 },;                     //  45  ZUS Wartosc wypadkowa
+   { "WAR_WFP", "N", 8, 2 },;                     //  46  ZUS Wartosc fundusz pracy
+   { "WAR_WFG", "N", 8, 2 },;                     //  47  ZUS Wartosc GSP
+   { "WAR_WSUM", "N", 8, 2 },;                    //  48  NIEUZYWANE
+   { "WAR5_WUE", "N", 8, 2 },;                    //  49  ZUS Wartosc emerytalna do PIT-5
+   { "WAR5_WUR", "N", 8, 2 },;                    //  50  ZUS Wartosc rentowa do PIT-5
+   { "WAR5_WUC", "N", 8, 2 },;                    //  51  ZUS Wartosc chorobowa do PIT-5
+   { "WAR5_WUZ", "N", 8, 2 },;                    //  52  ZUS Wartosc zdrowotna do ZUS do PIT-5
+   { "WAR5_WUW", "N", 8, 2 },;                    //  53  ZUS Wartosc wypadkowa do PIT-5
+   { "WAR5_WFP", "N", 8, 2 },;                    //  54  ZUS Wartosc fundusz pracy do PIT-5
+   { "WAR5_WFG", "N", 8, 2 },;                    //  55  ZUS Wartosc GSP do PIT-5
+   { "MC_WUE", "N", 2, 0 },;                      //  56  ZUS Miesiac emerytalna do PIT-5
+   { "MC_WUR", "N", 2, 0 },;                      //  57  ZUS Miesiac rentowa do PIT-5
+   { "MC_WUC", "N", 2, 0 },;                      //  58  ZUS Miesiac chorobowa
+   { "MC_WUZ", "N", 2, 0 },;                      //  59  ZUS Miesiac zdrowotna do ZUS do PIT-5
+   { "MC_WUW", "N", 2, 0 },;                      //  60  ZUS Miesiac wypadkowa do PIT-5
+   { "ORGANY", "N", 11, 2 },;                     //  61  Skladki na rzecz organizacji z obowiazkowa przynaleznoscia
+   { "ZWROT_REN", "N", 11, 2 },;                  //  62  Zwrot nienaleznie pobranych emerytur i rent oraz zasilkow z US
+   { "ZWROT_SWI", "N", 11, 2 },;                  //  63  Zwrot nienaleznie pobranych swiadczen,ktore uprzednio zw.doch
+   { "REHAB", "N", 11, 2 },;                      //  64  Wydatki na cele rehabilitacyjne, ponoszone przez podatnika
+   { "KOPALINY", "N", 11, 2 },;                   //  65  Kwota wydatkow,o ktora zostala obnizona oplata za wydob.kopalin
+   { "DAROWIZ", "N", 11, 2 },;                    //  66  Darowizny
+   { "INNE", "N", 11, 2 },;                       //  67  Inne odliczenia
+   { "BUDOWA", "N", 11, 2 },;                     //  68  Wydatki mieszkaniowe
+   { "INWEST11", "N", 11, 2 },;                   //  69  NIEUZYWANE
+   { "DOCHZWOL", "N", 11, 2 },;                   //  70  Dochod zwolniony od podatku na podstawie przepisow o SSE
+   { "AAA", "N", 11, 2 },;                        //  71  Ulgi inwestycyjne przyznane przed 1.01.1992r
+   { "BBB", "N", 11, 2 },;                        //  72  Ulgi za wyszkolenie ucznia
+   { "ZALICZKAP", "N", 11, 2 },;                  //  73  Zaliczka poprzednia?
+   { "ZALICZKA", "N", 11, 2 },;                   //  74  Zaliczka wplacona podatku
+   { "PIT597", "N", 11, 2 },;                     //  75  NIEUZYWANE
+   { "PIT569", "N", 11, 2 },;                     //  76  NIEUZYWANE
+   { "PIT5104", "N", 11, 2 },;                    //  77  NIEUZYWANE
+   { "PIT5105", "N", 11, 2 },;                    //  78  Nalezny zryczaltowany podatek dochodowy od dochodu z reman.likwid
+   { "PIT5AGOSK", "N", 11, 2 },;                  //  79  Dane z zalacznika PIT-5/A Dzial.gosp.(zal.PIT-5/A) - koszty
+   { "PIT5ANAJK", "N", 11, 2 },;                  //  80  Dane z zalacznika PIT-5/A Najem (zal.PIT-5/A) - koszty
+   { "PIT5AGOSP", "N", 11, 2 },;                  //  81  Dane z zalacznika PIT-5/A Dzial.gosp.(zal.PIT-5/A) - przychod
+   { "PIT5ANAJP", "N", 11, 2 },;                  //  82  Dane z zalacznika PIT-5/A Najem (zal.PIT-5/A) - przychod
+   { "G21", "N", 11, 2 },;                        //  83  Na podstawie przepisow wykonawczych do ustawy z dnia 20.10.1994
+   { "H385", "N", 11, 2 },;                       //  84  Ograniczenie wysokosci zaliczek albo zaniechanie poboru podatku - kwota
+   { "ZDROWIE", "N", 11, 2 },;                    //  85  Suma skladek na zdrowotne
+   { "ZDROWIEW", "N", 11, 2 },;                   //  86  Skladka na ubezpieczenie zdrowotne (zaplacona)
+   { "WYNAGRO", "N", 11, 2 },;                    //  87  Fundusz wynagrodzen przyslugujacy osobom pozbawionym wolnosci
+   { "UBIEGBUD", "N", 11, 2 },;                   //  88  NIEUZYWANE
+   { "UBIEGINW", "N", 11, 2 },;                   //  89  Odliczenia z tytulu wydatkow inwestycyjnych - Dodatkowa obnizka
+   { "ODSEODMAJ", "N", 11, 2 },;                  //  90  Kwota odsetek naliczonych od dnia zaliczenia do kosztow uzyskania przychodow - wydatkow na nabycie lub wytworzenie we wlasnym zakresie sklad.maj
+   { "STAW5_WUZ", "N", 5, 2 },;                   //  91  ZUS Stawka zdrowotna do ZUS do PIT-5
+   { "INNEODPOD", "N", 11, 2 },;                  //  92  Inne odliczenia
+   { "PODSTZDR", "N", 11, 2 } }                   //  93  ZUS Podstawa tylko do zdrow.
 
 // Create: DATYUM.DBF
 public aDATYUMdbf := {;
@@ -360,26 +360,26 @@ public aETATYdbf := {;
 public aEWIDdbf := {;
    { "ID", "+", 4, 0 },;                          //  1
    { "DEL", "C", 1, 0 },;                         //  2
-   { "FIRMA", "C", 3, 0 },;                       //  3
-   { "MC", "C", 2, 0 },;                          //  4
-   { "DZIEN", "C", 2, 0 },;                       //  5
-   { "DATAPRZY", "D", 8, 0 },;                    //  6
-   { "NUMER", "C", 100, 0 },;                     //  7
-   { "TRESC", "C", 30, 0 },;                      //  8
-   { "HANDEL", "N", 11, 2 },;                     //  9
-   { "PRODUKCJA", "N", 11, 2 },;                  //  10
-   { "USLUGI", "N", 11, 2 },;                     //  11
-   { "UWAGI", "C", 200, 0 },;                     //  12
-   { "ZAPLATA", "C", 1, 0 },;                     //  13
-   { "KWOTA", "N", 11, 2 },;                      //  14
-   { "LP", "N", 5, 0 },;                          //  15
-   { "ZAPIS", "N", 10, 0 },;                      //  16
-   { "REJZID", "N", 5, 0 },;                      //  17
-   { "RY20", "N", 11, 2 },;                       //  18
-   { "RY17", "N", 11, 2 },;                       //  19
-   { "RY10", "N", 11, 2 },;                       //  20
-   { "RYK07", "N", 11, 2 },;                      //  21
-   { "RYK08", "N", 11, 2 } }                      //  22
+   { "FIRMA", "C", 3, 0 },;                       //  3   Nr rekordu tablicy 'firma'
+   { "MC", "C", 2, 0 },;                          //  4   Miesiac (kol 2)
+   { "DZIEN", "C", 2, 0 },;                       //  5   Dzien (kol 2)
+   { "DATAPRZY", "D", 8, 0 },;                    //  6   Data uzyskania przychodu (kol 3)
+   { "NUMER", "C", 100, 0 },;                     //  7   Nr rachunku, faktury lub dziennego zestawienia sprzedazy (kol 4)
+   { "TRESC", "C", 30, 0 },;                      //  8   Opis zdarzenia
+   { "HANDEL", "N", 11, 2 },;                     //  9   Wartosc sprzedazy op. st. 8,5% (kol 9)
+   { "PRODUKCJA", "N", 11, 2 },;                  //  10  Wartosc sprzedazy op. st. 10% (kol 8)
+   { "USLUGI", "N", 11, 2 },;                     //  11  Wartosc sprzedazy op. st. 8,5% (kol 7)
+   { "UWAGI", "C", 200, 0 },;                     //  12  Uwagi (kol 13)
+   { "ZAPLATA", "C", 1, 0 },;                     //  13  Zaplata - '1' - Zaplacone, '2' - Czesciowo zaplacone, '3' - Niezaplacone
+   { "KWOTA", "N", 11, 2 },;                      //  14  Zaplacono kwota
+   { "LP", "N", 5, 0 },;                          //  15  L.p. ewidencji
+   { "ZAPIS", "N", 10, 0 },;                      //  16  NIEUZYWANE
+   { "REJZID", "N", 5, 0 },;                      //  17  Numer rekordu w tablicy 'rejs'
+   { "RY20", "N", 11, 2 },;                       //  18  Wartosc sprzedazy op. st. 17% (kol 5)
+   { "RY17", "N", 11, 2 },;                       //  19  Wartosc sprzedazy op. st. 15% (kol 6)
+   { "RY10", "N", 11, 2 },;                       //  20  Wartosc sprzedazy op. st. 3% (kol 11)
+   { "RYK07", "N", 11, 2 },;                      //  21  Wartosc sprzedazy op. st. 5,5% (kol 10)
+   { "RYK08", "N", 11, 2 } }                      //  22  Wartosc sprzedazy op. st. 2% (kol dodatkowa)
 
 // Create: EWIDPOJ.DBF
 public aEWIDPOJdbf := {;
@@ -490,77 +490,77 @@ public aFAKTURYWdbf := {;
 public aFIRMAdbf := {;
    { "ID", "+", 4, 0 },;                          //  1
    { "DEL", "C", 1, 0 },;                         //  2
-   { "SYMBOL", "C", 10, 0 },;                     //  3
-   { "NAZWA", "C", 60, 0 },;                      //  4
-   { "NAZWA_SKR", "C", 60, 0 },;                  //  5
-   { "SPOLKA", "L", 1, 0 },;                      //  6
-   { "ORGAN", "N", 2, 0 },;                       //  7
-   { "REJESTR", "N", 2, 0 },;                     //  8
-   { "MIEJSC", "C", 20, 0 },;                     //  9
-   { "GMINA", "C", 20, 0 },;                      //  10
-   { "ULICA", "C", 20, 0 },;                      //  11
-   { "NR_DOMU", "C", 5, 0 },;                     //  12
-   { "NR_MIESZK", "C", 5, 0 },;                   //  13
-   { "KOD_P", "C", 6, 0 },;                       //  14
-   { "POCZTA", "C", 20, 0 },;                     //  15
-   { "SKRYTKA", "C", 5, 0 },;                     //  16
-   { "TEL", "C", 10, 0 },;                        //  17
-   { "FAX", "C", 10, 0 },;                        //  18
-   { "TLX", "C", 10, 0 },;                        //  19
-   { "PRZEDM", "C", 40, 0 },;                     //  20
-   { "KGN1", "C", 8, 0 },;                        //  21
-   { "EKD1", "C", 8, 0 },;                        //  22
-   { "NR_REGON", "C", 35, 0 },;                   //  23
-   { "NR_KONTA", "C", 32, 0 },;                   //  24
-   { "BANK", "C", 30, 0 },;                       //  25
-   { "NAZWISKO", "C", 30, 0 },;                   //  26
-   { "NIP", "C", 13, 0 },;                        //  27
-   { "NKP", "C", 15, 0 },;                        //  28
-   { "ODZUS", "C", 20, 0 },;                      //  29
-   { "NR_FAKT", "N", 5, 0 },;                     //  30
-   { "LICZBA", "N", 5, 0 },;                      //  31
-   { "VAT", "C", 1, 0 },;                         //  32
-   { "NR_RACH", "N", 5, 0 },;                     //  33
-   { "KOR_FAKT", "N", 5, 0 },;                    //  34
-   { "KOR_RACH", "N", 5, 0 },;                    //  35
-   { "NR_SKUP", "N", 5, 0 },;                     //  36
-   { "DATAVAT", "D", 8, 0 },;                     //  37
-   { "DETAL", "C", 1, 0 },;                       //  38
-   { "LICZBA_WYP", "N", 5, 0 },;                  //  39
-   { "RYCZALT", "C", 1, 0 },;                     //  40
-   { "SKARB", "N", 3, 0 },;                       //  41
-   { "DATA_ZAL", "D", 8, 0 },;                    //  42
-   { "DATA_REJ", "D", 8, 0 },;                    //  43
-   { "NUMER_REJ", "C", 11, 0 },;                  //  44
-   { "PARAM_WOJ", "C", 20, 0 },;                  //  45
-   { "PARAM_POW", "C", 20, 0 },;                  //  46
-   { "HASLO", "C", 10, 0 },;                      //  47
-   { "FAKT_MIEJ", "C", 20, 0 },;                  //  48
-   { "VATOKRES", "C", 1, 0 },;                    //  49
-   { "PARAP_PUW", "N", 5, 2 },;                   //  50
-   { "PARAP_FUW", "N", 5, 2 },;                   //  51
-   { "PARAP_FWW", "N", 5, 2 },;                   //  52
-   { "NIPUE", "C", 13, 0 },;                      //  53
-   { "ROKOPOD", "N", 11, 2 },;                    //  54
-   { "ROKOGOL", "N", 11, 2 },;                    //  55
-   { "STRUSPRWY", "N", 6, 2 },;                   //  56
-   { "STRUSPROB", "N", 6, 2 },;                   //  57
-   { "NR_FAKTW", "N", 5, 0 },;                    //  58
-   { "DEKLNAZWI", "C", 20, 0 },;                  //  59
-   { "DEKLIMIE", "C", 15, 0 },;                   //  60
-   { "DEKLTEL", "C", 25, 0 },;                    //  61
-   { "DATAKS", "C", 1, 0 },;                      //  62
-   { "PITOKRES", "C", 1, 0 },;                    //  63
-   { "VATOKRESDR", "C", 1, 0 },;                  //  64
-   { "VATFORDR", "C", 2, 0 },;                    //  65
-   { "UEOKRES", "C", 1, 0 },;                     //  66
-   { "DATA2TYP", "C", 1, 0 },;                    //  67
-   { "ROZRZAPK", "C", 1, 0 },;                    //  68
-   { "ROZRZAPS", "C", 1, 0 },;                    //  69
-   { "ROZRZAPZ", "C", 1, 0 },;                    //  70
-   { "ROZRZAPF", "C", 1, 0 },;                    //  71
-   { "RODZNRKS", "C", 1, 0 },;                    //  72
-   { "EMAIL", "C", 60, 0 },;                      //  73
+   { "SYMBOL", "C", 10, 0 },;                     //  3  Symbol
+   { "NAZWA", "C", 60, 0 },;                      //  4  Nazwa pelna
+   { "NAZWA_SKR", "C", 60, 0 },;                  //  5  Nazwa skrocona
+   { "SPOLKA", "L", 1, 0 },;                      //  6  .T. - Spolka, .F. - Osoba fizyczna
+   { "ORGAN", "N", 2, 0 },;                       //  7  Organ rejestrowy - Nr rekordu tablicy "organy"
+   { "REJESTR", "N", 2, 0 },;                     //  8  NIEUZYWANE Nazwa rejestrowa - Nr rekordu tablicy "rejestry"
+   { "MIEJSC", "C", 20, 0 },;                     //  9  Miejscowosc
+   { "GMINA", "C", 20, 0 },;                      //  10 Gmina
+   { "ULICA", "C", 20, 0 },;                      //  11 Ulica
+   { "NR_DOMU", "C", 5, 0 },;                     //  12 Nr budynku
+   { "NR_MIESZK", "C", 5, 0 },;                   //  13 Nr lokalu
+   { "KOD_P", "C", 6, 0 },;                       //  14 Kod pocztowy
+   { "POCZTA", "C", 20, 0 },;                     //  15 Poczta
+   { "SKRYTKA", "C", 5, 0 },;                     //  16 NIEUZYWANE
+   { "TEL", "C", 10, 0 },;                        //  17 Nr tel
+   { "FAX", "C", 10, 0 },;                        //  18 Nr fax
+   { "TLX", "C", 10, 0 },;                        //  19 NIEUZYWANE Nr telex
+   { "PRZEDM", "C", 40, 0 },;                     //  20 NIEUZYWANE
+   { "KGN1", "C", 8, 0 },;                        //  21 NIEUZYWANE KGN
+   { "EKD1", "C", 8, 0 },;                        //  22 NIEUZYWANE KPD
+   { "NR_REGON", "C", 35, 0 },;                   //  23 REGON
+   { "NR_KONTA", "C", 32, 0 },;                   //  24 Nr konta bankowego
+   { "BANK", "C", 30, 0 },;                       //  25 Nazwa banku
+   { "NAZWISKO", "C", 30, 0 },;                   //  26 Nazwisko wˆa˜ciciela - Klucz do tablicy "spolka" pole "nazwiako"
+   { "NIP", "C", 13, 0 },;                        //  27 NIP
+   { "NKP", "C", 15, 0 },;                        //  28 NIEUZYWANE NKP
+   { "ODZUS", "C", 20, 0 },;                      //  29 NIEUZYWANE
+   { "NR_FAKT", "N", 5, 0 },;                     //  30 Kolejny numer faktury
+   { "LICZBA", "N", 5, 0 },;                      //  31 Nr poczatkowy ksiegi
+   { "VAT", "C", 1, 0 },;                         //  32 Platnik VAT - 'T' tak, 'N' nie
+   { "NR_RACH", "N", 5, 0 },;                     //  33 Kolejny nr rachunku (faktura dla nie-vatowca)
+   { "KOR_FAKT", "N", 5, 0 },;                    //  34 NIEUZYWANE
+   { "KOR_RACH", "N", 5, 0 },;                    //  35 NIEUZYWANE
+   { "NR_SKUP", "N", 5, 0 },;                     //  36 NIEUZYWANE
+   { "DATAVAT", "D", 8, 0 },;                     //  37 NIEUZYWANE
+   { "DETAL", "C", 1, 0 },;                       //  38 Rachunki wprowadzaj bruttem - 'T' - tak, 'N' - nie
+   { "LICZBA_WYP", "N", 5, 0 },;                  //  39 Licba poczatkowa wyposazenia
+   { "RYCZALT", "C", 1, 0 },;                     //  40 Ryczaˆtowiec - 'T' - tak, 'N' - nie (PKPIR)
+   { "SKARB", "N", 3, 0 },;                       //  41 Urzad skarboy - Nr rekordu tablicy "urzedy"
+   { "DATA_ZAL", "D", 8, 0 },;                    //  42 Data rozpoczecia dzialalnosci
+   { "DATA_REJ", "D", 8, 0 },;                    //  43 Data rejestracji
+   { "NUMER_REJ", "C", 11, 0 },;                  //  44 Numer rejestrowy
+   { "PARAM_WOJ", "C", 20, 0 },;                  //  45 Wojewodztwo
+   { "PARAM_POW", "C", 20, 0 },;                  //  46 Powiat
+   { "HASLO", "C", 10, 0 },;                      //  47 Haslo do firmy
+   { "FAKT_MIEJ", "C", 20, 0 },;                  //  48 NIEUZYWANE
+   { "VATOKRES", "C", 1, 0 },;                    //  49 NIEUZYWANE
+   { "PARAP_PUW", "N", 5, 2 },;                   //  50 ?? NIEUZYWANE Stawka na ubezpieczenie wypadkowe (ubezpieczony)
+   { "PARAP_FUW", "N", 5, 2 },;                   //  51 ?? NIEUZYWANE Stawka na ubezpieczenie wypadkowe (platnik)
+   { "PARAP_FWW", "N", 5, 2 },;                   //  52 ?? NIEUZYWANE Stawka na ubezpieczenie wypadkowe ?? (platnik)
+   { "NIPUE", "C", 13, 0 },;                      //  53 NIP UE
+   { "ROKOPOD", "N", 11, 2 },;                    //  54 NIEUZYWANE
+   { "ROKOGOL", "N", 11, 2 },;                    //  55 NIEUZYWANE
+   { "STRUSPRWY", "N", 6, 2 },;                   //  56 NIEUZYWANE
+   { "STRUSPROB", "N", 6, 2 },;                   //  57 Struktura sprzedazy - Przyjety wskazn.odliczenia
+   { "NR_FAKTW", "N", 5, 0 },;                    //  58 Kolejny nr faktury wewnetrznej
+   { "DEKLNAZWI", "C", 20, 0 },;                  //  59 PRZESTARZALE Nazisko na podpisie wydruku deklaracji
+   { "DEKLIMIE", "C", 15, 0 },;                   //  60 PRZESTARZALE Imie na podpisie wydruku deklaracji
+   { "DEKLTEL", "C", 25, 0 },;                    //  61 PRZESTARZALE Telefon na podpisie wydruku deklaracji
+   { "DATAKS", "C", 1, 0 },;                      //  62 Domyslna data ksiegowania do ksiegi - 'W' - wplywu, 'D' - dokumentu
+   { "PITOKRES", "C", 1, 0 },;                    //  63 Podatek dochodowy obliczac Miesiecznie/Kwartalnie - 'M' - miesiecznie, 'K' - kwartalnie
+   { "VATOKRESDR", "C", 1, 0 },;                  //  64 NIEUZYWANE
+   { "VATFORDR", "C", 2, 0 },;                    //  65 Rodzaj VAT (miesiecznie/kwartalnie) - ' 7' - miesiecznie, '7K' - kwartalnie
+   { "UEOKRES", "C", 1, 0 },;                     //  66 PRZESTAZALE Deklaracja VAT-UE Miesiecznie/Kwartalnie - 'M' - miesiecznie, 'K' - kwartalnie
+   { "DATA2TYP", "C", 1, 0 },;                    //  67 Domyslna druga data na fakturze - D-dokonanie dostawy,T-zakonczenie dostawy,U-wykonanie uslugi,Z-zaliczka
+   { "ROZRZAPK", "C", 1, 0 },;                    //  68 Sledzenie zaplat w ksiedze
+   { "ROZRZAPS", "C", 1, 0 },;                    //  69 Sledzenie zaplat w rej. sprzedazy
+   { "ROZRZAPZ", "C", 1, 0 },;                    //  70 Sledzenie zaplat w rej. zakupow
+   { "ROZRZAPF", "C", 1, 0 },;                    //  71 Sledzenie zaplat w fakturowaniu
+   { "RODZNRKS", "C", 1, 0 },;                    //  72 Rodzaj numeru ksiegi 'M' - miesiecznie, 'R' - rocznie
+   { "EMAIL", "C", 60, 0 },;                      //  73 Adres email do JPK
    { "PPKPS1", "N", 5, 2 },;                      //  74 PPK Wpˆata podstawowa pracodawcy - stawka
    { "PPKPS2", "N", 5, 2 },;                      //  75 PPK Wpˆata dodatkowa pracodawcy - stawka
    { "PPKKWGR", "N", 9, 2 },;                     //  76 PPK Kwota graniczna dla obni¾enia stawki podstawowej deklarowanej przez pracownika
@@ -965,7 +965,7 @@ public aRAPORTdbf := {;
    { "LINIA_L", "C", 190, 0 },;                   //   2
    { "LINIA_P", "C", 190, 0 } }                   //   3
 
-// Create: REJESTRY.DBF
+// Create: REJESTRY.DBF    NIEUZYWANE
 public aREJESTRYdbf := {;
    { "ID", "+", 4, 0 },;                          //   1
    { "DEL", "C", 1, 0 },;                         //   2
@@ -978,7 +978,7 @@ public aREJSdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //  3
    { "MC", "C", 2, 0 },;                          //  4
    { "DZIEN", "C", 2, 0 },;                       //  5
-   { "NUMER", "C", 100, 0 },;                      //  6
+   { "NUMER", "C", 100, 0 },;                     //  6
    { "NAZWA", "C", 200, 0 },;                     //  7
    { "ADRES", "C", 200, 0 },;                     //  8
    { "NR_IDENT", "C", 30, 0 },;                   //  9
@@ -1036,7 +1036,7 @@ public aREJZdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //  3
    { "MC", "C", 2, 0 },;                          //  4
    { "DZIEN", "C", 2, 0 },;                       //  5
-   { "NUMER", "C", 100, 0 },;                      //  6
+   { "NUMER", "C", 100, 0 },;                     //  6
    { "NAZWA", "C", 200, 0 },;                     //  7
    { "ADRES", "C", 200, 0 },;                     //  8
    { "NR_IDENT", "C", 30, 0 },;                   //  9
@@ -1177,177 +1177,177 @@ public aSAMOCHODdbf := {;
 public aSPOLKAdbf := {;
    { "ID", "+", 4, 0 },;                          //  1
    { "DEL", "C", 1, 0 },;                         //  2
-   { "FIRMA", "C", 3, 0 },;                       //  3
-   { "NAZ_IMIE", "C", 30, 0 },;                   //  4
-   { "PESEL", "C", 11, 0 },;                      //  5
-   { "NIP", "C", 13, 0 },;                        //  6
-   { "IMIE_O", "C", 15, 0 },;                     //  7
-   { "IMIE_M", "C", 15, 0 },;                     //  8
-   { "MIEJSC_UR", "C", 20, 0 },;                  //  9
-   { "DATA_UR", "D", 8, 0 },;                     //  10
-   { "MIEJSC_ZAM", "C", 20, 0 },;                 //  11
-   { "GMINA", "C", 20, 0 },;                      //  12
-   { "ULICA", "C", 20, 0 },;                      //  13
-   { "NR_DOMU", "C", 10, 0 },;                    //  14
-   { "NR_MIESZK", "C", 10, 0 },;                  //  15
-   { "KOD_POCZT", "C", 6, 0 },;                   //  16
-   { "POCZTA", "C", 20, 0 },;                     //  17
-   { "RODZ_DOK", "C", 1, 0 },;                    //  18
-   { "DOWOD_OSOB", "C", 9, 0 },;                  //  19
-   { "NAZW_RODU", "C", 30, 0 },;                  //  20
-   { "OBYWATEL", "C", 22, 0 },;                   //  21
-   { "PLEC", "C", 1, 0 },;                        //  22
-   { "UDZIAL1", "C", 7, 0 },;                     //  23
-   { "UDZIAL2", "C", 7, 0 },;                     //  24
-   { "UDZIAL3", "C", 7, 0 },;                     //  25
-   { "UDZIAL4", "C", 7, 0 },;                     //  26
-   { "UDZIAL5", "C", 7, 0 },;                     //  27
-   { "UDZIAL6", "C", 7, 0 },;                     //  28
-   { "UDZIAL7", "C", 7, 0 },;                     //  29
-   { "UDZIAL8", "C", 7, 0 },;                     //  30
-   { "UDZIAL9", "C", 7, 0 },;                     //  31
-   { "UDZIAL10", "C", 7, 0 },;                    //  32
-   { "UDZIAL11", "C", 7, 0 },;                    //  33
-   { "UDZIAL12", "C", 7, 0 },;                    //  34
-   { "G_RODZAJ1", "C", 40, 0 },;                  //  35
-   { "G_RODZAJ2", "C", 40, 0 },;                  //  36
-   { "G_RODZAJ3", "C", 40, 0 },;                  //  37
-   { "G_RODZAJ4", "C", 40, 0 },;                  //  38
-   { "G_RODZAJ5", "C", 40, 0 },;                  //  39
-   { "G_REGON1", "C", 35, 0 },;                   //  40
-   { "G_REGON2", "C", 35, 0 },;                   //  41
-   { "G_REGON3", "C", 35, 0 },;                   //  42
-   { "G_REGON4", "C", 35, 0 },;                   //  43
-   { "G_REGON5", "C", 35, 0 },;                   //  44
-   { "G_MIEJSC1", "C", 40, 0 },;                  //  45
-   { "G_MIEJSC2", "C", 40, 0 },;                  //  46
-   { "G_MIEJSC3", "C", 40, 0 },;                  //  47
-   { "G_MIEJSC4", "C", 40, 0 },;                  //  48
-   { "G_MIEJSC5", "C", 40, 0 },;                  //  49
-   { "N_PRZEDM1", "C", 40, 0 },;                  //  50
-   { "N_PRZEDM2", "C", 40, 0 },;                  //  51
-   { "N_MIEJSC1", "C", 40, 0 },;                  //  52
-   { "N_MIEJSC2", "C", 40, 0 },;                  //  53
-   { "TELEFON", "C", 10, 0 },;                    //  54
-   { "SKARB", "N", 3, 0 },;                       //  55
-   { "S_RODZAJ", "C", 30, 0 },;                   //  56
-   { "ODLICZ1", "C", 30, 0 },;                    //  57
-   { "G_NIP1", "C", 13, 0 },;                     //  58
-   { "G_NIP2", "C", 13, 0 },;                     //  59
-   { "G_NIP3", "C", 13, 0 },;                     //  60
-   { "G_NIP4", "C", 13, 0 },;                     //  61
-   { "G_NIP5", "C", 13, 0 },;                     //  62
-   { "PARAM_WOJ", "C", 20, 0 },;                  //  63
-   { "PARAM_POW", "C", 20, 0 },;                  //  64
-   { "PARAM_KW", "N", 9, 2 },;                    //  65
-   { "H384", "C", 20, 0 },;                       //  66
-   { "H386", "D", 8, 0 },;                        //  67
-   { "ODLICZ2", "C", 30, 0 },;                    //  68
-   { "SPOSOB", "C", 1, 0 },;                      //  69
-   { "KOD_TYTU", "C", 6, 0 },;                    //  70
-   { "KRAJ", "C", 10, 0 },;                       //  71
-   { "OBLKWWOL", "C", 1, 0 },;                    //  72
-   { "PARAM_KWD", "D", 8, 0 },;                   //  73
-   { "PARAM_KW2", "N", 9, 2 } }                   //  74
+   { "FIRMA", "C", 3, 0 },;                       //  3    Nr rekordu tablicy 'firma'
+   { "NAZ_IMIE", "C", 30, 0 },;                   //  4    Nazwisko i imie
+   { "PESEL", "C", 11, 0 },;                      //  5    PESEL
+   { "NIP", "C", 13, 0 },;                        //  6    NIP
+   { "IMIE_O", "C", 15, 0 },;                     //  7    NIEAKTUALNE Imie ojca
+   { "IMIE_M", "C", 15, 0 },;                     //  8    NIEAKTUALNE Imie matki
+   { "MIEJSC_UR", "C", 20, 0 },;                  //  9    Miejsce urodzenia
+   { "DATA_UR", "D", 8, 0 },;                     //  10   Data urodzenia
+   { "MIEJSC_ZAM", "C", 20, 0 },;                 //  11   Miejscowosc
+   { "GMINA", "C", 20, 0 },;                      //  12   Gmina
+   { "ULICA", "C", 20, 0 },;                      //  13   Ulica
+   { "NR_DOMU", "C", 10, 0 },;                    //  14   Nr budynku
+   { "NR_MIESZK", "C", 10, 0 },;                  //  15   Nr lokalu
+   { "KOD_POCZT", "C", 6, 0 },;                   //  16   Kod pocztowy
+   { "POCZTA", "C", 20, 0 },;                     //  17   Poczta
+   { "RODZ_DOK", "C", 1, 0 },;                    //  18   Rodzaj dokumentu tozsamosci 'D' - dowod, 'P' - paszport
+   { "DOWOD_OSOB", "C", 9, 0 },;                  //  19   Nr dokumentu tozsamosci
+   { "NAZW_RODU", "C", 30, 0 },;                  //  20   Nazwisko rodowe
+   { "OBYWATEL", "C", 22, 0 },;                   //  21   Obywatelstwo
+   { "PLEC", "C", 1, 0 },;                        //  22   Plec 'M'/'K'
+   { "UDZIAL1", "C", 7, 0 },;                     //  23   Udzial w styczniu format '000/000'
+   { "UDZIAL2", "C", 7, 0 },;                     //  24   ---- " ----
+   { "UDZIAL3", "C", 7, 0 },;                     //  25   ---- " ----
+   { "UDZIAL4", "C", 7, 0 },;                     //  26   ---- " ----
+   { "UDZIAL5", "C", 7, 0 },;                     //  27   ---- " ----
+   { "UDZIAL6", "C", 7, 0 },;                     //  28   ---- " ----
+   { "UDZIAL7", "C", 7, 0 },;                     //  29   ---- " ----
+   { "UDZIAL8", "C", 7, 0 },;                     //  30   ---- " ----
+   { "UDZIAL9", "C", 7, 0 },;                     //  31   ---- " ----
+   { "UDZIAL10", "C", 7, 0 },;                    //  32   ---- " ----
+   { "UDZIAL11", "C", 7, 0 },;                    //  33   ---- " ----
+   { "UDZIAL12", "C", 7, 0 },;                    //  34   ---- " ----
+   { "G_RODZAJ1", "C", 40, 0 },;                  //  35   Dodt. zrodlo dochodu z dzial. gosp. #1 - Rodzaj
+   { "G_RODZAJ2", "C", 40, 0 },;                  //  36   Dodt. zrodlo dochodu z dzial. gosp. #2 - Rodzaj
+   { "G_RODZAJ3", "C", 40, 0 },;                  //  37   Dodt. zrodlo dochodu z dzial. gosp. #3 - Rodzaj
+   { "G_RODZAJ4", "C", 40, 0 },;                  //  38   Dodt. zrodlo dochodu z dzial. gosp. #4 - Rodzaj
+   { "G_RODZAJ5", "C", 40, 0 },;                  //  39   Dodt. zrodlo dochodu z dzial. gosp. #5 - Rodzaj
+   { "G_REGON1", "C", 35, 0 },;                   //  40   Dodt. zrodlo dochodu z dzial. gosp. #1 - REGON
+   { "G_REGON2", "C", 35, 0 },;                   //  41   Dodt. zrodlo dochodu z dzial. gosp. #2 - REGON
+   { "G_REGON3", "C", 35, 0 },;                   //  42   Dodt. zrodlo dochodu z dzial. gosp. #3 - REGON
+   { "G_REGON4", "C", 35, 0 },;                   //  43   Dodt. zrodlo dochodu z dzial. gosp. #4 - REGON
+   { "G_REGON5", "C", 35, 0 },;                   //  44   Dodt. zrodlo dochodu z dzial. gosp. #5 - REGON
+   { "G_MIEJSC1", "C", 40, 0 },;                  //  45   Dodt. zrodlo dochodu z dzial. gosp. #1 - Miejsce prowadzenia dzialalnosci
+   { "G_MIEJSC2", "C", 40, 0 },;                  //  46   Dodt. zrodlo dochodu z dzial. gosp. #2 - Miejsce prowadzenia dzialalnosci
+   { "G_MIEJSC3", "C", 40, 0 },;                  //  47   Dodt. zrodlo dochodu z dzial. gosp. #3 - Miejsce prowadzenia dzialalnosci
+   { "G_MIEJSC4", "C", 40, 0 },;                  //  48   Dodt. zrodlo dochodu z dzial. gosp. #4 - Miejsce prowadzenia dzialalnosci
+   { "G_MIEJSC5", "C", 40, 0 },;                  //  49   Dodt. zrodlo dochodu z dzial. gosp. #5 - Miejsce prowadzenia dzialalnosci
+   { "N_PRZEDM1", "C", 40, 0 },;                  //  50   Dodt. zrodlo dochodu z najmu #1 - Przedmiot najmu
+   { "N_PRZEDM2", "C", 40, 0 },;                  //  51   Dodt. zrodlo dochodu z najmu #2 - Przedmiot najmu
+   { "N_MIEJSC1", "C", 40, 0 },;                  //  52   Dodt. zrodlo dochodu z najmu #1 - Miejsce
+   { "N_MIEJSC2", "C", 40, 0 },;                  //  53   Dodt. zrodlo dochodu z najmu #2 - Miejsce
+   { "TELEFON", "C", 10, 0 },;                    //  54   Telefon
+   { "SKARB", "N", 3, 0 },;                       //  55   Urzad skarbowy - Numer rekordu tablicy "urzedy"
+   { "S_RODZAJ", "C", 30, 0 },;                   //  56   Tytul odliczenia od podatku
+   { "ODLICZ1", "C", 30, 0 },;                    //  57   Tytul odliczenia od dochodu
+   { "G_NIP1", "C", 13, 0 },;                     //  58   Dodt. zrodlo dochodu z dzial. gosp. #1 - NIP
+   { "G_NIP2", "C", 13, 0 },;                     //  59   Dodt. zrodlo dochodu z dzial. gosp. #2 - NIP
+   { "G_NIP3", "C", 13, 0 },;                     //  60   Dodt. zrodlo dochodu z dzial. gosp. #3 - NIP
+   { "G_NIP4", "C", 13, 0 },;                     //  61   Dodt. zrodlo dochodu z dzial. gosp. #4 - NIP
+   { "G_NIP5", "C", 13, 0 },;                     //  62   Dodt. zrodlo dochodu z dzial. gosp. #5 - NIP
+   { "PARAM_WOJ", "C", 20, 0 },;                  //  63   Wowjewodztwo
+   { "PARAM_POW", "C", 20, 0 },;                  //  64   Powiat
+   { "PARAM_KW", "N", 9, 2 },;                    //  65   Kwota wolna
+   { "H384", "C", 20, 0 },;                       //  66   Ograniczenie wysokosci zaliczek albo zaniechanie poboru podatku - nr decyzji
+   { "H386", "D", 8, 0 },;                        //  67   Ograniczenie wysokosci zaliczek albo zaniechanie poboru podatku - data decyzji
+   { "ODLICZ2", "C", 30, 0 },;                    //  68   Tytul wydatkow na mieszkanie
+   { "SPOSOB", "C", 1, 0 },;                      //  69   Sposob rozliczenia podatku 'P' - progresywnie, 'L' - liniowo
+   { "KOD_TYTU", "C", 6, 0 },;                    //  70   Kod tytulu ubezp.(ZUS)
+   { "KRAJ", "C", 10, 0 },;                       //  71   NIEUZYWANE Kraj
+   { "OBLKWWOL", "C", 1, 0 },;                    //  72   Odlicz kwote wolna 'S' - stala wartos, 'T' - tablica pod. doch.
+   { "PARAM_KWD", "D", 8, 0 },;                   //  73   Kwota wolna do daty
+   { "PARAM_KW2", "N", 9, 2 } }                   //  74   Wartosc kwoty wolnej od daty
 
 // Create: SUMA_MC.DBF
 public aSUMA_MCdbf := {;
    { "ID", "+", 4, 0 },;                          //  1
    { "DEL", "C", 1, 0 },;                         //  2
    { "FIRMA", "C", 3, 0 },;                       //  3
-   { "MC", "C", 2, 0 },;                          //  4
-   { "HANDEL", "N", 12, 2 },;                     //  5
-   { "WYR_TOW", "N", 12, 2 },;                    //  6
-   { "USLUGI", "N", 12, 2 },;                     //  7
-   { "ZAKUP", "N", 12, 2 },;                      //  8
-   { "UBOCZNE", "N", 12, 2 },;                    //  9
-   { "REKLAMA", "N", 12, 2 },;                    //  10
-   { "WYNAGR_G", "N", 12, 2 },;                   //  11
-   { "WYDATKI", "N", 12, 2 },;                    //  12
-   { "PUSTA", "N", 12, 2 },;                      //  13
-   { "POZYCJE", "N", 5, 0 },;                     //  14
-   { "ZAMEK", "L", 1, 0 },;                       //  15
-   { "VAT760", "N", 12, 2 },;                     //  16
-   { "VAT723", "N", 12, 2 },;                     //  17
-   { "VAT759", "N", 12, 2 },;                     //  18
-   { "VAT7F", "C", 1, 0 },;                       //  19
-   { "VAT740", "N", 12, 2 },;                     //  20
-   { "VAT736", "N", 12, 2 },;                     //  21
-   { "VAT762", "N", 12, 2 },;                     //  22
-   { "MIES6OPOD", "N", 11, 2 },;                  //  23
-   { "MIES6OGOL", "N", 11, 2 },;                  //  24
-   { "NRSTOPODNE", "N", 11, 2 },;                 //  25
-   { "NRSTOPODVA", "N", 11, 2 },;                 //  26
-   { "NRSTMIESNE", "N", 11, 2 },;                 //  27
-   { "NRSTMIESVA", "N", 11, 2 },;                 //  28
-   { "NRPOOPODNE", "N", 11, 2 },;                 //  29
-   { "NRPOOPODVA", "N", 11, 2 },;                 //  30
-   { "NRPOMIESNE", "N", 11, 2 },;                 //  31
-   { "NRPOMIESVA", "N", 11, 2 },;                 //  32
-   { "KORZAK1MC", "C", 6, 0 },;                   //  33
-   { "KORZAK2MC", "C", 6, 0 },;                   //  34
-   { "KORZAK3MC", "C", 6, 0 },;                   //  35
-   { "KORZAK4MC", "C", 6, 0 },;                   //  36
-   { "KORZAK1VAT", "N", 11, 2 },;                 //  37
-   { "KORZAK2VAT", "N", 11, 2 },;                 //  38
-   { "KORZAK3VAT", "N", 11, 2 },;                 //  39
-   { "KORZAK4VAT", "N", 11, 2 },;                 //  40
-   { "KORSPR1MC", "C", 6, 0 },;                   //  41
-   { "KORSPR2MC", "C", 6, 0 },;                   //  42
-   { "KORSPR3MC", "C", 6, 0 },;                   //  43
-   { "KORSPR4MC", "C", 6, 0 },;                   //  44
-   { "KORSPR1VAT", "N", 11, 2 },;                 //  45
-   { "KORSPR2VAT", "N", 11, 2 },;                 //  46
-   { "KORSPR3VAT", "N", 11, 2 },;                 //  47
-   { "KORSPR4VAT", "N", 11, 2 },;                 //  48
-   { "LICZ_MIES", "N", 1, 0 },;                   //  49
-   { "KASA_ODL", "N", 11, 0 },;                   //  50
-   { "KASA_ZWR", "N", 11, 0 },;                   //  51
-   { "RY20", "N", 12, 2 },;                       //  52
-   { "RY17", "N", 12, 2 },;                       //  53
-   { "RY10", "N", 12, 2 },;                       //  54
-   { "NOWYTRAN", "N", 11, 2 },;                   //  55
-   { "KOREKST", "N", 11, 2 },;                    //  56
-   { "KOREKPOZ", "N", 11, 2 },;                   //  57
-   { "ZWR180DNI", "N", 11, 2 },;                  //  58
-   { "F1", "C", 1, 0 },;                          //  59
-   { "F2", "C", 1, 0 },;                          //  60
-   { "F3", "C", 1, 0 },;                          //  61
-   { "F4", "C", 1, 0 },;                          //  62
-   { "F5", "C", 1, 0 },;                          //  63
-   { "P4IL_POD", "N", 2, 0 },;                    //  64
-   { "P4SUM_WYP", "N", 11, 2 },;                  //  65
-   { "P4SUM_ZAL", "N", 11, 2 },;                  //  66
-   { "VATART129", "N", 11, 2 },;                  //  67
-   { "ZWR60DNI", "N", 11, 2 },;                   //  68
-   { "P4POTRAC", "N", 4, 2 },;                    //  69
-   { "P4NALZAL33", "N", 11, 2 },;                 //  70
-   { "P4OGRZAL", "N", 11, 2 },;                   //  71
-   { "P4OGRZAL33", "N", 11, 2 },;                 //  72
-   { "P4DODZAL", "N", 11, 2 },;                   //  73
-   { "P4NADZWR", "N", 11, 2 },;                   //  74
-   { "P4PFRON", "N", 11, 2 },;                    //  75
-   { "P4AKTYW", "N", 11, 2 },;                    //  76
-   { "P4ZAL13", "N", 11, 2 },;                    //  77
-   { "P4WYNAGR", "N", 11, 2 },;                   //  78
-   { "ZWR25DNI", "N", 11, 2 },;                   //  79
-   { "VATZALMIE", "N", 11, 2 },;                  //  80
-   { "VATNADKWA", "N", 11, 2 },;                  //  81
-   { "P8ZLECRY", "N", 11, 2 },;                   //  82
-   { "P8WYNAGR", "N", 11, 2 },;                   //  83
-   { "P8POTRAC", "N", 4, 2 },;                    //  84
-   { "P8ZLECIN", "N", 11, 2 },;                   //  85
-   { "A89B1", "N", 11, 2 },;                      //  86
-   { "A89B4", "N", 11, 2 },;                      //  87
-   { "A111U6", "N", 11, 2 },;                     //  88
-   { "WERJPKVAT", "N", 3, 0 },;                   //  89
-   { "ZWRRAVAT", "N", 11, 2 },;                   //  90
-   { "ZWRKONTO", "C", 1, 0 },;                    //  91
-   { "ZWRPODAT", "C", 1, 0 },;                    //  92
-   { "ZWRPODKW", "N", 11, 2 },;                   //  93
-   { "ZWRPODRD", "C", 120, 0 },;                  //  94
-   { "RYK07", "N", 12, 2 },;                      //  95
-   { "RYK08", "N", 12, 2 } }                      //  96
+   { "MC", "C", 2, 0 },;                          //  4   Miesiac
+   { "HANDEL", "N", 12, 2 },;                     //  5   Ryczalt - Suma kol. 9 (8,5%)
+   { "WYR_TOW", "N", 12, 2 },;                    //  6   Ryczalt - Suma kol. 8 (10%)   / Ksiega - Suma kol. 7 (sprzeda¾)
+   { "USLUGI", "N", 12, 2 },;                     //  7   Ryczalt - Suma kol. 7 (12,5%) / Ksiega - Suma kol. 8 (pozost. przych.)
+   { "ZAKUP", "N", 12, 2 },;                      //  8   Ksiega - Suma kol. 10 (zakupy tow. i mat.)
+   { "UBOCZNE", "N", 12, 2 },;                    //  9   Ksiega - Suma kol. 11 (koszty uboczne)
+   { "REKLAMA", "N", 12, 2 },;                    //  10  NIEUZYWANE
+   { "WYNAGR_G", "N", 12, 2 },;                   //  11  Ksiega - Suma kol. 12 (wynagrodzenia)
+   { "WYDATKI", "N", 12, 2 },;                    //  12  Ksiega - Suma kol. 13 (pozostale wydatki)
+   { "PUSTA", "N", 12, 2 },;                      //  13  Ksiega - Suma kol. 15 (bez opisu)
+   { "POZYCJE", "N", 5, 0 },;                     //  14  Liczba pozycji w ksiedze / ewidencji
+   { "ZAMEK", "L", 1, 0 },;                       //  15  Miesiac zamkniety
+   { "VAT760", "N", 12, 2 },;                     //  16  JPK_V7(VAT7) - Kwota nadwyzki VAT z poprzedniej deklaracji
+   { "VAT723", "N", 12, 2 },;                     //  17  NIEUZYWANE
+   { "VAT759", "N", 12, 2 },;                     //  18  JPK_V7(VAT7) - Do zwrotu na rachunek bank.
+   { "VAT7F", "C", 1, 0 },;                       //  19  NIEUZYWANE
+   { "VAT740", "N", 12, 2 },;                     //  20  JPK_V7(VAT7) - Podatek od spisu z natury
+   { "VAT736", "N", 12, 2 },;                     //  21  NIEUZYWANE
+   { "VAT762", "N", 12, 2 },;                     //  22  JPK_V7(VAT7) - Kwota objeta zaniechaniem
+   { "MIES6OPOD", "N", 11, 2 },;                  //  23  NIEUZYWANE
+   { "MIES6OGOL", "N", 11, 2 },;                  //  24  NIEUZYWANE
+   { "NRSTOPODNE", "N", 11, 2 },;                 //  25  NIEUZYWANE
+   { "NRSTOPODVA", "N", 11, 2 },;                 //  26  NIEUZYWANE
+   { "NRSTMIESNE", "N", 11, 2 },;                 //  27  NIEUZYWANE
+   { "NRSTMIESVA", "N", 11, 2 },;                 //  28  NIEUZYWANE
+   { "NRPOOPODNE", "N", 11, 2 },;                 //  29  NIEUZYWANE
+   { "NRPOOPODVA", "N", 11, 2 },;                 //  30  NIEUZYWANE
+   { "NRPOMIESNE", "N", 11, 2 },;                 //  31  NIEUZYWANE
+   { "NRPOMIESVA", "N", 11, 2 },;                 //  32  NIEUZYWANE
+   { "KORZAK1MC", "C", 6, 0 },;                   //  33  NIEUZYWANE
+   { "KORZAK2MC", "C", 6, 0 },;                   //  34  NIEUZYWANE
+   { "KORZAK3MC", "C", 6, 0 },;                   //  35  NIEUZYWANE
+   { "KORZAK4MC", "C", 6, 0 },;                   //  36  NIEUZYWANE
+   { "KORZAK1VAT", "N", 11, 2 },;                 //  37  NIEUZYWANE
+   { "KORZAK2VAT", "N", 11, 2 },;                 //  38  NIEUZYWANE
+   { "KORZAK3VAT", "N", 11, 2 },;                 //  39  NIEUZYWANE
+   { "KORZAK4VAT", "N", 11, 2 },;                 //  40  NIEUZYWANE
+   { "KORSPR1MC", "C", 6, 0 },;                   //  41  NIEUZYWANE
+   { "KORSPR2MC", "C", 6, 0 },;                   //  42  NIEUZYWANE
+   { "KORSPR3MC", "C", 6, 0 },;                   //  43  NIEUZYWANE
+   { "KORSPR4MC", "C", 6, 0 },;                   //  44  NIEUZYWANE
+   { "KORSPR1VAT", "N", 11, 2 },;                 //  45  NIEUZYWANE
+   { "KORSPR2VAT", "N", 11, 2 },;                 //  46  NIEUZYWANE
+   { "KORSPR3VAT", "N", 11, 2 },;                 //  47  NIEUZYWANE
+   { "KORSPR4VAT", "N", 11, 2 },;                 //  48  NIEUZYWANE
+   { "LICZ_MIES", "N", 1, 0 },;                   //  49  NIEUZYWANE
+   { "KASA_ODL", "N", 11, 0 },;                   //  50  JPK_V7(VAT7) - Do odliczenia na kasy
+   { "KASA_ZWR", "N", 11, 0 },;                   //  51  JPK_V7(VAT7) - Do zwrotu za kasy w okresie
+   { "RY20", "N", 12, 2 },;                       //  52  Ryczalt - Suma kol. 5 (17%)
+   { "RY17", "N", 12, 2 },;                       //  53  Ryczalt - Suma kol. 6 (15%)
+   { "RY10", "N", 12, 2 },;                       //  54  Ryczalt - Suma kol. 11 (3%)
+   { "NOWYTRAN", "N", 11, 2 },;                   //  55  NIEUZYWANE
+   { "KOREKST", "N", 11, 2 },;                    //  56  NIEUZYWANE
+   { "KOREKPOZ", "N", 11, 2 },;                   //  57  NIEUZYWANE
+   { "ZWR180DNI", "N", 11, 2 },;                  //  58  JPK_V7(VAT7) - Do zwrotu w okresie 180 dni
+   { "F1", "C", 1, 0 },;                          //  59  NIEUZYWANE VAT7 - 1.art.86 ust.8 pkt 1 ustawy
+   { "F2", "C", 1, 0 },;                          //  60  JPK_V7(VAT7) - 1.art.119 ustawy 'T'/'N'
+   { "F3", "C", 1, 0 },;                          //  61  JPK_V7(VAT7) - 2.art.120 ust.4 ustawy 'T'/'N'
+   { "F4", "C", 1, 0 },;                          //  62  JPK_V7(VAT7) - 3.art.122 ustawy 'T'/'N'
+   { "F5", "C", 1, 0 },;                          //  63  JPK_V7(VAT7) - 4.art.136 ustawy 'T'/'N'
+   { "P4IL_POD", "N", 2, 0 },;                    //  64  PIT-4R - ilosc pracownikow
+   { "P4SUM_WYP", "N", 11, 2 },;                  //  65  NIEUZYWANE
+   { "P4SUM_ZAL", "N", 11, 2 },;                  //  66  PIT-4R - pobrane zaliczni
+   { "VATART129", "N", 11, 2 },;                  //  67  JPK_V7(VAT7) - Dostawa 0% z art.129
+   { "ZWR60DNI", "N", 11, 2 },;                   //  68  JPK_V7(VAT7) - Do zwrotu w okresie 60 dni
+   { "P4POTRAC", "N", 4, 2 },;                    //  69  PIT-4R - wynagrodzenia
+   { "P4NALZAL33", "N", 11, 2 },;                 //  70  PIT-4R - nalezne zaliczki
+   { "P4OGRZAL", "N", 11, 2 },;                   //  71  PIT-4R - ogrzalu
+   { "P4OGRZAL33", "N", 11, 2 },;                 //  72  PIT-4R - ogrzal32u
+   { "P4DODZAL", "N", 11, 2 },;                   //  73  PIT-4R - dodzalu
+   { "P4NADZWR", "N", 11, 2 },;                   //  74  PIT-4R - nadzwru
+   { "P4PFRON", "N", 11, 2 },;                    //  75  PIT-4R - pfronu
+   { "P4AKTYW", "N", 11, 2 },;                    //  76  PIT-4R - aktywu
+   { "P4ZAL13", "N", 11, 2 },;                    //  77  PIT-4R - zal13u
+   { "P4WYNAGR", "N", 11, 2 },;                   //  78  NIEUZYWANE
+   { "ZWR25DNI", "N", 11, 2 },;                   //  79  JPK_V7(VAT7) - Do zwrotu w okresie 25 dni
+   { "VATZALMIE", "N", 11, 2 },;                  //  80  NIEUZYWANE JPK_V7(VAT7) - Wplacono VAT za ten miesi.
+   { "VATNADKWA", "N", 11, 2 },;                  //  81  NIEUZYWANE JPK_V7(VAT7) - Nadplata z poprz.kwartalu
+   { "P8ZLECRY", "N", 11, 2 },;                   //  82  PIT-8AR - zlecin
+   { "P8WYNAGR", "N", 11, 2 },;                   //  83  PIT-8AR - P8wynagr
+   { "P8POTRAC", "N", 4, 2 },;                    //  84  PIT-8AR - potrac
+   { "P8ZLECIN", "N", 11, 2 },;                   //  85  PIT-8AR - zlecinu
+   { "A89B1", "N", 11, 2 },;                      //  86  NIEUZYWANE
+   { "A89B4", "N", 11, 2 },;                      //  87  NIEUZYWANE
+   { "A111U6", "N", 11, 2 },;                     //  88  NIEUZYWANE
+   { "WERJPKVAT", "N", 3, 0 },;                   //  89  NIEAKTUALNE Rodzaj JPK_VAT (1)
+   { "ZWRRAVAT", "N", 11, 2 },;                   //  90  JPK_V7(VAT7) - Zwrot na rach. vat
+   { "ZWRKONTO", "C", 1, 0 },;                    //  91  JPK_V7(VAT7) - Do zwrotu w terminie - ' ' brak, '1' zwrot na rach vat, '2' 25 dni, '3' 60 dni, '4' 180 dni
+   { "ZWRPODAT", "C", 1, 0 },;                    //  92  JPK_V7(VAT7) - Zwrot VAT na poczet przyszlych zob.
+   { "ZWRPODKW", "N", 11, 2 },;                   //  93  JPK_V7(VAT7) - Kwota zwrotu vat na poczt przyszlych zob.
+   { "ZWRPODRD", "C", 120, 0 },;                  //  94  JPK_V7(VAT7) - Zwrot VAT na poczet. - nazwa podatku
+   { "RYK07", "N", 12, 2 },;                      //  95  Ryczalt - Suma kol. 10 (5,5%)
+   { "RYK08", "N", 12, 2 } }                      //  96  Ryczalt - Suma kol. 12 dodatkowa (2%)
 
 // Create: TABPIT4R.DBF
 public aTABPIT4Rdbf := {;
