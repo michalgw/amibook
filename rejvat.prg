@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "inkey.ch"
 
-FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rzi, ewid_rzz, bFiltr, lWgVat, lTylkoUE )
+FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rzi, ewid_rzz, bFiltr, lWgVat, lTylkoUE, lTylkoKsiega )
 
    LOCAL aRes := {}, aRow
    LOCAL aDane := hb_Hash()
@@ -36,6 +36,7 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
 
    hb_default( @lWgVat, .F. )
    hb_default( @lTylkoUE, .F. )
+   hb_default( @lTylkoKsiega, .F. )
 
    aDane[ 'pozycje' ] := {}
    aDane[ 'rok' ] := param_rok
@@ -442,7 +443,7 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
 
       aRow[ 'wartosc_vat' ] := aRow[ 'zak_zwol_vat' ] + aRow[ 'zak_op_vat' ] + aRow[ 'zak_mi_vat' ] + aRow[ 'pojazdy' ]
 
-      IF ( aRow[ 'wartosc_netto' ] <> 0 .OR. aRow[ 'wartosc_vat' ] <> 0 ) ;
+      IF ( lTylkoKsiega .OR. ( aRow[ 'wartosc_netto' ] <> 0 .OR. aRow[ 'wartosc_vat' ] <> 0 ) ) ;
          .AND. rejz->korekta == iif( ewid_rzk == 'N', 'N', iif( ewid_rzk == 'T', 'T', rejz->korekta ) ) ;
          .AND. iif( ewid_rzi <> '**', rejz->symb_rej == ewid_rzi, .T. ) ;
          .AND. iif( ! lTylkoUE, ( ewid_rzz$'NW' .OR. ( ewid_rzz == 'D' .AND. rejz->zaplata$'23' ) .OR. ( ewid_rzz == 'Z' .AND. rejz->zaplata == '1') ), .T. ) ;
@@ -518,7 +519,7 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
 */
 FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_rzi, ewid_rzz )
 
-   LOCAL nDruk, bFiltr
+   LOCAL nDruk, bFiltr, lTylkoKsiega := .F.
    LOCAL aDane, oRap, nMonDruk
    LOCAL aRodzaj := { 'S', 'P', 'SP', 'SP' }
    LOCAL aWgVat := { .F., .F., .T., .F. }
@@ -550,13 +551,13 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
       CASE nDruk == 2
 
          IF aRodzaj[ nRaport ] == 'P'
-            bFiltr := RejVAT_Zak_Filtr( aPlikiMem[ nRaport ] )
+            bFiltr := RejVAT_Zak_Filtr( aPlikiMem[ nRaport ], @lTylkoKsiega )
             IF HB_ISLOGICAL( bFiltr )
                RETURN NIL
             ENDIF
          ENDIF
 
-         aDane := RejVAT_Zak_Dane( cFirma, cMiesiac, aRodzaj[ nRaport ], ewid_rzs, ewid_rzk, ewid_rzi, ewid_rzz, bFiltr, aWgVat[ nRaport ], aTylkoUE[ nRaport ] )
+         aDane := RejVAT_Zak_Dane( cFirma, cMiesiac, aRodzaj[ nRaport ], ewid_rzs, ewid_rzk, ewid_rzi, ewid_rzz, bFiltr, aWgVat[ nRaport ], aTylkoUE[ nRaport ], lTylkoKsiega )
          IF hb_HHasKey( aDane, 'pozycje' ) .AND. HB_ISARRAY( aDane[ 'pozycje' ] ) .AND. Len( aDane[ 'pozycje' ] ) > 0
 
             @ 24, 0
@@ -637,7 +638,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION RejVAT_Zak_Filtr( cMemFile )
+FUNCTION RejVAT_Zak_Filtr( cMemFile, lTylkoKsiega )
 
    LOCAL bRes, cRes := '', cRes2 := ''
    LOCAL x, y
@@ -647,12 +648,20 @@ FUNCTION RejVAT_Zak_Filtr( cMemFile )
    MEMVAR  xx, yy, qqs, qqr, qqss
    PRIVATE  xx, yy, qqs, qqr, qqss
 
+   FOR x := 1 TO 10
+      FOR y := 1 TO 9
+         xx := StrTran( Str( x, 2 ), ' ', '0' )
+         yy := StrTran( Str( y, 2 ), ' ', '0' )
+         rspz_&xx&yy := 'T'
+      NEXT
+   NEXT
+
    IF File( cMemFile + '.mem' )
       RESTORE FROM ( cMemFile ) ADDITIVE
    ELSE
       IF ! File( cMemFile + '.mem' )
          FOR x := 1 TO 10
-            FOR y := 1 TO 8
+            FOR y := 1 TO 9
                xx := StrTran( Str( x, 2 ), ' ', '0' )
                yy := StrTran( Str( y, 2 ), ' ', '0' )
                rspz_&xx&yy := 'T'
@@ -678,13 +687,13 @@ FUNCTION RejVAT_Zak_Filtr( cMemFile )
    @ 16, 42 SAY '   NIEKSIEGOWANE³                     '
    @ 17, 42 SAY 'RACHUNKI (T/N) ?³                     '
    @ 18, 42 SAY 'FAKTURY  (T/N) ?³                     '
-   @ 19, 42 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-   @ 20, 42 SAY Space( 38 )
+   @ 19, 42 SAY 'Tylko ksi©gowane³                     '
+   @ 20, 42 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
    @ 21, 42 SAY Space( 38 )
    @ 22, 42 SAY Space( 38 )
    SET COLOR TO w+
    FOR x := 1 TO 10
-      FOR y := 1 TO 8
+      FOR y := 1 TO 9
          xx := StrTran( Str( x, 2 ), ' ', '0' )
          yy := StrTran( Str( y, 2 ), ' ', '0' )
          @ 10 + y, 58 + ( x * 2 ) SAY rspz_&xx&yy PICTURE '!'
@@ -695,7 +704,7 @@ FUNCTION RejVAT_Zak_Filtr( cMemFile )
    DO WHILE QQS <> 0
       SET COLOR TO w+
       FOR x := 1 TO 10
-         FOR y := 1 TO 8
+         FOR y := 1 TO 9
             xx := StrTran( Str( x, 2 ), ' ', '0' )
             yy := StrTran( str( y, 2 ), ' ', '0' )
             @ 10 + y, 58 + ( x * 2 ) SAY rspz_&xx&yy PICTURE '!'
@@ -732,7 +741,7 @@ FUNCTION RejVAT_Zak_Filtr( cMemFile )
       CASE QQR == 2
          SET CURS ON
          QQSS := StrTran( Str( QQS, 2 ), ' ', '0' )
-         FOR y := 1 TO 8
+         FOR y := 1 TO 9
             yy := StrTran( Str( y, 2 ), ' ', '0' )
             @ 10 + y, 58 + ( QQS * 2 ) GET rspz_&QQSS&yy PICTURE '!' VALID rspz_&QQSS&yy$'TN'
          NEXT
@@ -781,6 +790,13 @@ FUNCTION RejVAT_Zak_Filtr( cMemFile )
 
    cRes := '{ || (' + cRes + ') .AND. (' + cRes2 + ') }'
    bRes := &cRes
+
+   yy := StrTran( Str( 9, 2 ), ' ', '0' )
+   IF rspz_&QQSS&yy == 'T'
+      lTylkoKsiega := .T.
+   ELSE
+      lTylkoKsiega := .F.
+   ENDIF
 
    RETURN bRes
 
