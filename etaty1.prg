@@ -123,7 +123,8 @@ store 0 to zBRUT_ZASAD,;
            zPPKPK1    ,;
            zPPKPS2    ,;
            zPPKPK2    ,;
-           zPPKPPM
+           zPPKPPM    ,;
+           zZASI_BZUS
 *           zNADPL_KWO
 *           zZAOPOD    ,;
 zJAKI_PRZEL=' '
@@ -290,12 +291,13 @@ do while .t.
          case skladn=1
               save scre to scr_sklad
               set curs on
-              @  7,42 clear to 12,65
-              @  7,42 to 12,65
-              @  8,43 say 'Zasadnicza..:' get zBRUT_ZASAD pict '99999.99' valid oblpl()
-              @  9,43 say 'Premia......:' get zBRUT_PREMI pict '99999.99' valid oblpl()
-              @ 10,43 say 'Inne dodatki:' get zDOPL_OPOD  pict '99999.99' valid oblpl()
-              @ 11,43 say 'Inne bez ZUS:' get zDOPL_BZUS  pict '99999.99' valid oblpl()
+              @  7,42 clear to 13,68
+              @  7,42 to 13,68
+              @  8,43 say 'Zasadnicza.....:' get zBRUT_ZASAD pict '99999.99' valid oblpl()
+              @  9,43 say 'Premia.........:' get zBRUT_PREMI pict '99999.99' valid oblpl()
+              @ 10,43 say 'Inne dodatki...:' get zDOPL_OPOD  pict '99999.99' valid oblpl()
+              @ 11,43 say 'Inne bez ZUS...:' get zDOPL_BZUS  pict '99999.99' valid oblpl()
+              @ 12,43 say 'Zasiˆki bez ZUS:' get zZASI_BZUS  pict '99999.99' valid oblpl()
               read
               set curs off
               rest scre from scr_sklad
@@ -614,15 +616,15 @@ func _infoskl_
      sele etaty
      CURR=ColStd()
      set color to w+
-      zzWAR_PUE=_round((PENSJA-DOPL_BZUS)*(STAW_PUE/100),2)
-      zzWAR_PUR=_round((PENSJA-DOPL_BZUS)*(STAW_PUR/100),2)
-      zzWAR_PUC=_round((PENSJA-DOPL_BZUS)*(STAW_PUC/100),2)
+      zzWAR_PUE=_round((PENSJA-DOPL_BZUS - ZASI_BZUS)*(STAW_PUE/100),2)
+      zzWAR_PUR=_round((PENSJA-DOPL_BZUS - ZASI_BZUS)*(STAW_PUR/100),2)
+      zzWAR_PUC=_round((PENSJA-DOPL_BZUS - ZASI_BZUS)*(STAW_PUC/100),2)
       zzWAR_PSUM=zzWAR_PUE+zzWAR_PUR+zzWAR_PUC
-      zzWAR_FUE=_round((PENSJA-DOPL_BZUS)*(STAW_FUE/100),2)
-      zzWAR_FUR=_round((PENSJA-DOPL_BZUS)*(STAW_FUR/100),2)
-      zzWAR_FUW=_round((PENSJA-DOPL_BZUS)*(STAW_FUW/100),2)
-      zzWAR_FFP=_round((PENSJA-DOPL_BZUS)*(STAW_FFP/100),2)
-      zzWAR_FFG=_round((PENSJA-DOPL_BZUS)*(STAW_FFG/100),2)
+      zzWAR_FUE=_round((PENSJA-DOPL_BZUS - ZASI_BZUS)*(STAW_FUE/100),2)
+      zzWAR_FUR=_round((PENSJA-DOPL_BZUS - ZASI_BZUS)*(STAW_FUR/100),2)
+      zzWAR_FUW=_round((PENSJA-DOPL_BZUS - ZASI_BZUS)*(STAW_FUW/100),2)
+      zzWAR_FFP=_round((PENSJA-DOPL_BZUS - ZASI_BZUS)*(STAW_FFP/100),2)
+      zzWAR_FFG=_round((PENSJA-DOPL_BZUS - ZASI_BZUS)*(STAW_FFG/100),2)
       zzWAR_FSUM=zzWAR_FUE+zzWAR_FUR+zzWAR_FUW+zzWAR_FFP+zzWAR_FFG
      @  5,11 say STANOWISKO
      @  5,61 say KOD_KASY
@@ -630,7 +632,7 @@ func _infoskl_
      @  5,77 say WYMIARM
      @  6,73 say KOD_TYTU
 *     @  7,49 say iif(ZAOPOD=1,'Dziesiec groszy','Zlotowka       ')
-     @  8,43 say BRUT_ZASAD+BRUT_PREMI+DOPL_OPOD+DOPL_BZUS pict '99 999.99'
+     @  8,43 say BRUT_ZASAD+BRUT_PREMI+DOPL_OPOD+DOPL_BZUS+ZASI_BZUS pict '99 999.99'
      @  8,74 say WAR_PF3 pict '999.99'
      @  9,42 say padr(iif(wolU#0,'U='+alltrim(str(wolU,2))+' ','')+;
                       iif(wolC#0,'C='+alltrim(str(wolC,2))+' ','')+;
@@ -645,7 +647,7 @@ func _infoskl_
      @ 11,43 say DOP_ZASCHO+DOP_ZASC20+DOP_ZAS100 pict '99 999.99'
      @ 11,71 say BRUT_RAZEM pict '99 999.99'
      @ 12,43 say KOSZT pict '99 999.99'
-     @ 12,71 say PENSJA-DOPL_BZUS pict '99 999.99'
+     @ 12,71 say PENSJA-DOPL_BZUS - ZASI_BZUS pict '99 999.99'
      if str(zzWAR_PSUM,7,2)#str(WAR_PSUM,7,2)
         ColErr()
      endif
@@ -736,7 +738,7 @@ func oblpl
          zSTA_BEZPL=0
          zODL_BEZPL=0
       endif
-      zPENSJA=(zBRUT_ZASAD+zBRUT_PREMI+zDOPL_OPOD+zDOPL_BZUS)-(zWAR_PF3+zODL_CHOROB+zODL_BEZPL)
+      zPENSJA=(zBRUT_ZASAD+zBRUT_PREMI+zDOPL_OPOD+zDOPL_BZUS + zZASI_BZUS)-(zWAR_PF3+zODL_CHOROB+zODL_BEZPL)
       if prac->odliczenie='N'
          zODLICZ=0
       endif
@@ -747,14 +749,14 @@ func oblpl
       zSTA_ZAS100=_round((zBRUTTO6/zIL_MIE6)/30,2)
       zDOP_ZAS100=_round(zDNI_ZAS100*zSTA_ZAS100,2)
       zBRUT_RAZEM=zPENSJA+zDOP_ZASCHO+zDOP_ZASC20+zDOP_ZAS100+zWAR_PF3
-      zzWAR_PUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUE/100),2)
-      zzWAR_PUR=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUR/100),2)
-      zzWAR_PUC=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUC/100),2)
+      zzWAR_PUE=_round((zPENSJA-zDOPL_BZUS-zZASI_BZUS)*(zSTAW_PUE/100),2)
+      zzWAR_PUR=_round((zPENSJA-zDOPL_BZUS-zZASI_BZUS)*(zSTAW_PUR/100),2)
+      zzWAR_PUC=_round((zPENSJA-zDOPL_BZUS-zZASI_BZUS)*(zSTAW_PUC/100),2)
       zzWAR_PSUM=zzWAR_PUE+zzWAR_PUR+zzWAR_PUC
-      if str(zPENSJA,8,2)#str(PENSJA,8,2).or.str(zDOPL_BZUS,8,2)#str(DOPL_BZUS,8,2).or.str(zSTAW_PUE,5,2)#str(STAW_PUE,5,2).or.str(zSTAW_PUR,5,2)#str(STAW_PUR,5,2).or.str(zSTAW_PUC,5,2)#str(STAW_PUC,5,2)
-         zWAR_PUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUE/100),2)
-         zWAR_PUR=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUR/100),2)
-         zWAR_PUC=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUC/100),2)
+      if str(zPENSJA,8,2)#str(PENSJA,8,2).or.str(zDOPL_BZUS,8,2)#str(DOPL_BZUS,8,2).or.str(zSTAW_PUE,5,2)#str(STAW_PUE,5,2).or.str(zSTAW_PUR,5,2)#str(STAW_PUR,5,2).or.str(zSTAW_PUC,5,2)#str(STAW_PUC,5,2).or.str(zZASI_BZUS,8,2)#Str(ZASI_BZUS,8,2)
+         zWAR_PUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUE/100),2)
+         zWAR_PUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUR/100),2)
+         zWAR_PUC=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUC/100),2)
       endif
       zWAR_PSUM=zWAR_PUE+zWAR_PUR+zWAR_PUC
       zDOCHOD=max(0,zBRUT_RAZEM-(zKOSZT+zWAR_PSUM))
@@ -778,14 +780,14 @@ func oblpl
       ENDIF
       IF zOSWIAD26R == 'T'
          B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(parap_pod/100)
-         zWAR_PUZ=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)))
-         zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
-         zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PZK/100),2)
-         zWAR_PUZO=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PZK/100),2)))
+         zWAR_PUZ=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
+         zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
+         zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
+         zWAR_PUZO=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
          zPODATEK=max(0,_round(B5-(zWAR_PUZO+parap_odl),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
 
-         zWAR_PUZ := Min( _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2), zWAR_PUZ )
+         zWAR_PUZ := Min( _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2), zWAR_PUZ )
          zWAR_PUZB := zWAR_PUZ
          zWAR_PZKB := 0.0
          zWAR_PUZO := 0.0
@@ -796,10 +798,10 @@ func oblpl
       ELSE
          B5=zDOCHODPOD*(zSTAW_PODAT/100)
    *--> Gdy potracanie skladki do wysokosci podatku
-         zWAR_PUZ=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)))
-         zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
-         zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PZK/100),2)
-         zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PZK/100),2)))
+         zWAR_PUZ=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
+         zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
+         zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
+         zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
    *     zWAR_PUZO=zWAR_PUZ
    *--> Koniec
    *--> Gdy potracanie pelnej skladki a odliczanie do wysokosci podatku
@@ -811,19 +813,19 @@ func oblpl
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
       ENDIF
       zDO_WYPLATY=zNETTO+zZASIL_RODZ+zZASIL_PIEL+zDOPL_NIEOP-zODL_NIEOP-zPPKZK1-zPPKZK2
-      zzWAR_FUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUE/100),2)
-      zzWAR_FUR=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUR/100),2)
-      zzWAR_FUW=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUW/100),2)
-      zzWAR_FFP=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FFP/100),2)
-      zzWAR_FFG=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FFG/100),2)
+      zzWAR_FUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUE/100),2)
+      zzWAR_FUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUR/100),2)
+      zzWAR_FUW=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUW/100),2)
+      zzWAR_FFP=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFP/100),2)
+      zzWAR_FFG=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFG/100),2)
       zzWAR_FSUM=zzWAR_FUE+zzWAR_FUR+zzWAR_FUW+zzWAR_FFP+zzWAR_FFG
       if str(zPENSJA,8,2)#str(PENSJA,8,2).or.str(zDOPL_BZUS,8,2)#str(DOPL_BZUS,8,2).or.str(zSTAW_FUE,5,2)#str(STAW_FUE,5,2).or.str(zSTAW_FUR,5,2)#str(STAW_FUR,5,2).or.str(zSTAW_FUW,5,2)#str(STAW_FUW,5,2).or.str(zSTAW_FFP,5,2)#str(STAW_FFP,5,2);
-         .or.str(zSTAW_FFG,5,2)#str(STAW_FFG,5,2)
-         zWAR_FUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUE/100),2)
-         zWAR_FUR=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUR/100),2)
-         zWAR_FUW=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUW/100),2)
-         zWAR_FFP=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FFP/100),2)
-         zWAR_FFG=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FFG/100),2)
+         .or.str(zSTAW_FFG,5,2)#str(STAW_FFG,5,2) .or.str(zZASI_BZUS,8,2)#Str(ZASI_BZUS,8,2)
+         zWAR_FUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUE/100),2)
+         zWAR_FUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUR/100),2)
+         zWAR_FUW=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUW/100),2)
+         zWAR_FFP=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFP/100),2)
+         zWAR_FFG=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFG/100),2)
       endif
       zWAR_FSUM=zWAR_FUE+zWAR_FUR+zWAR_FUW+zWAR_FFP+zWAR_FFG
       zSTAW_FSUM=zSTAW_FUE+zSTAW_FUR+zSTAW_FUW+zSTAW_FFP+zSTAW_FFG
@@ -988,6 +990,8 @@ zPPKPK2 := PPKPK2
 zPPKPPM := PPKPPM
 zPPK := PPK
 
+zZASI_BZUS := ZASI_BZUS
+
 zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) .AND. prac->oswiad26r == 'T', 'T', 'N' ), OSWIAD26R )
 if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    skip -1
@@ -1137,15 +1141,15 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
       zSTAW_FUW=parap_fuw
       zSTAW_FFP=parap_ffp
       zSTAW_FFG=parap_ffg
-      zWAR_PUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUE/100),2)
-      zWAR_PUR=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUR/100),2)
-      zWAR_PUC=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUC/100),2)
+      zWAR_PUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUE/100),2)
+      zWAR_PUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUR/100),2)
+      zWAR_PUC=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUC/100),2)
       zWAR_PSUM=zWAR_PUE+zWAR_PUR+zWAR_PUC
-      zWAR_FUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUE/100),2)
-      zWAR_FUR=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUR/100),2)
-      zWAR_FUW=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUW/100),2)
-      zWAR_FFP=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FFP/100),2)
-      zWAR_FFG=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FFG/100),2)
+      zWAR_FUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUE/100),2)
+      zWAR_FUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUR/100),2)
+      zWAR_FUW=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUW/100),2)
+      zWAR_FFP=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFP/100),2)
+      zWAR_FFG=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFG/100),2)
       zWAR_FSUM=zWAR_FUE+zWAR_FUR+zWAR_FUW+zWAR_FFP+zWAR_FFG
       zJAKI_PRZEL=prac->JAKI_PRZEL
       do case
@@ -1181,15 +1185,15 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
       ENDIF
    endif
 endif
-      zzWAR_PUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUE/100),2)
-      zzWAR_PUR=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUR/100),2)
-      zzWAR_PUC=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_PUC/100),2)
+      zzWAR_PUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUE/100),2)
+      zzWAR_PUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUR/100),2)
+      zzWAR_PUC=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUC/100),2)
       zzWAR_PSUM=zzWAR_PUE+zzWAR_PUR+zzWAR_PUC
-      zzWAR_FUE=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUE/100),2)
-      zzWAR_FUR=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUR/100),2)
-      zzWAR_FUW=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FUW/100),2)
-      zzWAR_FFP=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FFP/100),2)
-      zzWAR_FFG=_round((zPENSJA-zDOPL_BZUS)*(zSTAW_FFG/100),2)
+      zzWAR_FUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUE/100),2)
+      zzWAR_FUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUR/100),2)
+      zzWAR_FUW=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUW/100),2)
+      zzWAR_FFP=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFP/100),2)
+      zzWAR_FFG=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFG/100),2)
       zzWAR_FSUM=zzWAR_FUE+zzWAR_FUR+zzWAR_FUW+zzWAR_FFP+zzWAR_FFG
 ***************************************************************************
 proc ZAPISZPLA
@@ -1288,6 +1292,7 @@ repl_( 'PPKPS2', zPPKPS2 )
 repl_( 'PPKPK2', zPPKPK2 )
 repl_( 'PPKPPM', zPPKPPM )
 repl_( 'PPK', zPPK )
+repl_( 'ZASI_BZUS', zZASI_BZUS )
 
 ***************************************************************************
 func spr_przel

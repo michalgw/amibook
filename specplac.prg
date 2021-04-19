@@ -171,7 +171,7 @@ PROCEDURE SpecPlac()
                      zbrut_zasad := zbrut_zasad + brut_zasad
                      zbrut_premi := zbrut_premi + brut_premi
                      zdopl_opod := zdopl_opod + dopl_opod
-                     zdopl_bzus := zdopl_bzus + dopl_bzus
+                     zdopl_bzus := zdopl_bzus + dopl_bzus + zasi_bzus
                      zwolu := zwolu + wolU
                      zwolc := zwolc + wolC
                      zwolz := zwolz + wolZ
@@ -434,7 +434,7 @@ PROCEDURE SpecPlac()
                      zbrut_zasad := zbrut_zasad + brut_zasad
                      zbrut_premi := zbrut_premi + brut_premi
                      zdopl_opod := zdopl_opod + dopl_opod
-                     zdopl_bzus := zdopl_bzus + dopl_bzus
+                     zdopl_bzus := zdopl_bzus + dopl_bzus + zasi_bzus
                      zwolu := zwolu + wolU
                      zwolc := zwolc + wolC
                      zwolz := zwolz + wolZ
