@@ -478,14 +478,14 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
          IF do_pit4 >= SubStr( DToS( ODKIEDY ), 1, 6 ) .AND. do_pit4 <= SubStr( DToS( DOKIEDY ), 1, 6 )
             IF  cIgnoruj26r == 'N' .AND. SToD( do_pit4 + '01' ) >= 0d20190801 .AND. CzyPracowPonizej26R( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) )
                IF OSWIAD26R == 'T'
-                  P50_R26 := P50_R26 + BRUT_RAZEM
+                  P50_R26 := P50_R26 + BRUT_RAZEM - zasi_bzus
                   P51_R26 := P51_R26 + koszt
                   P52_R26 := P52_R26 + war_psum
                   P54a_R26 := P54a_R26 + war_puz // war_puzo
                   P55_R26 := P55_R26 + podatek
                   P64_R26 := P64_R26 + ZUS_RKCH
                ELSE
-                  P50_R262 := P50_R262 + BRUT_RAZEM
+                  P50_R262 := P50_R262 + BRUT_RAZEM - zasi_bzus
                   P51_R262 := P51_R262 + koszt
                   P52_R262 := P52_R262 + war_psum
                   P54a_R262 := P54a_R262 + war_puzo
@@ -493,7 +493,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                   P64_R262 := P64_R262 + ZUS_RKCH
                ENDIF
             ELSE
-               P50 := P50 + BRUT_RAZEM
+               P50 := P50 + BRUT_RAZEM - zasi_bzus
                P51 := P51 + koszt
                P52 := P52 + war_psum
                p54a := p54a + war_puzo
@@ -504,6 +504,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
             P53 := P53 + dochod
             p61 := p61 + ZUS_ZASCHO
             p63 := p63 + ZUS_PODAT
+            P50_7 := P50_7 + zasi_bzus
          ENDIF
          SKIP 1
       ENDDO
