@@ -265,9 +265,6 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       zDEKLNAZWI := DEKLNAZWI
       zDEKLIMIE := DEKLIMIE
       zDEKLTEL := DEKLTEL
-      IF _OU != 'X'
-         DeklPodp()
-      ENDIF
 
       SELECT 8
       IF Dostep( 'ORGANY' )
@@ -693,30 +690,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                edekZapiszXml(danedeklar, edeklaracja_plik, wys_edeklaracja, 'PIT11-26', JAKICEL == 'K', 0, id_pracownika)
             ENDIF
          CASE _OU='K'
-              SWITCH GraficznyCzyTekst()
-              CASE 0
-                 EXIT
-              CASE 1
-                 DeklarDrukuj('PIT11-26')
-                 EXIT
-              CASE 2
-                 do kpit_811
-                 IF JAKICEL == 'K'
-                    IF tnesc(,'Czy wydrukowa† formularz przyczyn korekty ORD-ZU? (T/N)')
-                       tresc_korekty_pit11 := edekOrdZuTrescPobierz('PIT-11', Val(ident_fir), id_pracownika)
-                       IF ValType(tresc_korekty_pit11) == "C"
-                          kartka_ordzu(P1,;
-                             iif(spolka_, P8, naz_imie_naz(P8)),;
-                             iif(spolka_, '', naz_imie_imie(P8)),;
-                             iif(spolka_, '', DToC(P8d)),;
-                             iif(spolka_, P8r, ''),;
-                             iif(Len(AllTrim(P30)) == 0, P29, P30),;
-                             P31, P32, DToC(P36d), '', tresc_korekty_pit11)
-                       ENDIF
-                    ENDIF
-                 ENDIF
-                 EXIT
-              ENDSWITCH
+            DeklarDrukuj('PIT11-26')
       ENDCASE
    END
    SELECT prac
