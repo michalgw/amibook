@@ -167,8 +167,8 @@ do while kl#27
               */
 
               IF param_lp == 'T' .AND. TNEsc( , "Czy odbudowa† numeracj© ksi©gi? (T/N)" )
-                 //Ksiega_Przenumeruj()
-                 numeruj()
+                 Ksiega_Przenumeruj()
+                 //numeruj()
               ENDIF
 
               IF TNEsc( , "Czy przypsa† kwot© woln¥ do wszysztkich firm? (T/N)" )
@@ -447,7 +447,7 @@ PROCEDURE Ksiega_Przenumeruj()
 
    cKolor := ColInb()
    @ 24, 0
-   Center( 24, 'Trwa nadawanie liczby porz¥dkowej - prosz© czeka†...' )
+   Center( 24, 'Trwa nadawanie liczby porz¥dkowej ksi©gi - prosz© czeka†...' )
 
    DO WHILE oper->del == "+"
       IF oper->firma # cFirmaId
@@ -468,6 +468,46 @@ PROCEDURE Ksiega_Przenumeruj()
    oper->( dbCommit() )
    oper->( dbUnlock() )
    oper->( dbCloseArea() )
+
+   IF ! DostepPro( "EWID", , , "EWID", "EWID" )
+      firma->( dbCloseArea() )
+      RETURN
+   ENDIF
+
+   IF param_kslp == '3'
+      ewid->( dbSetOrder( 4 ) )
+   ENDIF
+
+   IF ! BlokadaPro( "EWID" )
+      ewid->( dbCloseArea() )
+      firma->( dbCloseArea() )
+      RETURN
+   ENDIF
+
+   cKolor := ColInb()
+   @ 24, 0
+   Center( 24, 'Trwa nadawanie liczby porz¥dkowej ewidencji - prosz© czeka†...' )
+
+   DO WHILE ewid->del == "+"
+      IF ewid->firma # cFirmaId
+         cFirmaId := ewid->firma
+         firma->( dbGoto( Val( cFirmaId ) ) )
+         nLp := firma->liczba
+         lMies := firma->rodznrks == 'M'
+      ENDIF
+      ewid->lp := nLp
+      nLp++
+      cMC := ewid->mc
+      ewid->( dbSkip() )
+      IF lMies .AND. ewid->mc # cMC
+         nLp := 1
+      ENDIF
+   ENDDO
+
+   ewid->( dbCommit() )
+   ewid->( dbUnlock() )
+   ewid->( dbCloseArea() )
+
    firma->( dbCloseArea() )
 
    ColStd()

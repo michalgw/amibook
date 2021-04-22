@@ -840,7 +840,8 @@ FUNCTION Main()
          SET CURS OFF
 
          // Numeracja ksiegi
-         Numeruj()
+         //Numeruj()
+         Ksiega_Przenumeruj()
 
          ERASE install.mem
          ColStd()
@@ -2029,7 +2030,8 @@ FUNCTION _ca()
 
    SET CURSOR OFF
 
-   Numeruj()
+   //Numeruj()
+   Ksiega_Przenumeruj()
 
    REST SCREEN FROM s_d
 

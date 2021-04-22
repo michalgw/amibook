@@ -139,7 +139,8 @@ FUNCTION Odtw()
    odtw_()
    Indeks()
    *!indeks
-   numeruj()
+   //numeruj()
+   Ksiega_Przenumeruj()
    center( 24, '- Odtwarzanie zako&_n.czone -' )
    IF param_dzw == 'T'
       Tone( 500, 4 )
