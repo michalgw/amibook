@@ -1259,10 +1259,11 @@ FUNCTION _add()
 
    SWITCH GraficznyCzyTekst()
    CASE 1
-      Obroty( 2 )
+      Obroty( 2, .F. )
       EXIT
    CASE 2
-      boramex()
+      Obroty( 2, .T. )
+      //boramex()
       EXIT
    ENDSWITCH
 
@@ -1274,10 +1275,11 @@ FUNCTION _ade()
 
    SWITCH GraficznyCzyTekst()
    CASE 1
-      Obroty( 1 )
+      Obroty( 1, .F. )
       EXIT
    CASE 2
-      obrotnip()
+      Obroty( 1, .T. )
+      //obrotnip()
       EXIT
    ENDSWITCH
 

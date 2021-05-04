@@ -52,7 +52,6 @@ prog.prg
 amidll.prg
 arch.prg
 bledy.prg
-boramex.prg
 dane_mc.prg
 dbfinit.prg
 dekldruk.prg
@@ -115,7 +114,6 @@ kulmar2.prg
 listapla.prg
 listaplm.prg
 nierozp4.prg
-obrotnip.prg
 obroty.prg
 odlicz.prg
 odtw.prg

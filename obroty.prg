@@ -26,7 +26,7 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
    LOCAL aDane := { 'ok' => .F., 'pozycje' => {}, 'rodzaj' => nRodzaj, ;
       'filtr' => cDane, 'data_od' => dDataOd, 'data_do' => dDataDo, ;
       'firma_nazwa' => '', 'firma_nip' => '' }
-   LOCAL dDataDok, aPoz
+   LOCAL dDataDok, aPoz, aLista := {}, nI, cKlucz
    LOCAL aFiltr := { ;
       { | cTablica | Empty( cDane ) .OR. ( NormalizujNipPL( ( cTablica )->nr_ident ) == NormalizujNipPL( cDane ) ) }, ;
       { | cTablica | Empty( cDane ) .OR. ( hb_AtI( cDane, ( cTablica )->nazwa ) > 0 ) } }
@@ -54,9 +54,10 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
          IF dDataDok >= dDataOd .AND. dDataDok <= dDataDo .AND. Eval( aFiltr[ nRodzaj ], 'oper' )
 
-            aPoz := {=>}
-            aPoz[ 'klucz' ] := iif( AllTrim( oper->nr_ident ) == "", AllTrim( oper->nazwa ), ;
+            cKlucz := iif( AllTrim( oper->nr_ident ) == "", AllTrim( oper->nazwa ), ;
                AllTrim( NormalizujNipPL( oper->nr_ident ) ) )
+            aPoz := {=>}
+            aPoz[ 'klucz' ] := cKlucz
             aPoz[ 'rodzaj' ] := 1
             aPoz[ 'data' ] := dDataDok
             aPoz[ 'nazwa' ] := AllTrim( oper->nazwa )
@@ -74,7 +75,12 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
                aPoz[ 'br' ] := oper->zakup + oper->uboczne + oper->wynagr_g + oper->wydatki
             ENDIF
 
-            AAdd( aDane[ 'pozycje' ], aPoz )
+            nI := AScan( aLista, { | aElem | aElem[ 'klucz' ] == cKlucz } )
+            IF nI == 0
+               AAdd( aLista, { 'klucz' => cKlucz, 'nazwa' => aPoz[ 'nazwa' ], 'pozycje' => { aPoz } } )
+            ELSE
+               AAdd( aLista[ nI ][ 'pozycje' ], aPoz )
+            ENDIF
 
          ENDIF
 
@@ -101,9 +107,10 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
          IF dDataDok >= dDataOd .AND. dDataDok <= dDataDo .AND. Eval( aFiltr[ nRodzaj ], 'rejs' )
 
-            aPoz := {=>}
-            aPoz[ 'klucz' ] := iif( AllTrim( rejs->nr_ident ) == "", AllTrim( rejs->nazwa ), ;
+            cKlucz := iif( AllTrim( rejs->nr_ident ) == "", AllTrim( rejs->nazwa ), ;
                AllTrim( NormalizujNipPL( rejs->nr_ident ) ) )
+            aPoz := {=>}
+            aPoz[ 'klucz' ] := cKlucz
             aPoz[ 'rodzaj' ] := 2
             aPoz[ 'data' ] := dDataDok
             aPoz[ 'nazwa' ] := AllTrim( rejs->nazwa )
@@ -120,7 +127,12 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
                + rejs->vat12
             aPoz[ 'br' ] := 0
 
-            AAdd( aDane[ 'pozycje' ], aPoz )
+            nI := AScan( aLista, { | aElem | aElem[ 'klucz' ] == cKlucz } )
+            IF nI == 0
+               AAdd( aLista, { 'klucz' => cKlucz, 'nazwa' => aPoz[ 'nazwa' ], 'pozycje' => { aPoz } } )
+            ELSE
+               AAdd( aLista[ nI ][ 'pozycje' ], aPoz )
+            ENDIF
 
          ENDIF
 
@@ -147,9 +159,10 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
          IF dDataDok >= dDataOd .AND. dDataDok <= dDataDo .AND. Eval( aFiltr[ nRodzaj ], 'rejz' )
 
-            aPoz := {=>}
-            aPoz[ 'klucz' ] := iif( AllTrim( rejz->nr_ident ) == "", AllTrim( rejz->nazwa ), ;
+            cKlucz := iif( AllTrim( rejz->nr_ident ) == "", AllTrim( rejz->nazwa ), ;
                AllTrim( NormalizujNipPL( rejz->nr_ident ) ) )
+            aPoz := {=>}
+            aPoz[ 'klucz' ] := cKlucz
             aPoz[ 'rodzaj' ] := 3
             aPoz[ 'data' ] := dDataDok
             aPoz[ 'nazwa' ] := AllTrim( rejz->nazwa )
@@ -166,7 +179,12 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
                + rejz->wart22 + rejz->wart12 + rejz->vat02 + rejz->vat07 + rejz->vat22 ;
                + rejz->vat12
 
-            AAdd( aDane[ 'pozycje' ], aPoz )
+            nI := AScan( aLista, { | aElem | aElem[ 'klucz' ] == cKlucz } )
+            IF nI == 0
+               AAdd( aLista, { 'klucz' => cKlucz, 'nazwa' => aPoz[ 'nazwa' ], 'pozycje' => { aPoz } } )
+            ELSE
+               AAdd( aLista[ nI ][ 'pozycje' ], aPoz )
+            ENDIF
 
          ENDIF
 
@@ -178,26 +196,33 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
    rejz->( dbCloseArea() )
 
-   IF cGrupuj == 'K'
-
-      ASort( aDane[ 'pozycje' ], , , { | a1, a2 |
-         IF a1[ 'klucz' ] <> a2[ 'klucz' ]
-            RETURN a1[ 'klucz' ] < a2[ 'klucz' ]
-         ELSE
-            RETURN a1[ 'rodzaj' ] < a2[ 'rodzaj' ]
-         ENDIF
-      } )
-
-   ELSE
-
-      ASort( aDane[ 'pozycje' ], , , { | a1, a2 |
+   ASort( aLista, , , { | a1, a2 | a1[ 'nazwa' ] < a2[ 'nazwa' ] } )
+   FOR nI := 1 TO Len( aLista )
+      ASort( aLista[ nI ][ 'pozycje' ], , , { | a1, a2 |
          IF a1[ 'rodzaj' ] <> a2[ 'rodzaj' ]
             RETURN a1[ 'rodzaj' ] < a2[ 'rodzaj' ]
          ELSE
-            RETURN a1[ 'klucz' ] < a2[ 'klucz' ]
+            RETURN a1[ 'data' ] < a2[ 'data' ]
          ENDIF
       } )
+   NEXT
 
+   IF cGrupuj == 'K'
+      AEval( aLista, { | aPozL |
+         AEval( aPozL[ 'pozycje' ], { | aPozP |
+            AAdd( aDane[ 'pozycje' ], aPozP )
+         } )
+      } )
+   ELSE
+      FOR nI := 1 TO 3
+         AEval( aLista, { | aPozL |
+            AEval( aPozL[ 'pozycje' ], { | aPozP |
+               IF aPozP[ 'rodzaj' ] == nI
+                  AAdd( aDane[ 'pozycje' ], aPozP )
+               ENDIF
+            } )
+         } )
+      NEXT
    ENDIF
 
    aDane[ 'ok' ] := .T.
@@ -206,7 +231,7 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
 /*----------------------------------------------------------------------*/
 
-PROCEDURE Obroty( nRodzaj )
+PROCEDURE Obroty( nRodzaj, lTekstowy )
 
    LOCAL cFiltr := Space( 100 )
    LOCAL dDataOd, dDataDo
@@ -233,14 +258,20 @@ PROCEDURE Obroty( nRodzaj )
    cKolor := ColStd()
 
    dDataOd := hb_Date( Val( param_rok ), 1, 1 )
-   dDataDo := hb_Date( Val( param_rok ), Month( Date() ), Day( Date() ) )
+   IF Val( param_rok ) < Year( Date() )
+      dDataDo := hb_Date( Val( param_rok ), 12, 31 )
+   ELSE
+      dDataDo := EoM( hb_Date( Val( param_rok ), Month( Date() ), Day( Date() ) ) )
+   ENDIF
 
    @ 20,  0 CLEAR TO 22, 79
    @ 21,  2 SAY 'Od dnia' GET dDataOd PICTURE '@D'
    @ 22,  2 SAY 'Do dnia' GET dDataDo PICTURE '@D'
    @ 21, 21 SAY 'Dla ' + iif( nRodzaj == 1, 'nr NIP', 'nazwy kontrahenta' ) GET cFiltr PICTURE '@S35 ' + Replicate( '!', 100 )
-   @ 22, 21 SAY 'Grupu wed┬ug' GET cGrupuj PICTURE '!' WHEN Eval( bGrupujW ) VALID Eval( bGrupujV )
-   @ 22, 35 SAY 'odzaju dokumentu'
+   IF ! lTekstowy
+      @ 22, 21 SAY 'Grupu wed┬ug' GET cGrupuj PICTURE '!' WHEN Eval( bGrupujW ) VALID Eval( bGrupujV )
+      @ 22, 35 SAY 'odzaju dokumentu'
+   ENDIF
    read_()
    IF LastKey() <> 27
 
@@ -248,7 +279,11 @@ PROCEDURE Obroty( nRodzaj )
 
       IF HB_ISHASH( aDane ) .AND. aDane[ 'ok' ]
 
-         FRDrukuj( 'frf\' + iif( cGrupuj == 'K', 'obrotygk', 'obrotygr' ) + '.frf', aDane )
+         IF lTekstowy
+            Obroty_Tekst( aDane )
+         ELSE
+            FRDrukuj( 'frf\' + iif( cGrupuj == 'K', 'obrotygk', 'obrotygr' ) + '.frf', aDane )
+         ENDIF
 
       ENDIF
 
@@ -256,6 +291,103 @@ PROCEDURE Obroty( nRodzaj )
 
    SetColor( cKolor )
    RestScreen( , , , , cEkran )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Obroty_Tekst( aDane )
+
+   LOCAL nI, nR, cGrupa := '!~@#@^&!', nIlosc
+   *-----parametry wewnetrzne-----
+   PRIVATE _papsz := 1
+   PRIVATE _lewa := 1
+   PRIVATE _prawa := 121
+   PRIVATE _strona := .T.
+   PRIVATE _czy_mon := .T.
+   PRIVATE _czy_close := .T.
+   PRIVATE czesc := 1
+   PRIVATE _szerokosc := 121
+   *------------------------------
+
+   BEGIN SEQUENCE
+      mon_drk( 'Ж' + ProcName() )
+
+      k1 := DToC( aDane[ 'data_od' ] )
+      k2 := DToC( aDane[ 'data_do' ] )
+
+      mon_drk( ' ZESTAWIENIE OBROTЮW Z KONTRAHENTEM  (Filtr: ' + aDane[ 'filtr' ] + ')  za okres od  ' + k1 + '  do  ' + k2 )
+      mon_drk( 'здддддддддддддддддддддддддддддддддбддддддддддбддддддддддбдддддддддддддддддддддддддддддддбддддддддддддддддддддддддддддддд©' )
+      mon_drk( 'Ё                                 Ё   Data   Ё   Numer  Ё           N E T T O           Ё          B R U T T O          Ё' )
+      mon_drk( 'Ё       Kontrahent                Ё dokumentuЁ dokumentuЁ    Przych╒d   Ё     Rozch╒d   Ё    Przych╒d   Ё     Rozch╒d   Ё' )
+      mon_drk( 'юдддддддддддддддддддддддддддддддддаддддддддддаддддддддддадддддддддддддддадддддддддддддддадддддддддддддддаддддддддддддддды' )
+
+      FOR nR := 1 TO 3
+         STORE 0 TO s0_4, s0_5, s0_6, s0_7
+         STORE 0 TO s1_4, s1_5, s1_6, s1_7
+         nIlosc := 0
+
+         mon_drk( 'здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©' )
+         DO CASE
+         CASE nR == 1
+            mon_drk( 'Ё                 O B R O T Y   Z   K S I ╗ G I                Ё' )
+         CASE nR == 2
+            mon_drk( 'Ё     O B R O T Y   Z   R E J E S T R U   S P R Z E D A ╫ Y    Ё' )
+         CASE nR == 3
+            mon_drk( 'Ё       O B R O T Y   Z   R E J E S T R U   Z A K U P Ю W      Ё' )
+         ENDCASE
+         mon_drk( 'юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды' )
+
+         FOR nI := 1 TO Len( aDane[ 'pozycje' ] )
+            IF aDane[ 'pozycje' ][ nI ][ 'rodzaj' ] == nR
+               IF cGrupa <> aDane[ 'pozycje' ][ nI ][ 'klucz' ]
+                  IF nIlosc > 0
+                     mon_drk( '               R a z e m   k o n t r a h e n t            ' + kwota( s1_4, 14, 2 ) + '  ' + kwota( s1_5, 14, 2 ) + '  ' + kwota( s1_6, 14, 2 ) + '  ' + kwota( s1_7, 14, 2 ) )
+                     mon_drk( 'дддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд' )
+                  ENDIF
+                  STORE 0 TO s1_4, s1_5, s1_6, s1_7
+                  cGrupa := aDane[ 'pozycje' ][ nI ][ 'klucz' ]
+                  nIlosc := 0
+               ENDIF
+               nIlosc++
+               IF nIlosc == 1
+                  k1 := Pad( SubStr( aDane[ 'pozycje' ][ nI ][ 'nazwa' ], 1, 33 ), 33 )
+               ELSE
+                  k1 := Space( 33 )
+               ENDIF
+               k2 := DToC( aDane[ 'pozycje' ][ nI ][ 'data' ] )
+               k3 := Pad( SubStr( aDane[ 'pozycje' ][ nI ][ 'nr_dok' ], 1, 10 ), 10 )
+               k4 := kwota( aDane[ 'pozycje' ][ nI ][ 'np' ], 14, 2 )
+               k5 := kwota( aDane[ 'pozycje' ][ nI ][ 'nr' ], 14, 2 )
+               k6 := kwota( aDane[ 'pozycje' ][ nI ][ 'bp' ], 14, 2 )
+               k7 := kwota( aDane[ 'pozycje' ][ nI ][ 'br' ], 14, 2 )
+
+               s0_4 := s0_4 + aDane[ 'pozycje' ][ nI ][ 'np' ]
+               s0_5 := s0_5 + aDane[ 'pozycje' ][ nI ][ 'nr' ]
+               s0_6 := s0_6 + aDane[ 'pozycje' ][ nI ][ 'bp' ]
+               s0_7 := s0_7 + aDane[ 'pozycje' ][ nI ][ 'br' ]
+
+               s1_4 := s1_4 + aDane[ 'pozycje' ][ nI ][ 'np' ]
+               s1_5 := s1_5 + aDane[ 'pozycje' ][ nI ][ 'nr' ]
+               s1_6 := s1_6 + aDane[ 'pozycje' ][ nI ][ 'bp' ]
+               s1_7 := s1_7 + aDane[ 'pozycje' ][ nI ][ 'br' ]
+
+               mon_drk( ' ' + k1 + ' ' + k2 + ' ' + k3 + '  ' + k4 + '  ' + k5 + '  ' + k6 + '  ' + k7 )
+
+               IF nI == Len( aDane[ 'pozycje' ] )
+                  mon_drk( '               R a z e m   k o n t r a h e n t            ' + kwota( s1_4, 14, 2 ) + '  ' + kwota( s1_5, 14, 2 ) + '  ' + kwota( s1_6, 14, 2 ) + '  ' + kwota( s1_7, 14, 2 ) )
+                  mon_drk( 'дддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд' )
+               ENDIF
+
+            ENDIF
+         NEXT
+
+      NEXT
+
+      mon_drk( '                                   O g ╒ ┬ e m            ' + kwota( s0_4, 14, 2 ) + '  ' + kwota( s0_5, 14, 2 ) + '  ' + kwota( s0_6, 14, 2 ) + '  ' + kwota( s0_7, 14, 2 ) )
+      mon_drk( 'Ч' )
+
+   END
 
    RETURN NIL
 
