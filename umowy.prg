@@ -94,7 +94,7 @@ PROCEDURE Umowy()
    _invers := [i]
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,-9,13,247,22,48,77,109,7,46,28,82,114,85,117,87,119'
+   _esc := '27,-9,13,247,22,48,77,109,7,46,28,82,114,85,117,87,119,1006'
    _top := 'firma#ident_fir'
    _bot := "del#'+'.or.firma#ident_fir"
    _stop := '+' + ident_fir
@@ -291,7 +291,7 @@ PROCEDURE Umowy()
          ENDIF
          @ 23, 0
       *################################### WYBOR POZYCJI ##########################
-      CASE kl == 13
+      CASE kl == 13 .OR. kl == 1006
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
          STORE 'A' TO zAKOSZT, ;

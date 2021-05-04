@@ -294,7 +294,7 @@ FUNCTION w1_71()
    IF del == '+' .AND. firma == ident_fir
       Samocho_()
       RESTORE SCREEN FROM scr2
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          znrrej := nrrej
          KEYBOARD Chr( K_ENTER )
       ENDIF
@@ -315,7 +315,7 @@ FUNCTION V1_71()
          Samocho_()
          RESTORE SCREEN FROM scr2
          DO CASE
-         CASE LastKey() == K_ENTER
+         CASE LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
             znrrej := nrrej
             KEYBOARD Chr( K_ENTER )
          OTHERWISE

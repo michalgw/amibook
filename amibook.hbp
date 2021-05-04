@@ -119,6 +119,7 @@ odlicz.prg
 odtw.prg
 oper.prg
 organy.prg
+organy_.prg
 param.prg
 param_drgr.prg
 param_edek.prg
@@ -157,6 +158,7 @@ p_wypla.prg
 p_wyplar.prg
 rachpoj.prg
 rachpojw.prg
+rejestr_.prg
 rejestry.prg
 rejs.prg
 rejsknew.prg
@@ -208,6 +210,7 @@ vue_info.prg
 wersja.prg
 winprint.prg
 winprinter.prg
+wlas_.prg
 wplatn.prg
 wyplaty.prg
 wydatki.prg

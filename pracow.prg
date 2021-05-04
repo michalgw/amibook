@@ -764,7 +764,7 @@ FUNCTION v3_141()
    ENDIF
    urzedy_()
    RESTORE SCREEN FROM scr2
-   IF LastKey() == 13
+   IF LastKey() == 13 .OR. LastKey() == 1006
       zurzad := miejsc_us + ' - ' + urzad
       SET COLOR TO i
       @ 18, 17 SAY zurzad

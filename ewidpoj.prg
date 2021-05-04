@@ -317,7 +317,7 @@ FUNCTION w1_31()
    IF del == '+' .AND. firma == ident_fir
       Samocho_()
       RESTORE SCREEN FROM scr2
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          znrrej := nrrej
          KEYBOARD Chr( K_ENTER )
       ENDIF
@@ -338,7 +338,7 @@ FUNCTION V1_31()
          Samocho_()
          RESTORE SCREEN FROM scr2
          DO CASE
-         CASE LastKey() == K_ENTER
+         CASE LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
             znrrej := nrrej
             KEYBOARD Chr( K_ENTER )
          OTHERWISE
@@ -360,7 +360,7 @@ FUNCTION w1_51()
       IF del == '+' .AND. firma == ident_fir
          Relacje_()
          RESTORE SCREEN FROM scr2
-         IF LastKey() == K_ENTER
+         IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
             ztrasa := trasa
             zcel := cel
             zkm := km

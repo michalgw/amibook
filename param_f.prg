@@ -407,6 +407,8 @@ restore screen from scr_
 endcase
 enddo
 close_()
+
+return
 *################################## FUNKCJE #################################
 procedure say23
 clear type
@@ -481,6 +483,7 @@ sele firma
 *@ 24,0 say padc('Wpisz:D-dokonanie dostawy,T-zakonczenie dostawy,U-wykonanie uslugi,Z-zaliczka',80,' ')
 *set century on
 ColStd()
+return
 ***************************************************
 function v23_11
 if lastkey()=5
@@ -584,7 +587,7 @@ if del#[+].or.miejsc_us#substr(zurzad,1,20).or.urzad#substr(zurzad,24)
 endif
 urzedy_()
 restore screen from scr2
-if lastkey()=13
+if lastkey()=13 .OR. LastKey() == 1006
    zurzad=miejsc_us+' - '+urzad
    set color to i
    @ 7,18 say zurzad
@@ -604,9 +607,9 @@ seek [+]+znazwa_org
 if del#[+].or.nazwa_org#znazwa_org
    skip -1
 endif
-do organy_
+organy_()
 restore screen from scr2
-if lastkey()=13
+if lastkey()=13 .OR. LastKey() == 1006
    znazwa_org=nazwa_org
    set color to i
    @ 11,14 say substr(znazwa_org,1,30)
@@ -626,9 +629,9 @@ seek [+]+znazwa_rej
 if del#[+].or.nazwa_rej#znazwa_rej
    skip -1
 endif
-do rejestr_
+rejestr_()
 restore screen from scr2
-if lastkey()=13
+if lastkey()=13 .OR. LastKey() == 1006
    znazwa_rej=nazwa_rej
    set color to i
    @ 12,14 say substr(znazwa_rej,1,30)
@@ -653,9 +656,9 @@ if del#[+].or.firma#ident_fir.or.naz_imie#znazwisko
       return .f.
    endif
 endif
-do wlas_
+wlas_()
 restore screen from scr2
-if lastkey()=13
+if lastkey()=13 .OR. LastKey() == 1006
    znazwisko=naz_imie
    set color to i
    @  9,48 say zNAZWISKO

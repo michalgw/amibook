@@ -865,7 +865,7 @@ FUNCTION V11_1z()
    IF del == '+' .AND. firma == ident_fir
       Kat_Rej_()
       RESTORE SCREEN FROM scr2
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          zSYMB_REJ := SYMB_REJ
          IF ins
             zOPCJE := OPCJE
@@ -1046,7 +1046,7 @@ FUNCTION w1_3z()
    IF del == '+' .AND. firma == ident_fir
       Kontr_()
       RESTORE SCREEN FROM scr2
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          znazwa := nazwa
          zadres := adres
          zNR_IDENT := NR_IDENT

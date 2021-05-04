@@ -661,7 +661,7 @@ set orde to 1
 if del=[+].and.firma=ident_fir
    Kontr_()
    restore screen from scr2
-   if lastkey()=13
+   if lastkey()=13 .OR. LastKey() == 1006
       zSZUKNAZ=nazwa
       zSZUKNIP=NR_IDENT
       set color to i

@@ -1169,7 +1169,7 @@ FUNCTION wRzI( im, wi, ko )
    IF del == '+' .AND. firma == ident_fir
       kat_rej_()
       RESTORE SCREEN FROM scr2
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          &( 'ewid_' + im + 'i' ) := SYMB_REJ
          SET COLOR TO i
          @ wi, ko SAY &( 'ewid_' + im + 'i' )
@@ -1198,7 +1198,7 @@ FUNCTION wRsI( im, wi, ko )
    IF del == '+' .AND. firma == ident_fir
       kat_rej_()
       RESTORE SCREEN FROM scr2
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          &( 'ewid_' + im + 'i' ) := SYMB_REJ
          SET COLOR TO i
          @ wi, ko SAY &( 'ewid_' + im + 'i' )

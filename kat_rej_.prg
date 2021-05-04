@@ -68,7 +68,7 @@ PROCEDURE Kat_Rej_()
    _invers := [i]
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,28,13,32'
+   _esc := '27,28,13,32,1006'
    _top := 'firma#ident_fir'
    _bot := "del#'+'.or.firma#ident_fir"
    _stop := '+' + ident_fir
@@ -81,7 +81,7 @@ PROCEDURE Kat_Rej_()
 
    *----------------------
    kl := 0
-   DO WHILE kl # K_ESC .AND. kl # K_ENTER .AND. kl # Asc( ' ' )
+   DO WHILE kl # K_ESC .AND. kl # K_ENTER .AND. kl # Asc( ' ' ) .AND. kl # K_LDBLCLK
       ColSta()
       @ 1, 47 SAY '[F1]-pomoc'
       SET COLOR TO
@@ -163,7 +163,7 @@ FUNCTION Kat_Rej_Wybierz( cSymbolRej, nTop, nLeft, cRej )
 
       RestScreen( , , , , cScreen )
 
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
 
          cSymbolRej := kat_sp_wyb->symb_rej
 

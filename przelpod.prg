@@ -362,7 +362,7 @@ if del#[+].or.miejsc_us#substr(zurzad,1,20).or.urzad#substr(zurzad,24,25)
 endif
 urzedy_()
 restore screen from scr2
-if lastkey()=13
+if lastkey()=13 .OR. LastKey() == 1006
    zurzad=miejsc_us+' - '+urzad
    zNAZWA_WIE='URZ&__A.D SKARBOWY '+alltrim(URZAD)
    znazwa_wie=znazwa_wie+space(56-len(znazwa_wie))

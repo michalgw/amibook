@@ -65,7 +65,7 @@ PROCEDURE Prac_()
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,28,13,32,7,46'
+   _esc := '27,28,13,32,7,46,1006'
    _top := "firma#ident_fir.or.status<'U'"
    _bot := "del#'+'.or.firma#ident_fir.or.status<'U'"
    _stop := '+' + ident_fir + '+'
@@ -77,7 +77,7 @@ PROCEDURE Prac_()
    _cls := ''
    *----------------------
    kl := 0
-   DO WHILE kl # 27 .AND. kl # 13
+   DO WHILE kl # 27 .AND. kl # 13 .AND. kl # 1006
       ColSta()
       @ 1, 47 SAY '[F1]-pomoc'
       SET COLOR TO
@@ -85,7 +85,7 @@ PROCEDURE Prac_()
       ColStd()
       kl := LastKey()
    ENDDO
-   IF kl == 13
+   IF kl == 13 .OR. kl == 1006
       zident := Str( rec_no, 5 )
    ENDIF
    SetColor( CURR )

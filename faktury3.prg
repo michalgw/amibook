@@ -771,7 +771,7 @@ FUNCTION v26_203()
       IF del == '+' .AND. firma = ident_fir
          Kontr_()
          RESTORE SCREEN FROM scr2
-         IF LastKey() == 13
+         IF LastKey() == 13 .OR. LastKey() == 1006
             znazwa := kontr->nazwa
             zadres := kontr->adres
             znr_ident := kontr->nr_ident
@@ -791,7 +791,7 @@ FUNCTION v26_203()
          IF del == '+' .AND. firma = ident_fir
             Kontr_()
             RESTORE SCREEN FROM scr2
-            IF LastKey() == 13
+            IF LastKey() == 13 .OR. LastKey() == 1006
                znazwa := nazwa
                zadres := adres
                znr_ident := nr_ident
@@ -917,7 +917,7 @@ FUNCTION Fakt3WhenTowar( nWiersz )
          SAVE SCREEN TO scr2_a
          Tresc_()
          RESTORE SCREEN FROM scr2_a
-         IF LastKey() == K_ENTER
+         IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
             cTresc := tresc->tresc
             zTowar[ nWiersz ] := cTresc
          ENDIF

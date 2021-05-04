@@ -20,10 +20,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+PROCEDURE PracW_()
+
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Obsluga podstawowych operacji na bazie ......                             ±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+
 private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
 @ 1,47 say [          ]
 RECS=recno()
@@ -61,7 +64,7 @@ _col_p=78
 _invers=[i]
 _curs_l=0
 _curs_p=0
-_esc=[27,28,13,32,7,46]
+_esc=[27,28,13,32,7,46,1006]
 _top=[firma#ident_fir]
 _bot=[del#'+'.or.firma#ident_fir]
 _stop=[+]+ident_fir
@@ -73,7 +76,7 @@ _disp=.t.
 _cls=''
 *----------------------
 kl=0
-do while kl#27.and.kl#13
+do while kl#27.and.kl#13 .AND. kl # 1006
    ColSta()
    @ 1,47 say '[F1]-pomoc'
    set colo to
@@ -81,7 +84,7 @@ do while kl#27.and.kl#13
    ColStd()
    kl=lastkey()
 enddo
-if kl=13
+if kl=13 .OR. kl == 1006
    zident=str(rec_no,5)
 endif
 setcolor(CURR)

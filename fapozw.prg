@@ -370,7 +370,7 @@ FUNCTION w26_50vw()
          SAVE SCREEN TO scr2_a
          Tresc_()
          RESTORE SCREEN FROM scr2_a
-         IF LastKey() == K_ENTER
+         IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
             zzz := tresc->tresc
             ztowar := zzz
          ENDIF

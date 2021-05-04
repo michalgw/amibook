@@ -543,6 +543,7 @@ FUNCTION wybor( _row )
          RETURN _row
       CASE _kl == 5 .OR. _kl == 56 .OR. _kl == K_MWFORWARD
          _nr_rec := RecNo()
+         _linia := &_proc
          SKIP -1
          IF Bof() .OR. &_top
             GO _nr_rec
@@ -578,6 +579,7 @@ FUNCTION wybor( _row )
          CLEAR TYPE
       CASE _kl == K_DOWN .OR. _kl == Asc( '2' ) .OR. _kl == K_MWBACKWARD
          _nr_rec := RecNo()
+         _linia := &_proc
          SKIP
          IF &_bot
             GO _nr_rec
@@ -667,6 +669,23 @@ FUNCTION wybor( _row )
                @ _row,_curs_p SAY ' '
             ENDIF
             _row := disp( _row_d )
+         ENDIF
+      CASE _kl == K_LBUTTONDOWN
+         IF MRow() >= _row_g .AND. MRow() <= _row_d .AND. MCol() >= _col_l .AND. MCol() <= _col_p ;
+            .AND. MRow() <> _row
+            _nr_rec := RecNo()
+            SKIP MRow() - _row
+            IF &_bot
+               GO _nr_rec
+            ELSE
+               IF _invers#''
+                  @ _row, _col_l SAY _linia
+               ELSE
+                  @ _row, _curs_l SAY ' '
+                  @ _row, _curs_p SAY ' '
+               ENDIF
+               _row := disp( MRow() )
+            ENDIF
          ENDIF
       ENDCASE
 

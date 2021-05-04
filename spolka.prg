@@ -742,7 +742,7 @@ if del#[+].or.miejsc_us#substr(zurzad,1,20).or.urzad#substr(zurzad,24)
 endif
 urzedy_()
 restore screen from scr2
-if lastkey()=13
+if lastkey()=13 .OR. LastKey() == 1006
    zurzad=miejsc_us+' - '+urzad
    set color to i
    @ 21,20 say zurzad

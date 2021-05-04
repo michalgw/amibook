@@ -111,7 +111,7 @@ FUNCTION Etaty( mieskart )
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,-9,13,247,75,107,77,109,7,28,80,87,89,112,119,121,52'
+   _esc := '27,-9,13,247,75,107,77,109,7,28,80,87,89,112,119,121,52,1006'
    _top := "firma#ident_fir.or.status>'U'"
    _bot := "del#'+'.or.firma#ident_fir.or.status>'U'"
    _stop := '+' + ident_fir + '+'
@@ -132,7 +132,7 @@ FUNCTION Etaty( mieskart )
       ColStd()
       kl := LastKey()
       DO CASE
-      CASE kl == 13
+      CASE kl == 13 .OR. kl == 1006
          SAVE SCREEN TO robs
          IF Empty( data_przy )
             kom( 3, '*u', ' Brak daty przyj&_e.cia do pracy ' )

@@ -59,7 +59,7 @@ _col_p=66
 _invers=[i]
 _curs_l=0
 _curs_p=0
-_esc=[27,28,13,-4]
+_esc=[27,28,13,-4,1006]
 _top=[firma#ident_fir]
 _bot=[del#'+'.or.firma#ident_fir]
 _stop=[+]+ident_fir
@@ -82,7 +82,7 @@ _cls=''
       ENDIF
    ENDIF
 kl=0
-do while kl#27.and.kl#13
+do while kl#27.and.kl#13 .AND. kl # 1006
    @ 1,47 say '[F1]-pomoc'
    @ 8, 18 SAY 'Filtr: ' + rodzaj2str(cFiltr)
    _row=wybor(_row)
@@ -167,7 +167,7 @@ do while kl#27.and.kl#13
       //if lastkey()#27.and.lastkey()#28
       keyboard Chr(0)
       //endif
-   CASE kl==13
+   CASE kl==13 .OR. kl == 1006
       IF lJestPusto
          CLEAR TYPEAHEAD
          kl := 0

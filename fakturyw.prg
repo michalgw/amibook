@@ -927,7 +927,7 @@ FUNCTION w1_3fw()
    IF del == '+' .AND. firma == ident_fir
       Kontr_()
       RESTORE SCREEN FROM scr2
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          znazwa := nazwa
          zadres := adres
          zNR_IDENT := NR_IDENT

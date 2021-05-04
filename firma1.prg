@@ -77,7 +77,7 @@ _col_p=52
 _invers=[i]
 _curs_l=0
 _curs_p=0
-_esc=[27,-9,247,22,48,77,109,7,46,28,13]
+_esc=[27,-9,247,22,48,77,109,7,46,28,13,1006]
 _top=[.f.]
 _bot=[del#'+']
 _stop=[]
@@ -748,7 +748,7 @@ endif
 restore screen from scr_
 _disp=.f.
 *################################### WYBOR ##################################
-case kl=13
+case kl=13 .OR. kl == 1006
    zhaslo=space(10)
    if .not.empty(haslo)
       Cocul=ColErr()

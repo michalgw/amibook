@@ -140,7 +140,7 @@ PROCEDURE P_Dochod( _OUT )
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,28,13'
+   _esc := '27,28,13,1006'
    _top := 'firma#ident_fir'
    _bot := "del#'+'.or.firma#ident_fir"
    _stop := '+' + ident_fir
@@ -161,7 +161,7 @@ PROCEDURE P_Dochod( _OUT )
       kl := LastKey()
       DO CASE
       *################################## ZESTAW_ #################################
-      CASE kl == 13
+      CASE kl == 13 .OR. kl == 1006
          SELECT spolka
          zident := Str( RecNo(), 5 )
 

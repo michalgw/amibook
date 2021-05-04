@@ -1290,7 +1290,7 @@ FUNCTION V11_1s()
    IF del == '+' .AND. firma == ident_fir
       Kat_Rej_()
       RESTORE SCREEN FROM scr2
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          zSYMB_REJ := SYMB_REJ
          SET COLOR TO i
          @ 3, 38 SAY zSYMB_REJ
@@ -1470,7 +1470,7 @@ FUNCTION w1_3s()
    IF del == '+' .AND. firma == ident_fir
       Kontr_()
       RESTORE SCREEN FROM scr2
-      IF LastKey() == K_ENTER
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          znazwa := nazwa
          zadres := adres
          zNR_IDENT := NR_IDENT

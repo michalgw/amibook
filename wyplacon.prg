@@ -418,7 +418,7 @@ FUNCTION v4_141w()
    SET ORDER TO 1
    pracw_()
    RESTORE SCREEN FROM scr2
-   IF LastKey() == 13
+   IF LastKey() == 13 .OR. LastKey() == 1006
       zpesel := pesel
       SET COLOR TO i
       @ 23, 68 SAY zpesel

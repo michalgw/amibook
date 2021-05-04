@@ -143,7 +143,7 @@ PROCEDURE ZusZcza( ubezp )
       _invers := 'i'
       _curs_l := 0
       _curs_p := 0
-      _esc := '27,28,13'
+      _esc := '27,28,13,1006'
       _top := 'firma#ident_fir'
       _bot := "del#'+'.or.firma#ident_fir"
       _stop := '+' + ident_fir
@@ -164,7 +164,7 @@ PROCEDURE ZusZcza( ubezp )
          kl := LastKey()
          DO CASE
          *################################## ZESTAW_ #################################
-         CASE kl == 13
+         CASE kl == 13 .OR. kl == 1006
             SAVE SCREEN TO scr2
             nr_rec := RecNo()
             param_zu()
@@ -279,7 +279,7 @@ PROCEDURE ZusZcza( ubezp )
       _invers := 'i'
       _curs_l := 0
       _curs_p := 0
-      _esc := '27,28,13'
+      _esc := '27,28,13,1006'
       _top := 'firma#ident_fir'
       _bot := "del#'+'.or.firma#ident_fir"
       _stop := '+' + ident_fir
@@ -300,7 +300,7 @@ PROCEDURE ZusZcza( ubezp )
          kl := LastKey()
          DO CASE
          *################################## ZESTAW_ #################################
-         CASE kl == 13
+         CASE kl == 13 .OR. kl == 1006
             zidp := Str( rec_no, 5 )
             SELECT etaty
             SEEK '+' + ident_fir + zidp

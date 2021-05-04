@@ -76,7 +76,7 @@ FUNCTION Kontr_()
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,-3,-9,247,28,13,32,7,46'
+   _esc := '27,-3,-9,247,28,13,32,7,46,1006'
    _top := 'firma#ident_fir'
    _bot := "del#'+'.or.firma#ident_fir"
    _stop := '+' + ident_fir
@@ -89,7 +89,7 @@ FUNCTION Kontr_()
 
    *----------------------
    kl := 0
-   DO WHILE kl # 27 .AND. kl # 13 .AND. kl # 32
+   DO WHILE kl # 27 .AND. kl # 13 .AND. kl # 32 .AND. kl # 1006
       ColSta()
       @ 1, 47 say '[F1]-pomoc'
       SET COLOR TO

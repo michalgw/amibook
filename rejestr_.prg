@@ -20,6 +20,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+PROCEDURE Rejestr_()
+
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Obsluga podstawowych operacji na bazie ......                             ±
@@ -56,7 +58,7 @@ _col_p=68
 _invers=[i]
 _curs_l=0
 _curs_p=0
-_esc=[27,28,13,32,7,46]
+_esc=[27,28,13,32,7,46,1006]
 _top=[bof()]
 _bot=[del#'+']
 _stop=[+]
@@ -68,7 +70,7 @@ _disp=.t.
 _cls=''
 *----------------------
 kl=0
-do while kl#27.and.kl#13
+do while kl#27.and.kl#13 .AND. kl # 1006
    ColSta()
    @ 1,47 say '[F1]-pomoc'
    set colo to
@@ -76,7 +78,7 @@ do while kl#27.and.kl#13
    setcolor(CURR)
    kl=lastkey()
 enddo
-if kl=13
+if kl=13 .OR. kl == 1006
    zrejestr=recno()
 endif
 setcolor(CURR)

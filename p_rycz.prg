@@ -107,7 +107,7 @@ PROCEDURE P_Rycz( okres )
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,28,13'
+   _esc := '27,28,13,1006'
    _top := 'firma#ident_fir'
    _bot := "del#'+'.or.firma#ident_fir"
    _stop := '+' + ident_fir
@@ -127,7 +127,7 @@ PROCEDURE P_Rycz( okres )
       kl := LastKey()
       DO CASE
       *################################## ZESTAW_R #################################
-      CASE kl == K_ENTER
+      CASE kl == K_ENTER .OR. kl == K_LDBLCKL
          SAVE SCREEN TO scr2
          nr_rec := RecNo()
          Zestaw_R( Okres )
