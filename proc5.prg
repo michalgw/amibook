@@ -268,15 +268,18 @@ FUNCTION OdblokujEkran()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION Komunikat(cTresc)
+FUNCTION Komunikat( cTresc, cKolor )
+
    LOCAL nRes := 2
+
    DO WHILE nRes == 2
-      nRes := Alert(cTresc, {'Zamknij', 'Kopiuj komunikat do schowka'})
+      nRes := Alert( cTresc, { 'Zamknij', 'Kopiuj komunikat do schowka' }, cKolor )
       IF nRes == 2
          hb_gtInfo( HB_GTI_CLIPBOARDDATA, rezultat )
-         komun('Komunikat zostaˆ skopiowany do schowka.', 5)
+         komun( 'Komunikat zostaˆ skopiowany do schowka.', 5 )
       ENDIF
    ENDDO
+
    RETURN
 
 /*----------------------------------------------------------------------*/
@@ -424,7 +427,7 @@ FUNCTION EwidSprawdzNrDokRec( cTablica, cKontrahent, cMiesiac, cNumer, aRec )
 
 PROCEDURE EwidSprawdzNrDok(cTablica, cKontrahent, cMiesiac, cNumer, nRecNo)
 
-   LOCAL nWS, nPopArea, nM, nMS
+   LOCAL nWS, nPopArea, nM, nMS, aLista := {}, cKom
 
    IF ! ( param_ksnd $ 'TR' )
       RETURN
@@ -468,15 +471,31 @@ PROCEDURE EwidSprawdzNrDok(cTablica, cKontrahent, cMiesiac, cNumer, nRecNo)
 
    FOR nM := nMS TO Val( cMiesiac )
       IF dbSeek('+' + cKontrahent + Str( nM, 2 ) + PadR(cNumer, 20))
-         IF Empty( nRecNo ) .OR. nRecNo <> RecNo()
-            komun('Istnieje ju¾ dokument o tym numerze.')
-            EXIT
-         ENDIF
+         DO WHILE AllTrim( cNumer ) == AllTrim( numer ) .AND. cKontrahent == firma .AND. mc == Str( nM, 2 )
+            IF Empty( nRecNo ) .OR. nRecNo <> RecNo()
+               AAdd( aLista, { ;
+                  'recno' => RecNo(), ;
+                  'nip' => AllTrim( nr_ident ), ;
+                  'nazwa' => AllTrim( nazwa ), ;
+                  'data' => hb_Date( Val( param_rok ), Val( mc ), Val( dzien ) ) } )
+            ENDIF
+            dbSkip()
+         ENDDO
       ENDIF
    NEXT
 
    dbCloseArea()
    Select(nPopArea)
+
+   IF Len( aLista ) > 0
+      cKom := "Dokument o podanym numerze ju¾ istnieje w bazie;"
+      FOR nM := 1 TO Len( aLista )
+         cKom := cKom + ";Data: " + DToC( aLista[ nM ][ 'data' ] ) + ;
+            ", NIP: " + aLista[ nM ][ 'nip' ] + ;
+            ", Kontrahent: " + SubStr( aLista[ nM ][ 'nazwa' ], 1, 30 )
+      NEXT
+      Komunikat( cKom, CColInf )
+   ENDIF
 
    RETURN
 
