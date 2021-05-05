@@ -1434,7 +1434,7 @@ FUNCTION JPK_V7_DaneDek( aDane )
 
    hDane['Rok'] := AllTrim( param_rok )
 
-   hDane['Miesiac'] := AllTrim( p5a )
+   hDane['Miesiac'] := Val( p5a )
    hDane['Spolka'] := spolka_
    IF spolka_
       hDane['PelnaNazwa'] := str2sxml( AllTrim( P8 ) )

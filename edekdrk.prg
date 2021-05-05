@@ -297,8 +297,10 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
    CASE 'JPKV7M-1'
    CASE 'JPKV7K-1'
       hDane := DaneXML_JPKV7w1( oDoc, cNrRef )
-      cPlikRap := 'frf\jpkv7n_w1.frf'
-      AAdd( aRaporty, { hDane, cPlikRap } )
+      IF ! hDane[ 'JestDeklaracja' ]
+         cPlikRap := 'frf\jpkv7n_w1.frf'
+         AAdd( aRaporty, { hDane, cPlikRap } )
+      ENDIF
       IF hDane[ 'JestDeklaracja' ]
          cPlikRap := 'frf\jpkv7d_w1.frf'
          AAdd( aRaporty, { hDane, cPlikRap } )
@@ -7942,8 +7944,8 @@ FUNCTION DaneXML_JPKV7w1( oDoc, cNrRef, hNaglowek )
    hDane[ 'NazwaSystemu' ] :=  xmlWartoscH( aTemp, 'NazwaSystemu' )
    hDane[ 'KodUrzedu' ] := xmlWartoscH( aTemp, 'KodUrzedu' )
    hDane[ 'Rok' ] := sxml2num( xmlWartoscH( aTemp, 'Rok' ) )
-   hDane[ 'Miesiac' ] := sxml2num( xmlWartoscH( aTemp, 'Miesiac' ) )
-   hDane[ 'Kwartal' ] := sxml2num( xmlWartoscH( aTemp, 'Kwartal' ) )
+   hDane[ 'Miesiac' ] := sxml2num( xmlWartoscH( aTemp, 'Miesiac' ), 0 )
+   hDane[ 'Kwartal' ] := sxml2num( xmlWartoscH( aTemp, 'Kwartal' ), 0 )
    cTmp := xmlWartoscH( aTemp, 'KodUrzedu' )
    hDane[ 'UrzadSkarbowy' ] := iif( cTmp != '', KodUS2Nazwa( cTmp ), '' )
    hDane[ 'NrRef' ] := iif( HB_ISSTRING( cNrRef ), cNrRef, '' )

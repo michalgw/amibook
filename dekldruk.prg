@@ -190,8 +190,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
    CASE 'JPKV7M-1'
    CASE 'JPKV7K-1'
       hDane := DaneDek_JPKV7w1( xDane )
-      cPlikRap := 'frf\jpkv7n_w1.frf'
-      AAdd( aRaporty, { hDane, cPlikRap } )
+      IF ! hDane[ 'JestDeklaracja' ]
+         cPlikRap := 'frf\jpkv7n_w1.frf'
+         AAdd( aRaporty, { hDane, cPlikRap } )
+      ENDIF
       IF hDane[ 'JestDeklaracja' ]
          cPlikRap := 'frf\jpkv7d_w1.frf'
          AAdd( aRaporty, { hDane, cPlikRap } )
@@ -5549,7 +5551,7 @@ FUNCTION DaneDek_JPKV7w1( aDaneZrd )
    IF aDaneZrd[ 'Kwartalnie' ]
       aDane[ 'Kwartal' ] := aDaneZrd[ 'Kwartal' ]
    ELSE
-      aDane[ 'Kwartal' ] := ''
+      aDane[ 'Kwartal' ] := 0
    ENDIF
    aDane[ 'Miesiac' ] := aDaneZrd[ 'Miesiac' ]
    cTmp := aDaneZrd[ 'KodUrzedu' ]
