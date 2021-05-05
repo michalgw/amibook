@@ -35,8 +35,9 @@ PROCEDURE KRejS()
    PRIVATE zWart07, zVat07, zWart22, zVat22, zWart12, zVat12, zNetto, zExport, zUe
    PRIVATE zKraj, zSek_CV7, zRach, zDetal, zKorekta, zRozrZapS, zZap_Ter, zZap_Dat
    PRIVATE zZap_Wart, zTrojstr, zKOL36, zKOL37, zKOL38, zKOL39, zNETTO2, zKOLUMNA2
-   PRIVATE zNETTOOrg, zOPCJE, zPROCEDUR, zRODZDOW, cScrRodzDow, zVATMARZA
+   PRIVATE zNETTOOrg, zOPCJE, zPROCEDUR, zRODZDOW, cScrRodzDow, zVATMARZA, fDETALISTA
 
+   fDETALISTA := DETALISTA
 
    zexport := 'N'
    scr_kolumC := .F.
@@ -86,7 +87,6 @@ PROCEDURE KRejS()
       kl := Inkey( 0 )
       Ster()
       DO CASE
-      *########################### INSERT/MODYFIKACJA #############################
       CASE kl == K_ALT_K
          Kalkul()
       CASE kl == K_ALT_N
@@ -100,6 +100,15 @@ PROCEDURE KRejS()
          IF ! &_bot
             DO &_proc
          ENDIF
+      CASE kl == Asc( 'B' ) .OR. kl == Asc( 'b' )
+         IF fDETALISTA == 'T'
+            fDETALISTA := 'N'
+         ELSE
+            fDETALISTA := 'T'
+         ENDIF
+         @ 2, 70 SAY iif( fDETALISTA <> 'T', ' netto  ', ' brutto ' )
+         Komun( "Zmieniono metod© wprowadzania kwot na " + iif( fDETALISTA <> 'T', 'NETTO', 'BRUTTO' ) )
+      *########################### INSERT/MODYFIKACJA #############################
       CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. &_top_bot ) .AND. kl # K_ESC .AND. kl # K_F1
          @ 1, 47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
@@ -159,7 +168,7 @@ PROCEDURE KRejS()
                zKRAJ := 'PL'
                zSEK_CV7 := '  '
                zRACH := 'F'
-               zDETAL := DETALISTA
+               zDETAL := fDETALISTA
                zKOREKTA := 'N'
                zROZRZAPS := pzROZRZAPS
                zZAP_TER := 0
@@ -291,7 +300,7 @@ PROCEDURE KRejS()
                @  7, 71 GET zOPCJE    PICTURE '@S8 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
                @  8, 64 GET zPROCEDUR PICTURE '@S15 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
                @  9, 77 GET zSEK_CV7  PICTURE '!!' WHEN wfsSEK_CV7( 9, 78 ) VALID vfsSEK_CV7( 9, 78 )
-               IF DETALISTA <> 'T'
+               IF fDETALISTA <> 'T'
                   @ 12, 14 GET zWART22 PICTURE FPIC VALID SUMPODs()
                   @ 12, 31 GET zVAT22  PICTURE FPIC WHEN SUMPOws( 'zvat22' ) VALID SUMPODs()
                   @ 13, 14 GET zWART07 PICTURE FPIC VALID SUMPODs()
@@ -1103,23 +1112,24 @@ PROCEDURE KRejS()
       case kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 12 ]
+         DECLARE pppp[ 13 ]
          *---------------------------------------
          pppp[  1 ] := '                                                        '
-         pppp[  2 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
-         pppp[  3 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
-         pppp[  4 ] := '   [Ins]...................wpisywanie                   '
-         pppp[  5 ] := '   [M].....................modyfikacja pozycji          '
-         pppp[  6 ] := '   [I].....................import z pliku JPK           '
-         pppp[  7 ] := '   [W].....................grupowa weryf. stat. VAT     '
-         pppp[  8 ] := '   [Del]...................kasowanie pozycji            '
-         pppp[  9 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 10 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 11 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 12 ] := '                                                        '
+         pppp[  2 ] := '   [PgUp/PgDn]...poprzednia/nast©pna strona             '
+         pppp[  3 ] := '   [Home/End]....pierwsza/ostatnia pozycja              '
+         pppp[  4 ] := '   [Ins].........wpisywanie                             '
+         pppp[  5 ] := '   [M]...........modyfikacja pozycji                    '
+         pppp[  6 ] := '   [I]...........import z pliku JPK                     '
+         pppp[  7 ] := '   [W]...........grupowa weryf. stat. VAT               '
+         pppp[  8 ] := '   [B]...........przeˆ¥cz wprowadzanie nettem/bruttem   '
+         pppp[  9 ] := '   [Del].........kasowanie pozycji                      '
+         pppp[ 10 ] := '   [F9 ].........szukanie zˆo¾one                       '
+         pppp[ 11 ] := '   [F10].........szukanie dnia                          '
+         pppp[ 12 ] := '   [Esc].........wyj˜cie                                '
+         pppp[ 13 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO I
-         i := 12
+         i := 13
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -1154,6 +1164,7 @@ PROCEDURE say1s()
 ***********************
    KRejSRysujTlo()
    CLEAR TYPE
+   @ 2, 70 SAY iif( fDETALISTA <> 'T', ' netto  ', ' brutto ' )
    SELECT rejs
    SET COLOR TO +w
    @  3, 20 SAY DZIEN
