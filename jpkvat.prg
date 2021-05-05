@@ -1344,6 +1344,10 @@ FUNCTION JPK_Dane_Firmy( nFirma, aRes )
          aRes[ 'Nazwisko' ] := SubStr( spolka->naz_imie, 1, At( ' ', spolka->naz_imie ) )
          aRes[ 'ImiePierwsze' ] := SubStr( spolka->naz_imie, At( ' ', spolka->naz_imie ) + 1 )
          aRes[ 'DataUrodzenia' ] := spolka->data_ur
+      ELSE
+         Komunikat( "Prosz© wybra† nazwisko peˆnomocnika lub wˆa˜ciciela w informacji o firmie." )
+         close_()
+         RETURN .F.
       ENDIF
       spolka->( dbCloseArea() )
    ENDIF

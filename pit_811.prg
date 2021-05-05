@@ -297,7 +297,13 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
          P6_kod := AllTrim( kodurzedu )
       ELSE
          P6 := Space( 60 )
+         P6_kod := ''
       ENDIF
+      IF P6_kod == ''
+         Komunikat( "Prosz© uzupeˆni† kod urz©du skarbowego." )
+         BREAK
+      ENDIF
+
       IF spolka_
          SELECT firma
          P8 := AllTrim( nazwa )
@@ -328,6 +334,8 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
             P9 := space( 60 )
             P10 := space( 11 )
             P11 := space( 8 )
+            Komunikat( "Prosz© wybra† nazwisko peˆnomocnika lub wˆa˜ciciela w informacji o firmie." )
+            BREAK
          ENDIF
       ENDIF
       SELECT organy

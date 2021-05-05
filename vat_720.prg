@@ -1144,6 +1144,10 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          P6 := Space( 60 )
          P6a := ''
       ENDIF
+      IF Empty( P6a )
+         Komunikat( "Brak kodu urz©du.;Prosz© uzupeˆni† lub wybra† odpowiedni urz¥d skarbowy" )
+         BREAK
+      ENDIF
       p8p := ''
       IF spolka_
          SELECT firma
@@ -1173,6 +1177,8 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             P8i := ''
             P8p := ''
             P11 := Space( 10 )
+            Komunikat( "Prosz© wybra† nazwisko peˆnomocnika lub wˆa˜ciciela w informacji o firmie." )
+            BREAK
          ENDIF
       ENDIF
       IF spolka_
