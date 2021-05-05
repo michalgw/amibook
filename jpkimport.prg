@@ -1631,7 +1631,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
             aPozDek[ 'zwart22' ] := HGetDefault( aPoz, 'P_13_1', 0 )
             aPozDek[ 'zvat22' ] := HGetDefault( aPoz, 'P_14_1', 0 )
 
-            aPozDek[ 'zwart08' ] := 0
+            aPozDek[ 'zwart08' ] := HGetDefault( aPoz, 'P_13_5', 0 )
             aPozDek[ 'zwart00' ] := 0
 
             IF aPoz[ 'P_18' ]
@@ -2696,7 +2696,7 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
          zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
          zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 100 ) )
          zADRES := iif( Upper( AllTrim( aPoz[ 'zadres' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'zadres' ], 100 ) )
-         zTRESC := Space( 30 )
+         zTRESC := aDane[ 'OpisZd' ]
 
          zWYR_TOW := 0
          zUSLUGI := 0
