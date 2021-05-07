@@ -127,7 +127,7 @@ PROCEDURE P_Rycz( okres )
       kl := LastKey()
       DO CASE
       *################################## ZESTAW_R #################################
-      CASE kl == K_ENTER .OR. kl == K_LDBLCKL
+      CASE kl == K_ENTER .OR. kl == K_LDBLCLK
          SAVE SCREEN TO scr2
          nr_rec := RecNo()
          Zestaw_R( Okres )
