@@ -1547,7 +1547,18 @@ public aUMOWYdbf := {;
    { "ZAOPOD", "N", 1, 0 },;                      //  82
    { "OSWIAD26R", "C", 1, 0 },;                   //  83
    { "STAW_PODA2", "N", 5, 2 },;                  //  84
-   { "POTRACENIA", "N", 12, 2 } }                 //  85
+   { "POTRACENIA", "N", 12, 2 },;                 //  85
+   { "PPK", "C", 1, 0 },;                         //  86 PPK aktywne
+   { "PPKZS1", "N", 5, 2 },;                      //  87 PPK Wpˆata podstawowa pracownik¢w - stawka
+   { "PPKZK1", "N", 8, 2 },;                      //  88 PPK Wpˆata podstawowa pracownik¢w - kwota
+   { "PPKZS2", "N", 5, 2 },;                      //  89 PPK Wpˆata dodatkowa pracownik¢w - stawka
+   { "PPKZK2", "N", 8, 2 },;                      //  90 PPK Wpˆata dodatkowa pracownik¢w - kwota
+   { "PPKPS1", "N", 5, 2 },;                      //  91 PPK Wpˆata podstawowa pracodawcy - stawka
+   { "PPKPK1", "N", 8, 2 },;                      //  92 PPK Wpˆata podstawowa pracodawcy - kwota
+   { "PPKPS2", "N", 5, 2 },;                      //  93 PPK Wpˆata dodatkowa pracodawcy - stawka
+   { "PPKPK2", "N", 8, 2 },;                      //  94 PPK Wpˆata dodatkowa pracodawcy - kwota
+   { "PPKPPM", "N", 8, 2 },;                      //  95 PPK Wpˆaty pracodawcy z pop. miesi¥ca
+   { "PPKIDEPPK", "C", 50, 0 } }                  //  96 PPK Identyfikator ewidencji PPK uczestnika PPK
 
 // Create: URZEDY.DBF
 public aURZEDYdbf := {;
