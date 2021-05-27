@@ -208,7 +208,7 @@ FUNCTION Etaty( mieskart )
          @  4, 68 GET zdata_zwol PICTURE '@D'
          @  5, 49 GET zodliczenie PICTURE '!' VALID vodlicz()
          @  5, 66 GET zOSWIAD26R PICTURE '!' VALID voswiad26r()
-         @  5, 75 GET zPPK PICTURE '!' VALID etatyvppk()
+         @  5, 75 GET zPPK PICTURE '!' VALID etatyvppk( 5, 76 )
          @  6, 43 GET zwyksztalc PICTURE '@S37 ' + repl( 'X', 40 )
          @  7, 43 GET zzawod_wyu PICTURE '@S37 ' + repl( 'X', 40 )
          @ 22,  8 GET zuwagi
@@ -799,20 +799,22 @@ FUNCTION voswiad26r()
    ENDIF
    RETURN R
 
-FUNCTION etatyvppk()
+FUNCTION etatyvppk( nTNRow, nTNCol )
 
    LOCAL GetList := {}
    LOCAL R := .F.
    LOCAL cEkran
+   LOCAL cKolor
 
    IF zPPK $ 'TN'
-      @ 5, 76 SAY iif( zPPK == 'T', 'ak', 'ie' )
+      @ nTNRow, nTNCol SAY iif( zPPK == 'T', 'ak', 'ie' )
       R := .T.
       IF zPPK == 'T'
          IF prac->ppk <> 'T' .AND. zPPKZS1 == 0
             zPPKZS1 := parpk_sz
          ENDIF
          SAVE SCREEN TO cEkran
+         cKolor := ColStd()
          @  6, 40 CLEAR TO 15, 79
          @  6, 40 TO 15, 79
          @  6, 42 SAY 'PPK - wpˆata podstawowa'
@@ -834,6 +836,7 @@ FUNCTION etatyvppk()
          @ 14, 66 GET zPPKIDPZIF PICTURE '@S12 ' + Replicate( '!', 50 )
          READ
          RESTORE SCREEN FROM cEkran
+         SetColor( cKolor )
       ENDIF
    ENDIF
 
