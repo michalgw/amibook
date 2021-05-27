@@ -405,7 +405,7 @@ do while .t.
               set curs on
               @  9,42 clear to 21,79
               @  9,42 to 21,79
-              @ 10,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) VALID zOSWIAD26R $ 'TN' .AND. oblpl()
+              @ 10,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID zOSWIAD26R $ 'TN' .AND. oblpl()
               @ 11,43 say 'Podatek stawka..........%.='
               @ 11,62 get zSTAW_PODAT pict '99.99' valid oblpl()
               @ 11,71 get B5          pict '99999.99' when oblpl().and..f.
@@ -1045,7 +1045,7 @@ if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    zWYMIARL=iif(zWYMIARL=0,WYMIARL,zWYMIARL)
    zWYMIARM=iif(zWYMIARM=0,WYMIARM,zWYMIARM)
 
-   zOSWIAD26R := OSWIAD26R
+   //zOSWIAD26R := OSWIAD26R
 
    //002 nowe linie
    zJAKI_PRZEL=prac->JAKI_PRZEL
