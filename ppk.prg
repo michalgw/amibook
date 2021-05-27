@@ -93,10 +93,16 @@ METHOD WczytajDane( lPPKAktywni ) CLASS TPPK
          RETURN .F.
       ENDIF
       etaty->( ordSetFocus( 2 ) )
+      IF ! DostepPro( 'UMOWY', , .T., , 'UMOWY' )
+         etaty->( dbCloseArea() )
+         prac->( dbCloseArea() )
+         RETURN .F.
+      ENDIF
+      umowy->( ordSetFocus( 1 ) )
    ENDIF
 
    DO WHILE ! prac->( Eof() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
-      IF prac->status $ 'EU' .AND. prac->ppk $ iif( lPPKAktywni, 'T', ' N' )
+      IF /* prac->status $ 'EU' .AND. */ prac->ppk $ iif( lPPKAktywni, 'T', ' N' )
          aPrac := hb_Hash( 'wybrany', .F. )
          aPrac[ 'id' ] := iif( Len( AllTrim( prac->ppkidkadr ) ) == 0, AllTrim( Str( prac->rec_no ) ), AllTrim( prac->ppkidkadr ) )
          aPrac[ 'imie' ] := AllTrim( prac->imie1 )
@@ -132,16 +138,34 @@ METHOD WczytajDane( lPPKAktywni ) CLASS TPPK
          aPrac[ 'id_pzif' ] := AllTrim( prac->ppkidpzif )
 
          IF HB_ISCHAR( ::cMiesiac )
+            aPrac[ 'wart_podst_pracownika' ] := 0
+            aPrac[ 'wart_dodat_pracownika' ] := 0
+            aPrac[ 'wart_podst_pracodawcy' ] := 0
+            aPrac[ 'wart_dodat_pracodawcy' ] := 0
+            aPrac[ 'ppk' ] := .F.
             etaty->( dbSeek( '+' + ident_fir + ::cMiesiac + Str( prac->rec_no, 5 ) ) )
             IF etaty->( Found() ) .AND. etaty->ppk == 'T'
                aPrac[ 'ppk' ] := .T.
                aPrac[ 'okres' ] := param_rok + '-' + StrTran( ::cMiesiac, ' ', '0' )
-               aPrac[ 'wart_podst_pracownika' ] := etaty->ppkzk1
-               aPrac[ 'wart_dodat_pracownika' ] := etaty->ppkzk2
-               aPrac[ 'wart_podst_pracodawcy' ] := etaty->ppkpk1
-               aPrac[ 'wart_dodat_pracodawcy' ] := etaty->ppkpk2
-            ELSE
-               aPrac[ 'ppk' ] := .F.
+               aPrac[ 'wart_podst_pracownika' ] := aPrac[ 'wart_podst_pracownika' ] + etaty->ppkzk1
+               aPrac[ 'wart_dodat_pracownika' ] := aPrac[ 'wart_dodat_pracownika' ] + etaty->ppkzk2
+               aPrac[ 'wart_podst_pracodawcy' ] := aPrac[ 'wart_podst_pracodawcy' ] + etaty->ppkpk1
+               aPrac[ 'wart_dodat_pracodawcy' ] := aPrac[ 'wart_dodat_pracodawcy' ] + etaty->ppkpk2
+            ENDIF
+            umowy->( dbSeek( '+' + Str( prac->rec_no, 5, 0 ) ) )
+            IF umowy->( Found() )
+               DO WHILE ! umowy->( Eof() ) .AND. umowy->ident == Str( prac->rec_no, 5, 0 )
+                  IF umowy->data_wyp >= hb_Date( Val( param_rok ), Val( ::cMiesiac ), 1 ) ;
+                     .AND. umowy->data_wyp <= EoM( hb_Date( Val( param_rok ), Val( ::cMiesiac ), 1 ) )
+                     aPrac[ 'ppk' ] := .T.
+                     aPrac[ 'okres' ] := param_rok + '-' + StrTran( ::cMiesiac, ' ', '0' )
+                     aPrac[ 'wart_podst_pracownika' ] := aPrac[ 'wart_podst_pracownika' ] + umowy->ppkzk1
+                     aPrac[ 'wart_dodat_pracownika' ] := aPrac[ 'wart_dodat_pracownika' ] + umowy->ppkzk2
+                     aPrac[ 'wart_podst_pracodawcy' ] := aPrac[ 'wart_podst_pracodawcy' ] + umowy->ppkpk1
+                     aPrac[ 'wart_dodat_pracodawcy' ] := aPrac[ 'wart_dodat_pracodawcy' ] + umowy->ppkpk2
+                  ENDIF
+                  umowy->( dbSkip() )
+               ENDDO
             ENDIF
          ENDIF
 
@@ -152,6 +176,7 @@ METHOD WczytajDane( lPPKAktywni ) CLASS TPPK
 
    IF HB_ISCHAR( ::cMiesiac )
       etaty->( dbCloseArea() )
+      umowy->( dbCloseArea() )
    ENDIF
    prac->( dbCloseArea() )
 

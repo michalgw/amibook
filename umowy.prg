@@ -1,4 +1,4 @@
-/************************************************************************
+   /************************************************************************
 
 AMi-BOOK
 
@@ -48,12 +48,12 @@ PROCEDURE Umowy()
    @ 14, 0 SAY '≥ Opis...                                                                      ≥'
    @ 15, 0 SAY '≥ prac...                                                                      ≥'
    //002a nowe pole
-   @ 16, 0 say '≥ Przychody opodatkowane =                 Z jakiego tytu&_l.u ?                  ≥'
-   @ 17, 0 say '≥ Sk&_l.adki wykonawcy      =     %             Przych&_o.d netto=                   ≥'
-   @ 18, 0 say '≥ Koszt uzyskania        =  %              Do opodatkowania=                   ≥'
-   @ 19, 0 say '≥ Wyliczenie podatku     =     %                 DO WYP&__L.ATY=                   ≥'
-   @ 20, 0 say '≥ Sk&_l.adki zleceniodawcy  =     %                 Fundusze  =     %             ≥'
-   @ 21, 0 say '≥ Potr•cenia po opodat.  =                                                     ≥'
+   @ 16, 0 say '≥ Przychody opodatkowane =                 Z jakiego tytuàu ?                  ≥'
+   @ 17, 0 say '≥ Skàadki wykonawcy      =     %           Prac. Plany Kap.=                   ≥'
+   @ 18, 0 say '≥ Koszt uzyskania        =  %                Przych¢d netto=                   ≥'
+   @ 19, 0 say '≥ Wyliczenie podatku     =     %           Do opodatkowania=                   ≥'
+   @ 20, 0 say '≥ Skàadki zleceniodawcy  =     %                 DO WYPùATY=                   ≥'
+   @ 21, 0 say '≥ Potr•cenia po opodat.  =                       Fundusze  =     %             ≥'
    @ 22, 0 say '¿ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒŸ'
 
    *############################### OTWARCIE BAZ ###############################
@@ -192,7 +192,7 @@ PROCEDURE Umowy()
                ENDCASE
 
                zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
-
+               zPPK := iif( PPK $ 'TN', PPK, 'N' )
                SELECT prac
                SET ORDER TO 4
                SEEK Val( zident )
@@ -364,12 +364,22 @@ PROCEDURE Umowy()
             zUWAGI     , ;
             B5         , ;
             SKLADN     , ;
-            zPOTRACENIA
+            zPOTRACENIA, ;
+            zPPKZS1    , ;
+            zPPKZK1    , ;
+            zPPKZS2    , ;
+            zPPKZK2    , ;
+            zPPKPS1    , ;
+            zPPKPK1    , ;
+            zPPKPS2    , ;
+            zPPKPK2    , ;
+            zPPKPPM
+
             *zZAOPOD    ,;
             *zJAKZAO='Z'
          zTYTUL := TYTUL
          zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
-
+         zPPK := ' '
          DO CASE
          *case TYTUL='0'
          *zTYT='O' //organy stanowiace
@@ -422,12 +432,13 @@ PROCEDURE Umowy()
             ColStd()
             @ 16,  1 PROMPT ' Przychody opodatkowane '
             //002a nowa linia
-            @ 16, 42 PROMPT ' Z jakiego tytu&_l.u ?'
-            @ 17,  1 PROMPT ' Sk&_l.adki wykonawcy      '
+            @ 16, 42 PROMPT ' Z jakiego tytuàu ?'
+            @ 17,  1 PROMPT ' Skàadki wykonawcy      '
             @ 18,  1 PROMPT ' Koszt uzyskania        '
             @ 19,  1 PROMPT ' Wyliczenie podatku     '
-            @ 20,  1 PROMPT ' Sk&_l.adki zleceniodawcy  '
+            @ 20,  1 PROMPT ' Skàadki zleceniodawcy  '
             @ 21,  1 PROMPT ' Potr•cenia po opodat.  '
+            @ 17, 42 PROMPT ' Prac. Plany Kap.'
             skladn := menu( skladn )
             ColStd()
             IF LastKey() == 27
@@ -546,6 +557,41 @@ PROCEDURE Umowy()
                READ
                SET CURSOR OFF
                RESTORE SCREEN FROM scr_sklad
+            CASE skladn == 8
+               SAVE SCREEN TO scr_sklad
+               SET CURSOR ON
+               zOLD_PPK := zPPK
+               bPPKValid := { | |
+                  IF zPPK $ 'TN'
+                     IF zPPK == 'T' .AND. zOLD_PPK <> 'T' ;
+                        .AND. TNEsc( , "Czy podstawiÜ domyòlne parametry? (T/N)" )
+                        zPPKZS1 := prac->ppkzs1
+                        zPPKPS1 := parpk_sp
+                        zPPKZS2 := prac->ppkzs2
+                        zPPKPS2 := prac->ppkps2
+                     ENDIF
+                     RETURN .T.
+                  ELSE
+                     RETURN .F.
+                  ENDIF
+               }
+               @ 11, 4 clear TO 21, 41
+               @ 11, 4 TO 21, 41
+               @ 12, 5 say 'Udziaà pracownika w PPK' get zPPK pict '!' valid Eval( bPPKValid ) .AND. oblplu()
+               @ 13, 5 say 'WPùATY PRACOWNIKA'
+               @ 14, 5 say 'Podst. stawka' get zPPKZS1 pict '99.99' when zPPK == 'T' valid oblplu()
+               @ 14,24 say '% kwota' get zPPKZK1 pict '9999.99' when zPPK == 'T' .AND. oblplu() .AND. .F.
+               @ 15, 5 say 'Dodat. stawka' get zPPKZS2 pict '99.99' when zPPK == 'T' valid oblplu()
+               @ 15,24 say '% kwota' get zPPKZK2 pict '9999.99' when zPPK == 'T' .AND. oblplu() .AND. .F.
+               @ 16, 5 say 'WPùATY PRACODAWCY'
+               @ 17, 5 say 'Podst. stawka' get zPPKPS1 pict '99.99' when zPPK == 'T' valid oblplu()
+               @ 17,24 say '% kwota' get zPPKPK1 pict '9999.99' when zPPK == 'T' .AND. oblplu() .AND. .F.
+               @ 18, 5 say 'Dodat. stawka' get zPPKPS2 pict '99.99' when zPPK == 'T' valid oblplu()
+               @ 18,24 say '% kwota' get zPPKPK2 pict '9999.99' when zPPK == 'T' .AND. oblplu() .AND. .F.
+               @ 20, 5 say 'Dolicz do podstawy opodat.' get zPPKPPM pict '9999.99' when Eval( { || zPPKPPM := zPPKPK1 + zPPKPK2, .T. } ) valid oblplu()
+               read
+               SET CURSOR OFF
+               RESTORE SCREEN FROM scr_sklad
             ENDCASE
             //002a zmiana skladn z 2 na 3
             IF LastKey() # 27 .OR. skladn == 3
@@ -559,12 +605,13 @@ PROCEDURE Umowy()
          ENDDO
          @ 16,  1 SAY ' Przychody opodatkowane '
          //002a nowa linia
-         @ 16, 42 SAY ' Z jakiego tytu&_l.u ?'
-         @ 17,  1 SAY ' Sk&_l.adki wykonawcy      '
+         @ 16, 42 SAY ' Z jakiego tytuàu ?'
+         @ 17,  1 SAY ' Skàadki wykonawcy      '
          @ 18,  1 SAY ' Koszt uzyskania        '
          @ 19,  1 SAY ' Wyliczenie podatku     '
-         @ 20,  1 SAY ' Sk&_l.adki zleceniodawcy  '
+         @ 20,  1 SAY ' Skàadki zleceniodawcy  '
          @ 21,  1 SAY ' Potr•cenia po opodat.  '
+         @ 17, 42 SAY ' Prac. Plany Kap.'
          RESTORE SCREEN FROM scr_
       *################################### POMOC ##################################
       CASE kl == 28
@@ -765,6 +812,22 @@ PROCEDURE TRANTEK()
    TEKSTDR := StrTran( TEKSTDR, '#WAR_FFG', AllTrim( kwota( WAR_FFG, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@POTRACENIA', kwota( POTRACENIA, 11, 2 ) )
    TEKSTDR := StrTran( TEKSTDR, '#POTRACENIA', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PPKZS1', kwota( PPKZS1, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKZS1', AllTrim( kwota( POTRACENIA, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PPKZK1', kwota( PPKZK1, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKZK1', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PPKZS2', kwota( PPKZS2, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKZS2', AllTrim( kwota( POTRACENIA, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PPKZK2', kwota( PPKZK2, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKZK2', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PPKPK1', kwota( PPKPK1, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKPK1', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PPKPS2', kwota( PPKPS2, 5, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKPS2', AllTrim( kwota( POTRACENIA, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PPKPK2', kwota( PPKPK2, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKPK2', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PPKPPM', kwota( PPKPPM, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKPPM', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
    //?tekstdr
    //ejec
    //set print off
@@ -909,18 +972,19 @@ FUNCTION _infoskl_u()
    //002a do tad
    @ 17, 26 SAY STAW_PSUM PICTURE '99.99'
    @ 17, 33 SAY WAR_PSUM PICTURE '999999.99'
-   @ 17, 60 SAY BRUT_ZASAD-WAR_PSUM PICTURE '999999.99'
+   @ 17, 60 SAY PPKPK1 + PPKPK2 + PPKZK1 + PPKZK2 pict '99 999.99'
+   @ 18, 60 SAY BRUT_ZASAD-WAR_PSUM PICTURE '999999.99'
    @ 18, 26 SAY KOSZTY PICTURE '99'
    @ 18, 30 SAY AKOSZT PICTURE '!'
    @ 18, 33 SAY KOSZT PICTURE '999999.99'
-   @ 18, 60 SAY DOCHOD PICTURE '999999.99'
+   @ 19, 60 SAY DOCHOD PICTURE '999999.99'
    @ 19, 26 SAY STAW_PODA2 PICTURE "99.99"
    @ 19, 33 SAY PODATEK PICTURE "999999.99"
-   @ 19, 60 SAY DO_WYPLATY PICTURE "999999.99"
+   @ 20, 60 SAY DO_WYPLATY PICTURE "999999.99"
    @ 20, 26 SAY STAW_FUE + STAW_FUR + STAW_FUW PICTURE '99.99'
    @ 20, 33 SAY WAR_FUE + WAR_FUR + WAR_FUW PICTURE '999999.99'
-   @ 20, 60 SAY STAW_FFP + STAW_FFG PICTURE '99.99'
-   @ 20, 67 SAY WAR_FFP + WAR_FFG PICTURE '999999.99'
+   @ 21, 60 SAY STAW_FFP + STAW_FFG PICTURE '99.99'
+   @ 21, 67 SAY WAR_FFP + WAR_FFG PICTURE '999999.99'
    @ 21, 26 SAY POTRACENIA PICTURE '999999.99'
    SetColor( CURR )
 
@@ -950,7 +1014,7 @@ FUNCTION oblplu()
          zKOSZT := _round( ( zBRUT_ZASAD - zWAR_PSUM ) * ( zKOSZTY / 100 ), 2 )
       ENDIF
       zDOCHOD := zBRUT_RAZEM
-      zDOCHODPOD := _round( zDOCHOD, 0 )
+      zDOCHODPOD := _round( zDOCHOD + zPPKPPM, 0 )
       B5 := _round( zBRUT_RAZEM*( zSTAW_PODAT / 100 ), 0 )
       oWAR_PZK := min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
       oWAR_PUZ := min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
@@ -988,6 +1052,21 @@ FUNCTION oblplu()
       zWAR_FSUM := zWAR_FUE + zWAR_FUR + zWAR_FUW + zWAR_FFP + zWAR_FFG
       zSTAW_FSUM := zSTAW_FUE + zSTAW_FUR + zSTAW_FUW + zSTAW_FFP + zSTAW_FFG
       zSTAW_PSUM := zSTAW_PUE + zSTAW_PUR + zSTAW_PUC
+      IF zPPK == 'T'
+         zPPKZK1 := zPENSJA * ( zPPKZS1 / 100 )
+         zPPKPK1 := zPENSJA * ( zPPKPS1 / 100 )
+         zPPKZK2 := zPENSJA * ( zPPKZS2 / 100 )
+         zPPKPK2 := zPENSJA * ( zPPKPS2 / 100 )
+      ELSE
+         zPPKZS1 := 0
+         zPPKZK1 := 0
+         zPPKPS1 := 0
+         zPPKPK1 := 0
+         zPPKZS2 := 0
+         zPPKZK2 := 0
+         zPPKPS2 := 0
+         zPPKPK2 := 0
+      ENDIF
    ELSE
       zPENSJA := zBRUT_ZASAD
       zBRUT_RAZEM := zPENSJA
@@ -1009,7 +1088,7 @@ FUNCTION oblplu()
          zKOSZT := _round( ( zBRUT_ZASAD - zWAR_PSUM ) * ( zKOSZTY / 100 ), 2 )
       ENDIF
       zDOCHOD := Max( 0, zBRUT_RAZEM - ( zKOSZT + zWAR_PSUM ) )
-      zDOCHODPOD := _round( zDOCHOD, 0 )
+      zDOCHODPOD := _round( zDOCHOD + zPPKPPM, 0 )
       IF zOSWIAD26R = 'T'
          B5 := 0.0
          oWAR_PUZ := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
@@ -1062,6 +1141,21 @@ FUNCTION oblplu()
       zWAR_FSUM := zWAR_FUE + zWAR_FUR + zWAR_FUW + zWAR_FFP + zWAR_FFG
       zSTAW_FSUM := zSTAW_FUE + zSTAW_FUR + zSTAW_FUW + zSTAW_FFP + zSTAW_FFG
       zSTAW_PSUM := zSTAW_PUE + zSTAW_PUR + zSTAW_PUC
+      IF zPPK == 'T'
+         zPPKZK1 := zPENSJA * ( zPPKZS1 / 100 )
+         zPPKPK1 := zPENSJA * ( zPPKPS1 / 100 )
+         zPPKZK2 := zPENSJA * ( zPPKZS2 / 100 )
+         zPPKPK2 := zPENSJA * ( zPPKPS2 / 100 )
+      ELSE
+         zPPKZS1 := 0
+         zPPKZK1 := 0
+         zPPKPS1 := 0
+         zPPKPK1 := 0
+         zPPKZS2 := 0
+         zPPKZK2 := 0
+         zPPKPS2 := 0
+         zPPKPK2 := 0
+      ENDIF
    ENDIF
    RETURN .T.
 
@@ -1168,6 +1262,37 @@ PROCEDURE PODSTAWu()
 
    zPOTRACENIA := POTRACENIA
 
+   IF PPK $ 'TN'
+      zPPK := PPK
+      zPPKZS1 := PPKZS1
+      zPPKZK1 := PPKZK1
+      zPPKZS2 := PPKZS2
+      zPPKZK2 := PPKZK2
+      zPPKPS1 := PPKPS1
+      zPPKPK1 := PPKPK1
+      zPPKPS2 := PPKPS2
+      zPPKPK2 := PPKPK2
+      zPPKPPM := PPKPPM
+   ELSE
+      IF prac->ppk == 'T'
+         zPPK := 'T'
+         zPPKZS1 := prac->ppkzs1
+         zPPKPS1 := parpk_sp
+         zPPKZS2 := prac->ppkzs2
+         zPPKPS2 := prac->ppkps2
+      ELSE
+         zPPK := 'N'
+         zPPKZS1 := 0
+         zPPKZK1 := 0
+         zPPKPS1 := 0
+         zPPKPK1 := 0
+         zPPKZS2 := 0
+         zPPKZK2 := 0
+         zPPKPS2 := 0
+         zPPKPK2 := 0
+      ENDIF
+   ENDIF
+
    RETURN
 
 ***************************************************************************
@@ -1264,6 +1389,17 @@ PROCEDURE ZAPISZPLAu()
    repl_( 'OSWIAD26R', zOSWIAD26R )
 
    repl_( 'POTRACENIA', zPOTRACENIA )
+
+   repl_( 'PPK', zPPK )
+   repl_( 'PPKZS1', zPPKZS1 )
+   repl_( 'PPKZK1', zPPKZK1 )
+   repl_( 'PPKZS2', zPPKZS2 )
+   repl_( 'PPKZK2', zPPKZK2 )
+   repl_( 'PPKPS1', zPPKPS1 )
+   repl_( 'PPKPK1', zPPKPK1 )
+   repl_( 'PPKPS2', zPPKPS2 )
+   repl_( 'PPKPK2', zPPKPK2 )
+   repl_( 'PPKPPM', zPPKPPM )
 
    RETURN
 
