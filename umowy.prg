@@ -1,4 +1,4 @@
-   /************************************************************************
+/************************************************************************
 
 AMi-BOOK
 
@@ -1027,7 +1027,7 @@ FUNCTION oblplu()
       zWAR_PUZO := zWAR_PZK
       zPODATEK := _round( zBRUT_RAZEM * ( zSTAW_PODAT / 100 ), 0 )
       zNETTO := zBRUT_RAZEM - ( zPODATEK + zWAR_PSUM + zWAR_PUZ )
-      zDO_WYPLATY := zNETTO - zPOTRACENIA
+      zDO_WYPLATY := zNETTO - zPOTRACENIA - zPPKZK1 - zPPKZK2
       oWAR_FUE := _round( zPENSJA * ( zSTAW_FUE / 100 ), 2 )
       oWAR_FUR := _round( zPENSJA * ( zSTAW_FUR / 100 ), 2 )
       oWAR_FUW := _round( zPENSJA * ( zSTAW_FUW / 100 ), 2 )
@@ -1116,7 +1116,7 @@ FUNCTION oblplu()
          zPODATEK := Max( 0, _round( B5 - zWAR_PZK, 0 ) )
       ENDIF
       zNETTO := zBRUT_RAZEM - ( zPODATEK + zWAR_PSUM + zWAR_PUZ )
-      zDO_WYPLATY := zNETTO - zPOTRACENIA
+      zDO_WYPLATY := zNETTO - zPOTRACENIA - zPPKZK1 - zPPKZK2
       oWAR_FUE := _round( zPENSJA * ( zSTAW_FUE / 100 ), 2 )
       oWAR_FUR := _round( zPENSJA * ( zSTAW_FUR / 100 ), 2 )
       oWAR_FUW := _round( zPENSJA * ( zSTAW_FUW / 100 ), 2 )
