@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE Wyplacon()
 
-   LOCAL nMenu, aDane, aWiersz
+   LOCAL nMenu, aDane, aWiersz, cUktyjZero := 'N', cEkran := NIL
 
    PRIVATE _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
    PRIVATE _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15,koniep
@@ -125,12 +125,14 @@ PROCEDURE Wyplacon()
       komu := 'W'
       mcod := Val( miesiac )
       mcdo := Val( miesiac )
-      @ 23,  0 CLEAR TO 23, 79
-      @ 23,  0 SAY 'M-c od' GET mcod
-      @ 23, 10 SAY 'do' GET mcdo
-      @ 23, 16 SAY 'Nag&_l.&_o.wek' GET zparas_wyp PICTURE '@S20 ' + repl( 'X', 40 )
-      @ 23, 46 SAY 'Wszyscy/PESEL' GET komu PICTURE '!' VALID komu $ 'WP'
-      @ 23, 62 SAY 'PESEL' GET zpesel PICTURE repl( 'X', 11 ) WHEN komu == 'P' VALID v4_141w()
+      SAVE SCREEN TO cEkran
+      @ 22,  0 CLEAR TO 23, 79
+      @ 22,  0 SAY 'M-c od' GET mcod
+      @ 22, 10 SAY 'do' GET mcdo
+      @ 22, 16 SAY 'Nag&_l.&_o.wek' GET zparas_wyp PICTURE '@S20 ' + repl( 'X', 40 )
+      @ 22, 46 SAY 'Wszyscy/PESEL' GET komu PICTURE '!' VALID komu $ 'WP'
+      @ 22, 62 SAY 'PESEL' GET zpesel PICTURE repl( 'X', 11 ) WHEN komu == 'P' VALID v4_141w()
+      @ 23,  0 SAY 'Ukryj zerowe warto˜ci' GET cUktyjZero PICTURE '!' VALID cUktyjZero $ 'TN'
       read_()
       IF LastKey() == 27
          BREAK
@@ -156,63 +158,65 @@ PROCEDURE Wyplacon()
       GO TOP
       SEEK '+' + ident_fir
       DO WHILE &_koniec == .F. .AND. .NOT. Eof()
-         SELECT etaty
-         SEEK '+' + ident_fir + Str( prac->Rec_no, 5 ) + Str( mcod, 2 )
-         IF Found()
-            DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma == ident_fir .AND. ident == Str( prac->Rec_no, 5 ) .AND. mc >= Str( mcod, 2 ) .AND. mc<= Str( mcdo, 2 )
-               SELECT robwypza
-               ZAP
-               SELECT wyplaty
-               SEEK '+' + ident_fir + Str( prac->Rec_no, 5 ) + etaty->mc
-               IF Found()
-                  DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma == ident_fir .AND. ident == Str( prac->Rec_no, 5 ) .AND. mc == etaty->mc
-                     SELECT robwypza
-                     APPEND BLANK
-                     REPLACE data WITH wyplaty->data_wyp, rodzaj WITH 'W', kwota WITH wyplaty->kwota
-                     SELECT wyplaty
-                     SKIP
-                  ENDDO
-               ENDIF
-               SELECT zaliczki
-               SEEK '+' + ident_fir + Str( prac->Rec_no, 5 ) + etaty->mc
-               IF Found()
-                  DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma == ident_fir .AND. ident == Str( prac->Rec_no, 5 ) .AND. mc == etaty->mc
-                     SELECT robwypza
-                     APPEND BLANK
-                     REPLACE data WITH zaliczki->data_wyp, rodzaj WITH 'Z', kwota WITH zaliczki->kwota
-                     SELECT zaliczki
-                     SKIP
-                  ENDDO
-               ENDIF
-
-               SELECT robwyp
-               APPEND BLANK
-               REPLACE nazwisko WITH AllTrim( prac->nazwisko ) + ' ' + AllTrim( prac->imie1 ) + ' ' + AllTrim( prac->imie2 ), ;
-                  pesel WITH prac->pesel, ;
-                  mcwyp WITH etaty->mc, ;
-                  dowyplaty WITH etaty->do_wyplaty, ;
-                  podatek WITH etaty->podatek, ;
-                  dopit4 WITH etaty->do_pit4
-               SELECT robwypza
-               GO TOP
-               DO WHILE .NOT. Eof()
-                  SELECT robwyp
-                  IF robwypza->rodzaj == 'W'
-                     REPLACE wyplacono WITH robwypza->kwota, datawypla WITH robwypza->data
-                  ENDIF
-                  IF robwypza->rodzaj == 'Z'
-                     REPLACE zaliczka with robwypza->kwota, datazali WITH robwypza->data
-                  ENDIF
+         IF prac->status $ 'EU'
+            SELECT etaty
+            SEEK '+' + ident_fir + Str( prac->Rec_no, 5 ) + Str( mcod, 2 )
+            IF Found()
+               DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma == ident_fir .AND. ident == Str( prac->Rec_no, 5 ) .AND. mc >= Str( mcod, 2 ) .AND. mc<= Str( mcdo, 2 )
                   SELECT robwypza
-                  SKIP
-                  IF .NOT. Eof()
-                     SELECT robwyp
-                     APPEND BLANK
+                  ZAP
+                  SELECT wyplaty
+                  SEEK '+' + ident_fir + Str( prac->Rec_no, 5 ) + etaty->mc
+                  IF Found()
+                     DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma == ident_fir .AND. ident == Str( prac->Rec_no, 5 ) .AND. mc == etaty->mc
+                        SELECT robwypza
+                        APPEND BLANK
+                        REPLACE data WITH wyplaty->data_wyp, rodzaj WITH 'W', kwota WITH wyplaty->kwota
+                        SELECT wyplaty
+                        SKIP
+                     ENDDO
                   ENDIF
+                  SELECT zaliczki
+                  SEEK '+' + ident_fir + Str( prac->Rec_no, 5 ) + etaty->mc
+                  IF Found()
+                     DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma == ident_fir .AND. ident == Str( prac->Rec_no, 5 ) .AND. mc == etaty->mc
+                        SELECT robwypza
+                        APPEND BLANK
+                        REPLACE data WITH zaliczki->data_wyp, rodzaj WITH 'Z', kwota WITH zaliczki->kwota
+                        SELECT zaliczki
+                        SKIP
+                     ENDDO
+                  ENDIF
+
+                  SELECT robwyp
+                  APPEND BLANK
+                  REPLACE nazwisko WITH AllTrim( prac->nazwisko ) + ' ' + AllTrim( prac->imie1 ) + ' ' + AllTrim( prac->imie2 ), ;
+                     pesel WITH prac->pesel, ;
+                     mcwyp WITH etaty->mc, ;
+                     dowyplaty WITH etaty->do_wyplaty, ;
+                     podatek WITH etaty->podatek, ;
+                     dopit4 WITH etaty->do_pit4
+                  SELECT robwypza
+                  GO TOP
+                  DO WHILE .NOT. Eof()
+                     SELECT robwyp
+                     IF robwypza->rodzaj == 'W'
+                        REPLACE wyplacono WITH robwypza->kwota, datawypla WITH robwypza->data
+                     ENDIF
+                     IF robwypza->rodzaj == 'Z'
+                        REPLACE zaliczka with robwypza->kwota, datazali WITH robwypza->data
+                     ENDIF
+                     SELECT robwypza
+                     SKIP
+                     IF .NOT. Eof()
+                        SELECT robwyp
+                        APPEND BLANK
+                     ENDIF
+                  ENDDO
+                  SELECT etaty
+                  SKIP
                ENDDO
-               SELECT etaty
-               SKIP
-            ENDDO
+            ENDIF
          ENDIF
          SELECT prac
          SKIP
@@ -244,21 +248,23 @@ PROCEDURE Wyplacon()
 
          DO WHILE .NOT. Eof()
 
-            aWiersz := hb_Hash()
+            IF cUktyjZero == 'N' .OR. ( dowyplaty <> 0 .OR. wyplacono <> 0 .OR. zaliczka <> 0 .OR. podatek <> 0 )
+               aWiersz := hb_Hash()
 
-            aWiersz[ 'nazwisko' ] := AllTrim( nazwisko )
-            aWiersz[ 'pesel' ] := AllTrim( pesel )
-            aWiersz[ 'mcwyp' ] := mcwyp
-            aWiersz[ 'dowyplaty' ] := dowyplaty
-            aWiersz[ 'datawypla' ] := StrTran( DToC( datawypla ), '    .  .  ', '' )
-            aWiersz[ 'wyplacono' ] := wyplacono
-            aWiersz[ 'datazali' ] := StrTran( DToC( datazali ), '    .  .  ', '' )
-            aWiersz[ 'zaliczka' ] := zaliczka
-            //k9 := Transform( Val( kk4 ) - ( sumkk6mc + sumkk8mc + Val( k6 ) + Val( k8 ) ), '999999.99' )
-            aWiersz[ 'podatek' ] := podatek
-            aWiersz[ 'dopit4'] := StrTran( SubStr( dopit4, 1, 4 ) + '.' + SubStr( dopit4, 5, 2 ), '    .  ', '' )
+               aWiersz[ 'nazwisko' ] := AllTrim( nazwisko )
+               aWiersz[ 'pesel' ] := AllTrim( pesel )
+               aWiersz[ 'mcwyp' ] := mcwyp
+               aWiersz[ 'dowyplaty' ] := dowyplaty
+               aWiersz[ 'datawypla' ] := StrTran( DToC( datawypla ), '    .  .  ', '' )
+               aWiersz[ 'wyplacono' ] := wyplacono
+               aWiersz[ 'datazali' ] := StrTran( DToC( datazali ), '    .  .  ', '' )
+               aWiersz[ 'zaliczka' ] := zaliczka
+               //k9 := Transform( Val( kk4 ) - ( sumkk6mc + sumkk8mc + Val( k6 ) + Val( k8 ) ), '999999.99' )
+               aWiersz[ 'podatek' ] := podatek
+               aWiersz[ 'dopit4'] := StrTran( SubStr( dopit4, 1, 4 ) + '.' + SubStr( dopit4, 5, 2 ), '    .  ', '' )
 
-            AAdd( aDane[ 'wiersze' ], aWiersz )
+               AAdd( aDane[ 'wiersze' ], aWiersz )
+            ENDIF
 
             SKIP
          ENDDO
@@ -392,6 +398,10 @@ PROCEDURE Wyplacon()
    END
    IF _czy_close
       close_()
+   ENDIF
+
+   IF ! Empty( cEkran )
+      RESTORE SCREEN FROM cEkran
    ENDIF
 
    RETURN
