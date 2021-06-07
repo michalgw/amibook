@@ -238,7 +238,11 @@ PROCEDURE UmowySum()
                SELECT umowy
                SKIP 1
             ENDDO
+            SELECT prac
+            SKIP 1
+            SET EXACT OFF
          ENDDO
+         SET EXACT ON
 
          FRDrukuj( 'frf\umowy.frf', aDane )
 
