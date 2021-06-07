@@ -137,7 +137,11 @@ FUNCTION Etaty( mieskart )
          IF Empty( data_przy )
             kom( 3, '*u', ' Brak daty przyj&_e.cia do pracy ' )
          ELSE
-            etaty1()
+            IF ! Empty( data_zwol ) .AND. data_zwol < hb_Date( Val( param_rok ), 1, 1 ) ;
+               .AND. ! TNEsc( , 'Pracownik zostaˆ zwolniony. Czy kontynuowa†?  (T/N)' )
+            ELSE
+               etaty1()
+            ENDIF
          ENDIF
          RESTORE SCREEN FROM robs
       CASE kl == 107 .OR. kl == 75

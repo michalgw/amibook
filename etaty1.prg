@@ -239,9 +239,8 @@ do while .t.
             _infoskl_()
          endif
    case lastkey()=13
+
 *        @ 17,39 get zNADPL_SPO pict '!' when wNADPL() valid zNADPL_SPO$'NZD'.and.vNADPL()
-        do podstaw
-        save scre to scr_sklad
 *        set curs on
 *        @ 7,49 get zJAKZAO pict '!' when wJAKZAO(7,50) valid vJAKZAO(7,50)
 *         when wJAKZAO() valid zJAKZAO$'ZD'.and.vJAKZAO()
@@ -260,7 +259,14 @@ do while .t.
 *           unlock
 *           _infoskl_()
 *        endif
+      save scre to scr_sklad
       do while .t.
+         IF ! Empty( prac->data_zwol ) .AND. prac->data_zwol < hb_Date( Val( param_rok ), Val( miesiacpla ), 1 )
+            IF ! TNEsc( , 'Pracownik jest ju¾ zwolniony. Czy kontynuowa†? (T/N)' )
+               EXIT
+            ENDIF
+         ENDIF
+         do podstaw
          edi=0
          set color to /w
          @ 8+val(miesiacpla),1 say mmm[val(miesiacpla)]
