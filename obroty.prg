@@ -62,16 +62,18 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
             aPoz[ 'data' ] := dDataDok
             aPoz[ 'nazwa' ] := AllTrim( oper->nazwa )
             IF Left( oper->numer, 1 ) == Chr( 1 ) .OR. Left( oper->numer, 1 ) == Chr( 254 )
+               cKlucz := Left( oper->numer, 1 )
+               aPoz[ 'klucz' ] := cKlucz
                aPoz[ 'nr_dok' ] := AllTrim( SubStr( oper->numer, 2 ) )
                aPoz[ 'np' ] := iif( oper->wyr_tow + oper->uslugi > 0, oper->wyr_tow + oper->uslugi, 0 )
-               aPoz[ 'nr' ] := 0
+               aPoz[ 'nr' ] := iif( oper->zakup + oper->uboczne + oper->wynagr_g + oper->wydatki > 0, oper->zakup + oper->uboczne + oper->wynagr_g + oper->wydatki, 0 )
                aPoz[ 'bp' ] := iif( oper->wyr_tow + oper->uslugi > 0, oper->wyr_tow + oper->uslugi, 0 )
-               aPoz[ 'br' ] := 0
+               aPoz[ 'br' ] := iif( oper->zakup + oper->uboczne + oper->wynagr_g + oper->wydatki > 0, oper->zakup + oper->uboczne + oper->wynagr_g + oper->wydatki, 0 )
             ELSE
                aPoz[ 'nr_dok' ] := AllTrim( oper->numer )
-               aPoz[ 'np' ] := 0
+               aPoz[ 'np' ] := oper->wyr_tow + oper->uslugi
                aPoz[ 'nr' ] := oper->zakup + oper->uboczne + oper->wynagr_g + oper->wydatki
-               aPoz[ 'bp' ] := 0
+               aPoz[ 'bp' ] := oper->wyr_tow + oper->uslugi
                aPoz[ 'br' ] := oper->zakup + oper->uboczne + oper->wynagr_g + oper->wydatki
             ENDIF
 
