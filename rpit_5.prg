@@ -33,7 +33,7 @@ begin sequence
       _czy_close=.t.
       czesc=1
       *------------------------------
-      _szerokosc=129
+      _szerokosc=80
       *@@@@@@@@@@@@@@@@@@@@ OTWARCIE BAZ DANYCH @@@@@@@@@@@@@@@@@@@@@@
       mon_drk([ö]+procname())
       if spolka->sposob='L'
