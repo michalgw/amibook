@@ -674,9 +674,9 @@ FUNCTION v1_1()
 ***************************************************
 FUNCTION V1_2()
 ***************************************************
-   IF ' ' $ AllTrim( znumer )
+   /*IF ' ' $ AllTrim( znumer )
       RETURN .F.
-   ENDIF
+   ENDIF*/
    @ 24, 0
    DO CASE
    CASE AllTrim( znumer ) == 'REM-P'
