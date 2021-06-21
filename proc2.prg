@@ -179,10 +179,11 @@ function mon_drk( _linia )
             IF _kl == Asc( 'M' ) .OR. _kl == Asc( 'm' )
                SAVE SCREEN TO scr_
                *נננננננננננננננננננננננננ GRAFIKA נננננננננננננננננננננננננ
-               @  1, 42 CLEAR TO 22, 42
+               @  0, 42 CLEAR TO 22, 42
                SET COLOR TO i
-               @  1, 43 SAY '     ³ PICA CONDENSED (17 zn/cal)..1 '
-               @  2, 43 SAY '     ³                             2 '
+               @  0, 43 SAY '     ³ PICA CONDENSED (17 zn/cal)..1 '
+               @  1, 43 SAY '     ³                             2 '
+               @  2, 43 SAY '     ³ SZEROKO— ELITE(12 zn/cal)..3 '
                @  3, 43 SAY 'ִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִֵ'
                @  4, 43 SAY '     ³ pojedyncze kartki papieru...1 '
                @  5, 43 SAY '     ³ ta&_s.ma papierowa sk&_l.adana....2 '
@@ -218,8 +219,8 @@ function mon_drk( _linia )
                   _druk82 := _druk_82
                   *נננננננננננננננננננננננננננ GET נננננננננננננננננננננננננננ
                   ColStd()
-                  @  2, 45 GET _druk8  PICTURE '99'    RANGE 1, 2
-                  @  2, 50 GET _druk82 PICTURE '@S27 ' + Replicate( 'X', 40 ) WHEN _druk8 == 2
+                  @  1, 45 GET _druk8  PICTURE '99'    RANGE 1, 3
+                  @  1, 50 GET _druk82 PICTURE '@S27 ' + Replicate( 'X', 40 ) WHEN _druk8 == 2
                   @  5, 45 GET _druk1  PICTURE '99'    RANGE 1, 2
                   @  7, 45 GET _druk2  PICTURE '99'    RANGE 1, 99
                   @ 10, 45 GET _druk3  PICTURE '99'    RANGE 1, 2
@@ -263,6 +264,8 @@ function mon_drk( _linia )
             buforDruku := buforDruku + &kod_res + Chr( 13 )
             IF _druk_8 == 1
                KODS := kod_17cp
+            ELSEIF _druk_8 == 3
+               KODS := kod_12cp
             ELSE
                KODS := AllTrim( _druk_82 )
                IF Len( KODS ) == 0
