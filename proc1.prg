@@ -2278,6 +2278,10 @@ PROCEDURE setind( ZB )
         SET INDEX TO tresckor
    CASE ZB == 'EDEKLAR'
         SET INDEX TO edeklar,edeklar1
+   CASE ZB == 'KASAFISK'
+        SET INDEX TO kasafisk
+   CASE ZB == 'EWIDZWR'
+        SET INDEX TO ewidzwr
    ENDCASE
 
    RETURN

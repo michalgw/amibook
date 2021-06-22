@@ -392,7 +392,29 @@ public aEWIDPOJdbf := {;
    { "NRKOL", "C", 2, 0 },;                       //   7
    { "TRASA", "C", 35, 0 },;                      //   8
    { "CEL", "C", 35, 0 },;                        //   9
-   { "KM", "N", 4, 0 } }                          //   10
+   { "KM", "N", 4, 0 } }                          //  10
+
+// Create: EWIDZWR.DBF
+public aEWIDZWRdbf := { ;
+   { "ID", "+", 4, 0 }, ;
+   { "FIRMA", "C", 3, 0 }, ;                      //   1
+   { "KASAFID", "I", 4, 0 }, ;                    //   2 ID Kasy fiskalnej
+   { "MC", "C", 2, 0 }, ;                         //   3 Miesiac zwrotu
+   { "DZIEN", "C", 2, 0 }, ;                      //   4 Dzien zwrotu
+   { "NRDOK", "C", 64, 0 }, ;                     //   6 Nr paragonu fiskalnego
+   { "DATASP", "D", 8, 0 }, ;                     //   6 Data sprzedazy
+   { "TOWAR", "C", 200, 0 }, ;                    //   7 Nazwa towaru/uslugi
+   { "CALOSC", "C", 1, 0 }, ;                     //   8 Zwrot calosci kwoty/czesci kwoty
+   { "BRUTA", "N", 11, 2 }, ;                     //   9 Wartosc brutto A
+   { "VATA", "N", 11, 2 }, ;                      //  10 Wartosc VAT A
+   { "BRUTB", "N", 11, 2 }, ;                     //  11 Wartosc brutto B
+   { "VATB", "N", 11, 2 }, ;                      //  12 Wartosc VAT B
+   { "BRUTC", "N", 11, 2 }, ;                     //  13 Wartosc brutto C
+   { "VATC", "N", 11, 2 }, ;                      //  14 Wartosc VAT C
+   { "BRUTD", "N", 11, 2 }, ;                     //  15 Wartosc brutto D
+   { "VATD", "N", 11, 2 }, ;                      //  16 Wartosc VAT D
+   { "BRUTE", "N", 11, 2 }, ;                     //  17 Wartosc brutto E
+   { "UWAGI", "C", 255, 0 } }                     //  18 Uwagi
 
 // Create: FAKTURY.DBF
 public aFAKTURYdbf := {;
@@ -568,7 +590,8 @@ public aFIRMAdbf := {;
    { "PPKEIDKADR", "C", 1, 0 },;                  //  78 PPK doˆ¥czaj pole "ID Kadrowy"
    { "PPKEIDEPPK", "C", 1, 0 },;                  //  79 PPK doˆ¥czaj pole "ID Kadrowy"
    { "PPKEIDPZIF", "C", 1, 0 },;                  //  80 PPK doˆ¥czaj pole "ID Kadrowy"
-   { "RODZAJDRFV", "C", 1, 0 } }                  //  81 Rodzaj wydruku faktury: G - graficzny, T - tekstowy
+   { "RODZAJDRFV", "C", 1, 0 },;                  //  81 Rodzaj wydruku faktury: G - graficzny, T - tekstowy
+   { "RODZAJFNV", "C", 1, 0 } }                   //  82 Rodzaj dok. sprzedazy dla nie watowca: F - faktura, R - rachunek
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;
@@ -607,6 +630,15 @@ public aKARTSTMOdbf := {;
    { "DATA_MOD", "D", 8, 0 },;                    //   4
    { "WART_MOD", "N", 12, 2 },;                   //   5
    { "OPIS_MOD", "C", 60, 0 } }                   //   6
+
+// Create: KASAFISK.DBF
+public aKASAFISKdbf := { ;
+   { "ID", "+", 4, 0 }, ;                         //   1
+   { "FIRMA", "C", 3, 0 }, ;                      //   2
+   { "AKTYWNY", "C", 1, 0 }, ;                    //   3 Aktywny
+   { "NAZWA", "C", 32, 0 }, ;                     //   4 Nazwa wyswietlana
+   { "NUMER", "C", 64, 0 }, ;                     //   5 Numer seryjny
+   { "OPIS", "C", 255, 0 } }                      //   6 Opis
 
 // Create: KAT_SPR.DBF
 public aKAT_SPRdbf := {;
@@ -1634,11 +1666,13 @@ public TabliceDbf := {;
    { "etaty",    "etaty.dbf",    aETATYdbf,    .T. },;
    { "ewid",     "ewid.dbf",     aEWIDdbf,     .T. },;
    { "ewidpoj",  "ewidpoj.dbf",  aEWIDPOJdbf,  .T. },;
+   { "ewidzwr",  "ewidzwr.dbf",  aEWIDZWRdbf,  .T. },;
    { "faktury",  "faktury.dbf",  aFAKTURYdbf,  .T. },;
    { "fakturyw", "fakturyw.dbf", aFAKTURYWdbf, .T. },;
    { "firma",    "firma.dbf",    aFIRMAdbf,    .T. },;
    { "kartst",   "kartst.dbf",   aKARTSTdbf,   .T. },;
    { "kartstmo", "kartstmo.dbf", aKARTSTMOdbf, .T. },;
+   { "kasafisk", "kasafisk.dbf", aKASAFISKdbf, .T. },;
    { "kat_spr",  "kat_spr.dbf",  aKAT_SPRdbf,  .T. },;
    { "kat_zak",  "kat_zak.dbf",  aKAT_ZAKdbf,  .T. },;
    { "kontr",    "kontr.dbf",    aKONTRdbf,    .T. },;
@@ -2061,6 +2095,20 @@ FUNCTION dbfIdxVAT7ZD()
    enddo
    pack
    index on del+firma+mc TO vat7zd
+   RETURN
+****************************************
+FUNCTION dbfIdxKASAFISK()
+   do while.not.dostepex('KASAFISK')
+   enddo
+   pack
+   index on firma TO kasafisk
+   RETURN
+****************************************
+FUNCTION dbfIdxEWIDZWR()
+   do while.not.dostepex('EWIDZWR')
+   enddo
+   pack
+   index on firma + Str( kasafid, 11, 0 ) + mc + dzien + nrdok TO ewidzwr
    RETURN
 ****************************************
 

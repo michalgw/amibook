@@ -24,14 +24,26 @@ FUNCTION Main()
 
    dbfInicjujDane()
 
+   ? 'Tworzenie nowych tablic...'
+   IF ! File( 'kasafisk.dbf' )
+      dbfUtworzTabele( 'KASAFISK', 'kasafisk.dbf' )
+      dbfIdxKASAFISK()
+   ENDIF
+   IF ! File( 'ewidzwr.dbf' )
+      dbfUtworzTabele( 'EWIDZWR', 'ewidzwr.dbf' )
+      dbfIdxEWIDZWR()
+   ENDIF
+
    ? 'Aktualizacja struktury danych...'
    dbfInicjujDane()
    dbfUtworzTabele( 'UMOWY', 'umowy.tym' )
+   dbfUtworzTabele( 'FIRMA', 'firma.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
    ? 'Indeksowanie...'
    dbfIdxUMOWY()
+   dbfIdxFIRMA()
    dbCloseAll()
 
    RETURN
