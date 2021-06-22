@@ -42,11 +42,11 @@ ColStd()
 @ 11, 0 say '³ Organ rej...                                 Data rejestracji....            ³'
 @ 12, 0 say '³ Nazwa rej...                                 Numer w rejestrze...            ³'
 @ 13, 0 say '³ R.Dzia&_l..1.                                         KGN.         PKD.         ³'
-@ 14, 0 say '³ Adres e-mail...                                                              ³'
-@ 15, 0 say '³ Platnik VAT.Tak        Formularz:VAT-      Info UE Mies/Kwart ?..            ³'
-@ 16, 0 say '³ Ryczalt...        Num.ks.(Roczn/Mies).     Pod.doch.oblicz Mies/Kwart ?..    ³'
-@ 17, 0 say '³ W rej.zak.VAT domy&_s.lna data ksi&_e.gowania do ksi&_e.gi (data Wp&_l.ywu/Dokumentu) ?. ³'
-@ 18, 0 say '³ Haslo firmy...            Rodz.druku FA.   Rachunki wprowadzac bruttem ?.    ³'
+@ 14, 0 say '³ Platnik VAT.Tak        Formularz:VAT-      Info UE Mies/Kwart ?..            ³'
+@ 15, 0 say '³ Ryczalt...        Num.ks.(Roczn/Mies).     Pod.doch.oblicz Mies/Kwart ?..    ³'
+@ 16, 0 say '³ W rej.zak.VAT domy&_s.lna data ksi&_e.gowania do ksi&_e.gi (data Wp&_l.ywu/Dokumentu) ?. ³'
+@ 17, 0 say '³ Haslo firmy...            Rodz.druku FA.   Rachunki wprowadzac bruttem ?.    ³'
+@ 18, 0 say '³ Adres e-mail...                            Rodzaj dokumentu sprzed..         ³'
 @ 19, 0 say 'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´'
 @ 20, 0 say '³ Lp pocz.ewid.podstawowej...       Domy&_s.lna druga data:.                      ³'
 @ 21, 0 say '³ Lp pocz.ewid.wyposa&_z.enia...       Nr biez.fakt.VAT:.....Wew:..... Rach:..... ³'
@@ -212,6 +212,7 @@ do while kl#27
               zRODZNRKS := firma->rodznrks
               zAdrEMail := firma->email
               zRodzajDrFV := iif( firma->rodzajdrfv $ 'GT', firma->rodzajdrfv, 'T' )
+              zRodzajFNV := iif( firma->rodzajfnv $ 'FR', firma->rodzajfnv, 'F' )
 *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
 *set century off
 ColStd()
@@ -236,19 +237,20 @@ ColStd()
 @ 13,12 get zPRZEDM    pict repl('!',40)
 @ 13,57 get zKGN1      pict '!!!!!!!!'
 @ 13,70 get zEKD1      pict '!!!!!!!!'
-@ 14,17 GET zAdrEMail  PICTURE "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-@ 15,14 get zVAT       pict "!" valid zVAT$'TN' .and. vTN(zVAT,15,14)
+@ 14,14 get zVAT       pict "!" valid zVAT$'TN' .and. vTN(zVAT,14,14)
 *@ 15,41 get zVATOKRES  pict "!" when zVAT<>'N' valid zVATOKRES$'MK' .and. vMK(zVATOKRES,15,41)
 *@ 15,60 get zVATOKRESDR pict "!" when zVAT<>'N' valid iif(zVATOKRES=='K',zVATOKRESDR$'K',zVATOKRESDR$'MK') .and. vMK(zVATOKRESDR,15,60)
-@ 15,39 get zVATFORDR  pict "!!" when wVATFORDR() valid vVATFORDR()
-@ 15,67 get zUEOKRES   pict "!" valid zUEOKRES$'MK' .and. vMK(zUEOKRES,15,67)
-@ 16,12 get zRYCZALT   pict "!" valid zRYCZALT$'TN' .and. vTN(zRYCZALT,16,12)
-@ 16,40 get zRODZNRKS  pict "!" valid zRODZNRKS $ 'MR'
-@ 16,75 get zPITOKRES  pict "!" valid zPITOKRES$'MK' .and. vMK(zPITOKRES,16,75)
-@ 17,78 get zDATAKS    pict "!" when wDATAKS() valid zDATAKS$'WD' .and. vDATAKS()
-@ 18,16 get zHASLO     pict 'XXXXXXXXXX'
-@ 18, 42 GET zRodzajDrFV PICTURE '!' WHEN Param_F_VRodzajDrFVW() VALID Param_F_VRodzajDrFVV()
-@ 18,75 get zDETAL     pict "!" valid zDETAL$'TN' .and. vTN(zDETAL,18,75)
+@ 14,39 get zVATFORDR  pict "!!" when wVATFORDR() valid vVATFORDR()
+@ 14,67 get zUEOKRES   pict "!" valid zUEOKRES$'MK' .and. vMK(zUEOKRES,14,67)
+@ 15,12 get zRYCZALT   pict "!" valid zRYCZALT$'TN' .and. vTN(zRYCZALT,15,12)
+@ 15,40 get zRODZNRKS  pict "!" valid zRODZNRKS $ 'MR'
+@ 15,75 get zPITOKRES  pict "!" valid zPITOKRES$'MK' .and. vMK(zPITOKRES,15,75)
+@ 16,78 get zDATAKS    pict "!" when wDATAKS() valid zDATAKS$'WD' .and. vDATAKS()
+@ 17,16 get zHASLO     pict 'XXXXXXXXXX'
+@ 17, 42 GET zRodzajDrFV PICTURE '!' WHEN Param_F_VRodzajDrFVW() VALID Param_F_VRodzajDrFVV()
+@ 17,75 get zDETAL     pict "!" valid zDETAL$'TN' .and. vTN(zDETAL,17,75)
+@ 18,17 GET zAdrEMail  PICTURE "@S27 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+@ 18,70 GET zRodzajFNV PICTURE "!" WHEN Param_F_WRodzajFNV() VALID Param_F_VRodzajFNV()
 @ 20,29 get zLICZBA    pict "99999"
 @ 21,29 get zLICZBA_WYP picture "99999"
 @ 20,56 get zDATA2TYP  pict "!" when wDATA2TYP() valid vDATA2TYP()
@@ -362,6 +364,7 @@ repl_([DATA2TYP],zDATA2TYP)
 repl_( "RODZNRKS", zRODZNRKS )
 repl_( "EMAIL", zAdrEMail )
 repl_( "RODZAJDRFV", zRodzajDrFV )
+repl_( "RODZAJFNV", zRodzajFNV )
 
 DETALISTA=DETAL
 commit_()
@@ -446,8 +449,7 @@ sele firma
 @ 13,12 say PRZEDM
 @ 13,57 say KGN1
 @ 13,70 say EKD1
-@ 14,17 SAY SubStr( EMAIL, 1, 60 )
-@ 15,14 say iif(VAT='T','Tak','Nie')
+@ 14,14 say iif(VAT='T','Tak','Nie')
 *@ 15,41 say iif(VATOKRES='K','Kwa','Mie')
 *@ 15,60 say iif(VATOKRESDR='K','Kwa','Mie')
               if VATFORDR=='  '
@@ -463,15 +465,17 @@ sele firma
               else
                  zVATFORDR=VATFORDR
               endif
-@ 15,39 say zVATFORDR
-@ 15,67 say iif(UEOKRES='K','Kwa','Mie')
-@ 16,12 say iif(RYCZALT='T','Tak','Nie')
-@ 16,40 say RODZNRKS
-@ 16,75 say iif(PITOKRES='K','Kwa','Mie')
-@ 17,78 say iif(DATAKS='W','W','D')
-@ 18,16 say HASLO
-@ 18, 42 say iif( rodzajdrfv $ 'GT', rodzajdrfv, 'T' )
-@ 18,75 say iif(DETAL='T','Tak','Nie')
+@ 14,39 say zVATFORDR
+@ 14,67 say iif(UEOKRES='K','Kwa','Mie')
+@ 15,12 say iif(RYCZALT='T','Tak','Nie')
+@ 15,40 say RODZNRKS
+@ 15,75 say iif(PITOKRES='K','Kwa','Mie')
+@ 16,78 say iif(DATAKS='W','W','D')
+@ 17,16 say HASLO
+@ 17, 42 say iif( rodzajdrfv $ 'GT', rodzajdrfv, 'T' )
+@ 17,75 say iif(DETAL='T','Tak','Nie')
+@ 18,17 SAY SubStr( EMAIL, 1, 27 )
+@ 18,70 SAY iif( RODZAJFNV == 'R', 'Rachunek', 'Faktura ' )
 @ 20,29 say dos_l(str(LICZBA,5))
 @ 21,29 say dos_l(str(LICZBA_WYP,5))
 @ 20,56 say DATA2TYP
@@ -702,6 +706,38 @@ FUNCTION Param_F_VRodzajDrFVV()
    LOCAL lRes := zRodzajDrFV $ 'GT'
 
    IF lRes
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Param_F_WRodzajFNV()
+
+   LOCAL lRes
+   LOCAL cKolor
+
+   IF ( lRes := zVAT <> 'T' )
+      cKolor := ColInf()
+      @ 24, 0 SAY PadC( "F - faktura             R - rachunek", 80 )
+      SetColor( cKolor )
+   ELSE
+      zRodzajFNV := 'F'
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Param_F_VRodzajFNV()
+
+   LOCAL lRes
+
+   IF ( lRes := zRodzajFNV $ 'FR' )
+      SET COLOR TO +w
+      @ 18, 70 SAY iif( zRodzajFNV == 'R', 'Rachunek', 'Faktura ' )
+      ColStd()
       @ 24, 0
    ENDIF
 

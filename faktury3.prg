@@ -1,4 +1,4 @@
-                        /************************************************************************
+/************************************************************************
 
 AMi-BOOK
 
@@ -31,31 +31,6 @@ PROCEDURE Faktury3()
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 
    PRIVATE _top,_bot,_top_bot,_stop,_sbot,_proc,kl,ins,nr_rec,f10,rec,fou
-
-   *################################# GRAFIKA ##################################
-   @  0, 0 SAY '                    F A K T U R A     Nr        z dnia                          '
-   @  1, 0 SAY 'Dla  :............................................................              '
-   @  2, 0 SAY 'Adres:........................................                                  '
-   @  3, 0 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿'
-   @  4, 0 SAY '³     Nazwa towaru/us&_l.ugi    ³    Ilo&_s.&_c.    ³ Jm  ³  Cena jedn.  ³    Warto&_s.&_c.   ³'
-   @  5, 0 SAY 'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´'
-   @  6, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @  7, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @  8, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @  9, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 10, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 11, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 12, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 13, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 14, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 15, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 16, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 17, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 18, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 19, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 20, 0 SAY '³                            ³             ³     ³              ³              ³'
-   @ 21, 0 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
-   @ 22, 0 SAY '                                                                                '
 
    *############################### OTWARCIE BAZ ###############################
    SELECT 7
@@ -125,6 +100,35 @@ PROCEDURE Faktury3()
       RETURN
    ENDIF
 
+   *################################# GRAFIKA ##################################
+   IF firma->rodzajfnv == 'R'
+      @  0, 0 SAY '                  R A C H U N E K     Nr        z dnia                          '
+   ELSE
+      @  0, 0 SAY '                    F A K T U R A     Nr        z dnia                          '
+   ENDIF
+   @  1, 0 SAY 'Dla  :............................................................              '
+   @  2, 0 SAY 'Adres:........................................                                  '
+   @  3, 0 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿'
+   @  4, 0 SAY '³     Nazwa towaru/us&_l.ugi    ³    Ilo&_s.&_c.    ³ Jm  ³  Cena jedn.  ³    Warto&_s.&_c.   ³'
+   @  5, 0 SAY 'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´'
+   @  6, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @  7, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @  8, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @  9, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 10, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 11, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 12, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 13, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 14, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 15, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 16, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 17, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 18, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 19, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 20, 0 SAY '³                            ³             ³     ³              ³              ³'
+   @ 21, 0 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
+   @ 22, 0 SAY '                                                                                '
+
    *################################# OPERACJE #################################
    *----- parametry ------
    _top := "firma#ident_fir.or.mc#miesiac"
@@ -170,7 +174,7 @@ PROCEDURE Faktury3()
             NEXT
             IF ins
                @ 6, 65 CLEAR TO 20, 75
-               zrach := ' '
+               zrach := iif( firma->rodzajfnv $ 'FR', firma->rodzajfnv, 'F' )
                zNUMER := firma->nr_rach
                zDZIEN := '  '
                znazwa := Space( 70 )
@@ -182,7 +186,7 @@ PROCEDURE Faktury3()
                @  2, 47 SAY repl( '.', 32 )
                @ 22,  0
             ELSE
-               zrach := ' '
+               zrach := RACH
                zNUMER := NUMER
                zDZIEN := DZIEN
                znazwa := nazwa
@@ -317,6 +321,7 @@ PROCEDURE Faktury3()
             repl_( 'sposob_p', zsposob_p )
             repl_( 'termin_z', ztermin_z )
             repl_( 'kwota', zkwota )
+            repl_( 'rach', zrach )
             COMMIT
             UNLOCK
             zident_poz := Str( rec_no, 8 )
@@ -958,7 +963,7 @@ PROCEDURE Faktury3_DrukGraf()
    aDane[ 'uwagi' ] := AllTrim( faktury->komentarz )
    aDane[ 'zamowienie' ] := AllTrim( faktury->zamowienie )
    aDane[ 'rach' ] := faktury->rach
-   aDane[ 'rodzaj' ] := iif( faktury->rach == 'F', 'FAKTURA', 'RACHUNEK UPROSZCZONY' )
+   aDane[ 'rodzaj' ] := iif( faktury->rach == 'R', 'RACHUNEK', 'FAKTURA' )
    aDane[ 'typ_faktury' ] := AllTrim( faktury->fakttyp )
 
    aDane[ 'pozycje' ] := {}

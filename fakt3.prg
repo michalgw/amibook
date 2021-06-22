@@ -69,7 +69,11 @@ k08=[          ]+'Nr ident.-'+alltrim(faktury->NR_IDENT)
 mon_drk([])
 mon_drk([                                                                      ]+k2+[ , dnia ]+k3)
 mon_drk([ ])
-mon_drk([ ]+space(25)+[                     F A K T U R A     Nr  S-]+k6)
+IF faktury->rach == 'R'
+   mon_drk([ ]+space(25)+[                   R A C H U N E K     Nr  S-]+k6)
+ELSE
+   mon_drk([ ]+space(25)+[                     F A K T U R A     Nr  S-]+k6)
+ENDIF
 *mon_drk([ ]+space(25)+[                           orygina&_l. / kopia  ])
 mon_drk([DOSTAWCA: ]+zm)
 mon_drk([          Nr ident.:]+zNIP)
