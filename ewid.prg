@@ -352,7 +352,23 @@ FUNCTION Ewid()
                IF zRYCZALT == 'T'
                   ewid_dr16rob()
                ELSE
-                 ksiega16()
+                  SAVE SCREEN TO ROBSO11
+                  opcja1 := 1
+                  ColPro()
+                  @ 16, 4 TO 19, 37
+                  @ 17, 5 PROMPT ' D - Wydruk ewidencji           '
+                  @ 18, 5 PROMPT ' J - JPK_PKPIR (2)              '
+                  opcja1 := menu( opcja1 )
+                  ColStd()
+                  IF LastKey() <> K_ESC
+                     DO CASE
+                        CASE opcja1 == 1
+                           ksiega16()
+                        CASE opcja1 == 2
+                           JpkPkpirRob()
+                     ENDCASE
+                  ENDIF
+                  RESTORE SCREEN FROM ROBSO11
                ENDIF
 
             CASE opcja == 8

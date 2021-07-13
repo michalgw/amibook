@@ -83,7 +83,11 @@ FUNCTION jpk_pkpir(aDane)
    FOR nI := 1 TO Len(aDane['pozycje'])
       cRes := cRes + '  <PKPIRWiersz typ="G">' + nl
       cRes := cRes + '    <K_1>' + AllTrim(Str(aDane['pozycje'][nI]['k1'])) + '</K_1>' + nl
-      cRes := cRes + '    <K_2>' + JPKData(aDane['rok'], aDane['miesiac'], aDane['pozycje'][nI]['k2']) + '</K_2>' + nl
+      IF hb_HHasKey( aDane, 'rok' )
+         cRes := cRes + '    <K_2>' + JPKData(aDane['rok'], aDane['miesiac'], aDane['pozycje'][nI]['k2']) + '</K_2>' + nl
+      ELSE
+         cRes := cRes + '    <K_2>' + date2strxml(aDane['pozycje'][nI]['k2']) + '</K_2>' + nl
+      ENDIF
       cRes := cRes + '    <K_3>' + JPKStrND(aDane['pozycje'][nI]['k3']) + '</K_3>' + nl
       cRes := cRes + '    <K_4>' + JPKStrND(aDane['pozycje'][nI]['k4']) + '</K_4>' + nl
       cRes := cRes + '    <K_5>' + JPKStrND(aDane['pozycje'][nI]['k5']) + '</K_5>' + nl

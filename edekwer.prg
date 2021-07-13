@@ -672,6 +672,20 @@ FUNCTION edekWybierzCertyfikatAChoice(nMode, nCurElement, nRowPos)
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION edekCzyDoraznie( cRodzaj )
+
+   LOCAL lRes := .F.
+
+   IF SubStr( cRodzaj, 1, 6 ) == 'JPKKPR'
+      lRes := .T.
+   ELSEIF SubStr( cRodzaj, 1, 6 ) == 'JPKEWP'
+      lRes := .T.
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION edekPodpiszDeklaracje( cPlikWej, cPlikWyj, cRodzaj )
 
    LOCAL nRes := 0
@@ -687,7 +701,7 @@ FUNCTION edekPodpiszDeklaracje( cPlikWej, cPlikWyj, cRodzaj )
    ENDIF
 
    IF Upper( SubStr( cRodzaj, 1, 3 ) ) == 'JPK'
-      nRes := amiJpkPodpisz2( cPlikWej, aWybranyCertyfikat[ 'indeks' ], param_ejts == 'T', .F., aWybranyCertyfikat[ 'serialno' ] )
+      nRes := amiJpkPodpisz2( cPlikWej, aWybranyCertyfikat[ 'indeks' ], param_ejts == 'T', edekCzyDoraznie( cRodzaj ), aWybranyCertyfikat[ 'serialno' ] )
    ELSE
       nRes := amiEdekPodpisz( cPlikWej, cPlikWyj, aWybranyCertyfikat[ 'indeks' ], aWybranyCertyfikat[ 'serialno' ] )
    ENDIF
@@ -710,8 +724,9 @@ FUNCTION edekPodpiszDeklaracjeAut( cPlikWej, cPlikWyj, cNIP, cImie, cNazwisko, d
    ENDIF
 
    IF Upper( SubStr( cRodzaj, 1, 3 ) ) == 'JPK'
-      nRes := amiJpkPodpiszAut( cPlikWej, param_ejts == 'T', .F., trimnip( cNIP ), AllTrim( cImie ), ;
-         AllTrim( cNazwisko ), date2strxml( dDataUr ), TKwota2( nKwota ) )
+      nRes := amiJpkPodpiszAut( cPlikWej, param_ejts == 'T', edekCzyDoraznie( cRodzaj ), ;
+         trimnip( cNIP ), AllTrim( cImie ), AllTrim( cNazwisko ), date2strxml( dDataUr ), ;
+         TKwota2( nKwota ) )
    ELSE
       nRes := amiEdekPodpiszAut( cPlikWej, cPlikWyj, trimnip( cNIP ), AllTrim( cImie ), ;
          AllTrim( cNazwisko ), date2strxml( dDataUr ), TKwota2( nKwota ) )
