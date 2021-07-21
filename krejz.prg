@@ -26,10 +26,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 PROCEDURE KRejZ()
 
    PRIVATE oGetWAR2, oGetVAT2, oGetWAR7, oGetVAT7, oGetWAR12, oGetVAT12, oGetWAR22, oGetVAT22, lBlokuj := .F.
-   PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE
+   PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE, fDETALISTA
    PRIVATE nOrgW2, nOrgW7, nOrgW12, nOrgW22, zRODZDOW, cScrRodzDow
    PRIVATE zK16OPIS, zKOL47, zKOL48, zKOL49, zKOL50, nWartoscNetto, zVATMARZA
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou
+
+   fDETALISTA := DETALISTA
+
    zexport := 'N'
    scr_kolumL := .F.
    scr_kolumC := .F.
@@ -107,6 +110,15 @@ PROCEDURE KRejZ()
             DO &_proc
          ENDIF
 
+      CASE kl == Asc( 'B' ) .OR. kl == Asc( 'b' )
+         IF fDETALISTA == 'T'
+            fDETALISTA := 'N'
+         ELSE
+            fDETALISTA := 'T'
+         ENDIF
+         @ 2, 70 SAY iif( fDETALISTA <> 'T', ' netto  ', ' brutto ' )
+         Komun( "Zmieniono metod© wprowadzania kwot na " + iif( fDETALISTA <> 'T', 'NETTO', 'BRUTTO' ) )
+
       CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. &_top_bot ) .AND. kl # K_ESC
          @ 1,47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
@@ -163,7 +175,7 @@ PROCEDURE KRejZ()
                zKRAJ := 'PL'
                zSEK_CV7 := '  '
                zRACH := 'F'
-               zDETAL := DETALISTA
+               zDETAL := fDETALISTA
                zKOREKTA := 'N'
                zUSLUGAUE := 'N'
                zWEWDOS := 'N'
@@ -322,24 +334,45 @@ PROCEDURE KRejZ()
             @  9, 77 GET zOPCJE PICTURE '!' WHEN w1_opcje() VALID v1_opcje()
             oGetOPCJE := ATail( GetList )
             @ 10, 77 GET zSEK_CV7 PICTURE '!!' WHEN wfSEK_CV7( 10, 78 ) VALID vfSEK_CV7( 10, 78 )
-            @ 13,  8 GET zWART22 PICTURE FPIC WHEN w1_wartosc( nOrgW22, @zWART22 ) VALID SUMPODz( zWART22, @nOrgW22 )
-            oGetWAR22 := ATail( GetList )
-            @ 13, 25 GET zVAT22  PICTURE FPIC WHEN SUMPOwz( 'zvat22' ) VALID SUMPODz()
-            oGetVAT22 := ATail( GetList )
-            @ 14,  8 GET zWART07 PICTURE FPIC WHEN w1_wartosc( nOrgW7, @zWART07 ) VALID SUMPODz( zWART07, @nOrgW7 )
-            oGetWAR7 := ATail( GetList )
-            @ 14, 25 GET zVAT07  PICTURE FPIC WHEN SUMPOwz( 'zvat07' ) VALID SUMPODz()
-            oGetVAT7 := ATail( GetList )
-            @ 15,  8 GET zWART02 PICTURE FPIC WHEN w1_wartosc( nOrgW2, @zWART02 ) valid SUMPODz( zWART02, @nOrgW7 )
-            oGetWAR2 := ATail( GetList )
-            @ 15, 25 GET zVAT02  PICTURE FPIC WHEN SUMPOwz( 'zvat02' ) VALID SUMPODz()
-            oGetVAT2 := ATail( GetList )
-            @ 16,  8 GET zWART00 PICTURE FPIC VALID SUMPODz()
-            @ 17,  8 GET zWARTZW PICTURE FPIC VALID SUMPODz()
-            @ 18,  8 GET zWART12 PICTURE FPIC WHEN w1_wartosc( nOrgW12, @zWART12 ) VALID SUMPODz( zWART12, @nOrgW12 )
-            oGetWAR12 := ATail( GetList )
-            @ 18, 25 GET zVAT12  PICTURE FPIC WHEN SUMPOwz( 'zvat12' ) VALID SUMPODz()
-            oGetVAT12 := ATail( GetList )
+            IF fDETALISTA <> 'T'
+               @ 13,  8 GET zWART22 PICTURE FPIC WHEN w1_wartosc( nOrgW22, @zWART22 ) VALID SUMPODz( zWART22, @nOrgW22 )
+               oGetWAR22 := ATail( GetList )
+               @ 13, 25 GET zVAT22  PICTURE FPIC WHEN SUMPOwz( 'zvat22' ) VALID SUMPODz()
+               oGetVAT22 := ATail( GetList )
+               @ 14,  8 GET zWART07 PICTURE FPIC WHEN w1_wartosc( nOrgW7, @zWART07 ) VALID SUMPODz( zWART07, @nOrgW7 )
+               oGetWAR7 := ATail( GetList )
+               @ 14, 25 GET zVAT07  PICTURE FPIC WHEN SUMPOwz( 'zvat07' ) VALID SUMPODz()
+               oGetVAT7 := ATail( GetList )
+               @ 15,  8 GET zWART02 PICTURE FPIC WHEN w1_wartosc( nOrgW2, @zWART02 ) valid SUMPODz( zWART02, @nOrgW7 )
+               oGetWAR2 := ATail( GetList )
+               @ 15, 25 GET zVAT02  PICTURE FPIC WHEN SUMPOwz( 'zvat02' ) VALID SUMPODz()
+               oGetVAT2 := ATail( GetList )
+               @ 16,  8 GET zWART00 PICTURE FPIC VALID SUMPODz()
+               @ 17,  8 GET zWARTZW PICTURE FPIC VALID SUMPODz()
+               @ 18,  8 GET zWART12 PICTURE FPIC WHEN w1_wartosc( nOrgW12, @zWART12 ) VALID SUMPODz( zWART12, @nOrgW12 )
+               oGetWAR12 := ATail( GetList )
+               @ 18, 25 GET zVAT12  PICTURE FPIC WHEN SUMPOwz( 'zvat12' ) VALID SUMPODz()
+               oGetVAT12 := ATail( GetList )
+            ELSE
+               @ 13, 42 GET zBRUT22 PICTURE FPIC WHEN w1_wartosc( nOrgW22, @zBRUT22 ) VALID SUMPODzB( zBRUT22, @nOrgW22 )
+               oGetWAR22 := ATail( GetList )
+               @ 13, 25 GET zVAT22  PICTURE FPIC WHEN SUMPOwzB( 'zvat22' ) VALID SUMPODzB()
+               oGetVAT22 := ATail( GetList )
+               @ 14, 42 GET zBRUT07 PICTURE FPIC WHEN w1_wartosc( nOrgW7, @zWART07 ) VALID SUMPODzB( zWART07, @nOrgW7 )
+               oGetWAR7 := ATail( GetList )
+               @ 14, 25 GET zVAT07  PICTURE FPIC WHEN SUMPOwzB( 'zvat07' ) VALID SUMPODzB()
+               oGetVAT7 := ATail( GetList )
+               @ 15, 42 GET zBRUT02 PICTURE FPIC WHEN w1_wartosc( nOrgW2, @zWART02 ) valid SUMPODzB( zWART02, @nOrgW7 )
+               oGetWAR2 := ATail( GetList )
+               @ 15, 25 GET zVAT02  PICTURE FPIC WHEN SUMPOwzB( 'zvat02' ) VALID SUMPODzB()
+               oGetVAT2 := ATail( GetList )
+               @ 16, 42 GET zWART00 PICTURE FPIC VALID SUMPODzB()
+               @ 17, 42 GET zWARTZW PICTURE FPIC VALID SUMPODzB()
+               @ 18, 42 GET zBRUT12 PICTURE FPIC WHEN w1_wartosc( nOrgW12, @zWART12 ) VALID SUMPODzB( zWART12, @nOrgW12 )
+               oGetWAR12 := ATail( GetList )
+               @ 18, 25 GET zVAT12  PICTURE FPIC WHEN SUMPOwzB( 'zvat12' ) VALID SUMPODzB()
+               oGetVAT12 := ATail( GetList )
+            ENDIF
             @ 13, 57 GET zSP22  PICTURE '!' WHEN zWART22 + zVAT22<> 0 .AND. wSP() VALID SP(zSP22)
             @ 13, 61 GET zZOM22 PICTURE '!' WHEN zWART22 + zVAT22<> 0 .AND. wZOM() VALID ZOM(zZOM22)
             @ 14, 57 GET zSP07  PICTURE '!' WHEN zWART07 + zVAT07<> 0 .AND. wSP() VALID SP(zSP07)
@@ -693,6 +726,7 @@ PROCEDURE say1z()
 ***********************
    krejzRysujTlo()
    CLEAR TYPEAHEAD
+   @ 2, 70 SAY iif( fDETALISTA <> 'T', ' netto  ', ' brutto ' )
    SELECT rejz
    SET COLOR TO +w
    @  3, 20 SAY DZIEN
@@ -1247,6 +1281,27 @@ FUNCTION SumPodz( nWartosc, nPole )
    RETURN .T.
 
 ***************************************************
+FUNCTION SumPodzB( nWartosc, nPole )
+***************************************************
+   @ 13,  8 SAY zBRUT22 - zVAT22 + iif( zOPCJE $ "257P", zVAT22, 0 ) PICTURE RPIC
+   @ 14,  8 SAY zBRUT07 - zVAT07 + iif( zOPCJE $ "257P", zVAT07, 0 ) PICTURE RPIC
+   *@ 16,42 say zWART12+zVAT12 pict RPIC
+   *@ 17,42 say zWART02+zVAT02 pict RPIC
+   *@ 18,42 say zWART00 pict RPIC
+   *@ 19,42 say zWARTZW pict RPIC
+   @ 15,  8 SAY zBRUT02 - zVAT02 + iif( zOPCJE $ "257P", zVAT02, 0 ) PICTURE RPIC
+   @ 16,  8 SAY zWART00 PICTURE RPIC
+   @ 17,  8 SAY zWARTZW PICTURE RPIC
+   @ 18,  8 SAY zBRUT12 - zVAT12 + iif( zOPCJE $ "257P", zVAT12, 0 ) PICTURE RPIC
+   @ 19,  8 SAY zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW PICTURE RPIC
+   @ 19, 25 SAY zVAT22 + zVAT12 + zVAT07 + zVAT02 PICTURE RPIC
+   @ 19, 42 SAY ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 + iif( zOPCJE $ "257P", zVAT22 + zVAT12 + zVAT07 + zVAT02, 0 ) ) * iif( zOPCJE == "2", 0.2, iif( zOPCJE == "5", 0.5, iif( zOPCJE == "7", 0.75, 1 ) ) ) PICTURE RPIC
+   IF ! Empty( nWartosc )
+      nPole := nWartosc
+   ENDIF
+   RETURN .T.
+
+***************************************************
 FUNCTION SUMPOwz( vari )
 ***************************************************
    LOCAL bTmp
@@ -1277,6 +1332,46 @@ FUNCTION SUMPOwz( vari )
       &vari := NN - &varim
       IF zOPCJE $ "257P"
          &vari := &vari * 0.5
+      ENDIF
+   CASE &variM == &vvariM
+      &vari := &vvari
+   ENDCASE
+   RETURN .T.
+
+***************************************************
+FUNCTION SUMPOwzB( vari )
+***************************************************
+   LOCAL bTmp
+
+   IF lBlokuj
+      RETURN .T.
+   ENDIF
+   VV1 := 'WART' + SubStr( vari, 5 )
+   VV2 := 'VAT' + SubStr( vari, 5 )
+   varim := 'zbrut' + SubStr( vari, 5 )
+   vvariM := SubStr( variM, 2 )
+   VV3 := 'ZWART' + SubStr( vari, 5 )
+   &VVARIM := &vv1+&VV2
+   vvari := SubStr( vari, 2 )
+   DO CASE
+   CASE &vari == 0 .OR. ( &variM <> &vvariM )
+      procvat := Val( SubStr( vari, 5, 2 ) )
+      DO CASE
+      CASE procvat == 2
+         procvat := 1 + ( vat_C / 100 )
+      CASE procvat == 7
+         procvat := 1 + ( vat_B / 100 )
+      CASE procvat == 22
+         procvat := 1 + ( vat_A / 100 )
+      CASE procvat == 12
+         procvat := 1 + ( vat_D / 100 )
+      ENDCASE
+      NN := _round( &varim / procvat, 2 )
+      &vari := &varim - NN
+      &VV3 := &varim - &vari
+      IF zOPCJE $ "257P"
+         &vari := &vari * 0.5
+         &varim := &VV3 + &vari
       ENDIF
    CASE &variM == &vvariM
       &vari := &vvari
