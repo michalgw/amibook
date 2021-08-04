@@ -353,7 +353,7 @@ PROCEDURE KRejS()
             SET KEY K_ALT_F9 TO VAT_Sprzwdz_NIP_RejE
             read_()
             SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_DlgK
-            SET KEY K_ALT_F9 TO VAT_Sprawdz_Vies_Dlg
+            SET KEY K_ALT_F9 TO VAT_Sprawdz_Vies_DlgF
             IF scr_kolumC := .T.
                RestScreen( 1, 40, 8, 79, scr_sekcv7 )
             ENDIF
@@ -1159,7 +1159,7 @@ PROCEDURE KRejS()
    ENDDO
    close_()
    SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_DlgK
-   SET KEY K_ALT_F9 TO VAT_Sprawdz_Vies_Dlg
+   SET KEY K_ALT_F9 TO VAT_Sprawdz_Vies_DlgF
    RETURN
 
 *################################## FUNKCJE #################################

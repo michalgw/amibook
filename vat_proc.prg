@@ -1210,3 +1210,10 @@ FUNCTION VAT_Sprawdz_Vies_Dlg( cKraj, cNIP )
 
 /*----------------------------------------------------------------------*/
 
+PROCEDURE VAT_Sprawdz_Vies_DlgF( cKraj, cNIP )
+
+   VAT_Sprawdz_Vies_Dlg()
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
