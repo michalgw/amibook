@@ -350,8 +350,10 @@ PROCEDURE KRejS()
             SET COLOR TO
             CLEAR TYPEAHEAD
             SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_RejE
+            SET KEY K_ALT_F9 TO VAT_Sprzwdz_NIP_RejE
             read_()
             SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_DlgK
+            SET KEY K_ALT_F9 TO VAT_Sprawdz_Vies_Dlg
             IF scr_kolumC := .T.
                RestScreen( 1, 40, 8, 79, scr_sekcv7 )
             ENDIF
@@ -1146,7 +1148,7 @@ PROCEDURE KRejS()
          RESTORE SCREEN FROM scr_
          _disp := .F.
 
-      CASE kl == K_ALT_F8
+      CASE kl == K_ALT_F8 .OR. kl == K_ALT_F9
          VAT_Sprzwdz_NIP_Rej()
 
       CASE kl == Asc( 'W' ) .OR. kl == Asc( 'w' )
@@ -1157,6 +1159,7 @@ PROCEDURE KRejS()
    ENDDO
    close_()
    SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_DlgK
+   SET KEY K_ALT_F9 TO VAT_Sprawdz_Vies_Dlg
    RETURN
 
 *################################## FUNKCJE #################################

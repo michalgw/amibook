@@ -401,8 +401,10 @@ PROCEDURE KRejZ()
             SET COLOR TO
             CLEAR TYPEAHEAD
             SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_RejE
+            SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_RejE
             Read_()
             SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_DlgK
+            SET KEY K_ALT_F9 TO VAT_Sprawdz_Vies_Dlg
             IF scr_kolumL == .T.
                RestScreen( 7, 40, 20, 79, scr_kolum )
             ENDIF
@@ -675,7 +677,7 @@ PROCEDURE KRejZ()
       CASE kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 12 ]
+         DECLARE pppp[ 13 ]
          *---------------------------------------
          pppp[  1 ] := '                                                        '
          pppp[  2 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
@@ -684,11 +686,12 @@ PROCEDURE KRejZ()
          pppp[  5 ] := '   [M].....................modyfikacja pozycji          '
          pppp[  6 ] := '   [I].....................import z pliku JPK           '
          pppp[  7 ] := '   [W].....................grupowa weryf. stat. VAT     '
-         pppp[  8 ] := '   [Del]...................kasowanie pozycji            '
-         pppp[  9 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 10 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 11 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 12 ] := '                                                        '
+         pppp[  8 ] := '   [B]...........przeˆ¥cz wprowadzanie nettem/bruttem   '
+         pppp[  9 ] := '   [Del]...................kasowanie pozycji            '
+         pppp[ 10 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 11 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 12 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 13 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
          i := 10
@@ -708,7 +711,7 @@ PROCEDURE KRejZ()
          RESTORE SCREEN FROM scr_
          _disp := .F.
 
-      CASE kl == K_ALT_F8
+      CASE kl == K_ALT_F8 .OR. kl == K_ALT_F9
          VAT_Sprzwdz_NIP_Rej()
 
       CASE kl == Asc( 'W' ) .OR. kl == Asc( 'w' )
@@ -719,6 +722,7 @@ PROCEDURE KRejZ()
    ENDDO
    Close_()
    SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_DlgK
+   SET KEY K_ALT_F9 TO VAT_Sprawdz_Vies_Dlg
    RETURN
 
 *################################## FUNKCJE #################################

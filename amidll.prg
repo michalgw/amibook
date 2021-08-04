@@ -623,3 +623,17 @@ FUNCTION amiWeryfikujNip( cNip )
       hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ) }, cNip )
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION amiViesCheckVat( cKraj, cNIP, aPowrot )
+
+   IF Empty( amiDllH )
+      RETURN
+   ENDIF
+
+   RETURN hb_DynCall( { 'viesCheckVat', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ) }, cKraj, cNIP )
+
+/*----------------------------------------------------------------------*/
+

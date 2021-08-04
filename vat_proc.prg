@@ -270,9 +270,12 @@ PROCEDURE VAT_Sprzwdz_NIP_DlgOld( cNIPIn )
    LOCAL cNIP := iif( Empty( cNIPIn ), Space( 10 ), PadR( TrimNip( cNIPIn ), 10 ) )
    LOCAL GetList := {}
    LOCAL bOldF8
+   LOCAL bOldF9
 
    bOldF8 := hb_SetKeyGet( K_ALT_F8 )
+   bOldF9 := hb_SetKeyGet( K_ALT_F9 )
    SET KEY K_ALT_F8 TO
+   SET KEY K_ALT_F9 TO
 
    @  9, 16 CLEAR TO 15, 59
    @ 10, 18 TO 14, 57
@@ -289,8 +292,8 @@ PROCEDURE VAT_Sprzwdz_NIP_DlgOld( cNIPIn )
    RestScreen( , , , , cEkran )
    SetColor( cKolor )
 
-   //SET KEY K_ALT_F8 TO VAT_Sprzwdz_NIP_DlgK
    SetKey( K_ALT_F8, bOldF8 )
+   SetKey( K_ALT_F9, bOldF9 )
 
    RETURN
 
@@ -298,7 +301,15 @@ PROCEDURE VAT_Sprzwdz_NIP_DlgOld( cNIPIn )
 
 PROCEDURE VAT_Sprzwdz_NIP_RejE()
 
-   VAT_Sprzwdz_NIP_Dlg( zNR_IDENT )
+   LOCAL cKraj := "", cNIP
+
+   cNIP := PodzielNIP( zNR_IDENT, @cKraj )
+
+   IF KrajUE( cKraj )
+      VAT_Sprawdz_Vies_Dlg( cKraj, cNIP )
+   ELSE
+      VAT_Sprzwdz_NIP_Dlg( zNR_IDENT )
+   ENDIF
 
    RETURN
 
@@ -306,7 +317,15 @@ PROCEDURE VAT_Sprzwdz_NIP_RejE()
 
 PROCEDURE VAT_Sprzwdz_NIP_Rej()
 
-   VAT_Sprzwdz_NIP_Dlg( NR_IDENT )
+   LOCAL cKraj := "", cNIP
+
+   cNIP := PodzielNIP( NR_IDENT, @cKraj )
+
+   IF KrajUE( cKraj )
+      VAT_Sprawdz_Vies_Dlg( cKraj, cNIP )
+   ELSE
+      VAT_Sprzwdz_NIP_Dlg( NR_IDENT )
+   ENDIF
 
    RETURN
 
@@ -804,6 +823,7 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
    LOCAL dData := Date()
    LOCAL lBtnRozpocznij := .T.
    LOCAL cRodzajRap := "S"
+   LOCAL cSprawdzVies := "T"
    LOCAL cEkran := SaveScreen( 0, 0, MaxRow(), MaxCol() )
    LOCAL cKolor := ColStd()
    LOCAL cEkranDt
@@ -827,7 +847,7 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
          RETURN .F.
       ENDIF
    }
-   LOCAL aDane := {}, aBledne := {}, aDaneRap
+   LOCAL aDane := {}, aBledne := {}, aDaneRap, aDaneVies := {}, aDaneViesGr := {}, aDaneViesRes
    LOCAL aPozycja, nTmpWA, nTmpRecNo, aGrupy, cRaport := '', nCnt, nIlosc, nGrTx
    LOCAL bRodzajRapW := { | x |
       ColInf()
@@ -846,11 +866,12 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
 
    PRIVATE lPrzerwij := .F.
 
-   @  9, 16 CLEAR TO 17, 59
-   @ 10, 18 TO 16, 57
-   @ 10, 21 SAY "GRUPOWA WERYFIKACJA PODMIOTU W VAT"
-   @ 12, 20 SAY "Sprawdz na dzieä:" GET cRodzajDaty PICTURE "!" WHEN Eval( bRodzajDatyW ) VALID Eval( bRodzajDatyV )
-   @ 13, 20 SAY "   Stan na dzieä:" GET dData WHEN cRodzajDaty == "Z" VALID ! Empty( dData )
+   @  8, 16 CLEAR TO 17, 59
+   @  9, 18 TO 16, 57
+   @  9, 21 SAY "GRUPOWA WERYFIKACJA PODMIOTU W VAT"
+   @ 11, 20 SAY "Sprawdz na dzieä:" GET cRodzajDaty PICTURE "!" WHEN Eval( bRodzajDatyW ) VALID Eval( bRodzajDatyV )
+   @ 12, 20 SAY "   Stan na dzieä:" GET dData WHEN cRodzajDaty == "Z" VALID ! Empty( dData )
+   @ 13, 20 SAY "  Sprawd« w VIES:" GET cSprawdzVies PICTURE "!" VALID cSprawdzVies $ 'TN'
    @ 14, 20 SAY "Rodzaj raportu (Peˆny/Skr¢cony):" GET cRodzajRap PICTURE "!" WHEN Eval( bRodzajRapW ) VALID Eval( bRodzajRapV )
 
    READ
@@ -859,7 +880,7 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
 
    IF LastKey() <> K_ESC
       ColInf()
-      @ 24, 0 SAY PadC( "Krok 1/3 ...Wybieranie danych...", 80 )
+      @ 24, 0 SAY PadC( "Krok 1/4 ...Wybieranie danych...", 80 )
       nTmpWA := Select()
       nTmpRecNo := ( cTablica )->( RecNo() )
       DO WHILE .NOT. Eval( bEof ) .AND. ! VAT_Sprzwdz_GrpNIP_WLApi_Prz()
@@ -869,6 +890,7 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
             aPozycja[ 'NIP' ] := TrimNip( ( cTablica )->nr_ident )
             aPozycja[ 'NrDok' ] := AllTrim( ( cTablica )->numer )
             aPozycja[ 'Kontrahent' ] := AllTrim( ( cTablica )->nazwa )
+            aPozycja[ 'Kraj' ] := 'PL'
             aPozycja[ 'DataDok' ] := hb_Date( Val( param_rok ), Val( ( cTablica )->mc ), Val( ( cTablica )->dzien ) )
             SWITCH cRodzajDaty
             CASE "Z"
@@ -894,6 +916,17 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
                AAdd( aBledne, aPozycja )
             ENDIF
          ENDIF
+         IF cSprawdzVies == 'T' .AND. KrajUE( ( cTablica )->kraj )
+            aPozycja := hb_Hash()
+            aPozycja[ 'RecNo' ] := ( cTablica )->( RecNo() )
+            aPozycja[ 'NIP' ] := PodzielNIP( TrimNip( ( cTablica )->nr_ident ) )
+            aPozycja[ 'NrDok' ] := AllTrim( ( cTablica )->numer )
+            aPozycja[ 'Kontrahent' ] := AllTrim( ( cTablica )->nazwa )
+            aPozycja[ 'Kraj' ] := ( cTablica )->kraj
+            aPozycja[ 'DataDok' ] := hb_Date( Val( param_rok ), Val( ( cTablica )->mc ), Val( ( cTablica )->dzien ) )
+            aPozycja[ 'StanNa' ] := Date()
+            AAdd( aDaneVies, aPozycja )
+         ENDIF
          ( cTablica )->( dbSkip() )
       ENDDO
       ( cTablica )->( dbGoto( nTmpRecNo ) )
@@ -905,7 +938,7 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
          DO WHILE ! DostepPro( "KONTRSPR", "KONTRSPR", .T. )
          ENDDO
 
-         @ 24, 0 SAY PadC( "Krok 2/3 ...Wyszukiwanie statusu w lokalnej bazie...", 80 )
+         @ 24, 0 SAY PadC( "Krok 2/4 ...Wyszukiwanie statusu w lokalnej bazie...", 80 )
          ColStd()
          @ 11, 15 CLEAR TO 15, 64
          @ 11, 15 TO 15, 64 DOUBLE
@@ -947,7 +980,7 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
 
             IF ! lPrzerwij
                ColInf()
-               @ 24, 0 SAY PadC( "Krok 3/3 ...Wyszukiwanie statusu w bazie MF...", 80 )
+               @ 24, 0 SAY PadC( "Krok 3/4 ...Wyszukiwanie statusu w bazie MF...", 80 )
 
                ColStd()
                @ 11, 15 CLEAR TO 15, 64
@@ -991,6 +1024,46 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
                      ENDIF
                   ENDIF
                } )
+
+               IF ! lPrzerwij
+                  ColInf()
+                  @ 24, 0 SAY PadC( "Krok 4/4 ...Wyszukiwanie statusu w bazie VIES...", 80 )
+
+                  ColStd()
+                  @ 11, 15 CLEAR TO 15, 64
+                  @ 11, 15 TO 15, 64 DOUBLE
+                  @ 12, 16 SAY PadC( "Wyszukiwanie w bazie VIES", 48 )
+                  nCnt := 0
+                  AEval( aDaneVies, { | aPoz |
+                     PUBLIC aPozL := aPoz
+                     IF AScan( aDaneViesGr, { | aPozV | aPozV[ 'NIP' ] == aPozL[ 'NIP' ] .AND. aPozV[ 'Kraj' ] == aPozL[ 'Kraj' ] } ) == 0
+                        AAdd( aDaneViesGr, aPoz )
+                     ENDIF
+                  } )
+                  AEval( aDaneViesGr, { | aPoz |
+                     IF ! VAT_Sprzwdz_GrpNIP_WLApi_Prz()
+                        PUBLIC aPozL := aPoz
+                        nI := Vies_CheckVat( aPoz[ 'Kraj' ], aPoz[ 'NIP' ], @aDaneViesRes )
+                        DO CASE
+                        CASE nI == 1
+                           AEval( aDaneVies, { | aPozV |
+                              IF aPozV[ 'Kraj' ] == aPozL[ 'Kraj' ] .AND. aPozV[ 'NIP' ] == aPozL[ 'NIP' ]
+                                 aPozV[ 'StatusVat' ] := "AKTYWNY"
+                              ENDIF
+                           } )
+                        CASE nI == 0
+                           AEval( aDaneVies, { | aPozV |
+                              IF aPozV[ 'Kraj' ] == aPozL[ 'Kraj' ] .AND. aPozV[ 'NIP' ] == aPozL[ 'NIP' ]
+                                 aPozV[ 'StatusVat' ] := "NIE JEST AKTYWNY"
+                              ENDIF
+                           } )
+                        ENDCASE
+                        nCnt++
+                        @ 13, 16 SAY PadC( AllTrim( Str( nCnt ) ) + " / " + AllTrim( Str( Len( aDaneViesGr ) ) ), 48 )
+                        @ 14, 17 SAY ProgressBar( nCnt, Len( aDaneViesGr ), 46 )
+                     ENDIF
+                  } )
+               ENDIF
             ENDIF
          ENDIF
       ENDIF
@@ -1001,6 +1074,7 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
       CLEAR TYPEAHEAD
       Restscreen( 0, 0, MaxRow(), MaxCol(), cEkran )
 
+      AEval( aDaneVies, { | aPoz | AAdd( aDane, aPoz ) } )
       AEval( aBledne, { | aPoz | AAdd( aDane, aPoz ) } )
       AEval( aDane, { | aPoz |
          IF ! hb_HHasKey( aPoz, 'StatusVat' )
@@ -1057,6 +1131,80 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
 
    Restscreen( 0, 0, MaxRow(), MaxCol(), cEkran )
    SetColor( cKolor )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Vies_CheckVat( cKraj, cNIP, aDane )
+
+   LOCAL nRes
+
+   IF ( ! KrajUE( cKraj ) .AND. cKraj <> "PL" ) .OR. ! HB_ISCHAR( cNIP ) .OR. Len( cNIP ) == 0
+      RETURN 4
+   ENDIF
+
+   nRes := amiViesCheckVat( cKraj, cNIP )
+
+   IF nRes == 1
+      hb_jsonDecode( amiEdekBladTekst(), @aDane )
+   ENDIF
+
+   RETURN nRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION VAT_Sprawdz_Vies_Dlg( cKraj, cNIP )
+
+   LOCAL bOldF8
+   LOCAL bOldF9
+   LOCAL cEkran := SaveScreen()
+   LOCAL cKolor := ColStd()
+   LOCAL nWynik
+   LOCAL aDane
+   LOCAL GetList := {}
+
+   hb_default( @cKraj, "  " )
+   hb_default( @cNIP, Space( 12 ) )
+
+   cNIP := PadR( cNIP, 12 )
+
+   bOldF8 := hb_SetKeyGet( K_ALT_F8 )
+   bOldF9 := hb_SetKeyGet( K_ALT_F9 )
+   SET KEY K_ALT_F8 TO
+   SET KEY K_ALT_F9 TO
+
+   @  9, 16 CLEAR TO 16, 59
+   @ 10, 18 TO 15, 57
+   @ 10, 21 SAY "SPRAWDZENIE STATUSU PODMIOTU W VIES"
+   @ 12, 20 SAY "              Kod kraju:" GET cKraj PICTURE "!!" VALID KrajUE( cKraj ) .OR. cKraj == "PL"
+   @ 13, 20 SAY "Identyfikator podatkowy:" GET cNIP PICTURE "!!!!!!!!!!!!" VALID Len( AllTrim( cNIP ) ) > 0
+
+   READ
+
+   IF LastKey() <> K_ESC
+      ColInf()
+      @ 24, 0 SAY PadC( 'Trwa sprawdzanie statusu VAT... Prosz© czeka†...', 80 )
+      ColStd()
+      nWynik := Vies_CheckVat( cKraj, AllTrim( cNIP ), @aDane )
+      @ 24, 0
+      IF nWynik == 1
+         Komunikat( "Podmiot JEST zarejestrowany w VIES;;Kraj: " + ;
+            HGetDefault( aDane, 'countryCode', '??' ) + ;
+            '   NIP: ' + HGetDefault( aDane, 'vatNumber', '???' )  + ';' + ;
+            HGetDefault( aDane, 'name', '' ) + ';' + HGetDefault( aDane, 'address', '' ), CColStd )
+      ELSEIF nWynik == 0
+         Komun( "Podmiot nie jest zarejestrowany w VIES" )
+      ELSE
+         Komun( "Sprawdzanie statusu nie powiodˆo si©." )
+      ENDIF
+   ENDIF
+
+   RestScreen( , , , , cEkran )
+   SetColor( cKolor )
+
+   SetKey( K_ALT_F8, bOldF8 )
+   SetKey( K_ALT_F9, bOldF9 )
 
    RETURN NIL
 

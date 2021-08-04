@@ -811,6 +811,7 @@ FUNCTION Main()
    SET KEY K_ALT_K   TO KALKUL
    SET KEY K_ALT_N   TO NOTES
    SET KEY K_ALT_F8  TO VAT_Sprzwdz_NIP_DlgK
+   SET KEY K_ALT_F9  TO VAT_Sprawdz_Vies_Dlg
 
    // ---
 
