@@ -338,7 +338,7 @@ PROCEDURE UmowySum()
                k24 := war_fue
                k25 := war_fur
                k26 := war_fuw
-               k27 := war_fsum
+               k27 := /*war_fsum*/ war_fue + war_fur + war_fuw
                k28 := war_ffp
                k29 := war_ffg
                k30 := war_ffp + war_ffg
