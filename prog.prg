@@ -1561,10 +1561,11 @@ FUNCTION _agc()
 // Katalogi firmy...
 FUNCTION _ah()
 
-   o[ 1 ] =' R - Rejestry VAT...       '
-   o[ 2 ] =' K - Kontrahenci           '
-   o[ 3 ] =' Z - Zdarzenia gospodarcze '
-   o[ 4 ] =' P - Pojazdy w&_l.a&_s.cicieli   '
+   o[ 1 ] := ' R - Rejestry VAT...       '
+   o[ 2 ] := ' K - Kontrahenci           '
+   o[ 3 ] := ' Z - Zdarzenia gospodarcze '
+   o[ 4 ] := ' P - Pojazdy w&_l.a&_s.cicieli   '
+   o[ 5 ] := ' F - Kasy fiskalne         '
 
    RETURN '15,6'
 
@@ -1614,6 +1615,14 @@ FUNCTION _ahc()
 FUNCTION _ahd()
 
    Samochod()
+
+   RETURN ''
+
+*******************************************
+// Kasy fiskalne...
+FUNCTION _ahe()
+
+   KasyFiskalne()
 
    RETURN ''
 

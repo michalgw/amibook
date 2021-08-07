@@ -134,7 +134,7 @@ FUNCTION Ewid()
          ColPro()
          @  8, 4 TO 22, 37
          @  9, 5 PROMPT ' K - KSI&__E.GOWANIE DOKUMENT&__O.W...  '
-         @ 10, 5 PROMPT ' B - ZESTAWIENIA ZBIORCZE       '
+         @ 10, 5 PROMPT ' B - ZESTAWIENIA                '
          @ 11, 5 PROMPT ' F - FAKTUROWANIE (' + SubStr( ewid_wyst, 1, 12 ) + ')'
          @ 12, 5 PROMPT ' P - PRZEBIEGI POJAZD&__O.W...      '
          @ 13, 5 PROMPT ' W - WYPOSA&__Z.ENIE - AKTUALIZACJA '
@@ -162,7 +162,35 @@ FUNCTION Ewid()
                ksieg()
 
             CASE opcja == 2
-               zbiorcze()
+               //zbiorcze()
+               opcja1 := 1
+               SAVE SCREEN TO ROBSO11
+               DO WHILE .T.
+                  *=============================
+                  ColPro()
+                  @ 11, 6 TO 14, 40
+                  @ 12, 7 PROMPT ' Z - Zestawienie zbiorcze        '
+                  @ 13, 7 PROMPT ' E - Ewidencja zwrot¢w paragon¢w '
+                  opcja1 := menu( opcja1 )
+                  ColStd()
+                  IF LastKey() == K_ESC
+                     EXIT
+                  ENDIF
+                  *=============================
+                  SAVE SCREEN TO scr22
+
+                  DO CASE
+                     CASE opcja1 == 1
+                        zbiorcze()
+
+                     CASE opcja1 == 2
+                        EwidencjaZwrotowParagonow()
+
+                  ENDCASE
+                  close_()
+                  RESTORE SCREEN FROM SCR22
+               ENDDO
+               RESTORE SCREEN FROM ROBSO11
 
             CASE opcja == 3
                SET CURSOR on
