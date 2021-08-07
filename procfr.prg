@@ -88,6 +88,7 @@ PROCEDURE FRDrukuj( cPlikFrp, aDane )
    CLEAR TYPE
    menu TO nMonDruk
    IF LastKey() == 27
+      @ 24, 0
       RETURN
    ENDIF
 
@@ -120,6 +121,8 @@ PROCEDURE FRDrukuj( cPlikFrp, aDane )
    ENDSWITCH
 
    oRap := NIL
+
+   @ 24, 0
 
    RETURN NIL
 
