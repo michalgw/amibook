@@ -502,7 +502,7 @@ PROCEDURE EwidencjaZwrotowParagonowPokaz( aKasa )
             ENDIF
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
             @ wiersz,  1 GET zDZIEN PICTURE '99' VALID Eval( bDzienValid )
-            @ wiersz,  4 GET zDATASP
+            @ wiersz,  4 GET zDATASP VALID ! Empty( zDATASP )
             @ wiersz, 15 GET zNRDOK PICTURE "@S18 " + Repl( '!', 64 ) VALID AllTrim( zNRDOK ) <> ""
             @ wiersz, 34 GET zTOWAR PICTURE "@S19 " + Repl( '!', 200 )
             @ 19,  9 GET zBRUTA PICTURE FPIC VALID Eval( bSumuj, 'A' )
