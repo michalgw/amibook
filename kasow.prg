@@ -187,6 +187,10 @@ if tnesc([*i],[   Jeste&_s. pewny? (T/N)   ])
    enddo
    do SETIND with 'VAT7ZD'
    zap_()
+   do while.not.dostepex('EWIDZWR')
+   enddo
+   do SETIND with 'EWIDZWR'
+   zap_()
 *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
    close_()
    Indeks()
