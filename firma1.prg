@@ -240,9 +240,18 @@ ColStd()
 if .not.tnesc([*i],[ UWAGA! Informacje firmy ]+rtrim(symbol)+[ zostan&_a. zniszczone - czy skasowa&_c.? (T/N) ])
 break
 endif
-if .not.tnesc([*i],[   Jeste&_s. pewny? (T/N)   ])
-break
-endif
+jestespewien := "   "
+ColErr()
+@ 24, 0
+@ 24, 25 SAY 'Jeste˜ pewny? (wprowad« "TAK")' GET jestespewien PICTURE '!!!' VALID jestespewien == "TAK"
+READ
+ColStd()
+IF LastKey() == 23 .OR. jestespewien <> 'TAK'
+   BREAK
+ENDIF
+//if .not.tnesc([*i],[   Jeste&_s. pewny? (T/N)   ])
+//break
+//endif
 do czekaj
 zident=str(recno(),3)
 *====================================
