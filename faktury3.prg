@@ -256,9 +256,10 @@ PROCEDURE Faktury3()
                IF ins
                   ztermin_z := 0
                ENDIF
-               zkwota := 0
-               @ 22, 24 SAY 'P&_l.atne przelewem w ci&_a.gu    dni'
-               @ 22, 49 GET ztermin_z PICTURE '99' RANGE 1, 99
+               //zkwota := 0
+               @ 22, 10 SAY 'Pˆatne przelewem w ci¥gu    dni,'
+               @ 22, 35 GET ztermin_z PICTURE '99' RANGE 1, 99
+               @ 22, 43 SAY 'zapˆacono' GET zkwota PICTURE '   99999999.99' RANGE 0, 99999999999
                read_()
                IF LastKey() == 27
                   SET COLOR TO
