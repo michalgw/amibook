@@ -156,9 +156,9 @@ PROCEDURE ZusRca( ubezp )
                   iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
                   ETATY->KOD_TYTU, ;
                   ZUSWYMIAR( ETATY->WYMIARL,ETATY->WYMIARM ), ;
-                  ETATY->PENSJA - ETATY->DOPL_BZUS, ;
-                  ETATY->PENSJA - ETATY->DOPL_BZUS, ;
-                  ETATY->BRUT_RAZEM - ( ETATY->DOPL_BZUS + ETATY->WAR_PF3 + ETATY->WAR_PSUM ), ;
+                  ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
+                  ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
+                  ETATY->BRUT_RAZEM - ( ETATY->DOPL_BZUS + ETATY->ZASI_BZUS + ETATY->WAR_PF3 + ETATY->WAR_PSUM ), ;
                   ETATY->WAR_PUE, ;
                   ETATY->WAR_PUR, ;
                   ETATY->WAR_PUC, ;
@@ -316,9 +316,9 @@ PROCEDURE ZusRca( ubezp )
                      iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
                      ETATY->KOD_TYTU, ;
                      ZUSWYMIAR( ETATY->WYMIARL, ETATY->WYMIARM ), ;
-                     ETATY->PENSJA - ETATY->DOPL_BZUS, ;
-                     ETATY->PENSJA - ETATY->DOPL_BZUS, ;
-                     ETATY->BRUT_RAZEM - ( ETATY->DOPL_BZUS + ETATY->WAR_PF3 + ETATY->WAR_PSUM ), ;
+                     ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
+                     ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
+                     ETATY->BRUT_RAZEM - ( ETATY->DOPL_BZUS + ETATY->ZASI_BZUS + ETATY->WAR_PF3 + ETATY->WAR_PSUM ), ;
                      ETATY->WAR_PUE, ;
                      ETATY->WAR_PUR, ;
                      ETATY->WAR_PUC, ;
