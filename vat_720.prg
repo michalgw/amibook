@@ -1507,7 +1507,7 @@ FUNCTION JPK_V7_DaneDek( aDane )
    hDane['P_59'] := cJPKZwrotPod == 'T'
    hDane['P_60'] := nJPKZwrotKwota
    hDane['P_61'] := AllTrim( cJPKZwrotRodzZob )
-   hDane['P_62'] := Int( Max( 0, P99d ) )
+   hDane['P_62'] := _round( Max( 0, P99d ), 0 )
    hDane['P_63'] := iif( zf2 == 'T', .T., .F. )
    hDane['P_64'] := iif( zf3 == 'T', .T., .F. )
    hDane['P_65'] := iif( zf4 == 'T', .T., .F. )
