@@ -2107,17 +2107,19 @@ PROCEDURE KRejZ_Ksieguj()
                   repl_( 'uboczne', iif( zKOLUMNA == '11', znetto, 0 ) )
                   repl_( 'wynagr_g', iif( zKOLUMNA == '12', znetto, 0 ) )
                   repl_( 'wydatki', iif( zKOLUMNA == '13' .OR. zKOLUMNA == '16', znetto, 0 ) )
-                  repl_(  'K16WART', iif( zKOLUMNA == '16', znetto, 0) )
-                  repl_(  'K16OPIS', iif( zKOLUMNA == '16', zK16OPIS, Space( 30 ) ) )
+                  repl_( 'K16WART', iif( zKOLUMNA == '16', znetto, 0) )
+                  repl_( 'K16OPIS', iif( zKOLUMNA == '16', zK16OPIS, Space( 30 ) ) )
                   IF zNETTO2 <> 0 .AND. Val( zKOLUMNA ) > 0
                      DO CASE
+                     CASE zKOLUMNA2 == '10'
+                        repl_( 'zakup', zNETTO2 )
                      CASE zKOLUMNA2 == '11'
                         repl_( 'uboczne', zNETTO2 )
                      CASE zKOLUMNA2 == '12'
                         repl_( 'wynagr_g', zNETTO2 )
                      CASE zKOLUMNA2 == '13'
                         repl_( 'wydatki', zNETTO2 )
-                     CASE zKOLUMNA2 == '13'
+                     CASE zKOLUMNA2 == '16'
                         repl_( 'K16WART', zNETTO2 )
                         repl_( 'K16OPIS', zK16OPIS )
                      ENDCASE
