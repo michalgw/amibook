@@ -416,13 +416,14 @@ FUNCTION Ewid()
                         verdekold := 'K  (1)                    '
                   ENDCASE
 
-                  @  9, 1 TO 22, 39
-                  @ 10, 2 PROMPT ' 4 - PIT-4R   (11)                   '
-                  @ 11, 2 PROMPT ' 8 - PIT-8AR  (10)                   '
-                  @ 12, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
-                  @ 13, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
-                  @ 14, 2 PROMPT ' J - JPK_V7' + verdekold
-                  @ 15, 2 PROMPT ' U - VAT-UE   (5)                    '
+                  @  8, 1 TO 22, 39
+                  @  9, 2 PROMPT ' 4 - PIT-4R   (11)                   '
+                  @ 10, 2 PROMPT ' 8 - PIT-8AR  (10)                   '
+                  @ 11, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
+                  @ 12, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
+                  @ 13, 2 PROMPT ' J - JPK_V7' + verdekold
+                  @ 14, 2 PROMPT ' U - VAT-UE   (5)                    '
+                  @ 15, 2 PROMPT ' I - IFT-2/2R (9)                    '
                   @ 16, 2 TO 16, 38
                   @ 17, 2 PROMPT ' C - RCA raport imienny              '
                   @ 18, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '
@@ -487,6 +488,9 @@ FUNCTION Ewid()
                         ENDSWITCH
 
                      CASE opcja1 == 7
+                        IFT2_Rob()
+
+                     CASE opcja1 == 8
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -514,7 +518,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 8
+                     CASE opcja1 == 9
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -542,7 +546,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 9
+                     CASE opcja1 == 10
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -574,7 +578,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 10
+                     CASE opcja1 == 11
                         opcja11 := MenuEx( 19, 6, { "S - Deklaracja skˆadki", "K - Korekta skˆadki" } )
                         DO CASE
                         CASE opcja11 == 1

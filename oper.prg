@@ -93,6 +93,7 @@ PROCEDURE Oper()
             ENDIF
             *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
             IF ins
+               @ 2, 65 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄ'
                zDZIEN := '  '
                znazwa := Space( 200 )
                zNR_IDENT := Space( 30 )
@@ -479,13 +480,14 @@ PROCEDURE Oper()
          pppp[  4 ] := '   [Ins]...................dopisanie dokumentu          '
          pppp[  5 ] := '   [M].....................modyfikacja dokumentu        '
          pppp[  6 ] := '   [I].....................import dokument¢w z pliku    '
-         pppp[  7 ] := '   [Del]...................kasowanie dokumentu          '
-         pppp[  8 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[  9 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 10 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 11 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
-         pppp[ 12 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
-         pppp[ 13 ] := '                                                        '
+         pppp[  7 ] := '   [F].....................wykazywanie w dek. IFT-2R    '
+         pppp[  8 ] := '   [Del]...................kasowanie dokumentu          '
+         pppp[  9 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 10 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 11 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 12 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
+         pppp[ 13 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
+         pppp[ 14 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
          i := 13
@@ -557,6 +559,13 @@ PROCEDURE Oper()
             commit_()
          ENDIF
          DO &_proc
+
+      CASE kl == Asc( 'F' ) .OR. kl == Asc( 'f' )
+         IF ! docsys()
+            OperIFT2()
+            DO &_proc
+         ENDIF
+
       ******************** ENDCASE
       ENDCASE
    ENDDO
@@ -565,6 +574,8 @@ PROCEDURE Oper()
 
 *################################## FUNKCJE #################################
 PROCEDURE say1()
+
+   operRysujTlo()
 
    CLEAR TYPEAHEAD
    SELECT oper
@@ -644,6 +655,14 @@ PROCEDURE say1()
       @ 22, 41 SAY '..........'
       @ 22, 67 SAY Space( 13 )
    ENDIF
+
+   IF IFT2 == 'T'
+      @ 2, 65 SAY 'IFT-2 (' + AllTrim( IFT2SEK ) + ')'
+   ELSE
+      ColStd()
+      @ 2, 65 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄ'
+   ENDIF
+
    SET COLOR TO
    RETURN
 
@@ -1419,6 +1438,60 @@ PROCEDURE Oper_Ksieguj()
    commit_()
    SELECT 1
    *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE OperIFT2()
+
+   LOCAL cKolor := ColStd()
+   LOCAL zIFT2 := iif( IFT2 == 'T', 'T', 'N' )
+   LOCAL zIFT2SEK := Val( IFT2SEK )
+   LOCAL zIFT2KWOT := iif( IFT2KWOT == 0, _round( ZAKUP + UBOCZNE + WYDATKI, 0 ), IFT2KWOT )
+   LOCAL nRecNo := RecNo()
+   LOCAL cEkran
+   LOCAL bRodzajW := { | |
+      cEkran := SaveScreen( 11, 0, 21, 79 )
+      ColInf()
+      @ 11, 0 CLEAR TO 21, 79
+      @ 11, 0 TO 21, 79
+      @ 12, 1 SAY "1 - Opˆaty za wyw¢z ˆadunk¢w i pasa¾er¢w przyj©tych do przewozu w portach pols"
+      @ 13, 1 SAY "2 - Przychody uzyskane na ter. RP przez zagr. przedsi©biorstwa ¾eglugi powiet."
+      @ 14, 1 SAY "3 - Dywidendy i inne przychody (dochody)z tytuˆu udziaˆu w zyskach os¢b prawny"
+      @ 15, 1 SAY "4 - Odsetki"
+      @ 16, 1 SAY "5 - Opˆaty licencyjne"
+      @ 17, 1 SAY "6 - Dziaˆalno˜† widowiskowa, rozrywkowa lub sportowa"
+      @ 18, 1 SAY "7 - Przychody z tytuˆu ˜wiadczeä: doradczych, ksi©gowych, badania rynku, us.pr"
+      @ 19, 1 SAY "8 - Przych¢d okre˜lony zgodnie z art. 21 i 22 ustawy"
+      @ 20, 1 SAY "9 - Przych¢d z tytuˆu zysk¢w kapitaˆowych, o kt¢rych mowa w art.7b ust.1pkt3-6"
+      RETURN .T.
+   }
+   LOCAL bRodzajV := { | |
+      IF zIFT2SEK >= 1 .AND. zIFT2SEK <= 9
+         RestScreen( 11, 0, 21, 79, cEkran )
+         RETURN .T.
+      ELSE
+         RETURN .F.
+      ENDIF
+   }
+
+   @  3, 16 CLEAR TO 11, 63
+   @  4, 18 TO 10, 61
+   @  5, 24 SAY 'WYKAZYWANIE W DEKLARACJI IFT-2R'
+   @  6, 19 TO 6, 60
+   @  7, 20 SAY 'Wyka¾ w deklaracji IFT-2R (Tak/Nie)' GET zIFT2 PICTURE '!' VALID zIFT2 $ 'NT'
+   @  8, 20 SAY 'Rodzaj przychodu (sekcja D, 1-9)' GET zIFT2SEK PICTURE '9' WHEN zIFT2 == 'T' .AND. Eval( bRodzajW ) VALID Eval( bRodzajV )
+   @  9, 20 SAY 'Wykazana kwota' GET zIFT2KWOT PICTURE '99999999999' WHEN zIFT2 == 'T' VALID zIFT2KWOT > 0
+   READ
+   IF LastKey() <> K_ESC
+      BlokadaR()
+      oper->IFT2 := zIFT2
+      oper->IFT2SEK := Str( zIFT2SEK, 3 )
+      oper->IFT2KWOT := zIFT2KWOT
+      COMMIT
+      UNLOCK
+   ENDIF
 
    RETURN NIL
 

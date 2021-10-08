@@ -135,6 +135,9 @@ FUNCTION Main()
    // Rodzaj SHA = 1 (SHA1)
    param_edsh = '1'
 
+   // Urz¥d skarbowy dla IFT-2R
+   param_eiku := '0671'
+
    // Parametry edeklaracji
    IF File( 'paramedek.mem' )
       RESTORE FROM paramedek ADDITIVE

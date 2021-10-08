@@ -46,8 +46,8 @@ FUNCTION edekKonfig()
       @ 18,42 say 'ออออออออออออออออออออออออออออออออออออออ'
       @ 19,42 say ' JPK - Metoda obsugi  (W/Zew):      '
       @ 20,42 say ' JPK - Bramka testowa (Tak/Nie):      '
-      @ 21,42 say 'ออออออออออออออออออออออออออออออออออออออ'
-      @ 22,42 SAY ' Rodzaj SHA (1 - SHA1, 2 - SHA256):   '
+      @ 21,42 SAY ' Rodzaj SHA (1 - SHA1, 2 - SHA256):   '
+      @ 22,42 say ' Kod urzฉdu dla IFT-2R :              '
       edekKonfigPokaz()
       kl=0
       DO WHILE kl#27
@@ -74,6 +74,7 @@ FUNCTION edekKonfig()
                        zparam_ejmo = param_ejmo
                        zparam_ejts = param_ejts
                        zparam_edsh = param_edsh
+                       zparam_eiku = param_eiku
                        *๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐ GET ๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐
                        @  3, 75 get zparam_edmo PICTURE '!' VALID edekKonfigPoleEdmo()
                        @  6, 43 get zparamedek_katalog picture '@S36' WHEN zparam_edmo == 'Z'
@@ -83,7 +84,8 @@ FUNCTION edekKonfig()
                        @ 17, 63 GET zparam_edpv PICTURE '!' WHEN zparam_edmo == 'Z' VALID edekKonfigPoleEdpv()
                        @ 19, 76 GET zparam_ejmo PICTURE '!' VALID edekKonfigPoleEjmo()
                        @ 20, 76 GET zparam_ejts PICTURE '!' VALID edekKonfigPoleEjts()
-                       @ 22, 78 GET zparam_edsh PICTURE '!' VALID edekKonfigPoleEdsh()
+                       @ 21, 78 GET zparam_edsh PICTURE '!' VALID edekKonfigPoleEdsh()
+                       @ 22, 67 GET zparam_eiku PICTURE '!!!!'
                        ****************************
                        clear type
                        read_()
@@ -100,6 +102,7 @@ FUNCTION edekKonfig()
                        param_ejmo = zparam_ejmo
                        param_ejts = zparam_ejts
                        param_edsh = zparam_edsh
+                       param_eiku = zparam_eiku
                        save to paramedek all like param_e*
                  end
                  edekKonfigPokaz()
@@ -235,7 +238,8 @@ FUNCTION edekKonfigPokaz()
       @ 17, 63 SAY txt_param_edpv
       @ 19, 76 SAY param_ejmo
       @ 20, 76 SAY param_ejts
-      @ 22, 78 SAY param_edsh
+      @ 21, 78 SAY param_edsh
+      @ 22, 67 SAY param_eiku
    RETURN
 
 /*----------------------------------------------------------------------*/

@@ -130,18 +130,21 @@ PROCEDURE KRejZ()
             krejzRysujTlo()
             *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
             IF ins
+               @  2, 5 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄ'
+/*
                @  4, 78 CLEAR TO  5, 79
                @  4, 29 CLEAR TO  4, 50
                @  5, 29 CLEAR TO  7, 69
                @  9, 29 CLEAR TO  9, 38
                @  9, 78 CLEAR TO 10, 79
                @ 10, 29 SAY '   '
- *                @ 10,50 say '   '
-*                @ 10,77 say '   '
+               *@ 10,50 say '   '
+               *@ 10,77 say '   '
                @ 13,  8 CLEAR TO 13, 79
                @ 14, 40 CLEAR TO 14, 79
                @ 15,  8 CLEAR TO 19, 79
- *                @ 13,57 clear to 19,79
+               *@ 13,57 clear to 19,79
+*/
                zDZIEN := '  '
                znazwa := Space( 200 )
                zNR_IDENT := Space( 30 )
@@ -677,24 +680,25 @@ PROCEDURE KRejZ()
       CASE kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 13 ]
+         DECLARE pppp[ 14 ]
          *---------------------------------------
-         pppp[  1 ] := '                                                        '
-         pppp[  2 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
-         pppp[  3 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
-         pppp[  4 ] := '   [Ins]...................wpisywanie                   '
-         pppp[  5 ] := '   [M].....................modyfikacja pozycji          '
-         pppp[  6 ] := '   [I].....................import z pliku JPK           '
-         pppp[  7 ] := '   [W].....................grupowa weryf. stat. VAT     '
-         pppp[  8 ] := '   [B]...........przeˆ¥cz wprowadzanie nettem/bruttem   '
-         pppp[  9 ] := '   [Del]...................kasowanie pozycji            '
-         pppp[ 10 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 11 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 12 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 13 ] := '                                                        '
+         pppp[  1 ] := '                                                            '
+         pppp[  2 ] := '   [PgUp/PgDn].......poprzednia/nast©pna strona             '
+         pppp[  3 ] := '   [Home/End]........pierwsza/ostatnia pozycja              '
+         pppp[  4 ] := '   [Ins].............wpisywanie                             '
+         pppp[  5 ] := '   [M]...............modyfikacja pozycji                    '
+         pppp[  6 ] := '   [I]...............import z pliku JPK                     '
+         pppp[  7 ] := '   [W]...............grupowa weryf. stat. VAT               '
+         pppp[  8 ] := '   [B]...............przeˆ¥cz wprowadzanie nettem/bruttem   '
+         pppp[  9 ] := '   [F]...............wykazywanie dokumentu w dek. IFT-2R    '
+         pppp[ 10 ] := '   [Del].............kasowanie pozycji                      '
+         pppp[ 11 ] := '   [F9 ].............szukanie zˆo¾one                       '
+         pppp[ 12 ] := '   [F10].............szukanie dnia                          '
+         pppp[ 13 ] := '   [Esc].............wyj˜cie                                '
+         pppp[ 14 ] := '                                                            '
          *---------------------------------------
          SET COLOR TO i
-         i := 10
+         i := 14
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -716,6 +720,11 @@ PROCEDURE KRejZ()
 
       CASE kl == Asc( 'W' ) .OR. kl == Asc( 'w' )
          VAT_Sprzwdz_GrpNIP_WLApi( 'rejz', { || &_bot }  )
+
+      CASE kl == Asc( 'F' ) .OR. kl == Asc( 'f' )
+         KRejZIFT2()
+         DO &_proc
+         _disp := .F.
 
       ******************** ENDCASE
       ENDCASE
@@ -862,6 +871,13 @@ PROCEDURE say1z()
       @ 17, 64 SAY KOL48 PICTURE FPIC
       @ 18, 64 SAY KOL49 PICTURE FPIC
       @ 19, 64 SAY KOL50 PICTURE FPIC
+   ENDIF
+
+   IF IFT2 == 'T'
+      @ 2, 5 SAY 'IFT-2 (' + AllTrim( IFT2SEK ) + ')'
+   ELSE
+      ColStd()
+      @  2, 5 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄ'
    ENDIF
 
    SET COLOR TO
@@ -2122,6 +2138,7 @@ PROCEDURE KRejZ_Ksieguj()
                      CASE zKOLUMNA2 == '16'
                         repl_( 'K16WART', zNETTO2 )
                         repl_( 'K16OPIS', zK16OPIS )
+                        repl_( 'wydatki', zNETTO2 )
                      ENDCASE
                   ENDIF
                   COMMIT
@@ -2348,6 +2365,78 @@ PROCEDURE KRejZ_Ksieguj()
      ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
      *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
    SELECT rejz
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE KRejZIFT2()
+
+   LOCAL cKolor := ColStd()
+   LOCAL zIFT2 := iif( IFT2 == 'T', 'T', 'N' )
+   LOCAL zIFT2SEK := Val( IFT2SEK )
+   LOCAL zIFT2KWOT := iif( IFT2KWOT == 0, _round( NETTO + NETTO2, 0 ), IFT2KWOT )
+   LOCAL nRecNo := RecNo()
+   LOCAL cEkran
+   LOCAL bRodzajW := { | |
+      cEkran := SaveScreen( 11, 0, 21, 79 )
+      ColInf()
+      @ 11, 0 CLEAR TO 21, 79
+      @ 11, 0 TO 21, 79
+      @ 12, 1 SAY "1 - Opˆaty za wyw¢z ˆadunk¢w i pasa¾er¢w przyj©tych do przewozu w portach pols"
+      @ 13, 1 SAY "2 - Przychody uzyskane na ter. RP przez zagr. przedsi©biorstwa ¾eglugi powiet."
+      @ 14, 1 SAY "3 - Dywidendy i inne przychody (dochody)z tytuˆu udziaˆu w zyskach os¢b prawny"
+      @ 15, 1 SAY "4 - Odsetki"
+      @ 16, 1 SAY "5 - Opˆaty licencyjne"
+      @ 17, 1 SAY "6 - Dziaˆalno˜† widowiskowa, rozrywkowa lub sportowa"
+      @ 18, 1 SAY "7 - Przychody z tytuˆu ˜wiadczeä: doradczych, ksi©gowych, badania rynku, us.pr"
+      @ 19, 1 SAY "8 - Przych¢d okre˜lony zgodnie z art. 21 i 22 ustawy"
+      @ 20, 1 SAY "9 - Przych¢d z tytuˆu zysk¢w kapitaˆowych, o kt¢rych mowa w art.7b ust.1pkt3-6"
+      RETURN .T.
+   }
+   LOCAL bRodzajV := { | |
+      IF zIFT2SEK >= 1 .AND. zIFT2SEK <= 9
+         RestScreen( 11, 0, 21, 79, cEkran )
+         RETURN .T.
+      ELSE
+         RETURN .F.
+      ENDIF
+   }
+
+   @  3, 16 CLEAR TO 11, 63
+   @  4, 18 TO 10, 61
+   @  5, 24 SAY 'WYKAZYWANIE W DEKLARACJI IFT-2R'
+   @  6, 19 TO 6, 60
+   @  7, 20 SAY 'Wyka¾ w deklaracji IFT-2R (Tak/Nie)' GET zIFT2 PICTURE '!' VALID zIFT2 $ 'NT'
+   @  8, 20 SAY 'Rodzaj przychodu (sekcja D, 1-9)' GET zIFT2SEK PICTURE '9' WHEN zIFT2 == 'T' .AND. Eval( bRodzajW ) VALID Eval( bRodzajV )
+   @  9, 20 SAY 'Wykazana kwota' GET zIFT2KWOT PICTURE '99999999999' WHEN zIFT2 == 'T' VALID zIFT2KWOT > 0
+   READ
+   IF LastKey() <> K_ESC
+      BlokadaR()
+      rejz->IFT2 := zIFT2
+      rejz->IFT2SEK := Str( zIFT2SEK, 3 )
+      rejz->IFT2KWOT := zIFT2KWOT
+      COMMIT
+      UNLOCK
+      IF zRYCZALT <> 'T'
+         SELECT 10
+         DO WHILE ! Dostep( "OPER" )
+         ENDDO
+         SetInd( "OPER" )
+         SET ORDER TO 5
+         SEEK '+' + Str( nRecNo, 5 ) + 'RZ-'
+         IF Found()
+            BlokadaR()
+            oper->IFT2 := zIFT2
+            oper->IFT2SEK := Str( zIFT2SEK, 3 )
+            oper->IFT2KWOT := zIFT2KWOT
+            COMMIT
+            UNLOCK
+         ENDIF
+         USE
+         SELECT 1
+      ENDIF
+   ENDIF
 
    RETURN NIL
 

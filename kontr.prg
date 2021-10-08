@@ -799,3 +799,74 @@ FUNCTION KontrahZnajdzA( aNipy, aDane, ncWrkplcNo )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION KontrahZnajdzIFT2( cNip,  aDane )
+
+   LOCAL lRes
+
+   hb_default( @aDane, {=>} )
+
+   DO WHILE ! DostepPro( "KONTR", , , , "KONTR" )
+   ENDDO
+   kontr->( dbSetOrder( 2 ) )
+
+   IF ( lRes := kontr->( dbSeek( "+" + ident_fir + cNip ) ) )
+
+      aDane[ 'kraj' ]     := kontr->kraj
+      aDane[ 'nazwaskr' ] := kontr->nazwaskr
+      aDane[ 'datarozp' ] := kontr->datarozp
+      aDane[ 'rodzajid' ] := kontr->rodzajid
+      aDane[ 'nridpod' ]  := kontr->nridpod
+      aDane[ 'krajwyd' ]  := kontr->krajwyd
+      aDane[ 'kodpoczt' ] := kontr->kodpoczt
+      aDane[ 'miasto' ]   := kontr->miasto
+      aDane[ 'ulica' ]    := kontr->ulica
+      aDane[ 'nrbud' ]    := kontr->nrbud
+      aDane[ 'nrlok' ]    := kontr->nrlok
+      aDane[ 'recno' ]    := kontr->( RecNo() )
+
+   ELSE
+
+      aDane[ 'kraj' ]     := '  '
+      aDane[ 'nazwaskr' ] := Space( 70 )
+      aDane[ 'datarozp' ] := SToD( '' )
+      aDane[ 'rodzajid' ] := ' '
+      aDane[ 'nridpod' ]  := Space( 50 )
+      aDane[ 'krajwyd' ]  := '  '
+      aDane[ 'kodpoczt' ] := Space( 8 )
+      aDane[ 'miasto' ]   := Space( 56 )
+      aDane[ 'ulica' ]    := Space( 65 )
+      aDane[ 'nrbud' ]    := Space( 9 )
+      aDane[ 'nrlok' ]    := Space( 10 )
+      aDane[ 'recno' ]    := 0
+
+   ENDIF
+
+   kontr->( dbCloseArea() )
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE KontrahentZapiszIFT2( aDane )
+
+   IF aDane[ 'recno' ] > 0
+      DO WHILE ! DostepPro( "KONTR", , , , "KONTR" )
+      ENDDO
+      kontr->( dbGoto( aDane[ 'recno' ] ) )
+      kontr->( RLock() )
+      kontr->nazwaskr := aDane[ 'nazwaskr' ]
+      kontr->datarozp := aDane[ 'datarozp' ]
+      kontr->rodzajid := aDane[ 'rodzajid' ]
+      kontr->nridpod  := aDane[ 'nridpod' ]
+      kontr->krajwyd  := aDane[ 'krajwyd' ]
+      kontr->kodpoczt := aDane[ 'kodpoczt' ]
+      kontr->miasto   := aDane[ 'miasto' ]
+      kontr->ulica    := aDane[ 'ulica' ]
+      kontr->nrbud    := aDane[ 'nrbud' ]
+      kontr->nrlok    := aDane[ 'nrlok' ]
+      kontr->( dbCommit() )
+      kontr->( dbUnlock() )
+      kontr->( dbCloseArea() )
+   ENDIF
+
+   RETURN NIL
