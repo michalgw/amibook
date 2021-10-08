@@ -673,7 +673,17 @@ public aKONTRdbf := {;
    { "UE", "C", 1, 0 },;                          //  11
    { "KRAJ", "C", 2, 0 },;                        //  12
    { "ZRODLO", "C", 1, 0 },;                      //  13
-   { "DATASPR", "D", 8, 0 } }                     //  14
+   { "DATASPR", "D", 8, 0 },;                     //  14
+   { "NAZWASKR", "C", 70, 0 },;                   //  15  Nazwa skr¢cona
+   { "DATAROZP", "D", 8, 0 },;                    //  16  Data rozpocz©cia dziaˆalno˜ci
+   { "RODZAJID", "C", 1, 0 },;                    //  17  Rodzaj identyfikacji: podatkowej (1) lub innej (2)
+   { "NRIDPOD", "C", 50, 0 },;                    //  18  Nr identyfikacji podatkowej
+   { "KRAJWYD", "C", 2, 0 },;                     //  19  Kraj wydania
+   { "KODPOCZT", "C", 8, 0 },;                    //  20  Kod pocztowy
+   { "MIASTO", "C", 56, 0 },;                     //  21  Miejscowosc
+   { "ULICA", "C", 65, 0 },;                      //  22  Ulica
+   { "NRBUD", "C", 9, 0 },;                       //  23  Nr budynku
+   { "NRLOK", "C", 10, 0 } }                      //  24  Nr lokalu
 
 public aKONTRSPRdbf := {;
    { "ID", "+", 4, 0 }, ;                         //  1
@@ -756,7 +766,10 @@ public aOPERdbf := {;
    { "ZAP_WART", "N", 11, 2 },;                   //  29
    { "REC_NO", "N", 10, 0 },;                     //  30
    { "K16WART", "N", 11, 2 },;                    //  31
-   { "K16OPIS", "C", 30, 0 } }                    //  32
+   { "K16OPIS", "C", 30, 0 },;                    //  32
+   { "IFT2", "C", 1, 0 },;                        //  33
+   { "IFT2SEK", "C", 3, 0 },;                     //  34
+   { "IFT2KWOT", "N", 11, 0 } }                   //  35
 
 // Create: ORGANY.DBF
 public aORGANYdbf := {;
@@ -1130,7 +1143,10 @@ public aREJZdbf := {;
    { "NETTO2", "N", 11, 2 },;                     //  65
    { "DATATRAN", "D", 8, 0 },;                    //  66
    { "RODZDOW", "C", 6, 0 },;                     //  67
-   { "VATMARZA", "N", 11, 2 } }                   //  68
+   { "VATMARZA", "N", 11, 2 },;                   //  68
+   { "IFT2", "C", 1, 0 },;                        //  69
+   { "IFT2SEK", "C", 3, 0 },;                     //  70
+   { "IFT2KWOT", "N", 11, 0 } }                   //  71
 
 // Create: RELACJE.DBF
 public aRELACJEdbf := {;
