@@ -29,6 +29,7 @@ FUNCTION Main()
    dbfUtworzTabele( 'OPER', 'oper.tym' )
    dbfUtworzTabele( 'REJZ', 'rejz.tym' )
    dbfUtworzTabele( 'KONTR', 'kontr.tym' )
+   dbfUtworzTabele( 'PRAC', 'prac.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
@@ -36,6 +37,7 @@ FUNCTION Main()
    dbfIdxOPER()
    dbfIdxREJZ()
    dbfIdxKONTR()
+   dbfIdxPRAC()
    dbCloseAll()
 
    RETURN

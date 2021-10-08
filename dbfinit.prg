@@ -937,7 +937,8 @@ public aPRACdbf := {;
    { "PPKPS2", "N", 5, 2 },;                      //  83 PPK Wpˆata dodatkowa pracodawcy - stawka
    { "PPKIDKADR", "C", 10, 0 },;                  //  84 PPK ID Kadrowy (wewn©trzny) Identyfikator zatrudnienia osobyaplikacji kadrowej pracodawcy.Musi by† unikalnyw ramach danej firmy.Identyfikator pomocniczy.
    { "PPKIDEPPK", "C", 20, 0 },;                  //  85 PPK Identyfikator ewidencji PPK uczestnika PPK.
-   { "PPKIDPZIF", "C", 50, 0 } }                  //  86 PPK Unikalny numer nadany przez instytucj© finansow¥, np. Nr rachunku, kt¢ry uczestnik ma nadany przez instytucj© finansow¥.
+   { "PPKIDPZIF", "C", 50, 0 },;                  //  86 PPK Unikalny numer nadany przez instytucj© finansow¥, np. Nr rachunku, kt¢ry uczestnik ma nadany przez instytucj© finansow¥.
+   { "PRAKTYKA", "C", 1, 0 } }                    //  87 Praktykant ( 'T' = tak, 'N' - nie )
 
 // Create: PROFIL.DBF
 public aPROFILdbf := { ;
