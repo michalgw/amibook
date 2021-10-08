@@ -442,6 +442,7 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
    ColStd()
    @ 5, 1 TO 5, 78
    @ 6, 19 TO 20, 19
+   @ 22, 0 SAY PadC( "Enter - wybierz         ESC - koniec" )
 
    Eval( bUserFun, AC_IDLE, 1 )
    DO WHILE nWybor > 0
