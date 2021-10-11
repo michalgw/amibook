@@ -2419,10 +2419,12 @@ PROCEDURE KRejZIFT2()
       COMMIT
       UNLOCK
       IF zRYCZALT <> 'T'
-         SELECT 10
-         DO WHILE ! Dostep( "OPER" )
-         ENDDO
-         SetInd( "OPER" )
+         SELECT 5
+         IF Select( "OPER" ) == 0
+            DO WHILE ! Dostep( "OPER" )
+            ENDDO
+            SetInd( "OPER" )
+         ENDIF
          SET ORDER TO 5
          SEEK '+' + Str( nRecNo, 5 ) + 'RZ-'
          IF Found()
