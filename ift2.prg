@@ -301,7 +301,8 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
       LOCAL cKolor
       IF aDane[ 'rodzajid' ] $ '12'
          @ 24, 0
-         cKolor := ColStd()
+         cKolor := SetColor()
+         SET COLOR TO W+
          DO CASE
          CASE aDane[ 'rodzajid' ] == '1'
             @ 9, 43 SAY "- podatkowej"
@@ -334,14 +335,6 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
             @ 14, 20 SAY "Ulica"
             @ 15, 20 SAY "Nr domu              Nr lokalu"
             @ 16, 20 SAY "Kraj"
-            DO CASE
-            CASE aDane[ 'rodzajid' ] == '1'
-               @ 9, 43 SAY "- podatkowej"
-            CASE aDane[ 'rodzajid' ] == '2'
-               @ 9, 43 SAY "- innej     "
-            OTHERWISE
-               @ 9, 43 SAY "            "
-            ENDCASE
             SET COLOR TO W+
             @  6, 32 SAY SubStr( aDane[ 'nazwa' ], 1, 47 )
             @  7, 35 SAY SubStr( aDane[ 'nazwaskr' ], 1, 44 )
@@ -355,6 +348,14 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
             @ 15, 28 SAY aDane[ 'nrbud' ]
             @ 15, 51 SAY aDane[ 'nrlok' ]
             @ 16, 25 SAY aDane[ 'kraj' ]
+            DO CASE
+            CASE aDane[ 'rodzajid' ] == '1'
+               @ 9, 43 SAY "- podatkowej"
+            CASE aDane[ 'rodzajid' ] == '2'
+               @ 9, 43 SAY "- innej     "
+            OTHERWISE
+               @ 9, 43 SAY "            "
+            ENDCASE
          CASE nIndex == 2
             @  6, 20 CLEAR TO 20, 78
             @  6, 20 SAY "Rodzaj przych.  Kwota zwoln. Kwota podl.  Staw.   Podatek"
