@@ -52,6 +52,9 @@ FUNCTION Main()
    hb_GtInfo( HB_GTI_ALTENTER, .T. )
    hb_gtInfo( HB_GTI_MAXIMIZED, .T. )
 
+   // Tymczasowa nazwa pliku z wydrukiem
+   PUBLIC RAPTEMP := ''
+
    // Wlasna obsluga bledow - rejestrowanie bledow
    AmiErrorSys()
 
@@ -755,9 +758,6 @@ FUNCTION Main()
 
    // Jaka zesc raportu jest drukowana
    PUBLIC CZESC := 0
-
-   // Tymczasowa nazwa pliku z wydrukiem
-   PUBLIC RAPTEMP := ''
 
    // Formaty liczb
    // TODO: Sprawdzic wykozystanie
