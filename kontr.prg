@@ -815,7 +815,11 @@ FUNCTION KontrahZnajdzIFT2( cNip,  aDane )
       aDane[ 'nazwaskr' ] := kontr->nazwaskr
       aDane[ 'datarozp' ] := kontr->datarozp
       aDane[ 'rodzajid' ] := kontr->rodzajid
-      aDane[ 'nridpod' ]  := kontr->nridpod
+      IF Empty( kontr->nridpod )
+         aDane[ 'nridpod' ] := Pad( kontr->nr_ident, 50 )
+      ELSE
+         aDane[ 'nridpod' ]  := kontr->nridpod
+      ENDIF
       aDane[ 'krajwyd' ]  := kontr->krajwyd
       aDane[ 'kodpoczt' ] := kontr->kodpoczt
       aDane[ 'miasto' ]   := kontr->miasto
