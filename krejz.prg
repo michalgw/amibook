@@ -2378,6 +2378,16 @@ PROCEDURE KRejZIFT2()
    LOCAL zIFT2KWOT := iif( IFT2KWOT == 0, _round( NETTO + NETTO2, 0 ), IFT2KWOT )
    LOCAL nRecNo := RecNo()
    LOCAL cEkran
+   LOCAL bWykazV := { | |
+      LOCAL cKolor := SetColor()
+      IF zIFT2 $ 'NT'
+         SET COLOR TO W+
+         @ 7, 57 SAY iif( zIFT2 == 'T', 'ak', 'ie' )
+         SetColor( cKolor )
+         RETURN .T.
+      ENDIF
+      RETURN .F.
+   }
    LOCAL bRodzajW := { | |
       cEkran := SaveScreen( 11, 0, 21, 79 )
       ColInf()
@@ -2407,9 +2417,10 @@ PROCEDURE KRejZIFT2()
    @  4, 18 TO 10, 61
    @  5, 24 SAY 'WYKAZYWANIE W DEKLARACJI IFT-2R'
    @  6, 19 TO 6, 60
-   @  7, 20 SAY 'Wyka¾ w deklaracji IFT-2R (Tak/Nie)' GET zIFT2 PICTURE '!' VALID zIFT2 $ 'NT'
+   @  7, 20 SAY 'Wyka¾ w deklaracji IFT-2R (Tak/Nie)' GET zIFT2 PICTURE '!' VALID Eval( bWykazV )
    @  8, 20 SAY 'Rodzaj przychodu (sekcja D, 1-9)' GET zIFT2SEK PICTURE '9' WHEN zIFT2 == 'T' .AND. Eval( bRodzajW ) VALID Eval( bRodzajV )
    @  9, 20 SAY 'Wykazana kwota' GET zIFT2KWOT PICTURE '99999999999' WHEN zIFT2 == 'T' VALID zIFT2KWOT > 0
+   Eval( bWykazV )
    READ
    IF LastKey() <> K_ESC
       BlokadaR()
