@@ -130,8 +130,8 @@ PROCEDURE IFT2_Dane( cTablica, dDataOd, dDataDo )
                'KR' => 0, ;
                'PR' => 0, ;
                'miesiace' => 12, ;
-               'data_zl' => Date(), ;
-               'data_prz' => Date() ;
+               'data_zl' => SToD( '' ), ;
+               'data_prz' => SToD( '' ) ;
             }
 
             KontrahZnajdzIFT2( dane->nr_ident, @aPoz )
