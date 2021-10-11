@@ -275,7 +275,7 @@ FUNCTION Komunikat( cTresc, cKolor )
    DO WHILE nRes == 2
       nRes := Alert( cTresc, { 'Zamknij', 'Kopiuj komunikat do schowka' }, cKolor )
       IF nRes == 2
-         hb_gtInfo( HB_GTI_CLIPBOARDDATA, rezultat )
+         hb_gtInfo( HB_GTI_CLIPBOARDDATA, StrTran( cTresc, ";", hb_eol() ) )
          komun( 'Komunikat zostaˆ skopiowany do schowka.', 5 )
       ENDIF
    ENDDO
