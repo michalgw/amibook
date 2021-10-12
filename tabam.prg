@@ -133,10 +133,11 @@ FUNCTION TabAm( mieskart )
          ZMC := Space( 10 )
          zSPOSOB := SPOSOB
          IF wybrok # 0
-            IF Val( param_rok ) > Val( AllTrim( ROK&swybr ) )
-               kom( 3, '*u', ' Nie mo&_z.esz aktualizowa&_c. poprzednich lat ' )
+            IF Val( param_rok ) > Val( AllTrim( ROK&swybr ) ) .AND. ! TNEsc( , "Pr¢bujesz edytowa† poprzedni rok. Czy jeste˜ pewien? (Tak/Nie)" )
+               //kom( 3, '*u', ' Nie mo&_z.esz aktualizowa&_c. poprzednich lat ' )
                wybrok := 0
-            ELSE
+            ENDIF
+            IF wybrok # 0
                SELECT KARTSTMO
                SEEK '+' + zidp + AllTrim( ROK&swybr )
                *if found()
@@ -153,14 +154,18 @@ FUNCTION TabAm( mieskart )
                   wybpol := 1
                   ZPRZE := Transform( PRZEL, '999.99' )
                   IF Val( ROK&swybr ) == Year( kartst->data_zak )
-                     cMCRozp := StrTran( Str( Month( kartst->data_zak ), 2 ), ' ', '0' )
+                     nMCRozp := Month( kartst->data_zak )
                   ELSE
-                     cMCRozp := '01'
+                     nMCRozp := 1
                   ENDIF
-                  NMC := MC&cMCRozp
-                  ZMC := Transform( NMC, '@Z 999999.99' )
                   @ 6, 44 + ( ( wybrok - 1 ) * 10 ) PROMPT Zprze
-                  @ 8 + Val( cMCRozp ), 41 + ( ( wybrok - 1 ) * 10 ) PROMPT ZMC
+                  FOR nI := nMCRozp TO 12
+                     cMCRozp := StrTran( Str( nI, 2, 0 ), ' ', '0' )
+                     NMC := MC&cMCRozp
+                     ZMC := Transform( NMC, '@Z 999999.99' )
+                     @ 8 + nI, 41 + ( ( wybrok - 1 ) * 10 ) PROMPT ZMC
+                  NEXT
+                  cMCRozp := StrTran( Str( nMCRozp, 2, 0 ), ' ', '0' )
                   wybpol := menu( wybpol )
                   swybp := StrTran( Str( wybpol - 1, 2 ), ' ', '0' )
                   ColStd()
@@ -180,9 +185,11 @@ FUNCTION TabAm( mieskart )
                         UNLOCK
                      ENDIF
                      ZPRZE := Transform( zPRZE, '999.99' )
-                  CASE wybpol # 1 .AND. wybpol # 0
+                  CASE wybpol > 1
+                     cMCRozp := StrTran( Str( wybpol + nMCRozp - 2, 2, 0 ), ' ', '0' )
+                     NMC := MC&cMCRozp
                      SET CURSOR ON
-                     @ 8 + Val( cMCRozp ), 41 + ( ( wybrok - 1 ) * 10 ) GET NMC PICTURE '999999.99' VALID NMC # 0
+                     @ 8 + wybpol - 1, 41 + ( ( wybrok - 1 ) * 10 ) GET NMC PICTURE '999999.99' VALID NMC # 0
                      READ
                      SET CURSOR OFF
                      IF LastKey() # 27
@@ -219,10 +226,13 @@ FUNCTION TabAm( mieskart )
                         umorz_akt WITH zumorz_akt, ;
                         liniowo WITH zliniowo, ;
                         degres WITH zdegres
-                     FOR i := Val( cMCRozp ) TO 12
+                     FOR i := nMCRozp TO 12
                         zmcn := StrTran( Str( i, 2 ), ' ', '0' )
                         IF kon
                            REPLACE mc&zmcn WITH 0
+                        ELSEIF i < Val( cMCRozp )
+                           zodpis_rok := zodpis_rok + mc&zmcn
+                           zodpis_sum := zodpis_sum + mc&zmcn
                         ELSE
                            IF zodpis_mie > zwart_akt - zodpis_sum
                               REPLACE mc&zmcn WITH zwart_akt - zodpis_sum
