@@ -5695,7 +5695,7 @@ FUNCTION DaneDek_IFT2w9( aDaneZrd )
    IF aDaneZrd[ 'Firma' ][ 'Spolka' ]
       aDane[ 'P_9' ] := aDaneZrd[ 'Firma' ][ 'PelnaNazwa' ]
    ELSE
-      aDane[ 'P_9' ] := aDaneZrd[ 'Firma' ][ 'Nazwisko' ] + ', ' + aDaneZrd[ 'Firma' ][ 'ImiePierwsze' ] + ', ' + DToC( aDaneZrd[ 'Dane' ][ 'Data' ] )
+      aDane[ 'P_9' ] := aDaneZrd[ 'Firma' ][ 'Nazwisko' ] + ', ' + aDaneZrd[ 'Firma' ][ 'ImiePierwsze' ] + ', ' + DToC( aDaneZrd[ 'Firma' ][ 'DataUrodzenia' ] )
    ENDIF
    aDane[ 'P_10' ] := 'POLSKA'
    aDane[ 'P_11' ] := aDaneZrd[ 'Firma' ][ 'Wojewodztwo' ]
@@ -5711,7 +5711,7 @@ FUNCTION DaneDek_IFT2w9( aDaneZrd )
    aDane[ 'P_19' ] := ''
    aDane[ 'P_20' ] := aDaneZrd[ 'nazwa' ]
    aDane[ 'P_21' ] := aDaneZrd[ 'nazwaskr' ]
-   aDane[ 'P_22' ] := aDaneZrd[ 'datarozp' ]
+   aDane[ 'P_22' ] := iif( Empty( aDaneZrd[ 'datarozp' ] ), '', aDaneZrd[ 'datarozp' ] )
    aDane[ 'P_23' ] := aDaneZrd[ 'rodzajid' ]
    aDane[ 'P_23_1' ] := iif( aDaneZrd[ 'rodzajid' ] == '1', '1', '0' )
    aDane[ 'P_23_2' ] := iif( aDaneZrd[ 'rodzajid' ] == '2', '1', '0' )
