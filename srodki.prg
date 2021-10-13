@@ -20,6 +20,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+PROCEDURE SrodkiTxt()
+
 private _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
 private _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15
 begin sequence
@@ -136,3 +138,106 @@ if _czy_close
    close_()
 endif
 seek [+]+ident_fir
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE SrodkiGr()
+
+   LOCAL aDane, aPoz, aPozMod, nRecNo
+
+   IF ! kartst->( dbSeek( '+' + ident_fir ) )
+      Kom( 3, '*w', 'b r a k    d a n y c h' )
+      RETURN NIL
+   ENDIF
+
+   nRecNo := kartst->( RecNo() )
+
+   aDane := { ;
+      'pozycje' => {}, ;
+      'SumaPrzed' => 0, ;
+      'SumaZlik' => 0, ;
+      'SumaZbyt' => 0, ;
+      'SumaMod' => 0 }
+
+   DO WHILE kartst->del == '+' .AND. kartst->firma == ident_fir
+      aPoz := hb_Hash()
+      aPoz[ 'DataZakupu' ] := kartst->data_zak
+      aPoz[ 'krst' ] := AllTrim( kartst->krst )
+      aPoz[ 'NrEwid' ] := AllTrim( kartst->nrewid )
+      aPoz[ 'Nazwa' ] := AllTrim( kartst->nazwa )
+      aPoz[ 'DowodZak' ] := AllTrim( kartst->dowod_zak )
+      aPoz[ 'Stawka' ] := kartst->stawka
+      aPoz[ 'Sposob' ] := iif( kartst->sposob == 'L', 'Liniowo', iif( kartst->sposob == 'J', 'Jednorazowo', 'Degresywnie' ) )
+      aPoz[ 'WspDeg' ] := kartst->wspdeg
+      aPoz[ 'Wartosc' ] := kartst->wartosc
+      aPoz[ 'RodzLik' ] := ''
+      IF Empty( kartst->data_lik )
+         aDane[ 'SumaPrzed' ] += kartst->wartosc
+         aPoz[ 'RodzLik' ] := ''
+         aPoz[ 'DataLik' ] := ''
+      ELSE
+         aPoz[ 'DataLik' ] := kartst->data_lik
+         IF Empty( kartst->data_sprz )
+            aDane[ 'SumaZlik' ] += kartst->wartosc
+            aPoz[ 'RodzLik' ] := 'Likwidacja'
+         ELSE
+            aDane[ 'SumaZbyt' ] += kartst->wartosc
+            aPoz[ 'RodzLik' ] := 'Zbycie'
+         ENDIF
+      ENDIF
+
+      aPoz[ 'modyfikacje' ] := {}
+      IF kartstmo->( dbSeek( '+' + Str( kartst->rec_no, 5 ) ) )
+         DO WHILE kartstmo->del == '+' .AND. kartstmo->ident == Str( kartst->rec_no, 5 )
+            aPozMod := { => }
+            aPozMod[ 'DataMod' ] := kartstmo->data_mod
+            aPozMod[ 'OpisMod' ] := AllTrim( kartstmo->opis_mod )
+            aPozMod[ 'WartMod' ] := kartstmo->wart_mod
+
+            IF Empty( kartst->data_lik )
+               aDane[ 'SumaMod' ] += kartstmo->wart_mod
+            ELSE
+               IF Empty( kartst->data_sprz )
+                  aDane[ 'SumaZlik' ] += kartstmo->wart_mod
+               ELSE
+                  aDane[ 'SumaZbyt' ] += kartstmo->wart_mod
+               ENDIF
+            ENDIF
+
+            AAdd( APoz[ 'modyfikacje' ], aPozMod )
+
+            kartstmo->( dbSkip() )
+         ENDDO
+      ENDIF
+
+      AAdd( aDane[ 'pozycje' ], aPoz )
+
+      kartst->( dbSkip() )
+   ENDDO
+
+   kartst->( dbGoto( nRecNo ) )
+
+   aDane[ 'Firma' ] := AllTrim( symbol_fir )
+   aDane[ 'uzytkownik' ] := AllTrim( code() )
+   aDane[ 'FR_Dataset' ] := 'POZYCJE:MODYFIKACJE'
+
+   FRDrukuj( 'frf\stsrodki.frf', aDane )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Srodki()
+
+   SWITCH GraficznyCzyTekst()
+   CASE 1
+      SrodkiGr()
+      EXIT
+   CASE 2
+      SrodkiTxt()
+      EXIT
+   ENDSWITCH
+
+   RETURN NIL
