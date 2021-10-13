@@ -189,7 +189,7 @@ FUNCTION TabAm( mieskart )
                      cMCRozp := StrTran( Str( wybpol + nMCRozp - 2, 2, 0 ), ' ', '0' )
                      NMC := MC&cMCRozp
                      SET CURSOR ON
-                     @ 8 + wybpol - 1, 41 + ( ( wybrok - 1 ) * 10 ) GET NMC PICTURE '999999.99' VALID NMC # 0
+                     @ 8 + wybpol - 1 + nMCRozp - 1, 41 + ( ( wybrok - 1 ) * 10 ) GET NMC PICTURE '999999.99' VALID NMC # 0
                      READ
                      SET CURSOR OFF
                      IF LastKey() # 27
@@ -219,7 +219,7 @@ FUNCTION TabAm( mieskart )
                      zodpis_sum := zumorz_akt
                      zliniowo := _round( zwart_akt * ( stawka / 100 ), 2 )
                      zdegres := _round( ( zwart_akt - zumorz_akt ) * ( ( stawka * wspdeg ) / 100 ), 2 )
-                     zodpis_mie := iif( modya=1, iif( zSPOSOB = 'L', _round( zliniowo / 12, 2 ), _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) ), zmc )
+                     zodpis_mie := iif( modya=1, iif( zSPOSOB = 'L', _round( zliniowo / 12, 2 ), iif( zSPOSOB = 'J', zwart_pocz, _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) ) ), zmc )
                      BlokadaR()
                      REPLACE przel WITH zprzel, ;
                         wart_akt WITH zwart_akt, ;
@@ -256,7 +256,7 @@ FUNCTION TabAm( mieskart )
                      zwspdeg := wspdeg
                      zliniowo := _round( zwart_akt * ( zstawka / 100 ), 2 )
                      zdegres := _round( ( zwart_akt - zumorz_akt ) * ( ( zstawka * zwspdeg ) / 100 ), 2 )
-                     zodpis_mie := iif( zSPOSOB='L', _round( zliniowo / 12, 2 ), _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) )
+                     zodpis_mie := iif( zSPOSOB='L', _round( zliniowo / 12, 2 ), iif( zSPOSOB = 'J', zwart_pocz, _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) ) )
                      zodpis_rok := 0
                      SKIP
                      IF .NOT. Eof() .AND. del + ident = '+' + zidp
@@ -310,7 +310,7 @@ FUNCTION TabAm( mieskart )
                               zumorz_akt := zodpis_sum * zprzel
                               zliniowo := _round( zwart_akt * ( zstawka / 100 ), 2 )
                               zdegres := _round( ( zwart_akt - zumorz_akt ) * ( ( zstawka * zwspdeg ) / 100 ), 2 )
-                              zodpis_mie := iif( zSPOSOB = 'L', _round( zliniowo / 12, 2 ), _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) )
+                              zodpis_mie := iif( zSPOSOB = 'L', _round( zliniowo / 12, 2 ), iif( zSPOSOB = 'J', zwart_pocz, _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) ) )
                            ENDIF
                         ENDDO
                         COMMIT

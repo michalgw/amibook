@@ -63,7 +63,7 @@ begin sequence
          k3=nrewid
          K4=nazwa
          K7=str(stawka,6,2)
-         K8=iif(sposob='L','Liniowo ','Degresyw')
+         K8=iif(sposob='L','Liniowo ',iif(sposob='J','Jednoraz','Degresyw'))
          K9=str(wspdeg,4,2)
          recst=str(rec_no,5)
          sele amort

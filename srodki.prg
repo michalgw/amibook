@@ -66,7 +66,7 @@ begin sequence
          K4=nazwa
          K5=dowod_zak
          K7=str(stawka,6,2)
-         K8=iif(sposob='L','Liniowo ','Degresyw')
+         K8=iif(sposob='L','Liniowo ',iif(sposob='J','Jednoraz','Degresyw'))
          K9=str(wspdeg,4,2)
          K10=transform(wartosc,'@E 9 999 999.99')
          wartst=wartosc

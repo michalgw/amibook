@@ -247,7 +247,7 @@ FUNCTION KartST()
                   zumorz_akt := zodpis_sum * zprzel
                   zliniowo := _round( zwart_akt * ( zstawka / 100 ), 2 )
                   zdegres := _round( ( zwart_akt - zumorz_akt ) * ( ( zstawka * zwspdeg ) / 100 ), 2 )
-                  zodpis_mie := iif( zSPOSOB='L', _round( zliniowo / 12, 2 ), _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ))
+                  zodpis_mie := iif( zSPOSOB='L', _round( zliniowo / 12, 2 ), iif( zSPOSOB='J', zwartosc, _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) ) )
                   odm := Month( zdata_zak )
                   odr := Year( zdata_zak )
                   DO WHILE .T.
@@ -311,7 +311,7 @@ FUNCTION KartST()
                         zumorz_akt := zodpis_sum * zprzel
                         zliniowo := _round( zwart_akt * ( zstawka / 100 ), 2 )
                         zdegres := _round( ( zwart_akt - zumorz_akt ) * ( ( zstawka * zwspdeg ) / 100 ), 2 )
-                        zodpis_mie := iif( zSPOSOB = 'L', _round( zliniowo / 12, 2 ), _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) )
+                        zodpis_mie := iif( zSPOSOB = 'L', _round( zliniowo / 12, 2 ), iif( zSPOSOB='J', zwartosc, _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) ) )
                      ENDIF
                   ENDDO
                   COMMIT
@@ -524,7 +524,7 @@ PROCEDURE say31sst()
    @ 15, 19 SAY ZRODLO
    @ 16, 12 SAY WLASNOSC + iif( WLASNOSC = 'W', '&_l.asny', 'bcy  ' )
    @ 16, 34 SAY PRZEZNACZ + iif( PRZEZNACZ='P', 'rodukcyj.', 'ieproduk.' )
-   @ 16, 53 SAY SPOSOB + iif( SPOSOB = 'L', 'iniowo    ', 'egresywnie' )
+   @ 16, 53 SAY SPOSOB + iif( SPOSOB = 'L', 'iniowo    ', iif( SPOSOB = 'J', 'ednorazowo', 'egresywnie' ) )
    @ 16, 75 SAY WSPDEG PICTURE "9.99"
    @ 18, 26 SAY VATZAKUP PICTURE "@E 9 999 999.99"
    @ 18, 49 SAY VATODLI PICTURE "@E 9 999 999.99"
@@ -617,9 +617,9 @@ FUNCTION v3_141st()
 FUNCTION w3_151st()
 
    ColInf()
-   @ 24,  0 SAY PadC( 'Wpisz: L - liniowo   lub   D - degresywnie', 80, ' ' )
+   @ 24,  0 SAY PadC( 'Wpisz: L - liniowo lub D - degresywnie lub J - jednorazowo', 80, ' ' )
    ColStd()
-   @ 16, 54 SAY iif( zSPOSOB = 'L', 'iniowo    ', 'egresywnie' )
+   @ 16, 54 SAY iif( zSPOSOB = 'L', 'iniowo    ', iif( zSPOSOB = 'J', 'ednorazowo', 'egresywnie' ) )
 
    RETURN .T.
 
@@ -627,9 +627,9 @@ FUNCTION w3_151st()
 FUNCTION v3_151st()
 
    R := .F.
-   IF zSPOSOB $ 'LD'
+   IF zSPOSOB $ 'LDJ'
       ColStd()
-      @ 16, 54 SAY iif( zSPOSOB = 'L', 'iniowo    ', 'egresywnie' )
+      @ 16, 54 SAY iif( zSPOSOB = 'L', 'iniowo    ', iif( zSPOSOB = 'J', 'ednorazowo', 'egresywnie' ) )
       @ 24,  0
       R := .T.
    ENDIF
