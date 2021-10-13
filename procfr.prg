@@ -102,6 +102,14 @@ PROCEDURE FRDrukuj( cPlikFrp, aDane )
    FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
       hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
 
+   IF hb_HHasKey( aDane, 'FR_Dataset' )
+      IF HB_ISARRAY( aDane[ 'FR_Dataset' ] )
+         AEval( aDane[ 'FR_Dataset' ], { | cDataSet | oRap:AddDataset( cDataSet ) } )
+      ELSEIF HB_ISCHAR( aDane[ 'FR_Dataset' ] )
+         oRap:AddDataset( aDane[ 'FR_Dataset' ] )
+      ENDIF
+   ENDIF
+
    RaportUstawDane( oRap, aDane )
 
    oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
