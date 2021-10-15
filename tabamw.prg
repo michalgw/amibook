@@ -20,6 +20,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+PROCEDURE TabAmWTxt()
+
 private _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
 private _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15
 zid=str(rec_no,5)
@@ -268,3 +270,155 @@ sele KARTST
 set orde to 2
 seek val(ZID)
 set orde to 1
+
+   RETURN NIL
+
+PROCEDURE TabAmWGr()
+
+   LOCAL aDane, nRokPocz, nRokKon, nI, nJ, nR, cR, aRok, aMod
+
+   aDane := { ;
+      'lata' => {}, ;
+      'modyfikacje' => {}, ;
+      'Firma'       => AllTrim( symbol_fir ), ;
+      'uzytkownik'  => AllTrim( code() ), ;
+      'DataZak'     => kartst->data_zak, ;
+      'krst'        => AllTrim( kartst->krst ), ;
+      'NrEwid'      => AllTrim( kartst->nrewid ), ;
+      'Nazwa'       => AllTrim( kartst->nazwa ), ;
+      'DowodZak'    => AllTrim( kartst->dowod_zak ), ;
+      'Stawka'      => kartst->stawka, ;
+      'Sposob'      => iif( kartst->sposob == 'L', 'Liniowo', iif( kartst->sposob =='J', 'Jednorazowo', 'Degresywnie' ) ), ;
+      'WspDeg'      => kartst->wspdeg, ;
+      'Wartosc'     => kartst->wartosc, ;
+      'DataLik'     => iif( Empty( kartst->data_lik ), '', kartst->data_lik ), ;
+      'DataZby'     => iif( Empty( kartst->data_sprz ), '', kartst->data_sprz ), ;
+      'DataL'       => '', ;
+      'RodzL'       => '', ;
+      'WartAkt'     => 0, ;
+      'OdpisSum'    => 0, ;
+      'JestLikw'    => 0, ;
+      'LikwTekst'   => '' }
+
+   IF ! Empty( kartst->data_lik )
+      aDane[ 'JestLikw' ] := 1
+      IF ! Empty( kartst->data_sprz )
+         aDane[ 'DataL' ] := kartst->data_sprz
+         aDane[ 'RodzL' ] := 'Zbycie'
+         aDane[ 'LikwTekst' ] := 'zbyty'
+      ELSE
+         aDane[ 'DataL' ] := kartst->data_lik
+         aDane[ 'RodzL' ] := 'Likwidacja'
+         aDane[ 'LikwTekst' ] := 'zlikwidowany'
+      ENDIF
+   ENDIF
+
+   IF amort->( dbSeek( '+' + Str( kartst->rec_no, 5 ) ) )
+      nRokPocz := Val( amort->rok )
+      DO WHILE amort->del == '+' .AND. amort->ident == Str( kartst->rec_no, 5 ) .AND. ! amort->( Eof() )
+         nRokKon := Val( amort->rok )
+         amort->( dbSkip() )
+      ENDDO
+      nI := 1
+      nR := nRokPocz
+      amort->( dbSeek( '+' + Str( kartst->rec_no, 5 ) ) )
+      DO WHILE amort->del == '+' .AND. amort->ident == Str( kartst->rec_no, 5 ) .AND. ! amort->( Eof() )
+         IF nI == 1
+            aRok := { => }
+            FOR nJ := 1 TO 7
+               cR := Str( nJ, 1 )
+               aRok[ 'Rok' + cR ] := 0
+               aRok[ 'Wartosc' + cR ] := 0
+               aRok[ 'Mnoznik' + cR ] := 0
+               aRok[ 'WartMod' + cR ] := 0
+               aRok[ 'WartPoMod' + cR ] := 0
+               aRok[ 'UmorzPoMod' + cR ] := 0
+               aRok[ 'OdpL' + cR ] := 0
+               aRok[ 'OdpD' + cR ] := 0
+               aRok[ 'm01' + cR ] := 0
+               aRok[ 'm02' + cR ] := 0
+               aRok[ 'm03' + cR ] := 0
+               aRok[ 'm04' + cR ] := 0
+               aRok[ 'm05' + cR ] := 0
+               aRok[ 'm06' + cR ] := 0
+               aRok[ 'm07' + cR ] := 0
+               aRok[ 'm08' + cR ] := 0
+               aRok[ 'm09' + cR ] := 0
+               aRok[ 'm10' + cR ] := 0
+               aRok[ 'm11' + cR ] := 0
+               aRok[ 'm12' + cR ] := 0
+               aRok[ 'OdpisR' + cR ] := 0
+               aRok[ 'OdpisN' + cR ] := 0
+            NEXT
+            AAdd( aDane[ 'lata' ], aRok )
+         ENDIF
+
+         cR := Str( nI, 1 )
+         aRok[ 'Rok' + cR ] := Val( amort->rok )
+         aRok[ 'Wartosc' + cR ] := amort->wart_pocz
+         aRok[ 'Mnoznik' + cR ] := amort->przel
+         aRok[ 'WartMod' + cR ] := amort->wart_mod
+         aRok[ 'WartPoMod' + cR ] := amort->wart_akt
+         aRok[ 'UmorzPoMod' + cR ] := amort->umorz_akt
+         aRok[ 'OdpL' + cR ] := amort->liniowo
+         aRok[ 'OdpD' + cR ] := amort->degres
+         aRok[ 'm01' + cR ] := amort->mc01
+         aRok[ 'm02' + cR ] := amort->mc02
+         aRok[ 'm03' + cR ] := amort->mc03
+         aRok[ 'm04' + cR ] := amort->mc04
+         aRok[ 'm05' + cR ] := amort->mc05
+         aRok[ 'm06' + cR ] := amort->mc06
+         aRok[ 'm07' + cR ] := amort->mc07
+         aRok[ 'm08' + cR ] := amort->mc08
+         aRok[ 'm09' + cR ] := amort->mc09
+         aRok[ 'm10' + cR ] := amort->mc10
+         aRok[ 'm11' + cR ] := amort->mc11
+         aRok[ 'm12' + cR ] := amort->mc12
+         aRok[ 'OdpisR' + cR ] := amort->odpis_rok
+         aRok[ 'OdpisN' + cR ] := amort->odpis_sum
+
+         IF nR == nRokKon
+            aDane[ 'WartAkt' ] := amort->wart_akt
+            aDane[ 'OdpisSum' ] := amort->odpis_sum
+         ENDIF
+
+         nI++
+         nR++
+         IF nI > 7
+            nI := 1
+         ENDIF
+         amort->( dbSkip() )
+      ENDDO
+   ENDIF
+
+   IF kartstmo->( dbSeek( '+' + Str( kartst->rec_no, 5 ) ) )
+      DO WHILE kartstmo->del == '+' .AND. kartstmo->ident == Str( kartst->rec_no, 5 ) .AND. ! kartstmo->( Eof() )
+         aMod := { ;
+            'DataMod' => kartstmo->data_mod, ;
+            'WartMod' => kartstmo->wart_mod, ;
+            'OpisMod' => AllTrim( kartstmo->opis_mod ) }
+         AAdd( aDane[ 'modyfikacje' ], aMod )
+         kartstmo->( dbSkip() )
+      ENDDO
+   ENDIF
+
+   FRDrukuj( 'frf\sttabam.frf', aDane )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE TabAmW()
+
+   SWITCH GraficznyCzyTekst()
+   CASE 1
+      TabAmWGr()
+      EXIT
+   CASE 2
+      TabAmWTxt()
+      EXIT
+   ENDSWITCH
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
