@@ -37,10 +37,11 @@ FUNCTION UsunRaportZListy(nIndeks)
 
 FUNCTION RaportUstawDane(oRap, hDane)
    LOCAL nI, aDane
+   LOCAL aWyklucz := { 'FR_Dataset' }
    PRIVATE cAktKlucz
    aDane := hb_HKeys(hDane)
    AEval(aDane, {| cKlucz |
-      IF .NOT.HB_ISHASH(hDane[cKlucz])
+      IF .NOT. HB_ISHASH(hDane[cKlucz]) .AND. AScan( aWyklucz, cKlucz ) == 0
          IF HB_ISARRAY(hDane[cKlucz])
             oRap:AddDataset(cKlucz)
             cAktKlucz := cKlucz
