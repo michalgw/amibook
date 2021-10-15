@@ -1012,3 +1012,9 @@ FUNCTION gm_AStrTok( aTab )
    RETURN cRes
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION IntToStrZ( nWartosc, nDlugosc )
+
+   RETURN StrTran( Str( nWartosc, nDlugosc ), ' ', '0' )
+
+/*----------------------------------------------------------------------*/
