@@ -161,7 +161,7 @@ PROCEDURE SrodkiGr()
       'SumaZbyt' => 0, ;
       'SumaMod' => 0 }
 
-   DO WHILE kartst->del == '+' .AND. kartst->firma == ident_fir
+   DO WHILE kartst->del == '+' .AND. kartst->firma == ident_fir .AND. ! kartst->( Eof() )
       aPoz := hb_Hash()
       aPoz[ 'DataZakupu' ] := kartst->data_zak
       aPoz[ 'krst' ] := AllTrim( kartst->krst )
@@ -190,7 +190,7 @@ PROCEDURE SrodkiGr()
 
       aPoz[ 'modyfikacje' ] := {}
       IF kartstmo->( dbSeek( '+' + Str( kartst->rec_no, 5 ) ) )
-         DO WHILE kartstmo->del == '+' .AND. kartstmo->ident == Str( kartst->rec_no, 5 )
+         DO WHILE kartstmo->del == '+' .AND. kartstmo->ident == Str( kartst->rec_no, 5 ) .AND. ! kartstmo->( Eof() )
             aPozMod := { => }
             aPozMod[ 'DataMod' ] := kartstmo->data_mod
             aPozMod[ 'OpisMod' ] := AllTrim( kartstmo->opis_mod )
