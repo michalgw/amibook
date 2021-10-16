@@ -125,8 +125,12 @@ zm=zm+space(150-len(zm))
 k1=left(zm,50)
 k2=substr(zm,51,50)
 k4=right(zm,50)
+k5a := ""
 do case
    case faktury->sposob_p=1
+        IF faktury->kwota > 0
+           k5a := "Zapˆacono " + AllTrim( Kwota( faktury->kwota, 13, 2 ) ) + "          Pozostaˆo do zapˆaty " + AllTrim( Kwota( s0_5 - faktury->kwota, 13, 2 ) )
+        ENDIF
         k5=[P&_l.atne przelewem w ci&_a.gu ]+str(faktury->termin_z,2)+[ dni na konto ]+iif(substr(firma->nr_konta,1,2)=='  ',substr(firma->nr_konta,4),firma->nr_konta)
         k6=space(10)+firma->bank
    case faktury->sposob_p=2
@@ -152,6 +156,9 @@ do case
    mon_drk([                   ]+k2)
    mon_drk([                   ]+k4)
    mon_drk([])
+   IF ! Empty( k5a )
+      mon_drk([ ]+k5a)
+   ENDIF
    mon_drk([ ]+k5)
    mon_drk([ ]+k6)
    if VATOWY='T'

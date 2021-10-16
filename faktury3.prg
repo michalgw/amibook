@@ -1000,6 +1000,9 @@ PROCEDURE Faktury3_DrukGraf()
       aDane[ 'zaplata' ] := 'Pˆatne przelewem w ci¥gu ' + Str( faktury->termin_z, 2 ) ;
          + ' dni na konto ' + iif( SubStr( firma->nr_konta, 1, 2 ) == '  ', ;
          SubStr( firma-> nr_konta, 4 ), firma->nr_konta ) + hb_eol() + firma->bank
+      IF faktury->kwota > 0
+         aDane[ 'zaplata' ] := 'Zapˆacono ' + LTrim( kwota( faktury->kwota, 13, 2 ) ) + '            Pozostaˆo do zapˆaty ' + LTrim( kwota( nWartosc - faktury->kwota, 13, 2 ) ) +  hb_eol() + aDane[ 'zaplata' ]
+      ENDIF
    CASE faktury->sposob_p == 2
       IF faktury->termin_z == 0
          aDane[ 'zaplata' ] := 'Zapˆacono got¢wk¥'
