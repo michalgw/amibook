@@ -533,7 +533,7 @@ function mon_drk( _linia )
    DO WHILE _kl#K_ESC
       _kl := Inkey( 0 )
       DO CASE
-      CASE ( _kl == K_RIGHT .OR. _kl == Asc( '6' ) ) .AND. _kolumna + 79 < _szerokosc
+      CASE ( _kl == K_RIGHT .OR. _kl == Asc( '6' ) .OR. ( _kl == K_MWBACKWARD .AND. AltWcisniety() ) ) .AND. _kolumna + 79 < _szerokosc
          RestScreen( 2, 0, 24, 78, SaveScreen( 2, 1, 24, 79 ) )
          _kolumna := _kolumna + 1
          @  2, 79 SAY SubStr( _mon2 ,_kolumna + 79, 1 )
@@ -559,7 +559,7 @@ function mon_drk( _linia )
          @ 22, 79 SAY SubStr( _mon22,_kolumna + 79, 1 )
          @ 23, 79 SAY SubStr( _mon23,_kolumna + 79, 1 )
          @ 24, 79 SAY SubStr( _mon24,_kolumna + 79, 1 )
-      CASE ( _kl == K_LEFT .OR. _kl == Asc( '4' ) ) .AND. _kolumna > 1
+      CASE ( _kl == K_LEFT .OR. _kl == Asc( '4' ) .OR. ( _kl == K_MWFORWARD .AND. AltWcisniety() ) ) .AND. _kolumna > 1
          RestScreen( 2, 1, 24, 79, SaveScreen( 2, 0, 24, 78 ) )
          _kolumna := _kolumna - 1
          @  2,0 SAY SubStr( _mon2 ,_kolumna, 1 )
@@ -585,7 +585,7 @@ function mon_drk( _linia )
          @ 22,0 SAY SubStr( _mon22,_kolumna, 1 )
          @ 23,0 SAY SubStr( _mon23,_kolumna, 1 )
          @ 24,0 SAY SubStr( _mon24,_kolumna, 1 )
-      CASE ( _kl == K_UP .OR. _kl == Asc( '8' ) ) .AND. recc() >= 23
+      CASE ( _kl == K_UP .OR. _kl == Asc( '8' ) .OR. ( _kl == K_MWFORWARD .AND. ! AltWcisniety() .AND. ! ShiftWcisniety() ) ) .AND. recc() >= 23
          IF ! _pk
             GO RecNo() - 22
             _pk := .T.
@@ -595,7 +595,7 @@ function mon_drk( _linia )
             scrol_()
          ENDIF
          CLEAR TYPE
-      CASE ( _kl == K_DOWN .OR. _kl == Asc( '2' ) ) .AND. recc() >= 23
+      CASE ( _kl == K_DOWN .OR. _kl == Asc( '2' ) .OR. ( _kl == K_MWBACKWARD .AND. ! AltWcisniety() .AND. ! ShiftWcisniety() ) ) .AND. recc() >= 23
          IF _pk
             GO RecNo() + 22
             _pk := .F.
@@ -713,7 +713,7 @@ function mon_drk( _linia )
          @ 22, 0 SAY SubStr( _mon22, _kolumna, 10 )
          @ 23, 0 SAY SubStr( _mon23, _kolumna, 10 )
          @ 24, 0 SAY SubStr( _mon24, _kolumna, 10 )
-      CASE ( _kl == K_PGUP .OR. _kl == Asc( '9' ) ) .AND. recc() >= 23
+      CASE ( _kl == K_PGUP .OR. _kl == Asc( '9' ) .OR. ( _kl == K_MWFORWARD .AND. ShiftWcisniety() ) ) .AND. recc() >= 23
          IF ! _pk
             GO RecNo() - 22
             _pk := .T.
@@ -726,7 +726,7 @@ function mon_drk( _linia )
             scrol_()
          NEXT
          CLEAR TYPE
-      CASE ( _kl == K_PGDN .OR. _kl == Asc( '3' ) ) .AND. recc() >= 23
+      CASE ( _kl == K_PGDN .OR. _kl == Asc( '3' ) .OR. ( _kl == K_MWBACKWARD .AND. ShiftWcisniety() ) ) .AND. recc() >= 23
          IF _pk
             go RecNo() + 22
             _pk := .F.
@@ -904,6 +904,23 @@ FUNCTION mon_drk2( _glmondrk2, _stmondrk2, _trmondrk2 )
    DO &_stmondrk2
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION ShiftWcisniety()
+
+   LOCAL nStatus := KBDSTAT()
+
+   RETURN IsBit( nStatus, 1 ) .OR. IsBit( nStatus, 2 )
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION AltWcisniety()
+
+   RETURN IsBit( KbdStat(), 4 )
+
+/*----------------------------------------------------------------------*/
+
 
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±± K O N I E C ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
