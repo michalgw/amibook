@@ -20,8 +20,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-para mieum
-mieum=strtran(mieum,' ','0')
+PROCEDURE UmorzTxt( cmieum )
+
+mieum=strtran(cmieum,' ','0')
 reccur=recno()
 private _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
 private _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15
@@ -106,3 +107,88 @@ if _czy_close
 endif
 sele KARTST
 go reccur
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE UmorzGr( cMiesiac )
+
+   LOCAL aDane, aPoz, nNrRek, cPole, aLik
+
+   nNrRek := kartst->( RecNo() )
+
+   IF ! kartst->( dbSeek( '+' + ident_fir ) )
+      Kom( 3, '*w', 'b r a k   d a n y c h' )
+      kartst->( dbGoto( nNrRek ) )
+      RETURN NIL
+   ENDIF
+
+   cMiesiac := StrTran( cMiesiac, ' ', '0' )
+
+   aDane := { ;
+      'pozycje' => {}, ;
+      'Firma' => AllTrim( symbol_fir ), ;
+      'uzytkownik' => AllTrim( code() ), ;
+      'Okres' => cMiesiac + '.' + param_rok }
+
+   cPole := 'mc' + cMiesiac
+
+   DO WHILE kartst->del == '+' .AND. kartst->firma == ident_fir .AND. ! kartst->( Eof() )
+      IF amort->( dbSeek( '+' + Str( kartst->rec_no, 5 ) + param_rok ) ) .AND. amort->&( cPole ) <> 0
+
+         aPoz := { ;
+            'DataZak' => kartst->data_zak, ;
+            'krst' => kartst->krst, ;
+            'NrEwid' => kartst->nrewid, ;
+            'Nazwa' => kartst->nazwa, ;
+            'Stawka' => kartst->stawka, ;
+            'Sposob' => iif( kartst->sposob == 'L', 'Liniowo', iif( kartst->sposob == 'J', 'Jednorazowo', 'Degresywnie' ) ), ;
+            'WspDeg' => kartst->wspdeg, ;
+            'Wartosc' => amort->&( cPole ), ;
+            'likwidacja' => {} }
+
+         IF ! Empty( kartst->data_lik ) .AND. Year( kartst->data_lik ) == Val( param_rok ) .AND. Month( kartst->data_lik ) == Val( cMiesiac )
+            IF ! Empty( kartst->data_sprz )
+               AAdd( aPoz[ 'likwidacja' ], { ;
+                  'RodzL' => 'zbyty', ;
+                  'DataL' => kartst->data_sprz, ;
+                  'WartL' => amort->wart_akt - amort->odpis_sum } )
+            ELSE
+               AAdd( aPoz[ 'likwidacja' ], { ;
+                  'RodzL' => 'zlikwidowany', ;
+                  'DataL' => kartst->data_lik, ;
+                  'WartL' => amort->wart_akt - amort->odpis_sum } )
+            ENDIF
+         ENDIF
+
+         AAdd( aDane[ 'pozycje' ], aPoz )
+
+      ENDIF
+      kartst->( dbSkip() )
+   ENDDO
+
+   kartst->( dbGoto( nNrRek ) )
+
+   aDane[ 'FR_Dataset' ] := 'POZYCJE:LIKWIDACJA'
+   FRDrukuj( 'frf\stumorz.frf', aDane )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Umorz( cMiesiac )
+
+   SWITCH GraficznyCzyTekst()
+   CASE 1
+      UmorzGr( cMiesiac )
+      EXIT
+   CASE 2
+      UmorzTxt( cMiesiac )
+      EXIT
+   ENDSWITCH
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
