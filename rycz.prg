@@ -370,7 +370,7 @@ PROCEDURE Rycz()
          @ 23, 0
          @ 24, 0
          *################################ KASOWANIE #################################
-      CASE kl == K_DEL .OR. kl == Asc( '.' )
+      CASE kl == K_DEL .OR. kl == Asc( '.' ) .OR. kl == K_CTRL_DEL
          @ 1, 47 SAY '          '
          ColStb()
          center( 23, 'þ                   þ' )
@@ -384,17 +384,37 @@ PROCEDURE Rycz()
                BREAK
             ENDIF
             *-------------------
-            IF Left( numer, 2 ) == 'S-' .OR. Left( numer, 2 ) == 'R-' .OR. Left( numer, 2 ) == 'F-' .OR. Left( numer, 3 ) == 'KF-' .OR. Left( numer, 3 ) == 'KR-'
-               kom( 4, '*u', ' Symbole S-,F-,R-,KF- i KR- mo&_z.na wykasowa&_c. tylko w opcji FAKTUROWANIE ' )
-               BREAK
-            ENDIF
-            IF Left( numer, 3 ) == 'RS-'
-               kom( 4, '*u', ' Na dokumenty o symbolu RS- mo&_z.na wp&_l.ywa&_c. tylko poprzez rejestr sprzeda&_z.y ' )
-               BREAK
-            ENDIF
-            IF Left( numer, 3 ) == 'RZ-'
-               kom( 4, '*u', ' Na dokumenty o symbolu RZ- mo&_z.na wp&_l.ywa&_c. tylko poprzez rejestr zakupu ' )
-               BREAK
+            IF kl <> K_CTRL_DEL
+               IF Left( numer, 2 ) == 'S-' .OR. Left( numer, 2 ) == 'R-' .OR. Left( numer, 2 ) == 'F-' .OR. Left( numer, 3 ) == 'KF-' .OR. Left( numer, 3 ) == 'KR-'
+                  kom( 4, '*u', ' Symbole S-,F-,R-,KF- i KR- mo&_z.na wykasowa&_c. tylko w opcji FAKTUROWANIE ' )
+                  BREAK
+               ENDIF
+               IF Left( numer, 3 ) == 'RS-'
+                  kom( 4, '*u', ' Na dokumenty o symbolu RS- mo&_z.na wp&_l.ywa&_c. tylko poprzez rejestr sprzeda&_z.y ' )
+                  BREAK
+               ENDIF
+               IF Left( numer, 3 ) == 'RZ-'
+                  kom( 4, '*u', ' Na dokumenty o symbolu RZ- mo&_z.na wp&_l.ywa&_c. tylko poprzez rejestr zakupu ' )
+                  BREAK
+               ENDIF
+            ELSE
+               IF Left( numer, 3 ) == 'RS-' .AND. rejzid > 0
+                  SELECT 100
+                  DO WHILE ! Dostep( 'REJS' )
+                  ENDDO
+                  dbGoto( ewid->rejzid )
+                  IF AllTrim( SubStr( ewid->numer, 4 ) ) == AllTrim( numer ) .AND. del == '+'
+                     kom( 4, '*u', ' Na dokumenty o symbolu RS- mo&_z.na wp&_l.ywa&_c. tylko poprzez rejestr sprzeda&_z.y ' )
+                     dbCloseArea()
+                     SELECT ewid
+                     BREAK
+                  ENDIF
+                  dbCloseArea()
+                  SELECT ewid
+               ELSE
+                  kom( 4, '*u', ' Nie mo¾na usun¥† tego dokumentu ' )
+                  BREAK
+               ENDIF
             ENDIF
             IF ! TNEsc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
                BREAK
