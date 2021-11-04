@@ -475,8 +475,8 @@ PROCEDURE EwidSprawdzNrDok(cTablica, cKontrahent, cMiesiac, cNumer, nRecNo)
             IF Empty( nRecNo ) .OR. nRecNo <> RecNo()
                AAdd( aLista, { ;
                   'recno' => RecNo(), ;
-                  'nip' => AllTrim( nr_ident ), ;
-                  'nazwa' => AllTrim( nazwa ), ;
+                  'nip' => iif( Type( 'nr_ident' ) == 'U', '', AllTrim( nr_ident ) ), ;
+                  'nazwa' => iif( Type( 'nazwa' ) == 'U', '', AllTrim( nazwa ) ), ;
                   'data' => hb_Date( Val( param_rok ), Val( mc ), Val( dzien ) ) } )
             ENDIF
             dbSkip()
