@@ -1406,6 +1406,7 @@ FUNCTION w1_3fn()
       Kontr_()
       RESTORE SCREEN FROM scr2
       IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
+         KontrahAktualizuj()
          znazwa := nazwa
          zadres := adres
          zNR_IDENT := NR_IDENT

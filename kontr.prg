@@ -874,3 +874,46 @@ PROCEDURE KontrahentZapiszIFT2( aDane )
    ENDIF
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KontrahAktualizuj( nRecNo )
+
+   LOCAL aDane, aRekord, lRes := .F.
+
+   hb_default( @nRecNo, 0 )
+
+   IF nRecNo > 0
+      kontr->( dbGoto( nRecNo ) )
+   ENDIF
+
+   IF kontr->del == '+' .AND. kontr->firma == ident_fir .AND. ! Empty( kontr->nr_ident ) .AND. olparam_ra .AND. ( kontr->zrodlo != 'R' .OR. kontr->dataspr < Date() - olparam_rd )
+      aDane := KontrahZnajdzRegonNip( AllTrim( kontr->nr_ident ) )
+      IF Len( aDane ) > 0
+
+         IF Len( aDane ) > 1
+            aRekord := KontrahentWybierzRegonNip( aDane )
+         ELSE
+            aRekord := aDane[ 1 ]
+         ENDIF
+
+         IF hb_HHasKey( aRekord, 'name' )
+            BlokadaR()
+            kontr->nazwa := Upper( aRekord[ 'name' ] )
+            kontr->adres := KontrahGenerujAdres( aRekord )
+            kontr->export := 'N'
+            kontr->ue := 'N'
+            kontr->kraj := 'PL'
+            kontr->zrodlo := 'R'
+            kontr->dataspr := Date()
+            COMMIT
+            UNLOCK
+            lRes := .T.
+         ENDIF
+      ENDIF
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+

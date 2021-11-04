@@ -778,6 +778,7 @@ FUNCTION v26_203()
          Kontr_()
          RESTORE SCREEN FROM scr2
          IF LastKey() == 13 .OR. LastKey() == 1006
+            KontrahAktualizuj()
             znazwa := kontr->nazwa
             zadres := kontr->adres
             znr_ident := kontr->nr_ident
@@ -798,6 +799,7 @@ FUNCTION v26_203()
             Kontr_()
             RESTORE SCREEN FROM scr2
             IF LastKey() == 13 .OR. LastKey() == 1006
+               KontrahAktualizuj()
                znazwa := nazwa
                zadres := adres
                znr_ident := nr_ident
