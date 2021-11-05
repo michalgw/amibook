@@ -6181,7 +6181,7 @@ FUNCTION edek_ord_zu2(sUzasadnienieP13)
    r = r + '      <zzu:WariantFormularza>2</zzu:WariantFormularza>' + nl
    r = r + '    </zzu:Naglowek>' + nl
    r = r + '    <zzu:PozycjeSzczegolowe>' + nl
-   r = r + '       <zzu:P_13>' + str2sxml(sUzasadnienieP13) + '</zzu:P_13>' + nl
+   r = r + '       <zzu:P_13>' + str2sxml( MemoTran( sUzasadnienieP13, ' ', ' ' ) ) + '</zzu:P_13>' + nl
    r = r + '    </zzu:PozycjeSzczegolowe>' + nl
    r = r + '  </zzu:Zalacznik_ORD-ZU>'
    RETURN r
@@ -6197,7 +6197,7 @@ FUNCTION edek_ord_zu3(sUzasadnienieP13)
    r = r + '      <zzu:WariantFormularza>3</zzu:WariantFormularza>' + nl
    r = r + '    </zzu:Naglowek>' + nl
    r = r + '    <zzu:PozycjeSzczegolowe>' + nl
-   r = r + '       <zzu:P_13>' + str2sxml(sUzasadnienieP13) + '</zzu:P_13>' + nl
+   r = r + '       <zzu:P_13>' + str2sxml( MemoTran( sUzasadnienieP13, ' ', ' ' ) ) + '</zzu:P_13>' + nl
    r = r + '    </zzu:PozycjeSzczegolowe>' + nl
    r = r + '  </zzu:Zalacznik_ORD-ZU>'
    RETURN r
@@ -6213,7 +6213,7 @@ FUNCTION edek_ord_zu3v2(sUzasadnienieP13)
    r = r + '      <zzu:WariantFormularza>3</zzu:WariantFormularza>' + nl
    r = r + '    </zzu:Naglowek>' + nl
    r = r + '    <zzu:PozycjeSzczegolowe>' + nl
-   r = r + '       <zzu:P_13>' + str2sxml(sUzasadnienieP13) + '</zzu:P_13>' + nl
+   r = r + '       <zzu:P_13>' + str2sxml( MemoTran( sUzasadnienieP13, ' ' , ' ' ) ) + '</zzu:P_13>' + nl
    r = r + '    </zzu:PozycjeSzczegolowe>' + nl
    r = r + '  </zzu:Zalacznik_ORD-ZU>'
    RETURN r
@@ -6229,7 +6229,7 @@ FUNCTION edek_ord_zu3v3(sUzasadnienieP13)
    r = r + '      <zzu:WariantFormularza>3</zzu:WariantFormularza>' + nl
    r = r + '    </zzu:Naglowek>' + nl
    r = r + '    <zzu:PozycjeSzczegolowe>' + nl
-   r = r + '       <zzu:P_13>' + str2sxml(sUzasadnienieP13) + '</zzu:P_13>' + nl
+   r = r + '       <zzu:P_13>' + str2sxml( MemoTran( sUzasadnienieP13, ' ', ' ' ) ) + '</zzu:P_13>' + nl
    r = r + '    </zzu:PozycjeSzczegolowe>' + nl
    r = r + '  </zzu:Zalacznik_ORD-ZU>'
    RETURN r
@@ -6245,7 +6245,7 @@ FUNCTION edek_ord_zu3v4(sUzasadnienieP13)
    r = r + '      <zzu:WariantFormularza>3</zzu:WariantFormularza>' + nl
    r = r + '    </zzu:Naglowek>' + nl
    r = r + '    <zzu:PozycjeSzczegolowe>' + nl
-   r = r + '       <zzu:P_13>' + str2sxml(sUzasadnienieP13) + '</zzu:P_13>' + nl
+   r = r + '       <zzu:P_13>' + str2sxml( MemoTran( sUzasadnienieP13, ' ', ' ' ) ) + '</zzu:P_13>' + nl
    r = r + '    </zzu:PozycjeSzczegolowe>' + nl
    r = r + '  </zzu:Zalacznik_ORD-ZU>'
    RETURN r

@@ -1271,7 +1271,9 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          infov716()
       CASE _OU == 'J'
          resdekl := JPK_V7_DaneDek()
-         IF kordek == 'K'
+         resdekl[ 'ORDZUrob' ] := .F.
+         IF kordek == 'K' .OR. aDane[ 'ORDZU' ][ 'rob' ]
+            resdekl[ 'ORDZUrob' ] := .T.
             resdekl[ 'ORDZU' ] := aDane[ 'ORDZU' ][ 'P_13' ]
          ENDIF
          _czy_close := .T.

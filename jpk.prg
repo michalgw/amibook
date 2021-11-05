@@ -872,8 +872,8 @@ FUNCTION jpk_v7m_1( aDane )
          cRes += '      <P_68>' + TKwotaC( aDane[ 'DekV7' ][ 'P_68' ] ) + '</P_68>' + nl
          cRes += '      <P_69>' + TKwotaC( aDane[ 'DekV7' ][ 'P_69' ] ) + '</P_69>' + nl
       ENDIF
-      IF aDane[ 'DekV7' ][ 'Korekta' ] .AND. Len( AllTrim( aDane[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
-         cRes += '      <P_ORDZU>' + str2sxml( aDane[ 'DekV7' ][ 'ORDZU' ] ) + '</P_ORDZU>' + nl
+      IF aDane[ 'DekV7' ][ 'ORDZUrob' ] .AND. Len( AllTrim( aDane[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
+         cRes += '      <P_ORDZU>' + str2sxml( MemoTran( aDane[ 'DekV7' ][ 'ORDZU' ], ' ', ' ' ) ) + '</P_ORDZU>' + nl
       ENDIF
       cRes += '    </PozycjeSzczegolowe>' + nl
       cRes += '    <Pouczenia>1</Pouczenia>' + nl
@@ -1278,8 +1278,8 @@ FUNCTION jpk_v7k_1( aDane )
          cRes += '      <P_68>' + TKwotaC( aDane[ 'DekV7' ][ 'P_68' ] ) + '</P_68>' + nl
          cRes += '      <P_69>' + TKwotaC( aDane[ 'DekV7' ][ 'P_69' ] ) + '</P_69>' + nl
       ENDIF
-      IF aDane[ 'DekV7' ][ 'Korekta' ] .AND. Len( AllTrim( aDane[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
-         cRes += '      <P_ORDZU>' + TKwotaC( aDane[ 'DekV7' ][ 'ORDZU' ] ) + '</P_ORDZU>' + nl
+      IF aDane[ 'DekV7' ][ 'ORDZUrob' ] .AND. Len( AllTrim( aDane[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
+         cRes += '      <P_ORDZU>' + str2sxml( MemoTran( aDane[ 'DekV7' ][ 'ORDZU' ], ' ', ' ' ) ) + '</P_ORDZU>' + nl
       ENDIF
       cRes += '    </PozycjeSzczegolowe>' + nl
       cRes += '    <Pouczenia>1</Pouczenia>' + nl
