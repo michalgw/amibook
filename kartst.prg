@@ -269,7 +269,7 @@ FUNCTION KartST()
                         degres WITH zdegres
                      FOR i := odm TO 12
                         zmcn := StrTran( Str( i, 2 ), ' ', '0' )
-                        IF Month( zdata_zak ) = i .AND. Year( zdata_zak ) = odr
+                        IF Month( zdata_zak ) = i .AND. Year( zdata_zak ) = odr .AND. zSPOSOB # 'J'
                            IF zwart_ulg = zwart_akt
                               REPLACE mc&zmcn WITH zwart_ulg
                               zodpis_rok := zodpis_rok + zwart_ulg
