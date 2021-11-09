@@ -298,7 +298,7 @@ PROCEDURE ewid_dr16rob()
          aDane['SumaPrzychodow'] := 0
          AEval(aDane['pozycje'], {|aRec| aDane['SumaPrzychodow'] := aDane['SumaPrzychodow'] + aRec['k12']  } )
 
-         cJPK := jpk_ewp_2(aDane)
+         cJPK := jpk_ewp_2_11(aDane)
 
          edekZapiszXML( cJPK, normalizujNazwe( 'JPK_EWP_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKEWP-2', nKorekta == 2, Val(miesiac) )
 
