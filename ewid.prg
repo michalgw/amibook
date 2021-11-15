@@ -406,14 +406,18 @@ FUNCTION Ewid()
                DO WHILE .T.
                *=============================
                   ColPro()
-                  verdekold := '                       '
+                  verdekold := '                                     '
 
                   DO CASE
                      CASE zVATFORDR == '7 '
-                        verdekold := 'M  (1)                    '
+                        verdekold := ' J - JPK_V7M  (1)                    '
 
                      CASE zVATFORDR == '7K'
-                        verdekold := 'K  (1)                    '
+                        verdekold := ' J - JPK_V7K  (1)                    '
+
+                     CASE zVATFORDR == '8 '
+                        verdekold := ' J - VAT-8    (11)                   '
+
                   ENDCASE
 
                   @  8, 1 TO 22, 39
@@ -421,7 +425,7 @@ FUNCTION Ewid()
                   @ 10, 2 PROMPT ' 8 - PIT-8AR  (10)                   '
                   @ 11, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
                   @ 12, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
-                  @ 13, 2 PROMPT ' J - JPK_V7' + verdekold
+                  @ 13, 2 PROMPT verdekold
                   @ 14, 2 PROMPT ' U - VAT-UE   (5)                    '
                   @ 15, 2 PROMPT ' I - IFT-2/2R (9)                    '
                   @ 16, 2 TO 16, 38
@@ -474,7 +478,18 @@ FUNCTION Ewid()
                         ENDIF
 
                      CASE opcja1 == 5
-                        JPK_V7_Rob( 15, 4 )
+                        IF zVATFORDR == '8 '
+                           papier := menuDeklaracjaDruk( 14, .F. )
+                           SET CURSOR OFF
+                           DO CASE
+                           CASE papier == 'K'
+                              vat_720( 0, 0, 1, '8D' )
+                           CASE papier == 'X'
+                              vat_720( 0, 0, 1, '8X' )
+                           ENDCASE
+                        ELSE
+                           JPK_V7_Rob( 15, 4 )
+                        ENDIF
 
                      CASE opcja1 == 6
 

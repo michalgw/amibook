@@ -221,6 +221,12 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\vat7d_w8.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'VAT8-11'
+      hDane := DaneXML_VAT8w11( oDoc, cNrRef )
+      cPlikRap := 'frf\vat8_w11.frf'
+      cOrdzuFrf := 'frf\ordzu_w3.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'VATUE-3'
       hDane := DaneXML_VATUEw3( oDoc, cNrRef )
       cPlikRap := 'frf\vatue_w3.frf'
@@ -6825,6 +6831,112 @@ FUNCTION DaneXML_VAT7Dw8(oDoc, cNrRef, hNaglowek)
       hDane[ 'VATZZ' ][ 'P_7' ] := hDane[ 'P_8_R' ]
    ELSE
       hDane[ 'VATZZ' ] := hb_Hash( 'rob', .F. )
+   ENDIF
+
+   hDane['P_PODPIS_IMIE'] := ''
+   hDane['P_PODPIS_NAZWISKO'] := ''
+   hDane['P_PODPIS_TEL'] := ''
+   hDane['P_PODPIS_DATA'] := ''
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneXML_VAT8w11(oDoc, cNrRef, hNaglowek)
+   LOCAL hPodmiot1, cTmp, hPozycje
+   LOCAL hDane := hb_Hash()
+   IF !HB_ISHASH( hNaglowek )
+      hNaglowek := edekXmlNaglowek( oDoc )
+   ENDIF
+   hPodmiot1 := edekXmlPodmiot1( oDoc )
+
+   hPozycje := edekXmlGrupa( oDoc, 'PozycjeSzczegolowe' )
+
+   hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
+   hDane['P_2'] := iif( HB_ISSTRING( cNrRef ), cNrRef, '' )
+   hDane['P_4'] := sxml2num( xmlWartoscH( hNaglowek, 'Miesiac' ) )
+   hDane['P_5'] := sxml2num( xmlWartoscH( hNaglowek, 'Rok' ) )
+   cTmp := xmlWartoscH( hNaglowek, 'KodUrzedu' )
+   hDane['P_6'] := iif( cTmp != '', KodUS2Nazwa( cTmp ), '' )
+   hDane['P_7_1'] := iif( xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '1', '1', '0' )
+   hDane['P_7_2'] := iif( xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '2', '1', '0' )
+   hDane['P_8_1'] := iif( !xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   hDane['P_8_2'] := iif( xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' ) + ', ' ;
+        + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' )
+   ELSE
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' )
+   ENDIF
+
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane['P_8_N'] := ''
+      hDane['P_8_R'] := ''
+      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' )
+      hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' )
+      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+   ELSE
+      hDane['P_8_N'] := xmlWartoscH( hPodmiot1, 'etd:PelnaNazwa' )
+      hDane['P_8_R'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
+      hDane['P_9_N'] := ''
+      hDane['P_9_I'] := ''
+      hDane['P_9_D'] := ''
+   ENDIF
+
+   hDane['P_10'] := sxml2num( xmlWartoscH( hPozycje, 'P_10' ) )
+   hDane['P_11'] := sxml2num( xmlWartoscH( hPozycje, 'P_11' ) )
+   hDane['P_12'] := sxml2num( xmlWartoscH( hPozycje, 'P_12' ) )
+   hDane['P_13'] := sxml2num( xmlWartoscH( hPozycje, 'P_13' ) )
+   hDane['P_14'] := sxml2num( xmlWartoscH( hPozycje, 'P_14' ) )
+   hDane['P_15'] := sxml2num( xmlWartoscH( hPozycje, 'P_15' ) )
+   hDane['P_16'] := sxml2num( xmlWartoscH( hPozycje, 'P_16' ) )
+   hDane['P_17'] := sxml2num( xmlWartoscH( hPozycje, 'P_17' ) )
+   hDane['P_18'] := sxml2num( xmlWartoscH( hPozycje, 'P_18' ) )
+   hDane['P_19'] := sxml2num( xmlWartoscH( hPozycje, 'P_19' ) )
+   hDane['P_20'] := sxml2num( xmlWartoscH( hPozycje, 'P_20' ) )
+   hDane['P_21'] := sxml2num( xmlWartoscH( hPozycje, 'P_21' ) )
+   hDane['P_22'] := sxml2num( xmlWartoscH( hPozycje, 'P_22' ) )
+   hDane['P_23'] := sxml2num( xmlWartoscH( hPozycje, 'P_23' ) )
+   hDane['P_24'] := sxml2num( xmlWartoscH( hPozycje, 'P_24' ) )
+   hDane['P_25'] := iif( xmlWartoscH( hPozycje, 'P_25' ) == '1', '1', '0' )
+   hDane['P_28'] := xmlWartoscH( hPozycje, 'P_28' )
+   hDane['P_29'] := xmlWartoscH( hPozycje, 'P_29' )
+   hDane['P_30'] := xmlWartoscH( hPozycje, 'P_30' )
+
+   IF xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '2' .AND. Len(edekXmlORDZU( oDoc )) > 0
+      hDane['ORDZU'] := hb_Hash()
+      hDane['ORDZU']['ORDZU_13'] := edekXmlORDZU( oDoc )
+      hDane['ORDZU']['ORDZU_1_R'] := 'N'
+      hDane['ORDZU']['ORDZU_1_N'] := hDane['P_1']
+      hDane['ORDZU']['ORDZU_2_R'] := ''
+      hDane['ORDZU']['ORDZU_2_N'] := ''
+      hDane['ORDZU']['ORDZU_3'] := hDane['P_2']
+
+      hDane['ORDZU']['ORDZU_5_N1'] := hDane['P_8_N']
+      hDane['ORDZU']['ORDZU_5_N2'] := hDane['P_9_N']
+      hDane['ORDZU']['ORDZU_6'] := hDane['P_9_I']
+      hDane['ORDZU']['ORDZU_7'] := hDane['P_9_D']
+      hDane['ORDZU']['ORDZU_8'] := hDane['P_8_N']
+
+      hDane['ORDZU']['ORDZU_9'] := ''
+      hDane['ORDZU']['ORDZU_10'] := ''
+      hDane['ORDZU']['ORDZU_11'] := ''
+   ENDIF
+
+   IF xmlWartoscH( hPozycje, 'P_70' ) == '1'
+      hDane[ 'VATZD' ] := edekXmlVATZD1( oDoc )
+      hDane[ 'VATZD' ][ 'rob' ] := .T.
+      hDane[ 'VATZD' ][ 'P_1' ] := hDane[ 'P_1' ]
+      hDane[ 'VATZD' ][ 'P_2' ] := hDane[ 'P_2' ]
+      hDane[ 'VATZD' ][ 'P_4' ] := hDane[ 'P_4' ]
+      hDane[ 'VATZD' ][ 'P_5' ] := ''
+      hDane[ 'VATZD' ][ 'P_6' ] := hDane[ 'P_5' ]
+      hDane[ 'VATZD' ][ 'P_7' ] := '1'
+      hDane[ 'VATZD' ][ 'P_8_1' ] := hDane[ 'P_8_1' ]
+      hDane[ 'VATZD' ][ 'P_8_2' ] := hDane[ 'P_8_2' ]
+      hDane[ 'VATZD' ][ 'P_9' ] := hDane[ 'P_9' ]
+   ELSE
+      hDane[ 'VATZD' ] := hb_Hash( 'rob', .F. )
    ENDIF
 
    hDane['P_PODPIS_IMIE'] := ''

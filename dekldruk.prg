@@ -150,6 +150,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_VAT7Dw8()
       cPlikRap := 'frf\vat7d_w8.frf'
       EXIT
+   CASE 'VAT8-11'
+      hDane := DaneDek_VAT8w11( xDane )
+      cPlikRap := 'frf\vat8_w11.frf'
+      EXIT
    CASE 'VATUE-3'
       hDane := DaneDek_VATUEw3()
       cPlikRap := 'frf\vatue_w3.frf'
@@ -5049,6 +5053,33 @@ FUNCTION DaneDek_VAT7Dw8()
    hDane['P_74_2'] := 0
    hDane['P_75_1'] := 0
    hDane['P_75_2'] := 0
+
+   hDane['P_PODPIS_IMIE'] := zDEKLIMIE
+   hDane['P_PODPIS_NAZWISKO'] := zDEKLNAZWI
+   hDane['P_PODPIS_TEL'] := zDEKLTEL
+   hDane['P_PODPIS_DATA'] := ''
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_VAT8w11( hDane )
+
+   hDane['P_1'] := P4
+   hDane['P_2'] := ''
+   hDane['P_4'] := p5a
+   hDane['P_5'] := p5b
+   hDane['P_6'] := iif( AllTrim(p6a) != '', KodUS2Nazwa( AllTrim(p6a) ), '' )
+   hDane['P_7_1'] := iif( kordek == 'K', '0', '1' )
+   hDane['P_7_2'] := iif( kordek == 'K', '1', '0' )
+   hDane['P_8_1'] := iif( spolka_, '1', '0' )
+   hDane['P_8_2'] := iif( spolka_, '0', '1' )
+   hDane['P_9'] := P8 + ',     ' + P11
+
+   hDane['P_25'] := 0
+   hDane['P_28'] := zAdrEMail
+   hDane['P_29'] := AllTrim(zDEKLTEL)
+   hDane['P_30'] := 0
 
    hDane['P_PODPIS_IMIE'] := zDEKLIMIE
    hDane['P_PODPIS_NAZWISKO'] := zDEKLNAZWI

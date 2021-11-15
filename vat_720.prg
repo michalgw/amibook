@@ -63,7 +63,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
 
    *#################################     VAT_7      #############################
    BEGIN SEQUENCE
-      IF zVATFORDR == '7 '
+      IF zVATFORDR == '7 ' .OR. zVATFORDR == '8 '
          zPOLE4 := 'Miesiac'
          zPOLESTO := ' '
          zWERVAT := '(18)'
@@ -137,7 +137,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       ILS := 0
       ILZ := 0
 
-      IF zVATFORDR == '7 '
+      IF zVATFORDR == '7 ' .OR. zVATFORDR == '8 '
         pp8 := vat760
       ELSE
          IF Val( AllTrim( miesiac ) ) > kwapocz
@@ -213,79 +213,86 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          IF zVATFORDR == '7D'
             @  4, 42 SAY ' Wplacono VAT za ten miesi.           '
          ENDIF
-         SET COLOR TO w+
-         @  5, 42 SAY ' ' + PadC( 'C.ROZLICZENIE PODATKU NALE&__Z.NEGO', 37, 'Ä' )
-         ColStd()
-         @  6, 42 SAY ' Dostawa 0% z art.129                 '
-         //@  7, 42 SAY ' Podatek od spisu z natury            '
-         //@  8, 42 SAY ' Zapl.VAT za naby.sr.trans            '
+         IF zVATFORDR <> '8 '
+            SET COLOR TO w+
+            @  5, 42 SAY ' ' + PadC( 'C.ROZLICZENIE PODATKU NALE&__Z.NEGO', 37, 'Ä' )
+            ColStd()
+            @  6, 42 SAY ' Dostawa 0% z art.129                 '
+            //@  7, 42 SAY ' Podatek od spisu z natury            '
+            //@  8, 42 SAY ' Zapl.VAT za naby.sr.trans            '
+         ENDIF
          SET COLOR TO w+
          @  7, 42 SAY ' '+padc('D.ROZLICZENIE PODATKU NALICZONEGO', 37, 'Ä' )
          ColStd()
          @  8, 42 SAY ' Kwota nadw.pop.deklaracji            '
-         @  9, 42 SAY ' Podatek od spisu z natury            '
-         //@ 12, 42 SAY ' Korekta pod.nal.od sr.trw.           '
-         //@ 13, 42 SAY ' Korekta pod.nal.od pozost.           '
-         //@ 12, 42 SAY '                                      '
-         //@ 13, 42 SAY '                                      '
-         SET COLOR TO w+
-         @ 10, 42 SAY ' ' + PadC( 'E.OBLICZENIE WYSOKO&__S.CI ZOBOWI&__A.Z.', 37, 'Ä' )
-         ColStd()
-         @ 11, 42 SAY ' Do odliczenia za kasy                '
-         @ 12, 42 SAY ' Kwota objeta zaniechaniem            '
-         IF zVATFORDR == '7D'
-            @ 13, 42 SAY ' Nadplata z poprz.kwartalu            '
+         IF zVATFORDR <> '8 '
+            @  9, 42 SAY ' Podatek od spisu z natury            '
+            //@ 12, 42 SAY ' Korekta pod.nal.od sr.trw.           '
+            //@ 13, 42 SAY ' Korekta pod.nal.od pozost.           '
+            //@ 12, 42 SAY '                                      '
+            //@ 13, 42 SAY '                                      '
+            SET COLOR TO w+
+            @ 10, 42 SAY ' ' + PadC( 'E.OBLICZENIE WYSOKO&__S.CI ZOBOWI&__A.Z.', 37, 'Ä' )
+            ColStd()
+            @ 11, 42 SAY ' Do odliczenia za kasy                '
+            @ 12, 42 SAY ' Kwota objeta zaniechaniem            '
+            IF zVATFORDR == '7D'
+               @ 13, 42 SAY ' Nadplata z poprz.kwartalu            '
+            ENDIF
+            SET COLOR TO w+
+            @ 14, 42 say ' ' + PadC( '(gdy nadwy&_z.ka podatku naliczonego)', 37, 'Ä' )
+            ColStd()
+            @ 15, 42 SAY ' Do zwrotu za kasy w okresie          '
+            @ 16, 42 SAY ' Do zwrotu na rachunek bank.          '
+            IF _OU == 'J'
+               @ 17, 42 SAY ' Do zwrotu w terminie (wyb¢r 1-4)     '
+               @ 18, 42 SAY ' Zwrot pod.na poczet przysz.zob.      '
+               @ 19, 42 SAY ' Wysoko˜† do zwrotu przy.zob.         '
+               @ 20, 42 SAY ' Rodzaj przyszl.zob.podat.            '
+            ELSE
+               @ 17, 42 SAY ' r. VAT               25 dni          '
+               @ 18, 42 SAY ' 60 dni              180 dni          '
+            ENDIF
+   *        set colo to w+
+   *        @ 22,42 to 22,79
+   *        ColStd()
          ENDIF
-         SET COLOR TO w+
-         @ 14, 42 say ' ' + PadC( '(gdy nadwy&_z.ka podatku naliczonego)', 37, 'Ä' )
-         ColStd()
-         @ 15, 42 SAY ' Do zwrotu za kasy w okresie          '
-         @ 16, 42 SAY ' Do zwrotu na rachunek bank.          '
-         IF _OU == 'J'
-            @ 17, 42 SAY ' Do zwrotu w terminie (wyb¢r 1-4)     '
-            @ 18, 42 SAY ' Zwrot pod.na poczet przysz.zob.      '
-            @ 19, 42 SAY ' Wysoko˜† do zwrotu przy.zob.         '
-            @ 20, 42 SAY ' Rodzaj przyszl.zob.podat.            '
-         ELSE
-            @ 17, 42 SAY ' r. VAT               25 dni          '
-            @ 18, 42 SAY ' 60 dni              180 dni          '
-         ENDIF
-*        set colo to w+
-*        @ 22,42 to 22,79
-*        ColStd()
 
          @  3, 70 GET kordek PICTURE '!' WHEN wfkordek20( 3, 71 ) VALID vfkordek20( 3, 71 )
          IF zVATFORDR == '7D'
             @  4, 71 GET zVATZALMIE PICTURE FVPIC
          ENDIF
-
-         @  6, 71 GET art129 PICTURE FVPIC
-         //@  7, 71 GET pp12 PICTURE FVPIC
-         //@  8, 71 GET znowytran PICTURE FVPIC
-
-         @  8, 71 GET pp8  PICTURE FVPIC
-         @  9, 71 GET pp11 PICTURE FVPIC
-         //@ 12, 71 GET zkorekst PICTURE FVPIC
-         //@ 13, 71 GET zkorekpoz PICTURE FVPIC
-
-         @ 11, 71 GET kkasa_odl PICTURE FVPIC
-         @ 12, 71 GET pp13 PICTURE FVPIC
-         IF zVATFORDR == '7D'
-            @ 13, 71 GET zVATNADKWA PICTURE FVPIC
+         IF zVATFORDR <> '8 '
+            @  6, 71 GET art129 PICTURE FVPIC
+            //@  7, 71 GET pp12 PICTURE FVPIC
+            //@  8, 71 GET znowytran PICTURE FVPIC
          ENDIF
 
-         @ 15, 71 GET kkasa_zwr PICTURE FVPIC
-         @ 16, 71 GET pp10 PICTURE FVPIC
-         IF _OU == 'J'
-            @ 17, 76 GET cJPKRodzZwrot PICTURE '!' WHEN Vat720WRodzZwrot() VALID Vat720VRodzZwrot()
-            @ 18, 76 GET cJPKZwrotPod PICTURE '!' WHEN Vat720WZwrotPod() VALID Vat720VZwrotPod()
-            @ 19, 71 GET nJPKZwrotKwota PICTURE FVPIC WHEN Vat720WZwrotKwota() VALID Vat720VZwrotKwota()
-            @ 20, 71 GET cJPKZwrotRodzZob PICTURE '@S9 ' + Replicate( '!', 120 ) WHEN Vat720WZwrotRodzZob() VALID Vat720VZwrotRodzZob()
-         ELSE
-            @ 17, 50 GET zZwrRaVAT PICTURE FVPIC
-            @ 17, 71 GET zzwr25dni PICTURE FVPIC
-            @ 18, 50 GET zzwr60dni PICTURE FVPIC
-            @ 18, 71 GET zzwr180dni PICTURE FVPIC
+         @  8, 71 GET pp8  PICTURE FVPIC
+         IF zVATFORDR <> '8 '
+            @  9, 71 GET pp11 PICTURE FVPIC
+            //@ 12, 71 GET zkorekst PICTURE FVPIC
+            //@ 13, 71 GET zkorekpoz PICTURE FVPIC
+
+            @ 11, 71 GET kkasa_odl PICTURE FVPIC
+            @ 12, 71 GET pp13 PICTURE FVPIC
+            IF zVATFORDR == '7D'
+               @ 13, 71 GET zVATNADKWA PICTURE FVPIC
+            ENDIF
+
+            @ 15, 71 GET kkasa_zwr PICTURE FVPIC
+            @ 16, 71 GET pp10 PICTURE FVPIC
+            IF _OU == 'J'
+               @ 17, 76 GET cJPKRodzZwrot PICTURE '!' WHEN Vat720WRodzZwrot() VALID Vat720VRodzZwrot()
+               @ 18, 76 GET cJPKZwrotPod PICTURE '!' WHEN Vat720WZwrotPod() VALID Vat720VZwrotPod()
+               @ 19, 71 GET nJPKZwrotKwota PICTURE FVPIC WHEN Vat720WZwrotKwota() VALID Vat720VZwrotKwota()
+               @ 20, 71 GET cJPKZwrotRodzZob PICTURE '@S9 ' + Replicate( '!', 120 ) WHEN Vat720WZwrotRodzZob() VALID Vat720VZwrotRodzZob()
+            ELSE
+               @ 17, 50 GET zZwrRaVAT PICTURE FVPIC
+               @ 17, 71 GET zzwr25dni PICTURE FVPIC
+               @ 18, 50 GET zzwr60dni PICTURE FVPIC
+               @ 18, 71 GET zzwr180dni PICTURE FVPIC
+            ENDIF
          ENDIF
 
          Read_()
@@ -338,7 +345,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                BREAK
             ENDIF
             DO CASE
-            CASE dane_vat == 2
+            CASE dane_vat == 2 .AND. zVATFORDR <> '8 '
                @ 17, 42 CLEAR TO 22,79
                @ 17, 42 TO 22, 79 DOUB
 *                 @ 17,43 say ' 1.art.86 ust.8 pkt 1 ustawy (T/N)  '
@@ -359,7 +366,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                   COMMIT
                   UNLOCK
                ENDIF
-            CASE dane_vat == 3
+            CASE dane_vat == 3 .AND. zVATFORDR <> '8 '
                @ 20, 42 CLEAR TO 22, 79
                @ 20, 42 TO 22, 79 DOUB
 *                @ 18,43 say ' Opodatkow.sprzedaz netto           '
@@ -1233,7 +1240,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       ENDIF
 
       SELECT 2
-      IF zVATFORDR == '7 '
+      IF zVATFORDR == '7 ' .OR. zVATFORDR == '8 '
          IF Val( miesiac ) < 12 .AND. Dostep( 'SUMA_MC' )
             SET INDEX TO suma_mc
             SEEK '+' + ident_fir + miesiac
@@ -1277,6 +1284,21 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             resdekl[ 'ORDZU' ] := aDane[ 'ORDZU' ][ 'P_13' ]
          ENDIF
          _czy_close := .T.
+      CASE _OU == '8D'
+         tresc_korekty_vat7 := ''
+         IF kordek == 'K' .AND. aDane[ 'ORDZU' ][ 'rob' ]
+            tresc_korekty_vat7 := aDane[ 'ORDZU' ][ 'P_13' ]
+         ENDIF
+         DeklPodp()
+         DeklarDrukuj( 'VAT8-11', VAT8_DaneDek() )
+      CASE _OU == '8X'
+         tresc_korekty_vat7 := ''
+         IF kordek == 'K' .AND. aDane[ 'ORDZU' ][ 'rob' ]
+            tresc_korekty_vat7 := aDane[ 'ORDZU' ][ 'P_13' ]
+         ENDIF
+         edeklaracja_plik := 'VAT_' + AllTrim( zVATFORDR ) + '_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( p5b ) + '_' + AllTrim( P5a )
+         resdekl := edek_vat8_11( VAT8_DaneDek() )
+         edekZapiszXml( resdekl, edeklaracja_plik, wys_edeklaracja, 'VAT8-11', kordek == 'K', Val( miesiac ) )
       ENDCASE
    END
 
@@ -1521,3 +1543,34 @@ FUNCTION JPK_V7_DaneDek( aDane )
    RETURN hDane
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION VAT8_DaneDek()
+
+   LOCAL aDane := {=>}
+
+   aDane[ 'P_10' ] := _round( P65dekue, 0 )
+   aDane[ 'P_11' ] := _round( P65vdekue, 0 )
+   aDane[ 'P_12' ] := _round( P65dekus, 0 )
+   aDane[ 'P_13' ] := _round( P65vdekus, 0 )
+   aDane[ 'P_14' ] := _round( P65dekusu, 0 )
+   aDane[ 'P_15' ] := _round( P65vdekusu, 0 )
+   aDane[ 'P_16' ] := _round( SEK_CV7net + p65dekwe, 0 )
+   aDane[ 'P_17' ] := _round( SEK_CV7vat + p65vdekwe, 0 )
+   aDane[ 'P_18' ] := 0
+   aDane[ 'P_19' ] := 0
+   aDane[ 'P_20' ] := _round( znowytran, 0 )
+   aDane[ 'P_21' ] := _round( zKOL39, 0 )
+   aDane[ 'P_22' ] := _round( Pp8, 0 )
+   aDane[ 'P_23' ] := Max( aDane[ 'P_11' ] + aDane[ 'P_13' ] + aDane[ 'P_15' ] ;
+      + aDane[ 'P_17' ] + aDane[ 'P_19' ] - aDane[ 'P_20' ] - aDane[ 'P_21' ] ;
+      - aDane[ 'P_22' ], 0 )
+   //aDane[ 'P_23' ] := _round( P98b, 0 )
+   aDane[ 'P_24' ] := Max( aDane[ 'P_20' ] + aDane[ 'P_21' ] + aDane[ 'P_22' ] ;
+      - aDane[ 'P_11' ] - aDane[ 'P_13' ] - aDane[ 'P_15' ] - aDane[ 'P_17' ] ;
+      - aDane[ 'P_19' ], 0 )
+   //aDane[ 'P_24' ] := _round( P99, 0 )
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
