@@ -43,7 +43,7 @@ FUNCTION Ksieg()
       IF zVAT == 'T'
          @ 2, 18 PROMPT ' SPRZEDA&__Z. (VAT) ' MESSAGE 'Zapis dokumentu do rejestru sprzeda&_z.y i ewentualnie do ewidencji podstawowej'
       ENDIF
-      IF zVAT == 'T' .OR. zVATFORDR == '8 '
+      IF zVAT == 'T' .OR. zVATFORDR == '8 ' .OR. zVATFORDR == '9M'
          @ 2, 40 PROMPT ' ZAKUPY (VAT) '       MESSAGE 'Zapis dokumentu do rejestru zakupu i ewentualnie do ewidencji podstawowej'
       ENDIF
       @ 2, 58 PROMPT ' DOWODY WEWN&__E.TRZNE ' MESSAGE 'Sporz&_a.dzanie dowod&_o.w wewn&_e.trznych (bez ksi&_e.gowania)'
@@ -56,9 +56,9 @@ FUNCTION Ksieg()
 
       SetColor( CURR )
       QQSQ := QQS
-      IF zVAT # 'T' .AND. zVATFORDR <> '8 ' .AND. QQS == 2
+      IF zVAT # 'T' .AND. zVATFORDR <> '8 ' .AND. zVATFORDR <> '9M' .AND. QQS == 2
          QQS := 4
-      ELSEIF zVAT # 'T' .AND. zVATFORDR == '8 ' .AND. QQS > 1
+      ELSEIF zVAT # 'T' .AND. ( zVATFORDR == '8 ' .OR. zVATFORDR == '9M' ) .AND. QQS > 1
          QQS := QQS + 1
       ENDIF
 

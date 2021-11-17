@@ -140,7 +140,7 @@ zBANK_PLA=bank
 zKONTO_PLA=nr_konta
 ztr1=padr(strtran(alltrim(nip),'-',''),14)
 ztr2=' N  '
-if zVATFORDR='7 ' .OR. zVATFORDR == '8 '
+if zVATFORDR='7 ' .OR. zVATFORDR == '8 ' .OR. zVATFORDR == '9M'
 *if zVATOKRES='M'
    ztr3=' '+substr(param_rok,3,2)+'M'+strtran(padl(miesiac,2),' ','0')+'  '
 else
@@ -173,7 +173,7 @@ zPodatki=.t.
 do case
 case kkk=68.or.kkk=100
      **** Drukowanie ekranu
-   DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), iif( zVATFORDR='7 ' .OR. zVATFORDR == '8 ', ;
+   DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), iif( zVATFORDR='7 ' .OR. zVATFORDR == '8 ' .OR. zVATFORDR == '9M', ;
       PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ), ;
       PadC( 'Kwarta&_l. ' + param_rok + '.' + StrTran( PadL( p5a, 2 ), ' ', '0' ), 80 ) ), "" }, , 4, 24 )
 

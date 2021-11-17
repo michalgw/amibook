@@ -63,7 +63,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
 
    *#################################     VAT_7      #############################
    BEGIN SEQUENCE
-      IF zVATFORDR == '7 ' .OR. zVATFORDR == '8 '
+      IF zVATFORDR == '7 ' .OR. zVATFORDR == '8 ' .OR. zVATFORDR == '9M'
          zPOLE4 := 'Miesiac'
          zPOLESTO := ' '
          zWERVAT := '(18)'
@@ -137,7 +137,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       ILS := 0
       ILZ := 0
 
-      IF zVATFORDR == '7 ' .OR. zVATFORDR == '8 '
+      IF zVATFORDR == '7 ' .OR. zVATFORDR == '8 ' .OR. zVATFORDR == '9M'
         pp8 := vat760
       ELSE
          IF Val( AllTrim( miesiac ) ) > kwapocz
@@ -213,7 +213,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          IF zVATFORDR == '7D'
             @  4, 42 SAY ' Wplacono VAT za ten miesi.           '
          ENDIF
-         IF zVATFORDR <> '8 '
+         IF zVATFORDR <> '8 ' .AND. zVATFORDR <> '9M'
             SET COLOR TO w+
             @  5, 42 SAY ' ' + PadC( 'C.ROZLICZENIE PODATKU NALE&__Z.NEGO', 37, 'Ä' )
             ColStd()
@@ -221,11 +221,13 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             //@  7, 42 SAY ' Podatek od spisu z natury            '
             //@  8, 42 SAY ' Zapl.VAT za naby.sr.trans            '
          ENDIF
-         SET COLOR TO w+
-         @  7, 42 SAY ' '+padc('D.ROZLICZENIE PODATKU NALICZONEGO', 37, 'Ä' )
-         ColStd()
-         @  8, 42 SAY ' Kwota nadw.pop.deklaracji            '
-         IF zVATFORDR <> '8 '
+         IF zVATFORDR <> '9M'
+            SET COLOR TO w+
+            @  7, 42 SAY ' '+padc('D.ROZLICZENIE PODATKU NALICZONEGO', 37, 'Ä' )
+            ColStd()
+            @  8, 42 SAY ' Kwota nadw.pop.deklaracji            '
+         ENDIF
+         IF zVATFORDR <> '8 ' .AND. zVATFORDR <> '9M'
             @  9, 42 SAY ' Podatek od spisu z natury            '
             //@ 12, 42 SAY ' Korekta pod.nal.od sr.trw.           '
             //@ 13, 42 SAY ' Korekta pod.nal.od pozost.           '
@@ -262,14 +264,15 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          IF zVATFORDR == '7D'
             @  4, 71 GET zVATZALMIE PICTURE FVPIC
          ENDIF
-         IF zVATFORDR <> '8 '
+         IF zVATFORDR <> '8 ' .AND. zVATFORDR <> '9M'
             @  6, 71 GET art129 PICTURE FVPIC
             //@  7, 71 GET pp12 PICTURE FVPIC
             //@  8, 71 GET znowytran PICTURE FVPIC
          ENDIF
-
-         @  8, 71 GET pp8  PICTURE FVPIC
-         IF zVATFORDR <> '8 '
+         IF zVATFORDR <> '9M'
+            @  8, 71 GET pp8  PICTURE FVPIC
+         ENDIF
+         IF zVATFORDR <> '8 ' .AND. zVATFORDR <> '9M'
             @  9, 71 GET pp11 PICTURE FVPIC
             //@ 12, 71 GET zkorekst PICTURE FVPIC
             //@ 13, 71 GET zkorekpoz PICTURE FVPIC
@@ -345,7 +348,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                BREAK
             ENDIF
             DO CASE
-            CASE dane_vat == 2 .AND. zVATFORDR <> '8 '
+            CASE dane_vat == 2 .AND. zVATFORDR <> '8 ' .AND. zVATFORDR <> '9M'
                @ 17, 42 CLEAR TO 22,79
                @ 17, 42 TO 22, 79 DOUB
 *                 @ 17,43 say ' 1.art.86 ust.8 pkt 1 ustawy (T/N)  '
@@ -366,7 +369,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
                   COMMIT
                   UNLOCK
                ENDIF
-            CASE dane_vat == 3 .AND. zVATFORDR <> '8 '
+            CASE dane_vat == 3 .AND. zVATFORDR <> '8 ' .AND. zVATFORDR <> '9M'
                @ 20, 42 CLEAR TO 22, 79
                @ 20, 42 TO 22, 79 DOUB
 *                @ 18,43 say ' Opodatkow.sprzedaz netto           '
@@ -1240,7 +1243,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       ENDIF
 
       SELECT 2
-      IF zVATFORDR == '7 ' .OR. zVATFORDR == '8 '
+      IF zVATFORDR == '7 ' .OR. zVATFORDR == '8 ' .OR. zVATFORDR == '9M'
          IF Val( miesiac ) < 12 .AND. Dostep( 'SUMA_MC' )
             SET INDEX TO suma_mc
             SEEK '+' + ident_fir + miesiac
@@ -1299,6 +1302,21 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
          edeklaracja_plik := 'VAT_' + AllTrim( zVATFORDR ) + '_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( p5b ) + '_' + AllTrim( P5a )
          resdekl := edek_vat8_11( VAT8_DaneDek() )
          edekZapiszXml( resdekl, edeklaracja_plik, wys_edeklaracja, 'VAT8-11', kordek == 'K', Val( miesiac ) )
+      CASE _OU == '9D'
+         tresc_korekty_vat7 := ''
+         IF kordek == 'K' .AND. aDane[ 'ORDZU' ][ 'rob' ]
+            tresc_korekty_vat7 := aDane[ 'ORDZU' ][ 'P_13' ]
+         ENDIF
+         DeklPodp()
+         DeklarDrukuj( 'VAT9M-10', VAT9M_DaneDek() )
+      CASE _OU == '9X'
+         tresc_korekty_vat7 := ''
+         IF kordek == 'K' .AND. aDane[ 'ORDZU' ][ 'rob' ]
+            tresc_korekty_vat7 := aDane[ 'ORDZU' ][ 'P_13' ]
+         ENDIF
+         edeklaracja_plik := 'VAT_' + AllTrim( zVATFORDR ) + '_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( p5b ) + '_' + AllTrim( P5a )
+         resdekl := edek_vat9m_10( VAT9M_DaneDek() )
+         edekZapiszXml( resdekl, edeklaracja_plik, wys_edeklaracja, 'VAT9M-10', kordek == 'K', Val( miesiac ) )
       ENDCASE
    END
 
@@ -1569,6 +1587,24 @@ FUNCTION VAT8_DaneDek()
       - aDane[ 'P_11' ] - aDane[ 'P_13' ] - aDane[ 'P_15' ] - aDane[ 'P_17' ] ;
       - aDane[ 'P_19' ], 0 )
    //aDane[ 'P_24' ] := _round( P99, 0 )
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION VAT9M_DaneDek()
+
+   LOCAL aDane := {=>}
+
+   aDane[ 'P_10' ] := _round( P65dekus, 0 )
+   aDane[ 'P_11' ] := _round( P65vdekus, 0 )
+   aDane[ 'P_12' ] := _round( P65dekusu, 0 )
+   aDane[ 'P_13' ] := _round( P65vdekusu, 0 )
+   aDane[ 'P_14' ] := _round( SEK_CV7net + p65dekwe, 0 )
+   aDane[ 'P_15' ] := _round( SEK_CV7vat + p65vdekwe, 0 )
+   aDane[ 'P_16' ] := 0
+   aDane[ 'P_17' ] := 0
+   aDane[ 'P_18' ] := aDane[ 'P_11' ] + aDane[ 'P_13' ] + aDane[ 'P_15' ] + aDane[ 'P_17' ]
 
    RETURN aDane
 
