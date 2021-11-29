@@ -1118,7 +1118,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
 
 
       p75 := p61 + p61a + p64 + p64exp + p69 + p71 + p67 + p65 + p65ue + p65dekue + p65dekit + p65dekus + p65dekwe + SEK_CV7net + p65dekusu
-      p76 := ( p62 + p62a + p70 + p72 + p65vdekue + p65vdekit + p65vdekus + p65vdekwe + pp12 + p65vdekusu + art111u6 ) - znowytran - zKOL39
+      p76 := ( p62 + p62a + p70 + p72 + p65vdekue + p65vdekit + p65vdekus + p65vdekwe + pp12 + p65vdekusu + art111u6 + SEK_CV7vat ) - znowytran - zKOL39
 
       p79 := pp8 + pp11 + p46dek + p50dek + zkorekst + zkorekpoz + art89b1 + art89b4
 
