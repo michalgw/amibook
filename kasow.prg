@@ -191,6 +191,14 @@ if tnesc([*i],[   Jeste&_s. pewny? (T/N)   ])
    enddo
    do SETIND with 'EWIDZWR'
    zap_()
+   do while.not.dostepex('OSSREJ')
+   enddo
+   do SETIND with 'OSSREJ'
+   zap_()
+   do while.not.dostepex('VIUDOKOR')
+   enddo
+   do SETIND with 'VIUDOKOR'
+   zap_()
 *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
    close_()
    Indeks()

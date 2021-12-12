@@ -47,7 +47,7 @@ FUNCTION edekKonfig()
       @ 19,42 say ' JPK - Metoda obsˆugi  (Wˆ/Zew):      '
       @ 20,42 say ' JPK - Bramka testowa (Tak/Nie):      '
       @ 21,42 SAY ' Rodzaj SHA (1 - SHA1, 2 - SHA256):   '
-      @ 22,42 say ' Kod urz©du dla IFT-2R :              '
+      @ 22,42 say ' Kod urz©du IFT-2R:        VIU-DO:    '
       edekKonfigPokaz()
       kl=0
       DO WHILE kl#27
@@ -75,6 +75,7 @@ FUNCTION edekKonfig()
                        zparam_ejts = param_ejts
                        zparam_edsh = param_edsh
                        zparam_eiku = param_eiku
+                       zparam_evku = param_evku
                        *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
                        @  3, 75 get zparam_edmo PICTURE '!' VALID edekKonfigPoleEdmo()
                        @  6, 43 get zparamedek_katalog picture '@S36' WHEN zparam_edmo == 'Z'
@@ -85,7 +86,8 @@ FUNCTION edekKonfig()
                        @ 19, 76 GET zparam_ejmo PICTURE '!' VALID edekKonfigPoleEjmo()
                        @ 20, 76 GET zparam_ejts PICTURE '!' VALID edekKonfigPoleEjts()
                        @ 21, 78 GET zparam_edsh PICTURE '!' VALID edekKonfigPoleEdsh()
-                       @ 22, 67 GET zparam_eiku PICTURE '!!!!'
+                       @ 22, 62 GET zparam_eiku PICTURE '!!!!'
+                       @ 22, 76 GET zparam_evku PICTURE '!!!!'
                        ****************************
                        clear type
                        read_()
@@ -103,6 +105,7 @@ FUNCTION edekKonfig()
                        param_ejts = zparam_ejts
                        param_edsh = zparam_edsh
                        param_eiku = zparam_eiku
+                       param_evku = zparam_evku
                        save to paramedek all like param_e*
                  end
                  edekKonfigPokaz()
@@ -239,7 +242,8 @@ FUNCTION edekKonfigPokaz()
       @ 19, 76 SAY param_ejmo
       @ 20, 76 SAY param_ejts
       @ 21, 78 SAY param_edsh
-      @ 22, 67 SAY param_eiku
+      @ 22, 62 SAY param_eiku
+      @ 22, 76 SAY param_evku
    RETURN
 
 /*----------------------------------------------------------------------*/

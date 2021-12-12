@@ -178,6 +178,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_VATUEKw5( xDane )
       cPlikRap := 'frf\vatuek_w5.frf'
       EXIT
+   CASE 'VIUDO-1'
+      hDane := DaneDek_VIUDOw1( xDane )
+      cPlikRap := 'frf\viudo_w1.frf'
+      EXIT
    CASE 'VAT27K-1'
    CASE 'VAT27-1'
       hDane := DaneDek_VAT27w1()
@@ -5500,6 +5504,122 @@ FUNCTION DaneDek_VATUEKw5( aDane )
    ENDIF
 
    RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_VIUDOw1( aDaneOSS )
+
+   LOCAL aDane := {=>}, cKrajL, cRodzajL, nSumT, nSumU, nSumC
+
+   aDane[ 'P_1' ] := aDaneOSS[ 'firma' ][ 'NIP' ]
+   aDane[ 'P_2' ] := ''
+   aDane[ 'P_3' ] := ''
+   aDane[ 'P_4' ] := aDaneOSS[ 'kwartal' ]
+   aDane[ 'P_5' ] := aDaneOSS[ 'rok' ]
+   aDane[ 'P_6' ] := KodUS2Nazwa( aDaneOSS[ 'kod_urzedu' ] )
+   aDane[ 'P_7_1' ] := iif( aDaneOSS[ 'cel' ] == 'D', '1', '0' )
+   aDane[ 'P_7_2' ] := iif( aDaneOSS[ 'cel' ] == 'R', '1', '0' )
+   aDane[ 'P_8' ] := date2strxml( aDaneOSS[ 'data_wypelnienia' ] )
+   aDane[ 'P_9_1' ] := iif( aDaneOSS[ 'firma' ][ 'Spolka' ], '1', '0' )
+   aDane[ 'P_9_2' ] := iif( aDaneOSS[ 'firma' ][ 'Spolka' ], '0', '1' )
+   aDane[ 'P_10' ] := iif( aDaneOSS[ 'firma' ][ 'Spolka' ], ;
+      aDaneOSS[ 'firma' ][ 'PelnaNazwa' ], ;
+      aDaneOSS[ 'firma' ][ 'Nazwisko' ] + '    ' + aDaneOSS[ 'firma' ][ 'ImiePierwsze' ] )
+   aDane[ 'P_11' ] := iif( Empty( aDaneOSS[ 'okres_od' ] ), '', date2strxml( aDaneOSS[ 'okres_od' ] ) )
+   aDane[ 'P_12' ] := iif( Empty( aDaneOSS[ 'okres_do' ] ), '', date2strxml( aDaneOSS[ 'okres_do' ] ) )
+
+   nSumT := 0
+   nSumU := 0
+   aDane[ 'SekcjaC2' ] := {}
+   hb_HEval( aDaneOSS[ 'sekcja_c2' ], { | cKraj, aRodzaje |
+      cKrajL := cKraj
+      hb_HEval( aRodzaje, { | cRodzaj, aStawki |
+         cRodzajL := cRodzaj
+         hb_HEval( aStawki, { | nStawka, aWartosci |
+            AAdd( aDane[ 'SekcjaC2' ], { ;
+               'kraj' => KrajUENazwa( cKrajL ), ;
+               'rodzaj' => iif( cRodzajL == 'U', '—wiadczenie usˆug', 'Dostawa towar¢w' ), ;
+               'stawkard' => iif( aWartosci[ 'stawkard' ] == 'O', 'Obni¾ona', 'Podstawowa' ), ;
+               'stawka' => nStawka, ;
+               'nettoeur' => aWartosci[ 'nettoeur' ], ;
+               'vateur' => aWartosci[ 'vateur' ] ;
+            } )
+            IF cRodzajL == 'U'
+               nSumU += aWartosci[ 'vateur' ]
+            ELSE
+               nSumT += aWartosci[ 'vateur' ]
+            ENDIF
+         } )
+      } )
+   } )
+   aDane[ 'P_13' ] := nSumU
+   aDane[ 'P_14' ] := nSumT
+
+   nSumC := nSumU + nSumT
+
+   nSumT := 0
+   nSumU := 0
+   aDane[ 'SekcjaC3' ] := {}
+   hb_HEval( aDaneOSS[ 'sekcja_c3' ], { | cKraj, aPozycje |
+      cKrajL := cKraj
+      AEval( aPozycje, { | aPoz |
+         AAdd( aDane[ 'SekcjaC3' ], { ;
+            'kraj' => KrajUENazwa( cKrajL ), ;
+            'krajdz' => KrajUENazwa( aPoz[ 'krajdz' ] ), ;
+            'nr_idvat' => aPoz[ 'nr_idvat' ], ;
+            'nr_idpod' => aPoz[ 'nr_idpod' ], ;
+            'rodzaj' => iif( aPoz[ 'rodzdost' ] == 'U', '—wiadczenie usˆug', 'Dostawa towar¢w' ), ;
+            'stawkard' => iif( aPoz[ 'stawkard' ] == 'O', 'Obni¾ona', 'Podstawowa' ), ;
+            'stawka' => aPoz[ 'stawka' ], ;
+            'nettoeur' => aPoz[ 'nettoeur' ], ;
+            'vateur' => aPoz[ 'vateur' ] ;
+         } )
+         IF aPoz[ 'rodzdost' ] == 'U'
+            nSumU += aPoz[ 'vateur' ]
+         ELSE
+            nSumT += aPoz[ 'vateur' ]
+         ENDIF
+      } )
+   } )
+   aDane[ 'P_15' ] := nSumU
+   aDane[ 'P_16' ] := nSumT
+
+   nSumC += nSumU + nSumT
+
+   aDane[ 'P_17' ] := nSumC
+
+   aDane[ 'SekcjaC5' ] := {}
+   hb_HEval( aDaneOSS[ 'sekcja_c5' ], { | cKraj, aPozycje |
+      cKrajL := cKraj
+      AEval( aPozycje, { | aPoz |
+         AAdd( aDane[ 'SekcjaC5' ], { ;
+            'kraj' => KrajUENazwa( cKrajL ), ;
+            'rok' => aPoz[ 'rok' ], ;
+            'kwartal' => aPoz[ 'kwartal' ], ;
+            'kwota' => aPoz[ 'kwota' ] ;
+         } )
+         IF aPoz[ 'kwota' ] > 0
+            nSumC += aPoz[ 'kwota' ]
+         ENDIF
+      } )
+   } )
+
+
+   nSumC := 0
+   aDane[ 'SekcjaC6' ] := {}
+   hb_HEval( aDaneOSS[ 'sekcja_c6' ], { | cKraj, nKwota |
+      AAdd( aDane[ 'SekcjaC6' ], { ;
+         'kraj' => KrajUENazwa( cKraj ), ;
+         'kwota' => nKwota ;
+      } )
+      IF nKwota > 0
+         nSumC += nKwota
+      ENDIF
+   } )
+
+   aDane[ 'P_18' ] := nSumC
+
+   RETURN aDane
 
 /*----------------------------------------------------------------------*/
 

@@ -123,6 +123,7 @@ odtw.prg
 oper.prg
 organy.prg
 organy_.prg
+ossrej.prg
 param.prg
 param_drgr.prg
 param_edek.prg
@@ -195,6 +196,7 @@ tab_kolo.prg
 tab_poj.prg
 tab_rycz.prg
 tab_vat.prg
+tab_vatue.prg
 tabam.prg
 tabamw.prg
 tresc.prg

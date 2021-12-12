@@ -258,6 +258,11 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\vatuek_w5.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'VIUDO-1'
+      hDane := DaneXML_VIUDOw1( oDoc, cNrRef )
+      cPlikRap := 'frf\viudo_w1.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'VAT27K-1'
    CASE 'VAT27-1'
       hDane := DaneXML_VAT27w1( oDoc, cNrRef )
@@ -7510,6 +7515,158 @@ FUNCTION DaneXML_VATUEKw5(oDoc, cNrRef, hNaglowek)
       AAdd(aGrupa4, hb_Hash( 'pusty', '1', 'P_CBa', '', 'P_CBb', '', 'P_CBc', '', 'P_CBd', '0', 'P_CBdl', '0', 'P_CJa', '', 'P_CJb', '', 'P_CJc', '', 'P_CJd', '0', 'P_CJdl', '0' ) )
    ENDIF
    hDane['Grupa4'] := aGrupa4
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneXML_VIUDOw1( oDoc, cNrRef, hNaglowek )
+
+   LOCAL hDane := {=>}, hPodmiot1, hPozycje, oElement
+   LOCAL cKraj, aPoz, oNastEl, oIter1, oAktEl
+
+   IF ! HB_ISHASH( hNaglowek )
+      hNaglowek := edekXmlNaglowek( oDoc )
+   ENDIF
+
+   hPodmiot1 := edekXmlPodmiot1( oDoc )
+
+   hDane[ 'P_1' ] := hPodmiot1[ 'dto:NIP' ]
+   hDane[ 'P_2' ] := iif( HB_ISCHAR( cNrRef ), cNrRef, '' )
+   hDane[ 'P_3' ] := ''
+   hDane[ 'P_4' ] := hNaglowek[ 'Kwartal' ]
+   hDane[ 'P_5' ] := hNaglowek[ 'Rok' ]
+   hDane[ 'P_6' ] := KodUS2Nazwa( xmlWartoscH( hNaglowek, 'KodUrzedu', '' ) )
+   hDane[ 'P_7_1' ] := iif( hNaglowek[ 'CelZlozenia' ] == '1', '1', '0' )
+   hDane[ 'P_7_2' ] := iif( hNaglowek[ 'CelZlozenia' ] == '2', '1', '0' )
+   hDane[ 'P_8' ] := hNaglowek[ 'DataWypelnienia' ]
+   hDane[ 'P_9_1' ] := iif( hPodmiot1[ 'OsobaFizyczna' ], '0', '1' )
+   hDane[ 'P_9_2' ] := iif( hPodmiot1[ 'OsobaFizyczna' ], '1', '0' )
+   hDane[ 'P_10' ] := iif( hPodmiot1[ 'OsobaFizyczna' ], ;
+      hPodmiot1[ 'dto:Nazwisko' ] + '    ' + hPodmiot1[ 'dto:ImiePierwsze' ], ;
+      hPodmiot1[ 'dto:PelnaNazwa' ] )
+
+   hPozycje := edekXmlGrupa( oDoc, 'Period' )
+   hDane[ 'P_11' ] := xmlWartoscH( hPozycje, 'dto:StartDate' , '' )
+   hDane[ 'P_12' ] := xmlWartoscH( hPozycje, 'dto:EndDate', '' )
+
+   hDane[ 'SekcjaC2' ] := {}
+   oElement := oDoc:FindFirst( 'MSIDSupplies' )
+   DO WHILE ! Empty( oElement )
+      cKraj := oElement:oChild:cData
+      oIter1 := TXMLIteratorScan():New( oElement )
+      oNastEl := oIter1:Find( 'dto:OSSVATReturnDetail' )
+      DO WHILE ! Empty( oNastEl )
+         aPoz := { 'kraj' => KrajUENazwa( cKraj ) }
+
+         oNastEl := oNastEl:oChild
+         aPoz[ 'rodzaj' ] := iif( oNastEl:cData == 'GOODS', 'Dostawa towar¢w', '—wiadczenie usˆug' )
+
+         oNastEl := oNastEl:oNext
+         aPoz[ 'stawkard' ] := iif( oNastEl:aAttributes[ 'type' ] == 'STANDARD', 'Podstawowa', 'Obni¾ona' )
+         aPoz[ 'stawka' ] := Val( oNastEl:cData )
+
+         oNastEl := oNastEl:oNext
+         aPoz[ 'nettoeur' ] := Val( oNastEl:cData )
+
+         oNastEl := oNastEl:oNext
+         aPoz[ 'vateur' ] := Val( oNastEl:cData )
+
+         AAdd( hDane[ 'SekcjaC2' ], aPoz )
+         oNastEl := oIter1:Next()
+      ENDDO
+      oElement := oDoc:FindNext()
+   ENDDO
+
+   oElement := oDoc:FindFirst( 'GrandTotalMSIDServices' )
+   hDane [ 'P_13' ] := iif( ! Empty( oElement ), Val( oElement:cData ), 0 )
+
+   oElement := oDoc:FindFirst( 'GrandTotalMSIDGoods' )
+   hDane [ 'P_14' ] := iif( ! Empty( oElement ), Val( oElement:cData ), 0 )
+
+   hDane[ 'SekcjaC3' ] := {}
+   oElement := oDoc:FindFirst( 'MSESTSupplies' )
+   DO WHILE ! Empty( oElement )
+      cKraj := oElement:oChild:cData
+      oIter1 := TXMLIteratorScan():New( oElement )
+      oAktEl := oIter1:Find( 'MSESTSupply' )
+      DO WHILE ! Empty( oAktEl )
+         aPoz := { 'kraj' => KrajUENazwa( cKraj ) }
+
+         oNastEl := oAktel:oChild:oChild:oChild
+         aPoz[ 'krajdz' ] := KrajUENazwa( oNastEl:aAttributes[ 'issuedBy' ] )
+         IF oNastEl:cName == 'dto:VATIdentificationNumber'
+            aPoz[ 'nr_idvat' ] := oNastEl:cData
+            aPoz[ 'nr_idpod' ] := ''
+         ELSE
+            aPoz[ 'nr_idvat' ] := ''
+            aPoz[ 'nr_idpod' ] := oNastEl:cData
+         ENDIF
+
+         oNastEl := oAktEl:oChild:oChild:oNext:oChild
+         aPoz[ 'rodzaj' ] := iif( oNastEl:cData == 'GOODS', 'Dostawa towar¢w', '—wiadczenie usˆug' )
+
+         oNastEl := oNastEl:oNext
+         aPoz[ 'stawkard' ] := iif( oNastEl:aAttributes[ 'type' ] == 'STANDARD', 'Podstawowa', 'Obni¾ona' )
+         aPoz[ 'stawka' ] := Val( oNastEl:cData )
+
+         oNastEl := oNastEl:oNext
+         aPoz[ 'nettoeur' ] := Val( oNastEl:cData )
+
+         oNastEl := oNastEl:oNext
+         aPoz[ 'vateur' ] := Val( oNastEl:cData )
+
+         AAdd( hDane[ 'SekcjaC3' ], aPoz )
+         oAktEl := oIter1:Next()
+      ENDDO
+      oElement := oDoc:FindNext()
+   ENDDO
+
+   oElement := oDoc:FindFirst( 'GrandTotalMSESTServices' )
+   hDane [ 'P_15' ] := iif( ! Empty( oElement ), Val( oElement:cData ), 0 )
+
+   oElement := oDoc:FindFirst( 'GrandTotalMSESTGoods' )
+   hDane [ 'P_16' ] := iif( ! Empty( oElement ), Val( oElement:cData ), 0 )
+
+   oElement := oDoc:FindFirst( 'GrandTotal' )
+   hDane [ 'P_17' ] := iif( ! Empty( oElement ), Val( oElement:cData ), 0 )
+
+   hDane[ 'SekcjaC5' ] := {}
+   oElement := oDoc:FindFirst( 'Corrections' )
+   DO WHILE ! Empty( oElement )
+      cKraj := oElement:oChild:cData
+      oIter1 := TXMLIteratorScan():New( oElement )
+      oAktEl := oIter1:Find( 'dto:Correction' )
+      DO WHILE ! Empty( oAktEl )
+         aPoz := { 'kraj' => KrajUENazwa( cKraj ) }
+
+         oNastEl := oAktEl:oChild:oChild
+         aPoz[ 'rok' ] := oNastEl:cData
+
+         oNastEl := oNastEl:oNext
+         aPoz[ 'kwartal' ] := oNastEl:cData
+
+         oNastEl := oAktEl:oChild:oNext
+         aPoz[ 'kwota' ] := Val( oNastEl:cData )
+
+         AAdd( hDane[ 'SekcjaC5' ], aPoz )
+         oAktEl := oIter1:Next()
+      ENDDO
+      oElement := oDoc:FindNext()
+   ENDDO
+
+   hDane[ 'SekcjaC6' ] := {}
+   oElement := oDoc:FindFirst( 'MSCONBalance' )
+   DO WHILE ! Empty( oElement )
+      AAdd( hDane[ 'SekcjaC6' ], { ;
+         'kraj' => KrajUENazwa( oElement:oChild:cData ), ;
+         'kwota' => Val( oElement:oChild:oNext:cData ) ;
+      } )
+      oElement := oDoc:FindNext()
+   ENDDO
+
+   oElement := oDoc:FindFirst( 'TotalAmountOfVATDue' )
+   hDane [ 'P_18' ] := iif( ! Empty( oElement ), Val( oElement:cData ), 0 )
 
    RETURN hDane
 

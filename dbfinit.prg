@@ -777,6 +777,38 @@ public aORGANYdbf := {;
    { "DEL", "C", 1, 0 },;                         //   2
    { "NAZWA_ORG", "C", 60, 0 } }                  //   3
 
+// Create: OSSREJ.DBF
+public aOSSREJdbf := {;
+   { "ID", "+", 4, 0 },;                          //   1
+   { "DEL", "C", 1, 0 },;                         //   2
+   { "FIRMA", "C", 3, 0 },;                       //   3 Ident firmy
+   { "MC", "C", 2, 0 },;                          //   4 Miesiac transakcji
+   { "DZIEN", "C", 2, 0 },;                       //   5 Dzien transakcji
+   { "NRDOK", "C", 64, 0 },;                      //   6 Nr dowodu sprzedazy
+   { "KRAJ", "C", 2, 0 },;                        //   7 Kraj
+   { "TOWAR", "C", 200, 0 },;                     //   8 Ilosc i nazwa towarow
+   { "STAWKARD", "C", 1, 0 },;                    //   9 Rodzaj stawki P - podstawowa, O - obnizona
+   { "STAWKA", "N", 5, 2 },;                      //  10 Stawka VAT
+   { "NETTOEUR", "N", 11, 2 },;                   //  11 Netto w Euro
+   { "VATEUR", "N", 11, 2 },;                     //  12 Kwota VAT Euro
+   { "KURS", "N", 11, 4 },;                       //  13 Sredni kurs Euro
+   { "NETTOPLN", "N", 11, 2 },;                   //  14 Wartosc netto w PLN
+   { "KOSZTY", "N", 11, 2 },;                     //  15 Koszty obnizajace i podwyszszajace podstawe podatkowa
+   { "DATAPLAT", "D", 8, 0 },;                    //  16 Data otrzymania platnosci
+   { "ZAPLATA", "N", 11, 2 },;                    //  17 Kwota otrzymanej platnosci
+   { "ZALICZKA", "N", 11, 2 },;                   //  18 Kwota zaliczki otrzymanej przed dostawa
+   { "INFO", "C", 200, 0 },;                      //  19 Informacje na fakturze
+   { "NRZAMOW", "C", 64, 0 },;                    //  20 Nr zamowienia
+   { "NRZWROT", "C", 64, 0 },;                    //  21 Nr zwrotu/reklamacji
+   { "NETTOZW", "N", 11, 2 },;                    //  22 Kwota netto zwrotu/reklamacji
+   { "VATZW", "N", 11, 2 },;                      //  23 Kwota VAT zwrotu/reklamacji
+   { "WALUTA", "C", 3, 0 },;                      //  24 Waluta zamowienia
+   { "RODZDOST", "C", 1, 0 },;                    //  25 Rodzaj dostawy - Towar czy usluga (T - towar, U - usluga)
+   { "KRAJDZ", "C", 2, 0 },;                      //  26 Panstwo miejsca prowadzenia dzialalnosci
+   { "NR_IDVAT", "C", 30, 0 },;                   //  27 Nr identyfikacyjny VAT
+   { "NR_IDPOD", "C", 30, 0 },;                   //  28 Nr identyfikacji podatkowej
+   { "SEKCJAC", "C", 1, 0 } }                     //  28 Ktora sekcja C deklaracji VIU-DO (2 - sekc. C.2, 3 - sekc. C.3)
+
 // Create: PIT_27.DBF
 public aPIT_27dbf := {;
    { "ID", "+", 4, 0 },;                          //  1
@@ -1492,6 +1524,17 @@ public aTAB_VATdbf := {;
    { "STAWKA_C", "N", 2, 0 },;                    //   6
    { "STAWKA_D", "N", 2, 0 } }                    //   7
 
+// Create: TAB_VATEU.DBF
+public aTAB_VATUEdbf := {;
+   { "ID", "+", 4, 0 },;                          //   1
+   { "DEL", "C", 1, 0 },;                         //   2
+   { "KRAJ", "C", 2, 0 },;                        //   3
+   { "ODDNIA", "D", 8, 0 },;                      //   4
+   { "STAWKA_A", "N", 5, 2 },;                    //   5
+   { "STAWKA_B", "N", 5, 2 },;                    //   6
+   { "STAWKA_C", "N", 5, 2 },;                    //   7
+   { "STAWKA_D", "N", 5, 2 } }                    //
+
 // Create: TRESC.DBF
 public aTRESCdbf := {;
    { "ID", "+", 4, 0 },;                          //   1
@@ -1637,6 +1680,16 @@ public aVAT7ZDdbf := {;
    { "PODSTAWA", "N", 11, 2 },;                   //  11
    { "PODATEK", "N", 11, 2 } }                    //  12
 
+// Create: VIUDOKOR.DBF
+public aVIUDOKORdbf := {;
+   { "ID", "+", 4, 0 },;                          //  1
+   { "FIRMA", "C", 3, 0 },;                       //  2 Ident. firmy
+   { "KWARTAL", "C", 1, 0 },;                     //  3 Kwartal deklaracji
+   { "KRAJ", "C", 2, 0 },;                        //  4 Kraj
+   { "ROKKOR", "C", 4, 0 },;                      //  5 Rok korekty
+   { "KWARTKOR", "C", 1, 0 },;                    //  6 Kwartal korekty
+   { "KWOTA", "N", 11, 2 } }                      //  7 Kwota korekty EUR
+
 // Create: WYPLATY.DBF
 public aWYPLATYdbf := {;
    { "ID", "+", 4, 0 },;                          //   1
@@ -1699,6 +1752,7 @@ public TabliceDbf := {;
    { "notes",    "notes.dbf",    aNOTESdbf,    .T. },;
    { "oper",     "oper.dbf",     aOPERdbf,     .T. },;
    { "organy",   "organy.dbf",   aORGANYdbf,   .T. },;
+   { "ossrej",   "ossrej.dbf",   aOSSREJdbf,   .T. },;
    { "pit_27",   "pit_27.dbf",   aPIT_27dbf,   .F. },;
    { "pozycje",  "pozycje.dbf",  aPOZYCJEdbf,  .T. },;
    { "pozycjew", "pozycjew.dbf", aPOZYCJEWdbf, .T. },;
@@ -1721,6 +1775,7 @@ public TabliceDbf := {;
    { "tab_doch", "tab_doch.dbf", aTAB_DOCHdbf, .T. },;
    { "tab_poj",  "tab_poj.dbf",  aTAB_POJdbf,  .T. },;
    { "tab_vat",  "tab_vat.dbf",  aTAB_VATdbf,  .T. },;
+   { "tab_vatue","tab_vatue.dbf",aTAB_VATUEdbf,.T. },;
    { "tabpit4r", "tabpit4r.dbf", aTABPIT4Rdbf, .F. },;
    { "tabpit8r", "tabpit8r.dbf", aTABPIT8Rdbf, .F. },;
    { "tresc",    "tresc.dbf",    aTRESCdbf,    .T. },;
@@ -1728,9 +1783,11 @@ public TabliceDbf := {;
    { "umowy",    "umowy.dbf",    aUMOWYdbf,    .T. },;
    { "urzedy",   "urzedy.dbf",   aURZEDYdbf,   .T. },;
    { "vat7zd",   "vat7zd.dbf",   aVAT7ZDdbf,   .T. },;
+   { "viudokor", "viudokor.dbf", aVIUDOKORdbf, .T. },;
    { "wyplaty",  "wyplaty.dbf",  aWYPLATYdbf,  .T. },;
    { "wyposaz",  "wyposaz.dbf",  aWYPOSAZdbf,  .T. },;
    { "zaliczki", "zaliczki.dbf", aZALICZKIdbf, .T. } }
+
    RETURN
 
 ****************************************
@@ -2128,7 +2185,29 @@ FUNCTION dbfIdxEWIDZWR()
    index on firma + Str( kasafid, 11, 0 ) + mc + dzien + nrdok TO ewidzwr
    RETURN
 ****************************************
+FUNCTION dbfIdxOSSREJ()
+   do while.not.dostepex('OSSREJ')
+   enddo
+   pack
+   index on firma + mc + dzien + nrdok TO ossrej
+   RETURN NIL
+****************************************
+FUNCTION dbfIdxTAB_VATUE()
+   do while.not.dostepex('TAB_VATUE')
+   enddo
+   pack
+   index on del + kraj + DToS( oddnia ) TO tab_vatue
+   index on del + kraj + Str( Descend( oddnia ) ) to tab_vatue1
+   RETURN
+****************************************
+FUNCTION dbfIdxVIUDOKOR()
+   do while.not.dostepex('VIUDOKOR')
+   enddo
+   pack
+   index on firma + kwartal + kraj + rokkor + kwartkor to viudokor
+   RETURN
 
+/*----------------------------------------------------------------------*/
 
 FUNCTION dbfZnajdzTablice(cNazwa)
    LOCAL nI := 0

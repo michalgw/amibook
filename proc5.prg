@@ -215,8 +215,6 @@ FUNCTION WczytajParamIni()
 
 /*----------------------------------------------------------------------*/
 
-
-
 FUNCTION ObliczKwartal(nMiesiac)
    LOCAL hRes := hb_Hash("kwapocz", 1, "kwakon", 3, "kwarta", 1)
    DO CASE
@@ -974,11 +972,55 @@ FUNCTION KrajUE( cKraj )
 
    LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
        "ES", "FI", "FR", "HR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", ;
-       "NL", "PT", "RO", "SE", "SI", "SK", "XI" }
+       "NL", "PT", "RO", "SE", "SI", "SK", "XI", "UK" }
 
    RETURN AScan( aKrajeUE, cKraj ) > 0
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION KrajUENazwa( cKraj )
+
+   LOCAL cRes := cKraj
+   LOCAL aKrajeUE := KrajeUELista()
+
+   cKraj := Upper( cKraj )
+   IF KrajUE( cKraj ) .AND. hb_HHasKey( aKrajeUE, cKraj )
+      cRes := aKrajeUE[ cKraj ]
+   ENDIF
+
+   RETURN cRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KrajeUELista()
+
+   LOCAL aKrajeUE := { 'AT' => 'Austria', 'BE' => 'Belgia', 'BG' => 'Buˆgaria', ;
+      'CY' => 'Cypr', 'CZ' => 'Republika Czeska', 'DE' => 'Niemcy', 'DK' => 'Dania', ;
+      'EE' => 'Estonia', 'EL' => 'Grecja', 'ES' => 'Hiszpania', 'FI' => 'Finlandia', ;
+      'FR' => 'Francja', 'HR' => 'Chorwacja', 'HU' => 'W©gry', 'IE' => 'Irlandia', ;
+      'IT' => 'Wˆochy', 'LT' => 'Litwa', 'LU' => 'Luksemburg', 'LV' => 'otwa', ;
+      'MT' => 'Malta', 'NL' => 'Holandia', 'PL' => 'Polska', 'PT' => 'Portugalia', ;
+      'RO' => 'Rumunia', 'SE' => 'Szwecja', 'SI' => 'Sˆowenia', 'SK' => 'Sˆowacja', ;
+      'UK' => 'Wielka Brytania' }
+
+   RETURN aKrajeUE
+
+/*----------------------------------------------------------------------*/
+
+/*
+FUNCTION KRajUEWybierz( nTop, nLeft, nBottom, nRight, cKraj )
+
+   LOCAL lRes := .F., aKrajeUE := KrajeUELista(), aMenu := {}, aKraje := {}
+   LOCAL cEkran, cKolor
+
+
+
+   RETURN NIL
+*/
+
+/*----------------------------------------------------------------------*/
+
+
 
 FUNCTION gm_ATokens( cDane, cSeparator )
 

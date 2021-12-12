@@ -141,6 +141,9 @@ FUNCTION Main()
    // Urz¥d skarbowy dla IFT-2R
    param_eiku := '0671'
 
+   // Urz¥d skarbowy dla VIU-DO
+   param_evku := '1436'
+
    // Parametry edeklaracji
    IF File( 'paramedek.mem' )
       RESTORE FROM paramedek ADDITIVE
@@ -1883,7 +1886,23 @@ FUNCTION _bd()
 // Tabela stawek VAT
 FUNCTION _be()
 
+   o[ 1 ] := ' K - Krajowe stawki VAT         '
+   o[ 2 ] := ' U - Stawki VAT w krajach UE    '
+
+   RETURN '12,4'
+
+// Tabela stawek VAT krajowych
+FUNCTION _bea()
+
    Tab_Vat()
+
+   RETURN ''
+
+*******************************************
+// Tabela stawek VAT UE
+FUNCTION _beb()
+
+   Tab_VatUE()
 
    RETURN ''
 

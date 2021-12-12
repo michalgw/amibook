@@ -2282,6 +2282,12 @@ PROCEDURE setind( ZB )
         SET INDEX TO kasafisk
    CASE ZB == 'EWIDZWR'
         SET INDEX TO ewidzwr
+   CASE ZB == 'OSSREJ'
+        SET INDEX TO ossrej
+   CASE ZB == 'TAB_VATUE'
+        SET INDEX TO tab_vatue,tab_vatue1
+   CASE ZB == 'VIUDOKOR'
+        SET INDEX TO viudokor
    ENDCASE
 
    RETURN

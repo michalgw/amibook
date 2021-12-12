@@ -168,9 +168,10 @@ FUNCTION Ewid()
                DO WHILE .T.
                   *=============================
                   ColPro()
-                  @ 11, 6 TO 14, 40
+                  @ 11, 6 TO 15, 40
                   @ 12, 7 PROMPT ' Z - Zestawienie zbiorcze        '
                   @ 13, 7 PROMPT ' E - Ewidencja zwrot¢w paragon¢w '
+                  @ 14, 7 PROMPT ' O - Ewidencja sprzeda¾y OSS     '
                   opcja1 := menu( opcja1 )
                   ColStd()
                   IF LastKey() == K_ESC
@@ -185,6 +186,9 @@ FUNCTION Ewid()
 
                      CASE opcja1 == 2
                         EwidencjaZwrotowParagonow()
+
+                     CASE opcja1 == 3
+                        RejestrOSS()
 
                   ENDCASE
                   close_()
@@ -423,14 +427,15 @@ FUNCTION Ewid()
 
                   ENDCASE
 
-                  @  8, 1 TO 22, 39
-                  @  9, 2 PROMPT ' 4 - PIT-4R   (11)                   '
-                  @ 10, 2 PROMPT ' 8 - PIT-8AR  (10)                   '
-                  @ 11, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
-                  @ 12, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
-                  @ 13, 2 PROMPT verdekold
-                  @ 14, 2 PROMPT ' U - VAT-UE   (5)                    '
-                  @ 15, 2 PROMPT ' I - IFT-2/2R (9)                    '
+                  @  7, 1 TO 22, 39
+                  @  8, 2 PROMPT ' 4 - PIT-4R   (11)                   '
+                  @  9, 2 PROMPT ' 8 - PIT-8AR  (10)                   '
+                  @ 10, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
+                  @ 11, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
+                  @ 12, 2 PROMPT verdekold
+                  @ 13, 2 PROMPT ' U - VAT-UE   (5)                    '
+                  @ 14, 2 PROMPT ' I - IFT-2/2R (9)                    '
+                  @ 15, 2 PROMPT ' V - VIU-DO   (1)                    '
                   @ 16, 2 TO 16, 38
                   @ 17, 2 PROMPT ' C - RCA raport imienny              '
                   @ 18, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '
@@ -509,6 +514,9 @@ FUNCTION Ewid()
                         IFT2_Rob()
 
                      CASE opcja1 == 8
+                        OSSDeklaracjaVIU_DO()
+
+                     CASE opcja1 == 9
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -536,7 +544,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 9
+                     CASE opcja1 == 10
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -564,7 +572,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 10
+                     CASE opcja1 == 11
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -596,7 +604,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 11
+                     CASE opcja1 == 12
                         opcja11 := MenuEx( 19, 6, { "S - Deklaracja skˆadki", "K - Korekta skˆadki" } )
                         DO CASE
                         CASE opcja11 == 1
