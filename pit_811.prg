@@ -498,7 +498,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                   P64_R262 := P64_R262 + ZUS_RKCH
                ENDIF
             ELSE
-               P50 := P50 + BRUT_RAZEM - zasi_bzus
+               P50 := P50 + BRUT_RAZEM - zasi_bzus + PPKPPM
                P51 := P51 + koszt
                P52 := P52 + war_psum
                p54a := p54a + war_puzo
