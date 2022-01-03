@@ -27,7 +27,7 @@ PROCEDURE Pit_4R( _G, _M, _STR, _OU )
    PRIVATE P20, P21, P22, P23, P24, p46, p47, p48
    PRIVATE P63
    PRIVATE tresc_korekty_pit4r := '', rodzaj_korekty := 0
-   PRIVATE aPit48Covid := { .F., .F., .F., .F., .F., .F. }
+   PRIVATE aPit48Covid := { .F., .F., .F., .F., .F., .F., .F., .F., .F., .F., .F., .F. }
 
    RAPORT := RAPTEMP
    zDEKLKOR := 'D'
@@ -362,7 +362,7 @@ PROCEDURE Pit_4R( _G, _M, _STR, _OU )
          p_wypla()
       CASE _OU == 'X'
          IF Pit48_Covid()
-           edeklaracja_plik := 'PIT_4R_11_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
+           edeklaracja_plik := 'PIT_4R_12_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
            IF ( zCzyKorekta := edekCzyKorekta() ) > 0
               IF zCzyKorekta == 2
                  rodzaj_korekty := edekRodzajKorekty()
@@ -371,15 +371,15 @@ PROCEDURE Pit_4R( _G, _M, _STR, _OU )
               ENDIF
               IF zDEKLKOR != 'K' .OR. (zDEKLKOR == 'K' .AND. ValType(tresc_korekty_pit4r) == "C")
                  private danedekl
-                 danedekl := edek_pit4r_11()
-                 edekZapiszXml(danedekl, edeklaracja_plik, wys_edeklaracja, 'PIT4R-11', zDEKLKOR == 'K')
+                 danedekl := edek_pit4r_12()
+                 edekZapiszXml(danedekl, edeklaracja_plik, wys_edeklaracja, 'PIT4R-12', zDEKLKOR == 'K')
               ENDIF
            ENDIF
          ENDIF
       OTHERWISE //_OU='K'
          IF Pit48_Covid()
            DeklPodp( 'T' )
-           DeklarDrukuj( 'PIT4R-11' )
+           DeklarDrukuj( 'PIT4R-12' )
          ENDIF
       ENDCASE
    END
@@ -392,7 +392,7 @@ PROCEDURE Pit_4R( _G, _M, _STR, _OU )
 FUNCTION Pit48_Covid()
 
    LOCAL lRes := .F., cEkran, cKolor := ColStd(), nI
-   LOCAL cCovid1, cCovid2, cCovid3, cCovid4, cCovid5, cCovid6
+   LOCAL cCovid1, cCovid2, cCovid3, cCovid4, cCovid5, cCovid6, cCovid7, cCovid8, cCovid9, cCovid10, cCovid11, cCovid12
    LOCAL bOdswierzTN := { | nEl |
       LOCAL lWart, cKolor := SetColor()
       DO CASE
@@ -408,9 +408,21 @@ FUNCTION Pit48_Covid()
          lWart := cCovid5 == 'T'
       CASE nEl == 6
          lWart := cCovid6 == 'T'
+      CASE nEl == 7
+         lWart := cCovid7 == 'T'
+      CASE nEl == 8
+         lWart := cCovid8 == 'T'
+      CASE nEl == 9
+         lWart := cCovid9 == 'T'
+      CASE nEl == 10
+         lWart := cCovid10 == 'T'
+      CASE nEl == 11
+         lWart := cCovid11 == 'T'
+      CASE nEl == 12
+         lWart := cCovid12 == 'T'
       ENDCASE
       SET COLOR TO w+
-      @ 11 + nEl, 43 SAY iif( lWart, 'ak', 'ie' )
+      @ 8 + nEl, 43 SAY iif( lWart, 'ak', 'ie' )
       SetColor( cKolor )
       RETURN .T.
    }
@@ -423,19 +435,31 @@ FUNCTION Pit48_Covid()
    cCovid4 := iif( aPit48Covid[ 4 ], 'T', 'N' )
    cCovid5 := iif( aPit48Covid[ 5 ], 'T', 'N' )
    cCovid6 := iif( aPit48Covid[ 6 ], 'T', 'N' )
+   cCovid7 := iif( aPit48Covid[ 7 ], 'T', 'N' )
+   cCovid8 := iif( aPit48Covid[ 8 ], 'T', 'N' )
+   cCovid9 := iif( aPit48Covid[ 9 ], 'T', 'N' )
+   cCovid10 := iif( aPit48Covid[ 10 ], 'T', 'N' )
+   cCovid11 := iif( aPit48Covid[ 11 ], 'T', 'N' )
+   cCovid12 := iif( aPit48Covid[ 12 ], 'T', 'N' )
 
-   @  8, 15 CLEAR TO 18, 64
-   @  8, 15 TO 18, 64
-   @  9, 16 SAY "  COVID-19 - Przesuni©cie terminu przekazania"
-   @ 10, 16 SAY " zrycz. podatku pobranego za poni¾sze miesi¥ce"
-   @ 12, 17 SAY "          za marzec 2020" GET cCovid1 PICTURE '!' VALID cCovid1 $ 'TN' .AND. Eval( bOdswierzTN, 1 )
-   @ 13, 17 SAY "        za kwiecieä 2020" GET cCovid2 PICTURE '!' VALID cCovid2 $ 'TN' .AND. Eval( bOdswierzTN, 2 )
-   @ 14, 17 SAY "             za maj 2020" GET cCovid3 PICTURE '!' VALID cCovid3 $ 'TN' .AND. Eval( bOdswierzTN, 3 )
-   @ 15, 17 SAY "     za pa«dziernik 2020" GET cCovid4 PICTURE '!' VALID cCovid4 $ 'TN' .AND. Eval( bOdswierzTN, 4 )
-   @ 16, 17 SAY "        za listopad 2020" GET cCovid5 PICTURE '!' VALID cCovid5 $ 'TN' .AND. Eval( bOdswierzTN, 5 )
-   @ 17, 17 SAY "        za grudzieä 2020" GET cCovid6 PICTURE '!' VALID cCovid6 $ 'TN' .AND. Eval( bOdswierzTN, 6 )
+   @  6, 15 CLEAR TO 21, 64
+   @  6, 15 TO 21, 64
+   @  7, 16 SAY "  COVID-19 - Przesuni©cie terminu przekazania"
+   @  8, 16 SAY " zrycz. podatku pobranego za poni¾sze miesi¥ce"
+   @  9, 17 SAY "                      I." GET cCovid1 PICTURE '!' VALID cCovid1 $ 'TN' .AND. Eval( bOdswierzTN, 1 )
+   @ 10, 17 SAY "                     II." GET cCovid2 PICTURE '!' VALID cCovid2 $ 'TN' .AND. Eval( bOdswierzTN, 2 )
+   @ 11, 17 SAY "                    III." GET cCovid3 PICTURE '!' VALID cCovid3 $ 'TN' .AND. Eval( bOdswierzTN, 3 )
+   @ 12, 17 SAY "                     IV." GET cCovid4 PICTURE '!' VALID cCovid4 $ 'TN' .AND. Eval( bOdswierzTN, 4 )
+   @ 13, 17 SAY "                      V." GET cCovid5 PICTURE '!' VALID cCovid5 $ 'TN' .AND. Eval( bOdswierzTN, 5 )
+   @ 14, 17 SAY "                     VI." GET cCovid6 PICTURE '!' VALID cCovid6 $ 'TN' .AND. Eval( bOdswierzTN, 6 )
+   @ 15, 17 SAY "                    VII." GET cCovid7 PICTURE '!' VALID cCovid7 $ 'TN' .AND. Eval( bOdswierzTN, 7 )
+   @ 16, 17 SAY "                   VIII." GET cCovid8 PICTURE '!' VALID cCovid8 $ 'TN' .AND. Eval( bOdswierzTN, 8 )
+   @ 17, 17 SAY "                     IX." GET cCovid9 PICTURE '!' VALID cCovid9 $ 'TN' .AND. Eval( bOdswierzTN, 9 )
+   @ 18, 17 SAY "                      X." GET cCovid10 PICTURE '!' VALID cCovid10 $ 'TN' .AND. Eval( bOdswierzTN, 10 )
+   @ 19, 17 SAY "                     XI." GET cCovid11 PICTURE '!' VALID cCovid11 $ 'TN' .AND. Eval( bOdswierzTN, 11 )
+   @ 20, 17 SAY "                    XII." GET cCovid12 PICTURE '!' VALID cCovid12 $ 'TN' .AND. Eval( bOdswierzTN, 12 )
 
-   FOR nI := 1 TO 6
+   FOR nI := 1 TO 12
       Eval( bOdswierzTN, nI )
    NEXT
 
@@ -448,6 +472,12 @@ FUNCTION Pit48_Covid()
       aPit48Covid[ 4 ] := cCovid4 == 'T'
       aPit48Covid[ 5 ] := cCovid5 == 'T'
       aPit48Covid[ 6 ] := cCovid6 == 'T'
+      aPit48Covid[ 7 ] := cCovid7 == 'T'
+      aPit48Covid[ 8 ] := cCovid8 == 'T'
+      aPit48Covid[ 9 ] := cCovid9 == 'T'
+      aPit48Covid[ 10 ] := cCovid10 == 'T'
+      aPit48Covid[ 11 ] := cCovid11 == 'T'
+      aPit48Covid[ 12 ] := cCovid12 == 'T'
       lRes := .T.
    ENDIF
 
