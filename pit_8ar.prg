@@ -27,7 +27,7 @@ PROCEDURE Pit_8AR( _G, _M, _STR, _OU )
    PRIVATE P20, P21, P22, P23, P24, p46, p47, p48
    PRIVATE P63
    PRIVATE tresc_korekty_pit8ar := '', rodzaj_korekty := 0
-   PRIVATE aPit48Covid := { .F., .F., .F., .F., .F., .F. }
+   PRIVATE aPit48Covid := { .F., .F., .F., .F., .F., .F., .F., .F., .F., .F., .F., .F. }
 
    RAPORT := RAPTEMP
    zDEKLKOR := 'D'
@@ -323,7 +323,7 @@ PROCEDURE Pit_8AR( _G, _M, _STR, _OU )
          p_wyplar()
       CASE _OU == 'X'
          IF Pit48_Covid()
-           edeklaracja_plik  :=  'PIT_8AR_10_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
+           edeklaracja_plik  :=  'PIT_8AR_11_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
            IF ( zCzyKorekta := edekCzyKorekta() ) > 0
               IF zCzyKorekta == 2
                  rodzaj_korekty := edekRodzajKorekty()
@@ -332,15 +332,15 @@ PROCEDURE Pit_8AR( _G, _M, _STR, _OU )
               ENDIF
               IF zDEKLKOR != 'K' .OR. (zDEKLKOR == 'K' .AND. ValType(tresc_korekty_pit8ar) == "C")
                  PRIVATE cWynikXml := ''
-                 cWynikXml  :=  edek_pit8ar_10()
-                 edekZapiszXml(cWynikXml, edeklaracja_plik, wys_edeklaracja, 'PIT8AR-10', zDEKLKOR == 'K')
+                 cWynikXml  :=  edek_pit8ar_11()
+                 edekZapiszXml(cWynikXml, edeklaracja_plik, wys_edeklaracja, 'PIT8AR-11', zDEKLKOR == 'K')
               ENDIF
            ENDIF
          ENDIF
       OTHERWISE //_OU='K'
          IF Pit48_Covid()
             DeklPodp( 'T' )
-            DeklarDrukuj( 'PIT8AR-10' )
+            DeklarDrukuj( 'PIT8AR-11' )
          ENDIF
       ENDCASE
    END
