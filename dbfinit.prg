@@ -354,7 +354,9 @@ public aETATYdbf := {;
    { "PPKPK2", "N", 8, 2 },;                      // 122 PPK Wpˆata dodatkowa pracodawcy - kwota
    { "PPKPPM", "N", 8, 2 },;                      // 123 PPK Wpˆaty pracodawcy z pop. miesi¥ca
    { "PPKIDEPPK", "C", 50, 0 },;                  // 124 PPK Identyfikator ewidencji PPK uczestnika PPK
-   { "ZASI_BZUS", "N", 8, 2 } }                   // 125 Zasiˆki od pracodawcy bez ZUS
+   { "ZASI_BZUS", "N", 8, 2 },;                   // 125 Zasiˆki od pracodawcy bez ZUS
+   { "ULGAKLSRA", "C", 1, 0 },;                   // 126 Odlicz ulge dla klasy sredniej
+   { "ULGAKLSRK", "N", 8, 2 } }                   // 127 Kwota ulgi dla klasy sredniej
 
 // Create: EWID.DBF
 public aEWIDdbf := {;
