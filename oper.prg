@@ -1034,14 +1034,18 @@ PROCEDURE AktKol( mnoz, kolum, wart )
       CASE KOKO == 6
          AKTPOL+ ry17 WITH wart * mnoz
       CASE KOKO == 7
-         AKTPOL+ uslugi WITH wart * mnoz
+         AKTPOL+ ryk09 WITH wart * mnoz
       CASE KOKO == 8
-         AKTPOL+ wyr_tow WITH wart * mnoz
+         AKTPOL+ uslugi WITH wart * mnoz
       CASE KOKO == 9
-         AKTPOL+ handel WITH wart * mnoz
+         AKTPOL+ ryk10 WITH wart * mnoz
       CASE KOKO == 10
-         AKTPOL+ ryk07 WITH wart * mnoz
+         AKTPOL+ wyr_tow WITH wart * mnoz
       CASE KOKO == 11
+         AKTPOL+ handel WITH wart * mnoz
+      CASE KOKO == 12
+         AKTPOL+ ryk07 WITH wart * mnoz
+      CASE KOKO == 13
          AKTPOL+ ry10 WITH wart * mnoz
       ENDCASE
       COMMIT

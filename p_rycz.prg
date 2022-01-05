@@ -232,6 +232,8 @@ PROCEDURE zestaw_R( Okres )
    przychr10 := 0
    przychrk07 := 0
    przychrk08 := 0
+   przychrk09 := 0
+   przychrk10 := 0
 
    DO WHILE del == '+' .AND. firma == ident_fir .AND. mc <= koniecokr
       zm := 'udz' + LTrim( mc )
@@ -243,6 +245,8 @@ PROCEDURE zestaw_R( Okres )
       przychr10 := przychr10 + RY10 * Val( Left( &zm, 3 ) ) / Val( Right( &zm, 3 ) )
       przychrk07 := przychrk07 + RYK07 * Val( Left( &zm, 3 ) ) / Val( Right( &zm, 3 ) )
       przychrk08 := przychrk08 + RYK08 * Val( Left( &zm, 3 ) ) / Val( Right( &zm, 3 ) )
+      przychrk09 := przychrk09 + RYK09 * Val( Left( &zm, 3 ) ) / Val( Right( &zm, 3 ) )
+      przychrk10 := przychrk10 + RYK10 * Val( Left( &zm, 3 ) ) / Val( Right( &zm, 3 ) )
       SKIP
    ENDDO
    SELECT spolka
@@ -254,8 +258,10 @@ PROCEDURE zestaw_R( Okres )
    k3 := _round( przychodh, 2 )
    k1k7 := _round( przychrk07, 2 )
    k1k8 := _round( przychrk08, 2 )
+   k1k9 := _round( przychrk09, 2 )
+   k1k10 := _round( przychrk10, 2 )
    *k4=k1+k2+k3+k1a+k1b+k1c
-   k4 := k1 + k2 + k3 + k1a + k1b + k1c + k1k7 + k1k8
+   k4 := k1 + k2 + k3 + k1a + k1b + k1c + k1k7 + k1k8 + k1k9 + k1k10
    *------------------------------------ dane_mc
    zident := Str( RecNo(), 5 )
 
@@ -323,10 +329,12 @@ PROCEDURE zestaw_R( Okres )
    k8 := _round( przychodh / procent1, 2 )
    k6k7 := _round( przychrk07 / procent1, 2 )
    k6k8 := _round( przychrk08 / procent1, 2 )
-   IF k6 + k6a + k6b + k6c + k7 + k8 + k6k7 + k6k8 < 100
-      k6a := 100 - ( k6 + k6b + k6c + k7 + k8 + k6k7 + k6k8 )
+   k6k9 := _round( przychrk09 / procent1, 2 )
+   k6k10 := _round( przychrk10 / procent1, 2 )
+   IF k6 + k6a + k6b + k6c + k7 + k8 + k6k7 + k6k8 + k6k9 + k6k10 < 100
+      k6a := 100 - ( k6 + k6b + k6c + k7 + k8 + k6k7 + k6k8 + k6k9 + k6k10 )
    ELSE
-      k8 := 100 - ( k6 + k6a + k6b + k6c + k7 + k6k7 + k6k8 )
+      k8 := 100 - ( k6 + k6a + k6b + k6c + k7 + k6k7 + k6k8 + k6k9 + k6k10 )
    ENDIF
    k55 := iif( OKRES == 'M', k5, wydatki )
    k9  := _round( k55 * ( k6 / 100 ), 2 )
@@ -337,6 +345,8 @@ PROCEDURE zestaw_R( Okres )
    k11 := _round( k55 * ( k8 / 100 ), 2 )
    k9k7 := _round( k55 * ( k6k7 / 100 ), 2 )
    k9k8 := _round( k55 * ( k6k8 / 100 ), 2 )
+   k9k9 := _round( k55 * ( k6k9 / 100 ), 2 )
+   k9k10 := _round( k55 * ( k6k10 / 100 ), 2 )
    k12 := _round( Max( 0, k1 - k9 ), 0 )
    k12a := _round( Max( 0, k1a - k9a ), 0 )
    k12b := _round( Max( 0, k1b - k9b ), 0 )
@@ -345,6 +355,8 @@ PROCEDURE zestaw_R( Okres )
    k14 := _round( Max( 0, k3 - k11 ), 0 )
    k12k7 := _round( Max( 0, k1k7 - k9k7 ), 0 )
    k12k8 := _round( Max( 0, k1k8 - k9k8 ), 0 )
+   k12k9 := _round( Max( 0, k1k9 - k9k9 ), 0 )
+   k12k10 := _round( Max( 0, k1k10 - k9k10 ), 0 )
    ********* zaremowano w 01.1
    *k15=_round(k12*staw_uslu,1)
    *k16=_round(k13*staw_prod,1)
@@ -359,7 +371,9 @@ PROCEDURE zestaw_R( Okres )
    k17 := _round( k14 * staw_hand, 2 )
    k15k7 := _round( k12k7 * staw_rk07, 2 )
    k15k8 := _round( k12k8 * staw_rk08, 2 )
-   k18 := k15 + k15a + k15b + k15c + k16 + k17 + k15k7 + k15k8
+   k15k9 := _round( k12k9 * staw_rk09, 2 )
+   k15k10 := _round( k12k10 * staw_rk10, 2 )
+   k18 := k15 + k15a + k15b + k15c + k16 + k17 + k15k7 + k15k8 + k15k9 + k15k10
    podatek := k18
    SELECT spolka
    *---------------
@@ -400,17 +414,21 @@ PROCEDURE zestaw_R( Okres )
    @  6, 0 SAY ' ( Odliczenia.......... )³Przychody ³Struktura%³Odliczenia³  Razem   ³ Podatek  '
    @  7, 0 SAY ' 1 (5) ' + PadR( AllTrim( SubStr( staw_ory20, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
    @  8, 0 SAY ' 2 (6) ' + PadR( AllTrim( SubStr( staw_ory17, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
-   @  9, 0 SAY ' 3 (7) ' + PadR( AllTrim( SubStr( staw_ouslu, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
-   @ 10, 0 SAY ' 4 (8) ' + PadR( AllTrim( SubStr( staw_oprod, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
-   @ 11, 0 SAY ' 5 (9) ' + PadR( AllTrim( SubStr( staw_ohand, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
-   @ 12, 0 SAY ' 6 (10)' + PadR( AllTrim( SubStr( staw_ork07, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
-   @ 13, 0 SAY ' 7 (11)' + PadR( AllTrim( SubStr( staw_ory10, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
+   @  9, 0 SAY ' 3 (7) ' + PadR( AllTrim( SubStr( staw_ork09, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
+   @ 10, 0 SAY ' 4 (8) ' + PadR( AllTrim( SubStr( staw_ouslu, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
+   @ 11, 0 SAY ' 5 (9) ' + PadR( AllTrim( SubStr( staw_ork10, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
+   @ 12, 0 SAY ' 6 (10)' + PadR( AllTrim( SubStr( staw_oprod, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
+   @ 13, 0 SAY ' 7 (11)' + PadR( AllTrim( SubStr( staw_ohand, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
+   @ 14, 0 SAY ' 8 (12)' + PadR( AllTrim( SubStr( staw_ork07, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
+   @ 15, 0 SAY ' 9 (13)' + PadR( AllTrim( SubStr( staw_ory10, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
+   /*
    IF staw_k08w
       @ 14, 0 SAY ' 8 (12)' + PadR( AllTrim( SubStr( staw_ork08, 1, 10 ) ), 10 ) + '(      )³          ³          ³          ³          ³          '
    ELSE
       @ 14, 0 SAY '                                                                                '
    ENDIF
-   @ 15, 0 SAY ' -------------------------------------------------------------------------------'
+   */
+   *@ 15, 0 SAY ' -------------------------------------------------------------------------------'
    @ 16, 0 SAY ' ' + iif( staw_k08w, '9', '8' ) + ' Razem podatek................................................                '
    @ 17, 0 SAY iif( staw_k08w, '10', ' 9' ) + ' Ulgi podlegaj&_a.ce odliczeniu od podatku.......................                '
    @ 18, 0 SAY iif( staw_k08w, '11', '10' ) + ' Na kas&_e. chorych..............................................                '
@@ -427,15 +445,18 @@ PROCEDURE zestaw_R( Okres )
    ENDIF
    @  7,18 SAY staw_ry20 * 100 PICTURE '99.99%'
    @  8,18 SAY staw_ry17 * 100 PICTURE '99.99%'
-   @  9,18 SAY staw_uslu * 100 PICTURE '99.99%'
-   @ 10,18 SAY staw_prod * 100 PICTURE '99.99%'
-   @ 11,18 SAY staw_hand * 100 PICTURE '99.99%'
-   @ 12,18 SAY staw_rk07 * 100 PICTURE '99.99%'
-   @ 13,18 SAY staw_ry10 * 100 PICTURE '99.99%'
+   @  9,18 SAY staw_rk09 * 100 PICTURE '99.99%'
+   @ 10,18 SAY staw_uslu * 100 PICTURE '99.99%'
+   @ 11,18 SAY staw_rk10 * 100 PICTURE '99.99%'
+   @ 12,18 SAY staw_prod * 100 PICTURE '99.99%'
+   @ 13,18 SAY staw_hand * 100 PICTURE '99.99%'
+   @ 14,18 SAY staw_rk07 * 100 PICTURE '99.99%'
+   @ 15,18 SAY staw_ry10 * 100 PICTURE '99.99%'
+   /*
    IF staw_k08w
       @ 14,18 SAY staw_rk08 * 100 PICTURE '99.99%'
    ENDIF
-
+   */
    ColInf()
    Center( 4, dos_c( ' Podatnik - ' + naz_imie + ' ' ) )
    DO CASE
@@ -457,60 +478,80 @@ PROCEDURE zestaw_R( Okres )
    set color to +w
    @  7, 26 SAY k1a PICTURE '@Z 9999999.99'
    @  8, 26 SAY k1b PICTURE '@Z 9999999.99'
-   @  9, 26 SAY k1  PICTURE '@Z 9999999.99'
-   @ 10, 26 SAY k2  PICTURE '@Z 9999999.99'
-   @ 11, 26 SAY k3  PICTURE '@Z 9999999.99'
-   @ 12, 26 SAY k1k7 PICTURE '@Z 9999999.99'
-   @ 13, 26 SAY k1c PICTURE '@Z 9999999.99'
+   @  9, 26 SAY k1k9 PICTURE '@Z 9999999.99'
+   @ 10, 26 SAY k1  PICTURE '@Z 9999999.99'
+   @ 11, 26 SAY k1k10 PICTURE '@Z 9999999.99'
+   @ 12, 26 SAY k2  PICTURE '@Z 9999999.99'
+   @ 13, 26 SAY k3  PICTURE '@Z 9999999.99'
+   @ 14, 26 SAY k1k7 PICTURE '@Z 9999999.99'
+   @ 15, 26 SAY k1c PICTURE '@Z 9999999.99'
+   /*
    IF staw_k08w
       @ 14, 26 SAY k1k8 PICTURE '@Z 9999999.99'
    ENDIF
+   */
 
    @  7, 39 SAY k6a PICTURE '@Z 999.99'
    @  8, 39 SAY k6b PICTURE '@Z 999.99'
-   @  9, 39 SAY k6  PICTURE '@Z 999.99'
-   @ 10, 39 SAY k7  PICTURE '@Z 999.99'
-   @ 11, 39 SAY k8  PICTURE '@Z 999.99'
-   @ 12, 39 SAY k6k7 PICTURE '@Z 999.99'
-   @ 13, 39 SAY k6c PICTURE '@Z 999.99'
+   @  9, 39 SAY k6k9 PICTURE '@Z 999.99'
+   @ 10, 39 SAY k6  PICTURE '@Z 999.99'
+   @ 11, 39 SAY k6k10 PICTURE '@Z 999.99'
+   @ 12, 39 SAY k7  PICTURE '@Z 999.99'
+   @ 13, 39 SAY k8  PICTURE '@Z 999.99'
+   @ 14, 39 SAY k6k7 PICTURE '@Z 999.99'
+   @ 15, 39 SAY k6c PICTURE '@Z 999.99'
+   /*
    IF staw_k08w
       @ 14, 39 SAY k6k8 PICTURE '@Z 999.99'
    ENDIF
+   */
 
    @  6, 15 SAY k55 PICTURE '99999.99'
 
    @  7, 48 SAY k9a PICTURE '@Z 9999999.99'
    @  8, 48 SAY k9b PICTURE '@Z 9999999.99'
-   @  9, 48 SAY k9  PICTURE '@Z 9999999.99'
-   @ 10, 48 SAY k10 PICTURE '@Z 9999999.99'
-   @ 11, 48 SAY k11 PICTURE '@Z 9999999.99'
-   @ 12, 48 SAY k9k7 PICTURE '@Z 9999999.99'
-   @ 13, 48 SAY k9c PICTURE '@Z 9999999.99'
+   @  9, 48 SAY k9k9 PICTURE '@Z 9999999.99'
+   @ 10, 48 SAY k9  PICTURE '@Z 9999999.99'
+   @ 11, 48 SAY k9k10 PICTURE '@Z 9999999.99'
+   @ 12, 48 SAY k10 PICTURE '@Z 9999999.99'
+   @ 13, 48 SAY k11 PICTURE '@Z 9999999.99'
+   @ 14, 48 SAY k9k7 PICTURE '@Z 9999999.99'
+   @ 15, 48 SAY k9c PICTURE '@Z 9999999.99'
+   /*
    IF staw_k08w
       @ 14, 48 SAY k9k8 PICTURE '@Z 9999999.99'
    ENDIF
+   */
 
    @  7, 59 SAY k12a PICTURE '@Z 9999999.99'
    @  8, 59 SAY k12b PICTURE '@Z 9999999.99'
-   @  9, 59 SAY k12 PICTURE '@Z 9999999.99'
-   @ 10, 59 SAY k13 PICTURE '@Z 9999999.99'
-   @ 11, 59 SAY k14 PICTURE '@Z 9999999.99'
-   @ 12, 59 SAY k12k7 PICTURE '@Z 9999999.99'
-   @ 13, 59 SAY k12c PICTURE '@Z 9999999.99'
+   @  9, 59 SAY k12k9 PICTURE '@Z 9999999.99'
+   @ 10, 59 SAY k12 PICTURE '@Z 9999999.99'
+   @ 11, 59 SAY k12k10 PICTURE '@Z 9999999.99'
+   @ 12, 59 SAY k13 PICTURE '@Z 9999999.99'
+   @ 13, 59 SAY k14 PICTURE '@Z 9999999.99'
+   @ 14, 59 SAY k12k7 PICTURE '@Z 9999999.99'
+   @ 15, 59 SAY k12c PICTURE '@Z 9999999.99'
+   /*
    IF staw_k08w
       @ 14, 59 SAY k12k8 PICTURE '@Z 9999999.99'
    ENDIF
+   */
 
    @  7, 70 SAY k15a PICTURE '@Z 9999999.99'
    @  8, 70 SAY k15b PICTURE '@Z 9999999.99'
-   @  9, 70 SAY k15 PICTURE '@Z 9999999.99'
-   @ 10, 70 SAY k16 PICTURE '@Z 9999999.99'
-   @ 11, 70 SAY k17 PICTURE '@Z 9999999.99'
-   @ 12, 70 SAY k15k7 PICTURE '@Z 9999999.99'
-   @ 13, 70 SAY k15c PICTURE '@Z 9999999.99'
+   @  9, 70 SAY k15k9 PICTURE '@Z 9999999.99'
+   @ 10, 70 SAY k15 PICTURE '@Z 9999999.99'
+   @ 11, 70 SAY k15k10 PICTURE '@Z 9999999.99'
+   @ 12, 70 SAY k16 PICTURE '@Z 9999999.99'
+   @ 13, 70 SAY k17 PICTURE '@Z 9999999.99'
+   @ 14, 70 SAY k15k7 PICTURE '@Z 9999999.99'
+   @ 15, 70 SAY k15c PICTURE '@Z 9999999.99'
+   /*
    IF staw_k08w
       @ 14, 70 SAY k15k8 PICTURE '@Z 9999999.99'
    ENDIF
+   */
 
    @ 16, 65 SAY k18 PICTURE ' 999 999 999.99'
    @ 17, 65 SAY k19 PICTURE ' 999 999 999.99'

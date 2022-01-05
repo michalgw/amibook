@@ -422,14 +422,18 @@ PROCEDURE KRejS()
                   CASE AllTrim( rejs->KOLUMNA ) == '6'
                      repl_( 'ry17', ry17 - rejs->netto )
                   CASE AllTrim( rejs->KOLUMNA ) == '7'
-                     repl_( 'uslugi', uslugi - rejs->netto )
+                     repl_( 'ryk09', ryk09 - rejs->netto )
                   CASE AllTrim( rejs->KOLUMNA ) == '8'
-                     repl_( 'wyr_tow', wyr_tow - rejs->netto )
+                     repl_( 'uslugi', uslugi - rejs->netto )
                   CASE AllTrim( rejs->KOLUMNA ) == '9'
-                     repl_( 'handel', handel - rejs->netto )
+                     repl_( 'ryk10', ryk10 - rejs->netto )
                   CASE AllTrim( rejs->KOLUMNA ) == '10'
-                     repl_( 'ryk07', ryk07 - rejs->netto )
+                     repl_( 'wyr_tow', wyr_tow - rejs->netto )
                   CASE AllTrim( rejs->KOLUMNA ) == '11'
+                     repl_( 'handel', handel - rejs->netto )
+                  CASE AllTrim( rejs->KOLUMNA ) == '12'
+                     repl_( 'ryk07', ryk07 - rejs->netto )
+                  CASE AllTrim( rejs->KOLUMNA ) == '13'
                      repl_( 'ry10', ry10 - rejs->netto )
                   ENDCASE
                   DO CASE
@@ -438,17 +442,21 @@ PROCEDURE KRejS()
                   CASE AllTrim( rejs->KOLUMNA2 ) == '6'
                      repl_( 'ry17', ry17 - rejs->netto2 )
                   CASE AllTrim( rejs->KOLUMNA2 ) == '7'
-                     repl_( 'uslugi', uslugi - rejs->netto2 )
+                     repl_( 'ryk09', ryk09 - rejs->netto2 )
                   CASE AllTrim( rejs->KOLUMNA2 ) == '8'
-                     repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
+                     repl_( 'uslugi', uslugi - rejs->netto2 )
                   CASE AllTrim( rejs->KOLUMNA2 ) == '9'
-                     repl_( 'handel', handel - rejs->netto2 )
+                     repl_( 'ryk10', ryk10 - rejs->netto2 )
                   CASE AllTrim( rejs->KOLUMNA2 ) == '10'
-                     repl_( 'ryk07', ry10 - rejs->netto2 )
+                     repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
                   CASE AllTrim( rejs->KOLUMNA2 ) == '11'
+                     repl_( 'handel', handel - rejs->netto2 )
+                  CASE AllTrim( rejs->KOLUMNA2 ) == '12'
+                     repl_( 'ryk07', ryk07 - rejs->netto2 )
+                  CASE AllTrim( rejs->KOLUMNA2 ) == '13'
                      repl_( 'ry10', ry10 - rejs->netto2 )
                   ENDCASE
-                  IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '11' )
+                  IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '11' .OR. AllTrim( rejs->KOLUMNA ) == '12' .OR. AllTrim( rejs->KOLUMNA ) == '13' )
                      repl_( 'pozycje', pozycje - 1 )
                   ENDIF
                ELSE
@@ -739,14 +747,18 @@ PROCEDURE KRejS()
                      CASE AllTrim( rejs->KOLUMNA ) == '6'
                         repl_( 'ry17', ry17 - rejs->netto )
                      CASE AllTrim( rejs->KOLUMNA ) == '7'
-                        repl_( 'uslugi', uslugi - rejs->netto )
+                        repl_( 'ryk09', ryk09 - rejs->netto )
                      CASE AllTrim( rejs->KOLUMNA ) == '8'
-                        repl_( 'wyr_tow', wyr_tow - rejs->netto )
+                        repl_( 'uslugi', uslugi - rejs->netto )
                      CASE AllTrim( rejs->KOLUMNA ) == '9'
-                        repl_( 'handel', handel - rejs->netto )
+                        repl_( 'ryk10', ryk10 - rejs->netto )
                      CASE AllTrim( rejs->KOLUMNA ) == '10'
-                        repl_( 'ryk07', ryk07 - rejs->netto )
+                        repl_( 'wyr_tow', wyr_tow - rejs->netto )
                      CASE AllTrim( rejs->KOLUMNA ) == '11'
+                        repl_( 'handel', handel - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '12'
+                        repl_( 'ryk07', ryk07 - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '13'
                         repl_( 'ry10', ry10 - rejs->netto )
                      ENDCASE
                      DO CASE
@@ -755,17 +767,21 @@ PROCEDURE KRejS()
                      CASE AllTrim( rejs->KOLUMNA2 ) == '6'
                         repl_( 'ry17', ry17 - rejs->netto2 )
                      CASE AllTrim( rejs->KOLUMNA2 ) == '7'
-                        repl_( 'uslugi', uslugi - rejs->netto2 )
+                        repl_( 'ryk09', ryk09 - rejs->netto2 )
                      CASE AllTrim( rejs->KOLUMNA2 ) == '8'
-                        repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
+                        repl_( 'uslugi', uslugi - rejs->netto2 )
                      CASE AllTrim( rejs->KOLUMNA2 ) == '9'
-                        repl_( 'handel', handel - rejs->netto2 )
+                        repl_( 'ryk10', ryk10 - rejs->netto2 )
                      CASE AllTrim( rejs->KOLUMNA2 ) == '10'
-                        repl_( 'ryk07', ryk07 - rejs->netto2 )
+                        repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
                      CASE AllTrim( rejs->KOLUMNA2 ) == '11'
+                        repl_( 'handel', handel - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '12'
+                        repl_( 'ryk07', ryk07 - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '13'
                         repl_( 'ry10', ry10 - rejs->netto2 )
                      ENDCASE
-                     IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '11' )
+                     IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '11' .OR. AllTrim( rejs->KOLUMNA ) == '12' .OR. AllTrim( rejs->KOLUMNA ) == '13' )
                         repl_( 'pozycje', pozycje - 1 )
                      ENDIF
                   ELSE

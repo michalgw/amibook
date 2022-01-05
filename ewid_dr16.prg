@@ -79,6 +79,8 @@ FUNCTION ewid_dr16licz()
       aRes['staw_prod'] := staw_prod * 100
       aRes['staw_uslu'] := staw_uslu * 100
       aRes['staw_rk07'] := staw_rk07 * 100
+      aRes['staw_rk09'] := staw_rk09 * 100
+      aRes['staw_rk10'] := staw_rk10 * 100
 
       aRes['staw_ory20'] := AllTrim( staw_ory20 )
       aRes['staw_ory17'] := AllTrim( staw_ory17 )
@@ -87,6 +89,8 @@ FUNCTION ewid_dr16licz()
       aRes['staw_oprod'] := AllTrim( staw_oprod )
       aRes['staw_ouslu'] := AllTrim( staw_ouslu )
       aRes['staw_ork07'] := AllTrim( staw_ork07 )
+      aRes['staw_ork09'] := AllTrim( staw_ork09 )
+      aRes['staw_ork10'] := AllTrim( staw_ork10 )
 
       do while .not.&_koniec
          *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
@@ -99,6 +103,8 @@ FUNCTION ewid_dr16licz()
          k4b=ry17
          k4c=ry10
          k4d=ryk07
+         k4e=ryk09
+         k4f=ryk10
          k4=uslugi
          k5=produkcja
          k6=handel
@@ -109,7 +115,9 @@ FUNCTION ewid_dr16licz()
             iif('REM-P'$k3.or.'REM-K'$k3,0,k4a)+;
             iif('REM-P'$k3.or.'REM-K'$k3,0,k4b)+;
             iif('REM-P'$k3.or.'REM-K'$k3,0,k4c)+;
-            iif('REM-P'$k3.or.'REM-K'$k3,0,k4d)
+            iif('REM-P'$k3.or.'REM-K'$k3,0,k4d)+;
+            iif('REM-P'$k3.or.'REM-K'$k3,0,k4e)+;
+            iif('REM-P'$k3.or.'REM-K'$k3,0,k4f)
          k8=uwagi
          aRow['k1'] := k1
          aRow['k2'] := k2
@@ -117,20 +125,24 @@ FUNCTION ewid_dr16licz()
          aRow['k4'] := k3
          aRow['k5'] := k4a
          aRow['k6'] := k4b
-         aRow['k7'] := k4
-         aRow['k8'] := k5
-         aRow['k9'] := k6
-         aRow['k10'] := k4d
-         aRow['k11'] := k4c
-         aRow['k12'] := k7
-         aRow['k13'] := AllTrim( k8 )
+         aRow['k7'] := k4e
+         aRow['k8'] := k4
+         aRow['k9'] := k4f
+         aRow['k10'] := k5
+         aRow['k11'] := k6
+         aRow['k12'] := k4d
+         aRow['k13'] := k4c
+         aRow['k14'] := k7
+         aRow['k15'] := AllTrim( k8 )
          aRow['k5_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4a)
          aRow['k6_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4b)
-         aRow['k7_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4)
-         aRow['k8_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k5)
-         aRow['k9_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k6)
-         aRow['k10_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4d)
-         aRow['k11_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4c)
+         aRow['k7_g'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4e)
+         aRow['k8_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4)
+         aRow['k9_h'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4f)
+         aRow['k10_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k5)
+         aRow['k11_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k6)
+         aRow['k12_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4d)
+         aRow['k13_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4c)
          AAdd(aRes['pozycje'], aRow)
          skip
       enddo
@@ -201,19 +213,23 @@ PROCEDURE ewid_dr16rob()
 
          oRap:AddValue('k5st', aDane['staw_ry20'])
          oRap:AddValue('k6st', aDane['staw_ry17'])
-         oRap:AddValue('k7st', aDane['staw_uslu'])
-         oRap:AddValue('k8st', aDane['staw_prod'])
-         oRap:AddValue('k9st', aDane['staw_hand'])
-         oRap:AddValue('k10st', aDane['staw_rk07'])
-         oRap:AddValue('k11st', aDane['staw_ry10'])
+         oRap:AddValue('k7st', aDane['staw_rk09'])
+         oRap:AddValue('k8st', aDane['staw_uslu'])
+         oRap:AddValue('k9st', aDane['staw_rk10'])
+         oRap:AddValue('k10st', aDane['staw_prod'])
+         oRap:AddValue('k11st', aDane['staw_hand'])
+         oRap:AddValue('k12st', aDane['staw_rk07'])
+         oRap:AddValue('k13st', aDane['staw_ry10'])
 
          oRap:AddValue('k5op', aDane['staw_ory20'])
          oRap:AddValue('k6op', aDane['staw_ory17'])
-         oRap:AddValue('k7op', aDane['staw_ouslu'])
-         oRap:AddValue('k8op', aDane['staw_oprod'])
-         oRap:AddValue('k9op', aDane['staw_ohand'])
-         oRap:AddValue('k10op', aDane['staw_ork07'])
-         oRap:AddValue('k11op', aDane['staw_ory10'])
+         oRap:AddValue('k7op', aDane['staw_ork09'])
+         oRap:AddValue('k8op', aDane['staw_ouslu'])
+         oRap:AddValue('k9op', aDane['staw_ork10'])
+         oRap:AddValue('k10op', aDane['staw_oprod'])
+         oRap:AddValue('k11op', aDane['staw_ohand'])
+         oRap:AddValue('k12op', aDane['staw_ork07'])
+         oRap:AddValue('k13op', aDane['staw_ory10'])
 
          oRap:AddDataset('pozycje')
          oRap:AddValue('FP7', 0.0, .T.)
@@ -224,6 +240,7 @@ PROCEDURE ewid_dr16rob()
          oRap:AddValue('FP12', 0.0, .T.)
          oRap:AddValue('FP13', 0.0, .T.)
          oRap:AddValue('FP14', 0.0, .T.)
+         oRap:AddValue('FP15', 0.0, .T.)
          oRap:AddValue('FP16', 0.0, .T.)
          oRap:AddValue('FS7', 0.0, .T.)
          oRap:AddValue('FS8', 0.0, .T.)
@@ -233,6 +250,7 @@ PROCEDURE ewid_dr16rob()
          oRap:AddValue('FS12', 0.0, .T.)
          oRap:AddValue('FS13', 0.0, .T.)
          oRap:AddValue('FS14', 0.0, .T.)
+         oRap:AddValue('FS15', 0.0, .T.)
          oRap:AddValue('FS16', 0.0, .T.)
          AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
 

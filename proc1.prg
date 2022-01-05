@@ -1233,6 +1233,7 @@ FUNCTION infoobr( nCurEl )
    LOCAL CURR
    LOCAL um, un, pm, pn, hm, hn, zm, zn, ilpoz, ry20m, ry20n, ry17m, ry17n
    LOCAL ry10m, ry10n, sm, sn, km, kn, ryk07m, ryk07n, ryk08m, ryk08n
+   LOCAL ryk09m, ryk09n, ryk10m, ryk10n
 
    SELECT 1
    DO WHILE ! dostep( 'SUMA_MC' )
@@ -1451,8 +1452,8 @@ FUNCTION ObliczSumMies( cMiesiac )
 FUNCTION aktsumies( nCurEl )
 
    LOCAL AKTM
-   LOCAL zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10, zRK07, zRK08
-   LOCAL zZAKUP, zUBOCZNE, zWYNAGR_G, zWYDATKI, zZAMEK
+   LOCAL zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10, zRYK07, zRYK08
+   LOCAL zZAKUP, zUBOCZNE, zWYNAGR_G, zWYDATKI, zZAMEK, zRYK09, zRYK10
    LOCAL lPrzelicz := .F., aDane
 
    lPrzelicz := TNEsc( , "Czy ponownie przeliczy† warto˜ci? (T/N)" )
@@ -1466,7 +1467,7 @@ FUNCTION aktsumies( nCurEl )
       SAVE SCREEN TO AKTM
       SET CURSOR ON
       IF zRYCZALT == 'T'
-         STORE 0 TO zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10, zRYK07, zRYK08
+         STORE 0 TO zUSLUGI, zWYR_TOW, zHANDEL, zPOZYCJE, zRY20, zRY17, zRY10, zRYK07, zRYK08, zRYK09, zRYK10
          IF lPrzelicz
             aDane := ObliczSumMies( nCurEl )
             zUSLUGI  := aDane[ 'uslugi' ]

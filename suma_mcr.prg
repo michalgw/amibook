@@ -100,11 +100,13 @@ PROCEDURE Suma_McRTekst()
 
       k5opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ory20, 1, 12 ) ) ) + ')', 14 )
       k6opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ory17, 1, 12 ) ) ) + ')', 14 )
-      k7opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ouslu, 1, 12 ) ) ) + ')', 14 )
-      k8opis := PadC( '(' + Lower( AllTrim( SubStr( staw_oprod, 1, 12 ) ) ) + ')', 14 )
-      k9opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ohand, 1, 12 ) ) ) + ')', 14 )
-      k10opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ork07, 1, 12 ) ) ) + ')', 14 )
-      k11opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ory10, 1, 12 ) ) ) + ')', 14 )
+      k7opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ork09, 1, 12 ) ) ) + ')', 14 )
+      k8opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ouslu, 1, 12 ) ) ) + ')', 14 )
+      k9opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ork10, 1, 12 ) ) ) + ')', 14 )
+      k10opis := PadC( '(' + Lower( AllTrim( SubStr( staw_oprod, 1, 12 ) ) ) + ')', 14 )
+      k11opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ohand, 1, 12 ) ) ) + ')', 14 )
+      k12opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ork07, 1, 12 ) ) ) + ')', 14 )
+      k13opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ory10, 1, 12 ) ) ) + ')', 14 )
 
       mon_drk( '          ' + k1 )
       mon_drk( '          ' + kk1 )
@@ -128,7 +130,9 @@ PROCEDURE Suma_McRTekst()
          k4b := ry17
          k4c := ry10
          k4d := ryk07
-         k5 := k2 + k3 + k4 + k4a + k4b + k4c + k4d
+         k4e := ryk09
+         k4f := ryk10
+         k5 := k2 + k3 + k4 + k4a + k4b + k4c + k4d + k4e + k4f
          skip
          *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          s0_2 := s0_2 + k2
@@ -209,6 +213,8 @@ PROCEDURE Suma_McRGraf()
       aDane[ 'staw_prod' ] := staw_prod * 100
       aDane[ 'staw_uslu' ] := staw_uslu * 100
       aDane[ 'staw_rk07' ] := staw_rk07 * 100
+      aDane[ 'staw_rk09' ] := staw_rk09 * 100
+      aDane[ 'staw_rk10' ] := staw_rk10 * 100
       aDane[ 'staw_ory20' ] := AllTrim( staw_ory20 )
       aDane[ 'staw_ory17' ] := AllTrim( staw_ory17 )
       aDane[ 'staw_ory10' ] := AllTrim( staw_ory10 )
@@ -216,6 +222,8 @@ PROCEDURE Suma_McRGraf()
       aDane[ 'staw_oprod' ] := AllTrim( staw_oprod )
       aDane[ 'staw_ouslu' ] := AllTrim( staw_ouslu )
       aDane[ 'staw_ork07' ] := AllTrim( staw_ork07 )
+      aDane[ 'staw_ork09' ] := AllTrim( staw_ork09 )
+      aDane[ 'staw_ork10' ] := AllTrim( staw_ork10 )
 
       aDane[ 'poz' ] := {}
 
@@ -226,12 +234,14 @@ PROCEDURE Suma_McRGraf()
          aPoz[ 'k1' ] := miesiac( Val( mc ) )
          aPoz[ 'k5' ] := ry20
          aPoz[ 'k6' ] := ry17
-         aPoz[ 'k7' ] := uslugi
-         aPoz[ 'k8' ] := wyr_tow
-         aPoz[ 'k9' ] := handel
-         aPoz[ 'k10' ] := ryk07
-         aPoz[ 'k11' ] := ry10
-         aPoz[ 'k12' ] := ry20 + ry17 + uslugi + wyr_tow + handel + ryk07 + ry10
+         aPoz[ 'k7' ] := ryk09
+         aPoz[ 'k8' ] := uslugi
+         aPoz[ 'k9' ] := ryk10
+         aPoz[ 'k10' ] := wyr_tow
+         aPoz[ 'k11' ] := handel
+         aPoz[ 'k12' ] := ryk07
+         aPoz[ 'k13' ] := ry10
+         aPoz[ 'k14' ] := ry20 + ry17 + uslugi + wyr_tow + handel + ryk07 + ry10 + ryk09 + ryk10
 
          AAdd( aDane[ 'poz' ], aPoz )
 
