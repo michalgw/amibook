@@ -27,6 +27,82 @@ FUNCTION DomyslneParametry()
    IF ! HB_ISHASH( aDomyslneParametry )
       aDomyslneParametry := hb_Hash()
 
+      // Rok 2022
+      aPar := hb_Hash()
+
+      // Tabela podatku doch.
+      aPar[ 'tab_doch' ] := { ;
+         { 'podstawa' => 0.0,       'procent' => 17, 'dataod' => 0d20220101 }, ;
+         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220101 } }
+
+      aPar[ 'tab_dochuks' ] := { ;
+         { 'podstod' => 5701.0,  'podstdo' => 8549.0,  'procent' => 0.17, 'mnoznik' => 6.68,  'kwota'=> -380.5, 'dataod' => 0d20220101 }, ;
+         { 'podstod' => 8549.01, 'podstdo' => 11141.0, 'procent' => 0.17, 'mnoznik' => -7.35, 'kwota'=> 819.08, 'dataod' => 0d20220101 } }
+
+      // Stawki rycz.
+      // Wolna zawody
+      aPar[ 'staw_ry20' ] := 0.17
+      // Inne uslugi
+      aPar[ 'staw_ry17' ] := 0.15
+      // Uslugi
+      aPar[ 'staw_uslu' ] := 0.125
+      // Produkcja
+      aPar[ 'staw_prod' ] := 0.1
+      // Handel
+      aPar[ 'staw_hand' ] := 0.085
+      // Wynajem pow. 100000
+      aPar[ 'staw_rk07' ] := 0.055
+      // Prawa maj.
+      aPar[ 'staw_ry10' ] := 0.03
+      // Art. 6 ust. 1d
+      aPar[ 'staw_rk08' ] := 0.02
+
+      aPar[ 'staw_ory20' ] := 'Wolne zawody            '
+      aPar[ 'staw_ory17' ] := 'Inne usˆugi             '
+      aPar[ 'staw_ouslu' ] := 'Wynajem pow.100000zˆ    '
+      aPar[ 'staw_oprod' ] := 'Prawa maj¥tkowe         '
+      aPar[ 'staw_ohand' ] := 'Usˆugi                  '
+      aPar[ 'staw_ork07' ] := 'Produkcja               '
+      aPar[ 'staw_ory10' ] := 'Handel                  '
+      aPar[ 'staw_ork08' ] := 'Art. 6 ust. 1d          '
+
+      // Kwota wolna
+      aPar[ 'param_kw' ] := 5100
+      aPar[ 'param_kwd' ] := d"2022-01-01"
+      aPar[ 'param_kw2' ] := 5100
+
+      aPar[ 'tab_vatue' ] := { ;
+         { 'kraj' => 'AT', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 13, 'stawka_c' => 10, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'BE', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 12, 'stawka_c' => 6, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'BG', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 9, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'CY', 'oddnia' => d"2021-01-01", 'stawka_a' => 19, 'stawka_b' => 9, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'CZ', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 15, 'stawka_c' => 10, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'DE', 'oddnia' => d"2021-01-01", 'stawka_a' => 19, 'stawka_b' => 7, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'DK', 'oddnia' => d"2021-01-01", 'stawka_a' => 25, 'stawka_b' => 0, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'EE', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 9, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'EL', 'oddnia' => d"2021-01-01", 'stawka_a' => 24, 'stawka_b' => 13, 'stawka_c' => 6, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'ES', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 10, 'stawka_c' => 0, 'stawka_d' => 4 }, ;
+         { 'kraj' => 'FI', 'oddnia' => d"2021-01-01", 'stawka_a' => 24, 'stawka_b' => 14, 'stawka_c' => 10, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'FR', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 10, 'stawka_c' => 5.5, 'stawka_d' => 2.1 }, ;
+         { 'kraj' => 'HR', 'oddnia' => d"2021-01-01", 'stawka_a' => 25, 'stawka_b' => 13, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'HU', 'oddnia' => d"2021-01-01", 'stawka_a' => 27, 'stawka_b' => 18, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'IE', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 13.5, 'stawka_c' => 9, 'stawka_d' => 4.8 }, ;
+         { 'kraj' => 'IE', 'oddnia' => d"2021-03-01", 'stawka_a' => 23, 'stawka_b' => 13.5, 'stawka_c' => 9, 'stawka_d' => 4.8 }, ;
+         { 'kraj' => 'IT', 'oddnia' => d"2021-01-01", 'stawka_a' => 22, 'stawka_b' => 10, 'stawka_c' => 5, 'stawka_d' => 4.8 }, ;
+         { 'kraj' => 'LT', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 9, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'LU', 'oddnia' => d"2021-01-01", 'stawka_a' => 17, 'stawka_b' => 8, 'stawka_c' => 0, 'stawka_d' => 3 }, ;
+         { 'kraj' => 'LV', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 12, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'MT', 'oddnia' => d"2021-01-01", 'stawka_a' => 18, 'stawka_b' => 7, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'NL', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 9, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'PT', 'oddnia' => d"2021-01-01", 'stawka_a' => 23, 'stawka_b' => 13, 'stawka_c' => 6, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'RO', 'oddnia' => d"2021-01-01", 'stawka_a' => 19, 'stawka_b' => 9, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'SE', 'oddnia' => d"2021-01-01", 'stawka_a' => 25, 'stawka_b' => 12, 'stawka_c' => 6, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'SI', 'oddnia' => d"2021-01-01", 'stawka_a' => 22, 'stawka_b' => 9.5, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'SK', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 10, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'UK', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 5, 'stawka_c' => 0, 'stawka_d' => 0 } }
+
+      aDomyslneParametry[ '2022' ] := aPar
+
       // Rok 2021
       aPar := hb_Hash()
 
@@ -191,14 +267,14 @@ PROCEDURE DomParPrzywroc_TabDoch( lOtworz, cRok )
    ENDDO
    AEval( aDomyslneParametry[ cRok ][ 'tab_doch' ], { | aPoz |
       tab_doch->( dbAppend() )
-      tab_doch->del := '+'
+      //tab_doch->del := '+'
       tab_doch->podstawa := aPoz[ 'podstawa' ]
       tab_doch->procent := aPoz[ 'procent' ]
-      tab_doch->procent2 := aPoz[ 'procent' ]
-      tab_doch->kwotazmn := aPoz[ 'kwotazmn' ]
-      tab_doch->degres := aPoz[ 'degres' ]
-      tab_doch->kwotade1 := aPoz[ 'kwotade1' ]
-      tab_doch->kwotade2 := aPoz[ 'kwotade2' ]
+      //tab_doch->procent2 := aPoz[ 'procent' ]
+      //tab_doch->kwotazmn := aPoz[ 'kwotazmn' ]
+      //tab_doch->degres := aPoz[ 'degres' ]
+      //tab_doch->kwotade1 := aPoz[ 'kwotade1' ]
+      //tab_doch->kwotade2 := aPoz[ 'kwotade2' ]
       tab_doch->dataod := aPoz[ 'dataod' ]
       // zostawiamy date do pusta
       //tab_doch->datado := aPoz[ 'datado' ]
@@ -208,6 +284,49 @@ PROCEDURE DomParPrzywroc_TabDoch( lOtworz, cRok )
 
    IF lOtworz
       tab_doch->( dbCloseArea() )
+   ENDIF
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE DomParPrzywroc_TabDochUKS( lOtworz, cRok )
+
+   IF Empty( cRok ) .OR. ! hb_HHasKey( aDomyslneParametry, cRok )
+      RETURN NIL
+   ENDIF
+
+   IF lOtworz
+      DO WHILE ! DostepPro( 'TAB_DOCHUKS', , .F., , 'TAB_DOCHUKS' )
+      ENDDO
+   ENDIF
+
+   Blokada()
+   tab_dochuks->( dbGoTop() )
+   DO WHILE ! tab_dochuks->( Eof() )
+      tab_dochuks->( dbDelete() )
+      tab_dochuks->( dbGoTop() )
+   ENDDO
+   AEval( aDomyslneParametry[ cRok ][ 'tab_dochuks' ], { | aPoz |
+      tab_dochuks->( dbAppend() )
+      //tab_doch->del := '+'
+      tab_dochuks->podstod := aPoz[ 'podstod' ]
+      tab_dochuks->podstdo := aPoz[ 'podstdo' ]
+      tab_dochuks->procent := aPoz[ 'procent' ]
+      tab_dochuks->mnoznik := aPoz[ 'mnoznik' ]
+      tab_dochuks->kwota := aPoz[ 'kwota' ]
+      //tab_doch->degres := aPoz[ 'degres' ]
+      //tab_doch->kwotade1 := aPoz[ 'kwotade1' ]
+      //tab_doch->kwotade2 := aPoz[ 'kwotade2' ]
+      tab_dochuks->dataod := aPoz[ 'dataod' ]
+      // zostawiamy date do pusta
+      //tab_doch->datado := aPoz[ 'datado' ]
+   } )
+   COMMIT
+   UNLOCK
+
+   IF lOtworz
+      tab_dochuks->( dbCloseArea() )
    ENDIF
 
    RETURN NIL

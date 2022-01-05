@@ -1246,7 +1246,7 @@ FUNCTION infoobr( nCurEl )
    ELSE
       IF zRYCZALT == 'T'
          STORE 0 TO um, un, pm, pn, hm, hn, zm, zn, ilpoz, ry20m, ry20n, ry17m, ry17n, ry10m, ry10n, ;
-            ryk07m, ryk07n, ryk08m, ryk08n
+            ryk07m, ryk07n, ryk08m, ryk08n, ryk09m, ryk09n, ryk10m, ryk10n
          DO WHILE suma_mc->del == '+' .AND. suma_mc->firma == ident_fir .AND. suma_mc->mc <= nCurEl
             um := suma_mc->USLUGI
             pm := suma_mc->WYR_TOW
@@ -1256,6 +1256,8 @@ FUNCTION infoobr( nCurEl )
             ry10m := suma_mc->RY10
             ryk07m := suma_mc->RYK07
             ryk08m := suma_mc->RYK08
+            ryk09m := suma_mc->RYK09
+            ryk10m := suma_mc->RYK10
             un := un + um
             pn := pn + pm
             hn := hn + hm
@@ -1264,6 +1266,8 @@ FUNCTION infoobr( nCurEl )
             ry10n := ry10n + ry10m
             ryk07n := ryk07n + ryk07m
             ryk08n := ryk08n + ryk08m
+            ryk09n := ryk09n + ryk09m
+            ryk10n := ryk10n + ryk10m
             ilpoz := suma_mc->pozycje
             SKIP
          ENDDO
@@ -1272,40 +1276,50 @@ FUNCTION infoobr( nCurEl )
          @ 11, 43 SAY '-------------------------------------'
          @ 12, 43 SAY PadR( AllTrim( SubStr( staw_ory20, 1, 9 ) ), 9, '.' ) + '.                           '
          @ 13, 43 SAY PadR( AllTrim( SubStr( staw_ory17, 1, 9 ) ), 9, '.' ) + '.                           '
-         @ 14, 43 SAY PadR( AllTrim( SubStr( staw_ouslu, 1, 9 ) ), 9, '.' ) + '.                           '
-         @ 15, 43 SAY PadR( AllTrim( SubStr( staw_oprod, 1, 9 ) ), 9, '.' ) + '.                           '
-         @ 16, 43 SAY PadR( AllTrim( SubStr( staw_ohand, 1, 9 ) ), 9, '.' ) + '.                           '
-         @ 17, 43 SAY PadR( AllTrim( SubStr( staw_ork07, 1, 9 ) ), 9, '.' ) + '.                           '
-         @ 18, 43 SAY PadR( AllTrim( SubStr( staw_ory10, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 14, 43 SAY PadR( AllTrim( SubStr( staw_ork09, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 15, 43 SAY PadR( AllTrim( SubStr( staw_ouslu, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 16, 43 SAY PadR( AllTrim( SubStr( staw_ork10, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 17, 43 SAY PadR( AllTrim( SubStr( staw_oprod, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 18, 43 SAY PadR( AllTrim( SubStr( staw_ohand, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 19, 43 SAY PadR( AllTrim( SubStr( staw_ork07, 1, 9 ) ), 9, '.' ) + '.                           '
+         @ 20, 43 SAY PadR( AllTrim( SubStr( staw_ory10, 1, 9 ) ), 9, '.' ) + '.                           '
+         /*
          IF staw_k08w
             @ 19, 43 SAY PadR( AllTrim( SubStr( staw_ork08, 1, 9 ) ), 9, '.' ) + '.                           '
          ELSE
             @ 19, 43 SAY '-------------------------------------'
          ENDIF
-         @ 20, 43 SAY 'PRZYCH&__O.D..                           '
-         @ 21, 43 SAY 'Ilo&_s.&_c. dokument&_o.w w miesi&_a.cu..........'
+         */
+         @ 21, 43 SAY 'PRZYCH&__O.D..                           '
+         @ 22, 43 SAY 'Ilo&_s.&_c. dokument&_o.w w miesi&_a.cu..........'
          SET COLOR TO w+
          @ 12, 53 SAY ry20m                        PICTURE RPIC
          @ 12, 66 SAY ry20n                        PICTURE RPICE
          @ 13, 53 SAY ry17m                        PICTURE RPIC
          @ 13, 66 SAY ry17n                        PICTURE RPICE
-         @ 14, 53 SAY um                           PICTURE RPIC
-         @ 14, 66 SAY un                           PICTURE RPICE
-         @ 15, 53 SAY pm                           PICTURE RPIC
-         @ 15, 66 SAY pn                           PICTURE RPICE
-         @ 16, 53 SAY hm                           PICTURE RPIC
-         @ 16, 66 SAY hn                           PICTURE RPICE
-         @ 17, 53 SAY ryk07m                        PICTURE RPIC
-         @ 17, 66 SAY ryk07n                        PICTURE RPICE
-         @ 18, 53 SAY ry10m                        PICTURE RPIC
-         @ 18, 66 SAY ry10n                        PICTURE RPICE
+         @ 14, 53 SAY ryk09m                       PICTURE RPIC
+         @ 14, 66 SAY ryk09n                       PICTURE RPICE
+         @ 15, 53 SAY um                           PICTURE RPIC
+         @ 15, 66 SAY un                           PICTURE RPICE
+         @ 16, 53 SAY ryk10m                       PICTURE RPIC
+         @ 16, 66 SAY ryk10n                       PICTURE RPICE
+         @ 17, 53 SAY pm                           PICTURE RPIC
+         @ 17, 66 SAY pn                           PICTURE RPICE
+         @ 18, 53 SAY hm                           PICTURE RPIC
+         @ 18, 66 SAY hn                           PICTURE RPICE
+         @ 19, 53 SAY ryk07m                       PICTURE RPIC
+         @ 19, 66 SAY ryk07n                       PICTURE RPICE
+         @ 20, 53 SAY ry10m                        PICTURE RPIC
+         @ 20, 66 SAY ry10n                        PICTURE RPICE
+         /*
          IF staw_k08w
             @ 19, 53 SAY ryk08m                        PICTURE RPIC
             @ 19, 66 SAY ryk08n                        PICTURE RPICE
          ENDIF
-         @ 20, 53 SAY um + pm + hm + ry20m + ry17m + ry10m + ryk07m + ryk08m PICTURE RPIC
-         @ 20, 66 SAY un + pn + hn + ry20n + ry17n + ry10n + ryk07n + ryk08n PICTURE RPICE
-         @ 21, 75 SAY ilpoz                        PICTURE '99999'
+         */
+         @ 21, 53 SAY um + pm + hm + ry20m + ry17m + ry10m + ryk07m + ryk08m + ryk09m + ryk10m PICTURE RPIC
+         @ 21, 66 SAY un + pn + hn + ry20n + ry17n + ry10n + ryk07n + ryk08n + ryk09n + ryk10n PICTURE RPICE
+         @ 22, 75 SAY ilpoz                        PICTURE '99999'
          SetColor( CURR )
          czyobrvat( un + pn + hn )
       ELSE
@@ -1371,7 +1385,7 @@ FUNCTION ObliczSumMies( cMiesiac )
    IF zRYCZALT == 'T'
 
       aRes := hb_Hash( 'uslugi', 0, 'wyr_tow', 0, 'handel', 0, 'ry20', 0, ;
-         'ry17', 0, 'ry10', 0, 'ryk07', 0, 'ryk08', 0, 'pozycje', 0 )
+         'ry17', 0, 'ry10', 0, 'ryk07', 0, 'ryk08', 0, 'ryk09', 0, 'ryk10', 0, 'pozycje', 0 )
 
       DO WHILE ! Dostep( 'EWID' )
       ENDDO
@@ -1389,6 +1403,8 @@ FUNCTION ObliczSumMies( cMiesiac )
             aRes[ 'ry10' ] += ewid->ry10
             aRes[ 'ryk07' ] += ewid->ryk07
             aRes[ 'ryk08' ] += ewid->ryk08
+            aRes[ 'ryk09' ] += ewid->ryk09
+            aRes[ 'ryk10' ] += ewid->ryk10
             aRes[ 'pozycje' ] := aRes[ 'pozycje' ] + 1
          ENDIF
          SKIP
@@ -1461,6 +1477,8 @@ FUNCTION aktsumies( nCurEl )
             zRY10    := aDane[ 'ry10' ]
             zRYK07   := aDane[ 'ryk07' ]
             zRYK08   := aDane[ 'ryk08' ]
+            zRYK09   := aDane[ 'ryk09' ]
+            zRYK10   := aDane[ 'ryk10' ]
             zPOZYCJE := aDane[ 'pozycje' ]
          ELSE
             zUSLUGI  := suma_mc->USLUGI
@@ -1471,21 +1489,27 @@ FUNCTION aktsumies( nCurEl )
             zRY10    := suma_mc->RY10
             zRYK07   := suma_mc->RYK07
             zRYK08   := suma_mc->RYK08
+            zRYK09   := suma_mc->RYK09
+            zRYK10   := suma_mc->RYK10
             zPOZYCJE := suma_mc->POZYCJE
          ENDIF
          zZAMEK   := iif( suma_mc->ZAMEK, 'T', 'N' )
          @ 12, 53 GET zRY20    PICTURE FPIC
          @ 13, 53 GET zRY17    PICTURE FPIC
-         @ 14, 53 GET zUSLUGI  PICTURE FPIC
-         @ 15, 53 GET zWYR_TOW PICTURE FPIC
-         @ 16, 53 GET zHANDEL  PICTURE FPIC
-         @ 17, 53 GET zRYK07   PICTURE FPIC
-         @ 18, 53 GET zRY10    PICTURE FPIC
+         @ 14, 53 GET zRYK09   PICTURE FPIC
+         @ 15, 53 GET zUSLUGI  PICTURE FPIC
+         @ 16, 53 GET zRYK10   PICTURE FPIC
+         @ 17, 53 GET zWYR_TOW PICTURE FPIC
+         @ 18, 53 GET zHANDEL  PICTURE FPIC
+         @ 19, 53 GET zRYK07   PICTURE FPIC
+         @ 20, 53 GET zRY10    PICTURE FPIC
+         /*
          IF staw_k08w
             @ 19, 53 GET zRYK08   PICTURE FPIC
          ENDIF
-         @ 21, 75 GET zPOZYCJE PICTURE '99999'
-         @ 22, 43 SAY "Miesi¥c zamkni©ty" GET zZAMEK PICTURE '!' VALID zZAMEK $ 'NT'
+         */
+         @ 22, 75 GET zPOZYCJE PICTURE '99999'
+         @ 23, 43 SAY "Miesi¥c zamkni©ty" GET zZAMEK PICTURE '!' VALID zZAMEK $ 'NT'
          READ
          IF LastKey() <> K_ESC
             BLOKADAR()
@@ -1493,7 +1517,8 @@ FUNCTION aktsumies( nCurEl )
             REPLACE USLUGI WITH zUSLUGI, WYR_TOW WITH zWYR_TOW, ;
                HANDEL WITH zHANDEL, POZYCJE WITH zPOZYCJE, ;
                RY20 WITH zRY20, RY17 WITH zRY17, RY10 WITH zRY10, ;
-               RYK07 WITH zRYK07, RYK08 WITH zRYK08, ZAMEK WITH iif( zZAMEK == 'T', .T., .F. )
+               RYK07 WITH zRYK07, RYK08 WITH zRYK08, RYK09 WITH zRYK09, ;
+               RYK10 WITH zRYK10, ZAMEK WITH iif( zZAMEK == 'T', .T., .F. )
             COMMIT
             UNLOCK
          ENDIF
@@ -2288,6 +2313,8 @@ PROCEDURE setind( ZB )
         SET INDEX TO tab_vatue,tab_vatue1
    CASE ZB == 'VIUDOKOR'
         SET INDEX TO viudokor
+   CASE ZB == 'TAB_DOCHUKS'
+        SET INDEX TO tab_dochuks
    ENDCASE
 
    RETURN

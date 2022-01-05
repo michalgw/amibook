@@ -1060,3 +1060,18 @@ FUNCTION IntToStrZ( nWartosc, nDlugosc )
    RETURN StrTran( Str( nWartosc, nDlugosc ), ' ', '0' )
 
 /*----------------------------------------------------------------------*/
+FUNCTION ValidTakNie( cVar, nRow, nCol )
+
+   LOCAL lRes, cKolor := SetColor()
+
+   IF ( lRes := cVar $ 'TN' )
+      SetColor( 'w+' )
+      @ nRow, nCol SAY iif( cVar == 'T', 'ak', 'ie' )
+      SetColor( cKolor )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+

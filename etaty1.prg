@@ -136,8 +136,7 @@ zKOD_TYTU='      '
 zSTANOWISKO=space(40)
 zOSWIAD26R := ' '
 zPPK := iif( etaty->ppk $ 'TN', etaty->ppk, 'N' )
-zTERM_WYP := ' '
-zULGAKLSRA := iif( etaty->ulgaklsra $ 'TN', etaty-ulgaklsra, 'N' )
+zULGAKLSRA := ' '
 //002 ostatnia zmienna jest nowa
 
 mmm=array(12)
@@ -412,31 +411,26 @@ do while .t.
          case skladn=8
               save scre to scr_sklad
               set curs on
-              @  7,42 clear to 21,79
-              @  7,42 to 21,79
-              @  8,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID zOSWIAD26R $ 'TN' .AND. oblpl()
-              IF Val( miesiacpla ) == 12
-                @ 9,43 say 'Ulga klasy ˜redniej' get zULGAKLSRA picture '!' valid zULGAKLSRA $ 'TN' .AND. oblpl()
-                @ 9,71 get zULGAKLSRK picture '99999.99' when zULGAKLSRA == 'T' valid oblpl()
-              ENDIF
-              @ 10,43 say 'Podatek stawka..........%.='
-              @ 10,62 get zSTAW_PODAT pict '99.99' valid oblpl()
-              @ 10,71 get B5          pict '99999.99' when oblpl().and..f.
-              @ 11,43 say     'Odliczenie od dochodu.....:' get zODLICZ     pict '99999.99' valid oblpl()
-              IF Val( miesiacpla ) == 12
-                 @ 12, 43 SAY 'Wypˆata w 2022............:'  get zTERM_WYP picture '!' valid zTERM_WYP $ 'TN' .AND. oblpl()
-              ENDIF
-              @ 13,43 say 'Na ubezp.zdrowotne do ZUS  '
-              @ 14,43 say 'obliczono:     % ='
-              @ 14,53 get zSTAW_PUZ pict '99.99' valid oblpl()
-              @ 14,61 get zWAR_PUZB pict '99999.99' when oblpl().and..f.
-              @ 15,43 say 'do pobrania na ZUS........='
-              @ 15,71 get zWAR_PUZ  pict '99999.99' when oblpl().and..f.
-              @ 16,43 say 'Do odliczenia od podatku   '
+              @ 11,42 clear to 21,79
+              @ 11,42 to 21,79
+              @ 12,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID zOSWIAD26R $ 'TN' .AND. oblpl()
+              @ 13,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' VALID zULGAKLSRA $ 'TN' .AND. oblpl()
+              @ 13,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
+              @ 14,43 say 'Podatek stawka..........%.='
+              @ 14,62 get zSTAW_PODAT pict '99.99' valid oblpl()
+              @ 14,71 get B5          pict '99999.99' when oblpl().and..f.
+              @ 15,43 say 'Odliczenie od dochodu.....:' get zODLICZ     pict '99999.99' valid oblpl()
+              @ 16,43 say 'Na ubezp.zdrowotne do ZUS  '
               @ 17,43 say 'obliczono:     % ='
-              @ 17,53 get zSTAW_PZK pict '99.99' valid oblpl()
-              @ 17,61 get zWAR_PZKB pict '99999.99' when oblpl().and..f.
-              @ 18,43 say 'Z tego odliczono od podat.:' get zWAR_PUZO   pict '99999.99' when oblpl().and..f.
+              @ 17,53 get zSTAW_PUZ pict '99.99' valid oblpl()
+              @ 17,61 get zWAR_PUZB pict '99999.99' when oblpl().and..f.
+              @ 18,43 say 'do pobrania na ZUS........='
+              @ 18,71 get zWAR_PUZ  pict '99999.99' when oblpl().and..f.
+              *@ 16,43 say 'Do odliczenia od podatku   '
+              *@ 17,43 say 'obliczono:     % ='
+              *@ 17,53 get zSTAW_PZK pict '99.99' valid oblpl()
+              *@ 17,61 get zWAR_PZKB pict '99999.99' when oblpl().and..f.
+              *@ 18,43 say 'Z tego odliczono od podat.:' get zWAR_PUZO   pict '99999.99' when oblpl().and..f.
               @ 19,71 say '========'
               @ 20,43 say 'Podatek do zap&_l.aty........:' get zPODATEK    pict '99999.99' when oblpl().and..f.
               read
@@ -777,7 +771,7 @@ func oblpl
       zWAR_PSUM=zWAR_PUE+zWAR_PUR+zWAR_PUC
       zDOCHOD=max(0,zBRUT_RAZEM-(zKOSZT+zWAR_PSUM))
       IF zULGAKLSRA == 'T'
-         zULGAKLSRK := ObliczUlgaKlSr( zBRUT_RAZEM )
+         zULGAKLSRK := TabDochUKSKwota( zBRUT_RAZEM, Val( param_rok ), Val( miesiacpla ) )
       ELSE
          zULGAKLSRK := 0
       ENDIF
@@ -800,80 +794,42 @@ func oblpl
          zPPKPK2 := 0
       ENDIF
       IF zOSWIAD26R == 'T'
-         IF Val( miesiacpla ) == 12 .AND. zTERM_WYP == 'T'
-            B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM+zULGAKLSRK)),0)*(parap_pod/100)
-            //zWAR_PUZ=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
-            zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
-            zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
-            //zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
-            //zWAR_PUZO=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
-            zWAR_PZKB=0
-            zWAR_PUZO=0
-            zPODATEK=max(0,_round(B5-(zWAR_PUZO+parap_odl),0))
-            zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
+         B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(parap_pod/100)
+         //zWAR_PUZ=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
+         zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
+         zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
+         //zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
+         //zWAR_PUZO=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
+         zWAR_PUZO=0
+         zPODATEK=max(0,_round(B5-(zWAR_PUZO+parap_odl),0))
+         zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
 
-            zWAR_PUZ := Min( _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2), zWAR_PUZ )
-            zWAR_PUZB := zWAR_PUZ
-            zWAR_PZKB := 0.0
-            zWAR_PUZO := 0.0
-            zPODATEK := 0.0
-            zNETTO := zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
-            B5 := 0.0
-            zODLICZ := 0.0
-         ELSE
-            B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(parap_pod/100)
-            zWAR_PUZ=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
-            zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
-            zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
-            zWAR_PUZO=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
-            zPODATEK=max(0,_round(B5-(zWAR_PUZO+parap_odl),0))
-            zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
-
-            zWAR_PUZ := Min( _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2), zWAR_PUZ )
-            zWAR_PUZB := zWAR_PUZ
-            zWAR_PZKB := 0.0
-            zWAR_PUZO := 0.0
-            zPODATEK := 0.0
-            zNETTO := zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
-            B5 := 0.0
-            zODLICZ := 0.0
-         ENDIF
+         zWAR_PUZ := Min( _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2), zWAR_PUZ )
+         zWAR_PUZB := zWAR_PUZ
+         zWAR_PZKB := 0.0
+         zWAR_PUZO := 0.0
+         zPODATEK := 0.0
+         zNETTO := zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
+         B5 := 0.0
+         zODLICZ := 0.0
       ELSE
-         IF Val( miesiacpla ) == 12 .AND. zTERM_WYP == 'T'
-            B5=zDOCHODPOD *(zSTAW_PODAT/100)
-            //zWAR_PUZ=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
-            zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
-            zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
-            //zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
-            //zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
-            zWAR_PZKB=0
-            zWAR_PUZO=0
-            *     zWAR_PUZO=zWAR_PUZ
-            *--> Koniec
-            *--> Gdy potracanie pelnej skladki a odliczanie do wysokosci podatku
-            *     zWAR_PUZ=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
-            *     zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
-            *     zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,zWAR_PUZ))
-            *--> Koniec
-            zPODATEK=max(0,_round(B5-(zWAR_PUZO+zODLICZ),0))
-            zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
-         ELSE
-            B5=zDOCHODPOD*(zSTAW_PODAT/100)
-            *--> Gdy potracanie skladki do wysokosci podatku
-            zWAR_PUZ=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
-            zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
-            zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
-            zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
-            *     zWAR_PUZO=zWAR_PUZ
-            *--> Koniec
-            *--> Gdy potracanie pelnej skladki a odliczanie do wysokosci podatku
-            *     zWAR_PUZ=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
-            *     zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
-            *     zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,zWAR_PUZ))
-            *--> Koniec
-            zPODATEK=max(0,_round(B5-(zWAR_PUZO+zODLICZ),0))
-            zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
-         ENDIF
+         B5=zDOCHODPOD*(zSTAW_PODAT/100)
+   *--> Gdy potracanie skladki do wysokosci podatku
+         //zWAR_PUZ=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
+         zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
+         zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
+         //zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
+         //zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
+         zWAR_PUZO=0
+   *     zWAR_PUZO=zWAR_PUZ
+   *--> Koniec
+   *--> Gdy potracanie pelnej skladki a odliczanie do wysokosci podatku
+   *     zWAR_PUZ=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
+   *     zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM))*(zSTAW_PUZ/100),2)
+   *     zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,zWAR_PUZ))
+   *--> Koniec
+         zPODATEK=max(0,_round(B5-(zWAR_PUZO+zODLICZ),0))
+         zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
       ENDIF
       zDO_WYPLATY=zNETTO+zZASIL_RODZ+zZASIL_PIEL+zDOPL_NIEOP-zODL_NIEOP-zPPKZK1-zPPKZK2
       zzWAR_FUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUE/100),2)
@@ -1010,7 +966,7 @@ zSTAW_PODAT=STAW_PODA2
 zSTAW_PUZ=STAW_PUZ
 zWAR_PUZ=WAR_PUZ
 zWAR_PUZO=WAR_PUZO
-zSTAW_PZK=STAW_PZK
+//zSTAW_PZK=STAW_PZK
 
 zDOPL_NIEOP=DOPL_NIEOP
 zODL_NIEOP=ODL_NIEOP
@@ -1056,9 +1012,8 @@ zPPK := PPK
 zZASI_BZUS := ZASI_BZUS
 
 zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) .AND. prac->oswiad26r == 'T', 'T', 'N' ), OSWIAD26R )
-zTERM_WYP := iif( Val( miesiacpla ) == 12, iif( TERM_WYP == ' ', 'N', TERM_WYP ), 'N' )
-zULGAKLSRA := iif( Val( miesiacpla ) == 12, iif( ULGAKLSRA == ' ', 'N', ULGAKLSRA ), 'N' )
-zULGAKLSRK := ULGAKLSRK
+zULGAKLSRA=iif( etaty->ulgaklsra $ 'TN', etaty->ulgaklsra, iif( prac->ulgaklsra == ' ', 'N', prac->ulgaklsra ) )
+zULGAKLSRK=ULGAKLSRK
 if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    skip -1
    zBRUT_ZASAD=iif(zBRUT_ZASAD=0,BRUT_ZASAD,zBRUT_ZASAD)
@@ -1082,7 +1037,7 @@ if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    zODLICZ=iif(zODLICZ=0,ODLICZ,zODLICZ)
    zSTAW_PODAT=iif(zSTAW_PODAT=0,STAW_PODA2,zSTAW_PODAT)
    zSTAW_PUZ=iif(zSTAW_PUZ=0,STAW_PUZ,zSTAW_PUZ)
-   zSTAW_PZK=iif(zSTAW_PZK=0,STAW_PZK,zSTAW_PZK)
+   //zSTAW_PZK=iif(zSTAW_PZK=0,STAW_PZK,zSTAW_PZK)
 
    zDOPL_NIEOP=iif(zDOPL_NIEOP=0,DOPL_NIEOP,zDOPL_NIEOP)
    zODL_NIEOP=iif(zODL_NIEOP=0,ODL_NIEOP,zODL_NIEOP)
@@ -1201,7 +1156,7 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
       zSTAW_PUC=parap_puc
       zSTAW_PF3=parap_pf3
       zSTAW_PUZ=parap_puz
-      zSTAW_PZK=parap_pzk
+      //zSTAW_PZK=parap_pzk
       zSTAW_FUE=parap_fue
       zSTAW_FUR=parap_fur
       zSTAW_FUW=parap_fuw
@@ -1251,11 +1206,6 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
       ENDIF
    endif
 endif
-
-   IF Val( miesiacpla ) == 12 .AND. zTERM_WYP == 'T'
-      zSTAW_PZK := 0
-   ENDIF
-
       zzWAR_PUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUE/100),2)
       zzWAR_PUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUR/100),2)
       zzWAR_PUC=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUC/100),2)
@@ -1364,12 +1314,8 @@ repl_( 'PPKPK2', zPPKPK2 )
 repl_( 'PPKPPM', zPPKPPM )
 repl_( 'PPK', zPPK )
 repl_( 'ZASI_BZUS', zZASI_BZUS )
-
-   IF Val( miesiacpla ) == 12
-      repl_( 'TERM_WYP', zTERM_WYP )
-      repl_( 'ULGAKLSRA', zULGAKLSRA )
-      repl_( 'ULGAKLSRK', zULGAKLSRK )
-   ENDIF
+repl_( 'ULGAKLSRA', zULGAKLSRA )
+repl_( 'ULGAKLSRK', zULGAKLSRK )
 
 ***************************************************************************
 func spr_przel
@@ -1432,18 +1378,4 @@ return .t.
 *endif
 *return R
 ***************************************************
-
-FUNCTION ObliczUlgaKlSr( nPodstawa )
-
-   LOCAL nRes := 0
-
-   IF nPodstawa >= 5701 .AND. nPodstawa <= 8549
-      nRes := ( nPodstawa * 0.0668 - 380.5 ) / 0.17
-   ELSEIF nPodstawa > 8549 .AND. nPodstawa <= 11141
-      nRes := ( nPodstawa * (-0.0735) + 819.08 ) / 0.17
-   ENDIF
-
-   RETURN nRes
-
-/*----------------------------------------------------------------------*/
 

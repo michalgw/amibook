@@ -52,15 +52,15 @@ set colo to
 @ 11,42 say '-emerytalne                           '
 @ 12,42 say '-rentowe                              '
 @ 13,42 say '-zdrowotne do ZUS                     '
-@ 14,42 say '-zdrowotne do odliczen                '
-@ 15,42 say '-chorobowe                            '
-@ 16,42 say '-wypadkowe - wpisz w parametrach firmy'
-@ 17,42 say '-III filar                            '
-@ 18,42 say ' Na fundusze:                         '
-@ 19,42 say '-Fundusz Pracy                        '
-@ 20,42 say '-Fundusz G&__S.P                          '
-@ 21,42 say ' Domy&_s.lny symbol Kasy Chorych         '
-@ 22,42 say ' PPK st.pracow.     % st.pracod.     %'
+*@ 14,42 say '-zdrowotne do odliczen                '
+@ 14,42 say '-chorobowe                            '
+@ 15,42 say '-wypadkowe - wpisz w parametrach firmy'
+@ 16,42 say '-III filar                            '
+@ 17,42 say ' Na fundusze:                         '
+@ 18,42 say '-Fundusz Pracy                        '
+@ 19,42 say '-Fundusz G&__S.P                          '
+@ 20,42 say ' Domy&_s.lny symbol Kasy Chorych         '
+@ 21,42 say ' PPK st.pracow.     % st.pracod.     %'
 *################################# OPERACJE #################################
 do say_pr
 kl=0
@@ -119,24 +119,24 @@ zparap_ldw := parap_ldw
 @ 11,65 get zparap_pue picture "99.99"
 @ 12,65 get zparap_pur picture "99.99"
 @ 13,65 get zparap_puz picture "99.99"
-@ 14,65 get zparap_pzk picture "99.99"
-@ 15,65 get zparap_puc picture "99.99"
+*@ 14,65 get zparap_pzk picture "99.99"
+@ 14,65 get zparap_puc picture "99.99"
 *@ 16,65 get zparap_puw picture "99.99"
-@ 17,65 get zparap_pf3 picture "99.99"
-@ 19,65 get zparap_pfp picture "99.99"
-@ 20,65 get zparap_pfg picture "99.99"
+@ 16,65 get zparap_pf3 picture "99.99"
+@ 18,65 get zparap_pfp picture "99.99"
+@ 19,65 get zparap_pfg picture "99.99"
 @ 11,75 get zparap_fue picture "99.99"
 @ 12,75 get zparap_fur picture "99.99"
 @ 13,75 get zparap_fuz picture "99.99"
-@ 15,75 get zparap_fuc picture "99.99"
+@ 14,75 get zparap_fuc picture "99.99"
 *@ 15,75 get zparap_fuw picture "99.99"
 *@ 16,75 get zparap_fww picture "99.99"
-@ 17,75 get zparap_ff3 picture "99.99"
-@ 19,75 get zparap_ffp picture "99.99"
-@ 20,75 get zparap_ffg picture "99.99"
-@ 21,75 get zparap_rkc picture "99!"
-@ 22,57 get zparpk_sz picture "99.99"
-@ 22,74 get zparpk_sp picture "99.99"
+@ 16,75 get zparap_ff3 picture "99.99"
+@ 17,75 get zparap_ffp picture "99.99"
+@ 19,75 get zparap_ffg picture "99.99"
+@ 20,75 get zparap_rkc picture "99!"
+@ 21,57 get zparpk_sz picture "99.99"
+@ 21,74 get zparpk_sp picture "99.99"
 ****************************
 clear type
 read_()

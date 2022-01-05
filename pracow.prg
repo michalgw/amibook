@@ -51,7 +51,7 @@ PROCEDURE Pracow()
    @ 16, 0 SAY '³ Ulica,dom,lokal......                              /        Tel...           ³'
    @ 17, 0 SAY '³ Gmina.                   Powiat.                   Wojew.                    ³'
    @ 18, 0 SAY '³ Urz¥d Skarbowy.                                                  O˜w.<26r:   ³'
-   @ 19, 0 SAY '³ Miejsce zatrudnienia.                                                 PPK:   ³'
+   @ 19, 0 SAY '³ Miejsce zatrudnienia.                        PPK:        Ulga klasy ˜red.:   ³'
    @ 20, 0 SAY '³ Bank:                Konto:                Kwota przelewu:                   ³'
    @ 21, 0 SAY '³ Nr id. podat.                  Rodzaj nr id.                                 ³'
    @ 22, 0 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
@@ -202,6 +202,7 @@ PROCEDURE Pracow()
                zPPKIDKADR := Pad( AllTrim( Str( RecNo(), 10 ) ), 10 )
                zPPKIDEPPK := Space( 20 )
                zPPKIDPZIF := Space( 50 )
+               zULGAKLSRA := 'T'
             else
                zNREWID := NREWID
                zNAZWISKO := NAZWISKO
@@ -257,6 +258,8 @@ PROCEDURE Pracow()
                zPPKIDEPPK := PPKIDEPPK
                zPPKIDPZIF := PPKIDPZIF
 
+               zULGAKLSRA := iif( ULGAKLSRA == ' ', 'T', ULGAKLSRA )
+
                SELECT urzedy
                GO zSKARB
                zURZAD := miejsc_us + ' - ' + urzad
@@ -292,8 +295,9 @@ PROCEDURE Pracow()
             @ 17, 59 GET zPARAM_WOJ  PICTURE "!!!!!!!!!!!!!!!!!!!!"
             @ 18, 17 GET zURZAD      PICTURE "!!!!!!!!!!!!!!!!!!!! - !!!!!!!!!!!!!!!!!!!!!!!!!" VALID v3_141()
             @ 18, 76 GET zOSWIAD26R  PICTURE "!" VALID ValidPracOswiad26r()
-            @ 19, 23 GET zZATRUD     PICTURE '@S45 ' + Replicate( '!', 70 )
-            @ 19, 76 GET zPPK        PICTURE '!' VALID etatyvppk( 19, 77 )
+            @ 19, 23 GET zZATRUD     PICTURE '@S23 ' + Replicate( '!', 70 )
+            @ 19, 52 GET zPPK        PICTURE '!' VALID etatyvppk( 19, 53 )
+            @ 19, 76 GET zULGAKLSRA  PICTURE '!' VALID ValidTakNie( zULGAKLSRA, 19, 77 )
             //002 zawezone parametry banku
             @ 20,  7 GET zBANK       PICTURE '@S15 ' + repl( '!', 30 )
             @ 20, 29 GET zKONTO      PICTURE '@S15 ' + repl( '!', 32 )
@@ -660,8 +664,9 @@ PROCEDURE say31s()
    zurzad := miejsc_us + ' - ' + urzad
    @ 18, 17 SAY zURZAD
    SELECT prac
-   @ 19, 23 SAY SubStr( ZATRUD, 1, 45 )
-   @ 19, 76 SAY iif( iif( PPK == ' ', 'N', PPK ) == 'T', 'Tak', 'Nie' )
+   @ 19, 23 SAY SubStr( ZATRUD, 1, 23 )
+   @ 19, 52 SAY iif( iif( PPK == ' ', 'N', PPK ) == 'T', 'Tak', 'Nie' )
+   @ 19, 76 SAY iif( iif( ULGAKLSRA == ' ', 'T', ULGAKLSRA ) == 'T', 'Tak', 'Nie' )
    //002 skrocenia pol banku
    @ 20,  7 SAY SubStr( BANK, 1, 15 )
    @ 20, 29 SAY substr( KONTO,1, 15 )

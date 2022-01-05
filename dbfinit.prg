@@ -358,6 +358,7 @@ public aETATYdbf := {;
    { "ULGAKLSRA", "C", 1, 0 },;                   // 126 Odlicz ulge dla klasy sredniej
    { "ULGAKLSRK", "N", 8, 2 } }                   // 127 Kwota ulgi dla klasy sredniej
 
+
 // Create: EWID.DBF
 public aEWIDdbf := {;
    { "ID", "+", 4, 0 },;                          //  1
@@ -368,9 +369,9 @@ public aEWIDdbf := {;
    { "DATAPRZY", "D", 8, 0 },;                    //  6   Data uzyskania przychodu (kol 3)
    { "NUMER", "C", 100, 0 },;                     //  7   Nr rachunku, faktury lub dziennego zestawienia sprzedazy (kol 4)
    { "TRESC", "C", 30, 0 },;                      //  8   Opis zdarzenia
-   { "HANDEL", "N", 11, 2 },;                     //  9   Wartosc sprzedazy op. st. 8,5% (kol 9)
-   { "PRODUKCJA", "N", 11, 2 },;                  //  10  Wartosc sprzedazy op. st. 10% (kol 8)
-   { "USLUGI", "N", 11, 2 },;                     //  11  Wartosc sprzedazy op. st. 8,5% (kol 7)
+   { "HANDEL", "N", 11, 2 },;                     //  9   Wartosc sprzedazy op. st. 8,5% (kol 11)
+   { "PRODUKCJA", "N", 11, 2 },;                  //  10  Wartosc sprzedazy op. st. 10% (kol 10)
+   { "USLUGI", "N", 11, 2 },;                     //  11  Wartosc sprzedazy op. st. 12,5% (kol 8)
    { "UWAGI", "C", 200, 0 },;                     //  12  Uwagi (kol 13)
    { "ZAPLATA", "C", 1, 0 },;                     //  13  Zaplata - '1' - Zaplacone, '2' - Czesciowo zaplacone, '3' - Niezaplacone
    { "KWOTA", "N", 11, 2 },;                      //  14  Zaplacono kwota
@@ -379,9 +380,11 @@ public aEWIDdbf := {;
    { "REJZID", "N", 5, 0 },;                      //  17  Numer rekordu w tablicy 'rejs'
    { "RY20", "N", 11, 2 },;                       //  18  Wartosc sprzedazy op. st. 17% (kol 5)
    { "RY17", "N", 11, 2 },;                       //  19  Wartosc sprzedazy op. st. 15% (kol 6)
-   { "RY10", "N", 11, 2 },;                       //  20  Wartosc sprzedazy op. st. 3% (kol 11)
-   { "RYK07", "N", 11, 2 },;                      //  21  Wartosc sprzedazy op. st. 5,5% (kol 10)
-   { "RYK08", "N", 11, 2 } }                      //  22  Wartosc sprzedazy op. st. 2% (kol dodatkowa)
+   { "RY10", "N", 11, 2 },;                       //  20  Wartosc sprzedazy op. st. 3% (kol 13)
+   { "RYK07", "N", 11, 2 },;                      //  21  Wartosc sprzedazy op. st. 5,5% (kol 12)
+   { "RYK08", "N", 11, 2 },;                      //  22  Wartosc sprzedazy op. st. 2% (kol dodatkowa)
+   { "RYK09", "N", 11, 2 },;                      //  23  Wartosc sprzedazy op. st. 14% (kol 7)
+   { "RYK10", "N", 11, 2 } }                      //  24  Wartosc sprzedazy op. st. 12% (kol 9)
 
 // Create: EWIDPOJ.DBF
 public aEWIDPOJdbf := {;
@@ -972,7 +975,8 @@ public aPRACdbf := {;
    { "PPKIDKADR", "C", 10, 0 },;                  //  84 PPK ID Kadrowy (wewn©trzny) Identyfikator zatrudnienia osobyaplikacji kadrowej pracodawcy.Musi by† unikalnyw ramach danej firmy.Identyfikator pomocniczy.
    { "PPKIDEPPK", "C", 20, 0 },;                  //  85 PPK Identyfikator ewidencji PPK uczestnika PPK.
    { "PPKIDPZIF", "C", 50, 0 },;                  //  86 PPK Unikalny numer nadany przez instytucj© finansow¥, np. Nr rachunku, kt¢ry uczestnik ma nadany przez instytucj© finansow¥.
-   { "PRAKTYKA", "C", 1, 0 } }                    //  87 Praktykant ( 'T' = tak, 'N' - nie )
+   { "PRAKTYKA", "C", 1, 0 },;                    //  87 Praktykant ( 'T' = tak, 'N' - nie )
+   { "ULGAKLSRA", "C", 1, 0 } }                   //  88 Ulga dla klasy sredniej ('T'- tak )
 
 // Create: PROFIL.DBF
 public aPROFILdbf := { ;
@@ -1430,7 +1434,9 @@ public aSUMA_MCdbf := {;
    { "ZWRPODKW", "N", 11, 2 },;                   //  93  JPK_V7(VAT7) - Kwota zwrotu vat na poczt przyszlych zob.
    { "ZWRPODRD", "C", 120, 0 },;                  //  94  JPK_V7(VAT7) - Zwrot VAT na poczet. - nazwa podatku
    { "RYK07", "N", 12, 2 },;                      //  95  Ryczalt - Suma kol. 10 (5,5%)
-   { "RYK08", "N", 12, 2 } }                      //  96  Ryczalt - Suma kol. 12 dodatkowa (2%)
+   { "RYK08", "N", 12, 2 },;                      //  96  Ryczalt - Suma kol. 12 dodatkowa (2%)
+   { "RYK09", "N", 12, 2 },;                      //  95  Ryczalt - Suma kol. 8 (14%)
+   { "RYK10", "N", 12, 2 } }                      //  96  Ryczalt - Suma kol. 10 (12%)
 
 // Create: TABPIT4R.DBF
 public aTABPIT4Rdbf := {;
@@ -1497,16 +1503,19 @@ public aTABPIT8Rdbf := {;
 // Create: TAB_DOCH.DBF
 public aTAB_DOCHdbf := {;
    { "ID", "+", 4, 0 },;                          //   1
-   { "DEL", "C", 1, 0 },;                         //   2
    { "PODSTAWA", "N", 11, 2 },;                   //   3
-   { "PROCENT", "N", 2, 0 },;                     //   4
-   { "KWOTAZMN", "N", 11, 2 },;                   //   5
-   { "DEGRES", "L", 1, 0 },;                      //   6
-   { "KWOTADE1", "N", 11, 2 },;                   //   7
-   { "KWOTADE2", "N", 11, 2 },;                   //   8
-   { "DATAOD", "D", 8, 0 },;                      //   9
-   { "DATADO", "D", 8, 0 },;                      //  10
-   { "PROCENT2", "N", 5, 2 } }                    //  11
+   { "PROCENT", "N", 5, 2 },;                     //   4
+   { "DATAOD", "D", 8, 0 } }                      //   5
+
+// Create: TAB_DOCHUKS.DBF
+public aTAB_DOCHUKSdbf := {;
+   { "ID", "+", 4, 0 },;                          //   1
+   { "PODSTOD", "N", 11, 2 },;                    //   3
+   { "PODSTDO", "N", 11, 2 },;                    //   4
+   { "PROCENT", "N", 5, 2 },;                     //   5
+   { "MNOZNIK", "N", 5, 2 },;                     //   6
+   { "KWOTA", "N", 11, 2 },;                      //   7
+   { "DATAOD", "D", 8, 0 } }                      //   8
 
 // Create: TAB_POJ.DBF
 public aTAB_POJdbf := {;
@@ -1775,6 +1784,7 @@ public TabliceDbf := {;
    { "spolka",   "spolka.dbf",   aSPOLKAdbf,   .T. },;
    { "suma_mc",  "suma_mc.dbf",  aSUMA_MCdbf,  .T. },;
    { "tab_doch", "tab_doch.dbf", aTAB_DOCHdbf, .T. },;
+   { "tab_dochuks","tab_dochuks.dbf",aTAB_DOCHUKSdbf, .T.},;
    { "tab_poj",  "tab_poj.dbf",  aTAB_POJdbf,  .T. },;
    { "tab_vat",  "tab_vat.dbf",  aTAB_VATdbf,  .T. },;
    { "tab_vatue","tab_vatue.dbf",aTAB_VATUEdbf,.T. },;
@@ -1830,7 +1840,14 @@ FUNCTION dbfIdxTAB_DOCH()
    do while.not.dostepex('TAB_DOCH')
    enddo
    pack
-   index on del+DToS(dataod)+str(podstawa,11,2) to tab_doch
+   index on DToS(dataod)+str(podstawa,11,2) to tab_doch
+   RETURN
+****************************************
+FUNCTION dbfIdxTAB_DOCHUKS()
+   do while.not.dostepex('TAB_DOCHUKS')
+   enddo
+   pack
+   index on DToS(dataod)+Str(podstod,11,2) to tab_dochuks
    RETURN
 ****************************************
 *do while.not.dostepex('TAB_VAT')

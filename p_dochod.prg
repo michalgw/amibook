@@ -77,7 +77,7 @@ PROCEDURE P_Dochod( _OUT )
       Close_()
       RETURN
    ENDIF
-   IF del # '+'
+   IF RecCount() == 0
       Kom( 3, '*u', ' Brak informacji w tabeli podatku dochodowego ' )
       Close_()
       RETURN
@@ -689,7 +689,8 @@ PROCEDURE P_Dochod( _OUT )
 
             *--------------- podatek dochodowy wg tabeli
             dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
-            tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
+            //tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
+            tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
             IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
 //               SEEK '-'
@@ -1140,7 +1141,8 @@ PROCEDURE P_Dochod( _OUT )
             *--------------- podatek dochodowy wg tabeli
 
             dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
-            tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
+            //tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
+            tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
             IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
 //               SEEK '-'
@@ -1300,7 +1302,8 @@ PROCEDURE P_Dochod( _OUT )
 
             *--------------- podatek dochodowy wg tabeli
             dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
-            tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
+            //tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
+            tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
             IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
 //               SEEK '-'

@@ -298,6 +298,7 @@ PROCEDURE SpecPlac()
                aWiersz[ 'zus_zascho' ] := zus_zascho
                aWiersz[ 'zus_rkch' ] := zus_rkch
                aWiersz[ 'zus_podat' ] := zus_podat
+               aWiersz[ 'ulgaklsrk' ] := ulgaklsrk
 
                aWiersz[ 'zwolstr' ] := iif( zwolU # 0, 'U=' + AllTrim( Str( zwolU, 3 ) ) + ' ', '' ) + ;
                   iif( zwolC # 0, 'C=' + AllTrim( Str( zwolC, 3 ) ) + ' ', '' ) + ;
@@ -377,7 +378,7 @@ PROCEDURE SpecPlac()
          DO WHILE .NOT. &_koniec
             STORE 0 TO zdochod,zstaw_podat,zbrut_zasad,zbrut_premi,zdopl_opod,zdopl_bzus,zstaw_pue,zstaw_pur,zstaw_puc,zwar_psum,zwar_pue,zwar_pur,zwar_puc,zzasil_rodz,ziloso_rodz,zzasil_piel,ziloso_piel,zstaw_fue,zwar_fue,zstaw_fur, ;
                zwar_fur,zstaw_fuw,zwar_fuw,zwolu,zwolc,zwolz,zwolo,zwolb,zwolm,zwolw,zwoln,zwoli,zwar_pf3,zstaw_ffp,zwar_ffp,zbrut_razem,zkoszt,zstaw_puz,zodlicz,zpodatek,znetto,zwar_puz,zwar_puzo,zdopl_nieop,zodl_nieop,zdo_wyplaty, ;
-               zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat
+               zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat,zulgaklsrk
             *REC=recno()
             REC := rec_no
             k1 := PadR( AllTrim( nazwisko ) + ' ' + AllTrim( imie1 ) + ' ' + AllTrim( imie2 ), 40 )
@@ -490,6 +491,7 @@ PROCEDURE SpecPlac()
                      zzus_zascho := zus_zascho
                      zzus_rkch := zus_rkch
                      zzus_podat := zus_podat
+                     zulgaklsrk := zulgaklsrk + ulgaklsrk
                   ENDIF
                NEXT
                mm := mcdo - mcod
@@ -520,7 +522,7 @@ PROCEDURE SpecPlac()
                   + '  ***RAZEM SK&__L.ADKI**:' + kwota( zwar_fsum, 11, 2 ) )
                mon_drk( '***P&__L.ACA BRUTTO***:' + kwota( zBRUT_RAZEM, 11, 2 ) + '  Kasa chorych.' + iif( mm == 0, Str( zSTAW_PUZ, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_puz, 11, 2 ) + '  ****DO WYP&__L.ATY****:' + kwota( zDO_WYPLATY, 11, 2 ) ;
                   + '  Z ZUS:zasilek.....:' + kwota( zzus_zascho, 11, 2 ) )
-               mon_drk( 'Koszt uzyskania...:' + kwota( zKOSZT, 11, 2 ) + '  z tego odliczono..:' + kwota( zWAR_PUZO, 11, 2 ) + '  z tego: przelewem.:' + kwota( zPRZEL_NAKO, 11, 2 ) ;
+               mon_drk( 'Koszt uzyskania...:' + kwota( zKOSZT, 11, 2 ) + '  ulga klasy ˜redni.:' + kwota( zULGAKLSRK, 11, 2 ) + '  z tego: przelewem.:' + kwota( zPRZEL_NAKO, 11, 2 ) ;
                   + '        zdro:' + kwota( zzus_rkch, 6, 2 ) + ' podat:' + kwota( zzus_podat, 6, 2 ) )
                mon_drk( '******DOCH&__O.D******:' + kwota( zDOCHOD, 11, 2 ) + '  ******PODATEK*****:' + kwota( zPODATEK, 11, 2 ) + '          got&_o.wk&_a....:' + kwota( zDO_WYPLATY - zPRZEL_NAKO, 11, 2 ) ;
                   + '  NFZ:' + zkod_kasy + '   Kod tyt.ub.:' + zkod_tytu )

@@ -565,6 +565,12 @@ FUNCTION Main()
    // Art. 6 ust. 1d
    PUBLIC staw_rk08 := 0.02
 
+   // Opieka zdrow., architekt, projekt
+   PUBLIC staw_rk09 := 0.14
+
+   // ???
+   PUBLIC staw_rk10 := 0.12
+
    // Wˆ¥cz osma kolumna ( stawka 2% )
    PUBLIC staw_k08w := .F.
 
@@ -591,6 +597,12 @@ FUNCTION Main()
 
    // Art. 6 ust. 1d
    PUBLIC staw_ork08 := 'Art. 6 ust. 1d          '
+
+   // Opieka zdrow., architekt, projekt
+   PUBLIC staw_ork09 := 'Opieka zdr, archit.,proj'
+
+   // Opieka zdrow., architekt, projekt
+   PUBLIC staw_ork10 := 'Usl.wyd.oprogr.,dor.komp'
 
    // ---
 
@@ -1848,7 +1860,7 @@ FUNCTION _bb()
    o[ 1 ] := ' O - Nazwy Organ&_o.w Rejestrowych '
    o[ 2 ] := ' R - Nazwy Rejestr&_o.w            '
 
-   RETURN '10,4'
+   RETURN '9,4'
 
 *******************************************
 // Nazwy Organow Rejestrowych
@@ -1870,7 +1882,24 @@ FUNCTION _bbb()
 // Tabela podatku dochodowego
 FUNCTION _bc()
 
+   o[ 1 ] := ' T - Tabela pdatku dochodowego '
+   o[ 2 ] := ' U - Ulga dla klasy ˜redniej   '
+
+   RETURN '10,4'
+
+*******************************************
+// Tabela podatku dochodowego
+FUNCTION _bca()
+
    Tab_Doch()
+
+   RETURN ''
+
+*******************************************
+// Tabela ulgi dla klasy sredniej
+FUNCTION _bcb()
+
+   Tab_DochUKS()
 
    RETURN ''
 

@@ -32,21 +32,21 @@ PROCEDURE Tab_Doch()
    @  1, 47 say '          '
 
    *################################# GRAFIKA ##################################
-   @  5,  5 CLEAR TO 20, 79
-   @  6,  7 SAY 'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»'
-   @  7,  7 SAY 'º Podstawa ³ Pod ³Odl. od ³Deg³  Kwota  ³  Kwota  ³   Data   ³   Data   º'
-   @  8,  7 SAY 'ºopodatkow.³  %  ³podatku ³   ³ degr.#1 ³ degr.#2 ³    od    ³    do    º'
-   @  9,  7 SAY 'ºÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄº'
-   @ 10,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
-   @ 11,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
-   @ 12,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
-   @ 13,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
-   @ 14,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
-   @ 15,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
-   @ 16,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
-   @ 17,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
-   @ 18,  7 SAY 'º          ³     ³        ³   ³         ³         ³          ³          º'
-   @ 19,  7 SAY 'ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼'
+   @  3,  42 CLEAR TO 22, 79
+   @  6,  43 SAY 'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»'
+   @  7,  43 SAY 'º Podstawa ³ Podatek ³   Data   º'
+   @  8,  43 SAY 'ºopodatkow.³    %    ³    od    º'
+   @  9,  43 SAY 'ºÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄº'
+   @ 10,  43 SAY 'º          ³         ³          º'
+   @ 11,  43 SAY 'º          ³         ³          º'
+   @ 12,  43 SAY 'º          ³         ³          º'
+   @ 13,  43 SAY 'º          ³         ³          º'
+   @ 14,  43 SAY 'º          ³         ³          º'
+   @ 15,  43 SAY 'º          ³         ³          º'
+   @ 16,  43 SAY 'º          ³         ³          º'
+   @ 17,  43 SAY 'º          ³         ³          º'
+   @ 18,  43 SAY 'º          ³         ³          º'
+   @ 19,  43 SAY 'ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼'
 
    *############################### OTWARCIE BAZ ###############################
    DO WHILE.NOT.Dostep( 'TAB_DOCH' )
@@ -56,15 +56,15 @@ PROCEDURE Tab_Doch()
    *################################# OPERACJE #################################
    *----- parametry ------
    _row_g := 10
-   _col_l := 8
+   _col_l := 44
    _row_d := 18
-   _col_p := 78
+   _col_p := 74
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
    _esc := '27,22,48,77,109,7,46,28,68,100'
-   _top := '.F.'
-   _bot := "del#'+'"
+   _top := 'Bof()'
+   _bot := 'Eof()'
    _stop := ''
    _sbot := '-'
    _proc := 'linia2()'
@@ -109,32 +109,17 @@ PROCEDURE Tab_Doch()
             IF ins
                zPODSTAWA := 0
                zPROCENT := 0
-               zKWOTAZMN := 0
-               zDEGRES := 'N'
-               zKWOTADE1 := 0
-               zKWOTADE2 := 0
                zDATAOD := SToD("")
-               zDATADO := SToD("")
             ELSE
                zPODSTAWA := PODSTAWA
-               zPROCENT := PROCENT2
-               zKWOTAZMN := KWOTAZMN
-               zDEGRES := iif( DEGRES, 'T', 'N' )
-               zKWOTADE1 := KWOTADE1
-               zKWOTADE2 := KWOTADE2
+               zPROCENT := PROCENT
                zDATAOD := DATAOD
-               zDATADO := DATADO
             ENDIF
 
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-            @ wiersz, 8 GET zPODSTAWA PICTURE "9999999.99" valid v2_1()
-            @ wiersz, 19 GET zPROCENT  PICTURE "99.99" valid v2_2()
-            @ wiersz, 25 GET zKWOTAZMN PICTURE "99999.99"
-            @ wiersz, 35 GET zDEGRES   PICTURE "!" valid v2_3()
-            @ wiersz, 38 GET zKWOTADE1 PICTURE "999999.99"
-            @ wiersz, 48 GET zKWOTADE2 PICTURE "999999.99"
-            @ wiersz, 58 GET zDATAOD   PICTURE "@D"
-            @ wiersz, 69 GET zDATADO   PICTURE "@D"
+            @ wiersz, 44 GET zPODSTAWA PICTURE "9999999.99" valid v2_1()
+            @ wiersz, 57 GET zPROCENT  PICTURE "99.99" valid v2_2()
+            @ wiersz, 65 GET zDATAOD   PICTURE "@D"
             read_()
             SET CURSOR OFF
             IF LastKey() == 27
@@ -147,13 +132,8 @@ PROCEDURE Tab_Doch()
             ENDIF
             BlokadaR()
             repl_( 'PODSTAWA', zPODSTAWA )
-            repl_( 'PROCENT2', zPROCENT )
-            repl_( 'KWOTAZMN', zKWOTAZMN )
-            repl_( 'DEGRES', iif( zDEGRES == 'T', .T., .F. ) )
-            repl_( 'KWOTADE1', zKWOTADE1 )
-            repl_( 'KWOTADE2', zKWOTADE2 )
+            repl_( 'PROCENT', zPROCENT )
             repl_( 'DATAOD', zDATAOD )
-            repl_( 'DATADO', zDATADO )
             commit_()
             UNLOCK
 
@@ -164,7 +144,7 @@ PROCEDURE Tab_Doch()
             ENDIF
             @ _row_d, _col_l SAY &_proc
             Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
-            @ _row_d, _col_l SAY '          ³  ³        ³   ³         ³         ³          ³          '
+            @ _row_d, _col_l SAY '          ³         ³          '
          ENDDO
          _disp := ins .OR. LastKey() # 27
          kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
@@ -242,7 +222,7 @@ PROCEDURE Tab_Doch()
 *################################## FUNKCJE #################################
 FUNCTION linia2()
 
-   RETURN kwota( PODSTAWA, 10, 2 ) + "³" + Str( PROCENT2, 5, 2 ) + "³" + kwota( kwotazmn, 8, 2 ) + "³ " +iif( degres, "T", "N" ) +  " ³" + kwota( kwotade1, 9, 2 ) + "³" + kwota( kwotade2, 9, 2 ) + "³" +  DToC( dataod ) + "³" +  DToC( datado )
+   RETURN kwota( PODSTAWA, 10, 2 ) + "³  " + Str( PROCENT, 5, 2 ) + "  ³" +  DToC( dataod )
    //return [   ]+kwota(PODSTAWA,14,2)+[    ³   ]+str(PROCENT,2)+[    ]
 
 ***************************************************
@@ -252,7 +232,7 @@ FUNCTION v2_1()
       RETURN .F.
    ENDIF
    nr_rec := RecNo()
-   seek '+' + Str( zPODSTAWA, 11, 2 )
+   seek Str( zPODSTAWA, 11, 2 )
    fou := Found()
    rec := RecNo()
    GO nr_rec
@@ -271,10 +251,221 @@ FUNCTION v2_2()
    RETURN zPROCENT > 0
 
 ***************************************************
-FUNCTION v2_3()
-   RETURN zDEGRES$'TN'
+//FUNCTION v2_3()
+//   RETURN zDEGRES$'TN'
 
 /*----------------------------------------------------------------------*/
+
+PROCEDURE Tab_DochUKS()
+
+   PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou,_top_bot
+
+   @  1, 47 say '          '
+
+   *################################# GRAFIKA ##################################
+   @  3,  11 CLEAR TO 22, 79
+   @  6,  12 SAY 'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»'
+   @  7,  12 SAY 'º Podstawa ³ Podstawa ³ Mno¾nik ³  Kwota   ³ Mianownik³   Data   º'
+   @  8,  12 SAY 'º    od    ³    do    ³         ³          ³          ³    od    º'
+   @  9,  12 SAY 'ºÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄº'
+   @ 10,  12 SAY 'º          ³          ³         ³          ³          ³          º'
+   @ 11,  12 SAY 'º          ³          ³         ³          ³          ³          º'
+   @ 12,  12 SAY 'º          ³          ³         ³          ³          ³          º'
+   @ 13,  12 SAY 'º          ³          ³         ³          ³          ³          º'
+   @ 14,  12 SAY 'º          ³          ³         ³          ³          ³          º'
+   @ 15,  12 SAY 'º          ³          ³         ³          ³          ³          º'
+   @ 16,  12 SAY 'º          ³          ³         ³          ³          ³          º'
+   @ 17,  12 SAY 'º          ³          ³         ³          ³          ³          º'
+   @ 18,  12 SAY 'º          ³          ³         ³          ³          ³          º'
+   @ 19,  12 SAY 'ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼'
+
+   *############################### OTWARCIE BAZ ###############################
+   DO WHILE.NOT.Dostep( 'TAB_DOCHUKS' )
+   ENDDO
+   SET INDEX TO tab_dochuks
+
+   *################################# OPERACJE #################################
+   *----- parametry ------
+   _row_g := 10
+   _col_l := 13
+   _row_d := 18
+   _col_p := 76
+   _invers := 'i'
+   _curs_l := 0
+   _curs_p := 0
+   _esc := '27,22,48,77,109,7,46,28,68,100'
+   _top := 'Bof()'
+   _bot := 'Eof()'
+   _stop := ''
+   _sbot := '-'
+   _proc := 'Tab_DochUKSLinia()'
+   _row := Int( ( _row_g + _row_d ) / 2 )
+   _proc_spe := ''
+   _disp := .T.
+   _cls := ''
+   _top_bot := _top + '.or.' + _bot
+
+   *----------------------
+   kl := 0
+   DO WHILE kl # 27
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      SET COLOR TO
+      _row := wybor( _row )
+      ColStd()
+      kl := LastKey()
+      DO CASE
+      *############################ INSERT/MODYFIKACJA ############################
+      CASE kl == 22 .OR. kl == 48 .OR. _row == -1 .OR. kl == 77 .OR. kl == 109
+         @ 1, 47 SAY '          '
+         ins := ( kl # 77 .AND. kl # 109 ) .OR. &_top_bot
+         IF ins
+            ColStb()
+            center( 23, 'þ                     þ' )
+            ColSta()
+            center( 23, 'W P I S Y W A N I E' )
+            ColStd()
+            RestScreen( _row_g, _col_l, _row_d + 1, _col_p, _cls )
+            wiersz := _row_d
+         ELSE
+            ColStb()
+            center( 23, 'þ                       þ' )
+            ColSta()
+            center( 23, 'M O D Y F I K A C J A' )
+            ColStd()
+            wiersz := _row
+         ENDIF
+         DO WHILE .T.
+            *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
+            IF ins
+               zPODSTOD := 0
+               zPODSTDO := 0
+               zPROCENT := 0
+               zMNOZNIK := 0
+               zKWOTA := 0
+               zDATAOD := SToD("")
+            ELSE
+               zPODSTOD := PODSTOD
+               zPODSTDO := PODSTDO
+               zPROCENT := PROCENT
+               zMNOZNIK := MNOZNIK
+               zKWOTA := KWOTA
+               zDATAOD := DATAOD
+            ENDIF
+
+            *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
+            @ wiersz, 13 GET zPODSTOD PICTURE "9999999.99"
+            @ wiersz, 24 GET zPODSTDO PICTURE "9999999.99"
+            @ wiersz, 35 GET zMNOZNIK PICTURE "999999.99"
+            @ wiersz, 45 GET zKWOTA   PICTURE "9999999.99"
+            @ wiersz, 59 GET zPROCENT PICTURE "99.99"
+            @ wiersz, 67 GET zDATAOD  PICTURE "@D"
+            read_()
+            SET CURSOR OFF
+            IF LastKey() == 27
+               EXIT
+            ENDIF
+
+            *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
+            IF ins
+               app()
+            ENDIF
+            BlokadaR()
+            repl_( 'PODSTAWA', zPODSTAWA )
+            repl_( 'PROCENT', zPROCENT )
+            repl_( 'DATAOD', zDATAOD )
+            commit_()
+            UNLOCK
+
+            *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
+            _row := Int( ( _row_g + _row_d ) / 2 )
+            IF .NOT. ins
+               EXIT
+            ENDIF
+            @ _row_d, _col_l SAY &_proc
+            Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
+            @ _row_d, _col_l SAY '          ³          ³         ³          ³          ³          '
+         ENDDO
+         _disp := ins .OR. LastKey() # 27
+         kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
+         @ 23, 0
+
+      *################################ KASOWANIE #################################
+      CASE kl == 7 .OR. kl == 46
+         @ 1, 47 SAY '          '
+         ColStb()
+         center( 23, 'þ                   þ' )
+         ColSta()
+         center( 23, 'K A S O W A N I E' )
+         ColStd()
+         _disp := tnesc( '*i', '   Czy skasowa†? (T/N)   ' )
+         if _disp
+            BlokadaR()
+            del()
+            UNLOCK
+            SKIP
+            commit_()
+            IF &_bot
+               SKIP -1
+            ENDIF
+         ENDIF
+         @ 23, 0
+
+      *################################### POMOC ##################################
+      CASE kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY '          '
+         declare p[ 20 ]
+         *---------------------------------------
+         p[ 1 ] := '                                                        '
+         p[ 2 ] := '   [' + Chr( 24 ) + '/' + Chr( 25 ) + ']...................poprzednia/nast©pna pozycja  '
+         p[ 3 ] := '   [PgUp/PgDn].............poprzednia/nast©pna strona   '
+         p[ 4 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
+         p[ 5 ] := '   [Ins]...................wpisywanie                   '
+         p[ 6 ] := '   [M].....................modyfikacja pozycji          '
+         p[ 7 ] := '   [D].....................przywr¢† warto˜ci domy˜lne   '
+         p[ 8 ] := '   [Del]...................kasowanie pozycji            '
+         p[ 9 ] := '   [Esc]...................wyj˜cie                      '
+         p[ 10] := '                                                        '
+         *---------------------------------------
+         SET COLOR TO i
+         i := 20
+         j := 24
+         DO WHILE i > 0
+            IF Type( 'p[i]' ) # 'U'
+               center( j, p[ i ] )
+               j := j - 1
+            ENDIF
+            i := i - 1
+         ENDDO
+         SET COLOR TO
+         pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            KEYBOARD Chr( LastKey() )
+         ENDIF
+         RESTORE SCREEN FROM scr_
+         _disp := .F.
+
+      CASE kl == Asc( 'D' ) .OR. kl == Asc( 'd' )
+
+         IF TNEsc( , "Czy przywr¢ci† domy˜ln¥ tabel© stawek podatku ? (Tak/Nie)" )
+            DomParPrzywroc_TabDochUKS( .F., DomParRok() )
+         ENDIF
+
+      ******************** ENDCASE
+      ENDCASE
+   ENDDO
+   close_()
+
+   RETURN
+
+*################################## FUNKCJE #################################
+FUNCTION Tab_DochUKSLinia()
+
+   RETURN kwota( PODSTOD, 10, 2 ) + "³" + kwota( PODSTDO, 10, 2 ) + "³" + kwota( MNOZNIK, 9, 2 ) + "³" + kwota( KWOTA, 10, 2 ) + "³   " + Str( PROCENT, 5, 2 ) + "  ³" +  DToC( dataod )
+   //return [   ]+kwota(PODSTAWA,14,2)+[    ³   ]+str(PROCENT,2)+[    ]
+
+***************************************************
 
 FUNCTION TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac, lUzyjFiltra  )
 
@@ -291,7 +482,8 @@ FUNCTION TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac, lUzyjFiltra  )
    ENDIF
 
    IF ! Empty( lUzyjFiltra ) .AND. lUzyjFiltra
-      ( ncWorkspace )->( dbSetFilter( { || ( ncWorkspace )->del == '+' .AND. ( ( ncWorkspace )->dataod <= dDataNa ) .AND. ( ( ( ncWorkspace )->datado >= dDataNa ) .OR. ( ( ncWorkspace )->datado == CToD('') ) ) } ) )
+      //( ncWorkspace )->( dbSetFilter( { || ( ncWorkspace )->del == '+' .AND. ( ( ncWorkspace )->dataod <= dDataNa ) .AND. ( ( ( ncWorkspace )->datado >= dDataNa ) .OR. ( ( ncWorkspace )->datado == CToD('') ) ) } ) )
+      ( ncWorkspace )->( dbSetFilter( { || ( ( ncWorkspace )->dataod <= dDataNa ) .AND. ( ( ( ncWorkspace )->datado >= dDataNa ) .OR. ( ( ncWorkspace )->datado == CToD('') ) ) } ) )
    ENDIF
    ( ncWorkspace )->( dbGoBottom() )
 //   ( ncWorkspace )->( dbSeek( '-' ) )
@@ -302,11 +494,12 @@ FUNCTION TabDochPobierz( nKwota, ncWorkspace, nRok, nMiesiac, lUzyjFiltra  )
    ENDDO
 
    AAdd( aRes, ( ncWorkspace )->podstawa )
-   AAdd( aRes, ( ncWorkspace )->procent2 )
-   AAdd( aRes, ( ncWorkspace )->kwotazmn )
-   AAdd( aRes, ( ncWorkspace )->degres )
-   AAdd( aRes, ( ncWorkspace )->kwotade1 )
-   AAdd( aRes, ( ncWorkspace )->kwotade2 )
+   AAdd( aRes, ( ncWorkspace )->procent )
+   //AAdd( aRes, ( ncWorkspace )->procent2 )
+   //AAdd( aRes, ( ncWorkspace )->kwotazmn )
+   //AAdd( aRes, ( ncWorkspace )->degres )
+   //AAdd( aRes, ( ncWorkspace )->kwotade1 )
+   //AAdd( aRes, ( ncWorkspace )->kwotade2 )
 
    IF ! Empty( lUzyjFiltra ) .AND. lUzyjFiltra
       ( ncWorkspace )->( dbClearFilter() )
@@ -353,3 +546,33 @@ FUNCTION TabDochProcent( nPodstawa, ncWorkspace, nRok, nMiesiac  )
    RETURN nRes
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION TabDochUKSKwota( nPodstawa, nRok, nMiesiac )
+
+   LOCAL nRes := 0
+   LOCAL nMnoznik := 0, nKwota, nProcent
+   LOCAL nTmpArea := Select()
+
+   DO WHILE ! DostepPro( 'TAB_DOCHUKS', ,.T., , 'TAB_DOCHUKS' )
+   ENDDO
+   tab_dochuks->( dbGoTop() )
+   DO WHILE ! tab_dochuks->( Eof() ) .AND. nMnoznik == 0
+      IF nPodstawa >= tab_dochuks->podstod .AND. nPodstawa <= tab_dochuks->podstdo
+         nMnoznik := tab_dochuks->mnoznik
+         nKwota := tab_dochuks->kwota
+         nProcent := tab_dochuks->procent
+      ENDIF
+      tab_dochuks->( dbSkip() )
+   ENDDO
+   tab_dochuks->( dbCloseArea() )
+
+   IF nMnoznik <> 0
+      nRes := _round( ( nPodstawa * ( nMnoznik / 100 ) + nKwota ) / nProcent, 2 )
+   ENDIF
+
+   Select( nTmpArea )
+
+   RETURN nRes
+
+/*----------------------------------------------------------------------*/
+
