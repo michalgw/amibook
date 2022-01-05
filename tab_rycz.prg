@@ -38,6 +38,8 @@ FUNCTION Tab_Rycz()
       staw_ry10 := 0.1
       staw_rk07 := 0.125
       staw_rk08 := 0.02
+      staw_rk09 := 0.14
+      staw_rk10 := 0.12
       SAVE TO tab_rycz ALL LIKE staw_*
       RETURN
    ENDIF
@@ -50,6 +52,8 @@ FUNCTION Tab_Rycz()
    zstaw_ry10 := staw_ry10 * 100
    zstaw_rk07 := staw_rk07 * 100
    zstaw_rk08 := staw_rk08 * 100
+   zstaw_rk09 := staw_rk09 * 100
+   zstaw_rk10 := staw_rk10 * 100
 
    zstaw_ohand := staw_ohand
    zstaw_oprod := staw_oprod
@@ -59,6 +63,8 @@ FUNCTION Tab_Rycz()
    zstaw_ory10 := staw_ory10
    zstaw_ork07 := staw_ork07
    zstaw_ork08 := staw_ork08
+   zstaw_ork09 := staw_ork09
+   zstaw_ork10 := staw_ork10
 
    *################################# GRAFIKA ##################################
    ColStd()
@@ -73,11 +79,13 @@ FUNCTION Tab_Rycz()
    @ 16, 42 SAY 'บ 9 ณ                      ณ         บ'
    @ 17, 42 SAY 'บ 10ณ                      ณ         บ'
    @ 18, 42 SAY 'บ 11ณ                      ณ         บ'
+   @ 19, 42 SAY 'บ 12ณ                      ณ         บ'
+   @ 20, 42 SAY 'บ 13ณ                      ณ         บ'
    IF staw_k08w
-      @ 19, 42 SAY 'บ 12ณ                      ณ         บ'
-      @ 20, 42 SAY 'ศออออออออออออออออออออออออออออออออออออผ'
+      @ 21, 42 SAY 'บ 14ณ                      ณ         บ'
+      @ 22, 42 SAY 'ศออออออออออออออออออออออออออออออออออออผ'
    ELSE
-      @ 19, 42 SAY 'ศออออออออออออออออออออออออออออออออออออผ'
+      @ 21, 42 SAY 'ศออออออออออออออออออออออออออออออออออออผ'
    ENDIF
 
    *################################# OPERACJE #################################
@@ -103,19 +111,23 @@ FUNCTION Tab_Rycz()
             @ 12, 72 GET zstaw_ry20 PICTURE '99.99'
             @ 13, 48 GET zstaw_ory17 PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
             @ 13, 72 GET zstaw_ry17 PICTURE '99.99'
-            @ 14, 48 GET zstaw_ouslu PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
-            @ 14, 72 GET zstaw_uslu PICTURE '99.99'
-            @ 15, 48 GET zstaw_oprod PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
-            @ 15, 72 GET zstaw_prod PICTURE '99.99'
-            @ 16, 48 GET zstaw_ohand PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
-            @ 16, 72 GET zstaw_hand PICTURE '99.99'
-            @ 17, 48 GET zstaw_ork07 PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
-            @ 17, 72 GET zstaw_rk07 PICTURE '99.99'
-            @ 18, 48 GET zstaw_ory10 PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
-            @ 18, 72 GET zstaw_ry10 PICTURE '99.99'
+            @ 14, 48 GET zstaw_ork09 PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
+            @ 14, 72 GET zstaw_rk09 PICTURE '99.99'
+            @ 15, 48 GET zstaw_ouslu PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
+            @ 15, 72 GET zstaw_uslu PICTURE '99.99'
+            @ 16, 48 GET zstaw_ork10 PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
+            @ 16, 72 GET zstaw_rk10 PICTURE '99.99'
+            @ 17, 48 GET zstaw_oprod PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
+            @ 17, 72 GET zstaw_prod PICTURE '99.99'
+            @ 18, 48 GET zstaw_ohand PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
+            @ 18, 72 GET zstaw_hand PICTURE '99.99'
+            @ 19, 48 GET zstaw_ork07 PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
+            @ 19, 72 GET zstaw_rk07 PICTURE '99.99'
+            @ 20, 48 GET zstaw_ory10 PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
+            @ 20, 72 GET zstaw_ry10 PICTURE '99.99'
             IF staw_k08w
-               @ 18, 48 GET zstaw_ork07 PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
-               @ 19, 70 GET zstaw_rk08 PICTURE '99.99'
+               @ 21, 48 GET zstaw_ork08 PICTURE '@S21 XXXXXXXXXXXXXXXXXXXXXXXX'
+               @ 21, 72 GET zstaw_rk08 PICTURE '99.99'
             ENDIF
             ****************************
             CLEAR TYPEAHEAD
@@ -132,6 +144,8 @@ FUNCTION Tab_Rycz()
             staw_ry10 := zstaw_ry10 / 100
             staw_rk07 := zstaw_rk07 / 100
             staw_rk08 := zstaw_rk08 / 100
+            staw_rk09 := zstaw_rk09 / 100
+            staw_rk10 := zstaw_rk10 / 100
 
             staw_ohand := zstaw_ohand
             staw_oprod := zstaw_oprod
@@ -141,6 +155,8 @@ FUNCTION Tab_Rycz()
             staw_ory10 := zstaw_ory10
             staw_ork07 := zstaw_ork07
             staw_ork08 := zstaw_ork08
+            staw_ork09 := zstaw_ork09
+            staw_ork10 := zstaw_ork10
 
             SAVE TO tab_rycz ALL LIKE staw_*
             *๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐
@@ -198,19 +214,23 @@ PROCEDURE say_r()
    @ 12, 72 SAY zstaw_ry20 PICTURE '99.99'
    @ 13, 48 SAY Pad( SubStr( zstaw_ory17, 1, 21 ), 21 )
    @ 13, 72 SAY zstaw_ry17 PICTURE '99.99'
-   @ 14, 48 SAY Pad( SubStr( zstaw_ouslu, 1, 21 ), 21 )
-   @ 14, 72 SAY zstaw_uslu PICTURE '99.99'
-   @ 15, 48 SAY Pad( SubStr( zstaw_oprod, 1, 21 ), 21 )
-   @ 15, 72 SAY zstaw_prod PICTURE '99.99'
-   @ 16, 48 SAY Pad( SubStr( zstaw_ohand, 1, 21 ), 21 )
-   @ 16, 72 SAY zstaw_hand PICTURE '99.99'
-   @ 17, 48 SAY Pad( SubStr( zstaw_ork07, 1, 21 ), 21 )
-   @ 17, 72 SAY zstaw_rk07 PICTURE '99.99'
-   @ 18, 48 SAY Pad( SubStr( zstaw_ory10, 1, 21 ), 21 )
-   @ 18, 72 SAY zstaw_ry10 PICTURE '99.99'
+   @ 14, 48 SAY Pad( SubStr( zstaw_ork09, 1, 21 ), 21 )
+   @ 14, 72 SAY zstaw_rk09 PICTURE '99.99'
+   @ 15, 48 SAY Pad( SubStr( zstaw_ouslu, 1, 21 ), 21 )
+   @ 15, 72 SAY zstaw_uslu PICTURE '99.99'
+   @ 16, 48 SAY Pad( SubStr( zstaw_ork10, 1, 21 ), 21 )
+   @ 16, 72 SAY zstaw_rk10 PICTURE '99.99'
+   @ 17, 48 SAY Pad( SubStr( zstaw_oprod, 1, 21 ), 21 )
+   @ 17, 72 SAY zstaw_prod PICTURE '99.99'
+   @ 18, 48 SAY Pad( SubStr( zstaw_ohand, 1, 21 ), 21 )
+   @ 18, 72 SAY zstaw_hand PICTURE '99.99'
+   @ 19, 48 SAY Pad( SubStr( zstaw_ork07, 1, 21 ), 21 )
+   @ 19, 72 SAY zstaw_rk07 PICTURE '99.99'
+   @ 20, 48 SAY Pad( SubStr( zstaw_ory10, 1, 21 ), 21 )
+   @ 20, 72 SAY zstaw_ry10 PICTURE '99.99'
    IF staw_k08w
-      @ 19, 48 SAY Pad( SubStr( zstaw_ork08, 1, 21 ), 21 )
-      @ 19, 72 SAY zstaw_rk08 PICTURE '99.99'
+      @ 21, 48 SAY Pad( SubStr( zstaw_ork08, 1, 21 ), 21 )
+      @ 21, 72 SAY zstaw_rk08 PICTURE '99.99'
    ENDIF
    ColStd()
 
