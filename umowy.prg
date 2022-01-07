@@ -507,11 +507,11 @@ PROCEDURE Umowy()
                @ 19, 54 GET oWAR_PUZ  PICTURE '999999.99' WHEN oblplu() .AND. .F.
                @ 19, 64 GET zAPUZ PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUZ $ 'AR' .AND. vAUTOKOM()
                @ 19, 66 GET zWAR_PUZ  PICTURE '999999.99' WHEN oblplu()
-               @ 20, 26 SAY '             do odlicz..%.='
-               @ 20, 45 GET zSTAW_PZK PICTURE '99.99' VALID oblplu()
-               @ 20, 54 GET oWAR_PZK  PICTURE '999999.99' WHEN oblplu() .AND. .F.
-               @ 20, 64 GET zAPZK PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPZK $ 'AR' .AND. vAUTOKOM()
-               @ 20, 66 GET zWAR_PZK  PICTURE '999999.99' WHEN oblplu()
+               *@ 20, 26 SAY '             do odlicz..%.='
+               *@ 20, 45 GET zSTAW_PZK PICTURE '99.99' VALID oblplu()
+               *@ 20, 54 GET oWAR_PZK  PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               *@ 20, 64 GET zAPZK PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPZK $ 'AR' .AND. vAUTOKOM()
+               *@ 20, 66 GET zWAR_PZK  PICTURE '999999.99' WHEN oblplu()
                @ 21, 26 SAY 'Podatek do zap&_l.aty........:'
                @ 21, 66 GET zPODATEK  PICTURE '999999.99' WHEN oblplu() .AND. .F.
                READ
@@ -1016,14 +1016,16 @@ FUNCTION oblplu()
       zDOCHOD := zBRUT_RAZEM
       zDOCHODPOD := _round( zDOCHOD + zPPKPPM, 0 )
       B5 := _round( zBRUT_RAZEM*( zSTAW_PODAT / 100 ), 0 )
-      oWAR_PZK := min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+      //oWAR_PZK := min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+      oWAR_PZK := 0
       oWAR_PUZ := min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
       IF zAPUZ # 'R'
          zWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
       ENDIF
-      IF zAPZK # 'R'
+      /*IF zAPZK # 'R'
          zWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
-      ENDIF
+      ENDIF*/
+      zWAR_PZK := 0
       zWAR_PUZO := zWAR_PZK
       zPODATEK := _round( zBRUT_RAZEM * ( zSTAW_PODAT / 100 ), 0 )
       zNETTO := zBRUT_RAZEM - ( zPODATEK + zWAR_PSUM + zWAR_PUZ )
@@ -1092,26 +1094,34 @@ FUNCTION oblplu()
       IF zOSWIAD26R = 'T'
          B5 := 0.0
          oWAR_PUZ := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
-         oWAR_PZK := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
+         //oWAR_PZK := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
+         oWAR_PZK := 0
          IF zAPUZ # 'R'
             zWAR_PUZ := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
          ENDIF
+         /*
          IF zAPZK # 'R'
             zWAR_PZK := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
          ENDIF
+         */
+         zWAR_PZK := 0
          zWAR_PUZO := zWAR_PZK
          zPODATEK := 0.0
          zSTAW_PODAT := 0.0
       ELSE
          B5 := zDOCHODPOD * ( zSTAW_PODAT / 100 )
          oWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
-         oWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+         //oWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+         oWAR_PZK := 0
          IF zAPUZ # 'R'
             zWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
          ENDIF
+         /*
          IF zAPZK # 'R'
             zWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
          ENDIF
+         */
+         zWAR_PZK := 0
          zWAR_PUZO := zWAR_PZK
          zPODATEK := Max( 0, _round( B5 - zWAR_PZK, 0 ) )
       ENDIF
