@@ -381,7 +381,8 @@ PROCEDURE Pracow()
                PPKPS2 WITH zPPKPS2, ;
                PPKIDKADR WITH zPPKIDKADR, ;
                PPKIDEPPK WITH zPPKIDEPPK, ;
-               PPKIDPZIF WITH zPPKIDPZIF
+               PPKIDPZIF WITH zPPKIDPZIF, ;
+               ULGAKLSRA WITH zULGAKLSRA
 
             IF (zJAKI_PRZEL = 'P' ) .AND. ( zKW_PRZELEW > 100 )
                SaveScreen()
