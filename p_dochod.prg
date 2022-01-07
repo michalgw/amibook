@@ -690,7 +690,7 @@ PROCEDURE P_Dochod( _OUT )
             *--------------- podatek dochodowy wg tabeli
             dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
             //tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
-            tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
+            tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) } ) )
             IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
 //               SEEK '-'
@@ -705,7 +705,7 @@ PROCEDURE P_Dochod( _OUT )
             ELSE
                IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                   DO WHILE  ! Bof()
-                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 1, xxx ], pzm ) - podstawa ) * procent2 / 100
+                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 1, xxx ], pzm ) - podstawa ) * procent / 100
                      pzm := podstawa
                      SKIP -1
                   ENDDO
@@ -1142,7 +1142,7 @@ PROCEDURE P_Dochod( _OUT )
 
             dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
             //tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
-            tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
+            tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) } ) )
             IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
 //               SEEK '-'
@@ -1157,7 +1157,7 @@ PROCEDURE P_Dochod( _OUT )
             ELSE
                IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                   DO WHILE ! Bof()
-                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 2, xxx ], pzm ) - podstawa ) * procent2 / 100
+                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 2, xxx ], pzm ) - podstawa ) * procent / 100
                      pzm := podstawa
                      SKIP -1
                   ENDDO
@@ -1303,7 +1303,7 @@ PROCEDURE P_Dochod( _OUT )
             *--------------- podatek dochodowy wg tabeli
             dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
             //tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
-            tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
+            tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) } ) )
             IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
 //               SEEK '-'
@@ -1318,7 +1318,7 @@ PROCEDURE P_Dochod( _OUT )
             ELSE
                IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                   DO WHILE ! Bof()
-                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 3, xxx ], pzm ) - podstawa ) * procent2 / 100
+                     ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 3, xxx ], pzm ) - podstawa ) * procent / 100
                      pzm := podstawa
                      SKIP -1
                   ENDDO

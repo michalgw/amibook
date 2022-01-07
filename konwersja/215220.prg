@@ -51,6 +51,7 @@ FUNCTION Main()
    dbfUtworzTabele( 'ETATY', 'etaty.tym' )
    dbfUtworzTabele( 'EWID', 'ewid.tym' )
    dbfUtworzTabele( 'SUMA_MC', 'suma_mc.tym' )
+   dbfUtworzTabele( 'DANE_MC', 'dane_mc.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
@@ -109,6 +110,7 @@ FUNCTION Main()
    dbfIdxETATY()
    dbfIdxEWID()
    dbfIdxSUMA_MC()
+   dbfIdxDANE_MC()
    dbCloseAll()
 
    wersja_db := 2200

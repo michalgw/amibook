@@ -147,7 +147,9 @@ public aDANE_MCdbf := {;
    { "ODSEODMAJ", "N", 11, 2 },;                  //  90  Kwota odsetek naliczonych od dnia zaliczenia do kosztow uzyskania przychodow - wydatkow na nabycie lub wytworzenie we wlasnym zakresie sklad.maj
    { "STAW5_WUZ", "N", 5, 2 },;                   //  91  ZUS Stawka zdrowotna do ZUS do PIT-5
    { "INNEODPOD", "N", 11, 2 },;                  //  92  Inne odliczenia
-   { "PODSTZDR", "N", 11, 2 } }                   //  93  ZUS Podstawa tylko do zdrow.
+   { "PODSTZDR", "N", 11, 2 },;                   //  93  ZUS Podstawa tylko do zdrow.
+   { "ULGAKLSRA", "C", 1, 0 },;                   //  94  Odlicz ulge dla klasy sredniej
+   { "ULGAKLSRK", "N", 8, 2 } }                   //  95  Kwota ulgi dla klasy sredniej
 
 // Create: DATYUM.DBF
 public aDATYUMdbf := {;
