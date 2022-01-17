@@ -358,8 +358,8 @@ public aETATYdbf := {;
    { "PPKIDEPPK", "C", 50, 0 },;                  // 124 PPK Identyfikator ewidencji PPK uczestnika PPK
    { "ZASI_BZUS", "N", 8, 2 },;                   // 125 Zasiˆki od pracodawcy bez ZUS
    { "ULGAKLSRA", "C", 1, 0 },;                   // 126 Odlicz ulge dla klasy sredniej
-   { "ULGAKLSRK", "N", 8, 2 } }                   // 127 Kwota ulgi dla klasy sredniej
-
+   { "ULGAKLSRK", "N", 8, 2 },;                   // 127 Kwota ulgi dla klasy sredniej
+   { "ODLICZENIE", "C", 1, 0 } }                  // 128 Odliczenie kwoty wolnej
 
 // Create: EWID.DBF
 public aEWIDdbf := {;
