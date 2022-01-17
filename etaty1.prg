@@ -138,6 +138,7 @@ zOSWIAD26R := ' '
 zPPK := iif( etaty->ppk $ 'TN', etaty->ppk, 'N' )
 zTERM_WYP := ' '
 zULGAKLSRA := iif( etaty->ulgaklsra $ 'TN', etaty-ulgaklsra, 'N' )
+zODLICZENIE := ' '
 //002 ostatnia zmienna jest nowa
 
 mmm=array(12)
@@ -422,7 +423,8 @@ do while .t.
               @ 10,43 say 'Podatek stawka..........%.='
               @ 10,62 get zSTAW_PODAT pict '99.99' valid oblpl()
               @ 10,71 get B5          pict '99999.99' when oblpl().and..f.
-              @ 11,43 say     'Odliczenie od dochodu.....:' get zODLICZ     pict '99999.99' valid oblpl()
+              @ 11,43 say     'Odliczenie od dochodu.' GET zODLICZENIE picture '!' valid zODLICZENIE $ 'TN' .AND. oblpl()
+              @ 11,71 get zODLICZ     pict '99999.99' valid oblpl()
               IF Val( miesiacpla ) == 12
                  @ 12, 43 SAY 'Wypˆata w 2022............:'  get zTERM_WYP picture '!' valid zTERM_WYP $ 'TN' .AND. oblpl()
               ENDIF
@@ -755,8 +757,12 @@ func oblpl
          zODL_BEZPL=0
       endif
       zPENSJA=(zBRUT_ZASAD+zBRUT_PREMI+zDOPL_OPOD+zDOPL_BZUS + zZASI_BZUS)-(zWAR_PF3+zODL_CHOROB+zODL_BEZPL)
-      if prac->odliczenie='N'
+      IF zODLICZENIE = 'N'
          zODLICZ=0
+      ELSE
+         IF zODLICZ == 0
+            zODLICZ := parap_odl
+         ENDIF
       endif
       zSTA_ZASCHO=_round(((zBRUTTO6/zIL_MIE6)/30)*(zPRO_ZASCHO/100),2)
       zDOP_ZASCHO=_round(zDNI_ZASCHO*zSTA_ZASCHO,2)
@@ -1059,6 +1065,7 @@ zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), V
 zTERM_WYP := iif( Val( miesiacpla ) == 12, iif( TERM_WYP == ' ', 'N', TERM_WYP ), 'N' )
 zULGAKLSRA := iif( Val( miesiacpla ) == 12, iif( ULGAKLSRA == ' ', 'N', ULGAKLSRA ), 'N' )
 zULGAKLSRK := ULGAKLSRK
+zODLICZENIE := ODLICZENIE
 if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    skip -1
    zBRUT_ZASAD=iif(zBRUT_ZASAD=0,BRUT_ZASAD,zBRUT_ZASAD)
@@ -1191,7 +1198,8 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
       zKOD_KASY=parap_rkc
       zKOD_TYTU='011000'
       zSTAW_PODAT=parap_pod
-      if prac->odliczenie='T'
+      zODLICZENIE := prac->odliczenie
+      IF zODLICZENIE='T'
          zODLICZ=parap_odl
       else
          zODLICZ=0
@@ -1251,6 +1259,10 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
       ENDIF
    endif
 endif
+
+   IF zODLICZENIE == ' '
+      zODLICZENIE := prac->odliczenie
+   ENDIF
 
    IF Val( miesiacpla ) == 12 .AND. zTERM_WYP == 'T'
       zSTAW_PZK := 0
@@ -1364,6 +1376,8 @@ repl_( 'PPKPK2', zPPKPK2 )
 repl_( 'PPKPPM', zPPKPPM )
 repl_( 'PPK', zPPK )
 repl_( 'ZASI_BZUS', zZASI_BZUS )
+
+repl_( 'ODLICZENIE', zODLICZENIE )
 
    IF Val( miesiacpla ) == 12
       repl_( 'TERM_WYP', zTERM_WYP )
