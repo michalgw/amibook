@@ -421,7 +421,8 @@ do while .t.
               @ 14,62 get zSTAW_PODAT pict '99.99' valid oblpl()
               @ 14,71 get B5          pict '99999.99' when oblpl().and..f.
               @ 15,43 say 'Odliczenie od dochodu.' GET zODLICZENIE picture '!' valid zODLICZENIE $ 'TN' .AND. oblpl()
-              @ 15,71 get zODLICZ     pict '99999.99' valid oblpl()              @ 16,43 say 'Na ubezp.zdrowotne do ZUS  '
+              @ 15,71 get zODLICZ     pict '99999.99' valid oblpl()
+              @ 16,43 say 'Na ubezp.zdrowotne do ZUS  '
               @ 17,43 say 'obliczono:     % ='
               @ 17,53 get zSTAW_PUZ pict '99.99' valid oblpl()
               @ 17,61 get zWAR_PUZB pict '99999.99' when oblpl().and..f.
