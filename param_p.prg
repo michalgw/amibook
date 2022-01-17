@@ -61,6 +61,7 @@ set colo to
 @ 19,42 say '-Fundusz G&__S.P                          '
 @ 20,42 say ' Domy&_s.lny symbol Kasy Chorych         '
 @ 21,42 say ' PPK st.pracow.     % st.pracod.     %'
+@ 22,42 say '                                      '
 *################################# OPERACJE #################################
 do say_pr
 kl=0
@@ -232,23 +233,23 @@ set colo to w+
 @ 11,65 say parap_pue picture "99.99"
 @ 12,65 say parap_pur picture "99.99"
 @ 13,65 say parap_puz picture "99.99"
-@ 14,65 say parap_pzk picture "99.99"
-@ 15,65 say parap_puc picture "99.99"
+*@ 14,65 say parap_pzk picture "99.99"
+@ 14,65 say parap_puc picture "99.99"
 *@ 15,65 say parap_puw picture "99.99"
-@ 17,65 say parap_pf3 picture "99.99"
-@ 19,65 say parap_pfp picture "99.99"
-@ 20,65 say parap_pfg picture "99.99"
+@ 16,65 say parap_pf3 picture "99.99"
+@ 18,65 say parap_pfp picture "99.99"
+@ 19,65 say parap_pfg picture "99.99"
 @ 11,75 say parap_fue picture "99.99"
 @ 12,75 say parap_fur picture "99.99"
 @ 13,75 say parap_fuz picture "99.99"
-@ 15,75 say parap_fuc picture "99.99"
+@ 14,75 say parap_fuc picture "99.99"
 *@ 15,75 say parap_fuw picture "99.99"
 *@ 16,75 say parap_fww picture "99.99"
-@ 17,75 say parap_ff3 picture "99.99"
-@ 19,75 say parap_ffp picture "99.99"
-@ 20,75 say parap_ffg picture "99.99"
-@ 21,75 say parap_rkc picture "99!"
-@ 22,57 say parpk_sz picture "99.99"
-@ 22,74 say parpk_sp picture "99.99"
+@ 16,75 say parap_ff3 picture "99.99"
+@ 18,75 say parap_ffp picture "99.99"
+@ 19,75 say parap_ffg picture "99.99"
+@ 20,75 say parap_rkc picture "99!"
+@ 21,57 say parpk_sz picture "99.99"
+@ 21,74 say parpk_sp picture "99.99"
 ColStd()
 *############################################################################
