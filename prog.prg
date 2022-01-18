@@ -2132,7 +2132,7 @@ FUNCTION _d()
    @ 12, 5 SAY ' Nr licencji : ' + PAM + '          '
    @ 13, 5 SAY ' NIP u¾ytkownika : ' + PadR( trimnip( nip_uzytk ), 13 )
    @ 14, 5 SAY ' Autor  : 1991-2014 AMi-SYS s.c.'
-   @ 15, 5 SAY '          2015-2019 GM Systems  '
+   @ 15, 5 SAY '          2015-2022 GM Systems  '
    @ 16, 5 SAY '          ul. rtm.W.Pileckiego 9'
    @ 17, 5 SAY '          58-260 Bielawa        '
    @ 18, 5 SAY '  e-mail: info@gmsystems.pl     '
