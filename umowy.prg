@@ -373,7 +373,8 @@ PROCEDURE Umowy()
             zPPKPK1    , ;
             zPPKPS2    , ;
             zPPKPK2    , ;
-            zPPKPPM
+            zPPKPPM    , ;
+            zZASI_BZUS
 
             *zZAOPOD    ,;
             *zJAKZAO='Z'
@@ -449,7 +450,12 @@ PROCEDURE Umowy()
             CASE skladn == 1
                SAVE SCREEN TO scr_sklad
                SET CURSOR ON
-               @ 16, 26 GET zBRUT_ZASAD PICTURE '999999.99' VALID oblplu()
+               @ 15, 25 CLEAR TO 19, 58
+               @ 15, 25 TO 19, 58
+               @ 16, 26 SAY 'Przychody opodatkowane' GET zBRUT_ZASAD PICTURE '999999.99' VALID oblplu() .AND. Eval( { | | GetList[ 3 ]:display(), .T. } )
+               @ 17, 26 SAY '       Zasiˆki bez ZUS' GET zZASI_BZUS PICTURE '999999.99' VALID oblplu()
+               @ 18, 26 SAY '                 Razem' GET zBRUT_RAZEM PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               *@ 16, 26 GET zBRUT_ZASAD PICTURE '999999.99' VALID oblplu()
                READ
                SET CURSOR OFF
                RESTORE SCREEN FROM scr_sklad
@@ -813,21 +819,23 @@ PROCEDURE TRANTEK()
    TEKSTDR := StrTran( TEKSTDR, '@POTRACENIA', kwota( POTRACENIA, 11, 2 ) )
    TEKSTDR := StrTran( TEKSTDR, '#POTRACENIA', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@PPKZS1', kwota( PPKZS1, 5, 2 ) )
-   TEKSTDR := StrTran( TEKSTDR, '#PPKZS1', AllTrim( kwota( POTRACENIA, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKZS1', AllTrim( kwota( PPKZS1, 5, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@PPKZK1', kwota( PPKZK1, 11, 2 ) )
-   TEKSTDR := StrTran( TEKSTDR, '#PPKZK1', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKZK1', AllTrim( kwota( PPKZK1, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@PPKZS2', kwota( PPKZS2, 5, 2 ) )
-   TEKSTDR := StrTran( TEKSTDR, '#PPKZS2', AllTrim( kwota( POTRACENIA, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKZS2', AllTrim( kwota( PPKZS2, 5, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@PPKZK2', kwota( PPKZK2, 11, 2 ) )
-   TEKSTDR := StrTran( TEKSTDR, '#PPKZK2', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKZK2', AllTrim( kwota( PPKZK2, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@PPKPK1', kwota( PPKPK1, 11, 2 ) )
-   TEKSTDR := StrTran( TEKSTDR, '#PPKPK1', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKPK1', AllTrim( kwota( PPKPK1, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@PPKPS2', kwota( PPKPS2, 5, 2 ) )
-   TEKSTDR := StrTran( TEKSTDR, '#PPKPS2', AllTrim( kwota( POTRACENIA, 5, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKPS2', AllTrim( kwota( PPKPS2, 5, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@PPKPK2', kwota( PPKPK2, 11, 2 ) )
-   TEKSTDR := StrTran( TEKSTDR, '#PPKPK2', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKPK2', AllTrim( kwota( PPKPK2, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@PPKPPM', kwota( PPKPPM, 11, 2 ) )
-   TEKSTDR := StrTran( TEKSTDR, '#PPKPPM', AllTrim( kwota( POTRACENIA, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PPKPPM', AllTrim( kwota( PPKPPM, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@ZASI_BZUS', kwota( ZASI_BZUS, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#ZASI_BZUS', AllTrim( kwota( ZASI_BZUS, 11, 2 ) ) )
    //?tekstdr
    //ejec
    //set print off
@@ -929,7 +937,7 @@ FUNCTION _infoskl_u()
    CURR := ColStd()
    SET COLOR TO w+
    *@ 16,32 say iif(ZAOPOD=1,'Dziesiec groszy','Zlotowka       ')
-   @ 16, 26 SAY BRUT_ZASAD PICTURE '999999.99'
+   @ 16, 26 SAY BRUT_RAZEM PICTURE '999999.99'
    //002a nowe linie
    DO CASE
     *     case TYTUL='0'
@@ -973,7 +981,7 @@ FUNCTION _infoskl_u()
    @ 17, 26 SAY STAW_PSUM PICTURE '99.99'
    @ 17, 33 SAY WAR_PSUM PICTURE '999999.99'
    @ 17, 60 SAY PPKPK1 + PPKPK2 + PPKZK1 + PPKZK2 pict '99 999.99'
-   @ 18, 60 SAY BRUT_ZASAD-WAR_PSUM PICTURE '999999.99'
+   @ 18, 60 SAY BRUT_RAZEM-WAR_PSUM PICTURE '999999.99'
    @ 18, 26 SAY KOSZTY PICTURE '99'
    @ 18, 30 SAY AKOSZT PICTURE '!'
    @ 18, 33 SAY KOSZT PICTURE '999999.99'
@@ -995,7 +1003,7 @@ FUNCTION oblplu()
 
    IF zTYT = 'R' .OR. zTYT == 'O'
       zPENSJA := zBRUT_ZASAD
-      zBRUT_RAZEM := zPENSJA
+      zBRUT_RAZEM := zPENSJA + zZASI_BZUS
       oWAR_PUE := _round( zPENSJA * ( zSTAW_PUE / 100 ), 2 )
       oWAR_PUR := _round( zPENSJA * ( zSTAW_PUR / 100 ), 2 )
       oWAR_PUC := _round( zPENSJA * ( zSTAW_PUC / 100 ), 2 )
@@ -1011,18 +1019,18 @@ FUNCTION oblplu()
       ENDIF
       zWAR_PSUM := zWAR_PUE + zWAR_PUR + zWAR_PUC
       IF zAKOSZT # 'R'
-         zKOSZT := _round( ( zBRUT_ZASAD - zWAR_PSUM ) * ( zKOSZTY / 100 ), 2 )
+         zKOSZT := _round( ( zPENSJA - zWAR_PSUM ) * ( zKOSZTY / 100 ), 2 )
       ENDIF
       zDOCHOD := zBRUT_RAZEM
       zDOCHODPOD := _round( zDOCHOD + zPPKPPM, 0 )
       B5 := _round( zBRUT_RAZEM*( zSTAW_PODAT / 100 ), 0 )
-      oWAR_PZK := min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
-      oWAR_PUZ := min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+      oWAR_PZK := min( B5, _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+      oWAR_PUZ := min( B5, _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
       IF zAPUZ # 'R'
-         zWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+         zWAR_PUZ := Min( B5, _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
       ENDIF
       IF zAPZK # 'R'
-         zWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+         zWAR_PZK := Min( B5, _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
       ENDIF
       zWAR_PUZO := zWAR_PZK
       zPODATEK := _round( zBRUT_RAZEM * ( zSTAW_PODAT / 100 ), 0 )
@@ -1069,7 +1077,7 @@ FUNCTION oblplu()
       ENDIF
    ELSE
       zPENSJA := zBRUT_ZASAD
-      zBRUT_RAZEM := zPENSJA
+      zBRUT_RAZEM := zPENSJA + zZASI_BZUS
       oWAR_PUE := _round( zPENSJA * ( zSTAW_PUE / 100 ), 2 )
       oWAR_PUR := _round( zPENSJA * ( zSTAW_PUR / 100 ), 2 )
       oWAR_PUC := _round( zPENSJA * ( zSTAW_PUC / 100 ), 2 )
@@ -1085,32 +1093,32 @@ FUNCTION oblplu()
       ENDIF
       zWAR_PSUM := zWAR_PUE + zWAR_PUR + zWAR_PUC
       IF zAKOSZT # 'R'
-         zKOSZT := _round( ( zBRUT_ZASAD - zWAR_PSUM ) * ( zKOSZTY / 100 ), 2 )
+         zKOSZT := _round( ( zPENSJA - zWAR_PSUM ) * ( zKOSZTY / 100 ), 2 )
       ENDIF
       zDOCHOD := Max( 0, zBRUT_RAZEM - ( zKOSZT + zWAR_PSUM ) )
       zDOCHODPOD := _round( zDOCHOD + zPPKPPM, 0 )
       IF zOSWIAD26R = 'T'
          B5 := 0.0
-         oWAR_PUZ := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
-         oWAR_PZK := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
+         oWAR_PUZ := _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
+         oWAR_PZK := _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
          IF zAPUZ # 'R'
-            zWAR_PUZ := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
+            zWAR_PUZ := _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
          ENDIF
          IF zAPZK # 'R'
-            zWAR_PZK := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
+            zWAR_PZK := _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
          ENDIF
          zWAR_PUZO := zWAR_PZK
          zPODATEK := 0.0
          zSTAW_PODAT := 0.0
       ELSE
          B5 := zDOCHODPOD * ( zSTAW_PODAT / 100 )
-         oWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
-         oWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+         oWAR_PUZ := Min( B5, _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+         oWAR_PZK := Min( B5, _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
          IF zAPUZ # 'R'
-            zWAR_PUZ := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
+            zWAR_PUZ := Min( B5, _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 ) )
          ENDIF
          IF zAPZK # 'R'
-            zWAR_PZK := Min( B5, _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
+            zWAR_PZK := Min( B5, _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 ) )
          ENDIF
          zWAR_PUZO := zWAR_PZK
          zPODATEK := Max( 0, _round( B5 - zWAR_PZK, 0 ) )
@@ -1182,6 +1190,7 @@ PROCEDURE PODSTAWu()
    zAPZK := APZK
 
    zBRUT_ZASAD := BRUT_ZASAD
+   zZASI_BZUS := ZASI_BZUS
 
    zKOSZT := KOSZT
    zKOSZTY := KOSZTY
@@ -1318,6 +1327,7 @@ PROCEDURE ZAPISZPLAu()
    repl_( 'APZK', zAPZK )
 
    repl_( 'BRUT_ZASAD', zBRUT_ZASAD )
+   repl_( 'ZASI_BZUS',  zZASI_BZUS  )
    repl_( 'KOSZT',      zKOSZT      )
    repl_( 'KOSZTY',     zKOSZTY     )
    repl_( 'STAW_PUE',   zSTAW_PUE   )
