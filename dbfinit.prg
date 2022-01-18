@@ -1663,7 +1663,8 @@ public aUMOWYdbf := {;
    { "PPKPS2", "N", 5, 2 },;                      //  93 PPK Wpˆata dodatkowa pracodawcy - stawka
    { "PPKPK2", "N", 8, 2 },;                      //  94 PPK Wpˆata dodatkowa pracodawcy - kwota
    { "PPKPPM", "N", 8, 2 },;                      //  95 PPK Wpˆaty pracodawcy z pop. miesi¥ca
-   { "PPKIDEPPK", "C", 50, 0 } }                  //  96 PPK Identyfikator ewidencji PPK uczestnika PPK
+   { "PPKIDEPPK", "C", 50, 0 },;                  //  96 PPK Identyfikator ewidencji PPK uczestnika PPK
+   { "ZASI_BZUS", "N", 12, 2 } }                  //  97 Zasilki bez ZUS
 
 // Create: URZEDY.DBF
 public aURZEDYdbf := {;

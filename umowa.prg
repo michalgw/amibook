@@ -46,7 +46,7 @@ FUNCTION Umowa( zbior )
    @ 19, 0 SAY 'MIEJSC_ZAM ZATR  DOWOD KOSZT  PODATEK  $_PUC - ubezp.chorob.      Przedrostki   '
    @ 20, 0 SAY 'DATA_WYP   KOD   NETTO BRUTTO IMIE_O   $_FUW - ubezp.wypadk.  # = spacje obciete'
    @ 21, 0 SAY '%PODATEK   DOM   NSLOW BSLOW  IMIE_M   $_PUZ - ub.zdr.do ZUS  @ = spacje drukow.'
-   @ 22, 0 SAY 'POTRACENIA                             $_PZK - ub.zdr.do odl                    '
+   @ 22, 0 SAY 'POTRACENIA       ZASI_BZUS             $_PZK - ub.zdr.do odl                    '
 
    *@ 19,0 say '@NAZWISKO  @IMIE1  @IMIE2  @IMIE_O  @IMIE_M  @MIEJSC_UR  @DATA_UR  @DOWOD @PESEL'
    *@ 20,0 say '@ZATR  @NIP  @MIEJSC_ZAM  @KOD  @GMINA  @ULICA  @DOM  @LOKAL   @DZISIAJ   @UMOWA'
@@ -219,7 +219,9 @@ PROCEDURE UmowaWstaw()
       '@PPKPK2', ;
       '#PPKPK2', ;
       '@PPKPPM', ;
-      '#PPKPPM' }
+      '#PPKPPM', ;
+      '@ZASI_BZUS', ;
+      '#ZASI_BZUS' }
 
    SAVE SCREEN TO cEkran
    cKolor := ColStd()

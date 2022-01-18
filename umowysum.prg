@@ -206,6 +206,7 @@ PROCEDURE UmowySum()
                   aPoz[ 'data2' ] := &fdat2
                   aPoz[ 'numer' ] := AllTrim( numer )
                   aPoz[ 'brut_zasad' ] := brut_zasad
+                  aPoz[ 'zasi_bzus' ] := zasi_bzus
                   aPoz[ 'koszt' ] := koszt
                   aPoz[ 'dochod' ] := dochod
                   aPoz[ 'war_puz' ] := war_puz
@@ -325,7 +326,7 @@ PROCEDURE UmowySum()
                k7 := numer
                k8 := DToC( &fdat1 )
                k9 := DToC( &fdat2 )
-               k10 := brut_zasad
+               k10 := brut_razem
                k11 := koszt
                k12 := dochod
                k12b := war_puz
