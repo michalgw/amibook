@@ -522,11 +522,11 @@ FUNCTION TabDochPodatek( nKwota, ncWorkspace, nRok, nMiesiac )
 
    IF Len( aTab ) > 0
       nRes := nKwota * aTab[ 2 ] / 100
-      IF aTab[ 4 ]
+      /*IF aTab[ 4 ]
          nRes := nRes - Max( 0, ( aTab[ 3 ] - aTab[ 5 ] * ( nKwota - aTab[ 1 ] - 1 ) / aTab[ 6 ] ) )
       ELSE
          nRes := nRes - aTab[ 3 ]
-      ENDIF
+      ENDIF*/
    ENDIF
 
    RETURN Max( 0, nRes )
