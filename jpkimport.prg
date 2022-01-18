@@ -3259,7 +3259,7 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                @  6, 13 CLEAR TO 20, 66
                @  7, 15 TO 19, 64
                @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
-               @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42 ), .T. }
+               @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 9, 42 ), .T. }
                @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "S", "R" ) )
                IF zRYCZALT == 'T'
                   @ 11, 17 SAY "Domy˜lna kolumna ewidencji (5,6,7,8,9,10,11)" GET cKolRej PICTURE '@K 99' VALID AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11'
@@ -3335,7 +3335,7 @@ FUNCTION JPKImp_VatS_Tresc_V( cKatalog )
          cOpisZd := Left( tresc->tresc, 30 )
          cKolorTemp := SetColor()
          SET COLOR TO i
-         @ 13, 33 SAY cOpisZd
+         @ 10, 33 SAY cOpisZd
          SetColor( cKolorTemp )
       ENDIF
    ENDIF
