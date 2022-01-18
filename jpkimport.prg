@@ -3221,15 +3221,27 @@ PROCEDURE JPKImp_VatS( nCelImportu )
             CASE nMenu == 2
                DO CASE
                CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
-                  JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                  IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
+                     JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                  ELSE
+                     Komun( "Brak danych", 15 )
+                  ENDIF
                   PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
 
                CASE AScan( { "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
-                  JPKImp_VatS_Podglad_V7( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                  IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
+                     JPKImp_VatS_Podglad_V7( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                  ELSE
+                     Komun( "Brak danych", 15 )
+                  ENDIF
                   PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
 
                CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
-                  JPKImp_VatS_Podglad_FA( aDane[ 'JPK' ][ 'Faktura' ], aDane[ 'JPK' ][ 'FakturaSum' ] )
+                  IF Len( aDane[ 'JPK' ][ 'Faktura' ] ) > 0
+                     JPKImp_VatS_Podglad_FA( aDane[ 'JPK' ][ 'Faktura' ], aDane[ 'JPK' ][ 'FakturaSum' ] )
+                  ELSE
+                     Komun( "Brak danych", 15 )
+                  ENDIF
                   PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
 
                ENDCASE
@@ -3491,10 +3503,18 @@ PROCEDURE JPKImp_VatZ()
                   nMenu2 := MenuEx( 18, 26, { "SprzedazPoz (podatek nale¾ny)", "ZakupPoz (podatek naliczony)" } )
                   SWITCH nMenu2
                   CASE 1
-                     JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                     IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
+                        JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                     ELSE
+                        Komun( "Brak danych", 15 )
+                     ENDIF
                      EXIT
                   CASE 2
-                     JPKImp_VatZ_Podglad_VAT( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
+                     IF Len( aDane[ 'JPK' ][ 'Zakup' ] ) > 0
+                        JPKImp_VatZ_Podglad_VAT( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
+                     ELSE
+                        Komun( "Brak danych", 15 )
+                     ENDIF
                      EXIT
                   ENDSWITCH
                   PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
@@ -3502,15 +3522,27 @@ PROCEDURE JPKImp_VatZ()
                   nMenu2 := MenuEx( 18, 26, { "SprzedazPoz (podatek nale¾ny)", "ZakupPoz (podatek naliczony)" } )
                   SWITCH nMenu2
                   CASE 1
-                     JPKImp_VatS_Podglad_V7( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                     IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
+                        JPKImp_VatS_Podglad_V7( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                     ELSE
+                        Komun( "Brak danych", 15 )
+                     ENDIF
                      EXIT
                   CASE 2
-                     JPKImp_VatZ_Podglad_V7( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
+                     IF Len( aDane[ 'JPK' ][ 'Zakup' ] ) > 0
+                        JPKImp_VatZ_Podglad_V7( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
+                     ELSE
+                        Komun( "Brak danych", 15 )
+                     ENDIF
                      EXIT
                   ENDSWITCH
                   PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
                CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
-                  JPKImp_VatS_Podglad_FA( aDane[ 'JPK' ][ 'Faktura' ], aDane[ 'JPK' ][ 'FakturaSum' ] )
+                  IF Len( aDane[ 'JPK' ][ 'Faktura' ] ) > 0
+                     JPKImp_VatS_Podglad_FA( aDane[ 'JPK' ][ 'Faktura' ], aDane[ 'JPK' ][ 'FakturaSum' ] )
+                  ELSE
+                     Komun( "Brak danych", 15 )
+                  ENDIF
                   PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
                ENDCASE
             CASE nMenu == 3
