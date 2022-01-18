@@ -414,13 +414,16 @@ do while .t.
               set curs on
               @ 11,42 clear to 21,79
               @ 11,42 to 21,79
-              @ 12,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID zOSWIAD26R $ 'TN' .AND. oblpl()
-              @ 13,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' VALID zULGAKLSRA $ 'TN' .AND. oblpl()
+              ValidTakNie( zOSWIAD26R, 12, 72 )
+              ValidTakNie( zULGAKLSRA, 13, 64 )
+              ValidTakNie( zODLICZENIE, 15, 67 )
+              @ 12,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID ValidTakNie( zOSWIAD26R, 12, 72 ) .AND. oblpl()
+              @ 13,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' VALID ValidTakNie( zULGAKLSRA, 13, 64 ) .AND. oblpl()
               @ 13,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
               @ 14,43 say 'Podatek stawka..........%.='
               @ 14,62 get zSTAW_PODAT pict '99.99' valid oblpl()
               @ 14,71 get B5          pict '99999.99' when oblpl().and..f.
-              @ 15,43 say 'Odliczenie od dochodu.' GET zODLICZENIE picture '!' valid zODLICZENIE $ 'TN' .AND. oblpl()
+              @ 15,43 say 'Odliczenie od dochodu.' GET zODLICZENIE picture '!' valid ValidTakNie( zODLICZENIE, 15, 67 ) .AND. oblpl()
               @ 15,71 get zODLICZ     pict '99999.99' valid oblpl()
               @ 16,43 say 'Na ubezp.zdrowotne do ZUS  '
               @ 17,43 say 'obliczono:     % ='
