@@ -187,6 +187,7 @@ PROCEDURE KRejS()
                zPROCEDUR := Space( 32 )
                zRODZDOW := Space( 6 )
                zVATMARZA := 0
+               zDATA_ZAP := CToD( '' )
                ***********************
             ELSE
                lRyczModSys := .F.
@@ -264,6 +265,7 @@ PROCEDURE KRejS()
                zPROCEDUR := PROCEDUR
                zRODZDOW := RODZDOW
                zVATMARZA := VATMARZA
+               zDATA_ZAP := DATA_ZAP
             ENDIF
             stan_ := -zNETTO - zNETTO2
             netprzed := zNETTO
@@ -1617,7 +1619,7 @@ FUNCTION w1_7s()
 FUNCTION V1_8s()
 ***************************************************
 
-   LOCAL cRodz
+   LOCAL cRodz, cEkran, cKolor, lRes := .T., GetList := {}
 
    DO CASE
    CASE zKOREKTA == 'T'
@@ -1629,15 +1631,26 @@ FUNCTION V1_8s()
    ENDCASE
 
    @ 9, 54 SAY cRodz
-
-   // to jest niepotrzebne
-   IF LastKey() == K_UP
-      RETURN .T.
-   ENDIF
-
    @ 24, 0
 
-   RETURN .T.
+   IF zKOREKTA == 'Z'
+      cEkran := SaveScreen()
+      cKolor := ColStd()
+
+      @ 10, 25 CLEAR TO 12, 71
+      @ 10, 25 TO 12, 71
+      @ 11, 26 SAY "Termin pˆatno˜ci lub data zapˆaty:" GET zDATA_ZAP PICTURE '@D' VALID ! Empty( zDATA_ZAP )
+
+      READ
+      IF LastKey() == K_ESC
+         lRes := .F.
+      ENDIF
+
+      RestScreen( , , , , cEkran )
+      SetColor( cKolor )
+   ENDIF
+
+   RETURN lRes
 
 /*----------------------------------------------------------------------*/
 
@@ -2061,7 +2074,7 @@ FUNCTION KRejSWhOpcje()
    LOCAL aOpcjeSel := KRejSWhOpcjeParsuj( zOPCJE )
    LOCAL aOpcje := { ;
       " (brak)                                                        ", ;
-      "1. [ ] - GTU_01 Dostawa napoj¢w alkoholowych - alkoholu etylowego...  ", ;
+      "1. [ ] - GTU_01 Dostawa napoj¢w alkoholowych o zaw. alk. pow 1,2%...  ", ;
       "2. [ ] - GTU_02 Dostawa towar¢w, o kt¢rych mowa w art. 103 ust. 5aa   ", ;
       "3. [ ] - GTU_03 Dostawa oleju opaˆowego w rozumieniu przepis¢w o p.akc", ;
       "4. [ ] - GTU_04 Dostawa wyrob¢w tytoniowych, suszu tytoniowego...     ", ;
@@ -2127,34 +2140,37 @@ FUNCTION KRejSWhOpcjeAChFunc( nMode, nCurElement, nRowPos, lMPP )
    LOCAL nI
    LOCAL aOpisy := { ;
       { "(brak)                                                                          " }, ;
-      { "Dostawa napoj¢w alkoholowych - alkoholu etylowego, piwa, wina, napoj¢w          ", ;
-        "fermentowanych i wyrob¢w po˜rednich, w rozumieniu przepis¢w o podatku akcyzowym " }, ;
+      { "Dostawa napoj¢w alkoholowych o zawarto˜ci alkoholu powy¾ej 1,2%, piwa oraz      ", ;
+        "napoj¢w alkoholowych b©d¥cych mieszanin¥ piwa i napoj¢w bezalkoholowych, w      ", ;
+        "kt¢rych zawarto˜† alkoholu przekracza 0,5% (CN od 2203 do 2208).                " }, ;
       { "Dostawa towar¢w, o kt¢rych mowa w art. 103 ust. 5aa ustawy                      " }, ;
-      { "Dostawa oleju opaˆowego w rozumieniu przepis¢w o podatku akcyzowym oraz olej¢w  " , ;
-        "smarowych, pozostaˆych olej¢w o kodach CN od 2710 19 71 do 2710 19 99, z        " , ;
-        "wyˆ¥czeniem wyrob¢w o kodzie CN 2710 19 85 (oleje biaˆe, parafina ciekˆa) oraz  " , ;
-        "smar¢w plastycznych zaliczanych do kodu CN 2710 19 99, olej¢w smarowych o kodzie" , ;
-        "CN 2710 20 90, preparat¢w smarowych obj©tych pozycj¥ CN 3403, z wyˆ¥czeniem...  " }, ;
+      { "Dostawa olej¢w opaˆowych nieuj©tych w lit. b, olej¢w smarowych i pozostaˆych    ", ;
+        "olej¢w (CN od 2710 19 71 do 2710 19 83 i CN od 2710 19 87 do 2710 19 99, z      ", ;
+        "wyˆ¥czeniem smar¢w plastycznych zaliczonych do kodu CN 2710 19 99), olej¢w      ", ;
+        "smarowych (CN 2710 20 90) oraz preparat¢w smarowych (CN 3403, z wyˆ¥czeniem     ", ;
+        "smar¢w plastycznych obj©tych t¥ pozycj¥).                                       " }, ;
       { "Dostawa wyrob¢w tytoniowych, suszu tytoniowego, pˆynu do papieros¢w             " , ;
         "elektronicznych i wyrob¢w nowatorskich, w rozumieniu przepis¢w o podatku        " , ;
         "akcyzowym                                                                       " }, ;
       { "Dostawa odpad¢w - wyˆ¥cznie okre˜lonych w poz. 79-91 zaˆ¥cznika nr 15 do ustawy " }, ;
-      { "Dostawa urz¥dzeä elektronicznych oraz cz©˜ci i materiaˆ¢w do nich, wyˆ¥cznie    " , ;
-        "okre˜lonych w poz. 7-9, 59-63, 65, 66, 69 i 94-96 zaˆ¥cznika nr 15 do ustawy    " }, ;
+      { "Dostawa urz¥dzeä elektronicznych oraz cz©˜ci i materiaˆ¢w do nich, wyˆ¥cznie    ", ;
+        "okre˜lonych w poz. 7, 8, 59-63, 65, 66, 69 i 94-96 zaˆ¥cznika nr 15 do ustawy,  ", ;
+        " a tak¾e folii typu stretch okre˜lonej w poz. 9 tego zaˆ¥cznika                 " }, ;
       { "Dostawa pojazd¢w oraz cz©˜ci samochodowych o kodach wyˆ¥cznie CN 8701 - 8708    " , ;
         "oraz CN 8708 10                                                                 " }, ;
       { "Dostawa metali szlachetnych oraz nieszlachetnych - wyˆ¥cznie okre˜lonych w poz. " , ;
-        "1-3 zaˆ¥cznika nr 12 do ustawy oraz w poz. 12-25, 33-40, 45, 46, 56 i 78        " , ;
+        "1 zaˆ¥cznika nr 12 do ustawy oraz w poz. 12-25, 33-40, 45, 46, 56 i 78          " , ;
         "zaˆ¥cznika nr 15 do ustawy                                                      " }, ;
       { "Dostawa lek¢w oraz wyrob¢w medycznych - produkt¢w leczniczych, ˜rodk¢w          " , ;
         "spo¾ywczych specjalnego przeznaczenia ¾ywieniowego oraz wyrob¢w medycznych,     " , ;
         "obj©tych obowi¥zkiem zgˆoszenia, o kt¢rym mowa w art. 37av ust. 1 ustawy z dnia " , ;
         "6 wrze˜nia 2001 r. - Prawo farmaceutyczne (Dz. U. z 2019 r. poz.499, z p¢«n.zm.)" }, ;
-      { "Dostawa budynk¢w, budowli i grunt¢w                                             " }, ;
+      { "Dostawa budynk¢w, budowli i grunt¢w oraz ich cz©˜ci i udziaˆ¢w w prawie         ", ;
+        "wˆasno˜ci, w tym r¢wnie¾ zbycia praw, o kt¢rych mowa w art. 7 ust. 1 ustawy     " }, ;
       { "—wiadczenie usˆug w zakresie przenoszenia uprawnieä do emisji gaz¢w             " , ;
         "cieplarnianych, o kt¢rych mowa w ustawie z dnia 12 czerwca 2015 r. o systemie   " , ;
-        "handlu uprawnieniami do emisji gaz¢w cieplarnianych (Dz. U. z 2018 r. poz. 1201 " , ;
-        "i 2538 oraz z 2019 r. poz. 730, 1501 i 1532)                                    " }, ;
+        "handlu uprawnieniami do emisji gaz¢w cieplarnianych (Dz. U. z 2021 r. poz. 332 i", ;
+        "1047)                                                                           " }, ;
       { "—wiadczenie usˆug o charakterze niematerialnym -wyˆ¥cznie:doradczych,ksi©gowych," , ;
         "prawnych, zarz¥dczych, szkoleniowych, marketingowych, firm centralnych (head    " , ;
         "offices), reklamowych, badania rynku i opinii publicznej, w zakresie badaä      " , ;
@@ -2246,8 +2262,8 @@ FUNCTION KRejSWhProcedur( lMPP )
    LOCAL aOpcjeSel
    LOCAL aOpcje := { ;
       " (brak)                                                           ", ;
-      "1. [ ] SW - Dostawa w ramach sprz. wysyˆkowej z terytorium kraju..", ;
-      "2. [ ] EE - —wiadczenie usˆug telekom., nadawczych i elektroniczny", ;
+      "1. [ ] WSTO_EE - Wewn¥trzwsp¢lnotowa sprzeda¾y na odlegˆo˜†...    ", ;
+      "2. [ ] IED - Dostawa towar¢w, o kt¢rej mowa w art. 7a ust. 1 i 2 u", ;
       "3. [ ] TP - Istniej¥ce powi¥zania mi©dzy nabywc¥ a dokonuj¥cym dos", ;
       "4. [ ] TT_WNT - Wewn¥trzwsp¢lnotowe nabycie towar¢w dok.przez drug", ;
       "5. [ ] TT_D - Dostawa towar¢w poza terytorium kraju dokonana przez", ;
@@ -2258,7 +2274,7 @@ FUNCTION KRejSWhProcedur( lMPP )
       "0. [ ] B_SPV - Transfer bonu jednego przeznaczenia dokonany przez ", ;
       "A. [ ] B_SPV_DOSTAWA - Dostawa towar¢w oraz ˜wiadczenie usˆug, kt¢", ;
       "B. [ ] B_MPV_PROWIZJA - —wiadczenie usˆug po˜rednictwa oraz innych" }
-   LOCAL aKody := { "SW", "EE", "TP", "TT_WNT", "TT_D", "MR_T", "MR_UZ", ;
+   LOCAL aKody := { "WSTO_EE", "IED", "TP", "TT_WNT", "TT_D", "MR_T", "MR_UZ", ;
       "I_42", "I_63", "B_SPV", "B_SPV_DOSTAWA", "B_MPV_PROWIZJA" }
 
    hb_default( @lMPP, .F. )
@@ -2323,10 +2339,15 @@ FUNCTION KRejSWhProcedurAChFunc( nMode, nCurElement, nRowPos )
    LOCAL nKey := LastKey()
    LOCAL aOpisy := { ;
       { "(brak)                                                                          " }, ;
-      { "Dostawa w ramach sprzeda¾y wysyˆkowej z terytorium kraju, o kt¢rej mowa w art.  " , ;
-        "23 ustawy                                                                       " }, ;
-      { "—wiadczenie usˆug telekomunikacyjnych, nadawczych i elektronicznych, o kt¢rych  " , ;
-        "mowa w art. 28k ustawy                                                          " }, ;
+      { "Wewn¥trzwsp¢lnotowa sprzeda¾y na odlegˆo˜† towar¢w, kt¢re w momencie rozpocz©cia" , ;
+        "ich wysyˆki lub transportu znajduj¥ si© na terytorium kraju, oraz ˜wiadczenie   " , ;
+        "usˆug telekomunikacyjnych, nadawczych i elektronicznych, o kt¢rych mowa w art.  " , ;
+        "28k ustawy, na rzecz podmiot¢w nieb©d¥cych podatnikami, posiadaj¥cych siedzib©, " , ;
+        "staˆe miejsce zamieszkania lub miejsce pobytu na terytorium paästwa czˆonkowsk.." }, ;
+      { "Dostawa towar¢w, o kt¢rej mowa w art. 7a ust. 1 i 2 ustawy, dokonana przez      " , ;
+        "podatnika uˆatwiaj¥cego t© dostaw©, kt¢ry nie korzysta z procedury szczeg¢lnej, " , ;
+        "o kt¢rej mowa w dziale XII w rozdziale 6a lub 9 ustawy lub w odpowiadaj¥cych im " , ;
+        "regulacjach, dla kt¢rej miejscem dostawy jest terytorium kraju.                 " }, ;
       { "Istniej¥ce powi¥zania mi©dzy nabywc¥ a dokonuj¥cym dostawy towar¢w lub          " , ;
         "usˆugodawc¥, o kt¢rych mowa w art. 32 ust. 2 pkt 1 ustawy                       " }, ;
       { "Wewn¥trzwsp¢lnotowe nabycie towar¢w dokonane przez drugiego w kolejno˜ci        " , ;
@@ -2356,11 +2377,11 @@ FUNCTION KRejSWhProcedurAChFunc( nMode, nCurElement, nRowPos )
       AAdd( aOpisy, aMPP )
    ENDIF
 
-   hb_Scroll( 22, 0, 24, 79, , , CColInf )
+   hb_Scroll( 20, 0, 24, 79, , , CColInf )
 
-   FOR nI := 1 TO 3
+   FOR nI := 1 TO 5
       IF Len( aOpisy[ nCurElement ] ) >= nI
-         hb_DispOutAt( 21 + nI, 0, aOpisy[ nCurElement ][ nI ], CColInf )
+         hb_DispOutAt( 19 + nI, 0, aOpisy[ nCurElement ][ nI ], CColInf )
       ENDIF
    NEXT
 

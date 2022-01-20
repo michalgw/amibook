@@ -1094,7 +1094,7 @@ public aREJSdbf := {;
    { "WART08", "N", 11, 2 },;                     //  33
    { "VAT08", "N", 11, 2 },;                      //  34
    { "SYMB_REJ", "C", 2, 0 },;                    //  35
-   { "DATA_ZAP", "D", 8, 0 },;                    //  36
+   { "DATA_ZAP", "D", 8, 0 },;                    //  36  // Ulga na zle dlugi - Data uplyniecia terminu platnosci lub data zaplaty
    { "KRAJ", "C", 2, 0 },;                        //  37
    { "UE", "C", 1, 0 },;                          //  38
    { "SEK_CV7", "C", 2, 0 },;                     //  39

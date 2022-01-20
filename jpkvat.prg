@@ -238,7 +238,16 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
       aPoz[ 'AdresKontrahenta' ] := rejs->adres
       aPoz[ 'TypDokumentu' ] := AllTrim( rejs->rodzdow )
 
+      aPoz[ 'TerminPlatnosci' ] := SToD( '' )
+      aPoz[ 'DataZaplaty' ] := SToD( '' )
       aPoz[ 'KorektaPodstawyOpodt' ] := rejs->korekta == 'Z'
+      IF rejs->korekta == 'Z'
+         IF rejs->vat02 + rejs->vat12 + rejs->vat07 + rejs->vat22 < 0
+            aPoz[ 'TerminPlatnosci' ] := rejs->data_zap
+         ELSE
+            aPoz[ 'DataZaplaty' ] := rejs->data_zap
+         ENDIF
+      ENDIF
 
       AEval( hb_ATokens( rejs->opcje, ',' ), { | aElem |
          SWITCH Val( aElem )
@@ -1237,12 +1246,12 @@ PROCEDURE JPK_V7_Rob( nR, nC )
          aDane[ 'Tel' ] := AllTrim( cTel )
          aDane[ 'EMail' ] := AllTrim( cAdresEmail )
          IF aDane[ 'Kwartalnie' ]
-            cDaneXml := jpk_v7k_1( aDane )
+            cDaneXml := jpk_v7k_2( aDane )
          ELSE
-            cDaneXml := jpk_v7m_1( aDane )
+            cDaneXml := jpk_v7m_2( aDane )
          ENDIF
          cMK := iif( aDane[ 'Kwartalnie' ], 'K', 'M' )
-         edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_V7' + cMK + '_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( hb_Date( Val( param_rok ), aDane[ 'Miesiac' ], 1 ) ), wys_edeklaracja, 'JPKV7' + cMK + '-1', aDane[ 'Korekta' ], nMiesiacPocz )
+         edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_V7' + cMK + '_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( hb_Date( Val( param_rok ), aDane[ 'Miesiac' ], 1 ) ), wys_edeklaracja, 'JPKV7' + cMK + '-2', aDane[ 'Korekta' ], nMiesiacPocz )
       ENDIF
    ENDIF
 

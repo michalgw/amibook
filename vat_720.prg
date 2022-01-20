@@ -247,7 +247,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             @ 15, 42 SAY ' Do zwrotu za kasy w okresie          '
             @ 16, 42 SAY ' Do zwrotu na rachunek bank.          '
             IF _OU == 'J'
-               @ 17, 42 SAY ' Do zwrotu w terminie (wyb¢r 1-4)     '
+               @ 17, 42 SAY ' Do zwrotu w terminie (wyb¢r 1-6)     '
                @ 18, 42 SAY ' Zwrot pod.na poczet przysz.zob.      '
                @ 19, 42 SAY ' Wysoko˜† do zwrotu przy.zob.         '
                @ 20, 42 SAY ' Rodzaj przyszl.zob.podat.            '
@@ -349,18 +349,20 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             ENDIF
             DO CASE
             CASE dane_vat == 2 .AND. zVATFORDR <> '8 ' .AND. zVATFORDR <> '9M'
-               @ 17, 42 CLEAR TO 22,79
-               @ 17, 42 TO 22, 79 DOUB
+               @ 16, 42 CLEAR TO 22,79
+               @ 16, 42 TO 22, 79 DOUB
 *                 @ 17,43 say ' 1.art.86 ust.8 pkt 1 ustawy (T/N)  '
-               @ 18, 43 SAY ' 1.art.119 ustawy            (T/N)  '
-               @ 19, 43 SAY ' 2.art.120 ust.4 ustawy      (T/N)  '
-               @ 20, 43 SAY ' 3.art.122 ustawy            (T/N)  '
-               @ 21, 43 SAY ' 4.art.136 ustawy            (T/N)  '
+               @ 17, 43 SAY ' 1.art.119 ustawy            (T/N)  '
+               @ 18, 43 SAY ' 2.art.120 ust.4 ustawy      (T/N)  '
+               @ 19, 43 SAY ' 3.art.122 ustawy            (T/N)  '
+               @ 20, 43 SAY ' 4.art.136 ustawy            (T/N)  '
+               @ 21, 43 SAY ' 5.art.109b ust. 4 ustawy    (T/N)  '
 *                 @ 17,78 get zf1 picture '!'
-               @ 18, 78 GET zf2 PICTURE '!'
-               @ 19, 78 GET zf3 PICTURE '!'
-               @ 20, 78 GET zf4 PICTURE '!'
-               @ 21, 78 GET zf5 PICTURE '!'
+               @ 17, 78 GET zf2 PICTURE '!' VALID zf2 $ ' TN'
+               @ 18, 78 GET zf3 PICTURE '!' VALID zf3 $ ' TN'
+               @ 19, 78 GET zf4 PICTURE '!' VALID zf4 $ ' TN'
+               @ 20, 78 GET zf5 PICTURE '!' VALID zf5 $ ' TN'
+               @ 21, 78 GET zf1 PICTURE '!' VALID zf1 $ ' TN'
                Read_()
                IF LastKey() <> K_ESC
                   SELECT 2
@@ -1373,12 +1375,14 @@ FUNCTION Vat720WRodzZwrot()
 
    cEkran := SaveScreen()
 
-   @ 10, 22 CLEAR TO 16, 79
-   @ 10, 22 TO 16, 79
-   @ 11, 23 SAY ' 1 - Zwrot na rachunek VAT w terminie 25 dni'
-   @ 12, 23 SAY ' 2 - Zwrot na rachunek rozliczeniowy w terminie 25 dni'
-   @ 13, 23 SAY ' 3 - Zwrot na rachunek rozliczeniowy w terminie 60 dni'
-   @ 14, 23 SAY ' 4 - Zwrot na rachunek rozliczeniowy w terminie 180 dni'
+   @  8, 22 CLEAR TO 16, 79
+   @  8, 22 TO 16, 79
+   @  9, 23 SAY ' 1 - Zwrot na rachunek rozliczeniowy w terminie 15 dni'
+   @ 10, 23 SAY ' 2 - Zwrot na rachunek VAT w terminie 25 dni'
+   @ 11, 23 SAY ' 3 - Zwrot na rachunek rozliczeniowy w terminie 25 dni'
+   @ 12, 23 SAY ' 4 - Zwrot na rachunek rozliczeniowy w terminie 40 dni'
+   @ 13, 23 SAY ' 5 - Zwrot na rachunek rozliczeniowy w terminie 60 dni'
+   @ 14, 23 SAY ' 6 - Zwrot na rachunek rozliczeniowy w terminie 180 dni'
    @ 15, 23 SAY '   - ½adne z powy¾szych'
 
    SetColor( cKolor )
@@ -1389,7 +1393,7 @@ FUNCTION Vat720WRodzZwrot()
 
 FUNCTION Vat720VRodzZwrot()
 
-   LOCAL lRes := AScan( { '1', '2', '3', '4', ' ' }, cJPKRodzZwrot ) > 0
+   LOCAL lRes := AScan( { '1', '2', '3', '4', '5', '6', ' ' }, cJPKRodzZwrot ) > 0
 
    IF lRes
       RestScreen( , , , , cEkran )
@@ -1542,10 +1546,12 @@ FUNCTION JPK_V7_DaneDek( aDane )
    hDane['P_52'] := _round( P99a, 0 )
    hDane['P_53'] := _round( P99, 0 )
    hDane['P_54'] := _round( P99c, 0 )
-   hDane['P_55'] := cJPKRodzZwrot == '1'
-   hDane['P_56'] := cJPKRodzZwrot == '2'
-   hDane['P_57'] := cJPKRodzZwrot == '3'
-   hDane['P_58'] := cJPKRodzZwrot == '4'
+   hDane['P_540'] := cJPKRodzZwrot == '1'
+   hDane['P_55'] := cJPKRodzZwrot == '2'
+   hDane['P_56'] := cJPKRodzZwrot == '3'
+   hDane['P_560'] := cJPKRodzZwrot == '4'
+   hDane['P_57'] := cJPKRodzZwrot == '5'
+   hDane['P_58'] := cJPKRodzZwrot == '6'
    hDane['P_59'] := cJPKZwrotPod == 'T'
    hDane['P_60'] := nJPKZwrotKwota
    hDane['P_61'] := AllTrim( cJPKZwrotRodzZob )
@@ -1554,6 +1560,7 @@ FUNCTION JPK_V7_DaneDek( aDane )
    hDane['P_64'] := iif( zf3 == 'T', .T., .F. )
    hDane['P_65'] := iif( zf4 == 'T', .T., .F. )
    hDane['P_66'] := iif( zf5 == 'T', .T., .F. )
+   hDane['P_660'] := iif( zf1 == 'T', .T., .F. )
    hDane['P_67'] := .F.
    hDane['P_68'] := _round( K_68, 0 )
    hDane['P_69'] := _round( K_69, 0 )
