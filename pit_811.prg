@@ -540,25 +540,25 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
          IF TYTUL <> '8 '
             DO CASE
             CASE TYTUL = '0'
-               P50_0 := P50_0 + BRUT_RAZEM - ZASI_BZUS
+               P50_0 := P50_0 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                P51_0 := P51_0 + koszt
                P51a_0 := P51a_0 + war_psum
                P52_0 := P52_0 + dochod
-               P52_0a := P52_0a + Max( 0, BRUT_RAZEM - koszt - ZASI_BZUS )
+               P52_0a := P52_0a + Max( 0, BRUT_RAZEM - koszt - ZASI_BZUS + PPKPPM )
                P52a_0 := P52a_0 + war_puz
                P52b_0 := P52b_0 + war_puzo
                P53_0 := P53_0 + podatek
             CASE TYTUL = '1'
-               P50_1 := P50_1 + BRUT_RAZEM - ZASI_BZUS
+               P50_1 := P50_1 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                P51_1 := P51_1 + koszt
                P51a_1 := P51a_1 + war_psum
                P52_1 := P52_1 + dochod
-               P52_1a := P52_1a + Max( 0, BRUT_RAZEM - koszt - ZASI_BZUS )
+               P52_1a := P52_1a + Max( 0, BRUT_RAZEM - koszt - ZASI_BZUS + PPKPPM )
                P52a_1 := P52a_1 + war_puz
                P52b_1 := P52b_1 + war_puzo
                P53_1 := P53_1 + podatek
             CASE TYTUL = '2'
-               P50_2 := P50_2 + BRUT_RAZEM - ZASI_BZUS
+               P50_2 := P50_2 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                P51_2 := P51_2 + koszt
                P51a_2 := P51a_2 + war_psum
                P52_2 := P52_2 + dochod
@@ -567,7 +567,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                P52b_2 := P52b_2 + war_puzo
                P53_2 := P53_2 + podatek
             CASE TYTUL = '3'
-               P50_3 := P50_3 + BRUT_RAZEM - ZASI_BZUS
+               P50_3 := P50_3 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                P51_3 := P51_3 + koszt
                P51a_3 := P51a_3 + war_psum
                P52_3 := P52_3 + dochod
@@ -576,7 +576,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                P52b_3 := P52b_3 + war_puzo
                P53_3 := P53_3 + podatek
             CASE TYTUL = '4'
-               P50_4 := P50_4 + BRUT_RAZEM - ZASI_BZUS
+               P50_4 := P50_4 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                P51_4 := P51_4 + koszt
                P51a_4 := P51a_4 + war_psum
                P52_4 := P52_4 + dochod
@@ -585,16 +585,16 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                P52b_4 := P52b_4 + war_puzo
                P53_4 := P53_4 + podatek
             CASE TYTUL = '9'
-               P50_9 := P50_9 + BRUT_RAZEM - ZASI_BZUS
+               P50_9 := P50_9 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                P51_9 := P51_9 + koszt
                P51a_9 := P51a_9 + war_psum
                P52_9 := P52_9 + dochod
-               P52_9a := P52_9a + Max( 0, BRUT_RAZEM - koszt - ZASI_BZUS )
+               P52_9a := P52_9a + Max( 0, BRUT_RAZEM - koszt - ZASI_BZUS + PPKPPM )
                P52a_9 := P52a_9 + war_puz
                P52b_9 := P52b_9 + war_puzo
                P53_9 := P53_9 + podatek
             CASE TYTUL = '6'
-               P50_6 := P50_6 + BRUT_RAZEM - ZASI_BZUS
+               P50_6 := P50_6 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                P51_6 := P51_6 + koszt
                P51a_6 := P51a_6 + war_psum
                P52_6 := P52_6 + dochod
@@ -603,7 +603,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                P52b_6 := P52b_6 + war_puzo
                P53_6 := P53_6 + podatek
             CASE TYTUL = '7'
-               P50_7 := P50_7 + BRUT_RAZEM - ZASI_BZUS
+               P50_7 := P50_7 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                P51_7 := P51_7 + koszt
                P51a_7 := P51a_7 + war_psum
                P52_7 := P52_7 + dochod
@@ -623,21 +623,21 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
             OTHERWISE
                IF cIgnoruj26r == 'N' .AND. data_wyp >= 0d20190801 .AND. CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) )
                   IF OSWIAD26R == 'T'
-                     P50_5_R26 := P50_5_R26 + BRUT_RAZEM - ZASI_BZUS
+                     P50_5_R26 := P50_5_R26 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                      P51_5_R26 := P51_5_R26 + koszt
                      P53_5_R26 := P53_5_R26 + podatek
                   ELSE
-                     P50_5_R262 := P50_5_R262 + BRUT_RAZEM - ZASI_BZUS
+                     P50_5_R262 := P50_5_R262 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                      P51_5_R262 := P51_5_R262 + koszt
                      P53_5_R262 := P53_5_R262 + podatek
                   ENDIF
                ELSE
                   IF TYTUL == '11'
-                     P50_11 := P50_11 + BRUT_RAZEM - ZASI_BZUS
+                     P50_11 := P50_11 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                      P51_11 := P51_11 + koszt
                      P53_11 := P53_11 + podatek
                   ELSE
-                     P50_5 := P50_5 + BRUT_RAZEM - ZASI_BZUS
+                     P50_5 := P50_5 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
                      P51_5 := P51_5 + koszt
                      P53_5 := P53_5 + podatek
                   ENDIF
@@ -661,7 +661,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                P52z := P52z + war_psum
                P54za := P54za + war_puzo
             ENDIF
-            P50z := P50z + BRUT_RAZEM - ZASI_BZUS
+            P50z := P50z + BRUT_RAZEM - ZASI_BZUS + PPKPPM
             P51z := P51z + koszt
             P53z := P53z + dochod
             *        P53za=P53za+max(0,BRUT_RAZEM-koszt)
