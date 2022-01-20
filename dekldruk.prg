@@ -4256,10 +4256,10 @@ FUNCTION DaneDek_PIT11w27()
    hDane['P_11_1'] := iif( DP10 == 'T', '1', '0' )
    hDane['P_11_2'] := iif( DP10 == 'N', '1', '0' )
    IF Len(AllTrim(P30)) = 0
-      hDane['P_12_R'] := 'P'
+      hDane['P_12_R'] := 'N'
       hDane['P_12_N'] := AllTrim(P29)
    ELSE
-      hDane['P_12_R'] := 'N'
+      hDane['P_12_R'] := 'P'
       hDane['P_12_N'] := AllTrim(P30)
    ENDIF
    hDane['P_13'] := AllTrim( P_DokIDNr )
