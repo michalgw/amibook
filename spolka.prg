@@ -45,7 +45,7 @@ private _top,_bot,_top_bot,_stop,_sbot,_proc,kl,ins,nr_rec,f10,rec,fou
 @ 13, 0 say '³ Miejscowosc.......                                      6 Czerwiec           ³'
 @ 14, 0 say '³ Ulica, dom, lokal.                           /          7 Lipiec             ³'
 @ 15, 0 say '³ Kod i poczta......                                      8 Sierpie&_n.           ³'
-@ 16, 0 say '³ Telefon dom.......           Oblicz kw.wol(Tab/St)      9 Wrzesie&_n.           ³'
+@ 16, 0 say '³ Telefon dom.......                                      9 Wrzesie&_n.           ³'
 @ 17, 0 say '³ Rozliczac: Progresyw/Liniowo.  Podat.od kw.wol.        10 Pa&_x.dziernik        ³'
 @ 18, 0 say '³ Jakie wyd.mieszk?.                                     11 Listopad           ³'
 @ 19, 0 say '³ Jakie odl.od doch?                                     12 Grudzie&_n.           ³'
@@ -176,7 +176,7 @@ if ins
    zPARAM_KW3=iif( Date() < m->param_kwd, m->param_kw, m->param_kw2 )
    store space(30) to zODLICZ1,zODLICZ2,zS_RODZAJ
    store [   /   ] to zudzial1,zudzial2,zudzial3,zudzial4,zudzial5,zudzial6,zudzial7,zudzial8,zudzial9,zudzial10,zudzial11,zudzial12
-   zOBLKWWOL := 'S'
+   *zOBLKWWOL := 'S'
 else
    zNAZ_IMIE=NAZ_IMIE
    zPESEL=PESEL
@@ -227,7 +227,7 @@ else
    zUDZIAL10=UDZIAL10
    zUDZIAL11=UDZIAL11
    zUDZIAL12=UDZIAL12
-   zOBLKWWOL := iif( spolka->oblkwwol == ' ', 'S', spolka->oblkwwol )
+   *zOBLKWWOL := iif( spolka->oblkwwol == ' ', 'S', spolka->oblkwwol )
 endif
 *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 @ 5,20 get zNAZ_IMIE picture "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" valid v3_1()
@@ -253,7 +253,7 @@ endif
 @ 15,20 get zKOD_POCZT picture "99-999"
 @ 15,27 get zPOCZTA picture "!!!!!!!!!!!!!!!!!!!!"
 @ 16,20 get zTELEFON picture "XXXXXXXXXX"
-@ 16,52 get zOBLKWWOL PICTURE "!" WHEN spolka_w_oblkwwol() VALID spolka_v_oblkwwol()
+*@ 16,52 get zOBLKWWOL PICTURE "!" WHEN spolka_w_oblkwwol() VALID spolka_v_oblkwwol()
 @ 17,31 get zSPOSOB picture "!" valid zSPOSOB$'PL'
 @ 17,49 get zPARAM_KW3 picture "9999.99" WHEN SpolkaWhenParamKW() //range 0,9999
 oGetKW := ATail( GetList )
@@ -359,8 +359,8 @@ repl NAZ_IMIE with zNAZ_IMIE,;
      UDZIAL9 with zUDZIAL9,;
      UDZIAL10 with zUDZIAL10,;
      UDZIAL11 with zUDZIAL11,;
-     UDZIAL12 with zUDZIAL12,;
-     OBLKWWOL WITH zOBLKWWOL
+     UDZIAL12 with zUDZIAL12
+     *OBLKWWOL WITH zOBLKWWOL
 commit_()
 unlock
 *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
@@ -471,7 +471,7 @@ set color to +w
 @ 15,20 say KOD_POCZT
 @ 15,27 say POCZTA
 @ 16,20 say TELEFON
-@ 16, 52 SAY spolka->oblkwwol
+*@ 16, 52 SAY spolka->oblkwwol
 @ 17,31 say SPOSOB
 @ 17,49 say iif( Date() < param_kwd, PARAM_KW, PARAM_KW2 ) picture "9999.99"
 @ 18,20 say ODLICZ2
@@ -792,15 +792,18 @@ if empty(zNAZW_RODU)
 endif
 return .t.
 
+/*
 FUNCTION spolka_w_oblkwwol()
 
    ColInf()
    @ 24, 0 SAY PadC( 'Wpisz: T - tabela pod. doch.    S - Staˆa warto˜†', 80, ' ' )
    ColStd()
    RETURN .T.
+*/
 
 /*----------------------------------------------------------------------*/
 
+/*
 FUNCTION spolka_v_oblkwwol()
 
    LOCAL lRes := .F.
@@ -811,6 +814,7 @@ FUNCTION spolka_v_oblkwwol()
       lRes := .T.
    ENDIF
    RETURN lRes
+*/
 
 /*----------------------------------------------------------------------*/
 

@@ -25,7 +25,7 @@ PROCEDURE P_Dochod( _OUT )
    LOCAL dDataNa
 
    PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
-   PRIVATE ObiczKwWl := 'S'
+   *PRIVATE ObiczKwWl := 'S'
 
    @ 1, 47 SAY Space( 10 )
    *############################### OTWARCIE BAZ ###############################
@@ -190,7 +190,7 @@ PROCEDURE P_Dochod( _OUT )
          P22 := POCZTA
          P24 := TELEFON
 
-         ObiczKwWl := spolka->oblkwwol
+         *ObiczKwWl := spolka->oblkwwol
 
          SELECT URZEDY
          IF firma->skarb > 0
@@ -691,19 +691,19 @@ PROCEDURE P_Dochod( _OUT )
             dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
             //tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
             tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) } ) )
-            IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
+            *IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
 //               SEEK '-'
 //               SKIP -1
                tab_doch->( dbGoBottom() )
-            ENDIF
+            *ENDIF
             ppodatek := 0
             pzm := a_ppodst[ 1, xxx ]
             IF spolka->sposob == 'L'
                ppodatek := pzm * ( param_lin / 100 )
                ppodatek := Max( 0, ppodatek )
             ELSE
-               IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
+               *IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                   DO WHILE  ! Bof()
                      ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 1, xxx ], pzm ) - podstawa ) * procent / 100
                      pzm := podstawa
@@ -717,9 +717,9 @@ PROCEDURE P_Dochod( _OUT )
                   ELSE
                      ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
                   ENDIF
-               ELSE
-                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
-               ENDIF
+               *ELSE
+                  *ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
+               *ENDIF
             ENDIF
             tab_doch->( dbClearFilter() )
             *---------------
@@ -1143,19 +1143,19 @@ PROCEDURE P_Dochod( _OUT )
             dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
             //tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
             tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) } ) )
-            IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
+            *IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
 //               SEEK '-'
 //               SKIP -1
                tab_doch->( dbGoBottom() )
-            ENDIF
+            *ENDIF
             ppodatek := 0
             pzm := a_ppodst[ 2, xxx ]
             IF spolka->sposob == 'L'
                ppodatek := pzm * ( param_lin / 100 )
                ppodatek := Max( 0, ppodatek )
             ELSE
-               IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
+               *IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                   DO WHILE ! Bof()
                      ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 2, xxx ], pzm ) - podstawa ) * procent / 100
                      pzm := podstawa
@@ -1169,9 +1169,9 @@ PROCEDURE P_Dochod( _OUT )
                   ELSE
                      ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
                   ENDIF
-               ELSE
-                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
-               ENDIF
+               *ELSE
+                  *ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
+               *ENDIF
             END
             tab_doch->( dbClearFilter() )
             *---------------
@@ -1304,19 +1304,19 @@ PROCEDURE P_Dochod( _OUT )
             dDataNa := hb_Date( Val( param_rok ), xxx, 1 )
             //tab_doch->( dbSetFilter( { || tab_doch->del == '+' .AND. ( tab_doch->dataod <= dDataNa ) .AND. ( ( tab_doch->datado >= dDataNa ) .OR. ( tab_doch->datado == CToD('') ) ) } ) )
             tab_doch->( dbSetFilter( { || ( tab_doch->dataod <= dDataNa ) } ) )
-            IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
+            *IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                SELECT tab_doch
 //               SEEK '-'
 //               SKIP -1
                tab_doch->( dbGoBottom() )
-            ENDIF
+            *ENDIF
             ppodatek := 0
             pzm := a_ppodst[ 3, xxx ]
             IF spolka->sposob == 'L'
                ppodatek := pzm * ( param_lin / 100 )
                ppodatek := Max( 0, ppodatek )
             ELSE
-               IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
+               *IF ObiczKwWl == 'S' .OR. ObiczKwWl == ' '
                   DO WHILE ! Bof()
                      ppodatek := ppodatek + Max( 0, Min( a_ppodst[ 3, xxx ], pzm ) - podstawa ) * procent / 100
                      pzm := podstawa
@@ -1330,9 +1330,9 @@ PROCEDURE P_Dochod( _OUT )
                   ELSE
                      ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
                   ENDIF
-               ELSE
-                  ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
-               ENDIF
+               *ELSE
+                  *ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
+               *ENDIF
             ENDIF
             tab_doch->( dbClearFilter() )
             *---------------
