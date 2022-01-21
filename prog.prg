@@ -199,7 +199,7 @@ FUNCTION Main()
    param_ks5d := '1'
    param_kslp := ''
    param_ksnd := 'N'
-   param_kskw := 'T'
+   param_kskw := 'N'
    param_ksv7 := 'T'
 
    //Bufor wydruku
