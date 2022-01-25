@@ -6701,9 +6701,9 @@ FUNCTION edek_viudo_1( aDane )
 
             nSumC += nSumT + nSumU
 
-            r += '        <GrandTotal currency="EUR">' + TKwota2( nSumC ) + '</GrandTotal>' + nl
          ENDIF
 
+         r += '        <GrandTotal currency="EUR">' + TKwota2( nSumC ) + '</GrandTotal>' + nl
          r += '      </Supplies>' + nl
       ENDIF
 
