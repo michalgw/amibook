@@ -38,9 +38,13 @@ FUNCTION xmlWartoscH(hDane, cKlucz, cDomyslny)
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION xml2date( cData )
+FUNCTION xml2date( cData, xDef )
    IF AllTrim( cData ) == ''
-      RETURN Date()
+      IF HB_ISNULL( xDef )
+         RETURN Date()
+      ELSE
+         RETURN xDef
+      ENDIF
    ENDIF
    RETURN hb_SToD( StrTran( cData, '-', '' ) )
 
@@ -9228,7 +9232,9 @@ FUNCTION DaneXML_JPKPKPIRw2( oDoc, cNrRef )
    aDane[ 'P_2' ] := sxml2num( xmlWartoscH( aTemp, 'P_2' ), 0 )
    aDane[ 'P_3' ] := sxml2num( xmlWartoscH( aTemp, 'P_3' ), 0 )
    aDane[ 'P_4' ] := sxml2num( xmlWartoscH( aTemp, 'P_4' ), 0 )
-   aDane[ 'P_5A' ] := xml2date( xmlWartoscH( aTemp, 'P_5A' ), '' )
+
+   aTemp := edekXmlGrupa( oDoc, 'PKPIRSpis' )
+   aDane[ 'P_5A' ] := xml2date( xmlWartoscH( aTemp, 'P_5A', '' ), '(brak)' )
    aDane[ 'P_5B' ] := sxml2num( xmlWartoscH( aTemp, 'P_5B' ), 0 )
 
    aDane[ 'PKPIRWiersz' ] := edekXmlGrupaTab( oDoc, 'JPK', 'PKPIRWiersz' )

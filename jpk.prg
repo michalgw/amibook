@@ -71,15 +71,17 @@ FUNCTION jpk_pkpir(aDane)
    cRes := cRes + '    </AdresPodmiotu>' + nl
    cRes := cRes + '  </Podmiot1>' + nl
    cRes := cRes + '  <PKPIRInfo>' + nl
-   cRes := cRes + '      <P_1>' + TKwota2(aDane['P_1']) + '</P_1>' + nl
-   cRes := cRes + '      <P_2>' + TKwota2(aDane['P_2']) + '</P_2>' + nl
-   cRes := cRes + '      <P_3>' + TKwota2(aDane['P_3']) + '</P_3>' + nl
-   cRes := cRes + '      <P_4>' + TKwota2(aDane['P_4']) + '</P_4>' + nl
-   IF aDane['P_5']
-      cRes := cRes + '      <P_5A>' + date2strxml(aDane['P_5A']) + '</P_5A>' + nl
-      cRes := cRes + '      <P_5B>' + TKwota2(aDane['P_5B']) + '</P_5B>' + nl
-   ENDIF
+   cRes := cRes + '    <P_1>' + TKwota2(aDane['P_1']) + '</P_1>' + nl
+   cRes := cRes + '    <P_2>' + TKwota2(aDane['P_2']) + '</P_2>' + nl
+   cRes := cRes + '    <P_3>' + TKwota2(aDane['P_3']) + '</P_3>' + nl
+   cRes := cRes + '    <P_4>' + TKwota2(aDane['P_4']) + '</P_4>' + nl
    cRes := cRes + '  </PKPIRInfo>' + nl
+   IF aDane['P_5']
+      cRes := cRes + '  <PKPIRSpis typ="G">' + nl
+      cRes := cRes + '    <P_5A>' + date2strxml(aDane['P_5A']) + '</P_5A>' + nl
+      cRes := cRes + '    <P_5B>' + TKwota2(aDane['P_5B']) + '</P_5B>' + nl
+      cRes := cRes + '  </PKPIRSpis>' + nl
+   ENDIF
    FOR nI := 1 TO Len(aDane['pozycje'])
       cRes := cRes + '  <PKPIRWiersz typ="G">' + nl
       cRes := cRes + '    <K_1>' + AllTrim(Str(aDane['pozycje'][nI]['k1'])) + '</K_1>' + nl
