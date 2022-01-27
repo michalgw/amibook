@@ -698,7 +698,7 @@ return
 *±±±±±± oblpl      ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *± Obliczanie skladnikow placowych                                          ±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-func oblpl
+function oblpl()
      store 0 to wolI,wolU,wolC,wolO,wolW,wolB,wolM,choC,wolZ,choZ,wolN
      _zident_=str(prac->rec_no,5)
      _bot_=[del#'+'.or.firma#ident_fir.or.ident#_zident_.or.mc#etaty->mc]
@@ -804,14 +804,16 @@ func oblpl
       ENDIF
       IF zOSWIAD26R == 'T'
          B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(parap_pod/100)
-         //zWAR_PUZ=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
+         zWAR_PUZ21=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
          zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
-         //zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
-         //zWAR_PUZO=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
+         zWAR_PZKB21=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)
+         zWAR_PUZO21=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)))
          zWAR_PUZO=0
          zPODATEK=max(0,_round(B5-(zWAR_PUZO+parap_odl),0))
+         zPODATEK21=max(0,_round(B5-(zWAR_PUZO21+43.76),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
+         zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZ21+zWAR_PF3)
 
          zWAR_PUZ := Min( _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2), zWAR_PUZ )
          zWAR_PUZB := zWAR_PUZ
@@ -824,11 +826,11 @@ func oblpl
       ELSE
          B5=zDOCHODPOD*(zSTAW_PODAT/100)
    *--> Gdy potracanie skladki do wysokosci podatku
-         //zWAR_PUZ=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
+         zWAR_PUZ21=iif(B5<=43.76,0,min(B5-43.76,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
          zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
-         //zWAR_PZKB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)
-         //zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PZK/100),2)))
+         zWAR_PZKB21=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)
+         zWAR_PUZO21=iif(B5<=43.76,0,min(B5-43.76,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)))
          zWAR_PUZO=0
    *     zWAR_PUZO=zWAR_PUZ
    *--> Koniec
@@ -838,9 +840,21 @@ func oblpl
    *     zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,zWAR_PUZ))
    *--> Koniec
          zPODATEK=max(0,_round(B5-(zWAR_PUZO+zODLICZ),0))
+         zPODATEK21=max(0,_round(B5-(zWAR_PUZO21+43.76),0))
+         zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
+         zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZ21+zWAR_PF3)
+         IF zBRUT_RAZEM < 1248.69
+            IF zODLICZ <> 0
+               zWAR_PUZ := zWAR_PUZ21
+            ELSE
+               zPODATEK := Max( 0, zPODATEK - zWAR_PUZ21 )
+            ENDIF
+         ENDIF
+         zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
       ENDIF
       zDO_WYPLATY=zNETTO+zZASIL_RODZ+zZASIL_PIEL+zDOPL_NIEOP-zODL_NIEOP-zPPKZK1-zPPKZK2
+      *zDO_WYPLATY21=zNETTO21+zZASIL_RODZ+zZASIL_PIEL+zDOPL_NIEOP-zODL_NIEOP-zPPKZK1-zPPKZK2
       zzWAR_FUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUE/100),2)
       zzWAR_FUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUR/100),2)
       zzWAR_FUW=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUW/100),2)
@@ -947,7 +961,7 @@ func oblpl
    endcase
 
 return .t.
-***************************************************************************
+**************************************************************************
 proc PODSTAW
 ***************************************************************************
 zBRUT_ZASAD=BRUT_ZASAD
