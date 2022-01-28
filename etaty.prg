@@ -46,7 +46,7 @@ FUNCTION Etaty( mieskart )
    @  4,  0 SAY 'ÚÄÄÄÄÄWyp&_l.a&_c. wszystkim...ÄÄÄÄÄ¿ Przyj&_e.to:             Zwolniono.:               '
    @  5,  0 SAY '³                             ³ Odlicza&_c. podatek:     O˜wi. <26r.:     PPK:     '
    @  6,  0 SAY '³                             ³ Wykszta&_l.c:                                      '
-   @  7,  0 SAY '³                             ³ Zaw&_o.d....:                                      '
+   @  7,  0 SAY '³                             ³ Zaw&_o.d....:                       Przedˆ.term:   '
    @  8,  0 SAY '³                             ³ M-c PRZYCH. DO WYP&__L.A. Wyp&_l.aty Wp&_l..podat. Do PIT4'
    @  9,  0 SAY '³                             ³  1                                              '
    @ 10,  0 SAY '³                             ³  2                                              '
@@ -208,13 +208,15 @@ FUNCTION Etaty( mieskart )
          zPPKIDKADR := iif( Len( AllTrim( PPKIDKADR ) ) == 0, Pad( AllTrim( Str( RecNo(), 10 ) ), 10 ), PPKIDKADR )
          zPPKIDEPPK := PPKIDEPPK
          zPPKIDPZIF := PPKIDPZIF
+         zWNIOSTERM := WNIOSTERM
          @  4, 42 GET zdata_przy PICTURE '@D' VALID .NOT. Empty( zdata_przy )
          @  4, 68 GET zdata_zwol PICTURE '@D'
          @  5, 49 GET zodliczenie PICTURE '!' VALID vodlicz()
          @  5, 66 GET zOSWIAD26R PICTURE '!' VALID voswiad26r()
          @  5, 75 GET zPPK PICTURE '!' VALID etatyvppk( 5, 76 )
          @  6, 43 GET zwyksztalc PICTURE '@S37 ' + repl( 'X', 40 )
-         @  7, 43 GET zzawod_wyu PICTURE '@S37 ' + repl( 'X', 40 )
+         @  7, 43 GET zzawod_wyu PICTURE '@S21 ' + repl( 'X', 40 )
+         @  7, 77 GET zWNIOSTERM PICTURE '!' VALID ValidTakNie( zWNIOSTERM, 7, 78 )
          @ 22,  8 GET zuwagi
          SET CURSOR ON
          READ
@@ -235,6 +237,7 @@ FUNCTION Etaty( mieskart )
             repl_( 'PPKIDKADR', zPPKIDKADR )
             repl_( 'PPKIDEPPK', zPPKIDEPPK )
             repl_( 'PPKIDPZIF', zPPKIDPZIF )
+            repl_( 'WNIOSTERM', zWNIOSTERM )
             COMMIT
             UNLOCK
          ENDIF
@@ -742,7 +745,8 @@ PROCEDURE say41es()
    @  5, 66 SAY iif( oswiad26r = 'T', 'Tak', 'Nie' )
    @  5, 75 SAY iif( ppk = 'T', 'Tak', 'Nie' )
    @  6, 43 SAY SubStr( wyksztalc, 1, 37 )
-   @  7, 43 SAY SubStr( zawod_wyu, 1, 37 )
+   @  7, 43 SAY SubStr( zawod_wyu, 1, 21 )
+   @  7, 77 SAY iif( wniosterm = 'T', 'Tak', 'Nie' )
    zidp := Str( rec_no, 5 )
    SELECT etaty
    SEEK '+' + ident_fir + zidp

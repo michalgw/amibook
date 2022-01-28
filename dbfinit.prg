@@ -359,7 +359,8 @@ public aETATYdbf := {;
    { "ZASI_BZUS", "N", 8, 2 },;                   // 125 Zasiˆki od pracodawcy bez ZUS
    { "ULGAKLSRA", "C", 1, 0 },;                   // 126 Odlicz ulge dla klasy sredniej
    { "ULGAKLSRK", "N", 8, 2 },;                   // 127 Kwota ulgi dla klasy sredniej
-   { "ODLICZENIE", "C", 1, 0 } }                  // 128 Odliczenie kwoty wolnej
+   { "ODLICZENIE", "C", 1, 0 },;                  // 128 Odliczenie kwoty wolnej
+   { "WNIOSTERM", "C", 1, 0 } }                   // 129 Wniosek o nieprzedluzanie terminu
 
 // Create: EWID.DBF
 public aEWIDdbf := {;
@@ -978,7 +979,9 @@ public aPRACdbf := {;
    { "PPKIDEPPK", "C", 20, 0 },;                  //  85 PPK Identyfikator ewidencji PPK uczestnika PPK.
    { "PPKIDPZIF", "C", 50, 0 },;                  //  86 PPK Unikalny numer nadany przez instytucj© finansow¥, np. Nr rachunku, kt¢ry uczestnik ma nadany przez instytucj© finansow¥.
    { "PRAKTYKA", "C", 1, 0 },;                    //  87 Praktykant ( 'T' = tak, 'N' - nie )
-   { "ULGAKLSRA", "C", 1, 0 } }                   //  88 Ulga dla klasy sredniej ('T'- tak )
+   { "ULGAKLSRA", "C", 1, 0 },;                   //  88 Ulga dla klasy sredniej ('T'- tak )
+   { "WNIOSTERM", "C", 1, 0 } }                   //  89 Wniosek o nieprzedluzanie terminu
+
 
 // Create: PROFIL.DBF
 public aPROFILdbf := { ;

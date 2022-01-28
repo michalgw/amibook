@@ -138,6 +138,7 @@ zOSWIAD26R := ' '
 zPPK := iif( etaty->ppk $ 'TN', etaty->ppk, 'N' )
 zULGAKLSRA := ' '
 zODLICZENIE := ' '
+zWNIOSTERM := ' '
 //002 ostatnia zmienna jest nowa
 
 mmm=array(12)
@@ -412,23 +413,24 @@ do while .t.
          case skladn=8
               save scre to scr_sklad
               set curs on
-              @ 11,42 clear to 21,79
-              @ 11,42 to 21,79
-              ValidTakNie( zOSWIAD26R, 12, 72 )
-              ValidTakNie( zULGAKLSRA, 13, 64 )
-              ValidTakNie( zODLICZENIE, 15, 67 )
-              @ 12,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID ValidTakNie( zOSWIAD26R, 12, 72 ) .AND. oblpl()
-              @ 13,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' VALID ValidTakNie( zULGAKLSRA, 13, 64 ) .AND. oblpl()
-              @ 13,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
-              @ 14,43 say 'Podatek stawka..........%.='
-              @ 14,62 get zSTAW_PODAT pict '99.99' valid oblpl()
-              @ 14,71 get B5          pict '99999.99' when oblpl().and..f.
-              @ 15,43 say 'Odliczenie od dochodu.' GET zODLICZENIE picture '!' valid ValidTakNie( zODLICZENIE, 15, 67 ) .AND. oblpl()
-              @ 15,71 get zODLICZ     pict '99999.99' valid oblpl()
-              @ 16,43 say 'Na ubezp.zdrowotne do ZUS  '
-              @ 17,43 say 'obliczono:     % ='
-              @ 17,53 get zSTAW_PUZ pict '99.99' valid oblpl()
-              @ 17,61 get zWAR_PUZB pict '99999.99' when oblpl().and..f.
+              @ 10,42 clear to 21,79
+              @ 10,42 to 21,79
+              ValidTakNie( zOSWIAD26R, 11, 72 )
+              ValidTakNie( zULGAKLSRA, 12, 64 )
+              ValidTakNie( zODLICZENIE, 14, 67 )
+              @ 11,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID ValidTakNie( zOSWIAD26R, 12, 72 ) .AND. oblpl()
+              @ 12,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' VALID ValidTakNie( zULGAKLSRA, 12, 64 ) .AND. oblpl()
+              @ 12,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
+              @ 13,43 say 'Podatek stawka..........%.='
+              @ 13,62 get zSTAW_PODAT pict '99.99' valid oblpl()
+              @ 13,71 get B5          pict '99999.99' when oblpl().and..f.
+              @ 14,43 say 'Odliczenie od dochodu.' GET zODLICZENIE picture '!' valid ValidTakNie( zODLICZENIE, 14, 67 ) .AND. oblpl()
+              @ 14,71 get zODLICZ     pict '99999.99' valid oblpl()
+              @ 15,43 say 'Na ubezp.zdrowotne do ZUS  '
+              @ 16,43 say 'obliczono:     % ='
+              @ 16,53 get zSTAW_PUZ pict '99.99' valid oblpl()
+              @ 16,61 get zWAR_PUZB pict '99999.99' when oblpl().and..f.
+              @ 17,43 SAY 'Przedˆu¾enie terminu poboru' GET zWNIOSTERM PICTURE '!' VALID ValidTakNie( zWNIOSTERM, 17, 72 ) .AND. oblpl()
               @ 18,43 say 'do pobrania na ZUS........='
               @ 18,71 get zWAR_PUZ  pict '99999.99' when oblpl().and..f.
               *@ 16,43 say 'Do odliczenia od podatku   '
@@ -843,15 +845,15 @@ function oblpl()
          zPODATEK21=max(0,_round(B5-(zWAR_PUZO21+43.76),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZ21+zWAR_PF3)
-         IF zBRUT_RAZEM < 1248.69
+         IF zBRUT_RAZEM < 1248.69 .AND. zWNIOSTERM == 'T'
             IF zODLICZ <> 0
                zWAR_PUZ := zWAR_PUZ21
             ELSE
                zPODATEK := Max( 0, zPODATEK - zWAR_PUZ21 )
             ENDIF
+            zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
+            zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          ENDIF
-         zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
-         zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
       ENDIF
       zDO_WYPLATY=zNETTO+zZASIL_RODZ+zZASIL_PIEL+zDOPL_NIEOP-zODL_NIEOP-zPPKZK1-zPPKZK2
       *zDO_WYPLATY21=zNETTO21+zZASIL_RODZ+zZASIL_PIEL+zDOPL_NIEOP-zODL_NIEOP-zPPKZK1-zPPKZK2
@@ -1038,6 +1040,7 @@ zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), V
 zULGAKLSRA=iif( etaty->ulgaklsra $ 'TN', etaty->ulgaklsra, iif( prac->ulgaklsra == ' ', 'N', prac->ulgaklsra ) )
 zULGAKLSRK=ULGAKLSRK
 zODLICZENIE := ODLICZENIE
+zWNIOSTERM := WNIOSTERM
 if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    skip -1
    zBRUT_ZASAD=iif(zBRUT_ZASAD=0,BRUT_ZASAD,zBRUT_ZASAD)
@@ -1229,6 +1232,7 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
          zPPKPS2 := 0
          zPPKPK2 := 0
       ENDIF
+      zWNIOSTERM := prac->wniosterm
    endif
 endif
 
@@ -1236,6 +1240,9 @@ endif
       zODLICZENIE := prac->odliczenie
    ENDIF
 
+   IF zWNIOSTERM == ' '
+      zWNIOSTERM := prac->wniosterm
+   ENDIF
       zzWAR_PUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUE/100),2)
       zzWAR_PUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUR/100),2)
       zzWAR_PUC=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUC/100),2)
@@ -1347,7 +1354,7 @@ repl_( 'ZASI_BZUS', zZASI_BZUS )
 repl_( 'ULGAKLSRA', zULGAKLSRA )
 repl_( 'ULGAKLSRK', zULGAKLSRK )
 repl_( 'ODLICZENIE', zODLICZENIE )
-
+repl_( 'WNIOSTERM', zWNIOSTERM )
 ***************************************************************************
 func spr_przel
 ***************************************************************************
