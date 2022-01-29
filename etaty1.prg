@@ -418,7 +418,7 @@ do while .t.
               ValidTakNie( zOSWIAD26R, 11, 72 )
               ValidTakNie( zULGAKLSRA, 12, 64 )
               ValidTakNie( zODLICZENIE, 14, 67 )
-              @ 11,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID ValidTakNie( zOSWIAD26R, 12, 72 ) .AND. oblpl()
+              @ 11,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID ValidTakNie( zOSWIAD26R, 11, 72 ) .AND. oblpl()
               @ 12,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' VALID ValidTakNie( zULGAKLSRA, 12, 64 ) .AND. oblpl()
               @ 12,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
               @ 13,43 say 'Podatek stawka..........%.='
@@ -805,17 +805,19 @@ function oblpl()
          zPPKPK2 := 0
       ENDIF
       IF zOSWIAD26R == 'T'
+         zODLICZ21 := 43.76
+         B521 := zDOCHODPOD*(zSTAW_PODAT/100)
          B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(parap_pod/100)
-         zWAR_PUZ21=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
+         zWAR_PUZ21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
          zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PZKB21=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)
-         zWAR_PUZO21=iif(B5<=parap_odl,0,min(B5-parap_odl,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)))
+         zWAR_PUZO21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)))
          zWAR_PUZO=0
          zPODATEK=max(0,_round(B5-(zWAR_PUZO+parap_odl),0))
-         zPODATEK21=max(0,_round(B5-(zWAR_PUZO21+43.76),0))
+         zPODATEK21=max(0,_round(B521-(zWAR_PUZO21+zODLICZ21),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
-         zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZ21+zWAR_PF3)
+         zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZO21+zWAR_PF3)
 
          zWAR_PUZ := Min( _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2), zWAR_PUZ )
          zWAR_PUZB := zWAR_PUZ
@@ -825,14 +827,24 @@ function oblpl()
          zNETTO := zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          B5 := 0.0
          zODLICZ := 0.0
+         IF zBRUT_RAZEM < 12800 .AND. zWNIOSTERM == 'T' .AND. zNETTO21 > zNETTO
+            *IF zODLICZ <> 0
+               zWAR_PUZ := zWAR_PUZO21
+               *zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
+            *ELSE
+               *zPODATEK=max(0,_round(B5-(zWAR_PUZO21+zODLICZ),0))
+            *ENDIF
+            zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
+         ENDIF
       ELSE
          B5=zDOCHODPOD*(zSTAW_PODAT/100)
    *--> Gdy potracanie skladki do wysokosci podatku
-         zWAR_PUZ21=iif(B5<=43.76,0,min(B5-43.76,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
+         zODLICZ21 := iif(zODLICZENIE<>'N'.AND.zODLICZ<>0,43.76,0)
+         zWAR_PUZ21=iif(B5<=zODLICZ21,0,min(B5-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
          zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PZKB21=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)
-         zWAR_PUZO21=iif(B5<=43.76,0,min(B5-43.76,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)))
+         zWAR_PUZO21=iif(B5<=zODLICZ21,0,min(B5-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)))
          zWAR_PUZO=0
    *     zWAR_PUZO=zWAR_PUZ
    *--> Koniec
@@ -842,16 +854,16 @@ function oblpl()
    *     zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,zWAR_PUZ))
    *--> Koniec
          zPODATEK=max(0,_round(B5-(zWAR_PUZO+zODLICZ),0))
-         zPODATEK21=max(0,_round(B5-(zWAR_PUZO21+43.76),0))
+         zPODATEK21=max(0,_round(B5-(zWAR_PUZO21+zODLICZ21),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZ21+zWAR_PF3)
-         IF zBRUT_RAZEM < 1248.69 .AND. zWNIOSTERM == 'T'
+         IF zBRUT_RAZEM < 12800 .AND. zWNIOSTERM == 'T' .AND. zNETTO21 > zNETTO
             IF zODLICZ <> 0
                zWAR_PUZ := zWAR_PUZ21
+               zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
             ELSE
-               zPODATEK := Max( 0, zPODATEK - zWAR_PUZ21 )
+               zPODATEK=max(0,_round(B5-(zWAR_PUZO21+zODLICZ),0))
             ENDIF
-            zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
             zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          ENDIF
       ENDIF
@@ -1148,7 +1160,11 @@ zPODATEK=PODATEK
 zNETTO=NETTO
 zDO_WYPLATY=DO_WYPLATY
 zUWAGI=UWAGI
-B5=zDOCHODPOD*(zSTAW_PODAT/100)
+   IF zOSWIAD26R == 'T'
+      B5 := 0
+   ELSE
+      B5=zDOCHODPOD*(zSTAW_PODAT/100)
+   ENDIF
 B6=zWAR_FSUM
 
    if zJAKI_PRZEL='K'.and.zKW_PRZELEW > zDO_WYPLATY
