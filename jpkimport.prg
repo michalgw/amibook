@@ -2642,6 +2642,7 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zKOL39 := 0
          zNETTO2 := 0
          zKOLUMNA2 := '  '
+         zDATA_ZAP := CToD('')
 
          IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'REJS', ident_fir, miesiac, znumer, @aIstniejacyRec )
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
