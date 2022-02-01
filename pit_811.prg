@@ -253,7 +253,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       P4d  :=  ODKIEDY
       P5 := rozrzut( DToC( DOKIEDY ) )
       SET DATE ANSI
-      SELECT 9
+      SELECT 19
       IF Dostep( 'FIRMA' )
          GO Val( ident_fir )
          spolka_ := spolka
@@ -266,19 +266,19 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       zDEKLIMIE := DEKLIMIE
       zDEKLTEL := DEKLTEL
 
-      SELECT 8
+      SELECT 18
       IF Dostep( 'ORGANY' )
          SET INDEX TO organy
       ELSE
          BREAK
       ENDIF
-      SELECT 7
+      SELECT 17
       IF Dostep( 'REJESTRY' )
          SET INDEX TO rejestry
       ELSE
          BREAK
       ENDIF
-      SELECT 6
+      SELECT 16
       IF Dostep( 'SPOLKA' )
          SetInd( 'SPOLKA' )
          SEEK '+' + ident_fir
