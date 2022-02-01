@@ -360,7 +360,9 @@ public aETATYdbf := {;
    { "ULGAKLSRA", "C", 1, 0 },;                   // 126 Odlicz ulge dla klasy sredniej
    { "ULGAKLSRK", "N", 8, 2 },;                   // 127 Kwota ulgi dla klasy sredniej
    { "ODLICZENIE", "C", 1, 0 },;                  // 128 Odliczenie kwoty wolnej
-   { "WNIOSTERM", "C", 1, 0 } }                   // 129 Wniosek o nieprzedluzanie terminu
+   { "WNIOSTERM", "C", 1, 0 },;                   // 129 Wniosek o nieprzedluzanie terminu
+   { "PODNIEP", "N", 8, 2 },;                     // 130 Niepoprana zaliczka podatku w danym miesacu
+   { "WAR_PUZW", "N", 8, 2 } }                    // 131 Wyliczona skladka zdrowotna
 
 // Create: EWID.DBF
 public aEWIDdbf := {;

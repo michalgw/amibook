@@ -125,7 +125,9 @@ store 0 to zBRUT_ZASAD,;
            zPPKPK2    ,;
            zPPKPPM    ,;
            zZASI_BZUS ,;
-           zULGAKLSRK
+           zULGAKLSRK ,;
+           zPODNIEP   ,;
+           zWAR_PUZW
 *           zNADPL_KWO
 *           zZAOPOD    ,;
 zJAKI_PRZEL=' '
@@ -827,6 +829,7 @@ function oblpl()
          zNETTO := zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          B5 := 0.0
          zODLICZ := 0.0
+         zWAR_PUZW := zWAR_PUZ
          IF zBRUT_RAZEM < 12800 .AND. zWNIOSTERM == 'T' .AND. zNETTO21 > zNETTO
             *IF zODLICZ <> 0
                zWAR_PUZ := zWAR_PUZO21
@@ -857,12 +860,24 @@ function oblpl()
          zPODATEK21=max(0,_round(B5-(zWAR_PUZO21+zODLICZ21),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZ21+zWAR_PF3)
+         zPODNIEP := 0
+         zWAR_PUZW := zWAR_PUZ
          IF zBRUT_RAZEM < 12800 .AND. zWNIOSTERM == 'T' .AND. zNETTO21 > zNETTO
             IF zODLICZ <> 0
-               zWAR_PUZ := zWAR_PUZ21
-               zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
+               IF zBRUT_RAZEM >= 5701
+                  zPODNIEP := zPODATEK - zPODATEK21
+                  zPODATEK := zPODATEK21
+               ELSE
+                  zWAR_PUZ := zWAR_PUZ21
+                  zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
+               ENDIF
             ELSE
-               zPODATEK=max(0,_round(B5-(zWAR_PUZO21+zODLICZ),0))
+               IF zBRUT_RAZEM >= 5701
+                  zPODNIEP := zPODATEK - zPODATEK21
+                  zPODATEK := zPODATEK21
+               ELSE
+                  zWAR_PUZ := zWAR_PUZ21
+               ENDIF
             ENDIF
             zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          ENDIF
@@ -1053,6 +1068,8 @@ zULGAKLSRA=iif( etaty->ulgaklsra $ 'TN', etaty->ulgaklsra, iif( prac->ulgaklsra 
 zULGAKLSRK=ULGAKLSRK
 zODLICZENIE := ODLICZENIE
 zWNIOSTERM := WNIOSTERM
+zPODNIEP := PODNIEP
+zWAR_PUZW := WAR_PUZW
 if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    skip -1
    zBRUT_ZASAD=iif(zBRUT_ZASAD=0,BRUT_ZASAD,zBRUT_ZASAD)
@@ -1371,6 +1388,8 @@ repl_( 'ULGAKLSRA', zULGAKLSRA )
 repl_( 'ULGAKLSRK', zULGAKLSRK )
 repl_( 'ODLICZENIE', zODLICZENIE )
 repl_( 'WNIOSTERM', zWNIOSTERM )
+repl_( 'PODNIEP', zPODNIEP )
+repl_( 'WAR_PUZW', zWAR_PUZW )
 ***************************************************************************
 func spr_przel
 ***************************************************************************
