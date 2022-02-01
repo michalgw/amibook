@@ -40,7 +40,7 @@ FUNCTION xmlWartoscH(hDane, cKlucz, cDomyslny)
 
 FUNCTION xml2date( cData, xDef )
    IF AllTrim( cData ) == ''
-      IF HB_ISNULL( xDef )
+      IF HB_ISNIL( xDef )
          RETURN Date()
       ELSE
          RETURN xDef
@@ -8810,8 +8810,8 @@ FUNCTION DaneXML_IFT1w15(oDoc, cNrRef, hNaglowek)
    hDane['P_72'] := sxml2num( xmlWartoscH( hPozycje, 'P_72' ) )
    hDane['P_73'] := sxml2num( xmlWartoscH( hPozycje, 'P_73' ) )
 
-   hDane['P_74'] := xml2date( xmlWartoscH( hPozycje, 'P_74' ) )
-   hDane['P_75'] := xml2date( xmlWartoscH( hPozycje, 'P_75' ) )
+   hDane['P_74'] := xml2date( xmlWartoscH( hPozycje, 'P_74' ), '' )
+   hDane['P_75'] := xml2date( xmlWartoscH( hPozycje, 'P_75' ), '' )
 
    IF xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '2' .AND. Len(edekXmlORDZU( oDoc )) > 0
       hDane['ORDZU'] := hb_Hash()
@@ -8990,8 +8990,8 @@ FUNCTION DaneXML_IFT2w9(oDoc, cNrRef, hNaglowek)
 
    hDane['P_116'] := sxml2num( xmlWartoscH( hPozycje, 'P_116' ) )
 
-   hDane['P_117'] := xml2date( xmlWartoscH( hPozycje, 'P_117' ) )
-   hDane['P_118'] := xml2date( xmlWartoscH( hPozycje, 'P_118' ) )
+   hDane['P_117'] := xml2date( xmlWartoscH( hPozycje, 'P_117' ), '' )
+   hDane['P_118'] := xml2date( xmlWartoscH( hPozycje, 'P_118' ), '' )
 
    IF xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '2' .AND. Len(edekXmlORDZU( oDoc )) > 0
       hDane['ORDZU'] := hb_Hash()
