@@ -25,6 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "tbrowse.ch"
 #include "box.ch"
 #include "button.ch"
+#include "dbinfo.ch"
 
 CREATE CLASS TEDeklaracje
    VAR lOtworzPrac
@@ -36,6 +37,8 @@ CREATE CLASS TEDeklaracje
    VAR lBramkaTestowa
    VAR nRekord
    VAR nLiczbaRekordow
+   VAR nPracOrd
+   VAR nPracRecNo
    METHOD New(lOtwPrac)
    METHOD Inicjuj()
    METHOD Zakoncz()
@@ -87,13 +90,17 @@ METHOD Inicjuj() CLASS TEDeklaracje
    IF ::lOtworzPrac
       nTmpArea := Select()
       IF Select('PRAC') == 0
-         IF !DostepPro('PRAC', 'PRAC')
+         IF !DostepPro('PRAC', , , , 'PRAC')
             edeklar->(dbCloseArea())
             RETURN .F.
          ENDIF
       ENDIF
       Select(nTmpArea)
+   ELSE
+      ::nPracOrd := dbOrderInfo( DBOI_NUMBER )
+      ::nPracRecNo := prac->( RecNo() )
    ENDIF
+   prac->( dbSetOrder( 4 ) )
    bColorBlock := {|| iif(AScan(::aWybrane, { |n| n == edeklar->(RecNo()) }) > 0, {5,2}, {1,2}) }
    ::oBrowser := TBrowseNew(3, 0, 22, 79)
    ::oBrowser:border := B_SINGLE
@@ -148,6 +155,9 @@ METHOD Zakoncz() CLASS TEDeklaracje
    edeklar->(dbCloseArea())
    IF ::lOtworzPrac
       prac->(dbCloseArea())
+   ELSEIF HB_ISNUMERIC( ::nPracOrd )
+      prac->( dbSetOrder( ::nPracOrd ) )
+      prac->( dbGoto( ::nPracRecNo ) )
    ENDIF
    RETURN
 
@@ -300,9 +310,9 @@ METHOD Uruchom(nID) CLASS TEDeklaracje
    RETURN
 
 METHOD PobierzPrac() CLASS TEDeklaracje
-   IF (Val(edeklar->osoba) > 0)
-      prac->(dbGoto(Val(edeklar->osoba)))
-   RETURN PadR(SubStr(AllTrim(prac->nazwisko) + ' ' + AllTrim(prac->imie1), 1, 16), 16)
+   IF (Val(edeklar->osoba) > 0) .AND. prac->( dbSeek( Val( edeklar->osoba ) ) )
+      //prac->(dbGoto(Val(edeklar->osoba)))
+      RETURN PadR(SubStr(AllTrim(prac->nazwisko) + ' ' + AllTrim(prac->imie1), 1, 16), 16)
    ENDIF
    RETURN Space(16)
 
