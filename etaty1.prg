@@ -841,13 +841,14 @@ function oblpl()
          ENDIF
       ELSE
          B5=zDOCHODPOD*(zSTAW_PODAT/100)
+         B521=(zDOCHODPOD+zULGAKLSRK)*(zSTAW_PODAT/100)
    *--> Gdy potracanie skladki do wysokosci podatku
          zODLICZ21 := iif(zODLICZENIE<>'N'.AND.zODLICZ<>0,43.76,0)
-         zWAR_PUZ21=iif(B5<=zODLICZ21,0,min(B5-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
+         zWAR_PUZ21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
          zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PZKB21=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)
-         zWAR_PUZO21=iif(B5<=zODLICZ21,0,min(B5-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)))
+         zWAR_PUZO21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)))
          zWAR_PUZO=0
    *     zWAR_PUZO=zWAR_PUZ
    *--> Koniec
@@ -857,27 +858,16 @@ function oblpl()
    *     zWAR_PUZO=iif(B5<=zODLICZ,0,min(B5-zODLICZ,zWAR_PUZ))
    *--> Koniec
          zPODATEK=max(0,_round(B5-(zWAR_PUZO+zODLICZ),0))
-         zPODATEK21=max(0,_round(B5-(zWAR_PUZO21+zODLICZ21),0))
+         zPODATEK21=max(0,_round(B521-(zWAR_PUZO21+zODLICZ21),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZ21+zWAR_PF3)
          zPODNIEP := 0
          zWAR_PUZW := zWAR_PUZ
-         IF zBRUT_RAZEM < 12800 .AND. zWNIOSTERM == 'T' .AND. zNETTO21 > zNETTO
-            IF zODLICZ <> 0
-               IF zBRUT_RAZEM >= 5701
-                  zPODNIEP := zPODATEK - zPODATEK21
-                  zPODATEK := zPODATEK21
-               ELSE
-                  zWAR_PUZ := zWAR_PUZ21
-                  zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
-               ENDIF
-            ELSE
-               IF zBRUT_RAZEM >= 5701
-                  zPODNIEP := zPODATEK - zPODATEK21
-                  zPODATEK := zPODATEK21
-               ELSE
-                  zWAR_PUZ := zWAR_PUZ21
-               ENDIF
+         IF zBRUT_RAZEM < 12800 .AND. zNETTO21 > zNETTO
+            zWAR_PUZ := zWAR_PUZ21
+            IF zWNIOSTERM == 'T'
+               zPODNIEP := zPODATEK - zPODATEK21
+               zPODATEK := zPODATEK21
             ENDIF
             zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          ENDIF
