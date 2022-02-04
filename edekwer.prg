@@ -111,7 +111,11 @@ FUNCTION naz_imie_naz(naz_imie)
 /*----------------------------------------------------------------------*/
 
 FUNCTION date2strxml(ddate)
-   RETURN AllTrim(Str(Year(ddate))) + '-' + PadL(AllTrim(Str(Month(ddate))),2,'0') + '-' + PadL(AllTrim(Str(Day(ddate))),2,'0')
+   IF Empty( ddate )
+      RETURN ''
+   ELSE
+      RETURN AllTrim(Str(Year(ddate))) + '-' + PadL(AllTrim(Str(Month(ddate))),2,'0') + '-' + PadL(AllTrim(Str(Day(ddate))),2,'0')
+   ENDIF
 
 /*----------------------------------------------------------------------*/
 

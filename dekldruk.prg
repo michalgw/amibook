@@ -7039,8 +7039,8 @@ FUNCTION DaneDek_JPKV7w2( aDaneZrd )
             ELSE
                aPoz[ 'KorektaPodstawyOpodt' ] := iif( aPoz[ 'KorektaPodstawyOpodt' ], '1', '0' )
             ENDIF
-            aPoz[ 'TerminPlatnosci' ] := xmlWartoscH( aPoz, 'TerminPlatnosci', '' )
-            aPoz[ 'DataZaplaty' ] := xmlWartoscH( aPoz, 'DataZaplaty', '' )
+            aPoz[ 'TerminPlatnosci' ] := date2strxml( xmlWartoscH( aPoz, 'TerminPlatnosci', '' ) )
+            aPoz[ 'DataZaplaty' ] := date2strxml( xmlWartoscH( aPoz, 'DataZaplaty', '' ) )
             aPoz[ 'DataWystawienia' ] := date2strxml( aPoz[ 'DataWystawienia' ] )
             aPoz[ 'K_10' ] := HGetDefault( aPoz, 'K_10', 0 )
             aPoz[ 'K_11' ] := HGetDefault( aPoz, 'K_11', 0 )
