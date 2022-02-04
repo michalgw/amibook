@@ -2875,7 +2875,7 @@ PROCEDURE KRejS_Ksieguj()
       ENDIF
    ELSE
       IF zRYCZALT == 'T'
-         IF ( AllTrim( zKOLUMNA ) $ '56789' .OR. AllTrim( zKOLUMNA ) == '10' .OR. AllTrim( zKOLUMNA ) == '11' ) .OR. ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. AllTrim( zKOLUMNA2 ) == '10' .OR. AllTrim( zKOLUMNA2 ) == '11' )
+         IF ( AllTrim( zKOLUMNA ) $ '56789' .OR. AllTrim( zKOLUMNA ) == '10' .OR. AllTrim( zKOLUMNA ) == '11' .OR. AllTrim( zKOLUMNA ) == '12' .OR. AllTrim( zKOLUMNA ) == '13' ) .OR. ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. AllTrim( zKOLUMNA2 ) == '10' .OR. AllTrim( zKOLUMNA2 ) == '11' .OR. AllTrim( zKOLUMNA2 ) == '12' .OR. AllTrim( zKOLUMNA2 ) == '13' )
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
             IF zNETTO <> 0
                SELECT suma_mc
