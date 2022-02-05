@@ -631,8 +631,8 @@ FUNCTION Main()
 
    PUBLIC param_kw := 525.12
 
-   PUBLIC param_kwd := d"2019-10-01"
-   PUBLIC param_kw2 := 525.12
+   //PUBLIC param_kwd := d"2019-10-01"
+   //PUBLIC param_kw2 := 525.12
 
    // --
 

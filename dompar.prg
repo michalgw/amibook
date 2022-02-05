@@ -68,8 +68,8 @@ FUNCTION DomyslneParametry()
 
       // Kwota wolna
       aPar[ 'param_kw' ] := 5100
-      aPar[ 'param_kwd' ] := d"2022-01-01"
-      aPar[ 'param_kw2' ] := 5100
+      //aPar[ 'param_kwd' ] := d"2022-01-01"
+      //aPar[ 'param_kw2' ] := 5100
 
       aPar[ 'tab_vatue' ] := { ;
          { 'kraj' => 'AT', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 13, 'stawka_c' => 10, 'stawka_d' => 0 }, ;
@@ -390,15 +390,15 @@ PROCEDURE DomParPrzywroc_Param( lPrzypiszTmp, cRok )
    ENDIF
 
    param_kw := aDomyslneParametry[ cRok ][ 'param_kw' ]
-   param_kwd := aDomyslneParametry[ cRok ][ 'param_kwd' ]
-   param_kw2 := aDomyslneParametry[ cRok ][ 'param_kw2' ]
+   //param_kwd := aDomyslneParametry[ cRok ][ 'param_kwd' ]
+   //param_kw2 := aDomyslneParametry[ cRok ][ 'param_kw2' ]
 
    SAVE TO param ALL LIKE param_*
 
    IF lPrzypiszTmp
       zparam_kw := param_kw
-      zparam_kwd := param_kwd
-      zparam_kw2 := param_kw2
+      //zparam_kwd := param_kwd
+      //zparam_kw2 := param_kw2
    END
 
    IF TNEsc( , "Czy przypsa† kwot© woln¥ do wszysztkich firm? (T/N)" )

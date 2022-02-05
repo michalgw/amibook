@@ -27,7 +27,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Spolka()
 
-   private oGetKW
+   //private oGetKW
 
 private _top,_bot,_top_bot,_stop,_sbot,_proc,kl,ins,nr_rec,f10,rec,fou
 @ 1,47 say [          ]
@@ -171,9 +171,9 @@ if ins
    zPARAM_WOJ=m->param_woj
    zPARAM_POW=m->param_pow
    zPARAM_KW=m->param_kw
-   zPARAM_KWD=m->param_kwd
-   zPARAM_KW2=m->param_kw2
-   zPARAM_KW3=iif( Date() < m->param_kwd, m->param_kw, m->param_kw2 )
+   //zPARAM_KWD=m->param_kwd
+   //zPARAM_KW2=m->param_kw2
+   //zPARAM_KW3=iif( Date() < m->param_kwd, m->param_kw, m->param_kw2 )
    store space(30) to zODLICZ1,zODLICZ2,zS_RODZAJ
    store [   /   ] to zudzial1,zudzial2,zudzial3,zudzial4,zudzial5,zudzial6,zudzial7,zudzial8,zudzial9,zudzial10,zudzial11,zudzial12
    *zOBLKWWOL := 'S'
@@ -207,9 +207,9 @@ else
    zPARAM_POW=param_pow
    zSPOSOB=SPOSOB
    zPARAM_KW=param_kw
-   zPARAM_KWD=param_kwd
-   zPARAM_KW2=param_kw2
-   zPARAM_KW3=iif( Date() < param_kwd, param_kw, param_kw2 )
+   //zPARAM_KWD=param_kwd
+   //zPARAM_KW2=param_kw2
+   //zPARAM_KW3=iif( Date() < param_kwd, param_kw, param_kw2 )
    zSKARB=SKARB
    sele urzedy
    go zSKARB
@@ -255,8 +255,9 @@ endif
 @ 16,20 get zTELEFON picture "XXXXXXXXXX"
 *@ 16,52 get zOBLKWWOL PICTURE "!" WHEN spolka_w_oblkwwol() VALID spolka_v_oblkwwol()
 @ 17,31 get zSPOSOB picture "!" valid zSPOSOB$'PL'
-@ 17,49 get zPARAM_KW3 picture "9999.99" WHEN SpolkaWhenParamKW() //range 0,9999
-oGetKW := ATail( GetList )
+@ 17,49 get zPARAM_KW picture "9999.99" range 0,9999
+//@ 17,49 get zPARAM_KW3 picture "9999.99" WHEN SpolkaWhenParamKW() //range 0,9999
+//oGetKW := ATail( GetList )
 @ 18,20 get zODLICZ2 picture repl('!',30)
 @ 19,20 get zODLICZ1 picture repl('!',30)
 @ 20,20 get zS_RODZAJ picture repl('!',30)
@@ -339,9 +340,7 @@ repl NAZ_IMIE with zNAZ_IMIE,;
      PARAM_WOJ with zPARAM_WOJ,;
      PARAM_POW with zPARAM_POW,;
      SPOSOB with zSPOSOB,;
-     PARAM_KW with zPARAM_KW,;
-     PARAM_KWD with zPARAM_KWD,;
-     PARAM_KW2 with zPARAM_KW2,;
+     PARAM_KW with zPARAM_KW,;  //PARAM_KWD with zPARAM_KWD,;  //PARAM_KW2 with zPARAM_KW2,;
      ODLICZ1 with zODLICZ1,;
      ODLICZ2 with zODLICZ2,;
      S_RODZAJ with zS_RODZAJ,;
@@ -473,7 +472,8 @@ set color to +w
 @ 16,20 say TELEFON
 *@ 16, 52 SAY spolka->oblkwwol
 @ 17,31 say SPOSOB
-@ 17,49 say iif( Date() < param_kwd, PARAM_KW, PARAM_KW2 ) picture "9999.99"
+//@ 17,49 say iif( Date() < param_kwd, PARAM_KW, PARAM_KW2 ) picture "9999.99"
+@ 17,49 say PARAM_KW picture "9999.99"
 @ 18,20 say ODLICZ2
 @ 19,20 say ODLICZ1
 @ 20,20 say S_RODZAJ
@@ -818,6 +818,7 @@ FUNCTION spolka_v_oblkwwol()
 
 /*----------------------------------------------------------------------*/
 
+/*
 FUNCTION SpolkaWhenParamKW()
 
    LOCAL cScreen
@@ -845,5 +846,6 @@ FUNCTION SpolkaWhenParamKW()
    RETURN .F.
 
 /*----------------------------------------------------------------------*/
+*/
 
 *############################################################################
