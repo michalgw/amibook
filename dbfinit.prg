@@ -1593,7 +1593,7 @@ public aUMOWYdbf := {;
    { "KOSZT", "N", 12, 2 },;                      //  18
    { "DOCHOD", "N", 12, 2 },;                     //  19
    { "STAW_PODAT", "N", 2, 0 },;                  //  20
-   { "PODATEK", "N", 12, 2 },;                    //  21
+   { "PODATEK", "N", 12, 2 },;                    //  21 Podatek do US
    { "NETTO", "N", 12, 2 },;                      //  22
    { "DO_WYPLATY", "N", 12, 2 },;                 //  23
    { "STAW_PUZ", "N", 5, 2 },;                    //  24
@@ -1669,7 +1669,9 @@ public aUMOWYdbf := {;
    { "PPKPK2", "N", 8, 2 },;                      //  94 PPK Wpˆata dodatkowa pracodawcy - kwota
    { "PPKPPM", "N", 8, 2 },;                      //  95 PPK Wpˆaty pracodawcy z pop. miesi¥ca
    { "PPKIDEPPK", "C", 50, 0 },;                  //  96 PPK Identyfikator ewidencji PPK uczestnika PPK
-   { "ZASI_BZUS", "N", 12, 2 } }                  //  97 Zasilki bez ZUS
+   { "ZASI_BZUS", "N", 12, 2 },;                  //  97 Zasilki bez ZUS
+   { "WNIOSTERM", "C", 1, 0 },;                   //  98 Przedˆu¾enie terminu poboru podatku (rozp. 07.01.2022)
+   { "NALPODAT", "N", 12, 2 } }                   //  99 Naliczony podatek
 
 // Create: URZEDY.DBF
 public aURZEDYdbf := {;
