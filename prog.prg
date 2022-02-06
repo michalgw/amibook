@@ -471,7 +471,10 @@ FUNCTION Main()
    PUBLIC parap_pf3 := 7
 
    // Zdrowotne do zus (platnik)
-   PUBLIC parap_fuz := 0
+   PUBLIC parap_fuz := 9
+
+   // Zdrowotne do zus (platnik) liniowo
+   PUBLIC parap_fzl := 4.9
 
    // Emerytalne (platnik)
    PUBLIC parap_fue := 9.76
@@ -504,6 +507,31 @@ FUNCTION Main()
 
    // Liczba dni wolnych pˆatnych 100% przez pracodawc©
    PUBLIC parap_ldw := 33
+
+   // Przeci©tne miesi©czne wynagrodzenie w sektorze przedsi©biorstw
+   // w czwartym kwartale roku poprzedniego, wˆ¥cznie z wypˆatami z zysku,
+   // ogˆaszanego przez Prezesa Gˆ¢wnego Urz©du Statystycznego w
+   // Dzienniku Urz©dowym Rzeczypospolitej Polskiej "Monitor Polski"
+   // Podstawa do zdrowotnego dla ryczaˆtowc¢w
+   PUBLIC parap_frp := 6221.04
+
+   // Kwota od dla 1 progu
+   PUBLIC parap_rk1 := 0
+
+   // Stawka dla 1 progu
+   PUBLIC parap_rs1 := 60
+
+   // Kwota od dla 2 progu
+   PUBLIC parap_rk2 := 60000
+
+   // Stawka dla 2 progu
+   PUBLIC parap_rs2 := 100
+
+   // Kwota od dla 3 progu
+   PUBLIC parap_rk3 := 300000
+
+   // Stawka dla 3 progu
+   PUBLIC parap_rs3 := 180
 
    // ---
 
@@ -1955,7 +1983,24 @@ FUNCTION _bg()
 // Parametry placowe i ZUS
 FUNCTION _bh()
 
+   o[ 1 ] := ' P - Og¢lne parametry ZUS       '
+   o[ 2 ] := ' R - Stawki dla ryczaˆtowc¢w    '
+
+   RETURN '15,4'
+
+*******************************************
+// Parametry placowe i ZUS
+FUNCTION _bha()
+
    Param_P()
+
+   RETURN ''
+
+*******************************************
+// Parametry placowe i ZUS dla ryczaˆtowc¢w
+FUNCTION _bhb()
+
+   Param_PRycz()
 
    RETURN ''
 

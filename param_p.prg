@@ -52,16 +52,15 @@ set colo to
 @ 11,42 say '-emerytalne                           '
 @ 12,42 say '-rentowe                              '
 @ 13,42 say '-zdrowotne do ZUS                     '
-*@ 14,42 say '-zdrowotne do odliczen                '
-@ 14,42 say '-chorobowe                            '
-@ 15,42 say '-wypadkowe - wpisz w parametrach firmy'
-@ 16,42 say '-III filar                            '
-@ 17,42 say ' Na fundusze:                         '
-@ 18,42 say '-Fundusz Pracy                        '
-@ 19,42 say '-Fundusz G&__S.P                          '
-@ 20,42 say ' Domy&_s.lny symbol Kasy Chorych         '
-@ 21,42 say ' PPK st.pracow.     % st.pracod.     %'
-@ 22,42 say '                                      '
+@ 14,42 say '-zdrowotne do ZUS liniowo             '
+@ 15,42 say '-chorobowe                            '
+@ 16,42 say '-wypadkowe - wpisz w parametrach firmy'
+@ 17,42 say '-III filar                            '
+@ 18,42 say ' Na fundusze:                         '
+@ 19,42 say '-Fundusz Pracy                        '
+@ 20,42 say '-Fundusz G&__S.P                          '
+@ 21,42 say ' Domy&_s.lny symbol Kasy Chorych         '
+@ 22,42 say ' PPK st.pracow.     % st.pracod.     %'
 *################################# OPERACJE #################################
 do say_pr
 kl=0
@@ -109,6 +108,7 @@ zparap_rkc=parap_rkc
 zparpk_sz := parpk_sz
 zparpk_sp := parpk_sp
 zparap_ldw := parap_ldw
+zparap_fzl := parap_fzl
 *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 @  3,77 get zparap_ldw picture "999" range 0,999
 @  4,73 get zparap_kos picture "9999.99" range 0,9999
@@ -121,23 +121,24 @@ zparap_ldw := parap_ldw
 @ 12,65 get zparap_pur picture "99.99"
 @ 13,65 get zparap_puz picture "99.99"
 *@ 14,65 get zparap_pzk picture "99.99"
-@ 14,65 get zparap_puc picture "99.99"
+@ 15,65 get zparap_puc picture "99.99"
 *@ 16,65 get zparap_puw picture "99.99"
-@ 16,65 get zparap_pf3 picture "99.99"
-@ 18,65 get zparap_pfp picture "99.99"
-@ 19,65 get zparap_pfg picture "99.99"
+@ 17,65 get zparap_pf3 picture "99.99"
+@ 19,65 get zparap_pfp picture "99.99"
+@ 20,65 get zparap_pfg picture "99.99"
 @ 11,75 get zparap_fue picture "99.99"
 @ 12,75 get zparap_fur picture "99.99"
 @ 13,75 get zparap_fuz picture "99.99"
-@ 14,75 get zparap_fuc picture "99.99"
+@ 14,75 get zparap_fzl picture "99.99"
+@ 15,75 get zparap_fuc picture "99.99"
 *@ 15,75 get zparap_fuw picture "99.99"
 *@ 16,75 get zparap_fww picture "99.99"
-@ 16,75 get zparap_ff3 picture "99.99"
-@ 17,75 get zparap_ffp picture "99.99"
-@ 19,75 get zparap_ffg picture "99.99"
-@ 20,75 get zparap_rkc picture "99!"
-@ 21,57 get zparpk_sz picture "99.99"
-@ 21,74 get zparpk_sp picture "99.99"
+@ 17,75 get zparap_ff3 picture "99.99"
+@ 19,75 get zparap_ffp picture "99.99"
+@ 20,75 get zparap_ffg picture "99.99"
+@ 21,75 get zparap_rkc picture "99!"
+@ 22,57 get zparpk_sz picture "99.99"
+@ 22,74 get zparpk_sp picture "99.99"
 ****************************
 clear type
 read_()
@@ -180,6 +181,7 @@ parap_rkc=zparap_rkc
 parpk_sz := zparpk_sz
 parpk_sp := zparpk_sp
 parap_ldw := zparap_ldw
+parap_fzl := zparap_fzl
 ****************************
 save to param_p all like parap_*
 save to param_ppk all like parpk_*
@@ -234,22 +236,151 @@ set colo to w+
 @ 12,65 say parap_pur picture "99.99"
 @ 13,65 say parap_puz picture "99.99"
 *@ 14,65 say parap_pzk picture "99.99"
-@ 14,65 say parap_puc picture "99.99"
+@ 15,65 say parap_puc picture "99.99"
 *@ 15,65 say parap_puw picture "99.99"
-@ 16,65 say parap_pf3 picture "99.99"
-@ 18,65 say parap_pfp picture "99.99"
-@ 19,65 say parap_pfg picture "99.99"
+@ 17,65 say parap_pf3 picture "99.99"
+@ 19,65 say parap_pfp picture "99.99"
+@ 20,65 say parap_pfg picture "99.99"
 @ 11,75 say parap_fue picture "99.99"
 @ 12,75 say parap_fur picture "99.99"
 @ 13,75 say parap_fuz picture "99.99"
-@ 14,75 say parap_fuc picture "99.99"
+@ 14,75 say parap_fzl picture "99.99"
+@ 15,75 say parap_fuc picture "99.99"
 *@ 15,75 say parap_fuw picture "99.99"
 *@ 16,75 say parap_fww picture "99.99"
-@ 16,75 say parap_ff3 picture "99.99"
-@ 18,75 say parap_ffp picture "99.99"
-@ 19,75 say parap_ffg picture "99.99"
-@ 20,75 say parap_rkc picture "99!"
-@ 21,57 say parpk_sz picture "99.99"
-@ 21,74 say parpk_sp picture "99.99"
+@ 17,75 say parap_ff3 picture "99.99"
+@ 19,75 say parap_ffp picture "99.99"
+@ 20,75 say parap_ffg picture "99.99"
+@ 21,75 say parap_rkc picture "99!"
+@ 22,57 say parpk_sz picture "99.99"
+@ 22,74 say parpk_sp picture "99.99"
 ColStd()
 *############################################################################
+
+PROCEDURE Param_PRycz()
+
+   LOCAL bPRyczPisz := { | |
+      SET COLOR TO w+
+      @  5, 70 SAY parap_frp PICTURE '99999.99'
+      @  8, 55 SAY parap_rk1 PICTURE '999999.99'
+      @  8, 75 SAY parap_rs1 PICTURE '999'
+      @  9, 55 SAY parap_rk2 PICTURE '999999.99'
+      @  9, 75 SAY parap_rs2 PICTURE '999'
+      @ 10, 55 SAY parap_rk3 PICTURE '999999.99'
+      @ 10, 75 SAY parap_rs3 PICTURE '999'
+      SET COLOR TO
+   }
+   LOCAL Kl
+
+   PRIVATE zparap_frp, zparap_rk1, zparap_rs1, zparap_rk2, zparap_rs2, zparap_rk3, zparap_rs3
+
+   IF .NOT. File( 'param_p.mem' )
+      SAVE TO param_p ALL LIKE parap_*
+      RETURN NIL
+   ENDIF
+
+   *################################# GRAFIKA ##################################
+   @  3,42 CLEAR TO 22, 79
+   @  3,42 say 'Przeci©tne miesi©czne wynagrodzenie w '
+   @  4,42 say 'sektorze przedsi©biorstw w 4.kwartale '
+   @  5,42 say 'roku poprzedniego                     '
+   @  6,42 say 'ֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽ'
+   @  7,42 say 'Miesi©czna podstawa wymiaru skˆadki   '
+   @  8,42 say 'Przychody od            podstawa     %'
+   @  9,42 say 'Przychody od            podstawa     %'
+   @ 10,42 say 'Przychody od            podstawa     %'
+   *################################# OPERACJE #################################
+
+   Eval( bPRyczPisz )
+
+   Kl := 0
+   DO WHILE kl # 27
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      ColStd()
+      Kl := Inkey( 0 )
+      DO CASE
+      *############################### MODYFIKACJA ################################
+      CASE kl == 109 .OR. kl == 77
+         @ 1,47 say '          '
+         ColStb()
+         center( 23, '‏                       ‏' )
+         ColSta()
+         center( 23, 'M O D Y F I K A C J A' )
+         ColStd()
+         BEGIN SEQUENCE
+            *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
+            zparap_frp := parap_frp
+            zparap_rk1 := parap_rk1
+            zparap_rs1 := parap_rs1
+            zparap_rk2 := parap_rk2
+            zparap_rs2 := parap_rs2
+            zparap_rk3 := parap_rk3
+            zparap_rs3 := parap_rs3
+
+            *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
+            @  5, 70 GET parap_frp PICTURE '99999.99'
+            @  8, 55 GET parap_rk1 PICTURE '999999.99'
+            @  8, 75 GET parap_rs1 PICTURE '999'
+            @  9, 55 GET parap_rk2 PICTURE '999999.99'
+            @  9, 75 GET parap_rs2 PICTURE '999'
+            @ 10, 55 GET parap_rk3 PICTURE '999999.99'
+            @ 10, 75 GET parap_rs3 PICTURE '999'
+
+            ****************************
+            CLEAR TYPEAHEAD
+            read_()
+            IF LastKey() == 27
+               BREAK
+            ENDIF
+
+            parap_frp := zparap_frp
+            parap_rk1 := zparap_rk1
+            parap_rs1 := zparap_rs1
+            parap_rk2 := zparap_rk2
+            parap_rs2 := zparap_rs2
+            parap_rk3 := zparap_rk3
+            parap_rs3 := zparap_rs3
+
+            SAVE TO param_p ALL LIKE parap_*
+            *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
+         END
+         Eval( bPRyczPisz )
+         @ 23,0
+
+      *################################### POMOC ##################################
+      CASE Kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY '          '
+         DECLARE p[ 20 ]
+         *---------------------------------------
+         p[ 1 ] := '                                             '
+         p[ 2 ] := '     [M].....................modyfikacja     '
+         p[ 3 ] := '     [Esc]...................wyj&_s.cie         '
+         p[ 4 ] := '                                             '
+         *---------------------------------------
+         SET COLOR TO i
+         i := 20
+         j := 24
+         DO WHILE i > 0
+            IF Type( 'p[i]' ) # 'U'
+               center( j, p[ i ] )
+               j := j - 1
+            ENDIF
+            i := i - 1
+         ENDDO
+         ColStd()
+         pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            KEYBOARD Chr( LastKey() )
+         ENDIF
+         RESTORE SCREEN FROM scr_
+
+      ******************** ENDCASE
+      ENDCASE
+   ENDDO
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
