@@ -1342,7 +1342,8 @@ public aSPOLKAdbf := {;
    { "KRAJ", "C", 10, 0 },;                       //  71   NIEUZYWANE Kraj
    { "OBLKWWOL", "C", 1, 0 },;                    //  72   Odlicz kwote wolna 'S' - stala wartos, 'T' - tablica pod. doch.
    { "PARAM_KWD", "D", 8, 0 },;                   //  73   Kwota wolna do daty
-   { "PARAM_KW2", "N", 9, 2 } }                   //  74   Wartosc kwoty wolnej od daty
+   { "PARAM_KW2", "N", 9, 2 },;                   //  74   Wartosc kwoty wolnej od daty
+   { "ULGAKLSRA", "C", 1, 0 } }                   //  75   Ulga dla klasy ˜redniej 'T' - tak
 
 // Create: SUMA_MC.DBF
 public aSUMA_MCdbf := {;

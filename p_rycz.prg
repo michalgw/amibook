@@ -27,6 +27,7 @@ PROCEDURE P_Rycz( okres )
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, _top, _bot, ;
       _stop, _sbot, _proc, _row, _proc_spe, _disp, _cls, kl, ins, nr_rec, wiersz, f10, rec, fou
 
+
    @ 1, 47 SAY '          '
    *############################### OTWARCIE BAZ ###############################
    zPITOKRES := 'M'
@@ -177,7 +178,13 @@ FUNCTION linia12R()
    RETURN ' ' + dos_c( naz_imie ) + ' '
 
 *############################################################################
-PROCEDURE zestaw_R( Okres )
+PROCEDURE zestaw_R( Okres, lPobierzPrzychody )
+
+   hb_default( @lPobierzPrzychody, .F. )
+
+   IF lPobierzPrzychody
+      SELECT spolka
+   ENDIF
 
    @ 1, 47 SAY '          '
    *################################# GRAFIKA ##################################
@@ -277,11 +284,13 @@ PROCEDURE zestaw_R( Okres )
 *                   seek [+]+zident+' 1'
 *                endcase
 
-   Dane_Mc( '5' )
+   IF ! lPobierzPrzychody
+      Dane_Mc( '5' )
 
-   IF LastKey() == K_ESC
-      SELECT spolka
-      RETURN
+      IF LastKey() == K_ESC
+         SELECT spolka
+         RETURN
+      ENDIF
    ENDIF
 
    SELECT dane_mc
@@ -316,6 +325,12 @@ PROCEDURE zestaw_R( Okres )
       ENDIF
       SKIP
    ENDDO
+
+   IF lPobierzPrzychody
+      SELECT dane_mc
+      RETURN dochody - wydatki
+   ENDIF
+
    SELECT spolka
    *------------------------------------
    reman := ( zpit5104 * ( zpit5105 / 100 ) ) * 0.1
@@ -380,11 +395,11 @@ PROCEDURE zestaw_R( Okres )
    k19 := zaaa + zbbb
 
    *k21 =_round(max(0,k18-(k19+zzdrowie)),1)
-   k21 := _round( Max( 0, k18 - ( k19 + zzdrowie ) ), 0 )
+   k21 := _round( Max( 0, k18 - ( k19 /*+ zzdrowie*/ ) ), 0 )
 
    *k21a=_round(max(0,k18-(k19+zzdrowie)),1)
    *k22=_round(zaliczki,1)
-   k21a := Max( 0, k18 - ( k19 + zzdrowie ) )
+   k21a := Max( 0, k18 - ( k19 /*+ zzdrowie*/ ) )
    k22 := zaliczki
 
    k23 := _round( Max( 0, k21a - k22 ), 0 )

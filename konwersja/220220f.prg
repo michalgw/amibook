@@ -28,11 +28,13 @@ FUNCTION Main()
    ? 'Aktualizacja struktury danych...'
    dbfInicjujDane()
    dbfUtworzTabele( 'UMOWY', 'umowy.tym' )
+   dbfUtworzTabele( 'SPOLKA', 'spolka.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
    ? 'Indeksowanie...'
    dbfIdxUMOWY()
+   dbfIdxSPOLKA()
    dbCloseAll()
 
    RETURN

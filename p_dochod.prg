@@ -20,12 +20,37 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+#include "Inkey.ch"
+
 PROCEDURE P_Dochod( _OUT )
 
    LOCAL dDataNa
 
    PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
    *PRIVATE ObiczKwWl := 'S'
+   PRIVATE udz1, udz2, udz3, udz4, udz5, udz6, udz7, udz8, udz9, udz10, udz11, udz12
+
+   PRIVATE a_pz_m, a_remp, a_remk, a_rem, a_wyr_tow, a_uslugi, a_zakup, a_uboczne
+   PRIVATE a_wynagr_g, a_wydatki, a_przywsp, a_koszwsp, a_pk1, a_pk2, a_pk3, a_pk4
+
+   PRIVATE dzial_g
+
+   PRIVATE p120, p127, p121, p128, p122, p123, p124, p125, p126, p129, p130, p131, p132, p133
+
+   PRIVATE a_przygos, a_przynaj, a_koszgos, a_kosznaj, a_rentalim, a_straty, a_straty_n
+   PRIVATE a_powodz, a_wydatkim, a_wydatkid, a_sumemer, a_budowa, a_ubieginw, a_dochzwol
+   PRIVATE a_SSE, a_g21, a_h385, a_sumzdro, a_zaliczki, a_aaa, a_bbb, a_inneodpo
+   PRIVATE a_odseodma, a_pit5105, a_pit5gosk, a_pit5najk, a_pit5gosp, a_pit5najp
+   PRIVATE a_zalipod, a_zalipodp
+
+   PRIVATE a_dochgos, a_dochnaj, a_stragos, a_stranaj, a_pit566, a_pit567
+   PRIVATE a_preman, a_pit5goss, a_pit5najs, a_gosprzy, a_goskosz, a_najprzy
+   PRIVATE a_najkosz, a_gosdoch, a_gosstra, a_najdoch, a_najstra, a_pro1doch
+   PRIVATE a_pro2doch, a_pro1stra, a_pro2stra, a_pk5, a_p50, a_p51, a_p51a
+   PRIVATE a_p51b, a_pkk7, a_pk6, a_pk75, a_pk7, a_ppodst, a_pk8, a_pk9, a_pk12
+   PRIVATE a_pk13, a_sumzdro1, a_P97MMM, a_P887MMMa, a_P887MMM, a_P885, a_P887
+   PRIVATE a_P888, a_P889, a_wartprze
+
 
    @ 1, 47 SAY Space( 10 )
    *############################### OTWARCIE BAZ ###############################
@@ -200,6 +225,8 @@ PROCEDURE P_Dochod( _OUT )
             P5 := Space( 60 )
          ENDIF
 
+         P_Dochod_Licz()
+
          SELECT dane_mc
 
          *tmp2miesiac=miesiac
@@ -220,6 +247,72 @@ PROCEDURE P_Dochod( _OUT )
             Close_()
             RETURN
          ENDIF
+
+         P_Dochod_Licz()
+
+         SAVE SCREEN TO scr2
+         nr_rec := RecNo()
+         otwarte_ := Select()
+         *wait otwarte_
+         DO CASE
+         CASE _OUT == 'I'
+            infodoch()
+         CASE _OUT == 'Z'
+            zezpit_5()
+         otherwise
+            rpit_5()
+         ENDCASE
+         Select( otwarte_ )
+         GO nr_rec
+         RESTORE SCREEN FROM scr2
+         _disp := .F.
+
+      *################################### POMOC ##################################
+      CASE kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY Space( 10 )
+         DECLARE p[ 20 ]
+         *---------------------------------------
+         p[ 1 ] := '                                                        '
+         p[ 2 ] := '   [' + Chr( 24 ) + '/' + Chr( 25 ) + ']...................poprzednia/nast&_e.pna pozycja  '
+         p[ 3 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
+         p[ 4 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
+         p[ 5 ] := '   [Enter].................akceptacja                   '
+         p[ 6 ] := '   [Esc]...................wyj&_s.cie                      '
+         p[ 7 ] := '                                                        '
+         *---------------------------------------
+         SET COLOR TO i
+      	i := 20
+      	j := 24
+         DO WHILE i > 0
+            IF Type( 'p[i]' ) # 'U'
+               center( j, p[i] )
+               j := j - 1
+            ENDIF
+            i := i-1
+   	   ENDDO
+         SET COLOR TO
+         pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            KEYBOARD Chr( LastKey() )
+      	ENDIF
+         RESTORE SCREEN FROM scr_
+      	_disp := .F.
+
+         ******************** ENDCASE
+      ENDCASE
+   ENDDO
+   Close_()
+
+   RETURN
+
+*################################## FUNKCJE #################################
+FUNCTION linia12()
+
+   RETURN ' ' + dos_c( naz_imie ) + ' '
+
+*############################################################################
+PROCEDURE P_Dochod_Licz()
 
          *miesiac=tmp2miesiac
          SELECT spolka
@@ -712,10 +805,10 @@ PROCEDURE P_Dochod( _OUT )
                   SELECT spolka
                   IF param_kskw == 'N'
                      IF TabDochProcent( a_ppodst[ 1, xxx ], 'tab_doch', Val( param_rok ), xxx, .F. ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx, .F. )
-                        ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
+                        ppodatek := Max( 0, ppodatek - param_kw )
                      ENDIF
                   ELSE
-                     ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
+                     ppodatek := Max( 0, ppodatek - param_kw )
                   ENDIF
                *ELSE
                   *ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
@@ -726,9 +819,11 @@ PROCEDURE P_Dochod( _OUT )
             SELECT spolka
             a_pk8[ 1, xxx ] := ppodatek
             IF spolka->sposob == 'L'
-               a_pk9[ 1, xxx ] := Min( a_pk8[ 1, xxx ], a_sumzdro[ 1, xxx ] )
+               //a_pk9[ 1, xxx ] := Min( a_pk8[ 1, xxx ], a_sumzdro[ 1, xxx ] )
+               a_pk9[ 1, xxx ] :=0 // a_pk8[ 1, xxx ]
             ELSE
-               a_pk9[ 1, xxx ] := Min( a_pk8[ 1, xxx ], a_sumzdro[ 1, xxx ] + a_aaa[ 1, xxx ] + a_bbb[ 1, xxx ] + a_inneodpo[ 1, xxx ] )
+               //a_pk9[ 1, xxx ] := Min( a_pk8[ 1, xxx ], a_sumzdro[ 1, xxx ] + a_aaa[ 1, xxx ] + a_bbb[ 1, xxx ] + a_inneodpo[ 1, xxx ] )
+               a_pk9[ 1, xxx ] := Min( a_pk8[ 1, xxx ], a_aaa[ 1, xxx ] + a_bbb[ 1, xxx ] + a_inneodpo[ 1, xxx ] )
             ENDIF
             a_sumzdro1[ 1, xxx ] := Max( 0, a_pk8[ 1, xxx ] - a_pk9[ 1, xxx ] )
             a_pk12[ 1, xxx ] := a_P97MMM[ 1, xxx ]
@@ -1164,10 +1259,10 @@ PROCEDURE P_Dochod( _OUT )
                   SELECT spolka
                   IF param_kskw == 'N'
                      IF TabDochProcent( a_ppodst[ 2, xxx ], 'tab_doch', Val( param_rok ), xxx, .F. ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx, .F. )
-                        ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
+                        ppodatek := Max( 0, ppodatek - param_kw )
                      ENDIF
                   ELSE
-                     ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
+                     ppodatek := Max( 0, ppodatek - param_kw )
                   ENDIF
                *ELSE
                   *ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
@@ -1178,9 +1273,11 @@ PROCEDURE P_Dochod( _OUT )
             SELECT spolka
             a_pk8[ 2, xxx ] := ppodatek
             IF spolka->sposob == 'L'
-               a_pk9[ 2, xxx ] := Min( a_pk8[ 2, xxx ], a_sumzdro[ 2, xxx ] )
+               //a_pk9[ 2, xxx ] := Min( a_pk8[ 2, xxx ], a_sumzdro[ 2, xxx ] )
+               a_pk9[ 2, xxx ] := 0 // a_pk8[ 2, xxx ]
             ELSE
-               a_pk9[ 2, xxx ] := Min( a_pk8[ 2, xxx ], a_sumzdro[ 2, xxx ] + a_aaa[ 2, xxx ] + a_bbb[ 2, xxx ] + a_inneodpo[ 2, xxx ] )
+               //a_pk9[ 2, xxx ] := Min( a_pk8[ 2, xxx ], a_sumzdro[ 2, xxx ] + a_aaa[ 2, xxx ] + a_bbb[ 2, xxx ] + a_inneodpo[ 2, xxx ] )
+               a_pk9[ 2, xxx ] := Min( a_pk8[ 2, xxx ], a_aaa[ 2, xxx ] + a_bbb[ 2, xxx ] + a_inneodpo[ 2, xxx ] )
             ENDIF
             a_sumzdro1[ 2, xxx ] := Max( 0, a_pk8[ 2, xxx ] - a_pk9[ 2, xxx ] )
             a_pk12[ 2, xxx ] := iif( xxx == 1, 0, a_P97MMM[ 2, xxx - 1 ] )
@@ -1325,10 +1422,10 @@ PROCEDURE P_Dochod( _OUT )
                   SELECT spolka
                   IF param_kskw == 'N'
                      IF TabDochProcent( a_ppodst[ 3, xxx ], 'tab_doch', Val( param_rok ), xxx, .F. ) = TabDochProcent( 0, 'tab_doch', Val( param_rok ), xxx, .F. )
-                        ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
+                        ppodatek := Max( 0, ppodatek - param_kw )
                      ENDIF
                   ELSE
-                     ppodatek := Max( 0, ppodatek - iif( dDataNa < param_kwd, param_kw, param_kw2 ) )
+                     ppodatek := Max( 0, ppodatek - param_kw )
                   ENDIF
                *ELSE
                   *ppodatek := TabDochPodatek( pzm, 'tab_doch', Val( param_rok ), xxx, .F. )
@@ -1339,9 +1436,11 @@ PROCEDURE P_Dochod( _OUT )
             SELECT spolka
             a_pk8[ 3, xxx ] := ppodatek
             IF spolka->sposob == 'L'
-               a_pk9[ 3, xxx ] := Min( a_pk8[ 3, xxx ], a_sumzdro[ 3, xxx ] )
+               //a_pk9[ 3, xxx ] := Min( a_pk8[ 3, xxx ], a_sumzdro[ 3, xxx ] )
+               a_pk9[ 3, xxx ] := 0 // a_pk8[ 3, xxx ]
             ELSE
-               a_pk9[ 3, xxx ] := Min( a_pk8[ 3, xxx ], a_sumzdro[ 3, xxx ] + a_aaa[ 3, xxx ] + a_bbb[ 3, xxx ] + a_inneodpo[ 3, xxx ] )
+               //a_pk9[ 3, xxx ] := Min( a_pk8[ 3, xxx ], a_sumzdro[ 3, xxx ] + a_aaa[ 3, xxx ] + a_bbb[ 3, xxx ] + a_inneodpo[ 3, xxx ] )
+               a_pk9[ 3, xxx ] := Min( a_pk8[ 3, xxx ], a_aaa[ 3, xxx ] + a_bbb[ 3, xxx ] + a_inneodpo[ 3, xxx ] )
             ENDIF
             a_sumzdro1[ 3, xxx ] := Max( 0, a_pk8[ 3, xxx ] - a_pk9[ 3, xxx ] )
             a_pk12[ 3, xxx ] := iif( xxx <= 3, 0, a_P97MMM[ 3, xxx - 3 ] )
@@ -1540,68 +1639,12 @@ PROCEDURE P_Dochod( _OUT )
             SPOL++
          ENDIF
 
-         SAVE SCREEN TO scr2
-         nr_rec := RecNo()
-         otwarte_ := Select()
-         *wait otwarte_
-         DO CASE
-         CASE _OUT == 'I'
-            infodoch()
-         CASE _OUT == 'Z'
-            zezpit_5()
-         otherwise
-            rpit_5()
-         ENDCASE
-         Select( otwarte_ )
-         GO nr_rec
-         RESTORE SCREEN FROM scr2
-         _disp := .F.
+   RETURN NIL
 
-      *################################### POMOC ##################################
-      CASE kl == 28
-         SAVE SCREEN TO scr_
-         @ 1, 47 SAY Space( 10 )
-         DECLARE p[ 20 ]
-         *---------------------------------------
-         p[ 1 ] := '                                                        '
-         p[ 2 ] := '   [' + Chr( 24 ) + '/' + Chr( 25 ) + ']...................poprzednia/nast&_e.pna pozycja  '
-         p[ 3 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
-         p[ 4 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
-         p[ 5 ] := '   [Enter].................akceptacja                   '
-         p[ 6 ] := '   [Esc]...................wyj&_s.cie                      '
-         p[ 7 ] := '                                                        '
-         *---------------------------------------
-         SET COLOR TO i
-      	i := 20
-      	j := 24
-         DO WHILE i > 0
-            IF Type( 'p[i]' ) # 'U'
-               center( j, p[i] )
-               j := j - 1
-            ENDIF
-            i := i-1
-   	   ENDDO
-         SET COLOR TO
-         pause( 0 )
-         IF LastKey() # 27 .AND. LastKey() # 28
-            KEYBOARD Chr( LastKey() )
-      	ENDIF
-         RESTORE SCREEN FROM scr_
-      	_disp := .F.
+/*----------------------------------------------------------------------*/
 
-         ******************** ENDCASE
-      ENDCASE
-   ENDDO
-   Close_()
 
-   RETURN
 
-*################################## FUNKCJE #################################
-FUNCTION linia12()
-
-   RETURN ' ' + dos_c( naz_imie ) + ' '
-
-*############################################################################
 PROCEDURE infodoch()
 
    *################################# GRAFIKA ##################################
@@ -1621,7 +1664,7 @@ PROCEDURE infodoch()
       @ 12, 0 SAY ' 5 Kwoty zwiekszajace podstawe opodatkowania/zmniejszajace strate.............. '
       @ 13, 0 SAY ' 6 Podstawa obliczenia podatku................................................. '
       @ 14, 0 SAY ' 7 Podatek od podstawy......................................................... '
-      @ 15, 0 SAY ' 8 Odliczenia od podatku - ubezp.zdrowotne.(NFZ narast:............)........... '
+      @ 15, 0 SAY ' 8 Odliczenia od podatku....................................................... '
       @ 16, 0 SAY ' 9 Podatek po odliczeniach od poczatku roku.................................... '
       IF zPITOKRES == 'K'
          okrpod := 3
@@ -1657,7 +1700,7 @@ PROCEDURE infodoch()
       @ 12, 0 SAY ' 6 Kwoty zwiekszajace podstawe opodatkowania/zmniejszajace strate.............. '
       @ 13, 0 SAY ' 7 Podstawa obliczenia podatku................................................. '
       @ 14, 0 SAY ' 8 Podatek od podstawy......................................................... '
-      @ 15, 0 SAY ' 9 Odliczenia od podatku...................(NFZ narast:............)........... '
+      @ 15, 0 SAY ' 9 Odliczenia od podatku....................................................... '
       @ 16, 0 SAY '10 Podatek po odliczeniach od poczatku roku.................................... '
       IF zPITOKRES == 'K'
          okrpod := 3
@@ -1701,7 +1744,7 @@ PROCEDURE infodoch()
    @ 12, 68 SAY a_pk75[ okrpod, Val( miesiac ) ] PICTURE DRPIC
    @ 13, 68 SAY a_pK7[ okrpod, Val( miesiac ) ] PICTURE DRPIC
    @ 14, 68 SAY a_pK8[ okrpod, Val( miesiac ) ] PICTURE DRPIC
-   @ 15, 55 SAY a_sumzdro[ okrpod, Val( miesiac ) ] PICTURE DRPIC
+   //@ 15, 55 SAY a_sumzdro[ okrpod, Val( miesiac ) ] PICTURE DRPIC
    @ 15, 68 SAY a_pK9[ okrpod, Val( miesiac ) ] PICTURE DRPIC
    @ 16, 68 SAY a_sumzdro1[ okrpod, Val( miesiac ) ] PICTURE DRPIC
    @ 17, 55 SAY a_zalipod[ okrpod, Val( miesiac ) ] PICTURE DRPIC
@@ -1763,7 +1806,7 @@ PROCEDURE infodoch()
 
    SELECT 7
    CLEAR TYPE
-   kkk := Inkey( 0 )
+   kkk := Inkey( 0, INKEY_KEYBOARD )
    zPodatki := .T.
    DO CASE
    CASE kkk == 68 .OR. kkk == 100

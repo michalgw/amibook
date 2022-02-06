@@ -203,11 +203,14 @@ FUNCTION Dane_MC( typpit )
            endif
            if podstzdr#0    */
          zstaw_wuz := staw_wuz
-         zstaw5_wuz := staw5_wuz
+         //zstaw5_wuz := staw5_wuz
+         zstaw5_wuz := 0
          zwar_wuz := war_wuz
-         pwar5_wuz := war5_wuz
+         //pwar5_wuz := war5_wuz
+         pwar5_wuz := 0
          pmc_wuz := mc_wuz
-         zwar5_wuz := war5_wuz
+         //zwar5_wuz := war5_wuz
+         zwar5_wuz := 0
          zmc_wuz := mc_wuz
 /*         else
               if mc=' 1'
@@ -251,7 +254,7 @@ FUNCTION Dane_MC( typpit )
          @  9, 41 SAY 'Podstawa do ZUS      (51,53)'
          @  9, 71 GET zzPODSTAWA PICTURE '99999.99' VALID przeskla()
          @ 10, 41 SAY 'Podstawa tylko do zdrow.(52)'
-         @ 10, 71 GET zzPODSTZDR PICTURE '99999.99' VALID przeskla()
+         @ 10, 69 GET zzPODSTZDR PICTURE '9999999.99' VALID przeskla()
          @ 11, 41 SAY 'SK&__L.ADKI    %stawki do ZUS do PIT5 za'
          @ 12, 41 SAY 'Emerytalna ' GET zSTAW_WUE PICTURE '99.99'
          @ 12, 59 GET zWAR_WUE PICTURE '99999.99'
@@ -272,9 +275,9 @@ FUNCTION Dane_MC( typpit )
          @ 16, 41 SAY 'RAZEM      '
          @ 17, 41 SAY 'Zdro.do ZUS' GET zSTAW_WUZ PICTURE '99.99'
          @ 17, 59 GET zWAR_WUZ PICTURE '99999.99'
-         @ 18, 41 SAY '     do PIT' GET zSTAW5_WUZ PICTURE '99.99'
-         @ 18, 68 GET zWAR5_WUZ PICTURE '99999.99'
-         @ 18, 77 GET zMC_WUZ PICTURE '99' RANGE 0, 12
+         //@ 18, 41 SAY '     do PIT' GET zSTAW5_WUZ PICTURE '99.99'
+         //@ 18, 68 GET zWAR5_WUZ PICTURE '99999.99'
+         //@ 18, 77 GET zMC_WUZ PICTURE '99' RANGE 0, 12
          @ 19, 41 SAY 'FUNDUSZE   %stawki do ZUS do PIT5'
          @ 20, 41 SAY 'Pracy      ' GET zSTAW_WFP PICTURE '99.99'
          @ 20, 59 GET zWAR_WFP PICTURE '99999.99'
@@ -396,7 +399,7 @@ FUNCTION przeskla()
       zwar5_wuw := _round( zzpodstawa * ( zstaw_wuw / 100 ), 2 )
    ENDIF
    IF zzpodstzdr # zzzpodstzdr
-      zwar_wuz := _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 )
+      zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
       zwar5_wuz := _round( zzpodstzdr * ( zstaw5_wuz / 100 ), 2 )
    ENDIF
    zwar_wsum := zwar_wue + zwar_wur + zwar_wuc + zwar_wuw
@@ -419,10 +422,30 @@ FUNCTION zrobcos()
 *           zzzpodstawa=podstzdr
 *           zzpodstzdr=podstzdr
 *           zzzpodstzdr=podstzdr
+
+   LOCAL nPrzychod
+
    if ( corobic == 1 .AND. mc == ' 1' ) .OR. corobic == 2
       zzpodstawa := parap_p51
 *          zzzpodstawa=parap_p51
-      zzpodstzdr := parap_p52
+      //zzpodstzdr := parap_p52
+      IF zRYCZALT == 'T'
+         nPrzychod := zestaw_R( 'N', .T. )
+         DO CASE
+         CASE nPrzychod < parap_rk2
+            zzpodstzdr := _round( parap_frp * ( parap_rs1 / 100 ), 2 )
+         CASE nPrzychod >= parap_rk2 .AND. nPrzychod < parap_rk3
+            zzpodstzdr := _round( parap_frp * ( parap_rs2 / 100 ), 2 )
+         CASE nPrzychod >= parap_rk3
+            zzpodstzdr := _round( parap_frp * ( parap_rs3 / 100 ), 2 )
+         ENDCASE
+      ELSE
+         IF mc == ' 1'
+            zzpodstzdr := parap_p52
+         ELSE
+            zzpodstzdr := a_ppodst[ 1, Val( mc ) ]
+         ENDIF
+      ENDIF
 *          zzzpodstzdr=parap_p52
       zstaw_wue := parap_pue + parap_fue
       zstaw_wur := parap_pur + parap_fur
@@ -457,8 +480,12 @@ FUNCTION zrobcos()
       zmc_wuc := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
       zmc_wuw := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
 
-      zstaw_wuz := parap_puz + parap_fuz
-      zstaw5_wuz := parap_pzk
+      zstaw_wuz := /*parap_puz +*/ parap_fuz
+      IF spolka->sposob == 'L' .AND. Val( mc ) > 1
+         zstaw_wuz := parap_fzl
+      ENDIF
+      //zstaw5_wuz := parap_pzk
+      zstaw5_wuz := 0
       zwar_wuz := war_wuz
 * usuwanie bledu naliczania
 *
@@ -466,7 +493,8 @@ FUNCTION zrobcos()
 *                 pmc_wuz=mc_wuz
 *
 * usuwanie bledu naliczania
-      zwar5_wuz := war5_wuz
+      //zwar5_wuz := war5_wuz
+      zwar5_wuz := 0
       zmc_wuz := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
 
    ENDIF
@@ -515,7 +543,8 @@ FUNCTION zrobcos()
       zzpodstzdr := podstzdr
       zzzpodstzdr := podstzdr
       zstaw_wuz := staw_wuz
-      zstaw5_wuz := staw5_wuz
+      //zstaw5_wuz := staw5_wuz
+      zstaw5_wuz := 0
       zwar_wuz := war_wuz
 * usuwanie bledu naliczania
 *
@@ -523,7 +552,8 @@ FUNCTION zrobcos()
 *                 pmc_wuz=0
 *
 * usuwanie bledu naliczania
-      zwar5_wuz := war5_wuz
+      //zwar5_wuz := war5_wuz
+      zwar5_wuz := 0
       zmc_wuz := iif( mc_wuz + 1 < 13, mc_wuz + 1, 0 )
 *                przeskla()
       SKIP 1
@@ -551,9 +581,9 @@ FUNCTION zrobcos()
    @ 15, 77 SAY zMC_WUW PICTURE '99'
    @ 17, 53 SAY zSTAW_WUZ PICTURE '99.99'
    @ 17, 59 SAY zWAR_WUZ PICTURE '99999.99'
-   @ 18, 53 SAY zSTAW5_WUZ PICTURE '99.99'
-   @ 18, 68 SAY zWAR5_WUZ PICTURE '99999.99'
-   @ 18, 77 SAY zMC_WUZ PICTURE '99'
+   //@ 18, 53 SAY zSTAW5_WUZ PICTURE '99.99'
+   //@ 18, 68 SAY zWAR5_WUZ PICTURE '99999.99'
+   //@ 18, 77 SAY zMC_WUZ PICTURE '99'
    @ 20, 53 SAY zSTAW_WFP PICTURE '99.99'
    @ 20, 59 SAY zWAR_WFP PICTURE '99999.99'
    @ 21, 53 SAY zSTAW_WFG PICTURE '99.99'
