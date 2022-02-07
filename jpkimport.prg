@@ -1622,6 +1622,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
             ENDIF
 
 
+
             aPozDek[ 'zwart02' ] := HGetDefault( aPoz, 'P_13_3', 0 )
             aPozDek[ 'zvat02' ] := HGetDefault( aPoz, 'P_14_3', 0 )
 
@@ -2621,6 +2622,9 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
             zNETTO := 0
          ENDIF
          zExPORT := aPoz[ 'zexport' ]
+         IF aPoz[ 'zue' ] == 'T' .AND. aDane[ 'Export' ] == 'T'
+            zExPORT := 'T'
+         ENDIF
          zUE := aPoz[ 'zue' ]
          zKRAJ := aPoz[ 'zkraj' ]
          zSEK_CV7 := aPoz[ 'zsek_cv7' ]
@@ -3069,12 +3073,13 @@ PROCEDURE JPKImp_VatS( nCelImportu )
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
       'OpisZd', Space( 30 ), 'KolRej', iif( zRYCZALT == 'T', ' 5', '7' ), ;
       'DataRej', 'W', 'Oznaczenie', Space( 16 ), 'Procedura', Space( 32 ), ;
-      'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'RodzDow', Space( 6 ) )
+      'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'RodzDow', Space( 6 ), ;
+      'Export', 'N' )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
    LOCAL nMenu, cEkran2
-   LOCAL aRaport, cRaport, cTN, cRej, lOk, cKolKs, cDataRej, cRegon
+   LOCAL aRaport, cRaport, cTN, cRej, lOk, cKolKs, cDataRej, cRegon, cExport
    LOCAL nSumaImp, nLiczbaLp := 0
 
    PRIVATE cOpisZd, zOpcje, zProcedur, zRodzDow
@@ -3257,13 +3262,14 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                zProcedur := aDane[ 'Procedura' ]
                cRegon := aDane[ 'SprawdzRegon' ]
                zRodzDow := aDane[ 'RodzDow' ]
-               @  6, 13 CLEAR TO 20, 66
-               @  7, 15 TO 19, 64
-               @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
+               cExport := aDane[ 'Export' ]
+               @  6, 13 CLEAR TO 21, 67
+               @  7, 15 TO 20, 65
+               @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID ValidTakNie( cTN, 8, 63 )
                @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 9, 42 ), .T. }
                @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "S", "R" ) )
                IF zRYCZALT == 'T'
-                  @ 11, 17 SAY "Domy˜lna kolumna ewidencji (5,6,7,8,9,10,11)" GET cKolRej PICTURE '@K 99' VALID AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11'
+                  @ 11, 17 SAY "Domy˜lna kol. ewid. (5,6,7,8,9,10,11,12,13)" GET cKolRej PICTURE '@K 99' VALID AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11' .OR. cKolRej == '12' .OR. cKolRej == '13'
                ELSE
                   @ 11, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
                ENDIF
@@ -3271,8 +3277,12 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                @ 13, 17 SAY "Oznaczenie dot. dostawy i ˜wiadczenia usˆug" GET zOpcje PICTURE '!!' WHEN nCelImportu == 1 .AND. KRejSWhOpcje() VALID KRejSVaOpcje()
                @ 14, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN nCelImportu == 1 .AND. KRejSWhProcedur() VALID KRejSVaProcedur()
                @ 15, 17 SAY "Rodzaj dowodu sprzeda¾y" GET zRodzDow PICTURE '!!!' WHEN nCelImportu == 1 .AND. KRejSWRodzDow() VALID KRejSVRodzDow()
-               @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
-               @ 18, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+               @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID ValidTakNie( cRegon, 16, 57 )
+               @ 17, 17 SAY "Oznacz kraje UE jako eksport" GET cExport PICTURE '!' VALID ValidTakNie( cExport, 17, 47 )
+               @ 19, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+               ValidTakNie( cTN, 8, 63 )
+               ValidTakNie( cRegon, 16, 57 )
+               ValidTakNie( cExport, 17, 47 )
                READ
                IF LastKey() <> K_ESC
                   aDane[ 'ZezwolNaDuplikaty' ] := cTN
@@ -3284,6 +3294,7 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                   aDane[ 'Procedura' ] := zProcedur
                   aDane[ 'SprawdzRegon' ] := cRegon
                   aDane[ 'RodzDow' ] := zRodzDow
+                  aDane[ 'Export' ] := cExport
                ENDIF
                RestScreen( , , , , cEkran2 )
             CASE nMenu == 4
