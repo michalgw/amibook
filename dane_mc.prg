@@ -400,7 +400,8 @@ FUNCTION przeskla()
    ENDIF
    IF zzpodstzdr # zzzpodstzdr
       zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
-      zwar5_wuz := _round( zzpodstzdr * ( zstaw5_wuz / 100 ), 2 )
+      //zwar5_wuz := _round( zzpodstzdr * ( zstaw5_wuz / 100 ), 2 )
+      zwar5_wuz := 0
    ENDIF
    zwar_wsum := zwar_wue + zwar_wur + zwar_wuc + zwar_wuw
    zwar5_wsum := zwar5_wue + zwar5_wur + zwar5_wuc + zwar5_wuw
@@ -430,29 +431,33 @@ FUNCTION zrobcos()
 *          zzzpodstawa=parap_p51
       //zzpodstzdr := parap_p52
       IF zRYCZALT == 'T'
-         nPrzychod := zestaw_R( 'N', .T. )
-         DO CASE
-         CASE nPrzychod < parap_rk2
-            zzpodstzdr := _round( parap_frp * ( parap_rs1 / 100 ), 2 )
-         CASE nPrzychod >= parap_rk2 .AND. nPrzychod < parap_rk3
-            zzpodstzdr := _round( parap_frp * ( parap_rs2 / 100 ), 2 )
-         CASE nPrzychod >= parap_rk3
-            zzpodstzdr := _round( parap_frp * ( parap_rs3 / 100 ), 2 )
-         ENDCASE
+         IF mc == ' 1'
+            zzpodstzdr := parap_p52
+         ELSE
+            nPrzychod := P_RyczLicz( 'N', .T. )
+            DO CASE
+            CASE nPrzychod < parap_rk2
+               zzpodstzdr := _round( parap_frp * ( parap_rs1 / 100 ), 2 )
+            CASE nPrzychod >= parap_rk2 .AND. nPrzychod < parap_rk3
+               zzpodstzdr := _round( parap_frp * ( parap_rs2 / 100 ), 2 )
+            CASE nPrzychod >= parap_rk3
+               zzpodstzdr := _round( parap_frp * ( parap_rs3 / 100 ), 2 )
+            ENDCASE
+         ENDIF
       ELSE
          IF mc == ' 1'
             zzpodstzdr := parap_p52
          ELSE
-            zzpodstzdr := a_ppodst[ 1, Val( mc ) ]
+            zzpodstzdr := a_ppodst[ 1, Val( mc ) - 1 ]
          ENDIF
       ENDIF
 *          zzzpodstzdr=parap_p52
-      zstaw_wue := parap_pue + parap_fue
-      zstaw_wur := parap_pur + parap_fur
-      zstaw_wuc := parap_puc + parap_fuc
-      zstaw_wuw := parap_puw + parap_fww
-      zstaw_wfp := parap_pfp + parap_ffp
-      zstaw_wfg := parap_pfg + parap_ffg
+      zstaw_wue := /*parap_pue +*/ parap_fue
+      zstaw_wur := /*parap_pur +*/ parap_fur
+      zstaw_wuc := /*parap_puc +*/ parap_fuc
+      zstaw_wuw := /*parap_puw +*/ parap_fww
+      zstaw_wfp := /*parap_pfp +*/ parap_ffp
+      zstaw_wfg := /*parap_pfg +*/ parap_ffg
       zwar_wue := war_wue
       zwar_wur := war_wur
       zwar_wuc := war_wuc

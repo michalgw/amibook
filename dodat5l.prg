@@ -184,7 +184,32 @@ FUNCTION Dodat5L()
                   BREAK
                ENDIF
                *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
-               zSKLADKI := SKLADKI
+               IF TNEsc( , 'Czy przeliczy† sum©?' )
+                  zSKLADKI := 0
+                  cAktMc := dane_mc->mc
+                  nAktRec := dane_mc->( RecNo() )
+                  cAktIdent := dane_mc->ident
+                  IF dane_mc->( dbSeek( '+' + cAktIdent + ' 1' ) )
+                     DO WHILE ! dane_mc->( Eof() ) .AND. dane_mc->ident == cAktIdent .AND. dane_mc->del == '+'
+                        IF dane_mc->mc_wue == Val( cAktMc )
+                           zSKLADKI := zSKLADKI + dane_mc->war5_wue
+                        ENDIF
+                        IF dane_mc->mc_wur == Val( cAktMc )
+                           zSKLADKI := zSKLADKI + dane_mc->war5_wur
+                        ENDIF
+                        IF dane_mc->mc_wuc == Val( cAktMc )
+                           zSKLADKI := zSKLADKI + dane_mc->war5_wuc
+                        ENDIF
+                        IF dane_mc->mc_wuw == Val( cAktMc )
+                           zSKLADKI := zSKLADKI + dane_mc->war5_wuw
+                        ENDIF
+                        dane_mc->( dbSkip() )
+                     ENDDO
+                  ENDIF
+                  dane_mc->( dbGoto( nAktRec ) )
+               ELSE
+                  zSKLADKI := SKLADKI
+               ENDIF
                zZDROWIE := ZDROWIE
                @  6, 68 GET zSKLADKI   PICTURE FPICold
                @ 10, 68 GET zZDROWIE   PICTURE FPICold

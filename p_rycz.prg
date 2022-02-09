@@ -178,16 +178,12 @@ FUNCTION linia12R()
    RETURN ' ' + dos_c( naz_imie ) + ' '
 
 *############################################################################
-PROCEDURE zestaw_R( Okres, lPobierzPrzychody )
+PROCEDURE P_RyczLicz( Okres, lPobierzPrzychody )
 
    hb_default( @lPobierzPrzychody, .F. )
 
-   IF lPobierzPrzychody
-      SELECT spolka
-   ENDIF
+   SELECT spolka
 
-   @ 1, 47 SAY '          '
-   *################################# GRAFIKA ##################################
    *################################ OBLICZENIA ################################
    ********************** udzialy w miesiacach
    zm := '  0/1  '
@@ -229,7 +225,11 @@ PROCEDURE zestaw_R( Okres, lPobierzPrzychody )
       koniecokr := kwarkon
    CASE OKRES == 'N'
       SEEK '+' + ident_fir + ' 1'
-      koniecokr := miesiac
+      IF lPobierzPrzychody .AND. Val( miesiac ) > 1
+         koniecokr := Str( Val( miesiac ) - 1, 2, 0 )
+      ELSE
+         koniecokr := miesiac
+      ENDIF
    ENDCASE
    przychodu := 0
    przychodp := 0
@@ -270,28 +270,6 @@ PROCEDURE zestaw_R( Okres, lPobierzPrzychody )
    *k4=k1+k2+k3+k1a+k1b+k1c
    k4 := k1 + k2 + k3 + k1a + k1b + k1c + k1k7 + k1k8 + k1k9 + k1k10
    *------------------------------------ dane_mc
-   zident := Str( RecNo(), 5 )
-
-   SELECT dane_mc
-   SEEK '+' + zident + miesiac
-
-*                do case
-*                case OKRES='M'
-*                   seek [+]+zident+miesiac
-*                case OKRES='K'
-*                   seek [+]+zident+kwarokr
-*                case OKRES='N'
-*                   seek [+]+zident+' 1'
-*                endcase
-
-   IF ! lPobierzPrzychody
-      Dane_Mc( '5' )
-
-      IF LastKey() == K_ESC
-         SELECT spolka
-         RETURN
-      ENDIF
-   ENDIF
 
    SELECT dane_mc
    DO CASE
@@ -330,6 +308,46 @@ PROCEDURE zestaw_R( Okres, lPobierzPrzychody )
       SELECT dane_mc
       RETURN dochody - wydatki
    ENDIF
+
+   RETURN NIL
+
+PROCEDURE zestaw_R( Okres )
+
+   PRIVATE udz1, udz2, udz3, udz4, udz5, udz6, udz7, udz8, udz9, udz10, udz11, udz12
+   PRIVATE przychodu, przychodp, przychodh, przychr20, przychr17, przychr10
+   PRIVATE przychrk07, przychrk08, przychrk09, przychrk10
+   PRIVATE k1, k1a, k1b, k1c, k2, k3, k1k7, k1k8, k1k9, k1k10, k4, k5
+   PRIVATE dochody, wydatki, zwolniony, zaliczki, zaaa, zbbb
+   PRIVATE zpit566, zpit567, zpit569, zpit5104, zpit5105, zzdrowie
+   PRIVATE kwarkon
+
+   @ 1, 47 SAY '          '
+   *################################# GRAFIKA ##################################
+   *------------------------------------ dane_mc
+   zident := Str( RecNo(), 5 )
+
+   P_RyczLicz( Okres )
+
+   SELECT dane_mc
+   SEEK '+' + zident + miesiac
+
+*                do case
+*                case OKRES='M'
+*                   seek [+]+zident+miesiac
+*                case OKRES='K'
+*                   seek [+]+zident+kwarokr
+*                case OKRES='N'
+*                   seek [+]+zident+' 1'
+*                endcase
+
+   Dane_Mc( '5' )
+
+   IF LastKey() == K_ESC
+      SELECT spolka
+      RETURN
+   ENDIF
+
+   P_RyczLicz( Okres )
 
    SELECT spolka
    *------------------------------------
