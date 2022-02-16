@@ -1512,9 +1512,6 @@ PROCEDURE JPKImp_VatS_Podglad_FA( aDane, aSumy )
 PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
 
    LOCAL aRes := {}
-   LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
-       "ES", "FI", "FR", "GB", "HR", "HU", "IE", "IT", "LV", "LT", "LU", ;
-       "MT", "NL", "PT", "RO", "SE", "SI", "SK" }
    LOCAL cNipFir := TrimNip( aDane[ 'JPK' ][ 'Firma' ][ 'firma' ][ 'nip' ] )
 
    AEval( aDane[ 'JPK' ][ 'Faktura' ], { | aPoz |
@@ -1608,7 +1605,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
             aPozDek[ 'znumer' ] := HGetDefault( aPoz, 'P_2A', '' )
 
             aPozDek[ 'zkraj' ] := HGetDefault( aPoz, 'P_5A', 'PL' )
-            aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, aPozDek[ 'zkraj' ] ) > 0, 'T', 'N' )
+            aPozDek[ 'zue' ] := iif( KrajUE( aPozDek[ 'zkraj' ] ), 'T', 'N' )
             aPozDek[ 'znr_ident' ] := HGetDefault( aPoz, 'P_5B', '' )
             aPozDek[ 'znazwa' ] := HGetDefault( aPoz, 'P_3A', '' )
             aPozDek[ 'zadres' ] := HGetDefault( aPoz, 'P_3B', '' )
@@ -1670,9 +1667,6 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
 PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
 
    LOCAL aRes := {}
-   LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
-       "ES", "FI", "FR", "GB", "HR", "HU", "IE", "IT", "LV", "LT", "LU", ;
-       "MT", "NL", "PT", "RO", "SE", "SI", "SK" }
    LOCAL cNipFir := TrimNip( aDane[ 'JPK' ][ 'Firma' ][ 'firma' ][ 'nip' ] )
 
    AEval( aDane[ 'JPK' ][ 'Faktura' ], { | aPoz |
@@ -1779,7 +1773,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
 
             //cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
             aPozDek[ 'zkraj' ] := HGetDefault( aPoz, 'P_4A', 'PL' )
-            aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, aPozDek[ 'zkraj' ] ) > 0, 'T', 'N' )
+            aPozDek[ 'zue' ] := iif( KrajUE( aPozDek[ 'zkraj' ] ), 'T', 'N' )
             aPozDek[ 'znr_ident' ] := HGetDefault( aPoz, 'P_4B', '' )
             aPozDek[ 'znazwa' ] := HGetDefault( aPoz, 'P_3C', '' )
             aPozDek[ 'zadres' ] := HGetDefault( aPoz, 'P_3D', '' )
@@ -1843,9 +1837,6 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
 PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
 
    LOCAL aRes := {}
-   LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
-       "ES", "FI", "FR", "GB", "HR", "HU", "IE", "IT", "LV", "LT", "LU", ;
-       "MT", "NL", "PT", "RO", "SE", "SI", "SK" }
 
    AEval( aDane[ 'JPK' ][ 'Sprzedaz' ], { | aPoz |
       LOCAL aPozDek
@@ -1882,7 +1873,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
 
          cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
          aPozDek[ 'zkraj' ] := iif( AllTrim( cKraj ) == "", "PL", cKraj )
-         aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, cKraj ) > 0, 'T', 'N' )
+         aPozDek[ 'zue' ] := iif( KrajUE( cKraj ), 'T', 'N' )
          aPozDek[ 'znr_ident' ] := cNip
          aPozDek[ 'znazwa' ] := aPoz[ 'NazwaKontrahenta' ]
          aPozDek[ 'zadres' ] := aPoz[ 'AdresKontrahenta' ]
@@ -1946,9 +1937,6 @@ PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
 PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
 
    LOCAL aRes := {}
-   LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
-       "ES", "FI", "FR", "GB", "HR", "HU", "IE", "IT", "LV", "LT", "LU", ;
-       "MT", "NL", "PT", "RO", "SE", "SI", "SK" }
    LOCAL nWNetto, nWVat, lSierTrwaly
    LOCAL nRodzajVat
 
@@ -1977,7 +1965,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
 
          cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
          aPozDek[ 'zkraj' ] := iif( AllTrim( cKraj ) == "", "PL", cKraj )
-         aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, cKraj ) > 0, 'T', 'N' )
+         aPozDek[ 'zue' ] := iif( KrajUE( aKrajeUE ), 'T', 'N' )
          aPozDek[ 'znr_ident' ] := cNip
          aPozDek[ 'znazwa' ] := aPoz[ 'NazwaKontrahenta' ]
          aPozDek[ 'zadres' ] := aPoz[ 'AdresKontrahenta' ]
@@ -2088,7 +2076,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
 
          cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrDostawcy' ] ) ) == "BRAK", "", aPoz[ 'NrDostawcy' ] ), @cKraj )
          aPozDek[ 'zkraj' ] := iif( AllTrim( cKraj ) == "", "PL", cKraj )
-         aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, cKraj ) > 0, 'T', 'N' )
+         aPozDek[ 'zue' ] := iif( KrajUE( cKraj ), 'T', 'N' )
          aPozDek[ 'znr_ident' ] := cNip
          aPozDek[ 'znazwa' ] := aPoz[ 'NazwaDostawcy' ]
          aPozDek[ 'zadres' ] := aPoz[ 'AdresDostawcy' ]
@@ -2184,9 +2172,6 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
 PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
 
    LOCAL aRes := {}
-   LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
-       "ES", "FI", "FR", "GB", "HR", "HU", "IE", "IT", "LV", "LT", "LU", ;
-       "MT", "NL", "PT", "RO", "SE", "SI", "SK" }
 
    AEval( aDane[ 'JPK' ][ 'Sprzedaz' ], { | aPoz |
       LOCAL aPozDek
@@ -2224,7 +2209,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
 
          cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
          aPozDek[ 'zkraj' ] := iif( AllTrim( cKraj ) == "", "PL", cKraj )
-         aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, cKraj ) > 0, 'T', 'N' )
+         aPozDek[ 'zue' ] := iif( KrajUE( cKraj ), 'T', 'N' )
          aPozDek[ 'znr_ident' ] := cNip
          aPozDek[ 'znazwa' ] := aPoz[ 'NazwaKontrahenta' ]
          aPozDek[ 'zadres' ] := ''
@@ -2296,9 +2281,6 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
 PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
 
    LOCAL aRes := {}
-   LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
-       "ES", "FI", "FR", "GB", "HR", "HU", "IE", "IT", "LV", "LT", "LU", ;
-       "MT", "NL", "PT", "RO", "SE", "SI", "SK" }
    LOCAL nWNetto, nWVat, lSierTrwaly
    LOCAL nRodzajVat
 
@@ -2327,7 +2309,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
 
          cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
          aPozDek[ 'zkraj' ] := iif( AllTrim( cKraj ) == "", "PL", cKraj )
-         aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, cKraj ) > 0, 'T', 'N' )
+         aPozDek[ 'zue' ] := iif( KrajUE( cKraj ), 'T', 'N' )
          aPozDek[ 'znr_ident' ] := cNip
          aPozDek[ 'znazwa' ] := aPoz[ 'NazwaKontrahenta' ]
          aPozDek[ 'zadres' ] := ''
@@ -2437,7 +2419,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
 
          cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrDostawcy' ] ) ) == "BRAK", "", aPoz[ 'NrDostawcy' ] ), @cKraj )
          aPozDek[ 'zkraj' ] := iif( AllTrim( cKraj ) == "", "PL", cKraj )
-         aPozDek[ 'zue' ] := iif( AScan( aKrajeUE, cKraj ) > 0, 'T', 'N' )
+         aPozDek[ 'zue' ] := iif( KrajUE( cKraj ), 'T', 'N' )
          aPozDek[ 'znr_ident' ] := cNip
          aPozDek[ 'znazwa' ] := aPoz[ 'NazwaDostawcy' ]
          aPozDek[ 'zadres' ] := ''
