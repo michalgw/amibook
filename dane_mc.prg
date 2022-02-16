@@ -486,7 +486,7 @@ FUNCTION zrobcos()
       zmc_wuw := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
 
       zstaw_wuz := /*parap_puz +*/ parap_fuz
-      IF spolka->sposob == 'L' .AND. Val( mc ) > 1
+      IF spolka->sposob == 'L' //.AND. Val( mc ) > 1
          zstaw_wuz := parap_fzl
       ENDIF
       //zstaw5_wuz := parap_pzk

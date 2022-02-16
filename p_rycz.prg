@@ -306,7 +306,7 @@ PROCEDURE P_RyczLicz( Okres, lPobierzPrzychody )
 
    IF lPobierzPrzychody
       SELECT dane_mc
-      RETURN dochody - wydatki
+      RETURN k4 + dochody - wydatki
    ENDIF
 
    RETURN NIL
