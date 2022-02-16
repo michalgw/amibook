@@ -972,7 +972,7 @@ FUNCTION KrajUE( cKraj )
 
    LOCAL aKrajeUE := { "AT", "BE", "BG", "CY", "CZ", "DK", "DE", "EE", "EL", ;
        "ES", "FI", "FR", "HR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", ;
-       "NL", "PT", "RO", "SE", "SI", "SK", "XI", "UK" }
+       "NL", "PT", "RO", "SE", "SI", "SK", "XI" } //, "UK" }
 
    RETURN AScan( aKrajeUE, cKraj ) > 0
 
