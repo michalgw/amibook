@@ -237,3 +237,13 @@ PROCEDURE say_r()
    RETURN
 
 *############################################################################
+
+FUNCTION Tab_RyczInfo()
+
+   RETURN "5-" + NumToStr( staw_ry20 * 100 ) + "%, 6-" + NumToStr( staw_ry17 * 100 ) + "%" ;
+      + ", 7-" + NumToStr( staw_rk09 * 100 ) + "%, 8-" + NumToStr( staw_uslu * 100 ) + "%" ;
+      + ", 9-" + NumToStr( staw_rk10 * 100 ) + "%, 10-" + NumToStr( staw_prod * 100 ) + "%" ;
+      + ", 11-" + NumToStr( staw_hand * 100 ) + "%, 12-" + NumToStr( staw_rk07 * 100 ) + "%" ;
+      + ", 13-" + NumToStr( staw_ry10 * 100 ) + "%"
+
+/*----------------------------------------------------------------------*/

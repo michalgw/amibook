@@ -3063,6 +3063,19 @@ PROCEDURE JPKImp_VatS( nCelImportu )
    LOCAL nMenu, cEkran2
    LOCAL aRaport, cRaport, cTN, cRej, lOk, cKolKs, cDataRej, cRegon, cExport
    LOCAL nSumaImp, nLiczbaLp := 0
+   LOCAL bKolRyczW := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 SAY PadC( Tab_RyczInfo(), 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bKolRyczV := { | |
+      LOCAL cKolor := ColStd()
+      @ 24, 0
+      SetColor( cKolor )
+      RETURN .T.
+   }
+
 
    PRIVATE cOpisZd, zOpcje, zProcedur, zRodzDow
 
@@ -3251,7 +3264,7 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 9, 42 ), .T. }
                @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "S", "R" ) )
                IF zRYCZALT == 'T'
-                  @ 11, 17 SAY "Domy˜lna kol. ewid. (5,6,7,8,9,10,11,12,13)" GET cKolRej PICTURE '@K 99' VALID AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11' .OR. cKolRej == '12' .OR. cKolRej == '13'
+                  @ 11, 17 SAY "Domy˜lna kol. ewid. (5,6,7,8,9,10,11,12,13)" GET cKolRej PICTURE '@K 99' WHEN Eval( bKolRyczW ) VALID ( AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11' .OR. cKolRej == '12' .OR. cKolRej == '13' ) .AND. Eval( bKolRyczV )
                ELSE
                   @ 11, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
                ENDIF

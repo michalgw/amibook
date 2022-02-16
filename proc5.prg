@@ -1074,4 +1074,20 @@ FUNCTION ValidTakNie( cVar, nRow, nCol )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION NumToStr( nNum )
 
+   LOCAL cStr := AllTrim( Str( nNum ) )
+
+   IF Len( cStr ) > 1
+      DO WHILE cStr[ Len( cStr ) ] == '0' .AND. Len( cStr ) > 1
+         cStr := SubStr( cStr, 1, Len( cStr ) - 1 )
+      ENDDO
+
+      IF cStr[ Len( cStr ) ] == '.' .AND. Len( cStr ) > 1
+         cStr := SubStr( cStr, 1, Len( cStr ) - 1 )
+      ENDIF
+   ENDIF
+
+   RETURN cStr
+
+/*----------------------------------------------------------------------*/

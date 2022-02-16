@@ -1866,7 +1866,7 @@ FUNCTION KRejSWZKolumna2( lRycz )
    IF lRes
       ColInf()
       IF lRycz
-         @ 24, 0 SAY PadC( 'Kolumna: 5, 6, 7, 8, 9, 10, 11, 12 lub 13', 80, ' ' )
+         @ 24, 0 SAY PadC( /*'Kolumna: 5, 6, 7, 8, 9, 10, 11, 12 lub 13'*/ Tab_RyczInfo(), 80, ' ' )
       ELSE
          @ 24, 0 SAY PadC( 'Kolumna: 7 lub 8', 80, ' ' )
          IF Val( zKOLUMNA ) == 7
@@ -1910,7 +1910,8 @@ FUNCTION KRejSWZKolumna( lRycz )
    IF lRes
       ColInf()
       IF lRycz
-         @ 24, 0 SAY PadC( 'Kolumna: 5, 6, 7, 8, 9, 10, 11, 12 lub 13', 80, ' ' )
+
+         @ 24, 0 SAY PadC( /*'Kolumna: 5, 6, 7, 8, 9, 10, 11, 12 lub 13'*/ Tab_RyczInfo(), 80, ' ' )
       ELSE
          @ 24, 0 SAY PadC( 'Kolumna: 7 lub 8', 80, ' ' )
       ENDIF
