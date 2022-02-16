@@ -804,7 +804,7 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                         aW[ 'Oznaczenie' ] := aW[ 'Oznaczenie' ] + iif( aW[ 'Oznaczenie' ] == '', '13', ',13' )
                      ENDIF
                      aW[ 'Procedura' ] := ''
-                     IF hb_HHasKey( aW, 'WSTO_EE' ) .AND. HB_ISCHAR( aW[ 'WSTO_EE' ] ) .AND. sxmlTrim( aW[ 'WSTO_EE' ] ) == '1'
+                     IF ( hb_HHasKey( aW, 'WSTO_EE' ) .AND. HB_ISCHAR( aW[ 'WSTO_EE' ] ) .AND. sxmlTrim( aW[ 'WSTO_EE' ] ) == '1' ) .OR. ( hb_HHasKey( aW, 'EE' ) .AND. HB_ISCHAR( aW[ 'EE' ] ) .AND. sxmlTrim( aW[ 'EE' ] ) == '1' )
                         aW[ 'Procedura' ] := 'WSTO_EE'
                      ENDIF
                      IF hb_HHasKey( aW, 'IED' ) .AND. HB_ISCHAR( aW[ 'IED' ] ) .AND. sxmlTrim( aW[ 'IED' ] ) == '1'
