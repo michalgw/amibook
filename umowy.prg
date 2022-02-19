@@ -94,7 +94,7 @@ PROCEDURE Umowy()
    _invers := [i]
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,-9,13,247,22,48,77,109,7,46,28,82,114,85,117,87,119,1006'
+   _esc := '27,-9,13,247,22,48,77,109,7,46,28,82,114,85,117,87,119,1006,75,107'
    _top := 'firma#ident_fir'
    _bot := "del#'+'.or.firma#ident_fir"
    _stop := '+' + ident_fir
@@ -117,7 +117,7 @@ PROCEDURE Umowy()
       kl := lastkey()
       DO CASE
       *########################### INSERT/MODYFIKACJA #############################
-      CASE kl == 22 .OR. kl == 48 .OR. _row == -1 .OR. kl == 77 .OR. kl == 109
+      CASE kl == 22 .OR. kl == 48 .OR. _row == -1 .OR. kl == 77 .OR. kl == 109 .OR. kl == 75 .OR. kl == 107
          @ 1, 47 SAY '          '
          ins := ( kl # 109 .AND. kl # 77 ) .OR. &_top_bot
          IF ins
@@ -139,7 +139,107 @@ PROCEDURE Umowy()
 
          BEGIN SEQUENCE
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
-            IF ins
+            IF ins .AND. ( kl == 75 .OR. kl == 107 )
+               zIDENT := IDENT
+               zNUMER := NUMER
+               zDATA_UMOWY := DATA_UMOWY
+               zTEMAT1 := TEMAT1
+               zTEMAT2 := TEMAT2
+               zTERMIN := TERMIN
+               zDATA_RACH := DATA_RACH
+               zDATA_WYP := DATA_WYP
+               zSTAW_PODAT := STAW_PODA2
+
+               STORE 'A' TO zAKOSZT, ;
+                  zAPUZ, ;
+                  zAPUE, ;
+                  zAPUR, ;
+                  zAPUC, ;
+                  zAPUW, ;
+                  zAPFP, ;
+                  zAPFG, ;
+                  zAPF3, ;
+                  zAFUZ, ;
+                  zAFUE, ;
+                  zAFUR, ;
+                  zAFUC, ;
+                  zAFUW, ;
+                  zAFFP, ;
+                  zAFFG, ;
+                  zAFF3, ;
+                  zAPZK
+               STORE 0 TO zBRUT_ZASAD, ;
+                  zKOSZT     , ;
+                  zKOSZTY    , ;
+                  zSTAW_PUE  , ;
+                  zSTAW_PUR  , ;
+                  zSTAW_PUC  , ;
+                  zSTAW_PSUM , ;
+                  zWAR_PUE   , ;
+                  zWAR_PUR   , ;
+                  zWAR_PUC   , ;
+                  zWAR_PSUM  , ;
+                  oWAR_PUE   , ;
+                  oWAR_PUR   , ;
+                  oWAR_PUC   , ;
+                  oWAR_PSUM  , ;
+                  zSTAW_PODAT, ;
+                  zSTAW_PUZ  , ;
+                  zSTAW_PZK  , ;
+                  zWAR_PUZ   , ;
+                  zWAR_PZK   , ;
+                  zWAR_PUZO  , ;
+                  oWAR_PUZ   , ;
+                  oWAR_PZK   , ;
+                  oWAR_PUZO  , ;
+                  zSTAW_FUE  , ;
+                  zSTAW_FUR  , ;
+                  zSTAW_FUW  , ;
+                  zSTAW_FFP  , ;
+                  zSTAW_FFG  , ;
+                  zSTAW_FSUM , ;
+                  zWAR_FUE   , ;
+                  zWAR_FUR   , ;
+                  zWAR_FUW   , ;
+                  zWAR_FFP   , ;
+                  zWAR_FFG   , ;
+                  zWAR_FSUM  , ;
+                  oWAR_FUE   , ;
+                  oWAR_FUR   , ;
+                  oWAR_FUW   , ;
+                  oWAR_FFP   , ;
+                  oWAR_FFG   , ;
+                  oWAR_FSUM  , ;
+                  zBRUT_RAZEM, ;
+                  zDOCHOD    , ;
+                  zDOCHODPOD , ;
+                  zPENSJA    , ;
+                  zPODATEK   , ;
+                  zNETTO     , ;
+                  zDO_WYPLATY, ;
+                  zUWAGI     , ;
+                  B5         , ;
+                  SKLADN     , ;
+                  zPOTRACENIA, ;
+                  zPPKZS1    , ;
+                  zPPKZK1    , ;
+                  zPPKZS2    , ;
+                  zPPKZK2    , ;
+                  zPPKPS1    , ;
+                  zPPKPK1    , ;
+                  zPPKPS2    , ;
+                  zPPKPK2    , ;
+                  zPPKPPM    , ;
+                  zZASI_BZUS , ;
+                  zNALPODAT
+
+               zTYTUL := TYTUL
+               zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
+               zPPK := ' '
+               zWNIOSTERM := ' '
+
+               PodstawU()
+            ELSEIF ins
                zIDENT := Space( 5 )
                zNUMER := Space( 8 )
                zDATA_UMOWY := CToD( '    .  .  ' )
@@ -257,6 +357,9 @@ PROCEDURE Umowy()
                zTYTUL := '5' //<--= brak danych
             ENDCASE
             repl_( 'TYTUL', zTYTUL )
+            IF ins .AND. ( kl == 75 .OR. kl == 107 )
+               ZapiszPlaU()
+            ENDIF
             commit_()
             UNLOCK
             *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
@@ -635,11 +738,12 @@ PROCEDURE Umowy()
          p[  5 ] := '   [Ins]...................dopisanie przychodu          '
          p[  6 ] := '   [M].....................modyfikacja przychodu        '
          p[  7 ] := '   [Del]...................kasowanie przychodu          '
-         p[  8 ] := '   [U].....................drukowanie tytu&_l.u przychodu  '
-         p[  9 ] := '   [R].....................drukowanie rachunku za prac&_e. '
-         p[ 10 ] := '   [W].....................drukowanie dowodu wyp&_l.aty    '
-         p[ 11 ] := '   [Esc]...................wyj&_s.cie                      '
-         p[ 12 ] := '                                                        '
+         p[  8 ] := '   [K].....................kopiowanie przychodu         '
+         p[  9 ] := '   [U].....................drukowanie tytu&_l.u przychodu  '
+         p[ 10 ] := '   [R].....................drukowanie rachunku za prac&_e. '
+         p[ 11 ] := '   [W].....................drukowanie dowodu wyp&_l.aty    '
+         p[ 12 ] := '   [Esc]...................wyj&_s.cie                      '
+         p[ 13 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO I
          i := 20
