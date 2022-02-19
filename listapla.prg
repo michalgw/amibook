@@ -97,10 +97,10 @@ PROCEDURE ListaPla()
             STORE .F. TO DOD
             STORE .T. TO DDO
             IF .NOT. Empty( PRAC->DATA_PRZY )
-               DOD := SubStr( DToS( PRAC->DATA_PRZY ), 1, 6 ) <= param_rok + strtran( miesiac, ' ', '0' )
+               DOD := SubStr( DToS( PRAC->DATA_PRZY ), 1, 6 ) <= param_rok + strtran( miesiac, ' ', '0' ) .AND. prac->status <> 'Z'
             ENDIF
             IF .NOT. Empty( PRAC->DATA_ZWOL )
-               DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + strtran( miesiac, ' ', '0' )
+               DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + strtran( miesiac, ' ', '0' ) .AND. prac->status <> 'Z'
             ENDIF
             IF Found() .AND. ( DO_WYPLATY <> 0 .OR. ( DOD .AND. DDO ) )
                aWiersz[ 'k3' ] := BRUT_RAZEM

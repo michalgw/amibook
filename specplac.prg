@@ -125,10 +125,10 @@ PROCEDURE SpecPlac()
             STORE .F. TO DOD
             STORE .T. TO DDO
             IF .NOT. Empty( PRAC->DATA_PRZY )
-               DOD := SubStr( DToS( PRAC->DATA_PRZY ), 1, 6 ) <= param_rok + StrTran( Str( mcdo, 2 ), ' ', '0' )
+               DOD := SubStr( DToS( PRAC->DATA_PRZY ), 1, 6 ) <= param_rok + StrTran( Str( mcdo, 2 ), ' ', '0' ) .AND. prac->status <> 'Z'
             ENDIF
             IF .NOT. Empty( PRAC->DATA_ZWOL )
-               DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + StrTran( Str( mcod, 2 ), ' ', '0' )
+               DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + StrTran( Str( mcod, 2 ), ' ', '0' ) .AND. prac->status <> 'Z'
             ENDIF
             IF DOD .AND. DDO
                FOR xxe := mcod TO mcdo

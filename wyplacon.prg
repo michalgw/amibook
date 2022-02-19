@@ -158,7 +158,7 @@ PROCEDURE Wyplacon()
       GO TOP
       SEEK '+' + ident_fir
       DO WHILE &_koniec == .F. .AND. .NOT. Eof()
-         IF prac->status $ 'EU'
+         IF prac->status $ 'EU' .AND. prac->aktywny <> 'N'
             SELECT etaty
             SEEK '+' + ident_fir + Str( prac->Rec_no, 5 ) + Str( mcod, 2 )
             IF Found()
