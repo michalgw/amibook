@@ -44,8 +44,12 @@ FUNCTION DomyslneParametry()
       aPar[ 'staw_ry20' ] := 0.17
       // Inne uslugi
       aPar[ 'staw_ry17' ] := 0.15
+      // Opieka zdr. archit.
+      aPar[ 'staw_rk09' ] := 0.14
       // Uslugi
       aPar[ 'staw_uslu' ] := 0.125
+      // Usl wyd. oprog., dor. komp.
+      aPar[ 'staw_rk10' ] := 0.12
       // Produkcja
       aPar[ 'staw_prod' ] := 0.1
       // Handel
@@ -59,7 +63,9 @@ FUNCTION DomyslneParametry()
 
       aPar[ 'staw_ory20' ] := 'Wolne zawody            '
       aPar[ 'staw_ory17' ] := 'Inne usˆugi             '
+      aPar[ 'staw_ork09' ] := 'Opieka zdr, archit.,proj'
       aPar[ 'staw_ouslu' ] := 'Wynajem pow.100000zˆ    '
+      aPar[ 'staw_ork10' ] := 'Usˆ.wyd.oprogr.,ror.komp'
       aPar[ 'staw_oprod' ] := 'Prawa maj¥tkowe         '
       aPar[ 'staw_ohand' ] := 'Usˆugi                  '
       aPar[ 'staw_ork07' ] := 'Produkcja               '
@@ -341,7 +347,9 @@ PROCEDURE DomParPrzywroc_TabRycz( lPrzypiszTmp, cRok )
 
    staw_hand := aDomyslneParametry[ cRok ][ 'staw_hand' ]
    staw_prod := aDomyslneParametry[ cRok ][ 'staw_prod' ]
+   staw_rk09 := aDomyslneParametry[ cRok ][ 'staw_rk09' ]
    staw_uslu := aDomyslneParametry[ cRok ][ 'staw_uslu' ]
+   staw_rk10 := aDomyslneParametry[ cRok ][ 'staw_rk10' ]
    staw_ry20 := aDomyslneParametry[ cRok ][ 'staw_ry20' ]
    staw_ry17 := aDomyslneParametry[ cRok ][ 'staw_ry17' ]
    staw_ry10 := aDomyslneParametry[ cRok ][ 'staw_ry10' ]
@@ -350,7 +358,9 @@ PROCEDURE DomParPrzywroc_TabRycz( lPrzypiszTmp, cRok )
 
    staw_ohand := aDomyslneParametry[ cRok ][ 'staw_ohand' ]
    staw_oprod := aDomyslneParametry[ cRok ][ 'staw_oprod' ]
+   staw_ork09 := aDomyslneParametry[ cRok ][ 'staw_ork09' ]
    staw_ouslu := aDomyslneParametry[ cRok ][ 'staw_ouslu' ]
+   staw_ork10 := aDomyslneParametry[ cRok ][ 'staw_ork10' ]
    staw_ory20 := aDomyslneParametry[ cRok ][ 'staw_ory20' ]
    staw_ory17 := aDomyslneParametry[ cRok ][ 'staw_ory17' ]
    staw_ory10 := aDomyslneParametry[ cRok ][ 'staw_ory10' ]
@@ -362,7 +372,9 @@ PROCEDURE DomParPrzywroc_TabRycz( lPrzypiszTmp, cRok )
    IF lPrzypiszTmp
       zstaw_hand := staw_hand * 100
       zstaw_prod := staw_prod * 100
+      zstaw_rk09 := staw_rk09 * 100
       zstaw_uslu := staw_uslu * 100
+      zstaw_rk10 := staw_rk10 * 100
       zstaw_ry20 := staw_ry20 * 100
       zstaw_ry17 := staw_ry17 * 100
       zstaw_ry10 := staw_ry10 * 100
@@ -371,7 +383,9 @@ PROCEDURE DomParPrzywroc_TabRycz( lPrzypiszTmp, cRok )
 
       zstaw_ohand := staw_ohand
       zstaw_oprod := staw_oprod
+      zstaw_ork09 := staw_ork09
       zstaw_ouslu := staw_ouslu
+      zstaw_ork10 := staw_ork10
       zstaw_ory20 := staw_ory20
       zstaw_ory17 := staw_ory17
       zstaw_ory10 := staw_ory10
