@@ -109,18 +109,84 @@ PROCEDURE KRejS()
          @ 2, 70 SAY iif( fDETALISTA <> 'T', ' netto  ', ' brutto ' )
          Komun( "Zmieniono metod© wprowadzania kwot na " + iif( fDETALISTA <> 'T', 'NETTO', 'BRUTTO' ) )
       *########################### INSERT/MODYFIKACJA #############################
-      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. &_top_bot ) .AND. kl # K_ESC .AND. kl # K_F1
+      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. &_top_bot ) .AND. kl # K_ESC .AND. kl # K_F1
          @ 1, 47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
          JESTNIP := .F.
-         KtorOper()
          BEGIN SEQUENCE
             IF ZamSum1()
                BREAK
             ENDIF
             KRejSRysujTlo()
+            KtorOper()
             *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
-            IF ins
+            IF ins .AND. ( kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) ) .AND. ! &_top_bot
+               IF DocSys()
+                  BREAK
+               ENDIF
+               zDZIEN := DZIEN
+               zSYMB_REJ := SYMB_REJ
+               zNAZWA := NAZWA
+               zNR_IDENT := NR_IDENT
+               zNUMER := NUMER
+               zADRES := ADRES
+               zTRESC := TRESC
+               zROKS := ROKS
+               zMCS := MCS
+               zDZIENS := DZIENS
+               zDATAS := CToD( zROKS + '.' + zMCS + '.' + zDZIENS )
+               IF zRYCZALT == 'T'
+                  zKOLUMNA := KOLUMNA
+               ELSE
+                  zKOLUMNA := AllTrim( KOLUMNA )
+               ENDIF
+               zUWAGI := UWAGI
+*                 zZAPLATA=ZAPLATA
+*                 zKWOTA=KWOTA
+               zWARTZW := WARTZW
+               zWART08 := WART08
+               zWART00 := WART00
+               zWART02 := WART02
+               zVAT02 := VAT02
+               zWART07 := WART07
+               zVAT07 := VAT07
+               zWART22 := WART22
+               zVAT22 := VAT22
+               zWART12 := WART12
+               zVAT12 := VAT12
+               zBRUTZW := WARTZW
+               zBRUT08 := WART08
+               zBRUT00 := WART00
+               zBRUT02 := VAT02 + WART02
+               zBRUT07 := VAT07 + WART07
+               zBRUT22 := VAT22 + WART22
+               zBRUT12 := VAT12 + WART12
+               zNETTO := NETTO
+               zExPORT := iif( EXPORT == ' ', 'N', EXPORT )
+               zUE := iif( UE == ' ', 'N', UE )
+               zKRAJ := iif( KRAJ == '  ', 'PL', KRAJ )
+               zSEK_CV7 := SEK_CV7
+               zRACH := RACH
+               zKOREKTA := KOREKTA
+               zDETAL := DETAL
+               zROZRZAPS := ROZRZAPS
+               zZAP_TER := ZAP_TER
+               zZAP_DAT := ZAP_DAT
+               zZAP_WART := ZAP_WART
+               zTROJSTR := iif( TROJSTR == ' ', 'N', TROJSTR )
+               zKOL36 := KOL36
+               zKOL37 := KOL37
+               zKOL38 := KOL38
+               zKOL39 := KOL39
+               zNETTO2 := NETTO2
+               zKOLUMNA2 := KOLUMNA2
+               zDATATRAN := DATATRAN
+               zOPCJE := OPCJE
+               zPROCEDUR := PROCEDUR
+               zRODZDOW := RODZDOW
+               zVATMARZA := VATMARZA
+               zDATA_ZAP := DATA_ZAP
+            ELSEIF ins
                @  4, 78 CLEAR TO 5, 79
                @  4, 29 CLEAR TO 6, 49
                @  7, 29 CLEAR TO 7, 59
@@ -1132,7 +1198,7 @@ PROCEDURE KRejS()
       case kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 13 ]
+         DECLARE pppp[ 14 ]
          *---------------------------------------
          pppp[  1 ] := '                                                        '
          pppp[  2 ] := '   [PgUp/PgDn]...poprzednia/nast©pna strona             '
@@ -1140,13 +1206,14 @@ PROCEDURE KRejS()
          pppp[  4 ] := '   [Ins].........wpisywanie                             '
          pppp[  5 ] := '   [M]...........modyfikacja pozycji                    '
          pppp[  6 ] := '   [I]...........import z pliku JPK                     '
-         pppp[  7 ] := '   [W]...........grupowa weryf. stat. VAT               '
-         pppp[  8 ] := '   [B]...........przeˆ¥cz wprowadzanie nettem/bruttem   '
-         pppp[  9 ] := '   [Del].........kasowanie pozycji                      '
-         pppp[ 10 ] := '   [F9 ].........szukanie zˆo¾one                       '
-         pppp[ 11 ] := '   [F10].........szukanie dnia                          '
-         pppp[ 12 ] := '   [Esc].........wyj˜cie                                '
-         pppp[ 13 ] := '                                                        '
+         pppp[  7 ] := '   [K]...........kopiuj dokument                        '
+         pppp[  8 ] := '   [W]...........grupowa weryf. stat. VAT               '
+         pppp[  9 ] := '   [B]...........przeˆ¥cz wprowadzanie nettem/bruttem   '
+         pppp[ 10 ] := '   [Del].........kasowanie pozycji                      '
+         pppp[ 11 ] := '   [F9 ].........szukanie zˆo¾one                       '
+         pppp[ 12 ] := '   [F10].........szukanie dnia                          '
+         pppp[ 13 ] := '   [Esc].........wyj˜cie                                '
+         pppp[ 14 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO I
          i := 13

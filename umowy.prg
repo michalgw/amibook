@@ -139,7 +139,7 @@ PROCEDURE Umowy()
 
          BEGIN SEQUENCE
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
-            IF ins .AND. ( kl == 75 .OR. kl == 107 )
+            IF ins .AND. ( kl == 75 .OR. kl == 107 ) .AND. ( ! &_top_bot )
                zIDENT := IDENT
                zNUMER := NUMER
                zDATA_UMOWY := DATA_UMOWY

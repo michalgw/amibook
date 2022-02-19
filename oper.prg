@@ -83,7 +83,7 @@ PROCEDURE Oper()
          IF ! &_bot
             DO &_proc
          ENDIF
-      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. &_top_bot ) .AND. kl # K_ESC
+      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. &_top_bot ) .AND. kl # K_ESC
          @ 1, 47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
          KtorOper()
@@ -92,7 +92,31 @@ PROCEDURE Oper()
                BREAK
             ENDIF
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
-            IF ins
+            IF ins .AND. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .AND. ! &_top_bot
+               IF docsys()
+                  BREAK
+               ENDIF
+               zDZIEN := DZIEN
+               znazwa := nazwa
+               zNR_IDENT := NR_IDENT
+               zNUMER := iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2, 100 ) , SubStr( numer, 1, 100 ) )
+               zADRES := ADRES
+               zTRESC := TRESC
+               zWYR_TOW := WYR_TOW
+               zUSLUGI := USLUGI
+               zZAKUP := ZAKUP
+               zUBOCZNE := UBOCZNE
+               zWYNAGR_G := WYNAGR_G
+               zWYDATKI := WYDATKI
+               zPUSTA := PUSTA
+               zuwagi := uwagi
+               zROZRZAPK := ROZRZAPK
+               zZAP_TER := ZAP_TER
+               zZAP_DAT := ZAP_DAT
+               zZAP_WART := ZAP_WART
+               zK16WART :=  K16WART
+               zK16OPIS := K16OPIS
+            ELSEIF ins
                @ 2, 65 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄ'
                zDZIEN := '  '
                znazwa := Space( 200 )
@@ -480,14 +504,15 @@ PROCEDURE Oper()
          pppp[  4 ] := '   [Ins]...................dopisanie dokumentu          '
          pppp[  5 ] := '   [M].....................modyfikacja dokumentu        '
          pppp[  6 ] := '   [I].....................import dokument¢w z pliku    '
-         pppp[  7 ] := '   [F].....................wykazywanie w dek. IFT-2R    '
-         pppp[  8 ] := '   [Del]...................kasowanie dokumentu          '
-         pppp[  9 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 10 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 11 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 12 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
-         pppp[ 13 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
-         pppp[ 14 ] := '                                                        '
+         pppp[  7 ] := '   [K].....................kopiowanie dokumentu         '
+         pppp[  8 ] := '   [F].....................wykazywanie w dek. IFT-2R    '
+         pppp[  9 ] := '   [Del]...................kasowanie dokumentu          '
+         pppp[ 10 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 11 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 12 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 13 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
+         pppp[ 14 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
+         pppp[ 15 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
          i := 13

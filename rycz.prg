@@ -96,7 +96,7 @@ PROCEDURE Rycz()
       Ster()
       DO CASE
       *########################### INSERT/MODYFIKACJA #############################
-      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. &_top_bot ) .AND. kl # K_ESC
+      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. &_top_bot ) .AND. kl # K_ESC
          @ 1, 47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
          KtorOper()
@@ -107,7 +107,28 @@ PROCEDURE Rycz()
                BREAK
             ENDIF
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
-            IF ins
+            IF ins .AND. ( kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) ) .AND. ! &_top_bot
+               IF RyczSymbolSys()
+                  BREAK
+               ENDIF
+               zDZIEN := DZIEN
+               zDATAPRZY := DATAPRZY
+               zNUMER := iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2 ) + ' ', numer )
+               zTRESC := TRESC
+               zHANDEL := HANDEL
+               zUSLUGI := USLUGI
+               zPRODUKCJA := PRODUKCJA
+               zRY20 := RY20
+               zRY17 := RY17
+               zRY10 := RY10
+               zRYK07 := RYK07
+               zRYK08 := RYK08
+               zRYK09 := RYK09
+               zRYK10 := RYK10
+               zuwagi := uwagi
+               zzaplata := zaplata
+               zkwota := kwota
+            ELSEIF ins
                zDZIEN := '  '
                zDATAPRZY := CToD( '    .  .  ' )
                zNUMER := Space( 100 )
@@ -124,16 +145,7 @@ PROCEDURE Rycz()
                ENDIF
                ***********************
             ELSE
-               IF Left( LTrim( numer ), 2 ) == 'S-' .OR. Left( LTrim( numer ), 2 ) == 'R-' .OR. Left( LTrim( numer ), 2 ) == 'F-' .OR. Left( LTrim( numer ), 3 ) == 'KF-' .OR. Left( LTrim( numer ), 3 ) == 'KR-'
-                  kom( 4, '*u', ' Symbole S-,F-,R-,KR- i KF- mo&_z.na modyfikowa&_c. tylko w modyfikacji faktury ' )
-                  BREAK
-               ENDIF
-               IF Left( LTrim( numer ), 3 ) == 'RS-'
-                  kom( 4, '*u', ' Symbole RS- mo&_z.na modyfikowa&_c. tylko w modyfikacji rejestru sprzeda&_z.y ' )
-                  BREAK
-               ENDIF
-               IF Left( LTrim( numer ), 3 ) == 'RZ-'
-                  kom( 4, '*u', ' Symbole RZ- mo&_z.na modyfikowa&_c. tylko w modyfikacji rejestru zakupu ' )
+               IF RyczSymbolSys()
                   BREAK
                ENDIF
                zDZIEN := DZIEN
@@ -617,6 +629,7 @@ PROCEDURE Rycz()
          pppp[  3 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
          pppp[  4 ] := '   [Ins]...................wpisywanie                   '
          pppp[  5 ] := '   [M].....................modyfikacja pozycji          '
+         pppp[  5 ] := '   [K].....................kopiowanie dokumentu         '
          pppp[  6 ] := '   [Del]...................kasowanie pozycji            '
          pppp[  7 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
          pppp[  8 ] := '   [F10]...................szukanie dnia                '
@@ -1021,6 +1034,25 @@ FUNCTION ryczRysujTlo()
    @ 21, 0 SAY '      Zap&_l.acono ?.......................                                        '
    @ 22, 0 SAY Space( 80 )
    RETURN
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION RyczSymbolSys()
+
+   IF Left( LTrim( numer ), 2 ) == 'S-' .OR. Left( LTrim( numer ), 2 ) == 'R-' .OR. Left( LTrim( numer ), 2 ) == 'F-' .OR. Left( LTrim( numer ), 3 ) == 'KF-' .OR. Left( LTrim( numer ), 3 ) == 'KR-'
+      kom( 4, '*u', ' Symbole S-,F-,R-,KR- i KF- mo&_z.na modyfikowa&_c. tylko w modyfikacji faktury ' )
+      RETURN .T.
+   ENDIF
+   IF Left( LTrim( numer ), 3 ) == 'RS-'
+      kom( 4, '*u', ' Symbole RS- mo&_z.na modyfikowa&_c. tylko w modyfikacji rejestru sprzeda&_z.y ' )
+      RETURN .T.
+   ENDIF
+   IF Left( LTrim( numer ), 3 ) == 'RZ-'
+      kom( 4, '*u', ' Symbole RZ- mo&_z.na modyfikowa&_c. tylko w modyfikacji rejestru zakupu ' )
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
 
 /*----------------------------------------------------------------------*/
 

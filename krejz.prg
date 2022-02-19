@@ -119,17 +119,95 @@ PROCEDURE KRejZ()
          @ 2, 70 SAY iif( fDETALISTA <> 'T', ' netto  ', ' brutto ' )
          Komun( "Zmieniono metod© wprowadzania kwot na " + iif( fDETALISTA <> 'T', 'NETTO', 'BRUTTO' ) )
 
-      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. &_top_bot ) .AND. kl # K_ESC
+      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. &_top_bot ) .AND. kl # K_ESC
          @ 1,47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
-         KtorOper()
          BEGIN SEQUENCE
             IF ZamSum1()
                BREAK
             ENDIF
             krejzRysujTlo()
+            KtorOper()
             *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
-            IF ins
+            IF ins .AND. ( kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) ) .AND. ! &_top_bot
+               IF DocSys()
+                  BREAK
+               ENDIF
+               zDZIEN := DZIEN
+               zSYMB_REJ := SYMB_REJ
+               zNAZWA := NAZWA
+               zNR_IDENT := NR_IDENT
+               zNUMER := NUMER
+               zADRES := ADRES
+               zTRESC := TRESC
+               zROKS := ROKS
+               zMCS := MCS
+               zDZIENS := DZIENS
+               zDATAS := CToD( zROKS + '.' + zMCS + '.' + zDZIENS )
+               zDATAKS := DATAKS
+               zKOLUMNA := KOLUMNA
+               zUWAGI := UWAGI
+               zWARTZW := WARTZW
+               zWART00 := WART00
+               zWART02 := WART02
+               zVAT02 := VAT02
+               zWART07 := WART07
+               zVAT07 := VAT07
+               zWART22 := WART22
+               zVAT22 := VAT22
+               zWART12 := WART12
+               zVAT12 := VAT12
+               zBRUT02 := VAT02 + WART02
+               zBRUT07 := VAT07 + WART07
+               zBRUT22 := VAT22 + WART22
+               zBRUT12 := VAT12 + WART12
+               zNETTO := NETTO
+               zExPORT := iif( EXPORT == ' ', 'N', EXPORT )
+               zUE := iif( UE == ' ', 'N', UE )
+               zKRAJ := iif( KRAJ == '  ', 'PL', KRAJ )
+               zSEK_CV7 := SEK_CV7
+               zRACH := RACH
+               zKOREKTA := KOREKTA
+               zUSLUGAUE := USLUGAUE
+               zWEWDOS := WEWDOS
+               zPALIWA := PALIWA
+               zPOJAZDY := POJAZDY
+               zDETAL := DETAL
+               zSP22 := SP22
+               zSP12 := SP12
+               zSP07 := SP07
+               zSP02 := SP02
+               zSP00 := SP00
+               zSPZW := SPZW
+               zZOM22 := ZOM22
+               zZOM12 := ZOM12
+               zZOM07 := ZOM07
+               zZOM02 := ZOM02
+               zZOM00 := ZOM00
+               zROZRZAPZ := ROZRZAPZ
+               zZAP_TER := ZAP_TER
+               zZAP_DAT := ZAP_DAT
+               zZAP_WART := ZAP_WART
+               zOPCJE := OPCJE
+
+               zK16OPIS := Space( 30 )
+               IF KOLUMNA == '16'
+                  // Pobieramy opis kolumny 16 z ksiegi
+               ENDIF
+               zTROJSTR := iif( TROJSTR == ' ', 'N', TROJSTR )
+
+               zKOL47 := KOL47
+               zKOL48 := KOL48
+               zKOL49 := KOL49
+               zKOL50 := KOL50
+
+               zNETTO2 := NETTO2
+               zKOLUMNA2 := KOLUMNA2
+               zDATATRAN := DATATRAN
+
+               zRODZDOW := RODZDOW
+               zVATMARZA := VATMARZA
+            ELSEIF ins
                @  2, 5 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄ'
 /*
                @  4, 78 CLEAR TO  5, 79
@@ -680,7 +758,7 @@ PROCEDURE KRejZ()
       CASE kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 14 ]
+         DECLARE pppp[ 15 ]
          *---------------------------------------
          pppp[  1 ] := '                                                            '
          pppp[  2 ] := '   [PgUp/PgDn].......poprzednia/nast©pna strona             '
@@ -691,11 +769,12 @@ PROCEDURE KRejZ()
          pppp[  7 ] := '   [W]...............grupowa weryf. stat. VAT               '
          pppp[  8 ] := '   [B]...............przeˆ¥cz wprowadzanie nettem/bruttem   '
          pppp[  9 ] := '   [F]...............wykazywanie dokumentu w dek. IFT-2R    '
-         pppp[ 10 ] := '   [Del].............kasowanie pozycji                      '
-         pppp[ 11 ] := '   [F9 ].............szukanie zˆo¾one                       '
-         pppp[ 12 ] := '   [F10].............szukanie dnia                          '
-         pppp[ 13 ] := '   [Esc].............wyj˜cie                                '
-         pppp[ 14 ] := '                                                            '
+         pppp[ 10 ] := '   [K]...............kopiowanie dokumentu                   '
+         pppp[ 11 ] := '   [Del].............kasowanie pozycji                      '
+         pppp[ 12 ] := '   [F9 ].............szukanie zˆo¾one                       '
+         pppp[ 13 ] := '   [F10].............szukanie dnia                          '
+         pppp[ 14 ] := '   [Esc].............wyj˜cie                                '
+         pppp[ 15 ] := '                                                            '
          *---------------------------------------
          SET COLOR TO i
          i := 14
