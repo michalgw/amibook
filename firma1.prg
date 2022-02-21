@@ -821,6 +821,9 @@ PROCEDURE Firma1()
             *m->parap_puw=parap_puw
             m->parap_fuw=parap_fuw
             m->parap_fww=parap_fww
+
+            bufor_dok := { 'oper' => {}, 'rycz' => {}, 'rejs' => {}, 'rejz' => {} }
+
             set color to
             @ 0,0 clear to 0,40
             @ 0,3 say iif(zVAT='T','VAT-'+zVATFORDR,'')+iif(zRYCZALT='T','Rycza&_l.t ','')+iif(DETALISTA='T','Detal ','')

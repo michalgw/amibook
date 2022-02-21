@@ -664,6 +664,11 @@ FUNCTION Main()
 
    // --
 
+   // Bufor dokumentow
+   PUBLIC bufor_dok := NIL
+
+   // --
+
    // Odtawrzamy parametry z param.mem
    //lub pokazujemy edycje parametrow jesli plik nie istnieje
    IF File( 'param.mem' )

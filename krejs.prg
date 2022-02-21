@@ -109,7 +109,7 @@ PROCEDURE KRejS()
          @ 2, 70 SAY iif( fDETALISTA <> 'T', ' netto  ', ' brutto ' )
          Komun( "Zmieniono metod© wprowadzania kwot na " + iif( fDETALISTA <> 'T', 'NETTO', 'BRUTTO' ) )
       *########################### INSERT/MODYFIKACJA #############################
-      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. &_top_bot ) .AND. kl # K_ESC .AND. kl # K_F1
+      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. kl == K_F6 .OR. &_top_bot ) .AND. kl # K_ESC .AND. kl # K_F1
          @ 1, 47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
          JESTNIP := .F.
@@ -120,7 +120,85 @@ PROCEDURE KRejS()
             KRejSRysujTlo()
             KtorOper()
             *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
-            IF ins .AND. ( kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) ) .AND. ! &_top_bot
+            IF ins .AND. kl == K_F6
+               aBufDok := Bufor_Dok_Wybierz( 'rejs' )
+               IF ! Empty( aBufDok ) .AND. HB_ISHASH( aBufDok )
+                  lRyczModSys := .F.
+                  IF zRYCZALT == 'T'
+                     IF Left( LTrim( aBufDok[ 'NUMER' ] ), 2 ) == 'F-'
+                        lRyczModSys := .T.
+                     ELSE
+                        IF DocSys()
+                           BREAK
+                        ENDIF
+                     ENDIF
+                  ELSE
+                     IF DocSys()
+                        BREAK
+                     ENDIF
+                  ENDIF
+                  zDZIEN := aBufDok[ 'DZIEN' ]
+                  zSYMB_REJ := aBufDok[ 'SYMB_REJ' ]
+                  zNAZWA := aBufDok[ 'NAZWA' ]
+                  zNR_IDENT := aBufDok[ 'NR_IDENT' ]
+                  zNUMER := aBufDok[ 'NUMER' ]
+                  zADRES := aBufDok[ 'ADRES' ]
+                  zTRESC := aBufDok[ 'TRESC' ]
+                  zROKS := aBufDok[ 'ROKS' ]
+                  zMCS := aBufDok[ 'MCS' ]
+                  zDZIENS := aBufDok[ 'DZIENS' ]
+                  zDATAS := CToD( aBufDok[ 'ROKS' ] + '.' + aBufDok[ 'MCS' ] + '.' + aBufDok[ 'DZIENS' ] )
+                  zKOLUMNA := aBufDok[ 'KOLUMNA' ]
+                  zUWAGI := aBufDok[ 'UWAGI' ]
+   *                 zZAPLATA=ZAPLATA
+   *                 zKWOTA=KWOTA
+                  zWARTZW := aBufDok[ 'WARTZW' ]
+                  zWART08 := aBufDok[ 'WART08' ]
+                  zWART00 := aBufDok[ 'WART00' ]
+                  zWART02 := aBufDok[ 'WART02' ]
+                  zVAT02 := aBufDok[ 'VAT02' ]
+                  zWART07 := aBufDok[ 'WART07' ]
+                  zVAT07 := aBufDok[ 'VAT07' ]
+                  zWART22 := aBufDok[ 'WART22' ]
+                  zVAT22 := aBufDok[ 'VAT22' ]
+                  zWART12 := aBufDok[ 'WART12' ]
+                  zVAT12 := aBufDok[ 'VAT12' ]
+                  zBRUTZW := aBufDok[ 'WARTZW' ]
+                  zBRUT08 := aBufDok[ 'WART08' ]
+                  zBRUT00 := aBufDok[ 'WART00' ]
+                  zBRUT02 := aBufDok[ 'VAT02' ] + aBufDok[ 'WART02' ]
+                  zBRUT07 := aBufDok[ 'VAT07' ] + aBufDok[ 'WART07' ]
+                  zBRUT22 := aBufDok[ 'VAT22' ] + aBufDok[ 'WART22' ]
+                  zBRUT12 := aBufDok[ 'VAT12' ] + aBufDok[ 'WART12' ]
+                  zNETTO := aBufDok[ 'NETTO' ]
+                  zExPORT := iif( aBufDok[ 'EXPORT' ] == ' ', 'N', aBufDok[ 'EXPORT' ] )
+                  zUE := iif( aBufDok[ 'UE' ] == ' ', 'N', aBufDok[ 'UE' ] )
+                  zKRAJ := iif( aBufDok[ 'KRAJ' ] == '  ', 'PL', aBufDok[ 'KRAJ' ] )
+                  zSEK_CV7 := aBufDok[ 'SEK_CV7' ]
+                  zRACH := aBufDok[ 'RACH' ]
+                  zKOREKTA := aBufDok[ 'KOREKTA' ]
+                  zDETAL := aBufDok[ 'DETAL' ]
+                  zROZRZAPS := aBufDok[ 'ROZRZAPS' ]
+                  zZAP_TER := aBufDok[ 'ZAP_TER' ]
+                  zZAP_DAT := aBufDok[ 'ZAP_DAT' ]
+                  zZAP_WART := aBufDok[ 'ZAP_WART' ]
+                  zTROJSTR := iif( aBufDok[ 'TROJSTR' ] == ' ', 'N', aBufDok[ 'TROJSTR' ] )
+                  zKOL36 := aBufDok[ 'KOL36' ]
+                  zKOL37 := aBufDok[ 'KOL37' ]
+                  zKOL38 := aBufDok[ 'KOL38' ]
+                  zKOL39 := aBufDok[ 'KOL39' ]
+                  zNETTO2 := aBufDok[ 'NETTO2' ]
+                  zKOLUMNA2 := aBufDok[ 'KOLUMNA2' ]
+                  zDATATRAN := aBufDok[ 'DATATRAN' ]
+                  zOPCJE := aBufDok[ 'OPCJE' ]
+                  zPROCEDUR := aBufDok[ 'PROCEDUR' ]
+                  zRODZDOW := aBufDok[ 'RODZDOW' ]
+                  zVATMARZA := aBufDok[ 'VATMARZA' ]
+                  zDATA_ZAP := aBufDok[ 'DATA_ZAP' ]
+               ELSE
+                  BREAK
+               ENDIF
+            ELSEIF ins .AND. ( kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) ) .AND. ! &_top_bot
                IF DocSys()
                   BREAK
                ENDIF
@@ -1198,7 +1276,7 @@ PROCEDURE KRejS()
       case kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 14 ]
+         DECLARE pppp[ 17 ]
          *---------------------------------------
          pppp[  1 ] := '                                                        '
          pppp[  2 ] := '   [PgUp/PgDn]...poprzednia/nast©pna strona             '
@@ -1210,13 +1288,16 @@ PROCEDURE KRejS()
          pppp[  8 ] := '   [W]...........grupowa weryf. stat. VAT               '
          pppp[  9 ] := '   [B]...........przeˆ¥cz wprowadzanie nettem/bruttem   '
          pppp[ 10 ] := '   [Del].........kasowanie pozycji                      '
-         pppp[ 11 ] := '   [F9 ].........szukanie zˆo¾one                       '
-         pppp[ 12 ] := '   [F10].........szukanie dnia                          '
-         pppp[ 13 ] := '   [Esc].........wyj˜cie                                '
-         pppp[ 14 ] := '                                                        '
+         pppp[ 11 ] := '   [F5 ].........kopiowanie dokumentu do bufora         '
+         pppp[ 12 ] := '   [Shift+F5]....kopiowanie wsystkich dok. do bufora    '
+         pppp[ 13 ] := '   [F6 ].........wstawianie dokumentu z bufora          '
+         pppp[ 14 ] := '   [F9 ].........szukanie zˆo¾one                       '
+         pppp[ 15 ] := '   [F10].........szukanie dnia                          '
+         pppp[ 16 ] := '   [Esc].........wyj˜cie                                '
+         pppp[ 17 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO I
-         i := 13
+         i := 17
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -1238,6 +1319,39 @@ PROCEDURE KRejS()
 
       CASE kl == Asc( 'W' ) .OR. kl == Asc( 'w' )
          VAT_Sprzwdz_GrpNIP_WLApi( 'rejs', { || &_bot }  )
+
+      CASE kl == K_F5
+         IF ! docsys()
+            aBufRec := RejS_PobierzDok()
+            IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'rejs', id ) ) > 0
+               bufor_dok[ 'rejs' ][ nBufRecIdx ] := aBufRec
+            ELSE
+               AAdd( bufor_dok[ 'rejs' ], aBufRec )
+            ENDIF
+            Komun( "Dokument zostaˆ skopiowany" )
+         ENDIF
+
+      CASE kl == K_SH_F5
+         IF TNEsc( , "Czy skopiowa† wszytkie dokumenty do bufora? (Tak/Nie)" )
+            nAktRec := RecNo()
+            nLicznik := 0
+            GO TOP
+            SEEK "+" + ident_fir + miesiac
+            DO WHILE ! &_bot
+               IF ! DocSys( .F. )
+                  aBufRec := RejS_PobierzDok()
+                  IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'rejs', id ) ) > 0
+                     bufor_dok[ 'rejs' ][ nBufRecIdx ] := aBufRec
+                  ELSE
+                     AAdd( bufor_dok[ 'rejs' ], aBufRec )
+                  ENDIF
+                  nLicznik++
+               ENDIF
+               SKIP
+            ENDDO
+            dbGoto( nAktRec )
+            Komun( "Skopiowano " + AllTrim( Str( nLicznik ) ) + " dokument¢w" )
+         ENDIF
 
       ******************** ENDCASE
       ENDCASE
@@ -3190,3 +3304,67 @@ PROCEDURE KRejS_Ksieguj()
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION RejS_PobierzDok()
+
+   LOCAL aBufRec := { ;
+      'ID' => ID, ;
+      'DZIEN' => DZIEN, ;
+      'SYMB_REJ' => SYMB_REJ, ;
+      'NAZWA' => NAZWA, ;
+      'NR_IDENT' => NR_IDENT, ;
+      'NUMER' => NUMER, ;
+      'ADRES' => ADRES, ;
+      'TRESC' => TRESC, ;
+      'ROKS' => ROKS, ;
+      'MCS' => MCS, ;
+      'DZIENS' => DZIENS, ;
+      'DATAS' => CToD( ROKS + '.' + MCS + '.' + DZIENS ), ;
+      'KOLUMNA' => KOLUMNA, ;
+      'UWAGI' => UWAGI, ;
+      'WARTZW' => WARTZW, ;
+      'WART08' => WART08, ;
+      'WART00' => WART00, ;
+      'WART02' => WART02, ;
+      'VAT02' => VAT02, ;
+      'WART07' => WART07, ;
+      'VAT07' => VAT07, ;
+      'WART22' => WART22, ;
+      'VAT22' => VAT22, ;
+      'WART12' => WART12, ;
+      'VAT12' => VAT12, ;
+      'BRUTZW' => WARTZW, ;
+      'BRUT08' => WART08, ;
+      'BRUT00' => WART00, ;
+      'BRUT02' => VAT02 + WART02, ;
+      'BRUT07' => VAT07 + WART07, ;
+      'BRUT22' => VAT22 + WART22, ;
+      'BRUT12' => VAT12 + WART12, ;
+      'NETTO' => NETTO, ;
+      'EXPORT' => iif( EXPORT == ' ', 'N', EXPORT ), ;
+      'UE' => iif( UE == ' ', 'N', UE ), ;
+      'KRAJ' => iif( KRAJ == '  ', 'PL', KRAJ ), ;
+      'SEK_CV7' => SEK_CV7, ;
+      'RACH' => RACH, ;
+      'KOREKTA' => KOREKTA, ;
+      'DETAL' => DETAL, ;
+      'ROZRZAPS' => ROZRZAPS, ;
+      'ZAP_TER' => ZAP_TER, ;
+      'ZAP_DAT' => ZAP_DAT, ;
+      'ZAP_WART' => ZAP_WART, ;
+      'TROJSTR' => iif( TROJSTR == ' ', 'N', TROJSTR ), ;
+      'KOL36' => KOL36, ;
+      'KOL37' => KOL37, ;
+      'KOL38' => KOL38, ;
+      'KOL39' => KOL39, ;
+      'NETTO2' => NETTO2, ;
+      'KOLUMNA2' => KOLUMNA2, ;
+      'DATATRAN' => DATATRAN, ;
+      'OPCJE' => OPCJE, ;
+      'PROCEDUR' => PROCEDUR, ;
+      'RODZDOW' => RODZDOW, ;
+      'VATMARZA' => VATMARZA, ;
+      'DATA_ZAP' => DATA_ZAP }
+
+   RETURN aBufRec
+
+/*----------------------------------------------------------------------*/

@@ -96,7 +96,7 @@ PROCEDURE Rycz()
       Ster()
       DO CASE
       *########################### INSERT/MODYFIKACJA #############################
-      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. &_top_bot ) .AND. kl # K_ESC
+      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. kl == K_F6 .OR. &_top_bot ) .AND. kl # K_ESC
          @ 1, 47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
          KtorOper()
@@ -106,8 +106,35 @@ PROCEDURE Rycz()
                kom( 3, '*u', ' Miesi&_a.c jest zamkni&_e.ty ' )
                BREAK
             ENDIF
+            IF kl == K_F6 .AND. Len( bufor_dok[ 'rycz' ] ) == 0
+               Komun( "Brak dokument¢w w buforze" )
+               BREAK
+            ENDIF
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
-            IF ins .AND. ( kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) ) .AND. ! &_top_bot
+            IF ins .AND. kl == K_F6
+               aBufDok := Bufor_Dok_Wybierz( 'rycz' )
+               IF ! Empty( aBufDok ) .AND. HB_ISHASH( aBufDok )
+                  zDZIEN := aBufDok[ 'DZIEN' ]
+                  zDATAPRZY := aBufDok[ 'DATAPRZY' ]
+                  zNUMER := aBufDok[ 'NUMER' ]
+                  zTRESC := aBufDok[ 'TRESC' ]
+                  zHANDEL := aBufDok[ 'HANDEL' ]
+                  zUSLUGI := aBufDok[ 'USLUGI' ]
+                  zPRODUKCJA := aBufDok[ 'PRODUKCJA' ]
+                  zRY20 := aBufDok[ 'RY20' ]
+                  zRY17 := aBufDok[ 'RY17' ]
+                  zRY10 := aBufDok[ 'RY10' ]
+                  zRYK07 := aBufDok[ 'RYK07' ]
+                  zRYK08 := aBufDok[ 'RYK08' ]
+                  zRYK09 := aBufDok[ 'RYK09' ]
+                  zRYK10 := aBufDok[ 'RYK10' ]
+                  zuwagi := aBufDok[ 'UWAGI' ]
+                  zzaplata := aBufDok[ 'ZAPLATA' ]
+                  zkwota := aBufDok[ 'KWOTA' ]
+               ELSE
+                  BREAK
+               ENDIF
+            ELSEIF ins .AND. ( kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) ) .AND. ! &_top_bot
                IF RyczSymbolSys()
                   BREAK
                ENDIF
@@ -629,15 +656,18 @@ PROCEDURE Rycz()
          pppp[  3 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
          pppp[  4 ] := '   [Ins]...................wpisywanie                   '
          pppp[  5 ] := '   [M].....................modyfikacja pozycji          '
-         pppp[  5 ] := '   [K].....................kopiowanie dokumentu         '
-         pppp[  6 ] := '   [Del]...................kasowanie pozycji            '
-         pppp[  7 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[  8 ] := '   [F10]...................szukanie dnia                '
-         pppp[  9 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 10 ] := '                                                        '
+         pppp[  6 ] := '   [K].....................kopiowanie dokumentu         '
+         pppp[  7 ] := '   [Del]...................kasowanie pozycji            '
+         pppp[  8 ] := '   [F5 ]...................kopiowanie do bufora         '
+         pppp[  9 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
+         pppp[ 10 ] := '   [F6 ]...................wstawianie z bufora          '
+         pppp[ 11 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 12 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 13 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 14 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
-         i := 12
+         i := 14
          j := 22
          DO WHILE i>0
             IF Type( 'pppp[i]' ) # 'U'
@@ -695,16 +725,50 @@ PROCEDURE Rycz()
             nLP2 := ewid->lp
             blokada()
             ewid->lp := nLP1
-   //         unlock
+            //unlock
             dbGoto( rec )
-   //         blokadar()
+            //blokadar()
             ewid->lp := nLP2
             unlock
-   //         setind('OPER')
-   //         dbGoto( rec )
+            //setind('OPER')
+            //dbGoto( rec )
             commit_()
          ENDIF
          DO &_proc
+
+      CASE kl == K_F5
+         IF ! docsys()
+            aBufRec := Rycz_PobierzDok()
+            IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'rycz', id ) ) > 0
+               bufor_dok[ 'rycz' ][ nBufRecIdx ] := aBufRec
+            ELSE
+               AAdd( bufor_dok[ 'rycz' ], aBufRec )
+            ENDIF
+            Komun( "Dokument zostaˆ skopiowany" )
+         ENDIF
+
+      CASE kl == K_SH_F5
+         IF TNEsc( , "Czy skopiowa† wszytkie dokumenty do bufora? (Tak/Nie)" )
+            nAktRec := RecNo()
+            nLicznik := 0
+            GO TOP
+            SEEK "+" + ident_fir + miesiac
+            DO WHILE ! &_bot
+               IF ! DocSys( .F. )
+                  aBufRec := Rycz_PobierzDok()
+                  IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'rycz', id ) ) > 0
+                     bufor_dok[ 'rycz' ][ nBufRecIdx ] := aBufRec
+                  ELSE
+                     AAdd( bufor_dok[ 'rycz' ], aBufRec )
+                  ENDIF
+                  nLicznik++
+               ENDIF
+               SKIP
+            ENDDO
+            dbGoto( nAktRec )
+            Komun( "Skopiowano " + AllTrim( Str( nLicznik ) ) + " dokument¢w" )
+         ENDIF
+
       ******************** ENDCASE
       ENDCASE
    ENDDO
@@ -1056,3 +1120,28 @@ FUNCTION RyczSymbolSys()
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION Rycz_PobierzDok()
+
+   LOCAL aBufRec := { ;
+      'ID' => ID, ;
+      'DZIEN' => DZIEN, ;
+      'DATAPRZY' => DATAPRZY, ;
+      'NUMER' => iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2 ) + ' ', numer ), ;
+      'TRESC' => TRESC, ;
+      'HANDEL' => HANDEL, ;
+      'USLUGI' => USLUGI, ;
+      'PRODUKCJA' => PRODUKCJA, ;
+      'RY20' => RY20, ;
+      'RY17' => RY17, ;
+      'RY10' => RY10, ;
+      'RYK07' => RYK07, ;
+      'RYK08' => RYK08, ;
+      'RYK09' => RYK09, ;
+      'RYK10' => RYK10, ;
+      'UWAGI' => uwagi, ;
+      'ZAPLATA' => zaplata, ;
+      'KWOTA' => kwota }
+
+   RETURN aBufRec
+
+/*----------------------------------------------------------------------*/

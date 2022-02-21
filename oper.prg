@@ -83,7 +83,7 @@ PROCEDURE Oper()
          IF ! &_bot
             DO &_proc
          ENDIF
-      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. &_top_bot ) .AND. kl # K_ESC
+      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. kl == K_F6 .OR. &_top_bot ) .AND. kl # K_ESC
          @ 1, 47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
          KtorOper()
@@ -91,8 +91,38 @@ PROCEDURE Oper()
             IF ZamSum1()
                BREAK
             ENDIF
+            IF kl == K_F6 .AND. Len( bufor_dok[ 'oper' ] ) == 0
+               Komun( "Brak dokument¢w w buforze" )
+               BREAK
+            ENDIF
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
-            IF ins .AND. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .AND. ! &_top_bot
+            IF ins .AND. kl == K_F6
+               aBufDok := Bufor_Dok_Wybierz( 'oper' )
+               IF ! Empty( aBufDok ) .AND. HB_ISHASH( aBufDok )
+                  zDZIEN := aBufDok[ 'DZIEN' ]
+                  znazwa := aBufDok[ 'NAZWA' ]
+                  zNR_IDENT := aBufDok[ 'NR_IDENT' ]
+                  zNUMER := aBufDok[ 'NUMER' ]
+                  zADRES := aBufDok[ 'ADRES' ]
+                  zTRESC := aBufDok[ 'TRESC' ]
+                  zWYR_TOW := aBufDok[ 'WYR_TOW' ]
+                  zUSLUGI := aBufDok[ 'USLUGI' ]
+                  zZAKUP := aBufDok[ 'ZAKUP' ]
+                  zUBOCZNE := aBufDok[ 'UBOCZNE' ]
+                  zWYNAGR_G := aBufDok[ 'WYNAGR_G' ]
+                  zWYDATKI := aBufDok[ 'WYDATKI' ]
+                  zPUSTA := aBufDok[ 'PUSTA' ]
+                  zuwagi := aBufDok[ 'UWAGI' ]
+                  zROZRZAPK := aBufDok[ 'ROZRZAPK' ]
+                  zZAP_TER := aBufDok[ 'ZAP_TER' ]
+                  zZAP_DAT := aBufDok[ 'ZAP_DAT' ]
+                  zZAP_WART := aBufDok[ 'ZAP_WART' ]
+                  zK16WART :=  aBufDok[ 'K16WART' ]
+                  zK16OPIS := aBufDok[ 'K16OPIS' ]
+               ELSE
+                  BREAK
+               ENDIF
+            ELSEIF ins .AND. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .AND. ! &_top_bot
                IF docsys()
                   BREAK
                ENDIF
@@ -507,15 +537,18 @@ PROCEDURE Oper()
          pppp[  7 ] := '   [K].....................kopiowanie dokumentu         '
          pppp[  8 ] := '   [F].....................wykazywanie w dek. IFT-2R    '
          pppp[  9 ] := '   [Del]...................kasowanie dokumentu          '
-         pppp[ 10 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 11 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 12 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 13 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
-         pppp[ 14 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
-         pppp[ 15 ] := '                                                        '
+         pppp[ 10 ] := '   [F5 ]...................kopiowanie do bufora         '
+         pppp[ 11 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
+         pppp[ 12 ] := '   [F6 ]...................wstawianie z bufora          '
+         pppp[ 13 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 14 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 15 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 16 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
+         pppp[ 17 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
+         pppp[ 18 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
-         i := 13
+         i := 18
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -589,6 +622,39 @@ PROCEDURE Oper()
          IF ! docsys()
             OperIFT2()
             DO &_proc
+         ENDIF
+
+      CASE kl == K_F5
+         IF ! docsys()
+            aBufRec := Oper_PobierzDok()
+            IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'oper', id ) ) > 0
+               bufor_dok[ 'oper' ][ nBufRecIdx ] := aBufRec
+            ELSE
+               AAdd( bufor_dok[ 'oper' ], aBufRec )
+            ENDIF
+            Komun( "Dokument zostaˆ skopiowany" )
+         ENDIF
+
+      CASE kl == K_SH_F5
+         IF TNEsc( , "Czy skopiowa† wszytkie dokumenty do bufora? (Tak/Nie)" )
+            nAktRec := RecNo()
+            nLicznik := 0
+            GO TOP
+            SEEK "+" + ident_fir + miesiac
+            DO WHILE ! &_bot
+               IF ! DocSys( .F. )
+                  aBufRec := Oper_PobierzDok()
+                  IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'oper', id ) ) > 0
+                     bufor_dok[ 'oper' ][ nBufRecIdx ] := aBufRec
+                  ELSE
+                     AAdd( bufor_dok[ 'oper' ], aBufRec )
+                  ENDIF
+                  nLicznik++
+               ENDIF
+               SKIP
+            ENDDO
+            dbGoto( nAktRec )
+            Komun( "Skopiowano " + AllTrim( Str( nLicznik ) ) + " dokument¢w" )
          ENDIF
 
       ******************** ENDCASE
@@ -984,18 +1050,25 @@ PROCEDURE OpenOper( bazy )
    RETURN
 
 *************************************
-FUNCTION DocSys()
+FUNCTION DocSys( lPokazKomunikat )
 *************************************
-   R := .F.
+   LOCAL R := .F.
+   hb_default( @lPokazKomunikat, .T. )
    DO CASE
    CASE Left( LTrim( numer ), 2 ) == 'S-' .OR. Left( LTrim( numer ), 2 ) == 'R-' .OR. Left( LTrim( numer ), 2 ) == 'F-' .OR. Left( LTrim( numer ), 3 ) == 'KF-' .OR. Left( LTrim( numer ), 3 ) == 'KR-'
-      kom( 4, '*u', ' Symbole S-,F-,R-,KR- i KF- mo&_z.na modyfikowa&_c. tylko w modyfikacji faktury ' )
+      IF lPokazKomunikat
+         kom( 4, '*u', ' Symbole S-,F-,R-,KR- i KF- mo&_z.na modyfikowa&_c. tylko w modyfikacji faktury ' )
+      ENDIF
       R := .T.
    CASE Left( LTrim( numer ), 3 ) == 'RS-'
-      kom( 4, '*u', ' Symbole RS- mo&_z.na modyfikowa&_c. tylko poprzez rejestr sprzeda&_z.y ' )
+      IF lPokazKomunikat
+         kom( 4, '*u', ' Symbole RS- mo&_z.na modyfikowa&_c. tylko poprzez rejestr sprzeda&_z.y ' )
+      ENDIF
       R := .T.
    CASE Left( LTrim( numer ), 3 ) == 'RZ-'
-      kom( 4, '*u', ' Symbole RZ- mo&_z.na modyfikowa&_c. tylko poprzez rejestr zakupu ' )
+      IF lPokazKomunikat
+         kom( 4, '*u', ' Symbole RZ- mo&_z.na modyfikowa&_c. tylko poprzez rejestr zakupu ' )
+      ENDIF
       R := .T.
    ENDCASE
    RETURN R
@@ -1535,6 +1608,35 @@ PROCEDURE OperIFT2()
    ENDIF
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Oper_PobierzDok()
+
+   LOCAL aBufRec := { ;
+      'ID' => id, ;
+      'DZIEN' => DZIEN, ;
+      'NAZWA' => nazwa, ;
+      'NR_IDENT' => NR_IDENT, ;
+      'NUMER' => iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2, 100 ) , SubStr( numer, 1, 100 ) ), ;
+      'ADRES' => ADRES, ;
+      'TRESC' => TRESC, ;
+      'WYR_TOW' => WYR_TOW, ;
+      'USLUGI' => USLUGI, ;
+      'ZAKUP' => ZAKUP, ;
+      'UBOCZNE' => UBOCZNE, ;
+      'WYNAGR_G' => WYNAGR_G, ;
+      'WYDATKI' => WYDATKI, ;
+      'PUSTA' => PUSTA, ;
+      'UWAGI' => uwagi, ;
+      'ROZRZAPK' => ROZRZAPK, ;
+      'ZAP_TER' => ZAP_TER, ;
+      'ZAP_DAT' => ZAP_DAT, ;
+      'ZAP_WART' => ZAP_WART, ;
+      'K16WART' =>  K16WART, ;
+      'K16OPIS' => K16OPIS }
+
+   RETURN aBufRec
 
 /*----------------------------------------------------------------------*/
 
