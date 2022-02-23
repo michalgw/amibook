@@ -1857,9 +1857,9 @@ FUNCTION jpk_v7m_2( aDane )
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'B_MPV_PROWIZJA' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'B_MPV_PROWIZJA' ]
             cRes := cRes + '    <B_MPV_PROWIZJA>1</B_MPV_PROWIZJA>' + nl
          ENDIF
-         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MPP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MPP' ]
-            cRes := cRes + '    <MPP>1</MPP>' + nl
-         ENDIF
+         //IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MPP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MPP' ]
+         //   cRes := cRes + '    <MPP>1</MPP>' + nl
+         //ENDIF
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'KorektaPodstawyOpodt' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'KorektaPodstawyOpodt' ]
             cRes := cRes + '    <KorektaPodstawyOpodt>1</KorektaPodstawyOpodt>' + nl
             IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TerminPlatnosci' ) .AND. ! Empty( aDane[ 'sprzedaz' ][ nI ][ 'TerminPlatnosci' ] )
@@ -2278,9 +2278,9 @@ FUNCTION jpk_v7k_2( aDane )
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'B_MPV_PROWIZJA' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'B_MPV_PROWIZJA' ]
             cRes := cRes + '    <B_MPV_PROWIZJA>1</B_MPV_PROWIZJA>' + nl
          ENDIF
-         IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MPP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MPP' ]
-            cRes := cRes + '    <MPP>1</MPP>' + nl
-         ENDIF
+         //IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'MPP' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'MPP' ]
+         //   cRes := cRes + '    <MPP>1</MPP>' + nl
+         //ENDIF
          IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'KorektaPodstawyOpodt' ) .AND. aDane[ 'sprzedaz' ][ nI ][ 'KorektaPodstawyOpodt' ]
             cRes := cRes + '    <KorektaPodstawyOpodt>1</KorektaPodstawyOpodt>' + nl
             IF hb_HHasKey( aDane[ 'sprzedaz' ][ nI ], 'TerminPlatnosci' ) .AND. ! Empty( aDane[ 'sprzedaz' ][ nI ][ 'TerminPlatnosci' ] )
