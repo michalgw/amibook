@@ -1091,3 +1091,28 @@ FUNCTION NumToStr( nNum )
    RETURN cStr
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION FPSFileSaveDialog()
+
+   LOCAL cFileName, cFileExt
+   LOCAL nFltIdx := 1
+   LOCAL aFilter := { ;
+      { "Arkusz Excel XML (*.xlsx)", "*.xlsx" }, ;
+      { "Arkusz LibreOffice/OpenOffice (*.ods)", "*.ods" }, ;
+      { "Arkusz Excel 97-2003 (*.xls)", "*.xls" } }
+   LOCAL aExt := { ".xlsx", ".ods", ".xls" }
+
+   cFileName := win_GetSaveFileName( WIN_OFN_OVERWRITEPROMPT + WIN_OFN_EXPLORER + WIN_OFN_NOCHANGEDIR, ;
+      "Zapisz jako...", , , aFilter, @nFltIdx )
+
+   IF cFileName <> ""
+      hb_FNameSplit( cFileName, , , @cFileExt )
+      IF cFileExt == "" .OR. AScan( aExt, Lower( cFileExt ) ) == 0
+         cFileName := cFileName + aExt[ nFltIdx ]
+      ENDIF
+   ENDIF
+
+   RETURN cFileName
+
+/*----------------------------------------------------------------------*/
+

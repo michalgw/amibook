@@ -158,18 +158,19 @@ RETURN aRes
 
 PROCEDURE ewid_dr16rob()
    LOCAL aDane, oRap, nMonDruk, cScr, cKolor, nPoz := 1, cJPK, cPlik, nFile
-   LOCAL nKorekta
+   LOCAL nKorekta, oWorkbook, oWorksheet, cPlikWyj, nWiersz
    aDane := ewid_dr16licz()
    IF Len(aDane['pozycje']) > 0
 
       SAVE SCREEN TO cScr
       cKolor := ColPro()
-      @ 16, 1  CLEAR TO 21, 40
-      @ 16, 1, 21, 40 BOX B_SINGLE
+      @ 16, 1  CLEAR TO 22, 40
+      @ 16, 1, 22, 40 BOX B_SINGLE
       @ 17, 2 PROMPT ' T - Druk tekstowy                    '
       @ 18, 2 PROMPT ' G - Druk graficzny A4 (pionowo)      '
       @ 19, 2 PROMPT ' G - Druk graficzny A4 (poziomo)      '
       @ 20, 2 PROMPT ' J - Jednolity Plik Kontrolny JPK_EWP '
+      @ 21, 2 PROMPT ' Z - Zapisz do pliku...               '
       nPoz=menu(nPoz)
       ColStd()
       IF LastKey() == 27
@@ -319,6 +320,95 @@ PROCEDURE ewid_dr16rob()
          cJPK := jpk_ewp_2_11(aDane)
 
          edekZapiszXML( cJPK, normalizujNazwe( 'JPK_EWP_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKEWP-2', nKorekta == 2, Val(miesiac) )
+
+         EXIT
+      CASE 5
+         IF ( cPlikWyj := FPSFileSaveDialog() ) <> ""
+            IF ( oWorkbook := TsWorkbook():New() ) <> NIL
+               IF ( oWorksheet := oWorkbook:AddWorksheet( "Ewidencja przychod¢w" ) ) <> NIL
+                  oWorksheet:WriteColWidth( 0, 5, 0 )
+                  oWorksheet:WriteColWidth( 1, 10, 0 )
+                  oWorksheet:WriteColWidth( 2, 10, 0 )
+                  oWorksheet:WriteColWidth( 3, 25, 0 )
+                  oWorksheet:WriteColWidth( 4, 15, 0 )
+                  oWorksheet:WriteColWidth( 5, 15, 0 )
+                  oWorksheet:WriteColWidth( 6, 15, 0 )
+                  oWorksheet:WriteColWidth( 7, 15, 0 )
+                  oWorksheet:WriteColWidth( 8, 15, 0 )
+                  oWorksheet:WriteColWidth( 9, 15, 0 )
+                  oWorksheet:WriteColWidth( 10, 15, 0 )
+                  oWorksheet:WriteColWidth( 11, 15, 0 )
+                  oWorksheet:WriteColWidth( 12, 15, 0 )
+                  oWorksheet:WriteColWidth( 13, 15, 0 )
+                  oWorksheet:WriteColWidth( 14, 25, 0 )
+
+                  oWorksheet:WriteText( 0, 0, aDane[ 'firma' ] )
+                  oWorksheet:WriteText( 1, 0, "Miesi¥c: " + aDane[ 'miesiac' ] + " " + aDane[ 'rok' ] )
+
+                  oWorksheet:WriteText( 3, 0, "L.p." )
+                  oWorksheet:WriteText( 3, 1, "Data wpisu" )
+                  oWorksheet:WriteText( 3, 2, "Data uzyskania przychodu" )
+                  oWorksheet:WriteText( 3, 3, "Nr dowodu" )
+                  oWorksheet:WriteText( 3, 4, "Przychody op. st. " + NumToStr( aDane[ 'staw_ry20' ] ) + "% (" + aDane[ 'staw_ory20' ] + ")" )
+                  oWorksheet:WriteText( 3, 5, "Przychody op. st. " + NumToStr( aDane[ 'staw_ry17' ] ) + "% (" + aDane[ 'staw_ory17' ] + ")" )
+                  oWorksheet:WriteText( 3, 6, "Przychody op. st. " + NumToStr( aDane[ 'staw_rk09' ] ) + "% (" + aDane[ 'staw_ork09' ] + ")" )
+                  oWorksheet:WriteText( 3, 7, "Przychody op. st. " + NumToStr( aDane[ 'staw_uslu' ] ) + "% (" + aDane[ 'staw_ouslu' ] + ")" )
+                  oWorksheet:WriteText( 3, 8, "Przychody op. st. " + NumToStr( aDane[ 'staw_rk10' ] ) + "% (" + aDane[ 'staw_ork10' ] + ")" )
+                  oWorksheet:WriteText( 3, 9, "Przychody op. st. " + NumToStr( aDane[ 'staw_prod' ] ) + "% (" + aDane[ 'staw_oprod' ] + ")" )
+                  oWorksheet:WriteText( 3, 10, "Przychody op. st. " + NumToStr( aDane[ 'staw_hand' ] ) + "% (" + aDane[ 'staw_ohand' ] + ")" )
+                  oWorksheet:WriteText( 3, 11, "Przychody op. st. " + NumToStr( aDane[ 'staw_rk07' ] ) + "% (" + aDane[ 'staw_ork07' ] + ")" )
+                  oWorksheet:WriteText( 3, 12, "Przychody op. st. " + NumToStr( aDane[ 'staw_ry10' ] ) + "% (" + aDane[ 'staw_ory10' ] + ")" )
+                  oWorksheet:WriteText( 3, 13, "Og¢ˆem przychody" )
+                  oWorksheet:WriteText( 3, 14, "Uwagi" )
+                  nWiersz := 4
+                  AEval( aDane[ 'pozycje' ], { | aRow |
+                     oWorksheet:WriteNumber( nWiersz, 0, aRow['k1'] )
+                     oWorksheet:WriteText( nWiersz, 1, aRow['k2'] )
+                     oWorksheet:WriteText( nWiersz, 2, AllTrim( aRow['k3'] ) )
+                     oWorksheet:WriteText( nWiersz, 3, AllTrim( aRow['k4'] ) )
+                     IF aRow['k5'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 4, aRow['k5'] )
+                     ENDIF
+                     IF aRow['k6'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 5, aRow['k6'] )
+                     ENDIF
+                     IF aRow['k7'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 6, aRow['k7'] )
+                     ENDIF
+                     IF aRow['k8'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 7, aRow['k8'] )
+                     ENDIF
+                     IF aRow['k9'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 8, aRow['k9'] )
+                     ENDIF
+                     IF aRow['k10'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 9, aRow['k10'] )
+                     ENDIF
+                     IF aRow['k11'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 10, aRow['k11'] )
+                     ENDIF
+                     IF aRow['k12'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 11, aRow['k12'] )
+                     ENDIF
+                     IF aRow['k13'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 12, aRow['k13'] )
+                     ENDIF
+                     IF aRow['k14'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 13, aRow['k14'] )
+                     ENDIF
+                     oWorksheet:WriteText( nWiersz, 14, AllTrim( aRow['k15'] ) )
+                     nWiersz++
+                  } )
+                  IF oWorkbook:WriteToFile( cPlikWyj ) == 0
+                     Komun( "Plik zostaˆ utworzony" )
+                  ENDIF
+               ENDIF
+            ELSE
+
+            ENDIF
+         ENDIF
+         oWorksheet := NIL
+         oWorkbook := NIL
 
          EXIT
       ENDSWITCH

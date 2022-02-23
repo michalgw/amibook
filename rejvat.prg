@@ -520,13 +520,14 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
 FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_rzi, ewid_rzz )
 
    LOCAL nDruk, bFiltr, lTylkoKsiega := .F.
-   LOCAL aDane, oRap, nMonDruk
+   LOCAL aDane, oRap, nMonDruk, oWorkbook, oWorksheet, cPlikWyj, nWiersz
    LOCAL aRodzaj := { 'S', 'P', 'SP', 'SP' }
    LOCAL aWgVat := { .F., .F., .T., .F. }
    LOCAL aTylkoUE := { .F., .F., .F., .T. }
    LOCAL aPlikiMem := { '', 'rejzpzze', 'rejzsze', 'rejszuep' }
 
-   IF ( nDruk := MenuEx( 14, 2, { "T - Druk tekstowy", "P - Druk graficzny A4 (poziomo)" } ) ) > 0
+   IF ( nDruk := MenuEx( 14, 2, { "T - Druk tekstowy", "P - Druk graficzny A4 (poziomo)", ;
+      "Z - Zapisz do pliku..." } ) ) > 0
 
       SAVE TO ewid ALL LIKE ewid_*
       ColStd()
@@ -630,6 +631,377 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
             kom( 3, '*w', 'b r a k   d a n y c h' )
 
          ENDIF
+
+      CASE nDruk == 3
+
+         IF ( cPlikWyj := FPSFileSaveDialog() ) <> ""
+
+            IF aRodzaj[ nRaport ] == 'P'
+               bFiltr := RejVAT_Zak_Filtr( aPlikiMem[ nRaport ], @lTylkoKsiega )
+               IF HB_ISLOGICAL( bFiltr )
+                  RETURN NIL
+               ENDIF
+            ENDIF
+
+            aDane := RejVAT_Zak_Dane( cFirma, cMiesiac, aRodzaj[ nRaport ], ewid_rzs, ewid_rzk, ewid_rzi, ewid_rzz, bFiltr, aWgVat[ nRaport ], aTylkoUE[ nRaport ], lTylkoKsiega )
+            IF hb_HHasKey( aDane, 'pozycje' ) .AND. HB_ISARRAY( aDane[ 'pozycje' ] ) .AND. Len( aDane[ 'pozycje' ] ) > 0
+
+               IF ( oWorkbook := TsWorkbook():New() ) <> NIL
+                  oWorksheet := oWorkbook:AddWorksheet( "Rejestr zakup¢w" )
+                  SWITCH nRaport
+                  CASE 1
+                  CASE 2
+                     oWorksheet:WriteColWidth( 0, 10, 0 )
+                     oWorksheet:WriteColWidth( 1, 10, 0 )
+                     oWorksheet:WriteColWidth( 2, 10, 0 )
+                     oWorksheet:WriteColWidth( 3, 3, 0 )
+                     oWorksheet:WriteColWidth( 4, 3, 0 )
+                     oWorksheet:WriteColWidth( 5, 15, 0 )
+                     oWorksheet:WriteColWidth( 6, 25, 0 )
+                     oWorksheet:WriteColWidth( 7, 12, 0 )
+                     oWorksheet:WriteColWidth( 8, 3, 0 )
+                     oWorksheet:WriteColWidth( 9, 25, 0 )
+                     oWorksheet:WriteColWidth( 10, 10, 0 )
+                     oWorksheet:WriteColWidth( 11, 3, 0 )
+                     oWorksheet:WriteColWidth( 12, 3, 0 )
+                     oWorksheet:WriteColWidth( 13, 15, 0 )
+                     oWorksheet:WriteColWidth( 14, 15, 0 )
+                     oWorksheet:WriteColWidth( 15, 15, 0 )
+                     oWorksheet:WriteColWidth( 16, 15, 0 )
+                     oWorksheet:WriteColWidth( 17, 15, 0 )
+                     oWorksheet:WriteColWidth( 18, 15, 0 )
+                     oWorksheet:WriteColWidth( 19, 15, 0 )
+                     oWorksheet:WriteColWidth( 20, 15, 0 )
+                     oWorksheet:WriteColWidth( 21, 15, 0 )
+                     oWorksheet:WriteColWidth( 22, 15, 0 )
+
+                     oWorksheet:WriteText( 0, 0, "Rejestr zakup¢w - " + ;
+                        aDane[ 'rejestr' ] + " (" + aDane[ 'jaki_rej' ] + ;
+                        " - " + aDane[ 'opis_rej' ] + ")      za miesi¥c   " + ;
+                        aDane[ 'miesiac' ] + ", " + aDane[ 'rok' ] )
+                     oWorksheet:WriteText( 1, 0, aDane[ 'firma' ] )
+
+                     oWorksheet:WriteText( 3, 0, "Data rejestru" )
+                     oWorksheet:WriteText( 3, 1, "Data wystawienia" )
+                     oWorksheet:WriteText( 3, 2, "Data wpˆywu" )
+                     oWorksheet:WriteText( 3, 3, "Rodzaj dokumentu" )
+                     oWorksheet:WriteText( 3, 4, "Kolumny ksi©gi" )
+                     oWorksheet:WriteText( 3, 5, "Nr dowodu" )
+                     oWorksheet:WriteText( 3, 6, "Nazwa dostawcy" )
+                     oWorksheet:WriteText( 3, 7, "NIP dostawcy" )
+                     oWorksheet:WriteText( 3, 8, "Zakup UE" )
+                     oWorksheet:WriteText( 3, 9, "Przedmiot zakupu" )
+                     oWorksheet:WriteText( 3, 10, "Oznaczenia" )
+                     oWorksheet:WriteText( 3, 11, "Sekcja Deklaracji" )
+                     oWorksheet:WriteText( 3, 12, "Symbol rejestru" )
+                     oWorksheet:WriteText( 3, 13, "Og¢lna warto˜† " + iif( ewid_rzs == 'B', "brutto", "netto" ) )
+                     oWorksheet:WriteText( 3, 14, "Zak. niepodl. odlicz. NETTO" )
+                     oWorksheet:WriteText( 3, 15, "Zak. niepodl. odlicz. VAT" )
+                     oWorksheet:WriteText( 3, 16, "Zak. opodat. od sprz. opodat. NETTO" )
+                     oWorksheet:WriteText( 3, 17, "Zak. opodat. od sprz. opodat. VAT" )
+                     oWorksheet:WriteText( 3, 18, "Zak. opodat. od sprz. miesz. NETTO" )
+                     oWorksheet:WriteText( 3, 19, "Zak. opodat. od sprz. miesz. VAT" )
+                     oWorksheet:WriteText( 3, 20, "Zak. opodat. od sprz. miesz. VAT odlicz" )
+                     oWorksheet:WriteText( 3, 21, "Do ksi©gi" )
+                     oWorksheet:WriteText( 3, 22, "Og¢lna warto˜† VAT" )
+                     nWiersz := 4
+                     AEval( aDane[ 'pozycje' ], { | aRow |
+                        oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
+                        oWorksheet:WriteText( nWiersz, 1, aRow[ 'data_wystawienia' ] )
+                        oWorksheet:WriteText( nWiersz, 2, aRow[ 'datatran' ] )
+                        oWorksheet:WriteText( nWiersz, 3, aRow[ 'rodzaj' ] )
+                        oWorksheet:WriteText( nWiersz, 4, aRow[ 'kolumna' ] )
+                        oWorksheet:WriteText( nWiersz, 5, aRow[ 'numer' ] )
+                        oWorksheet:WriteText( nWiersz, 6, aRow[ 'nazwa' ] )
+                        oWorksheet:WriteText( nWiersz, 7, aRow[ 'nr_ident' ] )
+                        IF aRow[ 'zakup_ue' ] == '1'
+                           oWorksheet:WriteText( nWiersz, 8, "Tak" )
+                        ENDIF
+                        oWorksheet:WriteText( nWiersz, 9, aRow[ 'przedmiot' ] )
+                        oWorksheet:WriteText( nWiersz, 10, aRow[ 'oznaczenia' ] )
+                        oWorksheet:WriteText( nWiersz, 11, aRow[ 'sekcja' ] )
+                        oWorksheet:WriteText( nWiersz, 12, aRow[ 'symbol_rej' ] )
+                        oWorksheet:WriteCurrency( nWiersz, 13, aRow[ 'wartosc_netto' ] + iif( ewid_rzs == 'B', aRow[ 'wartosc_vat' ], 0 ) )
+                        IF aRow[ 'zak_zwol_net' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 14, aRow[ 'zak_zwol_net' ] )
+                        ENDIF
+                        IF aRow[ 'zak_zwol_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 15, aRow[ 'zak_zwol_vat' ] )
+                        ENDIF
+                        IF aRow[ 'zak_op_net' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 16, aRow[ 'zak_op_net' ] )
+                        ENDIF
+                        IF aRow[ 'zak_op_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 17, aRow[ 'zak_op_vat' ] )
+                        ENDIF
+                        IF aRow[ 'zak_mi_net' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 18, aRow[ 'zak_mi_net' ] )
+                        ENDIF
+                        IF aRow[ 'zak_mi_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 19, aRow[ 'zak_mi_vat' ] )
+                        ENDIF
+                        IF aRow[ 'zak_mi_odl' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 20, aRow[ 'zak_mi_odl' ] )
+                        ENDIF
+                        IF aRow[ 'netto_ksiega' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 21, aRow[ 'netto_ksiega' ] )
+                        ENDIF
+                        IF aRow[ 'wartosc_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 22, aRow[ 'wartosc_vat' ] )
+                        ENDIF
+                        nWiersz++
+                     } )
+                     IF oWorkbook:WriteToFile( cPlikWyj ) == 0
+                        Komun( "Plik zostaˆ utworzony" )
+                     ENDIF
+
+                     EXIT
+                  CASE 3
+                     oWorksheet:WriteColWidth( 0, 10, 0 )
+                     oWorksheet:WriteColWidth( 1, 10, 0 )
+                     oWorksheet:WriteColWidth( 2, 10, 0 )
+                     oWorksheet:WriteColWidth( 3, 3, 0 )
+                     oWorksheet:WriteColWidth( 4, 3, 0 )
+                     oWorksheet:WriteColWidth( 5, 15, 0 )
+                     oWorksheet:WriteColWidth( 6, 25, 0 )
+                     oWorksheet:WriteColWidth( 7, 12, 0 )
+                     oWorksheet:WriteColWidth( 8, 3, 0 )
+                     oWorksheet:WriteColWidth( 9, 25, 0 )
+                     oWorksheet:WriteColWidth( 10, 10, 0 )
+                     oWorksheet:WriteColWidth( 11, 3, 0 )
+                     oWorksheet:WriteColWidth( 12, 3, 0 )
+                     oWorksheet:WriteColWidth( 13, 15, 0 )
+                     oWorksheet:WriteColWidth( 14, 15, 0 )
+                     oWorksheet:WriteColWidth( 15, 15, 0 )
+                     oWorksheet:WriteColWidth( 16, 15, 0 )
+                     oWorksheet:WriteColWidth( 17, 15, 0 )
+                     oWorksheet:WriteColWidth( 18, 15, 0 )
+                     oWorksheet:WriteColWidth( 19, 15, 0 )
+                     oWorksheet:WriteColWidth( 20, 15, 0 )
+                     oWorksheet:WriteColWidth( 21, 15, 0 )
+                     oWorksheet:WriteColWidth( 22, 15, 0 )
+                     oWorksheet:WriteColWidth( 23, 15, 0 )
+                     oWorksheet:WriteColWidth( 24, 15, 0 )
+                     oWorksheet:WriteColWidth( 25, 15, 0 )
+                     oWorksheet:WriteColWidth( 26, 15, 0 )
+                     oWorksheet:WriteColWidth( 27, 15, 0 )
+
+                     oWorksheet:WriteText( 0, 0, "Rejestr zakup¢w wg stawek - " + ;
+                        aDane[ 'rejestr' ] + " (" + aDane[ 'jaki_rej' ] + ;
+                        " - " + aDane[ 'opis_rej' ] + ")      za miesi¥c   " + ;
+                        aDane[ 'miesiac' ] + ", " + aDane[ 'rok' ] )
+                     oWorksheet:WriteText( 1, 0, aDane[ 'firma' ] )
+
+                     oWorksheet:WriteText( 3, 0, "Data rejestru" )
+                     oWorksheet:WriteText( 3, 1, "Data wystawienia" )
+                     oWorksheet:WriteText( 3, 2, "Data wpˆywu" )
+                     oWorksheet:WriteText( 3, 3, "Rodzaj dokumentu" )
+                     oWorksheet:WriteText( 3, 4, "Kolumny ksi©gi" )
+                     oWorksheet:WriteText( 3, 5, "Nr dowodu" )
+                     oWorksheet:WriteText( 3, 6, "Nazwa dostawcy" )
+                     oWorksheet:WriteText( 3, 7, "NIP dostawcy" )
+                     oWorksheet:WriteText( 3, 8, "Zakup UE" )
+                     oWorksheet:WriteText( 3, 9, "Przedmiot zakupu" )
+                     oWorksheet:WriteText( 3, 10, "Oznaczenia" )
+                     oWorksheet:WriteText( 3, 11, "Sekcja Deklaracji" )
+                     oWorksheet:WriteText( 3, 12, "Symbol rejestru" )
+                     oWorksheet:WriteText( 3, 13, "Og¢lna warto˜† " + iif( ewid_rzs == 'B', "brutto", "netto" ) )
+                     oWorksheet:WriteText( 3, 14, "Zak. wg. st. 23% NETTO" )
+                     oWorksheet:WriteText( 3, 15, "Zak. wg. st. 23% VAT" )
+                     oWorksheet:WriteText( 3, 16, "Zak. wg. st. 8% NETTO" )
+                     oWorksheet:WriteText( 3, 17, "Zak. wg. st. 8% VAT" )
+                     oWorksheet:WriteText( 3, 18, "Zak. wg. st. 5% NETTO" )
+                     oWorksheet:WriteText( 3, 19, "Zak. wg. st. 5% VAT" )
+                     oWorksheet:WriteText( 3, 20, "Zak. wg. st. 7% NETTO" )
+                     oWorksheet:WriteText( 3, 21, "Zak. wg. st. 7% VAT" )
+                     oWorksheet:WriteText( 3, 22, "Zak. wg. st. 0%" )
+                     oWorksheet:WriteText( 3, 23, "Zak. zwol. od pod." )
+                     oWorksheet:WriteText( 3, 24, "Zakupy bez odliczeä (NETTO + VAT)" )
+                     oWorksheet:WriteText( 3, 25, "Zakupy z odliczeniami NETTO" )
+                     oWorksheet:WriteText( 3, 26, "Zakupy z odliczeniami VAT" )
+                     oWorksheet:WriteText( 3, 27, "Stan rozr." )
+                     nWiersz := 4
+                     AEval( aDane[ 'pozycje' ], { | aRow |
+                        oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
+                        oWorksheet:WriteText( nWiersz, 1, aRow[ 'data_wystawienia' ] )
+                        oWorksheet:WriteText( nWiersz, 2, aRow[ 'datatran' ] )
+                        oWorksheet:WriteText( nWiersz, 3, aRow[ 'rodzaj' ] )
+                        oWorksheet:WriteText( nWiersz, 4, aRow[ 'kolumna' ] )
+                        oWorksheet:WriteText( nWiersz, 5, aRow[ 'numer' ] )
+                        oWorksheet:WriteText( nWiersz, 6, aRow[ 'nazwa' ] )
+                        oWorksheet:WriteText( nWiersz, 7, aRow[ 'nr_ident' ] )
+                        IF aRow[ 'zakup_ue' ] == '1'
+                           oWorksheet:WriteText( nWiersz, 8, "Tak" )
+                        ENDIF
+                        oWorksheet:WriteText( nWiersz, 9, aRow[ 'przedmiot' ] )
+                        oWorksheet:WriteText( nWiersz, 10, aRow[ 'oznaczenia' ] )
+                        oWorksheet:WriteText( nWiersz, 11, aRow[ 'sekcja' ] )
+                        oWorksheet:WriteText( nWiersz, 12, aRow[ 'symbol_rej' ] )
+                        oWorksheet:WriteCurrency( nWiersz, 13, aRow[ 'wartosc_netto' ] + iif( ewid_rzs == 'B', aRow[ 'wartosc_vat' ], 0 ) )
+                        IF aRow[ 'netto_a' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 14, aRow[ 'netto_a' ] )
+                        ENDIF
+                        IF aRow[ 'vat_a' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 15, aRow[ 'vat_a' ] )
+                        ENDIF
+                        IF aRow[ 'netto_b' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 16, aRow[ 'netto_b' ] )
+                        ENDIF
+                        IF aRow[ 'vat_b' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 17, aRow[ 'vat_b' ] )
+                        ENDIF
+                        IF aRow[ 'netto_c' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 18, aRow[ 'netto_c' ] )
+                        ENDIF
+                        IF aRow[ 'vat_c' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 19, aRow[ 'vat_c' ] )
+                        ENDIF
+                        IF aRow[ 'netto_d' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 20, aRow[ 'netto_d' ] )
+                        ENDIF
+                        IF aRow[ 'vat_d' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 21, aRow[ 'vat_d' ] )
+                        ENDIF
+                        IF aRow[ 'netto_zr' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 22, aRow[ 'netto_zr' ] )
+                        ENDIF
+                        IF aRow[ 'netto_zw' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 23, aRow[ 'netto_zw' ] )
+                        ENDIF
+                        IF aRow[ 'zak_bez_odl' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 24, aRow[ 'zak_bez_odl' ] )
+                        ENDIF
+                        IF aRow[ 'zak_odl_netto' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 25, aRow[ 'zak_odl_netto' ] )
+                        ENDIF
+                        IF aRow[ 'zak_odl_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 26, aRow[ 'zak_odl_vat' ] )
+                        ENDIF
+                        IF aRow[ 'fz_zz' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 27, aRow[ 'fz_zz' ] )
+                        ENDIF
+                        nWiersz++
+                     } )
+                     IF oWorkbook:WriteToFile( cPlikWyj ) == 0
+                        Komun( "Plik zostaˆ utworzony" )
+                     ENDIF
+
+                     EXIT
+                  CASE 4
+                     oWorksheet:WriteColWidth( 0, 10, 0 )
+                     oWorksheet:WriteColWidth( 1, 10, 0 )
+                     oWorksheet:WriteColWidth( 2, 10, 0 )
+                     oWorksheet:WriteColWidth( 3, 3, 0 )
+                     oWorksheet:WriteColWidth( 4, 3, 0 )
+                     oWorksheet:WriteColWidth( 5, 15, 0 )
+                     oWorksheet:WriteColWidth( 6, 25, 0 )
+                     oWorksheet:WriteColWidth( 7, 12, 0 )
+                     oWorksheet:WriteColWidth( 8, 3, 0 )
+                     oWorksheet:WriteColWidth( 9, 25, 0 )
+                     oWorksheet:WriteColWidth( 10, 10, 0 )
+                     oWorksheet:WriteColWidth( 11, 3, 0 )
+                     oWorksheet:WriteColWidth( 12, 3, 0 )
+                     oWorksheet:WriteColWidth( 13, 15, 0 )
+                     oWorksheet:WriteColWidth( 14, 15, 0 )
+                     oWorksheet:WriteColWidth( 15, 15, 0 )
+                     oWorksheet:WriteColWidth( 16, 15, 0 )
+                     oWorksheet:WriteColWidth( 17, 15, 0 )
+                     oWorksheet:WriteColWidth( 18, 15, 0 )
+                     oWorksheet:WriteColWidth( 19, 15, 0 )
+                     oWorksheet:WriteColWidth( 20, 15, 0 )
+                     oWorksheet:WriteColWidth( 21, 15, 0 )
+                     oWorksheet:WriteColWidth( 22, 15, 0 )
+
+                     oWorksheet:WriteText( 0, 0, "Rejestr zakup¢w UE, import... - " + ;
+                        aDane[ 'rejestr' ] + " (" + aDane[ 'jaki_rej' ] + ;
+                        " - " + aDane[ 'opis_rej' ] + ")      za miesi¥c   " + ;
+                        aDane[ 'miesiac' ] + ", " + aDane[ 'rok' ] )
+                     oWorksheet:WriteText( 1, 0, aDane[ 'firma' ] )
+
+                     oWorksheet:WriteText( 3, 0, "Data rejestru" )
+                     oWorksheet:WriteText( 3, 1, "Data wystawienia" )
+                     oWorksheet:WriteText( 3, 2, "Data wpˆywu" )
+                     oWorksheet:WriteText( 3, 3, "Rodzaj dokumentu" )
+                     oWorksheet:WriteText( 3, 4, "Kolumny ksi©gi" )
+                     oWorksheet:WriteText( 3, 5, "Nr dowodu" )
+                     oWorksheet:WriteText( 3, 6, "Nazwa dostawcy" )
+                     oWorksheet:WriteText( 3, 7, "NIP dostawcy" )
+                     oWorksheet:WriteText( 3, 8, "Zakup UE" )
+                     oWorksheet:WriteText( 3, 9, "Przedmiot zakupu" )
+                     oWorksheet:WriteText( 3, 10, "Oznaczenia" )
+                     oWorksheet:WriteText( 3, 11, "Sekcja Deklaracji" )
+                     oWorksheet:WriteText( 3, 12, "Symbol rejestru" )
+                     oWorksheet:WriteText( 3, 13, "Og¢lna warto˜† " + iif( ewid_rzs == 'B', "brutto", "netto" ) )
+                     oWorksheet:WriteText( 3, 14, "Wewn.nab.tow. NETTO" )
+                     oWorksheet:WriteText( 3, 15, "Wewn.nab.tow. VAT" )
+                     oWorksheet:WriteText( 3, 16, "Import towar¢w NETTO" )
+                     oWorksheet:WriteText( 3, 17, "Import towar¢w VAT" )
+                     oWorksheet:WriteText( 3, 18, "Import usˆug NETTO" )
+                     oWorksheet:WriteText( 3, 19, "Import usˆug VAT" )
+                     oWorksheet:WriteText( 3, 20, "Podatnikiem nabywca NETTO" )
+                     oWorksheet:WriteText( 3, 21, "Podatnikiem nabywca VAT" )
+                     oWorksheet:WriteText( 3, 22, "Og¢lna warto˜† VAT" )
+                     nWiersz := 4
+                     AEval( aDane[ 'pozycje' ], { | aRow |
+                        oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
+                        oWorksheet:WriteText( nWiersz, 1, aRow[ 'data_wystawienia' ] )
+                        oWorksheet:WriteText( nWiersz, 2, aRow[ 'datatran' ] )
+                        oWorksheet:WriteText( nWiersz, 3, aRow[ 'rodzaj' ] )
+                        oWorksheet:WriteText( nWiersz, 4, aRow[ 'kolumna' ] )
+                        oWorksheet:WriteText( nWiersz, 5, aRow[ 'numer' ] )
+                        oWorksheet:WriteText( nWiersz, 6, aRow[ 'nazwa' ] )
+                        oWorksheet:WriteText( nWiersz, 7, aRow[ 'nr_ident' ] )
+                        IF aRow[ 'zakup_ue' ] == '1'
+                           oWorksheet:WriteText( nWiersz, 8, "Tak" )
+                        ENDIF
+                        oWorksheet:WriteText( nWiersz, 9, aRow[ 'przedmiot' ] )
+                        oWorksheet:WriteText( nWiersz, 10, aRow[ 'oznaczenia' ] )
+                        oWorksheet:WriteText( nWiersz, 11, aRow[ 'sekcja' ] )
+                        oWorksheet:WriteText( nWiersz, 12, aRow[ 'symbol_rej' ] )
+                        oWorksheet:WriteCurrency( nWiersz, 13, aRow[ 'wartosc_netto' ] + iif( ewid_rzs == 'B', aRow[ 'wartosc_vat' ], 0 ) )
+                        IF aRow[ 'ue_wt_net' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 14, aRow[ 'ue_wt_net' ] )
+                        ENDIF
+                        IF aRow[ 'ue_wt_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 15, aRow[ 'ue_wt_vat' ] )
+                        ENDIF
+                        IF aRow[ 'ue_it_net' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 16, aRow[ 'ue_it_net' ] )
+                        ENDIF
+                        IF aRow[ 'ue_it_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 17, aRow[ 'ue_it_vat' ] )
+                        ENDIF
+                        IF aRow[ 'ue_iu_net' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 18, aRow[ 'ue_iu_net' ] )
+                        ENDIF
+                        IF aRow[ 'ue_iu_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 19, aRow[ 'ue_iu_vat' ] )
+                        ENDIF
+                        IF aRow[ 'ue_pn_net' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 20, aRow[ 'ue_pn_net' ] )
+                        ENDIF
+                        IF aRow[ 'ue_pn_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 21, aRow[ 'ue_pn_vat' ] )
+                        ENDIF
+                        IF aRow[ 'wartosc_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 22, aRow[ 'wartosc_vat' ] )
+                        ENDIF
+                        nWiersz++
+                     } )
+                     IF oWorkbook:WriteToFile( cPlikWyj ) == 0
+                        Komun( "Plik zostaˆ utworzony" )
+                     ENDIF
+
+                     EXIT
+                  ENDSWITCH
+                  oWorksheet := NIL
+                  oWorkbook := NIL
+               ENDIF
+
+            ENDIF
+
+         ENDIF
+
       ENDCASE
 
    ENDIF
@@ -894,59 +1266,130 @@ FUNCTION RejVAT_Zak_Marza_Dane( cFirma, cMiesiac )
 PROCEDURE RejVAT_Zak_Marza( cFirma, cMiesiac )
 
    LOCAL aDane := RejVAT_Zak_Marza_Dane( cFirma, cMiesiac )
+   LOCAL nMenu, oWorkbook, oWorksheet, cPlikWyj, nWiersz
 
    IF hb_HHasKey( aDane, 'pozycje' ) .AND. HB_ISARRAY( aDane[ 'pozycje' ] ) .AND. Len( aDane[ 'pozycje' ] ) > 0
 
-      @ 24, 0
-      @ 24, 26 PROMPT '[ Monitor ]'
-      @ 24, 44 PROMPT '[ Drukarka ]'
-      IF trybSerwisowy
-         @ 24, 70 PROMPT '[ Edytor ]'
-      ENDIF
-      CLEAR TYPE
-      menu TO nMonDruk
-      IF LastKey() == K_ESC
-         RETURN
-      ENDIF
+      nMenu := MenuEx( 17, 2, { "D - Wydruk graficzny", "Z - Zapis do pliku..." }, 1, .T. )
 
-      oRap := TFreeReport():New()
-
-      oRap:LoadFromFile( 'frf\rejzm.frf' )
-
-      IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-         oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-      ENDIF
-
-      FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-         hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
-
-      oRap:AddValue( 'uzytkownik', code() )
-      oRap:AddValue( 'miesiac', aDane[ 'miesiac' ] )
-      oRap:AddValue( 'rok', aDane[ 'rok' ] )
-      oRap:AddValue( 'firma', aDane[ 'firma' ] )
-      oRap:AddValue( 'strusprob', aDane[ 'strusprob' ] )
-
-      oRap:AddDataset('pozycje')
-      AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
-
-      oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-      oRap:ModalPreview := .F.
-
-      SWITCH nMonDruk
+      SWITCH nMenu
       CASE 1
-         oRap:ShowReport()
+
+         @ 24, 0
+         @ 24, 26 PROMPT '[ Monitor ]'
+         @ 24, 44 PROMPT '[ Drukarka ]'
+         IF trybSerwisowy
+            @ 24, 70 PROMPT '[ Edytor ]'
+         ENDIF
+         CLEAR TYPE
+         menu TO nMonDruk
+         IF LastKey() == K_ESC
+            RETURN
+         ENDIF
+
+         oRap := TFreeReport():New()
+
+         oRap:LoadFromFile( 'frf\rejzm.frf' )
+
+         IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+            oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+         ENDIF
+
+         FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+            hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+
+         oRap:AddValue( 'uzytkownik', code() )
+         oRap:AddValue( 'miesiac', aDane[ 'miesiac' ] )
+         oRap:AddValue( 'rok', aDane[ 'rok' ] )
+         oRap:AddValue( 'firma', aDane[ 'firma' ] )
+         oRap:AddValue( 'strusprob', aDane[ 'strusprob' ] )
+
+         oRap:AddDataset('pozycje')
+         AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+
+         oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+         oRap:ModalPreview := .F.
+
+         SWITCH nMonDruk
+         CASE 1
+            oRap:ShowReport()
+            EXIT
+         CASE 2
+            oRap:PrepareReport()
+            oRap:PrintPreparedReport('', 1)
+            EXIT
+         CASE 3
+            oRap:DesignReport()
+            EXIT
+         ENDSWITCH
+
+         oRap := NIL
+
          EXIT
       CASE 2
-         oRap:PrepareReport()
-         oRap:PrintPreparedReport('', 1)
-         EXIT
-      CASE 3
-         oRap:DesignReport()
+         IF ( cPlikWyj := FPSFileSaveDialog() ) <> ""
+            IF ( oWorkbook := TsWorkbook():New() ) <> NIL
+               oWorksheet := oWorkbook:AddWorksheet( "Rejestr zakup¢w" )
+
+               oWorksheet:WriteColWidth( 0, 10, 0 )
+               oWorksheet:WriteColWidth( 1, 10, 0 )
+               oWorksheet:WriteColWidth( 2, 10, 0 )
+               oWorksheet:WriteColWidth( 3, 3, 0 )
+               oWorksheet:WriteColWidth( 4, 3, 0 )
+               oWorksheet:WriteColWidth( 5, 15, 0 )
+               oWorksheet:WriteColWidth( 6, 25, 0 )
+               oWorksheet:WriteColWidth( 7, 12, 0 )
+               oWorksheet:WriteColWidth( 8, 25, 0 )
+               oWorksheet:WriteColWidth( 9, 3, 0 )
+               oWorksheet:WriteColWidth( 10, 15, 0 )
+               oWorksheet:WriteColWidth( 11, 15, 0 )
+
+               oWorksheet:WriteText( 0, 0, "Rejestr zakup¢w do sprzeda¾y w proc. mar¾y za miesi¥c " + ;
+                  aDane[ 'miesiac' ] + ", " + aDane[ 'rok' ] )
+               oWorksheet:WriteText( 1, 0, aDane[ 'firma' ] )
+
+               oWorksheet:WriteText( 3, 0, "Data rejestru" )
+               oWorksheet:WriteText( 3, 1, "Data wystawienia" )
+               oWorksheet:WriteText( 3, 2, "Data wpˆywu" )
+               oWorksheet:WriteText( 3, 3, "Rodzaj dokumentu" )
+               oWorksheet:WriteText( 3, 4, "Kolumny ksi©gi" )
+               oWorksheet:WriteText( 3, 5, "Nr dowodu" )
+               oWorksheet:WriteText( 3, 6, "Nazwa dostawcy" )
+               oWorksheet:WriteText( 3, 7, "NIP dostawcy" )
+               oWorksheet:WriteText( 3, 8, "Przedmiot zakupu" )
+               oWorksheet:WriteText( 3, 9, "Symbol rejestru" )
+               oWorksheet:WriteText( 3, 10, "Do ksi©gi" )
+               oWorksheet:WriteText( 3, 11, "Og¢lna warto˜† VAT" )
+               nWiersz := 4
+               AEval( aDane[ 'pozycje' ], { | aRow |
+                  oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
+                  oWorksheet:WriteText( nWiersz, 1, aRow[ 'data_wystawienia' ] )
+                  oWorksheet:WriteText( nWiersz, 2, aRow[ 'datatran' ] )
+                  oWorksheet:WriteText( nWiersz, 3, aRow[ 'rodzaj' ] )
+                  oWorksheet:WriteText( nWiersz, 4, aRow[ 'kolumna' ] )
+                  oWorksheet:WriteText( nWiersz, 5, aRow[ 'numer' ] )
+                  oWorksheet:WriteText( nWiersz, 6, aRow[ 'nazwa' ] )
+                  oWorksheet:WriteText( nWiersz, 7, aRow[ 'nr_ident' ] )
+                  oWorksheet:WriteText( nWiersz, 8, aRow[ 'przedmiot' ] )
+                  oWorksheet:WriteText( nWiersz, 9, aRow[ 'symbol_rej' ] )
+                  IF aRow[ 'netto_ksiega' ] <> 0
+                     oWorksheet:WriteCurrency( nWiersz, 10, aRow[ 'netto_ksiega' ] )
+                  ENDIF
+                  IF aRow[ 'vatmarza' ] <> 0
+                     oWorksheet:WriteCurrency( nWiersz, 11, aRow[ 'vatmarza' ] )
+                  ENDIF
+                  nWiersz++
+               } )
+               IF oWorkbook:WriteToFile( cPlikWyj ) == 0
+                  Komun( "Plik zostaˆ utworzony" )
+               ENDIF
+
+            ENDIF
+            oWorksheet := NIL
+            oWorkbook := NIL
+         ENDIF
          EXIT
       ENDSWITCH
-
-      oRap := NIL
-
    ELSE
 
       kom( 3, '*w', 'b r a k   d a n y c h' )
@@ -1280,7 +1723,7 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
       RETURN
    ENDIF
 
-   IF ( nDruk := MenuEx( 14, 2, { "T - Druk tekstowy", "P - Druk graficzny A4 (poziomo)" } ) ) > 0
+   IF ( nDruk := MenuEx( 14, 2, { "T - Druk tekstowy", "P - Druk graficzny A4 (poziomo)", "Z - Zapisz do pliku..." } ) ) > 0
       SWITCH nDruk
       CASE 1
 
@@ -1370,12 +1813,250 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
 
             oRap := NIL
 
-
-
          ELSE
             kom( 3, '*w', 'b r a k   d a n y c h' )
          ENDIF
 
+         EXIT
+      CASE 3
+         aDane := RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi, ewid_rzz, aFiltr )
+
+         IF Len( aDane[ 'pozycje' ] ) > 0
+            IF ( cPlikWyj := FPSFileSaveDialog() ) <> ""
+               IF ( oWorkbook := TsWorkbook():New() ) <> NIL
+                  oWorksheet := oWorkbook:AddWorksheet( "Rejestr sprzeda¾y" )
+                  SWITCH nRaport
+                  CASE 1
+                     oWorksheet:WriteColWidth( 0, 10, 0 )
+                     oWorksheet:WriteColWidth( 1, 10, 0 )
+                     oWorksheet:WriteColWidth( 2, 10, 0 )
+                     oWorksheet:WriteColWidth( 3, 3, 0 )
+                     oWorksheet:WriteColWidth( 4, 3, 0 )
+                     oWorksheet:WriteColWidth( 5, 15, 0 )
+                     oWorksheet:WriteColWidth( 6, 25, 0 )
+                     oWorksheet:WriteColWidth( 7, 12, 0 )
+                     oWorksheet:WriteColWidth( 8, 25, 0 )
+                     oWorksheet:WriteColWidth( 9, 3, 0 )
+                     oWorksheet:WriteColWidth( 10, 3, 0 )
+                     oWorksheet:WriteColWidth( 11, 15, 0 )
+                     oWorksheet:WriteColWidth( 12, 15, 0 )
+                     oWorksheet:WriteColWidth( 13, 15, 0 )
+                     oWorksheet:WriteColWidth( 14, 15, 0 )
+                     oWorksheet:WriteColWidth( 15, 15, 0 )
+                     oWorksheet:WriteColWidth( 16, 15, 0 )
+                     oWorksheet:WriteColWidth( 17, 15, 0 )
+                     oWorksheet:WriteColWidth( 18, 15, 0 )
+                     oWorksheet:WriteColWidth( 19, 15, 0 )
+                     oWorksheet:WriteColWidth( 20, 15, 0 )
+                     oWorksheet:WriteColWidth( 21, 15, 0 )
+                     oWorksheet:WriteColWidth( 22, 15, 0 )
+                     oWorksheet:WriteColWidth( 23, 15, 0 )
+                     oWorksheet:WriteColWidth( 24, 15, 0 )
+                     oWorksheet:WriteColWidth( 25, 15, 0 )
+
+                     oWorksheet:WriteText( 0, 0, "Rejestr sprzeda¾y za miesi¥c " + ;
+                        aDane[ 'miesiac' ] + ", " + aDane[ 'rok' ] )
+                     oWorksheet:WriteText( 1, 0, aDane[ 'firma' ] )
+
+                     PRIVATE cRes := ""
+                     AEval( aFiltr[ 'opcje' ], { | cItem |
+                        IF cRes <> ""
+                           cRes := cRes + ','
+                        ENDIF
+                        cRes := cRes + cItem
+                     } )
+                     oWorksheet:WriteText( 2, 0, "Filtr: " + aDane[ 'jaki_rej' ] + ;
+                        " - " + aDane[ 'opis_rej' ] + ", rodzaj dowodu: " + ;
+                        iif( aFiltr[ 'rodzaj' ] == "*", 'wszystkie', ;
+                        iif( aFiltr[ 'rodzaj' ] == "", "bez rodzaju", aFiltr[ 'rodzaj' ] ) ) + ;
+                        ", oznaczenia: " + iif( Len( aFiltr[ 'opcje' ] ) == 0, "wszystkie", cRes ) + ;
+                        ", procedura: " + iif( Len( aFiltr[ 'procedura' ] ) == 0, "wszystkie", gm_AStrTok( aFiltr[ 'procedura' ] ) ) )
+
+                     oWorksheet:WriteText( 3, 0, "Data rejestru" )
+                     oWorksheet:WriteText( 3, 1, "Data wystawienia" )
+                     oWorksheet:WriteText( 3, 2, "Data sprzeda¾y" )
+                     oWorksheet:WriteText( 3, 3, "Rodzaj dokumentu" )
+                     oWorksheet:WriteText( 3, 4, "Kolumny ksi©gi" )
+                     oWorksheet:WriteText( 3, 5, "Nr dowodu" )
+                     oWorksheet:WriteText( 3, 6, "Nazwa" )
+                     oWorksheet:WriteText( 3, 7, "NIP" )
+                     oWorksheet:WriteText( 3, 8, "Opis zdarzenia" )
+                     oWorksheet:WriteText( 3, 9, "Symbol rejestru" )
+                     oWorksheet:WriteText( 3, 10, "Korekta" )
+                     oWorksheet:WriteText( 3, 11, "Og¢lna warto˜† " + iif( ewid_rss == 'B', "brutto", "netto" ) )
+                     oWorksheet:WriteText( 3, 12, "Sprz. wg. st. 23% NETTO" )
+                     oWorksheet:WriteText( 3, 13, "Sprz. wg. st. 23% VAT" )
+                     oWorksheet:WriteText( 3, 14, "Sprz. wg. st. 8% NETTO" )
+                     oWorksheet:WriteText( 3, 15, "Sprz. wg. st. 8% VAT" )
+                     oWorksheet:WriteText( 3, 16, "Sprz. wg. st. 5% NETTO" )
+                     oWorksheet:WriteText( 3, 17, "Sprz. wg. st. 5% VAT" )
+                     oWorksheet:WriteText( 3, 18, "Sprz. wg. st. 7% NETTO" )
+                     oWorksheet:WriteText( 3, 19, "Sprz. wg. st. 7% VAT" )
+                     oWorksheet:WriteText( 3, 20, "Sprz. wg. st. 0% kraj" )
+                     oWorksheet:WriteText( 3, 21, "Sprz. wg. st. 0% WDT" )
+                     oWorksheet:WriteText( 3, 22, "Sprz. wg. st. 0% Eksport" )
+                     oWorksheet:WriteText( 3, 23, "Sprz. zwol. od pod." )
+                     oWorksheet:WriteText( 3, 24, "Sprz. nie podl. VAT" )
+                     oWorksheet:WriteText( 3, 25, "Razem warto˜† podatku" )
+                     nWiersz := 4
+                     AEval( aDane[ 'pozycje' ], { | aRow |
+                        oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
+                        oWorksheet:WriteText( nWiersz, 1, aRow[ 'data_sprzedazy' ] )
+                        oWorksheet:WriteText( nWiersz, 2, aRow[ 'datatran' ] )
+                        oWorksheet:WriteText( nWiersz, 3, aRow[ 'rodzaj' ] )
+                        oWorksheet:WriteText( nWiersz, 4, aRow[ 'kolumna' ] )
+                        oWorksheet:WriteText( nWiersz, 5, aRow[ 'numer' ] )
+                        oWorksheet:WriteText( nWiersz, 6, aRow[ 'nazwa' ] )
+                        oWorksheet:WriteText( nWiersz, 7, aRow[ 'nr_ident' ] )
+                        oWorksheet:WriteText( nWiersz, 8, aRow[ 'tresc' ] )
+                        oWorksheet:WriteText( nWiersz, 9, aRow[ 'symb_rej' ] )
+                        oWorksheet:WriteText( nWiersz, 10, aRow[ 'korekta' ] )
+                        oWorksheet:WriteCurrency( nWiersz, 11, aRow[ 'dwartosc_netto' ] + iif( ewid_rss == 'B', aRow[ 'dwartosc_vat' ], 0 ) )
+                        IF aRow[ 'dnetto_a' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 12, aRow[ 'dnetto_a' ] )
+                        ENDIF
+                        IF aRow[ 'dvat_a' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 13, aRow[ 'dvat_a' ] )
+                        ENDIF
+                        IF aRow[ 'dnetto_b' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 14, aRow[ 'dnetto_b' ] )
+                        ENDIF
+                        IF aRow[ 'dvat_b' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 15, aRow[ 'dvat_b' ] )
+                        ENDIF
+                        IF aRow[ 'dnetto_c' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 16, aRow[ 'dnetto_c' ] )
+                        ENDIF
+                        IF aRow[ 'dvat_c' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 17, aRow[ 'dvat_c' ] )
+                        ENDIF
+                        IF aRow[ 'dnetto_d' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 18, aRow[ 'dnetto_d' ] )
+                        ENDIF
+                        IF aRow[ 'dvat_d' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 19, aRow[ 'dvat_d' ] )
+                        ENDIF
+                        IF aRow[ 'dnetto_zr_kraj' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 20, aRow[ 'dnetto_zr_kraj' ] )
+                        ENDIF
+                        IF aRow[ 'dnetto_zr_wdt' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 21, aRow[ 'dnetto_zr_wdt' ] )
+                        ENDIF
+                        IF aRow[ 'dnetto_zr_eksp' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 22, aRow[ 'dnetto_zr_eksp' ] )
+                        ENDIF
+                        IF aRow[ 'dnetto_zw' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 23, aRow[ 'dnetto_zw' ] )
+                        ENDIF
+                        IF aRow[ 'dnetto_np' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 24, aRow[ 'dnetto_np' ] )
+                        ENDIF
+                        IF aRow[ 'dwartosc_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 25, aRow[ 'dwartosc_vat' ] )
+                        ENDIF
+                        nWiersz++
+                     } )
+                     IF oWorkbook:WriteToFile( cPlikWyj ) == 0
+                        Komun( "Plik zostaˆ utworzony" )
+                     ENDIF
+                     EXIT
+                  CASE 2
+                     oWorksheet:WriteColWidth( 0, 10, 0 )
+                     oWorksheet:WriteColWidth( 1, 10, 0 )
+                     oWorksheet:WriteColWidth( 2, 10, 0 )
+                     oWorksheet:WriteColWidth( 3, 3, 0 )
+                     oWorksheet:WriteColWidth( 4, 3, 0 )
+                     oWorksheet:WriteColWidth( 5, 15, 0 )
+                     oWorksheet:WriteColWidth( 6, 25, 0 )
+                     oWorksheet:WriteColWidth( 7, 12, 0 )
+                     oWorksheet:WriteColWidth( 8, 25, 0 )
+                     oWorksheet:WriteColWidth( 9, 3, 0 )
+                     oWorksheet:WriteColWidth( 10, 15, 0 )
+                     oWorksheet:WriteColWidth( 11, 15, 0 )
+                     oWorksheet:WriteColWidth( 12, 15, 0 )
+                     oWorksheet:WriteColWidth( 13, 15, 0 )
+                     oWorksheet:WriteColWidth( 14, 15, 0 )
+                     oWorksheet:WriteColWidth( 15, 15, 0 )
+                     oWorksheet:WriteColWidth( 16, 25, 0 )
+
+                     oWorksheet:WriteText( 0, 0, "Rejestr korekt sprzeda¾y za miesi¥c " + ;
+                        aDane[ 'miesiac' ] + ", " + aDane[ 'rok' ] )
+                     oWorksheet:WriteText( 1, 0, aDane[ 'firma' ] )
+
+                     PRIVATE cRes := ""
+                     AEval( aFiltr[ 'opcje' ], { | cItem |
+                        IF cRes <> ""
+                           cRes := cRes + ','
+                        ENDIF
+                        cRes := cRes + cItem
+                     } )
+                     oWorksheet:WriteText( 2, 0, "Filtr: " + aDane[ 'jaki_rej' ] + ;
+                        " - " + aDane[ 'opis_rej' ] + ", rodzaj dowodu: " + ;
+                        iif( aFiltr[ 'rodzaj' ] == "*", 'wszystkie', ;
+                        iif( aFiltr[ 'rodzaj' ] == "", "bez rodzaju", aFiltr[ 'rodzaj' ] ) ) + ;
+                        ", oznaczenia: " + iif( Len( aFiltr[ 'opcje' ] ) == 0, "wszystkie", cRes ) + ;
+                        ", procedura: " + iif( Len( aFiltr[ 'procedura' ] ) == 0, "wszystkie", gm_AStrTok( aFiltr[ 'procedura' ] ) ) )
+
+                     oWorksheet:WriteText( 3, 0, "Data rejestru" )
+                     oWorksheet:WriteText( 3, 1, "Data wystawienia" )
+                     oWorksheet:WriteText( 3, 2, "Data sprzeda¾y" )
+                     oWorksheet:WriteText( 3, 3, "Rodzaj dokumentu" )
+                     oWorksheet:WriteText( 3, 4, "Kolumny ksi©gi" )
+                     oWorksheet:WriteText( 3, 5, "Nr dowodu" )
+                     oWorksheet:WriteText( 3, 6, "Nazwa" )
+                     oWorksheet:WriteText( 3, 7, "NIP" )
+                     oWorksheet:WriteText( 3, 8, "Opis zdarzenia" )
+                     oWorksheet:WriteText( 3, 9, "Symbol rejestru" )
+                     oWorksheet:WriteText( 3, 10, "Og¢lna warto˜† " + iif( ewid_rss == 'B', "brutto", "netto" ) )
+                     oWorksheet:WriteText( 3, 11, "Sprz. opodat. NETTO" )
+                     oWorksheet:WriteText( 3, 12, "Sprz. opodat. VAT" )
+                     oWorksheet:WriteText( 3, 13, "Sprz. zwolniona NETTO" )
+                     oWorksheet:WriteText( 3, 14, "Razem rokekta NETTO" )
+                     oWorksheet:WriteText( 3, 15, "Razem korekta VAT" )
+                     oWorksheet:WriteText( 3, 16, "Uwagi" )
+                     nWiersz := 4
+                     AEval( aDane[ 'pozycje' ], { | aRow |
+                        oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
+                        oWorksheet:WriteText( nWiersz, 1, aRow[ 'data_sprzedazy' ] )
+                        oWorksheet:WriteText( nWiersz, 2, aRow[ 'datatran' ] )
+                        oWorksheet:WriteText( nWiersz, 3, aRow[ 'rodzaj' ] )
+                        oWorksheet:WriteText( nWiersz, 4, aRow[ 'kolumna' ] )
+                        oWorksheet:WriteText( nWiersz, 5, aRow[ 'numer' ] )
+                        oWorksheet:WriteText( nWiersz, 6, aRow[ 'nazwa' ] )
+                        oWorksheet:WriteText( nWiersz, 7, aRow[ 'nr_ident' ] )
+                        oWorksheet:WriteText( nWiersz, 8, aRow[ 'tresc' ] )
+                        oWorksheet:WriteText( nWiersz, 9, aRow[ 'symb_rej' ] )
+                        oWorksheet:WriteCurrency( nWiersz, 10, aRow[ 'wartosc_netto' ] + iif( ewid_rss == 'B', aRow[ 'wartosc_vat' ], 0 ) )
+                        IF aRow[ 'netto_op' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 11, aRow[ 'netto_op' ] )
+                        ENDIF
+                        IF aRow[ 'wartosc_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 12, aRow[ 'wartosc_vat' ] )
+                        ENDIF
+                        IF aRow[ 'netto_zw' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 13, aRow[ 'netto_zw' ] )
+                        ENDIF
+                        IF aRow[ 'wartosc_netto' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 14, aRow[ 'wartosc_netto' ] )
+                        ENDIF
+                        IF aRow[ 'wartosc_vat' ] <> 0
+                           oWorksheet:WriteCurrency( nWiersz, 15, aRow[ 'wartosc_vat' ] )
+                        ENDIF
+                        oWorksheet:WriteText( nWiersz, 16, aRow[ 'uwagi' ] )
+                        nWiersz++
+                     } )
+                     IF oWorkbook:WriteToFile( cPlikWyj ) == 0
+                        Komun( "Plik zostaˆ utworzony" )
+                     ENDIF
+                     EXIT
+                  ENDSWITCH
+               ENDIF
+               oWorksheet := NIL
+               oWorkbook := NIL
+            ENDIF
+         ELSE
+            kom( 3, '*w', 'b r a k   d a n y c h' )
+         ENDIF
          EXIT
       ENDSWITCH
    ENDIF

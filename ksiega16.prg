@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
 #include "Box.ch"
+#include "hbwin.ch"
 
 FUNCTION ksiega16licz()
    LOCAL aRes := hb_Hash(), aRow
@@ -153,19 +154,20 @@ RETURN aRes
 PROCEDURE ksiega16()
    LOCAL aDane, oRap, nLewaPrawa := 1, nMonDruk, cScr, cKolor, nPoz := 1, cJPK, cPlik, nFile
    LOCAL nP_1 := 0, nP_2 := 0, nP_3 := 0, nP_4 := 0, dP_5A := CToD(''), nP_5B := 0, cP_5 := 'N'
-   LOCAL cKorekta := 'D'
+   LOCAL cKorekta := 'D', oWorkbook, oWorksheet, cPlikWyj, nWiersz
    aDane := ksiega16licz()
    IF Len(aDane['pozycje']) > 0
 
       SAVE SCREEN TO cScr
       cKolor := ColPro()
-      @ 16, 0  CLEAR TO 22, 41
-      @ 16, 0, 22, 41 BOX B_SINGLE
-      @ 17, 1 PROMPT ' T - Druk tekstowy                      '
-      @ 18, 1 PROMPT ' P - Druk graficzny A4 (poziomo)        '
-      @ 19, 1 PROMPT ' G - Druk graficzny A4 (2 str.)         '
-      @ 20, 1 PROMPT ' H - Druk graficzny A3                  '
-      @ 21, 1 PROMPT ' J - Jednolity Plik Kontrolny JPK_PKPIR '
+      @ 15, 0  CLEAR TO 22, 41
+      @ 15, 0, 22, 41 BOX B_SINGLE
+      @ 16, 1 PROMPT ' T - Druk tekstowy                      '
+      @ 17, 1 PROMPT ' P - Druk graficzny A4 (poziomo)        '
+      @ 18, 1 PROMPT ' G - Druk graficzny A4 (2 str.)         '
+      @ 19, 1 PROMPT ' H - Druk graficzny A3                  '
+      @ 20, 1 PROMPT ' J - Jednolity Plik Kontrolny JPK_PKPIR '
+      @ 21, 1 PROMPT ' Z - Zapisz do pluku...                 '
       nPoz=menu(nPoz)
       ColStd()
       IF LastKey() == 27
@@ -530,6 +532,103 @@ PROCEDURE ksiega16()
 */
 
          EXIT
+
+      CASE 6
+         IF ( cPlikWyj := FPSFileSaveDialog() ) <> ""
+            IF ( oWorkbook := TsWorkbook():New() ) <> NIL
+               IF ( oWorksheet := oWorkbook:AddWorksheet( "PKPiR" ) ) <> NIL
+                  oWorksheet:WriteColWidth( 0, 5, 0 )
+                  oWorksheet:WriteColWidth( 1, 10, 0 )
+                  oWorksheet:WriteColWidth( 2, 15, 0 )
+                  oWorksheet:WriteColWidth( 3, 25, 0 )
+                  oWorksheet:WriteColWidth( 4, 25, 0 )
+                  oWorksheet:WriteColWidth( 5, 25, 0 )
+                  oWorksheet:WriteColWidth( 6, 15, 0 )
+                  oWorksheet:WriteColWidth( 7, 15, 0 )
+                  oWorksheet:WriteColWidth( 8, 15, 0 )
+                  oWorksheet:WriteColWidth( 9, 15, 0 )
+                  oWorksheet:WriteColWidth( 10, 15, 0 )
+                  oWorksheet:WriteColWidth( 11, 15, 0 )
+                  oWorksheet:WriteColWidth( 12, 15, 0 )
+                  oWorksheet:WriteColWidth( 13, 15, 0 )
+                  oWorksheet:WriteColWidth( 14, 5, 0 )
+                  oWorksheet:WriteColWidth( 15, 25, 0 )
+                  oWorksheet:WriteColWidth( 16, 15, 0 )
+                  oWorksheet:WriteColWidth( 17, 25, 0 )
+                  oWorksheet:WriteText( 0, 0, aDane[ 'firma' ] )
+                  oWorksheet:WriteText( 1, 0, "Miesi¥c: " + aDane[ 'miesiac' ] + " " + aDane[ 'rok' ] )
+                  oWorksheet:WriteText( 3, 0, "L.p." )
+                  oWorksheet:WriteText( 3, 1, "Dzieä zdarzenia gospodarczego" )
+                  oWorksheet:WriteText( 3, 2, "Nr dowodu ksi©gowego" )
+                  oWorksheet:WriteText( 3, 3, "Kontrahent - nazwa" )
+                  oWorksheet:WriteText( 3, 4, "Kontrahent - adres" )
+                  oWorksheet:WriteText( 3, 5, "Opis zdarzenia" )
+                  oWorksheet:WriteText( 3, 6, "Warto˜† sprzedanych towar¢w i usˆug" )
+                  oWorksheet:WriteText( 3, 7, "Pozostaˆe przychody" )
+                  oWorksheet:WriteText( 3, 8, "Razem przych¢d" )
+                  oWorksheet:WriteText( 3, 9, "Zakup towar¢w i materiaˆ¢w" )
+                  oWorksheet:WriteText( 3, 10, "Koszty uboczne zakupu" )
+                  oWorksheet:WriteText( 3, 11, "Wynagrodzenia" )
+                  oWorksheet:WriteText( 3, 12, "Pozostaˆe wydatki" )
+                  oWorksheet:WriteText( 3, 13, "Razem wydatki" )
+                  oWorksheet:WriteText( 3, 14, "(pusta)" )
+                  oWorksheet:WriteText( 3, 15, "Dzieˆalno˜† badawcza - opis kosztu" )
+                  oWorksheet:WriteText( 3, 16, "Dzieˆalno˜† badawcza - warto˜†" )
+                  oWorksheet:WriteText( 3, 17, "Uwagi" )
+                  nWiersz := 4
+                  AEval( aDane[ 'pozycje' ], { | aRow |
+                     oWorksheet:WriteNumber( nWiersz, 0, aRow['k1'] )
+                     oWorksheet:WriteDate( nWiersz, 1,hb_Date( Val( param_rok ), Val( miesiac ), Val( aRow['k2'] ) ) )
+                     oWorksheet:WriteText( nWiersz, 2, AllTrim( aRow['k3'] ) )
+                     oWorksheet:WriteText( nWiersz, 3, AllTrim( aRow['k4'] ) )
+                     oWorksheet:WriteText( nWiersz, 4, AllTrim( aRow['k5'] ) )
+                     oWorksheet:WriteText( nWiersz, 5, AllTrim( aRow['k6'] ) )
+                     IF aRow['k7'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 6, aRow['k7'] )
+                     ENDIF
+                     IF aRow['k8'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 7, aRow['k8'] )
+                     ENDIF
+                     IF aRow['k9'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 8, aRow['k9'] )
+                     ENDIF
+                     IF aRow['k10'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 9, aRow['k10'] )
+                     ENDIF
+                     IF aRow['k11'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 10, aRow['k11'] )
+                     ENDIF
+                     IF aRow['k13'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 11, aRow['k13'] )
+                     ENDIF
+                     IF aRow['k14'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 12, aRow['k14'] )
+                     ENDIF
+                     IF aRow['k15'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 13, aRow['k15'] )
+                     ENDIF
+                     IF aRow['k16'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 14, aRow['k16'] )
+                     ENDIF
+                     oWorksheet:WriteText( nWiersz, 15, AllTrim( aRow['k16o'] ) )
+                     IF aRow['k16w'] <> 0
+                        oWorksheet:WriteCurrency( nWiersz, 16, aRow['k16w'] )
+                     ENDIF
+                     oWorksheet:WriteText( nWiersz, 17, AllTrim( aRow['k17'] ) )
+                     nWiersz++
+                  } )
+                  IF oWorkbook:WriteToFile( cPlikWyj ) == 0
+                     Komun( "Plik zostaˆ utworzony" )
+                  ENDIF
+               ENDIF
+            ELSE
+
+            ENDIF
+         ENDIF
+         oWorksheet := NIL
+         oWorkbook := NIL
+         EXIT
+
       ENDSWITCH
       RESTORE SCREEN FROM cScr
    ELSE

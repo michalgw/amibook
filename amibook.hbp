@@ -29,10 +29,13 @@
 #-lhbwin
 #-lxhb
 -lhbfr
+-lhbfps
 #-id:\hb32\contrib\xhb
 #-id:\hb32\contrib\hbwin
 -i${HBFRDIR}\src
 -L${HBFRDIR}\src
+-i${HBFPSDIR}\src
+-L${HBFPSDIR}\src
 #-a
 -b
 #-w3
@@ -244,4 +247,3 @@ zus_zglo.prg
 
 wersja.rc
 
- 
