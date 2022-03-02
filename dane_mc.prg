@@ -398,11 +398,11 @@ FUNCTION przeskla()
       zwar5_wuc := _round( zzpodstawa * ( zstaw_wuc / 100 ), 2 )
       zwar5_wuw := _round( zzpodstawa * ( zstaw_wuw / 100 ), 2 )
    ENDIF
-   IF zzpodstzdr # zzzpodstzdr
+   //IF zzpodstzdr # zzzpodstzdr
       zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
       //zwar5_wuz := _round( zzpodstzdr * ( zstaw5_wuz / 100 ), 2 )
       zwar5_wuz := 0
-   ENDIF
+   //ENDIF
    zwar_wsum := zwar_wue + zwar_wur + zwar_wuc + zwar_wuw
    zwar5_wsum := zwar5_wue + zwar5_wur + zwar5_wuc + zwar5_wuw
    zstaw_wsum := zstaw_wue + zstaw_wur + zstaw_wuc + zstaw_wuw
@@ -434,13 +434,22 @@ FUNCTION zrobcos()
          IF mc == ' 1'
             zzpodstzdr := parap_p52
          ELSE
-            nPrzychod := P_RyczLicz( 'N', .T. )
             DO CASE
-            CASE nPrzychod < parap_rk2
+            CASE spolka->ryczstzdr $ ' 0'
+               nPrzychod := P_RyczLicz( 'N', .T. )
+               DO CASE
+               CASE nPrzychod < parap_rk2
+                  zzpodstzdr := _round( parap_frp * ( parap_rs1 / 100 ), 2 )
+               CASE nPrzychod >= parap_rk2 .AND. nPrzychod < parap_rk3
+                  zzpodstzdr := _round( parap_frp * ( parap_rs2 / 100 ), 2 )
+               CASE nPrzychod >= parap_rk3
+                  zzpodstzdr := _round( parap_frp * ( parap_rs3 / 100 ), 2 )
+               ENDCASE
+            CASE spolka->ryczstzdr == '1'
                zzpodstzdr := _round( parap_frp * ( parap_rs1 / 100 ), 2 )
-            CASE nPrzychod >= parap_rk2 .AND. nPrzychod < parap_rk3
+            CASE spolka->ryczstzdr == '2'
                zzpodstzdr := _round( parap_frp * ( parap_rs2 / 100 ), 2 )
-            CASE nPrzychod >= parap_rk3
+            CASE spolka->ryczstzdr == '3'
                zzpodstzdr := _round( parap_frp * ( parap_rs3 / 100 ), 2 )
             ENDCASE
          ENDIF
@@ -562,6 +571,36 @@ FUNCTION zrobcos()
       zmc_wuz := iif( mc_wuz + 1 < 13, mc_wuz + 1, 0 )
 *                przeskla()
       SKIP 1
+      IF zRYCZALT == 'T'
+         IF mc == ' 1'
+            zzpodstzdr := parap_p52
+         ELSE
+            DO CASE
+            CASE spolka->ryczstzdr $ ' 0'
+               nPrzychod := P_RyczLicz( 'N', .T. )
+               DO CASE
+               CASE nPrzychod < parap_rk2
+                  zzpodstzdr := _round( parap_frp * ( parap_rs1 / 100 ), 2 )
+               CASE nPrzychod >= parap_rk2 .AND. nPrzychod < parap_rk3
+                  zzpodstzdr := _round( parap_frp * ( parap_rs2 / 100 ), 2 )
+               CASE nPrzychod >= parap_rk3
+                  zzpodstzdr := _round( parap_frp * ( parap_rs3 / 100 ), 2 )
+               ENDCASE
+            CASE spolka->ryczstzdr == '1'
+               zzpodstzdr := _round( parap_frp * ( parap_rs1 / 100 ), 2 )
+            CASE spolka->ryczstzdr == '2'
+               zzpodstzdr := _round( parap_frp * ( parap_rs2 / 100 ), 2 )
+            CASE spolka->ryczstzdr == '3'
+               zzpodstzdr := _round( parap_frp * ( parap_rs3 / 100 ), 2 )
+            ENDCASE
+         ENDIF
+      ELSE
+         IF mc == ' 1'
+            zzpodstzdr := parap_p52
+         ELSE
+            zzpodstzdr := a_ppodst[ 1, Val( mc ) - 1 ]
+         ENDIF
+      ENDIF
 
    ENDIF
    przeskla()

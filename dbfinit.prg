@@ -1343,7 +1343,8 @@ public aSPOLKAdbf := {;
    { "OBLKWWOL", "C", 1, 0 },;                    //  72   Odlicz kwote wolna 'S' - stala wartos, 'T' - tablica pod. doch.
    { "PARAM_KWD", "D", 8, 0 },;                   //  73   Kwota wolna do daty
    { "PARAM_KW2", "N", 9, 2 },;                   //  74   Wartosc kwoty wolnej od daty
-   { "ULGAKLSRA", "C", 1, 0 } }                   //  75   Ulga dla klasy ˜redniej 'T' - tak
+   { "ULGAKLSRA", "C", 1, 0 },;                   //  75   Ulga dla klasy ˜redniej 'T' - tak
+   { "RYCZSTZDR", "C", 1, 0 } }                   //  76   Stawka zdrowotnego dla ryczaltowcow '0' - auto, '1' - 60%, '2' - 100%, '3' - 180%
 
 // Create: SUMA_MC.DBF
 public aSUMA_MCdbf := {;

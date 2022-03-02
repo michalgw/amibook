@@ -45,7 +45,7 @@ private _top,_bot,_top_bot,_stop,_sbot,_proc,kl,ins,nr_rec,f10,rec,fou
 @ 13, 0 say '³ Miejscowosc.......                                      6 Czerwiec           ³'
 @ 14, 0 say '³ Ulica, dom, lokal.                           /          7 Lipiec             ³'
 @ 15, 0 say '³ Kod i poczta......                                      8 Sierpie&_n.           ³'
-@ 16, 0 say '³ Telefon dom.......                                      9 Wrzesie&_n.           ³'
+@ 16, 0 say '³ Telefon dom.......             St.ubezp.zdr.rycz.       9 Wrzesie&_n.           ³'
 @ 17, 0 say '³ Rozliczac: Progresyw/Liniowo.  Podat.od kw.wol.        10 Pa&_x.dziernik        ³'
 @ 18, 0 say '³ Jakie wyd.mieszk?.                                     11 Listopad           ³'
 @ 19, 0 say '³ Jakie odl.od doch?                                     12 Grudzie&_n.           ³'
@@ -177,6 +177,7 @@ if ins
    store space(30) to zODLICZ1,zODLICZ2,zS_RODZAJ
    store [   /   ] to zudzial1,zudzial2,zudzial3,zudzial4,zudzial5,zudzial6,zudzial7,zudzial8,zudzial9,zudzial10,zudzial11,zudzial12
    *zOBLKWWOL := 'S'
+   zRYCZSTZDR := '0'
 else
    zNAZ_IMIE=NAZ_IMIE
    zPESEL=PESEL
@@ -228,6 +229,7 @@ else
    zUDZIAL11=UDZIAL11
    zUDZIAL12=UDZIAL12
    *zOBLKWWOL := iif( spolka->oblkwwol == ' ', 'S', spolka->oblkwwol )
+   zRYCZSTZDR := iif( spolka->ryczstzdr == ' ', '0', spolka->ryczstzdr )
 endif
 *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 @ 5,20 get zNAZ_IMIE picture "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" valid v3_1()
@@ -253,6 +255,7 @@ endif
 @ 15,20 get zKOD_POCZT picture "99-999"
 @ 15,27 get zPOCZTA picture "!!!!!!!!!!!!!!!!!!!!"
 @ 16,20 get zTELEFON picture "XXXXXXXXXX"
+@ 16,52 get zRYCZSTZDR PICTURE '9' WHEN SpolkaRyczstzdrW() VALID SpolkaRyczstzdrV()
 *@ 16,52 get zOBLKWWOL PICTURE "!" WHEN spolka_w_oblkwwol() VALID spolka_v_oblkwwol()
 @ 17,31 get zSPOSOB picture "!" valid zSPOSOB$'PL'
 @ 17,49 get zPARAM_KW picture "9999.99" range 0,9999
@@ -358,7 +361,8 @@ repl NAZ_IMIE with zNAZ_IMIE,;
      UDZIAL9 with zUDZIAL9,;
      UDZIAL10 with zUDZIAL10,;
      UDZIAL11 with zUDZIAL11,;
-     UDZIAL12 with zUDZIAL12
+     UDZIAL12 with zUDZIAL12,;
+     RYCZSTZDR WITH zRYCZSTZDR
      *OBLKWWOL WITH zOBLKWWOL
 commit_()
 unlock
@@ -470,6 +474,7 @@ set color to +w
 @ 15,20 say KOD_POCZT
 @ 15,27 say POCZTA
 @ 16,20 say TELEFON
+@ 16, 52 SAY iif( spolka->RYCZSTZDR == ' ', '0', spolka->RYCZSTZDR )
 *@ 16, 52 SAY spolka->oblkwwol
 @ 17,31 say SPOSOB
 //@ 17,49 say iif( Date() < param_kwd, PARAM_KW, PARAM_KW2 ) picture "9999.99"
@@ -847,5 +852,30 @@ FUNCTION SpolkaWhenParamKW()
 
 /*----------------------------------------------------------------------*/
 */
+
+FUNCTION SpolkaRyczstzdrW()
+
+   LOCAL lRes, cKolor
+
+   IF ( lRes := zRYCZALT == 'T' )
+      cKolor := ColInf()
+      @ 24, 0 SAY PadC( "0 - na podst. przychodu,    1 - 60%,    2 - 100%,    3 - 180%", 80 )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION SpolkaRyczstzdrV()
+
+   LOCAL lRes
+
+   IF ( lRes := zRYCZSTZDR $ '0123' )
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
 
 *############################################################################
