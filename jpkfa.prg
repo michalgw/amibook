@@ -50,17 +50,17 @@ FUNCTION JPK_FA_Dane()
       urzedy->( dbGoto( firma->skarb ) )
       aDane[ 'KodUrzedu' ] := urzedy->kodurzedu
    ENDIF
-   aDane[ 'PelnaNazwa' ] := firma->nazwa
-   aDane[ 'Wojewodztwo' ] := firma->param_woj
-   aDane[ 'Powiat' ] := firma->param_pow
-   aDane[ 'Gmina' ] := firma->gmina
-   aDane[ 'Ulica' ] := firma->ulica
-   aDane[ 'NrDomu' ] := firma->nr_domu
-   aDane[ 'NrLokalu' ] := firma->nr_mieszk
-   aDane[ 'Miejscowosc' ] := firma->miejsc
-   aDane[ 'KodPocztowy' ] := firma->kod_p
-   aDane[ 'Poczta' ] := firma->poczta
-   aDane[ 'NazwaSkr' ] := firma->nazwa_skr
+   aDane[ 'PelnaNazwa' ] := AllTrim( firma->nazwa )
+   aDane[ 'Wojewodztwo' ] := AllTrim( firma->param_woj )
+   aDane[ 'Powiat' ] := AllTrim( firma->param_pow )
+   aDane[ 'Gmina' ] := AllTrim( firma->gmina )
+   aDane[ 'Ulica' ] := AllTrim( firma->ulica )
+   aDane[ 'NrDomu' ] := AllTrim( firma->nr_domu )
+   aDane[ 'NrLokalu' ] := AllTrim( firma->nr_mieszk )
+   aDane[ 'Miejscowosc' ] := AllTrim( firma->miejsc )
+   aDane[ 'KodPocztowy' ] := AllTrim( firma->kod_p )
+   aDane[ 'Poczta' ] := AllTrim( firma->poczta )
+   aDane[ 'NazwaSkr' ] := AllTrim( firma->nazwa_skr )
    urzedy->( dbCloseArea() )
    firma->( dbCloseArea() )
 
@@ -108,14 +108,14 @@ FUNCTION JPK_FA_Dane()
       aPoz := hb_Hash()
       aPoz[ 'P_1' ] := hb_Date( Val( param_rok ), Val( faktury->mc ), Val( faktury->dzien ) )
       aPoz[ 'P_2A' ] := faktury->rach + '-' + StrTran( Str( faktury->numer, 5 ), ' ', '0' ) + '/' + param_rok
-      aPoz[ 'P_3A' ] := faktury->nazwa
-      aPoz[ 'P_3B' ] := faktury->adres
+      aPoz[ 'P_3A' ] := AllTrim( faktury->nazwa )
+      aPoz[ 'P_3B' ] := AllTrim( faktury->adres )
       aPoz[ 'P_3C' ] := cFirmaNazwa
       aPoz[ 'P_3D' ] := cFirmaAdres
       aPoz[ 'P_4A' ] := 'PL'
       aPoz[ 'P_4B' ] := cFirmaNIP
-      aPoz[ 'P_5A' ] := faktury->kraj
-      aPoz[ 'P_5B' ] := faktury->nr_ident
+      aPoz[ 'P_5A' ] := AllTrim( faktury->kraj )
+      aPoz[ 'P_5B' ] := AllTrim( faktury->nr_ident )
       IF ! Empty( faktury->datas )
          aPoz[ 'P_6' ] := faktury->datas
       ELSEIF ! Empty( faktury->dataz )
@@ -139,71 +139,79 @@ FUNCTION JPK_FA_Dane()
       aPoz[ 'P_16' ] := .F.
       aPoz[ 'P_17' ] := .F.
       aPoz[ 'P_18' ] := .F.
+      aPoz[ 'P_18A' ] := .F.
       aPoz[ 'P_19' ] := .F.
       aPoz[ 'P_20' ] := .F.
       aPoz[ 'P_21' ] := .F.
+      aPoz[ 'P_22' ] := .F.
       aPoz[ 'P_23' ] := .F.
       aPoz[ 'P_106E_2' ] := .F.
+      aPoz[ 'P_106E_3' ] := .F.
       aPoz[ 'RodzajFaktury' ] := 'VAT'
       aPoz[ 'Pozycje' ] := {}
-
-      aWiersz := hb_Hash()
 
       cIdPoz := Str( faktury->rec_no, 8 )
       pozycje->( dbSeek( "+" + cIdPoz ) )
       DO WHILE pozycje->del == "+" .AND. pozycje->ident == cIdPoz
-         aWiersz[ 'P_2B' ] := aPoz[ 'P_2A' ]
-         aWiersz[ 'P_7' ] := pozycje->towar
-         aWiersz[ 'P_8A' ] := pozycje->jm
-         aWiersz[ 'P_8B' ] := pozycje->ilosc
-         aWiersz[ 'P_9A' ] := pozycje->cena
-         aWiersz[ 'P_11' ] := pozycje->ilosc * pozycje->cena
 
-         cVAT := AllTrim( pozycje->vat )
+         IF ( pozycje->ilosc == 0 .OR. pozycje->ilosc == 0 ) .AND. HB_ISHASH( aWiersz ) .AND. hb_HHasKey( aWiersz, 'P_2B' ) .AND. aWiersz[ 'P_2B' ] == aPoz[ 'P_2A' ]
+            aWiersz[ 'P_7' ] := aWiersz[ 'P_7' ] + ' ' + AllTrim( pozycje->towar )
+         ELSE
+            aWiersz := hb_Hash()
 
-         DO CASE
-         CASE cVAT == '23'
-            aWiersz[ 'P_12' ] := '23'
-            aPoz[ 'P_13_1' ] := aPoz[ 'P_13_1' ] + pozycje->cena * pozycje->ilosc
-            aPoz[ 'P_14_1' ] := aPoz[ 'P_14_1' ] + pozycje->cena * pozycje->ilosc * 0.23
-         CASE cVAT == '22'
-            aWiersz[ 'P_12' ] := '22'
-            aPoz[ 'P_13_1' ] := aPoz[ 'P_13_1' ] + pozycje->cena * pozycje->ilosc
-            aPoz[ 'P_14_1' ] := aPoz[ 'P_14_1' ] + pozycje->cena * pozycje->ilosc * 0.22
-         CASE cVAT == '8'
-            aWiersz[ 'P_12' ] := '8'
-            aPoz[ 'P_13_2' ] := aPoz[ 'P_13_2' ] + pozycje->cena * pozycje->ilosc
-            aPoz[ 'P_14_2' ] := aPoz[ 'P_14_2' ] + pozycje->cena * pozycje->ilosc * 0.08
-         CASE cVAT == '7'
-            aWiersz[ 'P_12' ] := '7'
-            aPoz[ 'P_13_2' ] := aPoz[ 'P_13_2' ] + pozycje->cena * pozycje->ilosc
-            aPoz[ 'P_14_2' ] := aPoz[ 'P_14_2' ] + pozycje->cena * pozycje->ilosc * 0.07
-         CASE cVAT == '5'
-            aWiersz[ 'P_12' ] := '5'
-            aPoz[ 'P_13_3' ] := aPoz[ 'P_13_3' ] + pozycje->cena * pozycje->ilosc
-            aPoz[ 'P_14_3' ] := aPoz[ 'P_14_3' ] + pozycje->cena * pozycje->ilosc * 0.05
-         CASE cVAT == '0'
-            aWiersz[ 'P_12' ] := '0'
-            aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + pozycje->cena * pozycje->ilosc
-            //aPoz[ 'P_14_4' ] := aPoz[ 'P_14_4' ] + pozycje->cena * pozycje->ilosc * 0.05
-         CASE cVAT == 'NP'
-            aWiersz[ 'P_12' ] := '0'
-            aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + pozycje->cena * pozycje->ilosc
-            aPoz[ 'P_19' ] := .T.
-         CASE cVAT == 'PN' .OR. cVAT == 'PU'
-            aWiersz[ 'P_12' ] := '0'
-            aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + pozycje->cena * pozycje->ilosc
-            aPoz[ 'P_18' ] := .T.
-         CASE cVAT == 'ZW'
-            aWiersz[ 'P_12' ] := 'zw'
-            aPoz[ 'P_13_5' ] := aPoz[ 'P_13_5' ] + pozycje->cena * pozycje->ilosc
-         ENDCASE
+            aWiersz[ 'P_2B' ] := aPoz[ 'P_2A' ]
+            aWiersz[ 'P_7' ] := AllTrim( pozycje->towar )
+            aWiersz[ 'P_8A' ] := AllTrim( pozycje->jm )
+            aWiersz[ 'P_8B' ] := pozycje->ilosc
+            aWiersz[ 'P_9A' ] := pozycje->cena
+            aWiersz[ 'P_11' ] := pozycje->ilosc * pozycje->cena
 
-         aDane[ 'FakturaWierszCtrl' ][ 'LiczbaWierszyFaktur' ] := aDane[ 'FakturaWierszCtrl' ][ 'LiczbaWierszyFaktur' ] + 1
-         aDane[ 'FakturaWierszCtrl' ][ 'WartoscWierszyFaktur' ] := aDane[ 'FakturaWierszCtrl' ][ 'WartoscWierszyFaktur' ] + aWiersz[ 'P_11' ]
+            cVAT := AllTrim( pozycje->vat )
 
-         AAdd( aPoz[ 'Pozycje' ], aWiersz )
-         AAdd( aDane[ 'Pozycje' ], aWiersz )
+            DO CASE
+            CASE cVAT == '23'
+               aWiersz[ 'P_12' ] := '23'
+               aPoz[ 'P_13_1' ] := aPoz[ 'P_13_1' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_14_1' ] := aPoz[ 'P_14_1' ] + pozycje->cena * pozycje->ilosc * 0.23
+            CASE cVAT == '22'
+               aWiersz[ 'P_12' ] := '22'
+               aPoz[ 'P_13_1' ] := aPoz[ 'P_13_1' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_14_1' ] := aPoz[ 'P_14_1' ] + pozycje->cena * pozycje->ilosc * 0.22
+            CASE cVAT == '8'
+               aWiersz[ 'P_12' ] := '8'
+               aPoz[ 'P_13_2' ] := aPoz[ 'P_13_2' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_14_2' ] := aPoz[ 'P_14_2' ] + pozycje->cena * pozycje->ilosc * 0.08
+            CASE cVAT == '7'
+               aWiersz[ 'P_12' ] := '7'
+               aPoz[ 'P_13_2' ] := aPoz[ 'P_13_2' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_14_2' ] := aPoz[ 'P_14_2' ] + pozycje->cena * pozycje->ilosc * 0.07
+            CASE cVAT == '5'
+               aWiersz[ 'P_12' ] := '5'
+               aPoz[ 'P_13_3' ] := aPoz[ 'P_13_3' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_14_3' ] := aPoz[ 'P_14_3' ] + pozycje->cena * pozycje->ilosc * 0.05
+            CASE cVAT == '0'
+               aWiersz[ 'P_12' ] := '0'
+               aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + pozycje->cena * pozycje->ilosc
+               //aPoz[ 'P_14_4' ] := aPoz[ 'P_14_4' ] + pozycje->cena * pozycje->ilosc * 0.05
+            CASE cVAT == 'NP'
+               aWiersz[ 'P_12' ] := '0'
+               aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_19' ] := .T.
+            CASE cVAT == 'PN' .OR. cVAT == 'PU'
+               aWiersz[ 'P_12' ] := '0'
+               aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_18' ] := .T.
+            CASE cVAT == 'ZW'
+               aWiersz[ 'P_12' ] := 'zw'
+               aPoz[ 'P_13_5' ] := aPoz[ 'P_13_5' ] + pozycje->cena * pozycje->ilosc
+            ENDCASE
+
+            aDane[ 'FakturaWierszCtrl' ][ 'LiczbaWierszyFaktur' ] := aDane[ 'FakturaWierszCtrl' ][ 'LiczbaWierszyFaktur' ] + 1
+            aDane[ 'FakturaWierszCtrl' ][ 'WartoscWierszyFaktur' ] := aDane[ 'FakturaWierszCtrl' ][ 'WartoscWierszyFaktur' ] + aWiersz[ 'P_11' ]
+
+            AAdd( aPoz[ 'Pozycje' ], aWiersz )
+            AAdd( aDane[ 'Pozycje' ], aWiersz )
+         ENDIF
          pozycje->( dbSkip() )
       ENDDO
 
@@ -241,13 +249,15 @@ PROCEDURE JPK_FA_Rob()
       RETURN
    ENDIF
 
-   nKorekta := edekCzyKorekta( 17, 2 )
+   IF ( nKorekta := edekCzyKorekta( 17, 2 ) ) == 0
+      RETURN
+   ENDIF
 
    aDane[ 'CelZlozenia' ] := iif( nKorekta == 2, '2', '1' )
 
-   cJPK := jpk_fa1( aDane )
+   cJPK := jpk_fa3( aDane )
 
-   edekZapiszXML( cJPK, normalizujNazwe( 'JPK_FA_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKFA-1', nKorekta == 2, Val(miesiac) )
+   edekZapiszXML( cJPK, normalizujNazwe( 'JPK_FA_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKFA-3', nKorekta == 2, Val(miesiac) )
 
    RETURN
 
