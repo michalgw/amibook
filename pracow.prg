@@ -21,6 +21,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
 #include "box.ch"
+#include "Inkey.ch"
+#include "achoice.ch"
+#include "xhb.ch"
+
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Obsluga podstawowych operacji na bazie ......                             ±
@@ -966,6 +970,86 @@ FUNCTION CzyPracowPonizej26R( nMiesiac, nRok )
    ENDIF
 
    RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION PracWybierz()
+
+   LOCAL aRes := {}, cEkran
+   LOCAL nRecNo := prac->( RecNo() )
+   LOCAL aDaneStr := {}, aDaneNrr := {}
+   LOCAL nARes, lKoniec := .F., nIdx, nPos := 1, nHiLt := 0
+
+   LOCAL bUserFunc := { | nMode, nCurElement, nRowPos |
+      LOCAL nRetVal := AC_CONT, nKey := LastKey()
+      IF nMode == AC_NOITEM
+         nRetVal := AC_ABORT
+      ELSEIF nMode == AC_EXCEPT
+         DO CASE
+         CASE nKey == K_ENTER
+            nRetVal := AC_SELECT
+            //KEYBOARD Chr(13)
+         CASE nKey == K_ESC
+            nRetVal := AC_ABORT
+            //KEYBOARD Chr(13)
+         CASE nKey == Asc(' ')
+            nRetVal := AC_SELECT
+        ENDCASE
+      ENDIF
+      RETURN nRetVal
+   }
+
+   prac->( dbGoTop() )
+   prac->( dbSeek( "+" + ident_fir ) )
+
+   DO WHILE ! prac->( Eof() ) .AND. prac->del == "+" .AND. prac->firma == ident_fir
+      IF prac->status $ 'EU' .AND. prac->aktywny <> 'N' ;
+         .AND. ( Empty( prac->data_przy ) .OR. SubStr( DToS( prac->data_przy ), 1, 6 ) <= param_rok + strtran( miesiac, ' ', '0' ) ) ;
+         .AND. ( Empty( prac->data_zwol ) .OR. SubStr( DToS( prac->data_zwol ), 1, 6 ) >= param_rok + strtran( miesiac, ' ', '0' ) )
+
+         AAdd( aDaneStr, " [ ]  " + prac->nazwisko + ' ' + prac->imie1 + ' ' + Transform( Str( Int( ( Date() - prac->data_ur ) / 365 ), 2 ), '99' ) + ' lat' )
+         AAdd( aDaneNrr, prac->( RecNo() ) )
+      ENDIF
+      prac->( dbSkip() )
+   ENDDO
+
+   prac->( dbGoto( nRecNo ) )
+
+   IF Len( aDaneStr ) > 0
+      SAVE SCREEN TO cEkran
+      @  3, 4 CLEAR TO 22, 75
+      @  4, 4 TO 22, 75
+      @ 20, 5 TO 20, 74
+      @  3, 23 SAY "W Y B à R     P R A C O W N I K à W"
+      @ 21, 9 SAY "Spacja - zaznacz/odznacz   Enter - zatwierd«   ESC - anuluj"
+
+      DO WHILE ! lKoniec
+         nARes := AChoice( 5, 5, 19, 74, aDaneStr, , bUserFunc, @nPos, @nHiLt )
+         IF nARes == 0 .AND. LastKey() == K_ESC
+            lKoniec := .T.
+         ENDIF
+         IF nARes <> 0 .AND. LastKey() == K_SPACE
+            IF ( nIdx := AScan( aRes, aDaneNrr[ nARes ] ) ) > 0
+               hb_ADel( aRes, nIdx, .T. )
+               aDaneStr[ nARes ][ 3 ] := ' '
+            ELSE
+               AAdd( aRes, aDaneNrr[ nARes ] )
+               aDaneStr[ nARes ][ 3 ] := 'X'
+            ENDIF
+         ENDIF
+         IF LastKey() == K_ENTER
+            IF Len( aRes ) > 0
+               lKoniec := .T.
+            ELSE
+               Komun( "Prosz© zaznaczy† przynajmniej jednego pracownika" )
+            ENDIF
+         ENDIF
+      ENDDO
+
+      RESTORE SCREEN FROM cEkran
+   ENDIF
+
+   RETURN aRes
 
 /*----------------------------------------------------------------------*/
 

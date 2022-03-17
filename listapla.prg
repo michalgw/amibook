@@ -20,9 +20,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+#include "Inkey.ch"
+
 PROCEDURE ListaPla()
 
-   LOCAL nMenu, aDane, aWiersz
+   LOCAL nMenu, aDane, aWiersz, nZakres, aRekordy := {}
 
    PRIVATE _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
    PRIVATE _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15,koniep
@@ -66,6 +68,22 @@ PROCEDURE ListaPla()
          BREAK
       ENDIF
 
+      @ 24,  0
+      @ 24, 19 PROMPT "[ Wszyscy pracownicy ]"
+      @ 24, 44 PROMPT "[ Wybrani pracownicy ]"
+
+      MENU TO nZakres
+      IF LastKey() == K_ESC
+         BREAK
+      ENDIF
+
+      IF nZakres == 2
+         aRekordy := PracWybierz()
+         IF Len( aRekordy ) == 0
+            BREAK
+         ENDIF
+      ENDIF
+
       nMenu := GraficznyCzyTekst()
       IF nMenu == 0
          BREAK
@@ -102,7 +120,7 @@ PROCEDURE ListaPla()
             IF .NOT. Empty( PRAC->DATA_ZWOL )
                DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + strtran( miesiac, ' ', '0' ) .AND. prac->status <> 'Z'
             ENDIF
-            IF Found() .AND. ( DO_WYPLATY <> 0 .OR. ( DOD .AND. DDO ) )
+            IF Found() .AND. ( DO_WYPLATY <> 0 .OR. ( DOD .AND. DDO ) ) .AND. ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
                aWiersz[ 'k3' ] := BRUT_RAZEM
                aWiersz[ 'k4' ] := PODATEK
                aWiersz[ 'k5' ] := DOPL_NIEOP
@@ -142,7 +160,7 @@ PROCEDURE ListaPla()
             IF .NOT. Empty( PRAC->DATA_ZWOL )
                DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + strtran( miesiac, ' ', '0' )
             ENDIF
-            IF Found() .AND. ( DO_WYPLATY <> 0 .OR. ( DOD .AND. DDO ) )
+            IF Found() .AND. ( DO_WYPLATY <> 0 .OR. ( DOD .AND. DDO ) ) .AND. ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
                IF _grupa .OR. _grupa1 # Int( strona / Max( 1, _druk_2 - 7 ) )
                   _grupa1 := Int( strona / Max( 1, _druk_2 - 7 ) )
                   _grupa := .T.

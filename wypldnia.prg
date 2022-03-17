@@ -20,9 +20,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+#include "Inkey.ch"
+
 PROCEDURE WyplDnia()
 
-   LOCAL nMenu, aDane, aWiersz
+   LOCAL nMenu, aDane, aWiersz, nZakres, aRekordy := {}, lDodaj
 
    PRIVATE _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
    PRIVATE _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15,koniep
@@ -70,6 +72,22 @@ PROCEDURE WyplDnia()
       IF .NOT. Found()
          kom( 3, '*w', 'b r a k   p r a c o w n i k &_o. w' )
          BREAK
+      ENDIF
+
+      @ 24,  0
+      @ 24, 19 PROMPT "[ Wszyscy pracownicy ]"
+      @ 24, 44 PROMPT "[ Wybrani pracownicy ]"
+
+      MENU TO nZakres
+      IF LastKey() == K_ESC
+         BREAK
+      ENDIF
+
+      IF nZakres == 2
+         aRekordy := PracWybierz()
+         IF Len( aRekordy ) == 0
+            BREAK
+         ENDIF
       ENDIF
 
       //tworzenie bazy roboczej
@@ -171,25 +189,29 @@ PROCEDURE WyplDnia()
 
       DO WHILE .NOT. Eof()
          SELECT prac
+         lDodaj := .T.
          SEEK Val( robwypza->ident )
          IF Found()
             znazimie := AllTrim( nazwisko ) + ' ' + AllTrim( imie1 ) + ' ' + AllTrim( imie2 )
             zpesel := pesel
+            lDodaj := ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
          ELSE
             znazimie := 'BRAK PRACOWNIKA W BAZIE DANYCH  '
             zpesel := '? ? ? ? ? ?'
          ENDIF
 
-         SELECT robwyp
-         APPEND BLANK
-         REPLACE nazwisko WITH znazimie, ;
-            pesel WITH zpesel, ;
-            mcwyp WITH robwypza->mc
-         IF robwypza->rodzaj == 'W'
-            REPLACE wyplacono WITH robwypza->kwota, datawypla WITH robwypza->data, data WITH robwypza->data
-         ENDIF
-         IF robwypza->rodzaj == 'Z'
-            REPLACE zaliczka WITH robwypza->kwota, datazali WITH robwypza->data, data WITH robwypza->data
+         IF lDodaj
+            SELECT robwyp
+            APPEND BLANK
+            REPLACE nazwisko WITH znazimie, ;
+               pesel WITH zpesel, ;
+               mcwyp WITH robwypza->mc
+            IF robwypza->rodzaj == 'W'
+               REPLACE wyplacono WITH robwypza->kwota, datawypla WITH robwypza->data, data WITH robwypza->data
+            ENDIF
+            IF robwypza->rodzaj == 'Z'
+               REPLACE zaliczka WITH robwypza->kwota, datazali WITH robwypza->data, data WITH robwypza->data
+            ENDIF
          ENDIF
          SELECT robwypza
          SKIP

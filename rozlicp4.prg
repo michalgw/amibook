@@ -20,9 +20,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+#include "Inkey.ch"
+
 PROCEDURE RozlicP4()
 
-   LOCAL nMenu, aDane, aWiersz
+   LOCAL nMenu, aDane, aWiersz, nZakres, aRekordy := {}
 
    PRIVATE _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
    PRIVATE _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15,koniep
@@ -58,6 +60,22 @@ PROCEDURE RozlicP4()
       IF .NOT. Found()
          kom( 3, '*w', 'b r a k   p r a c o w n i k &_o. w' )
          BREAK
+      ENDIF
+
+      @ 24,  0
+      @ 24, 19 PROMPT "[ Wszyscy pracownicy ]"
+      @ 24, 44 PROMPT "[ Wybrani pracownicy ]"
+
+      MENU TO nZakres
+      IF LastKey() == K_ESC
+         BREAK
+      ENDIF
+
+      IF nZakres == 2
+         aRekordy := PracWybierz()
+         IF Len( aRekordy ) == 0
+            BREAK
+         ENDIF
       ENDIF
 
       //tworzenie bazy roboczej
@@ -112,7 +130,7 @@ PROCEDURE RozlicP4()
       DO WHILE .NOT. &_koniec .AND. .NOT. Eof()
          SELECT etaty
          SEEK '+' + ident_fir + Str( prac->rec_no, 5 )
-         IF Found()
+         IF Found() .AND. ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
             znazimie := AllTrim( prac->nazwisko ) + ' ' + AllTrim( prac->imie1 ) + ' ' + AllTrim( prac->imie2 )
             zpesel := prac->pesel
             DO WHILE del + firma + ident == '+' + ident_fir + Str( prac->rec_no, 5 ) .AND. .NOT. Eof()
