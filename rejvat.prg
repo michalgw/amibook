@@ -1691,7 +1691,8 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
          .AND. ( aFiltr[ 'rodzaj' ] == "*"  .OR. aFiltr[ 'rodzaj' ] == AllTrim( rejs->rodzdow ) ) ;
          .AND. ( Len( aFiltr[ 'opcje' ] ) == 0 .OR. ( AllTrim( rejs->opcje ) <> "" .AND. Len( AMerge( aFiltr[ 'opcje' ], gm_ATokens( AllTrim( rejs->opcje ), ',' ) ) ) > 0 ) ) ;
          .AND. ( Len( aFiltr[ 'procedura' ] ) == 0 .OR. AScan( aFiltr[ 'procedura' ], "MPP" ) > 0 .OR. ( AllTrim( rejs->procedur ) <> "" .AND. Len( AMerge( aFiltr[ 'procedura' ], gm_ATokens( AllTrim( rejs->procedur ), ',' ) ) ) > 0 ) ) ;
-         .AND. ( AScan( aFiltr[ 'procedura' ], "MPP" ) == 0 .OR. rejs->sek_cv7 == "SP" )
+         .AND. ( AScan( aFiltr[ 'procedura' ], "MPP" ) == 0 .OR. rejs->sek_cv7 == "SP" ) ;
+         .AND. ( aFiltr[ 'dolaczFP' ] .OR. AllTrim( rejs->rodzdow ) <> "FP" )
 
          aRow[ 'lp' ] := nLp
          AAdd( aDane[ 'pozycje' ], aRow )
@@ -2072,6 +2073,7 @@ FUNCTION RejVAT_Sp_Filtr()
    LOCAL cKolor
    LOCAL cRodzDow := '*' + Space( 5 )
    LOCAL aGTU := {}
+   LOCAL cUwzglFP := "T"
    LOCAL cSumujFP := "N"
    LOCAL nI
 
@@ -2096,12 +2098,13 @@ FUNCTION RejVAT_Sp_Filtr()
    cKolor := ColStd()
 
    @  3, 42 CLEAR TO 22, 79
-   @ 10, 42 TO 15, 79
+   @ 10, 42 TO 16, 79
    @  9, 54 SAY "-- Parametry --"
-   @ 11, 43 SAY "     Rodzaj dowodu" GET cRodzDow PICTURE '!!!' WHEN Eval( bRodzDowW ) VALID Eval( bRodzDowV, cRodzDow )
-   @ 12, 43 SAY "        Oznaczenie" GET zOpcje PICTURE '!!!!!!!!!!!!!!!!' WHEN KRejSWhOpcje()
-   @ 13, 43 SAY "         Procedura" GET zProcedur PICTURE '!!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur( .T. )
-   @ 14, 43 SAY "Sumuj dokumenty FP" GET cSumujFP PICTURE '!' VALID cSumujFP $ 'NT'
+   @ 11, 43 SAY "      Rodzaj dowodu" GET cRodzDow PICTURE '!!!' WHEN Eval( bRodzDowW ) VALID Eval( bRodzDowV, cRodzDow )
+   @ 12, 43 SAY "         Oznaczenie" GET zOpcje PICTURE '!!!!!!!!!!!!!!!!' WHEN KRejSWhOpcje()
+   @ 13, 43 SAY "          Procedura" GET zProcedur PICTURE '!!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur( .T. )
+   @ 14, 43 SAY "Doˆ¥cz dokumenty FP" GET cUwzglFP PICTURE '!' VALID cUwzglFP $ 'NT'
+   @ 15, 43 SAY " Sumuj dokumenty FP" GET cSumujFP PICTURE '!' WHEN cUwzglFP == "T" VALID cSumujFP $ 'NT'
    READ
 
    RESTORE SCREEN FROM cEkran
@@ -2115,7 +2118,8 @@ FUNCTION RejVAT_Sp_Filtr()
    aDane[ 'rodzaj' ] := AllTrim( cRodzDow )
    aDane[ 'opcje' ] := iif( AllTrim( zOpcje ) <> "", hb_ATokens( AllTrim( zOpcje ), ',' ), {} )
    aDane[ 'procedura' ] := iif( AllTrim( zProcedur ) <> "", hb_ATokens( AllTrim( zProcedur ), ',' ), {} )
-   aDane[ 'sumujFP' ] := cSumujFP == 'T'
+   aDane[ 'dolaczFP' ] := cUwzglFP == 'T'
+   aDane[ 'sumujFP' ] := aDane[ 'dolaczFP' ] .AND. ( cSumujFP == 'T' )
 
    FOR nI := 1 TO Len( aDane[ 'procedura' ] )
       aDane[ 'procedura' ][ nI ] := AllTrim( aDane[ 'procedura' ][ nI ] )
