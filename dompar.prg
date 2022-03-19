@@ -1,4 +1,4 @@
-/************************************************************************
+   /************************************************************************
 
 AMi-BOOK
 
@@ -106,6 +106,49 @@ FUNCTION DomyslneParametry()
          { 'kraj' => 'SI', 'oddnia' => d"2021-01-01", 'stawka_a' => 22, 'stawka_b' => 9.5, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
          { 'kraj' => 'SK', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 10, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
          { 'kraj' => 'UK', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 5, 'stawka_c' => 0, 'stawka_d' => 0 } }
+
+      // Parametry pˆacowe i zus
+      aPar[ 'parap_ldw' ] := 33
+      aPar[ 'parap_kos' ] := 250
+      aPar[ 'parap_odl' ] := 425
+      aPar[ 'parap_cho' ] := 80
+      aPar[ 'parap_pod' ] := 17.0
+      aPar[ 'parap_p51' ] := 3010
+      aPar[ 'parap_p52' ] := 3010
+      aPar[ 'parap_pue' ] := 9.76
+      aPar[ 'parap_pur' ] := 1.5
+      aPar[ 'parap_puz' ] := 9
+      aPar[ 'parap_puc' ] := 2.45
+      aPar[ 'parap_pf3' ] := 7
+      aPar[ 'parap_pfp' ] := 2.45
+      aPar[ 'parap_pfg' ] := 0.1
+      aPar[ 'parap_fue' ] := 9.76
+      aPar[ 'parap_fur' ] := 6.5
+      aPar[ 'parap_fuz' ] := 0
+      aPar[ 'parap_fzl' ] := 4.9
+      aPar[ 'parap_fuc' ] := 0
+      aPar[ 'parap_ff3' ] := 0
+      aPar[ 'parap_ffp' ] := 2.45
+      aPar[ 'parap_ffg' ] := 0.1
+      aPar[ 'parap_rkc' ] := '01R'
+
+      aPar[ 'parpk_sz' ] := 2
+      aPar[ 'parpk_sp' ] := 1.5
+
+      aPar[ 'parap_frp' ] := 6221.04
+      // Kwota od dla 1 progu
+      aPar[ 'parap_rk1' ] := 0
+      // Stawka dla 1 progu
+      aPar[ 'parap_rs1' ] := 60
+      // Kwota od dla 2 progu
+      aPar[ 'parap_rk2' ] := 60000
+      // Stawka dla 2 progu
+      aPar[ 'parap_rs2' ] := 100
+      // Kwota od dla 3 progu
+      aPar[ 'parap_rk3' ] := 300000
+      // Stawka dla 3 progu
+      aPar[ 'parap_rs3' ] := 180
+
 
       aDomyslneParametry[ '2022' ] := aPar
 
@@ -458,5 +501,65 @@ PROCEDURE DomParPrzywroc_TabVatUE( lOtworz, cRok )
    ENDIF
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE DomParPrzywroc_Param_P( lPrzypiszTmp, cRok )
+
+   IF Empty( cRok ) .OR. ! hb_HHasKey( aDomyslneParametry, cRok )
+      RETURN
+   ENDIF
+
+   parap_ldw := aDomyslneParametry[ cRok ][ 'parap_ldw' ]
+   parap_kos := aDomyslneParametry[ cRok ][ 'parap_kos' ]
+   parap_odl := aDomyslneParametry[ cRok ][ 'parap_odl' ]
+   parap_cho := aDomyslneParametry[ cRok ][ 'parap_cho' ]
+   parap_pod := aDomyslneParametry[ cRok ][ 'parap_pod' ]
+   parap_p51 := aDomyslneParametry[ cRok ][ 'parap_p51' ]
+   parap_p52 := aDomyslneParametry[ cRok ][ 'parap_p52' ]
+   parap_pue := aDomyslneParametry[ cRok ][ 'parap_pue' ]
+   parap_pur := aDomyslneParametry[ cRok ][ 'parap_pur' ]
+   parap_puz := aDomyslneParametry[ cRok ][ 'parap_puz' ]
+   parap_puc := aDomyslneParametry[ cRok ][ 'parap_puc' ]
+   parap_pf3 := aDomyslneParametry[ cRok ][ 'parap_pf3' ]
+   parap_pfp := aDomyslneParametry[ cRok ][ 'parap_pfp' ]
+   parap_pfg := aDomyslneParametry[ cRok ][ 'parap_pfg' ]
+   parap_fue := aDomyslneParametry[ cRok ][ 'parap_fue' ]
+   parap_fur := aDomyslneParametry[ cRok ][ 'parap_fur' ]
+   parap_fuz := aDomyslneParametry[ cRok ][ 'parap_fuz' ]
+   parap_fzl := aDomyslneParametry[ cRok ][ 'parap_fzl' ]
+   parap_fuc := aDomyslneParametry[ cRok ][ 'parap_fuc' ]
+   parap_ff3 := aDomyslneParametry[ cRok ][ 'parap_ff3' ]
+   parap_ffp := aDomyslneParametry[ cRok ][ 'parap_ffp' ]
+   parap_ffg := aDomyslneParametry[ cRok ][ 'parap_ffg' ]
+   parap_rkc := aDomyslneParametry[ cRok ][ 'parap_rkc' ]
+
+   parpk_sz := aDomyslneParametry[ cRok ][ 'parpk_sz' ]
+   parpk_sp := aDomyslneParametry[ cRok ][ 'parpk_sp' ]
+
+   SAVE TO param_p ALL LIKE parap_*
+   SAVE TO param_ppk ALL LIKE parpk_*
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE DomParPrzywroc_Param_PRycz( lPrzypiszTmp, cRok )
+
+   IF Empty( cRok ) .OR. ! hb_HHasKey( aDomyslneParametry, cRok )
+      RETURN
+   ENDIF
+
+   parap_frp := aDomyslneParametry[ cRok ][ 'parap_frp' ]
+   parap_rk1 := aDomyslneParametry[ cRok ][ 'parap_rk1' ]
+   parap_rs1 := aDomyslneParametry[ cRok ][ 'parap_rs1' ]
+   parap_rk2 := aDomyslneParametry[ cRok ][ 'parap_rk2' ]
+   parap_rs2 := aDomyslneParametry[ cRok ][ 'parap_rs2' ]
+   parap_rk3 := aDomyslneParametry[ cRok ][ 'parap_rk3' ]
+   parap_rs3 := aDomyslneParametry[ cRok ][ 'parap_rs3' ]
+
+   SAVE TO param_p ALL LIKE parap_*
+
+   RETURN
 
 /*----------------------------------------------------------------------*/

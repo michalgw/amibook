@@ -195,10 +195,11 @@ save screen to scr_
 @ 1,47 say [          ]
 declare p[20]
 *---------------------------------------
-p[ 1]='                                             '
-p[ 2]='     [M].....................modyfikacja     '
-p[ 3]='     [Esc]...................wyj&_s.cie         '
-p[ 4]='                                             '
+p[ 1 ] := '                                                      '
+p[ 2 ] := '     [M]...............modyfikacja                    '
+p[ 3 ] := '     [D]...............przywr¢c domy˜lne warto˜ci     '
+p[ 4 ] := '     [Esc].............wyj˜cie                        '
+p[ 5 ] := '                                                      '
 *---------------------------------------
 set color to i
    i=20
@@ -217,6 +218,13 @@ keyboard chr(lastkey())
 endif
 restore screen from scr_
 _disp=.f.
+
+      CASE Kl == Asc( 'd' ) .OR. Kl == Asc( 'D' )
+         IF TNEsc( , "Czy przywr¢ci† domy˜lne warto˜ci parametr¢w ? (Tak/Nie)" )
+            DomParPrzywroc_Param_P( .T., DomParRok() )
+            say_pr()
+         ENDIF
+
 ******************** ENDCASE
 endcase
 enddo
@@ -319,13 +327,13 @@ PROCEDURE Param_PRycz()
             zparap_rs3 := parap_rs3
 
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-            @  5, 70 GET parap_frp PICTURE '99999.99'
-            @  8, 55 GET parap_rk1 PICTURE '999999.99'
-            @  8, 75 GET parap_rs1 PICTURE '999'
-            @  9, 55 GET parap_rk2 PICTURE '999999.99'
-            @  9, 75 GET parap_rs2 PICTURE '999'
-            @ 10, 55 GET parap_rk3 PICTURE '999999.99'
-            @ 10, 75 GET parap_rs3 PICTURE '999'
+            @  5, 70 GET zparap_frp PICTURE '99999.99'
+            @  8, 55 GET zparap_rk1 PICTURE '999999.99'
+            @  8, 75 GET zparap_rs1 PICTURE '999'
+            @  9, 55 GET zparap_rk2 PICTURE '999999.99'
+            @  9, 75 GET zparap_rs2 PICTURE '999'
+            @ 10, 55 GET zparap_rk3 PICTURE '999999.99'
+            @ 10, 75 GET zparap_rs3 PICTURE '999'
 
             ****************************
             CLEAR TYPEAHEAD
@@ -354,10 +362,11 @@ PROCEDURE Param_PRycz()
          @ 1, 47 SAY '          '
          DECLARE p[ 20 ]
          *---------------------------------------
-         p[ 1 ] := '                                             '
-         p[ 2 ] := '     [M].....................modyfikacja     '
-         p[ 3 ] := '     [Esc]...................wyj&_s.cie         '
-         p[ 4 ] := '                                             '
+         p[ 1 ] := '                                                      '
+         p[ 2 ] := '     [M]...............modyfikacja                    '
+         p[ 3 ] := '     [D]...............przywr¢c domy˜lne warto˜ci     '
+         p[ 4 ] := '     [Esc].............wyj˜cie                        '
+         p[ 5 ] := '                                                      '
          *---------------------------------------
          SET COLOR TO i
          i := 20
@@ -375,6 +384,12 @@ PROCEDURE Param_PRycz()
             KEYBOARD Chr( LastKey() )
          ENDIF
          RESTORE SCREEN FROM scr_
+
+      CASE Kl == Asc( 'd' ) .OR. Kl == Asc( 'D' )
+         IF TNEsc( , "Czy przywr¢ci† domy˜lne warto˜ci parametr¢w ? (Tak/Nie)" )
+            DomParPrzywroc_Param_PRycz( .T., DomParRok() )
+            Eval( bPRyczPisz )
+         ENDIF
 
       ******************** ENDCASE
       ENDCASE
