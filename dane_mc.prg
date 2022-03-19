@@ -460,6 +460,7 @@ FUNCTION zrobcos()
             zzpodstzdr := a_ppodstn[ 1, Val( mc ) - 1 ]
          ENDIF
       ENDIF
+      zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
 *          zzzpodstzdr=parap_p52
       zstaw_wue := parap_pue + parap_fue
       zstaw_wur := parap_pur + parap_fur
@@ -598,10 +599,10 @@ FUNCTION zrobcos()
          IF mc == ' 1'
             zzpodstzdr := parap_p52
          ELSE
-            zzpodstzdr := a_ppodst[ 1, Val( mc ) - 1 ]
+            zzpodstzdr := a_ppodstn[ 1, Val( mc ) - 1 ]
          ENDIF
       ENDIF
-
+      zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
    ENDIF
    przeskla()
    SET COLOR TO /w+
