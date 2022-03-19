@@ -461,12 +461,12 @@ FUNCTION zrobcos()
          ENDIF
       ENDIF
 *          zzzpodstzdr=parap_p52
-      zstaw_wue := /*parap_pue +*/ parap_fue
-      zstaw_wur := /*parap_pur +*/ parap_fur
-      zstaw_wuc := /*parap_puc +*/ parap_fuc
-      zstaw_wuw := /*parap_puw +*/ parap_fww
-      zstaw_wfp := /*parap_pfp +*/ parap_ffp
-      zstaw_wfg := /*parap_pfg +*/ parap_ffg
+      zstaw_wue := parap_pue + parap_fue
+      zstaw_wur := parap_pur + parap_fur
+      zstaw_wuc := parap_puc + parap_fuc
+      zstaw_wuw := parap_puw + parap_fww
+      zstaw_wfp := parap_pfp + parap_ffp
+      zstaw_wfg := parap_pfg + parap_ffg
       zwar_wue := war_wue
       zwar_wur := war_wur
       zwar_wuc := war_wuc
