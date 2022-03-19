@@ -47,7 +47,7 @@ PROCEDURE P_Dochod( _OUT )
    PRIVATE a_preman, a_pit5goss, a_pit5najs, a_gosprzy, a_goskosz, a_najprzy
    PRIVATE a_najkosz, a_gosdoch, a_gosstra, a_najdoch, a_najstra, a_pro1doch
    PRIVATE a_pro2doch, a_pro1stra, a_pro2stra, a_pk5, a_p50, a_p51, a_p51a
-   PRIVATE a_p51b, a_pkk7, a_pk6, a_pk75, a_pk7, a_ppodst, a_pk8, a_pk9, a_pk12
+   PRIVATE a_p51b, a_pkk7, a_pk6, a_pk75, a_pk7, a_ppodst, a_ppodstn, a_pk8, a_pk9, a_pk12
    PRIVATE a_pk13, a_sumzdro1, a_P97MMM, a_P887MMMa, a_P887MMM, a_P885, a_P887
    PRIVATE a_P888, a_P889, a_wartprze
 
@@ -643,6 +643,7 @@ PROCEDURE P_Dochod_Licz()
          a_pk75     := Array( 3, 12 )
          a_pk7      := Array( 3, 12 )
          a_ppodst   := Array( 3, 12 )
+         a_ppodstn  := Array( 3, 12 )
          a_pk8      := Array( 3, 12 )
          a_pk9      := Array( 3, 12 )
          a_pk12     := Array( 3, 12 )
@@ -685,6 +686,7 @@ PROCEDURE P_Dochod_Licz()
                a_pk75[ yyy, xxx ] := 0
                a_pk7[ yyy, xxx ] := 0
                a_ppodst[ yyy, xxx ] := 0
+               a_ppodstn[ yyy, xxx ] := 0
                a_pk8[ yyy, xxx ] := 0
                a_pk9[ yyy, xxx ] := 0
                a_pk12[ yyy, xxx ] := 0
@@ -777,6 +779,7 @@ PROCEDURE P_Dochod_Licz()
                   a_pk7[ 1, xxx ] := a_pk6[ 1, xxx ]
                ENDIF
             ENDIF
+            a_ppodstn[ 1, xxx ] := a_pk7[ 1, xxx ]
             a_pk7[ 1, xxx ] := _round( a_pk7[ 1, xxx ], 0 )
             a_ppodst[ 1, xxx ] := a_pk7[ 1, xxx ]
 
@@ -1230,6 +1233,7 @@ PROCEDURE P_Dochod_Licz()
                   a_pk7[ 2, xxx ] := a_pk6[ 2, xxx ]
                ENDIF
             ENDIF
+            a_ppodstn[ 2, xxx ] := a_pk7[ 2, xxx ]
             a_pk7[ 2, xxx ] := _round( a_pk7[ 2, xxx ], 0 )
             a_ppodst[ 2, xxx ] := a_pk7[ 2, xxx ]
 
@@ -1394,6 +1398,7 @@ PROCEDURE P_Dochod_Licz()
                   a_pk7[ 3, xxx ] := a_pk6[ 3, xxx ]
                ENDIF
             ENDIF
+            a_ppodstn[ 3, xxx ] := a_pk7[ 3, xxx ]
             a_pk7[ 3, xxx ] := _round( a_pk7[ 3, xxx ], 0 )
             a_ppodst[ 3, xxx ] := a_pk7[ 3, xxx ]
 

@@ -457,7 +457,7 @@ FUNCTION zrobcos()
          IF mc == ' 1'
             zzpodstzdr := parap_p52
          ELSE
-            zzpodstzdr := a_ppodst[ 1, Val( mc ) - 1 ]
+            zzpodstzdr := a_ppodstn[ 1, Val( mc ) - 1 ]
          ENDIF
       ENDIF
 *          zzzpodstzdr=parap_p52
