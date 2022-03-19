@@ -124,7 +124,7 @@ FUNCTION DomyslneParametry()
       aPar[ 'parap_pfg' ] := 0.1
       aPar[ 'parap_fue' ] := 9.76
       aPar[ 'parap_fur' ] := 6.5
-      aPar[ 'parap_fuz' ] := 0
+      aPar[ 'parap_fuz' ] := 9
       aPar[ 'parap_fzl' ] := 4.9
       aPar[ 'parap_fuc' ] := 0
       aPar[ 'parap_ff3' ] := 0

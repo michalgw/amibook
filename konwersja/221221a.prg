@@ -29,7 +29,7 @@ FUNCTION Main()
       RESTORE FROM param_p ADDITIVE
       parap_fue := 9.76
       parap_fur := 6.5
-      parap_fuz := 0
+      parap_fuz := 9
       parap_fzl := 4.9
       parap_fuc := 0
       parap_ff3 := 0
