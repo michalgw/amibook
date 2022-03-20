@@ -178,7 +178,7 @@ PROCEDURE ksiega16()
 
       SWITCH nPoz
       CASE 1
-         DO ksiega13
+         Ksiega13()
          EXIT
       CASE 2
          @ 24, 0
