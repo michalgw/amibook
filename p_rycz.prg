@@ -226,7 +226,7 @@ PROCEDURE P_RyczLicz( Okres, lPobierzPrzychody )
    CASE OKRES == 'N'
       SEEK '+' + ident_fir + ' 1'
       IF lPobierzPrzychody .AND. Val( miesiac ) > 1
-         koniecokr := Str( Val( miesiac ) - 1, 2, 0 )
+         koniecokr := Str( Val( miesiac ) - iif( firma->zuspodmie == 'B', 0, 1 ), 2, 0 )
       ELSE
          koniecokr := miesiac
       ENDIF

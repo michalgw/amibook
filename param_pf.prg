@@ -27,6 +27,22 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Param_PF()
 
+   LOCAL bZusPodMieW := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 say PadC( "P - poprzedni miesi¥c      B - bie¾¥cy miesi¥c", 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bZusPodMieV := { | |
+      LOCAL lRes, cKolor
+      IF ( lRes := zzuspodmie $ 'BP' )
+         @ 24, 0
+         cKolor := SetColor( 'w+' )
+         @ 4, 63 SAY iif( zzuspodmie == 'B', 'ie¾¥cy miesi¥c  ', 'oprzedni miesi¥c' )
+      ENDIF
+      RETURN lRes
+   }
+
 *############################# PARAMETRY POCZATKOWE #########################
 if .not.file([param_p.mem])
    save to param_p all like parap_*
@@ -42,10 +58,14 @@ else
 endif
 @  3,42 clear to 22,79
 *################################# GRAFIKA ##################################
-@ 11,42 say 'ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍfinansuje: P&_l.atnik'
+@  3,42 say 'ÍÍ Podstawa do zdrowotnego ÍÍÍÍÍÍÍÍÍÍÍ'
+@ 10,42 say 'ÍÍStawki na ubezpieczenie wypadkoweÍÍÍ'
+@ 11,42 say '                    finansuje: P&_l.atnik'
 set colo to /w+
 @ 11,73 say 'P&_l.atnik'
 set colo to
+@  4,42 say ' Doch¢d za                            '
+
 @ 12,42 say ' Na ubezpieczenia wypadkowe:          '
 @ 13,42 say ' pracownik&_o.w                          '
 @ 14,42 say ' w&_l.a&_s.cicieli                          '
@@ -71,7 +91,9 @@ do case
 zparap_puw=A->parap_puw
 zparap_fuw=A->parap_fuw
 zparap_fww=A->parap_fww
+zzuspodmie := iif( A->zuspodmie $ 'BP', A->zuspodmie, 'P' )
 *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
+@  4,62 get zzuspodmie PICTURE '!' WHEN Eval( bZusPodMieW ) VALID Eval( bZusPodMieV )
 *@ 15,65 get zparap_puw picture "99.99"
 @ 13,75 get zparap_fuw picture "99.99"
 @ 14,75 get zparap_fww picture "99.99"
@@ -86,12 +108,15 @@ do BLOKADAR
 repl_([A->parap_puw],0)
 repl_([A->parap_fuw],zparap_fuw)
 repl_([A->parap_fww],zparap_fww)
+repl_([A->zuspodmie],zzuspodmie)
+
 commit_()
 unlock
 
 m->parap_puw=zparap_puw
 m->parap_fuw=zparap_fuw
 m->parap_fww=zparap_fww
+//m->zuspodmie=zzuspodmie
 ****************************
 save to param_p all like parap_*
 *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
@@ -134,6 +159,7 @@ close_()
 procedure say_pfirmy
 clear type
 set colo to w+
+@ 4,62 say iif( A->zuspodmie == 'B', 'Bie¾¥cy miesi¥c  ', 'Poprzedni miesi¥c' )
 *@ 15,65 say parap_puw picture "99.99"
 @ 13,75 say parap_fuw picture "99.99"
 @ 14,75 say parap_fww picture "99.99"

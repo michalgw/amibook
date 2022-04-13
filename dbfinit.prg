@@ -601,7 +601,8 @@ public aFIRMAdbf := {;
    { "PPKEIDEPPK", "C", 1, 0 },;                  //  79 PPK doˆ¥czaj pole "ID Kadrowy"
    { "PPKEIDPZIF", "C", 1, 0 },;                  //  80 PPK doˆ¥czaj pole "ID Kadrowy"
    { "RODZAJDRFV", "C", 1, 0 },;                  //  81 Rodzaj wydruku faktury: G - graficzny, T - tekstowy
-   { "RODZAJFNV", "C", 1, 0 } }                   //  82 Rodzaj dok. sprzedazy dla nie watowca: F - faktura, R - rachunek
+   { "RODZAJFNV", "C", 1, 0 },;                   //  82 Rodzaj dok. sprzedazy dla nie watowca: F - faktura, R - rachunek
+   { "ZUSPODMIE", "C", 1, 0 } }                   //  83 Podstawa do zdrowotnego - przych¢d z 'B' - biezacy miesiac, 'P' - poprzedni miesiac
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;
