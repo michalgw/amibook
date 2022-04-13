@@ -306,13 +306,14 @@ FUNCTION Ewid()
                DO WHILE .T.
                *=============================
                   ColPro()
-                  @ 14, 4 to 21, 37
+                  @ 14, 4 to 22, 37
                   @ 15, 5 PROMPT ' D - podatku dochodowym         '
                   @ 16, 5 PROMPT ' V - podatku VAT                '
                   @ 17, 5 PROMPT ' W - podatku od wyp&_l.at          '
                   @ 18, 5 PROMPT ' R - podatku zrycza&_l.towanym     '
                   @ 19, 5 PROMPT ' S - strukturze sprzeda&_z.y-detal '
                   @ 20, 5 PROMPT ' K - % korekty VAT-zak.pozosta. '
+                  @ 21, 5 PROMPT ' Z - skˆadkach ZUS wˆa˜cicieli  '
                   opcja1 := menu( opcja1 )
                   ColStd()
                   IF LastKey() == K_ESC
@@ -373,6 +374,9 @@ FUNCTION Ewid()
 
                      CASE opcja1 == 6
                         info_kor()
+
+                     CASE opcja1 == 7
+                        Wlasciciel_SkladkiZus()
 
                   ENDCASE
                   close_()
