@@ -1803,7 +1803,7 @@ FUNCTION _aj()
    o[ 1 ] := ' W - Informacje o w&_l.a&_s.cicielach firmy  '
    o[ 2 ] := ' Z - Inne zr&_o.d&_l.a przychod&_o.w            '
    o[ 3 ] := ' F - Informacje o firmie               '
-   o[ 4 ] := ' P - Stawki na ubezpieczenie wypadkowe '
+   o[ 4 ] := ' P - Parametry ZUS i stawki na wypadk. '
 
    RETURN '17,1'
 
