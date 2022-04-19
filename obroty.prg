@@ -77,6 +77,28 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
                aPoz[ 'br' ] := oper->zakup + oper->uboczne + oper->wynagr_g + oper->wydatki
             ENDIF
 
+            aPoz[ 'kol' ] := ''
+            IF oper->wyr_tow <> 0
+               aPoz[ 'kol' ] := '7 '
+            ENDIF
+            IF oper->uslugi <> 0
+               aPoz[ 'kol' ] += '8 '
+            ENDIF
+            IF oper->zakup <> 0
+               aPoz[ 'kol' ] += '10 '
+            ENDIF
+            IF oper->uboczne <> 0
+               aPoz[ 'kol' ] += '11 '
+            ENDIF
+            IF oper->wynagr_g <> 0
+               aPoz[ 'kol' ] += '12 '
+            ENDIF
+            IF oper->wydatki <> 0
+               aPoz[ 'kol' ] += '13 '
+            ENDIF
+
+            aPoz[ 'opis' ] := AllTrim( oper->tresc )
+
             nI := AScan( aLista, { | aElem | aElem[ 'klucz' ] == cKlucz } )
             IF nI == 0
                AAdd( aLista, { 'klucz' => cKlucz, 'nazwa' => aPoz[ 'nazwa' ], 'pozycje' => { aPoz } } )
@@ -129,6 +151,9 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
                + rejs->vat12
             aPoz[ 'br' ] := 0
 
+            aPoz[ 'kol' ] := AllTrim( AllTrim( rejs->kolumna ) + ' ' + AllTrim( rejs->kolumna2 ) )
+            aPoz[ 'opis' ] := AllTrim( rejs->tresc )
+
             nI := AScan( aLista, { | aElem | aElem[ 'klucz' ] == cKlucz } )
             IF nI == 0
                AAdd( aLista, { 'klucz' => cKlucz, 'nazwa' => aPoz[ 'nazwa' ], 'pozycje' => { aPoz } } )
@@ -180,6 +205,9 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
             aPoz[ 'br' ] := rejz->wartzw + rejz->wart00 + rejz->wart02 + rejz->wart07 ;
                + rejz->wart22 + rejz->wart12 + rejz->vat02 + rejz->vat07 + rejz->vat22 ;
                + rejz->vat12
+
+            aPoz[ 'kol' ] := AllTrim( AllTrim( rejz->kolumna ) + ' ' + AllTrim( rejz->kolumna2 ) )
+            aPoz[ 'opis' ] := AllTrim( rejz->tresc )
 
             nI := AScan( aLista, { | aElem | aElem[ 'klucz' ] == cKlucz } )
             IF nI == 0
@@ -238,7 +266,7 @@ PROCEDURE Obroty( nRodzaj, lTekstowy )
    LOCAL cFiltr := Space( 100 )
    LOCAL dDataOd, dDataDo
    LOCAL aDane
-   LOCAL cEkran, cKolor, cGrupuj := 'R'
+   LOCAL cEkran, cKolor, cGrupuj := 'R', cRodzaj := 'P'
    LOCAL bGrupujW := { | x |
       LOCAL cGrKolor := ColInf()
       @ 24, 0 SAY PadC( 'R - rodzaju rejestru      K - kontrahenta', 80 )
@@ -249,6 +277,22 @@ PROCEDURE Obroty( nRodzaj, lTekstowy )
       IF cGrupuj $ 'KR'
          @ 24,  0
          @ 22, 35 SAY iif( cGrupuj == 'K', 'ontrahenta      ', 'odzaju dokumentu' )
+         RETURN .T.
+      ELSE
+         @ 22, 35 SAY '                '
+         RETURN .F.
+      ENDIF
+   }
+   LOCAL bRodzajW := { | x |
+      LOCAL cGrKolor := ColInf()
+      @ 24, 0 SAY PadC( 'P - podstawowy      R - rozszerzony', 80 )
+      SetColor( cGrKolor )
+      RETURN .T.
+   }
+   LOCAL bRodzajV := { | x |
+      IF cRodzaj $ 'PR'
+         @ 24,  0
+         @ 22, 71 SAY iif( cGrupuj == 'P', 'oodstawowy ', 'rozszerzony' )
          RETURN .T.
       ELSE
          @ 22, 35 SAY '                '
@@ -273,6 +317,8 @@ PROCEDURE Obroty( nRodzaj, lTekstowy )
    IF ! lTekstowy
       @ 22, 21 SAY 'Grupu wedˆug' GET cGrupuj PICTURE '!' WHEN Eval( bGrupujW ) VALID Eval( bGrupujV )
       @ 22, 35 SAY 'odzaju dokumentu'
+      @ 22, 55 SAY 'Rodzaj wydruku' GET cRodzaj PICTURE '!' WHEN Eval( bRodzajW ) VALID Eval( bRodzajV )
+      @ 22, 71 SAY 'odstawowy'
    ENDIF
    read_()
    IF LastKey() <> 27
@@ -284,7 +330,7 @@ PROCEDURE Obroty( nRodzaj, lTekstowy )
          IF lTekstowy
             Obroty_Tekst( aDane )
          ELSE
-            FRDrukuj( 'frf\' + iif( cGrupuj == 'K', 'obrotygk', 'obrotygr' ) + '.frf', aDane )
+            FRDrukuj( 'frf\' + iif( cGrupuj == 'K', 'obrotygk', 'obrotygr' ) + iif( cRodzaj == 'R', 'r', '' ) + '.frf', aDane )
          ENDIF
 
       ENDIF
