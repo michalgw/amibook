@@ -599,7 +599,7 @@ FUNCTION zrobcos()
          IF mc == ' 1'
             zzpodstzdr := parap_p52
          ELSE
-            zzpodstzdr := a_ppodstn[ 1, Val( mc ) - 1 ]
+            zzpodstzdr := a_ppodstn[ 1, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ]
          ENDIF
       ENDIF
       zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
