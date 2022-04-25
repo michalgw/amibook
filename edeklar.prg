@@ -6668,7 +6668,7 @@ FUNCTION edek_viudo_1( aDane )
                   IF ! Empty( aPoz[ 'nr_idvat' ] )
                      r += '                <dto:VATIdentificationNumber issuedBy="' + aPoz[ 'krajdz' ] + '">' + str2sxml( aPoz[ 'nr_idvat' ] ) + '</dto:VATIdentificationNumber>' + nl
                   ELSE
-                     r += '                <dto:TaxReferenceNumber issuedBy="' + aPoz[ 'krajdz' ] + '">' + str2sxml( aPoz[ 'nr_idvat' ] ) + '</dto:TaxReferenceNumber>' + nl
+                     r += '                <dto:TaxReferenceNumber issuedBy="' + aPoz[ 'krajdz' ] + '">' + str2sxml( aPoz[ 'nr_idpod' ] ) + '</dto:TaxReferenceNumber>' + nl
                   ENDIF
                   r += '              </EUTraderID>' + nl
                   r += '              <OSSVATReturnDetail>' + nl
