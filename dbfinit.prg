@@ -1674,7 +1674,9 @@ public aUMOWYdbf := {;
    { "PPKIDEPPK", "C", 50, 0 },;                  //  96 PPK Identyfikator ewidencji PPK uczestnika PPK
    { "ZASI_BZUS", "N", 12, 2 },;                  //  97 Zasilki bez ZUS
    { "WNIOSTERM", "C", 1, 0 },;                   //  98 Przedˆu¾enie terminu poboru podatku (rozp. 07.01.2022)
-   { "NALPODAT", "N", 12, 2 } }                   //  99 Naliczony podatek
+   { "NALPODAT", "N", 12, 2 },;                   //  99 Naliczony podatek
+   { "ODLICZ", "N", 8, 2 },;                      // 100 Kwota wolna do odliczenia
+   { "ODLICZENIE", "C", 1, 0 } }                  // 101 Odlicz kwote wolna
 
 // Create: URZEDY.DBF
 public aURZEDYdbf := {;

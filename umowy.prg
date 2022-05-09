@@ -231,12 +231,14 @@ PROCEDURE Umowy()
                   zPPKPK2    , ;
                   zPPKPPM    , ;
                   zZASI_BZUS , ;
-                  zNALPODAT
+                  zNALPODAT  , ;
+                  zODLICZ
 
                zTYTUL := TYTUL
                zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
                zPPK := ' '
                zWNIOSTERM := ' '
+               zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
 
                PodstawU()
             ELSEIF ins
@@ -253,6 +255,12 @@ PROCEDURE Umowy()
                //002a nowa zmienna
                zTYT := ( 'Z' )
                zOSWIAD26R := 'N'
+               zODLICZENIE := iif( prac->odliczenie == ' ', 'N', prac->odliczenie )
+               IF zODLICZENIE == 'T'
+                  zODLICZ := parap_odl
+               ELSE
+                  zODLICZ := 0
+               ENDIF
             ELSE
                zIDENT := IDENT
                zNUMER := NUMER
@@ -293,6 +301,7 @@ PROCEDURE Umowy()
 
                zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
                zPPK := iif( PPK $ 'TN', PPK, 'N' )
+               zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
                SELECT prac
                SET ORDER TO 4
                SEEK Val( zident )
@@ -478,13 +487,15 @@ PROCEDURE Umowy()
             zPPKPK2    , ;
             zPPKPPM    , ;
             zZASI_BZUS , ;
-            zNALPODAT
+            zNALPODAT  , ;
+            zODLICZ
             *zZAOPOD    ,;
             *zJAKZAO='Z'
          zTYTUL := TYTUL
          zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
          zPPK := ' '
          zWNIOSTERM := ' '
+         zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
          DO CASE
          *case TYTUL='0'
          *zTYT='O' //organy stanowiace
@@ -606,17 +617,20 @@ PROCEDURE Umowy()
             CASE skladn == 5
                SAVE SCREEN TO scr_sklad
                SET CURSOR ON
-               @ 16, 25 CLEAR TO 22, 75
-               @ 16, 25 TO 22, 75
-               @ 17, 26 SAY 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' WHEN CzyPracowPonizej26R( Month( Date() ), Year( Date() ) ) VALID zOSWIAD26R $ 'TN' .AND. oblplu()
-               @ 18, 26 SAY 'Podatek stawka..........%.='
-               @ 18, 45 GET zSTAW_PODAT PICTURE '99.99' VALID oblplu()
-               @ 18, 66 GET B5          PICTURE '999999.99' WHEN oblplu() .AND. .F.
-               @ 19, 26 SAY 'Ubezp.zdrow. do ZUS.....%.='
-               @ 19, 45 GET zSTAW_PUZ PICTURE '99.99' VALID oblplu()
-               @ 19, 54 GET oWAR_PUZ  PICTURE '999999.99' WHEN oblplu() .AND. .F.
-               @ 19, 64 GET zAPUZ PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUZ $ 'AR' .AND. vAUTOKOM()
-               @ 19, 66 GET zWAR_PUZ  PICTURE '999999.99' WHEN oblplu()
+               @ 15, 25 CLEAR TO 22, 75
+               @ 15, 25 TO 22, 75
+               @ 16, 26 SAY 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' WHEN CzyPracowPonizej26R( Month( Date() ), Year( Date() ) ) VALID zOSWIAD26R $ 'TN' .AND. oblplu()
+               @ 17, 26 SAY 'Podatek stawka..........%.='
+               @ 17, 45 GET zSTAW_PODAT PICTURE '99.99' VALID oblplu()
+               @ 17, 66 GET B5          PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 18, 26 SAY 'Ubezp.zdrow. do ZUS.....%.='
+               @ 18, 45 GET zSTAW_PUZ PICTURE '99.99' VALID oblplu()
+               @ 18, 54 GET oWAR_PUZ  PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 18, 64 GET zAPUZ PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUZ $ 'AR' .AND. vAUTOKOM()
+               @ 18, 66 GET zWAR_PUZ  PICTURE '999999.99' WHEN oblplu()
+               @ 19, 26 SAY 'Odlicz kwot© woln¥.........'
+               @ 19, 54 GET zODLICZENIE PICTURE '!' WHEN oblplu() VALID zODLICZENIE $ 'TN'
+               @ 19, 66 GET zODLICZ PICTURE '999999.99' WHEN oblplu()
                @ 20, 26 SAY 'Przesuni©cie terminu poboru podatku....' GET zWNIOSTERM PICTURE '!' VALID ValidTakNie( zWNIOSTERM, 20, 67 ) .AND. oblplu()
                *@ 20, 26 SAY '             do odlicz..%.='
                *@ 20, 45 GET zSTAW_PZK PICTURE '99.99' VALID oblplu()
@@ -1108,6 +1122,12 @@ FUNCTION _infoskl_u()
 *############################################################################
 FUNCTION oblplu()
 
+   IF zODLICZENIE == 'T'
+      zODLICZ := parap_odl
+   ELSE
+      zODLICZ := 0
+   ENDIF
+
    IF zTYT = 'R' .OR. zTYT == 'O'
       zPENSJA := zBRUT_ZASAD
       zBRUT_RAZEM := zPENSJA + zZASI_BZUS
@@ -1143,7 +1163,7 @@ FUNCTION oblplu()
       zWAR_PZK := 0
       zWAR_PUZO := zWAR_PZK
       //zWAR_PUZO21 := zWAR_PZK21
-      zPODATEK := _round( zBRUT_RAZEM * ( zSTAW_PODAT / 100 ), 0 )
+      zPODATEK := Max( 0, _round( ( zBRUT_RAZEM * ( zSTAW_PODAT / 100 ) ) - iif( zODLICZENIE == 'T', zODLICZ, 0 ), 0 ) )
       //zPODATEK21 := _round( zBRUT_RAZEM * ( zSTAW_PODAT / 100 ), 0 )
       zNETTO := zBRUT_RAZEM - ( zPODATEK + zWAR_PSUM + zWAR_PUZ )
       zDO_WYPLATY := zNETTO - zPOTRACENIA - zPPKZK1 - zPPKZK2
@@ -1239,8 +1259,8 @@ FUNCTION oblplu()
          zWAR_PZK := 0
          zWAR_PUZO := zWAR_PZK
          zWAR_PUZO21 := zWAR_PZK21
-         zPODATEK := Max( 0, _round( B5 - zWAR_PZK, 0 ) )
-         zPODATEK21 := Max( 0, _round( B5 - zWAR_PZK21, 0 ) )
+         zPODATEK := Max( 0, _round( B5 - zWAR_PZK - iif( zODLICZENIE == 'T', zODLICZ, 0 ), 0 ) )
+         zPODATEK21 := Max( 0, _round( B5 - zWAR_PZK21 - iif( zODLICZENIE == 'T', zODLICZ, 0 ), 0 ) )
          IF zPENSJA < 12800 .AND. zWNIOSTERM == 'T'
             IF zPODATEK > zPODATEK21
                zNALPODAT := zPODATEK
@@ -1430,6 +1450,9 @@ PROCEDURE PODSTAWu()
       ENDIF
    ENDIF
 
+   zODLICZ := ODLICZ
+   zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
+
    RETURN
 
 ***************************************************************************
@@ -1541,6 +1564,9 @@ PROCEDURE ZAPISZPLAu()
 
    repl_( 'WNIOSTERM', zWNIOSTERM )
    repl_( 'NALPODAT', zNALPODAT )
+
+   repl_( 'ODLICZENIE', zODLICZENIE )
+   repl_( 'ODLICZ', zODLICZ )
 
    RETURN
 

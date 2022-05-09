@@ -54,7 +54,7 @@ PROCEDURE Pracow()
    @ 15, 0 SAY '³ Miejsce zamieszkania.                        Kod..        Poczta..           ³'
    @ 16, 0 SAY '³ Ulica,dom,lokal......                              /        Tel...           ³'
    @ 17, 0 SAY '³ Gmina.                   Powiat.                   Wojew.                    ³'
-   @ 18, 0 SAY '³ Urz¥d Skarbowy.                                                  O˜w.<26r:   ³'
+   @ 18, 0 SAY '³ Urz¥d Skarbowy.                              Odlicz kw.wol.      O˜w.<26r:   ³'
    @ 19, 0 SAY '³ Miejsce zatrudnienia.                        PPK:        Ulga klasy ˜red.:   ³'
    @ 20, 0 SAY '³ Bank:                Konto:                Kwota przelewu:                   ³'
    @ 21, 0 SAY '³ Nr id. podat.                  Rodzaj nr id.                                 ³'
@@ -207,6 +207,7 @@ PROCEDURE Pracow()
                zPPKIDEPPK := Space( 20 )
                zPPKIDPZIF := Space( 50 )
                zULGAKLSRA := 'T'
+               zODLICZENIE := 'N'
             else
                zNREWID := NREWID
                zNAZWISKO := NAZWISKO
@@ -263,6 +264,7 @@ PROCEDURE Pracow()
                zPPKIDPZIF := PPKIDPZIF
 
                zULGAKLSRA := iif( ULGAKLSRA == ' ', 'T', ULGAKLSRA )
+               zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
 
                SELECT urzedy
                GO zSKARB
@@ -297,7 +299,8 @@ PROCEDURE Pracow()
             @ 17,  8 GET zGMINA      PICTURE "@S17 !!!!!!!!!!!!!!!!!!!!"
             @ 17, 34 GET zPARAM_POW  PICTURE "@S17 !!!!!!!!!!!!!!!!!!!!"
             @ 17, 59 GET zPARAM_WOJ  PICTURE "!!!!!!!!!!!!!!!!!!!!"
-            @ 18, 17 GET zURZAD      PICTURE "!!!!!!!!!!!!!!!!!!!! - !!!!!!!!!!!!!!!!!!!!!!!!!" VALID v3_141()
+            @ 18, 17 GET zURZAD      PICTURE "@S29 !!!!!!!!!!!!!!!!!!!! - !!!!!!!!!!!!!!!!!!!!!!!!!" VALID v3_141()
+            @ 18, 62 GET zODLICZENIE PICTURE "!" VALID ValidPracOdliczenie()
             @ 18, 76 GET zOSWIAD26R  PICTURE "!" VALID ValidPracOswiad26r()
             @ 19, 23 GET zZATRUD     PICTURE '@S23 ' + Replicate( '!', 70 )
             @ 19, 52 GET zPPK        PICTURE '!' VALID etatyvppk( 19, 53 )
@@ -386,7 +389,8 @@ PROCEDURE Pracow()
                PPKIDKADR WITH zPPKIDKADR, ;
                PPKIDEPPK WITH zPPKIDEPPK, ;
                PPKIDPZIF WITH zPPKIDPZIF, ;
-               ULGAKLSRA WITH zULGAKLSRA
+               ULGAKLSRA WITH zULGAKLSRA, ;
+               ODLICZENIE WITH zODLICZENIE
 
             IF (zJAKI_PRZEL = 'P' ) .AND. ( zKW_PRZELEW > 100 )
                SaveScreen()
@@ -667,8 +671,9 @@ PROCEDURE say31s()
    SELECT urzedy
    GO prac->skarb
    zurzad := miejsc_us + ' - ' + urzad
-   @ 18, 17 SAY zURZAD
+   @ 18, 17 SAY SubStr( zURZAD, 1, 29 )
    SELECT prac
+   @ 18, 62 SAY iif( ODLICZENIE == 'T', 'Tak', 'Nie' )
    @ 19, 23 SAY SubStr( ZATRUD, 1, 23 )
    @ 19, 52 SAY iif( iif( PPK == ' ', 'N', PPK ) == 'T', 'Tak', 'Nie' )
    @ 19, 76 SAY iif( iif( ULGAKLSRA == ' ', 'T', ULGAKLSRA ) == 'T', 'Tak', 'Nie' )
@@ -802,7 +807,7 @@ FUNCTION v3_141()
    IF LastKey() == 13 .OR. LastKey() == 1006
       zurzad := miejsc_us + ' - ' + urzad
       SET COLOR TO i
-      @ 18, 17 SAY zurzad
+      @ 18, 17 SAY SubStr( zurzad, 1, 29 )
       SET COLOR TO
       pause( .5 )
    ENDIF
@@ -818,6 +823,20 @@ FUNCTION ValidPracOswiad26r()
       R := .T.
       SET COLOR TO w+
       @ 18, 77 SAY iif( zOSWIAD26R == 'T', 'ak', 'ie' )
+      SET COLOR TO
+   ENDIF
+
+   RETURN R
+
+***************************************************
+FUNCTION ValidPracOdliczenie()
+
+   LOCAL R := .F.
+
+   IF zODLICZENIE $ 'NT'
+      R := .T.
+      SET COLOR TO w+
+      @ 18, 63 SAY iif( zODLICZENIE == 'T', 'ak', 'ie' )
       SET COLOR TO
    ENDIF
 
