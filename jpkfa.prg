@@ -255,9 +255,9 @@ PROCEDURE JPK_FA_Rob()
 
    aDane[ 'CelZlozenia' ] := iif( nKorekta == 2, '2', '1' )
 
-   cJPK := jpk_fa3( aDane )
+   cJPK := jpk_fa4( aDane )
 
-   edekZapiszXML( cJPK, normalizujNazwe( 'JPK_FA_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKFA-3', nKorekta == 2, Val(miesiac) )
+   edekZapiszXML( cJPK, normalizujNazwe( 'JPK_FA_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKFA-4', nKorekta == 2, Val(miesiac) )
 
    RETURN
 
