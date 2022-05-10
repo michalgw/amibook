@@ -149,7 +149,8 @@ public aDANE_MCdbf := {;
    { "INNEODPOD", "N", 11, 2 },;                  //  92  Inne odliczenia
    { "PODSTZDR", "N", 11, 2 },;                   //  93  ZUS Podstawa tylko do zdrow.
    { "ULGAKLSRA", "C", 1, 0 },;                   //  94  Odlicz ulge dla klasy sredniej
-   { "ULGAKLSRK", "N", 8, 2 } }                   //  95  Kwota ulgi dla klasy sredniej
+   { "ULGAKLSRK", "N", 8, 2 },;                   //  95  Kwota ulgi dla klasy sredniej
+   { "DOCHODZDR", "N", 11, 2 } }                  //  96  Dochod do zdrowotnego do obliczenia podstawy (PODSTZDR)
 
 // Create: DATYUM.DBF
 public aDATYUMdbf := {;
@@ -780,7 +781,8 @@ public aOPERdbf := {;
    { "K16OPIS", "C", 30, 0 },;                    //  32
    { "IFT2", "C", 1, 0 },;                        //  33
    { "IFT2SEK", "C", 3, 0 },;                     //  34
-   { "IFT2KWOT", "N", 11, 0 } }                   //  35
+   { "IFT2KWOT", "N", 11, 0 },;                   //  35
+   { "WARTZUS", "N", 11, 2 } }                    //  36 Wartosc przychodu do ZUS
 
 // Create: ORGANY.DBF
 public aORGANYdbf := {;

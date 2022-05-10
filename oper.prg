@@ -536,19 +536,20 @@ PROCEDURE Oper()
          pppp[  6 ] := '   [I].....................import dokument¢w z pliku    '
          pppp[  7 ] := '   [K].....................kopiowanie dokumentu         '
          pppp[  8 ] := '   [F].....................wykazywanie w dek. IFT-2R    '
-         pppp[  9 ] := '   [Del]...................kasowanie dokumentu          '
-         pppp[ 10 ] := '   [F5 ]...................kopiowanie do bufora         '
-         pppp[ 11 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
-         pppp[ 12 ] := '   [F6 ]...................wstawianie z bufora          '
-         pppp[ 13 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 14 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 15 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 16 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
-         pppp[ 17 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
-         pppp[ 18 ] := '                                                        '
+         pppp[  9 ] := '   [S].....................przych¢d do ZUS zdrowotne    '
+         pppp[ 10 ] := '   [Del]...................kasowanie dokumentu          '
+         pppp[ 11 ] := '   [F5 ]...................kopiowanie do bufora         '
+         pppp[ 12 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
+         pppp[ 13 ] := '   [F6 ]...................wstawianie z bufora          '
+         pppp[ 14 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 15 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 16 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 17 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
+         pppp[ 18 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
+         pppp[ 19 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
-         i := 18
+         i := 19
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -624,6 +625,12 @@ PROCEDURE Oper()
             DO &_proc
          ENDIF
 
+      CASE kl == Asc( 'S' ) .OR. kl == Asc( 's' )
+         IF ! docsys()
+            Oper_WartZUS()
+            DO &_proc
+         ENDIF
+
       CASE kl == K_F5
          IF ! docsys()
             aBufRec := Oper_PobierzDok()
@@ -665,6 +672,8 @@ PROCEDURE Oper()
 
 *################################## FUNKCJE #################################
 PROCEDURE say1()
+
+   LOCAL cKolor
 
    operRysujTlo()
 
@@ -722,6 +731,16 @@ PROCEDURE say1()
    @  7, 27 SAY SubStr( ADRES, 1, 52 )
    @  8, 37 SAY TRESC
    @ 10, 67 SAY wyr_tow  PICTURE RPIC
+   IF WARTZUS <> 0
+      cKolor := ColStd()
+      @ 11, 30 SAY "(przych¢d do ZUS:             )"
+      SetColor( cKolor )
+      @ 11, 48 SAY wartzus PICTURE FPIC
+   ELSE
+      cKolor := ColStd()
+      @ 11, 30 SAY "..............................."
+      SetColor( cKolor )
+   ENDIF
    @ 11, 67 SAY uslugi   PICTURE RPIC
    @ 12, 67 SAY zakup    PICTURE RPIC
    @ 13, 67 SAY uboczne  PICTURE RPIC
@@ -1637,6 +1656,24 @@ FUNCTION Oper_PobierzDok()
       'K16OPIS' => K16OPIS }
 
    RETURN aBufRec
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Oper_WartZUS()
+
+   LOCAL zWARTZUS := oper->wartzus
+
+   @ 11, 30 SAY "(przych¢d do ZUS:             )"
+   @ 11, 48 GET zWARTZUS PICTURE FPIC
+   READ
+   IF LastKey() <> K_ESC
+      BlokadaR()
+      oper->wartzus := zWARTZUS
+      COMMIT
+      UNLOCK
+   ENDIF
+
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 

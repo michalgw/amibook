@@ -225,7 +225,7 @@ PROCEDURE P_Dochod( _OUT )
             P5 := Space( 60 )
          ENDIF
 
-         P_Dochod_Licz()
+         P_Dochod_Licz( .T. )
 
          SELECT dane_mc
 
@@ -312,7 +312,9 @@ FUNCTION linia12()
    RETURN ' ' + dos_c( naz_imie ) + ' '
 
 *############################################################################
-PROCEDURE P_Dochod_Licz()
+PROCEDURE P_Dochod_Licz( lDoZUS )
+
+   hb_default( @lDoZUS, .F. )
 
          *miesiac=tmp2miesiac
          SELECT spolka
@@ -401,7 +403,7 @@ PROCEDURE P_Dochod_Licz()
                   DO WHILE del == '+' .AND. firma == ident_fir .AND. mc == Str( i, 2 ) .AND. ! Eof()
                      IF substr(numer,1,1)<>chr(1) .and. substr(numer,1,1)<>chr(254)
                         a_wyr_tow[ 1, i ] := a_wyr_tow[ 1, i ] + wyr_tow
-                        a_uslugi[ 1, i ]  := a_uslugi[ 1, i ] + uslugi
+                        a_uslugi[ 1, i ]  := a_uslugi[ 1, i ] + iif( lDoZUS .AND. wartzus <> 0, wartzus, uslugi )
                         a_zakup[ 1, i ]   := a_zakup[ 1, i ] + zakup
                         a_uboczne[ 1, i ] := a_uboczne[ 1, i ] + uboczne
                         a_wynagr_g[ 1, i ] := a_wynagr_g[ 1, i ] + wynagr_g

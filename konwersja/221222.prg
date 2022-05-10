@@ -27,11 +27,15 @@ FUNCTION Main()
 
    ? 'Aktualizacja struktury danych...'
    dbfUtworzTabele( 'UMOWY', 'umowy.tym' )
+   dbfUtworzTabele( 'OPER', 'oper.tym' )
+   dbfUtworzTabele( 'DANE_MC', 'dane_mc.tym' )
    dbfImportujDaneTym('', 'TYM')
    dbCloseAll()
 
    ? 'Indeksowanie...'
    dbfIdxUMOWY()
+   dbfIdxOPER()
+   dbfIdxDANE_MC()
    dbCloseAll()
 
    RETURN
