@@ -282,7 +282,7 @@ PROCEDURE Pracow()
             @ 12, 12 GET zPESEL      PICTURE "99999999999"
             @ 12, 30 GET zNIP        PICTURE "!!!!!!!!!!!!!"
             @ 12, 56 GET zRODZ_DOK   PICTURE "!" WHEN w3_133() VALID v3_133()
-            @ 12, 69 GET zDOWOD      PICTURE "!!!999999"
+            @ 12, 69 GET zDOWOD      PICTURE iif( zRODZ_DOK == 'D', "!!!999999", "!!!!!!!!!" )
             @ 13, 19 GET zDATA_UR    PICTURE '@D'
             @ 13, 32 GET zMIEJSC_UR  PICTURE "@S14 !!!!!!!!!!!!!!!!!!!!"
             @ 13, 63 GET zNAZW_RODU  PICTURE '@S15 ' + repl( '!', 30 ) WHEN rod()
@@ -736,9 +736,9 @@ FUNCTION v3_131()
       ColStd()
       @ wiersz, 62 SAY iif( zSTATUS <> 'U', iif( zSTATUS = 'E', 'tatowy', 'lecen.' ), 'niwers' )
       @ 24, 0
-      IF zSTATUS <> 'Z'
+      /*IF zSTATUS <> 'Z'
          zDOKIDKRAJ := 'PL'
-      ENDIF
+      ENDIF*/
       R := .T.
    ENDIF
 
