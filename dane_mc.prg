@@ -32,7 +32,7 @@ FUNCTION Dane_MC( typpit )
       zwar5_wsum
    STORE 0 TO zmc_wue,zmc_wur,zmc_wuc,zmc_wuw,zmc_wuz
    STORE 0 TO pwar5_wue,pwar5_wur,pwar5_wuc,pwar5_wuw,pwar5_wuz
-   STORE 0 TO pmc_wue,pmc_wur,pmc_wuc,pmc_wuw,pmc_wuz
+   STORE 0 TO pmc_wue,pmc_wur,pmc_wuc,pmc_wuw,pmc_wuz,zDOCHODZDR
 
    ColStd()
    @ 11, 42 CLEAR TO 22, 79
@@ -212,6 +212,7 @@ FUNCTION Dane_MC( typpit )
          //zwar5_wuz := war5_wuz
          zwar5_wuz := 0
          zmc_wuz := mc_wuz
+         zdochodzdr := dochodzdr
 /*         else
               if mc=' 1'
                  zstaw_wuz=parap_puz+parap_fuz
@@ -273,8 +274,9 @@ FUNCTION Dane_MC( typpit )
          @ 15, 68 GET zWAR5_WUW PICTURE '99999.99'
          @ 15, 77 GET zMC_WUW PICTURE '99' RANGE 0, 12
          @ 16, 41 SAY 'RAZEM      '
-         @ 17, 41 SAY 'Zdro.do ZUS' GET zSTAW_WUZ PICTURE '99.99'
-         @ 17, 59 GET zWAR_WUZ PICTURE '99999.99'
+         @ 17, 41 SAY 'Doch¢d do podst. zdrow. ' GET zDOCHODZDR PICTURE '9999999.99'
+         @ 18, 41 SAY 'Zdro.do ZUS' GET zSTAW_WUZ PICTURE '99.99'
+         @ 18, 59 GET zWAR_WUZ PICTURE '99999.99'
          //@ 18, 41 SAY '     do PIT' GET zSTAW5_WUZ PICTURE '99.99'
          //@ 18, 68 GET zWAR5_WUZ PICTURE '99999.99'
          //@ 18, 77 GET zMC_WUZ PICTURE '99' RANGE 0, 12
@@ -299,7 +301,8 @@ FUNCTION Dane_MC( typpit )
                war5_wue WITH zwar5_wue, war5_wur WITH zwar5_wur, war5_wuc WITH zwar5_wuc, ;
                war5_wuw WITH zwar5_wuw, war5_wuz WITH zwar5_wuz, ;
                mc_wue WITH zmc_wue, mc_wur WITH zmc_wur, mc_wuc WITH zmc_wuc, ;
-               mc_wuw WITH zmc_wuw, mc_wuz WITH zmc_wuz
+               mc_wuw WITH zmc_wuw, mc_wuz WITH zmc_wuz, dochodzdr WITH zdochodzdr
+
             rrre := RecNo()
             SEEK '+' + zident + Str( pmc_wue, 2 )
             IF Found()
@@ -456,8 +459,17 @@ FUNCTION zrobcos()
       ELSE
          IF mc == ' 1'
             zzpodstzdr := parap_p52
+            zzpodstzdr := 0
          ELSE
-            zzpodstzdr := a_ppodstn[ 1, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ]
+            IF firma->zuspodnar == 'N'
+               zzpodstzdr := Max( a_ppodstn[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ] - a_dochodzdr[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ], 0 )
+            ELSE
+               zzpodstzdr := a_ppodstn[ 1, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ]
+            ENDIF
+            zdochodzdr := Max( zzpodstzdr, 0 )
+            IF zzpodstzdr < parap_p52
+               zzpodstzdr := parap_p52
+            ENDIF
          ENDIF
       ENDIF
       zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
@@ -598,8 +610,17 @@ FUNCTION zrobcos()
       ELSE
          IF mc == ' 1'
             zzpodstzdr := parap_p52
+            zzpodstzdr := 0
          ELSE
-            zzpodstzdr := a_ppodstn[ 1, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ]
+            IF firma->zuspodnar == 'N'
+               zzpodstzdr := Max( a_ppodstn[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ] - a_dochodzdr[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ], 0 )
+            ELSE
+               zzpodstzdr := a_ppodstn[ 1, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ]
+            ENDIF
+            zdochodzdr := Max( zzpodstzdr, 0 )
+            IF zzpodstzdr < parap_p52
+               zzpodstzdr := parap_p52
+            ENDIF
          ENDIF
       ENDIF
       zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
@@ -607,7 +628,7 @@ FUNCTION zrobcos()
    przeskla()
    SET COLOR TO /w+
    @  9, 71 SAY zzPODSTAWA PICTURE '99999.99'
-   @ 10, 71 SAY zzPODSTZDR PICTURE '99999.99'
+   @ 10, 69 SAY zzPODSTZDR PICTURE '9999999.99'
    @ 12, 53 SAY zSTAW_WUE PICTURE '99.99'
    @ 12, 59 SAY zWAR_WUE PICTURE '99999.99'
    @ 12, 68 SAY zWAR5_WUE PICTURE '99999.99'
@@ -624,8 +645,9 @@ FUNCTION zrobcos()
    @ 15, 59 SAY zWAR_WUW PICTURE '99999.99'
    @ 15, 68 SAY zWAR5_WUW PICTURE '99999.99'
    @ 15, 77 SAY zMC_WUW PICTURE '99'
-   @ 17, 53 SAY zSTAW_WUZ PICTURE '99.99'
-   @ 17, 59 SAY zWAR_WUZ PICTURE '99999.99'
+   @ 17, 66 SAY zDOCHODZDR PICTURE '9999999.99'
+   @ 18, 53 SAY zSTAW_WUZ PICTURE '99.99'
+   @ 18, 59 SAY zWAR_WUZ PICTURE '99999.99'
    //@ 18, 53 SAY zSTAW5_WUZ PICTURE '99.99'
    //@ 18, 68 SAY zWAR5_WUZ PICTURE '99999.99'
    //@ 18, 77 SAY zMC_WUZ PICTURE '99'

@@ -202,7 +202,8 @@ PROCEDURE Wlasciciel_SkladkiZus_Druk()
          'fnpr_st' => dane_mc->staw_wfp, ;
          'fnpr_war' => dane_mc->war_wfp, ;
          'fngs_st' => dane_mc->staw_wfg, ;
-         'fngs_war' => dane_mc->war_wfg }
+         'fngs_war' => dane_mc->war_wfg, ;
+         'dochodzdr' => dane_mc->dochodzdr }
       AAdd( aDane[ 'pozycje' ], aRow )
 
       dane_mc->( dbSkip() )

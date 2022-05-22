@@ -42,6 +42,21 @@ FUNCTION Param_PF()
       ENDIF
       RETURN lRes
    }
+   LOCAL bZusPodNarW := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 say PadC( "M - miesi©cznie            N - narastaj¥co", 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bZusPodNarV := { | |
+      LOCAL lRes, cKolor
+      IF ( lRes := zzuspodnar $ 'MN' )
+         @ 24, 0
+         cKolor := SetColor( 'w+' )
+         @ 5, 63 SAY iif( zzuspodnar == 'N', 'arastaj¥co', 'iesi©cznie' )
+      ENDIF
+      RETURN lRes
+   }
 
 *############################# PARAMETRY POCZATKOWE #########################
 if .not.file([param_p.mem])
@@ -65,6 +80,7 @@ set colo to /w+
 @ 11,73 say 'P&_l.atnik'
 set colo to
 @  4,42 say ' Doch¢d za                            '
+@  5,42 say ' Doch¢d naliczaj                      '
 
 @ 12,42 say ' Na ubezpieczenia wypadkowe:          '
 @ 13,42 say ' pracownik&_o.w                          '
@@ -92,8 +108,10 @@ zparap_puw=A->parap_puw
 zparap_fuw=A->parap_fuw
 zparap_fww=A->parap_fww
 zzuspodmie := iif( A->zuspodmie $ 'BP', A->zuspodmie, 'P' )
+zzuspodnar := iif( A->zuspodnar $ 'MN', A->zuspodnar, 'N' )
 *ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ GET ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ
 @  4,62 get zzuspodmie PICTURE '!' WHEN Eval( bZusPodMieW ) VALID Eval( bZusPodMieV )
+@  5,62 get zzuspodnar PICTURE '!' WHEN Eval( bZusPodNarW ) VALID Eval( bZusPodNarV )
 *@ 15,65 get zparap_puw picture "99.99"
 @ 13,75 get zparap_fuw picture "99.99"
 @ 14,75 get zparap_fww picture "99.99"
@@ -109,6 +127,7 @@ repl_([A->parap_puw],0)
 repl_([A->parap_fuw],zparap_fuw)
 repl_([A->parap_fww],zparap_fww)
 repl_([A->zuspodmie],zzuspodmie)
+repl_([A->zuspodnar],zzuspodnar)
 
 commit_()
 unlock
@@ -160,6 +179,7 @@ procedure say_pfirmy
 clear type
 set colo to w+
 @ 4,62 say iif( A->zuspodmie == 'B', 'Bie¾¥cy miesi¥c  ', 'Poprzedni miesi¥c' )
+@ 5,62 say iif( A->zuspodnar == 'N', 'Narastaj¥co', 'Miesi©cznie' )
 *@ 15,65 say parap_puw picture "99.99"
 @ 13,75 say parap_fuw picture "99.99"
 @ 14,75 say parap_fww picture "99.99"

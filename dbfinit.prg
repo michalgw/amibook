@@ -603,7 +603,8 @@ public aFIRMAdbf := {;
    { "PPKEIDPZIF", "C", 1, 0 },;                  //  80 PPK doˆ¥czaj pole "ID Kadrowy"
    { "RODZAJDRFV", "C", 1, 0 },;                  //  81 Rodzaj wydruku faktury: G - graficzny, T - tekstowy
    { "RODZAJFNV", "C", 1, 0 },;                   //  82 Rodzaj dok. sprzedazy dla nie watowca: F - faktura, R - rachunek
-   { "ZUSPODMIE", "C", 1, 0 } }                   //  83 Podstawa do zdrowotnego - przych¢d z 'B' - biezacy miesiac, 'P' - poprzedni miesiac
+   { "ZUSPODMIE", "C", 1, 0 },;                   //  83 Podstawa do zdrowotnego - przych¢d z 'B' - biezacy miesiac, 'P' - poprzedni miesiac
+   { "ZUSPODNAR", "C", 1, 0 } }                   //  84 Podstawa do zdrowotnego - przych¢d: 'M' - miesi©cznie, 'N' - narastaj¥co
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;

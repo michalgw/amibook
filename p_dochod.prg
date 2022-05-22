@@ -41,7 +41,7 @@ PROCEDURE P_Dochod( _OUT )
    PRIVATE a_powodz, a_wydatkim, a_wydatkid, a_sumemer, a_budowa, a_ubieginw, a_dochzwol
    PRIVATE a_SSE, a_g21, a_h385, a_sumzdro, a_zaliczki, a_aaa, a_bbb, a_inneodpo
    PRIVATE a_odseodma, a_pit5105, a_pit5gosk, a_pit5najk, a_pit5gosp, a_pit5najp
-   PRIVATE a_zalipod, a_zalipodp
+   PRIVATE a_zalipod, a_zalipodp, a_dochodzdr
 
    PRIVATE a_dochgos, a_dochnaj, a_stragos, a_stranaj, a_pit566, a_pit567
    PRIVATE a_preman, a_pit5goss, a_pit5najs, a_gosprzy, a_goskosz, a_najprzy
@@ -500,6 +500,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
          a_pit5najp := Array( 3, 12 )
          a_zalipod  := Array( 3, 12 )
          a_zalipodp := Array( 3, 12 )
+         a_dochodzdr:= Array( 3, 12 )
 
          FOR xxx := 1 TO 12
             FOR yyy := 1 TO 3
@@ -529,6 +530,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
                a_pit5najp[ yyy, xxx ] := 0
                a_zalipod[ yyy, xxx ] := 0
                a_zalipodp[ yyy, xxx ] := 0
+               a_dochodzdr[ yyy, xxx ] := 0
                FOR zzz := 1 TO 2
                   a_przynaj[ zzz, yyy, xxx ] := 0
                   a_kosznaj[ zzz, yyy, xxx ] := 0
@@ -601,6 +603,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
                      a_pit5najp[ 1, i ]  := a_pit5najp[ 1, i ] + pit5anajp
                      a_zalipod[ 1, i ]   := a_zalipod[ 1, i ] + zaliczka
                      a_zalipodp[ 1, i ]  := a_zalipodp[ 1, i ] + zaliczkap
+                     a_dochodzdr[ 1, i ] := a_dochodzdr[ 1, i ] + dochodzdr
 
                      a_pit5105[ 1, i ] := pit5105
                      a_odseodma[ 1, i ] := odseodmaj
@@ -968,6 +971,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
                a_zalipod[ 2, i ]   := a_zalipod[ 2,i ] + a_zalipod[ 1, yyy ]
                a_zalipodp[ 2, i ]  := a_zalipodp[ 2, i ] + a_zalipodp[ 1, yyy ]
                a_rem[ 2, i ]       := a_rem[ 2, i ] + a_rem[ 1, yyy ]
+               a_dochodzdr[ 2, i ] := a_dochodzdr[ 2, i ] + a_dochodzdr[ 1, yyy ]
             NEXT
             a_preman[ 2, i ] := a_preman[ 1, i ]
             a_odseodma[ 2, i ] := a_odseodma[ 1, i ]
@@ -1017,6 +1021,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
                a_preman[ 3, i ] := a_preman[ 3, i ] + a_preman[ 1, yyy ]
                a_odseodma[ 3, i ] := a_odseodma[ 3, i ] + a_odseodma[ 1, yyy ]
                a_rem[ 3, i ]      := a_rem[ 3, i ] + a_rem[ 1, yyy ]
+               a_dochodzdr[ 3, i ] := a_dochodzdr[ 3, i ] + a_dochodzdr[ 3, yyy ]
              *next
             NEXT
          NEXT
@@ -1062,6 +1067,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
                a_zalipod[ 3, i ]   := a_zalipod[ 3, i ] + a_zalipod[ 1, yyy ]
                a_zalipodp[ 3, i ]  := a_zalipodp[ 3, i ] + a_zalipodp[ 1, yyy ]
                a_rem[ 3, i ]      := a_rem[ 3, i ] + a_rem[ 1, yyy ]
+               a_dochodzdr[ 3, i ] := a_dochodzdr[3, i ] + a_dochodzdr[ 1, yyy ]
             *next
             NEXT
             FOR yyy := 4 TO 6
@@ -1110,6 +1116,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
                a_zalipod[ 3, i ]   := a_zalipod[ 3, i ] + a_zalipod[ 1, yyy ]
                a_zalipodp[ 3, i ]  := a_zalipodp[ 3, i ] + a_zalipodp[ 1, yyy ]
                a_rem[ 3, i ]      := a_rem[ 3, i ] + a_rem[ 1, yyy ]
+               a_dochodzdr[ 3, i ] := a_dochodzdr[ 3, i ] + a_dochodzdr[ 1, yyy ]
             NEXT
             FOR yyy := 7 TO 9
                a_preman[ 3, i ] := a_preman[ 3, i ] + a_preman[ 1, yyy ]
@@ -1157,6 +1164,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
                a_zalipod[ 3, i ]   := a_zalipod[ 3, i ] + a_zalipod[ 1, yyy ]
                a_zalipodp[ 3, i ]  := a_zalipodp[ 3, i ] + a_zalipodp[ 1, yyy ]
                a_rem[ 3, i ]       := a_rem[ 3, i ] + a_rem[ 1, yyy ]
+               a_dochodzdr[ 3, i ] := a_dochodzdr[ 3, i ] + a_dochodzdr[ 1, yyy ]
             NEXT
             FOR yyy := 10 TO 12
                a_preman[ 3, i ] := a_preman[ 3, i ] + a_preman[ 1, yyy ]
