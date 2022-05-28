@@ -822,7 +822,7 @@ PROCEDURE Firma1()
             m->parap_fuw=parap_fuw
             m->parap_fww=parap_fww
 
-            bufor_dok := { 'oper' => {}, 'rycz' => {}, 'rejs' => {}, 'rejz' => {} }
+            bufor_dok := { 'oper' => {}, 'rycz' => {}, 'rejs' => {}, 'rejz' => {}, 'faktury' => {} }
 
             set color to
             @ 0,0 clear to 0,40

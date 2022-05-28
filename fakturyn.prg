@@ -40,7 +40,7 @@ PROCEDURE FakturyN()
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, _top, _bot, _stop, _sbot
    PRIVATE _proc, _row, _proc_spe, _disp, _cls, kl, ins, nr_rec, wiersz, f10, rec, fou, _top_bot
 
-   PRIVATE nPopKsgData, dPopDataTrans
+   PRIVATE nPopKsgData, dPopDataTrans, aBufDok
 
    *********************** lp
    m->liczba := 1
@@ -50,33 +50,7 @@ PROCEDURE FakturyN()
 
    @  1, 47 SAY '          '
    *################################# GRAFIKA ##################################
-   @  3, 0 SAY 'Faktura  Nr       z dnia                 data                                   '
-   @  4, 0 SAY 'NABYWCA: Nr ident.(NIP).                                 SplitPay.:      Exp:   '
-   @  5, 0 SAY '         Nazwa..........                                                  UE:   '
-   @  6, 0 SAY '         Adres..........                                                Kraj:   '
-   @  7, 0 SAY 'UWAGI....                                         Zlecenie.                     '
-   @  8, 0 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄ¿'
-   @  9, 0 SAY '³         Nazwa towaru/us&_l.ugi          ³  Ilo&_s.&_c.  ³ JM  ³Cena nett³Wart.netto³VA³'
-   @ 10, 0 SAY 'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄ´'
-   @ 11, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
-   @ 12, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
-   @ 13, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
-   @ 14, 0 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÂÄÄÄÄÁÄÄÄÄÄÅÄÄÂÄÄÄÄÄÄÁÄÄÂÄÄÄÄÄÄÄÁÄÄ´'
-   @ 15, 0 SAY 'Oznaczenie:         Procedura:              ³          ³' + Str( vat_A, 2 ) + '³         ³          ³'
-   @ 16, 0 SAY 'TYP FAKT.(opis typu/podstawy fakturowania): ³          ³' + Str( vat_B, 2 ) + '³         ³          ³'
-   @ 17, 0 SAY '                                            ³          ³' + Str( vat_C, 2 ) + '³         ³          ³'
-   @ 18, 0 SAY 'ODBIORCA:                                   ³          ³' + Str( vat_D, 2 ) + '³         ³          ³'
-   @ 19, 0 SAY 'Nazwa.                                      ³          ³ 0³         ³          ³'
-   @ 20, 0 SAY 'Adres.                                      ³          ³ZW³         ³          ³'
-   @ 21, 0 SAY '                                            ³          ³  ³         ³          ³'
-   @ 22, 0 SAY '                                       RAZEMÀÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÙ'
-   @ 23, 0 SAY 'Kontrola zaplat....  Termin zaplaty.... (..........) Juz zaplacono.             '
-   *if NR_UZYTK=800
-   *   @ 20,0  say 'Opl.skarb.'
-   *   @ 21,0  say 'Od darowiz.'
-   *   @ 21,22 say 'Od czynnos.'
-   *endif
-
+   FakturyN_RysujTlo()
    *############################### OTWARCIE BAZ ###############################
    SELECT 9
    IF Dostep( 'ROZR' )
@@ -211,7 +185,7 @@ PROCEDURE FakturyN()
       ster()
       DO CASE
       *########################### INSERT/MODYFIKACJA #############################
-         CASE kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. &_top_bot
+         CASE kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == K_F6 .OR. &_top_bot
             @ 1, 47 SAY '          '
             ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
             ktoroper()
@@ -228,14 +202,51 @@ PROCEDURE FakturyN()
                   ENDIF
                ENDIF
                *ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ ZMIENNE ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ
-               IF ins
+               IF ins .AND. kl == K_F6
+                  aBufDok := Bufor_Dok_Wybierz( 'faktury' )
+                  IF ! Empty( aBufDok ) .AND. HB_ISHASH( aBufDok )
+                     @  4, 78 CLEAR TO 5, 79
+                     @ 11, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
+                     @ 12, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
+                     @ 13, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
+                     @ 15, 45 CLEAR TO 21, 54
+                     @ 15, 59 CLEAR TO 21, 67
+                     @ 15, 69 CLEAR TO 21, 78
+
+                     zRACH := aBufDok[ 'RACH' ]
+                     zNUMER&zRACH := firma->nr_fakt
+                     zDZIEN := Str( Day( Date( ) ), 2 )
+                     zDATAS := CToD( param_rok + '.' + miesiac + '.' + zDZIEN )
+                     znazwa := aBufDok[ 'NAZWA' ]
+                     zADRES := aBufDok[ 'ADRES' ]
+                     zNR_IDENT := aBufDok[ 'NR_IDENT' ]
+                     zKOMENTARZ := aBufDok[ 'KOMENTARZ' ]
+                     zZAMOWIENIE := aBufDok[ 'ZAMOWIENIE' ]
+                     //zident_poz := Str( rec_no, 8 )
+                     zSplitPay := aBufDok[ 'SPLITPAY' ]
+                     zexport := aBufDok[ 'EXPORT' ]
+                     zUE := aBufDok[ 'UE' ]
+                     zKRAJ := aBufDok[ 'KRAJ' ]
+                     zDATA2TYP := aBufDok[ 'DATA2TYP' ]
+                     zFAKTTYP := aBufDok[ 'FAKTTYP' ]
+                     zROZRZAPF := aBufDok[ 'ROZRZAPF' ]
+                     zZAP_TER := 0
+                     zZAP_DAT := Date()
+                     zZAP_WART := 0
+                     zOPCJE := aBufDok[ 'OPCJE' ]
+                     zPROCEDUR := aBufDok[ 'PROCEDUR' ]
+                     zKSGDATA := 0
+                  ELSE
+                     BREAK
+                  ENDIF
+               ELSEIF ins
                   @  4, 78 CLEAR TO 5, 79
                   @ 11, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
                   @ 12, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
                   @ 13, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
-                  @ 16, 45 CLEAR TO 21, 54
-                  @ 16, 59 CLEAR TO 21, 67
-                  @ 16, 69 CLEAR TO 21, 78
+                  @ 15, 45 CLEAR TO 21, 54
+                  @ 15, 59 CLEAR TO 21, 67
+                  @ 15, 69 CLEAR TO 21, 78
                   zrach := 'F'
                   zNUMERF := firma->nr_fakt
                   zDZIEN := Str( Day( Date( ) ), 2 )
@@ -388,6 +399,20 @@ PROCEDURE FakturyN()
                UNLOCK
                zident_poz := Str( rec_no, 8 )
 
+               IF kl == K_F6
+                  AEval( aBufDok[ 'pozycje' ], { | aPoz |
+                     pozycje->( dbAppend() )
+                     pozycje->del := '+'
+                     pozycje->ident := zident_poz
+                     pozycje->towar := aPoz[ 'TOWAR' ]
+                     pozycje->ilosc := aPoz[ 'ILOSC' ]
+                     pozycje->jm := aPoz[ 'JM' ]
+                     pozycje->cena := aPoz[ 'CENA' ]
+                     pozycje->wartosc := aPoz[ 'WARTOSC' ]
+                     pozycje->vat := aPoz[ 'VAT' ]
+                     COMMIT
+                  } )
+               ENDIF
                FaPozN()
                SELECT faktury
 
@@ -1025,6 +1050,42 @@ PROCEDURE FakturyN()
             ENDIF
             RESTORE SCREEN FROM scr_
             _disp := .F.
+
+         CASE kl == K_F5
+            IF faktury->korekta <> 'T'
+               aBufRec := FakturyN_PobierzDok()
+               IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'faktury', id ) ) > 0
+                  bufor_dok[ 'faktury' ][ nBufRecIdx ] := aBufRec
+               ELSE
+                  AAdd( bufor_dok[ 'faktury' ], aBufRec )
+               ENDIF
+               Komun( "Dokument zostaˆ skopiowany" )
+            ELSE
+               Komun( "Nie mo¾na kopiowa† faktury koryguj¥cej" )
+            ENDIF
+
+         CASE kl == K_SH_F5
+            IF TNEsc( , "Czy skopiowa† wszytkie faktury do bufora? (Tak/Nie)" )
+               nAktRec := RecNo()
+               nLicznik := 0
+               GO TOP
+               SEEK "+" + ident_fir + miesiac
+               DO WHILE ! &_bot
+                  IF faktury->korekta <> 'T'
+                     aBufRec := FakturyN_PobierzDok()
+                     IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'faktury', id ) ) > 0
+                        bufor_dok[ 'faktury' ][ nBufRecIdx ] := aBufRec
+                     ELSE
+                        AAdd( bufor_dok[ 'faktury' ], aBufRec )
+                     ENDIF
+                     nLicznik++
+                  ENDIF
+                  SKIP
+               ENDDO
+               dbGoto( nAktRec )
+               Komun( "Skopiowano " + AllTrim( Str( nLicznik ) ) + " dokument¢w" )
+            ENDIF
+
          ******************** ENDCASE
       ENDCASE
    ENDDO
@@ -1038,6 +1099,7 @@ PROCEDURE say260vn()
    SELECT faktury
    zrach := rach
    *  set cent off
+
    ColStd()
    @ 23, 0 SAY 'Kontrola zaplat....  Termin zaplaty.... (..........) Juz zaplacono.             '
    SET COLOR TO +w
@@ -1073,7 +1135,7 @@ PROCEDURE say260vn()
    @ 17,  0 SAY SubStr( FAKTTYP, 1, 40 )
    @ 19,  6 SAY SubStr( ODBNAZWA, 1, 30 )
    @ 20,  6 SAY SubStr( ODBADRES, 1, 30 )
-   @ 21,  0 SAY Space( 40 )
+   @ 21,  0 SAY Space( 39 )
    *@ 21,6 say ODBOSOBA
    IF NR_UZYTK == 800
       @ 20, 11 SAY oplskarb PICTURE '999999.99'
@@ -1200,20 +1262,20 @@ PROCEDURE say260vn()
    @ 19, 45 SAY zWART00 PICTURE "@Z 999 999.99"
    @ 19, 59 SAY 0 PICTURE "@Z 99 999.99"
    @ 19, 69 SAY zWART00 PICTURE "@Z 999 999.99"
-   @ 20, 45 SAY zWARTzw PICTURE "@Z 999 999.99"
+   @ 20, 45 SAY zWARTzw + zWART08 PICTURE "@Z 999 999.99"
    @ 20, 59 SAY 0 PICTURE "@Z 99 999.99"
-   @ 20, 69 SAY zWARTzw PICTURE "@Z 999 999.99"
-   @ 21, 45 SAY zWART08 PICTURE "@Z 999 999.99"
-   @ 21, 59 SAY 0 PICTURE "@Z 99 999.99"
-   @ 21, 69 SAY zWART08 PICTURE "@Z 999 999.99"
+   @ 20, 69 SAY zWARTzw + zWART08 PICTURE "@Z 999 999.99"
+   //@ 21, 45 SAY zWART08 PICTURE "@Z 999 999.99"
+   //@ 21, 59 SAY 0 PICTURE "@Z 99 999.99"
+   //@ 21, 69 SAY zWART08 PICTURE "@Z 999 999.99"
    *@ 21,45 say zWART12 picture "@Z 999 999.99"
    *@ 21,59 say zVAT12 picture "@Z 99 999.99"
    *@ 21,69 say zWART12+zVAT12 picture "@Z 999 999.99"
    SET COLOR TO w
-   @ 22, 45 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 PICTURE "999 999.99"
-   @ 22, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "99 999.99"
+   @ 21, 45 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 PICTURE "999 999.99"
+   @ 21, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "99 999.99"
    SET COLOR TO w+*
-   @ 22, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "999 999.99"
+   @ 21, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "999 999.99"
    SELECT faktury
    SET COLOR TO
    *  set cent on
@@ -1745,6 +1807,78 @@ PROCEDURE FakturyN_DrukGraf()
    aDane[ 'wystawil' ] := AllTrim( ewid_wyst )
 
    FRDrukuj( 'frf\fv.frf', aDane )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION FakturyN_DokRefPobierz( nRecNo )
+
+   LOCAL aDane := NIL
+   LOCAL nPopRecNoF, cOldOrdF, nPopRecNoP
+
+   nPopRecNoF := faktury->( RecNo() )
+   cOldOrdF := faktury->( ordSetFocus() )
+   faktury->( ordSetFocus( 4 ) )
+   IF faktury->( dbSeek( nRecNo ) )
+      aDane := PobierzRekord( 'faktury', .F. )
+      aDane[ 'pozycje' ] := {}
+      aDane[ 'suma_netto' ] := 0
+      aDane[ 'suma_brutto' ] := 0
+      nPopRecNoP := pozycje->( RecNo() )
+      IF pozycje->( dbSeek( "+" + Str( nRecNo, 8, 0 ) ) )
+         DO WHILE pozycje->del == "+" .AND. pozycje->ident == Str( nRecNo, 8, 0 )
+            AAdd( aDane[ 'pozycje' ], PobierzRekord( 'pozycje', .F. ) )
+            aDane[ 'suma_netto' ] += pozycje->wartosc
+            aDane[ 'suma_brutto' ] += _round( pozycje->wartosc * ( 1 + ( Val( pozycje->vat ) / 100 ) ), 2 )
+            pozycje->( dbSkip() )
+         ENDDO
+      ENDIF
+      pozycje->( dbGoto( nPopRecNoP ) )
+   ENDIF
+   faktury->( ordSetFocus( cOldOrdF ) )
+   faktury->( dbGoto( nPopRecNoF ) )
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION FakturyN_PobierzDok()
+
+   LOCAL aRes := FakturyN_DokRefPobierz( faktury->rec_no )
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE FakturyN_RysujTlo()
+
+   @  3, 0 SAY 'Faktura  Nr       z dnia                 data                                   '
+   @  4, 0 SAY 'NABYWCA: Nr ident.(NIP).                                 SplitPay.:      Exp:   '
+   @  5, 0 SAY '         Nazwa..........                                                  UE:   '
+   @  6, 0 SAY '         Adres..........                                                Kraj:   '
+   @  7, 0 SAY 'UWAGI....                                         Zlecenie.                     '
+   @  8, 0 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄ¿'
+   @  9, 0 SAY '³         Nazwa towaru/us&_l.ugi          ³  Ilo&_s.&_c.  ³ JM  ³Cena nett³Wart.netto³VA³'
+   @ 10, 0 SAY 'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄ´'
+   @ 11, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
+   @ 12, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
+   @ 13, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
+   @ 14, 0 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÂÄÄÄÄÁÄÄÄÄÄÅÄÄÂÄÄÄÄÄÄÁÄÄÂÄÄÄÄÄÄÄÁÄÄ´'
+   @ 15, 0 SAY 'Oznaczenie:         Procedura:              ³          ³' + Str( vat_A, 2 ) + '³         ³          ³'
+   @ 16, 0 SAY 'TYP FAKT.(opis typu/podstawy fakturowania): ³          ³' + Str( vat_B, 2 ) + '³         ³          ³'
+   @ 17, 0 SAY '                                            ³          ³' + Str( vat_C, 2 ) + '³         ³          ³'
+   @ 18, 0 SAY 'ODBIORCA:                                   ³          ³' + Str( vat_D, 2 ) + '³         ³          ³'
+   @ 19, 0 SAY 'Nazwa.                                      ³          ³ 0³         ³          ³'
+   @ 20, 0 SAY 'Adres.                                      ³          ³ZW³         ³          ³'
+   @ 21, 0 SAY '                                       RAZEM³          ³  ³         ³          ³'
+   @ 22, 0 SAY '                                            ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÙ'
+   @ 23, 0 SAY 'Kontrola zaplat....  Termin zaplaty.... (..........) Juz zaplacono.             '
+   *if NR_UZYTK=800
+   *   @ 20,0  say 'Opl.skarb.'
+   *   @ 21,0  say 'Od darowiz.'
+   *   @ 21,22 say 'Od czynnos.'
+   *endif
 
    RETURN NIL
 

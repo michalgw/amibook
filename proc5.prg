@@ -146,6 +146,32 @@ FUNCTION WczytajRekordDoHash(cAlias)
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION PobierzRekord( cAlias, lLower )
+
+   LOCAL aRes := NIL
+   LOCAL nWorkArea, nI, aStruct, cKey
+
+   hb_default( @cAlias, Alias() )
+   hb_default( @lLower, .T. )
+
+   nWorkArea := Select( cAlias )
+   aStruct := ( nWorkArea )->( dbStruct() )
+   IF HB_ISARRAY( aStruct ) .AND. Len( aStruct ) > 0
+      aRes := { => }
+      FOR nI := 1 TO Len( aStruct )
+         cKey := aStruct[ nI, DBS_NAME ]
+         IF lLower
+            cKey := Lower( cKey )
+         ENDIF
+         aRes[ cKey ] := ( nWorkArea )->( FieldGet( nI ) )
+      NEXT
+   ENDIF
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+
 FUNCTION PobierzUrzad(nUrzadRecNo)
    LOCAL hRes := hb_Hash()
    IF DostepPro('URZEDY')

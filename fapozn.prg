@@ -47,8 +47,8 @@ PROCEDURE FaPozN()
    @ 18,  0 SAY 'ODBIORCA:                                   ³          ³' + Str( vat_D, 2 ) + '³         ³          ³'
    @ 19,  0 SAY 'Nazwa.                                      ³          ³ 0³         ³          ³'
    @ 20,  0 SAY 'Adres.                                      ³          ³ZW³         ³          ³'
-   @ 21,  0 SAY '                                            ³          ³  ³         ³          ³'
-   @ 22,  0 SAY '                                       RAZEMÀÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÙ'
+   @ 21,  0 SAY '                                       RAZEM³          ³  ³         ³          ³'
+   @ 22,  0 SAY '                                            ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÙ'
    SET COLO TO w+
    @ 15, 11 SAY SubStr( OPCJE, 1, 8 )
    @ 15, 30 SAY SubStr( PROCEDUR, 1, 14 )
@@ -303,20 +303,20 @@ PROCEDURE linia61fsn()
    @ 19, 45 SAY zWART00 PICTURE "@Z 999 999.99"
    @ 19, 59 SAY 0 PICTURE "@Z 99 999.99"
    @ 19, 69 SAY zWART00 PICTURE "@Z 999 999.99"
-   @ 20, 45 SAY zWARTzw PICTURE "@Z 999 999.99"
+   @ 20, 45 SAY zWARTzw + zWART08 PICTURE "@Z 999 999.99"
    @ 20, 59 SAY 0 PICTURE "@Z 99 999.99"
-   @ 20, 69 SAY zWARTzw PICTURE "@Z 999 999.99"
-   @ 21, 45 SAY zWART08 PICTURE "@Z 999 999.99"
-   @ 21, 59 SAY 0 PICTURE "@Z 99 999.99"
-   @ 21, 69 SAY zWART08 PICTURE "@Z 999 999.99"
+   @ 20, 69 SAY zWARTzw + zWART08 PICTURE "@Z 999 999.99"
+   //@ 21, 45 SAY zWART08 PICTURE "@Z 999 999.99"
+   //@ 21, 59 SAY 0 PICTURE "@Z 99 999.99"
+   //@ 21, 69 SAY zWART08 PICTURE "@Z 999 999.99"
    *@ 21,45 say zWART12 picture "@Z 999 999.99"
    *@ 21,59 say zVAT12 picture "@Z 99 999.99"
    *@ 21,69 say zWART12+zVAT12 picture "@Z 999 999.99"
    SET COLOR TO w
-   @ 22, 45 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 PICTURE "999 999.99"
-   @ 22, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "99 999.99"
+   @ 21, 45 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 PICTURE "999 999.99"
+   @ 21, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "99 999.99"
    SET COLOR TO w+*
-   @ 22, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "999 999.99"
+   @ 21, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "999 999.99"
    GO reccc
    ColInf()
    @ 24,  0 SAY PadC( ' M-modyfikacja   Ins-dopisanie   Del-kasowanie   Esc-zakonczenie ', 80, ' ' )

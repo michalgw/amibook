@@ -44,6 +44,8 @@ FUNCTION Bufor_Dok_Wybierz( cRodzaj )
       RETURN Bufor_Dok_Wybierz_RejS()
    CASE cRodzaj == 'rejz'
       RETURN Bufor_Dok_Wybierz_RejZ()
+   CASE cRodzaj == 'faktury'
+      RETURN Bufor_Dok_Wybierz_Faktury()
    ENDCASE
 
    RETURN NIL
@@ -261,3 +263,39 @@ FUNCTION Bufor_Dok_Wybierz_RejZ()
    RETURN xRes
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION Bufor_Dok_Wybierz_Faktury()
+
+   LOCAL xRes := NIL
+   LOCAL nElem := 1
+   LOCAL cEkran
+   LOCAL cKolor := ColStd()
+   LOCAL aNaglowki := { "Dz.", "Nr fakt.", "NIP", "Nazwa", "Adres", ;
+      "Wart.netto", "Wart.brutto" }
+   LOCAL aKolumny := { ;
+      { || bufor_dok[ 'faktury' ][ nElem ][ 'DZIEN' ] }, ;
+      { || bufor_dok[ 'faktury' ][ nElem ][ 'NUMER' ] }, ;
+      { || SubStr( bufor_dok[ 'faktury' ][ nElem ][ 'NR_IDENT' ], 1, 12 ) }, ;
+      { || SubStr( bufor_dok[ 'faktury' ][ nElem ][ 'NAZWA' ], 1, 20 ) }, ;
+      { || SubStr( bufor_dok[ 'faktury' ][ nElem ][ 'ADRES' ], 1, 20 ) }, ;
+      { || bufor_dok[ 'faktury' ][ nElem ][ 'suma_netto' ] }, ;
+      { || bufor_dok[ 'faktury' ][ nElem ][ 'suma_brutto' ] } }
+
+   SAVE SCREEN TO cEkran
+
+   @  2, 0 SAY PadC( "BUFOR DOKUMENT‡W", 80 )
+   @ 22, 0 SAY PadC( "Enter - wyb¢r,   Delete - usuni©cie z bufora,   ESC - anuluj", 80 )
+   nElem := GM_ArEdit( 3, 0, 21, 79, bufor_dok[ 'faktury' ], @nElem, aNaglowki, aKolumny, NIL, NIL, NIL, NIL, SetColor() + ",N+/N" )
+
+   IF LastKey() <> K_ESC .AND. nElem > 0 .AND. Len( bufor_dok[ 'faktury' ] ) >= nElem
+      xRes := bufor_dok[ 'faktury' ][ nElem ]
+   ENDIF
+
+   CLEAR TYPEAHEAD
+   RESTORE SCREEN FROM cEkran
+   SetColor( cKolor )
+
+   RETURN xRes
+
+/*----------------------------------------------------------------------*/
+
