@@ -1,4 +1,4 @@
-/************************************************************************
+       /************************************************************************
 
 AMi-BOOK
 
@@ -40,7 +40,7 @@ PROCEDURE FakturyN()
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, _top, _bot, _stop, _sbot
    PRIVATE _proc, _row, _proc_spe, _disp, _cls, kl, ins, nr_rec, wiersz, f10, rec, fou, _top_bot
 
-   PRIVATE nPopKsgData, dPopDataTrans, aBufDok
+   PRIVATE nPopKsgData, dPopDataTrans, aBufDok, lKorekta
 
    *********************** lp
    m->liczba := 1
@@ -203,7 +203,7 @@ PROCEDURE FakturyN()
                ENDIF
                *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
                IF ins .AND. kl == K_F6
-                  aBufDok := Bufor_Dok_Wybierz( 'faktury' )
+                  aBufDok := Bufor_Dok_Wybierz( 'faktury', @lKorekta )
                   IF ! Empty( aBufDok ) .AND. HB_ISHASH( aBufDok )
                      @  4, 78 CLEAR TO 5, 79
                      @ 11, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
@@ -212,6 +212,7 @@ PROCEDURE FakturyN()
                      @ 15, 45 CLEAR TO 21, 54
                      @ 15, 59 CLEAR TO 21, 67
                      @ 15, 69 CLEAR TO 21, 78
+                     @ 22, 29 SAY 'WARTO— KOREKTYÀÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÙ'
 
                      zRACH := aBufDok[ 'RACH' ]
                      zNUMER&zRACH := firma->nr_fakt
@@ -236,6 +237,7 @@ PROCEDURE FakturyN()
                      zOPCJE := aBufDok[ 'OPCJE' ]
                      zPROCEDUR := aBufDok[ 'PROCEDUR' ]
                      zKSGDATA := 0
+                     zKOREKTA := iif( lKorekta, 'T', 'N' )
                   ELSE
                      BREAK
                   ENDIF
@@ -247,6 +249,8 @@ PROCEDURE FakturyN()
                   @ 15, 45 CLEAR TO 21, 54
                   @ 15, 59 CLEAR TO 21, 67
                   @ 15, 69 CLEAR TO 21, 78
+                  @ 22, 29 SAY '               ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÙ'
+
                   zrach := 'F'
                   zNUMERF := firma->nr_fakt
                   zDZIEN := Str( Day( Date( ) ), 2 )
@@ -273,6 +277,7 @@ PROCEDURE FakturyN()
                   zOPCJE := Space( 32 )
                   zPROCEDUR := Space( 32 )
                   zKSGDATA := 0
+                  zKOREKTA := 'N'
                ELSE
                   zRACH := RACH
                   zNUMER&zRACH := NUMER
@@ -319,6 +324,7 @@ PROCEDURE FakturyN()
                   zKSGDATA := KSGDATA
                   nPopKsgData := KSGDATA
                   dPopDataTrans := DATAS
+                  zKOREKTA := KOREKTA
     *             endif
                ENDIF
                *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
@@ -330,14 +336,14 @@ PROCEDURE FakturyN()
                @ 3, 46 GET zDATA2TYP PICTURE '!' WHEN wDATA2TYPv() VALID vDATA2TYPv()
                @ 3, 70 GET zDATAS PICTURE "@D" WHEN w26_20vn() VALID v26_20vn()
     *           @ 3,63 get zDATAZ picture "@D"
-               @ 4, 24 GET zNR_IDENT PICTURE repl( '!', 30 ) VALID vv1_3fn()
-               @ 5, 24 GET znazwa PICTURE "@S46 " + repl( '!', 200 ) VALID w1_3fn()
-               @ 6, 24 GET zADRES PICTURE "@S40 " + repl( '!', 200 )
+               @ 4, 24 GET zNR_IDENT PICTURE repl( '!', 30 ) WHEN zKOREKTA <> 'T' VALID vv1_3fn()
+               @ 5, 24 GET znazwa PICTURE "@S46 " + repl( '!', 200 ) WHEN zKOREKTA <> 'T' VALID w1_3fn()
+               @ 6, 24 GET zADRES PICTURE "@S40 " + repl( '!', 200 ) WHEN zKOREKTA <> 'T'
     *          if ins
                   @ 4,67 get zSplitPay PICTURE '!' WHEN wfSplitPay() VALID vfSplitPay()
-                  @ 4,77 get zexport picture '!' when wfEXIM( 4, 78 ) valid vfEXIM( 4, 78 )
-                  @ 5,77 get zUE picture '!' when wfUE( 5, 78 ) valid vfUE( 5, 78 )
-                  @ 6,77 get zKRAJ picture '!!'
+                  @ 4,77 get zexport picture '!' WHEN zKOREKTA <> 'T' .AND. wfEXIM( 4, 78 ) valid vfEXIM( 4, 78 )
+                  @ 5,77 get zUE picture '!' WHEN zKOREKTA <> 'T' .AND. wfUE( 5, 78 ) valid vfUE( 5, 78 )
+                  @ 6,77 get zKRAJ picture '!!' WHEN zKOREKTA <> 'T'
     *          endif
                @  7,  9 GET zKOMENTARZ PICTURE "@S38" + repl( '!', 60 )
                @  7, 59 GET zZAMOWIENIE PICTURE "@S20" + repl( '!', 30 )
@@ -395,8 +401,19 @@ PROCEDURE FakturyN()
                repl_( 'OPCJE', zOPCJE )
                repl_( 'PROCEDUR', zPROCEDUR )
                repl_( 'FAKTTYP', zFAKTTYP )
+               IF ins
+                  repl_( 'KOREKTA', zKOREKTA )
+                  IF kl == K_F6
+                     repl_( 'DOKKORID', aBufDok[ 'REC_NO' ] )
+                  ENDIF
+               ENDIF
                COMMIT
                UNLOCK
+
+               IF ins .AND. kl == K_F6
+                  FakturyN_UstawRef( aBufDok[ 'REC_NO' ], z_rec_no )
+               ENDIF
+
                zident_poz := Str( rec_no, 8 )
 
                IF kl == K_F6
@@ -458,6 +475,43 @@ PROCEDURE FakturyN()
                zVAT12 := 0
                zSEK_CV7 := '  '
 
+               kor_zWARTZW := 0
+               kor_zWART08 := 0
+               kor_zWART00 := 0
+               kor_zWART07 := 0
+               kor_zWART02 := 0
+               kor_zWART22 := 0
+               kor_zWART12 := 0
+
+               IF zKOREKTA == 'T'
+                  AEval( aBufDok[ 'pozycje' ], { | aPoz |
+                     DO CASE
+                        CASE aPoz[ 'VAT' ] == 'ZW'
+                           kor_zWARTZW := kor_zWARTZW + aPoz[ 'WARTOSC' ]
+
+                        CASE aPoz[ 'VAT' ] == 'NP' .OR. aPoz[ 'VAT' ] == 'PN' .OR. aPoz[ 'VAT' ] == 'PU'
+                           kor_zWART08 := kor_zWART08 + aPoz[ 'WARTOSC' ]
+
+                        CASE aPoz[ 'VAT' ] == '0 '
+                           kor_zWART00 := kor_zWART00 + aPoz[ 'WARTOSC' ]
+
+                        CASE AllTrim( aPoz[ 'VAT' ] ) == Str( vat_B, 1 )
+                           kor_zWART07 := kor_zWART07 + aPoz[ 'WARTOSC' ]
+
+                        CASE AllTrim( aPoz[ 'VAT' ] ) == Str( vat_C, 1 )
+                           kor_zWART02 := kor_zWART02 + aPoz[ 'WARTOSC' ]
+
+                        CASE AllTrim( aPoz[ 'VAT' ] ) == Str( vat_A, 2 )
+                           kor_zWART22 := kor_zWART22 + aPoz[ 'WARTOSC' ]
+
+                        CASE AllTrim( aPoz[ 'VAT' ] ) == Str( vat_D, 1 )
+                           kor_zWART12 := kor_zWART12 + aPoz[ 'WARTOSC' ]
+
+                     ENDCASE
+
+                  } )
+               ENDIF
+
                DO WHILE del == '+' .AND. ident == zident_poz
                   DO CASE
                      CASE VAT == 'ZW'
@@ -491,6 +545,14 @@ PROCEDURE FakturyN()
                IF zSplitPay == 'T'
                   zSEK_CV7 := 'SP'
                ENDIF
+
+               zWARTZW := zWARTZW - kor_zWARTZW
+               zWART08 := zWART08 - kor_zWART08
+               zWART00 := zWART00 - kor_zWART00
+               zWART07 := zWART07 - kor_zWART07
+               zWART02 := zWART02 - kor_zWART02
+               zWART22 := zWART22 - kor_zWART22
+               zWART12 := zWART12 - kor_zWART12
 
                zVAT07 := _round( zWART07 * ( vat_B / 100 ), 2 )
                zVAT02 := _round( zWART02 * ( vat_C / 100 ), 2 )
@@ -866,6 +928,10 @@ PROCEDURE FakturyN()
                   kom( 3, '*u', ' Miesi&_a.c jest zamkni&_e.ty ' )
                   BREAK
                ENDIF
+               IF faktury->korekta <> 'T' .AND. faktury->dokkorid <> 0
+                  kom( 3, '*u', ' Nie mo¾na usun¥†. Ta faktura posiada korekt©. ' )
+                  BREAK
+               ENDIF
                *-------------------
                IF ! tnesc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
                   BREAK
@@ -893,6 +959,9 @@ PROCEDURE FakturyN()
                ENDDO
                SELECT faktury
                rrrec := rec_no
+               IF faktury->korekta == 'T' .AND. faktury->rec_no > 0
+                  FakturyN_UstawRef( faktury->dokkorid, 0 )
+               ENDIF
                BlokadaR()
                del()
                COMMIT
@@ -1019,7 +1088,7 @@ PROCEDURE FakturyN()
          CASE kl == K_F1
             @ 1, 47 SAY '          '
             save screen to scr_
-            DECLARE p[ 11 ]
+            DECLARE p[ 13 ]
             *---------------------------------------
             p[  1 ] := '                                                        '
             p[  2 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna faktura  '
@@ -1027,14 +1096,16 @@ PROCEDURE FakturyN()
             p[  4 ] := '   [Ins]...................wystawienie nowej faktury    '
             p[  5 ] := '   [M].....................modyfikacja faktury          '
             p[  6 ] := '   [Del]...................kasowanie faktury            '
-            p[  7 ] := '   [F9]....................szukanie faktury/rachunku    '
-            p[  8 ] := '   [F10]...................szukanie dnia                '
-            p[  9 ] := '   [Enter].................wydruk faktury               '
-            p[ 10 ] := '   [Esc]...................wyj&_s.cie                      '
-            p[ 11 ] := '                                                        '
+            p[  7 ] := '   [F5 ]..................kopiowanie dokumentu do bufora'
+            p[  8 ] := '   [Shift+F5]........kopiowanie wsystkich dok. do bufora'
+            p[  9 ] := '   [F9]....................szukanie faktury/rachunku    '
+            p[ 10 ] := '   [F10]...................szukanie dnia                '
+            p[ 11 ] := '   [Enter].................wydruk faktury               '
+            p[ 12 ] := '   [Esc]...................wyj&_s.cie                      '
+            p[ 13 ] := '                                                        '
             *---------------------------------------
             SET COLOR TO i
-            i := 11
+            i := 13
             j := 24
             DO WHILE i > 0
                IF Type( 'p[i]' ) # 'U'
@@ -1100,7 +1171,10 @@ PROCEDURE say260vn()
    zrach := rach
    *  set cent off
 
+   FakturyN_KorInfo()
+
    ColStd()
+   @ 22, 29 SAY iif( KOREKTA == 'T', 'WARTO— KOREKTY', '               ' ) + 'ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÙ'
    @ 23, 0 SAY 'Kontrola zaplat....  Termin zaplaty.... (..........) Juz zaplacono.             '
    SET COLOR TO +w
    *@ 3,0  say iif(RACH='F','Faktura VAT','Rachunek   ')
@@ -1274,8 +1348,15 @@ PROCEDURE say260vn()
    SET COLOR TO w
    @ 21, 45 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 PICTURE "999 999.99"
    @ 21, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "99 999.99"
+   IF faktury->KOREKTA == 'T'
+      @ 22, 45 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 - aBufDok[ 'suma_netto' ] PICTURE "999 999.99"
+      @ 22, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 - ( aBufDok[ 'suma_brutto' ] - aBufDok[ 'suma_netto' ] ) PICTURE "99 999.99"
+   ENDIF
    SET COLOR TO w+*
    @ 21, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "999 999.99"
+   IF faktury->KOREKTA == 'T'
+      @ 22, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 - aBufDok[ 'suma_brutto' ] PICTURE "999 999.99"
+   ENDIF
    SELECT faktury
    SET COLOR TO
    *  set cent on
@@ -1674,7 +1755,7 @@ PROCEDURE Faktury_UsunKsieg( cMiesiac )
 
 PROCEDURE FakturyN_DrukGraf()
 
-   LOCAL aDane := {=>}, aPoz, aSuma, nIdx, nWartosc := 0
+   LOCAL aDane := {=>}, aPoz, aSuma, nIdx, nWartosc := 0, nWartoscPrzed := 0
    LOCAL cFakturyId := Str( faktury->rec_no, 8 )
 
    aDane[ 'nr_dok' ] := faktury->rach + '-' + StrTran( Str( faktury->numer, 5 ), ' ', '0' ) + '/' + param_rok
@@ -1733,7 +1814,7 @@ PROCEDURE FakturyN_DrukGraf()
    aDane[ 'sumy' ] := {}
    pozycje->( dbSeek( '+' + cFakturyId ) )
    DO WHILE pozycje->del == '+' .AND. pozycje->ident == cFakturyId
-      IF pozycje->wartosc == 0 .AND. Len( aDane[ 'pozycje' ] ) > 0
+      IF pozycje->wartosc == 0 .AND. pozycje->ilosc == 0 .AND. Len( AllTrim( pozycje->jm ) ) == 0 .AND. Len( aDane[ 'pozycje' ] ) > 0
          aPoz := ATail( aDane[ 'pozycje' ] )
          aPoz[ 'towar' ] := aPoz[ 'towar' ] + hb_eol() + AllTrim( pozycje->towar )
       ELSE
@@ -1758,6 +1839,59 @@ PROCEDURE FakturyN_DrukGraf()
       ENDIF
       pozycje->( dbSkip() )
    ENDDO
+
+   IF faktury->korekta == 'T' .AND. HB_ISHASH( aBufDok )
+      aDane[ 'nr_dok_kor' ] := aBufDok[ 'RACH' ] + '-' + StrTran( Str( aBufDok[ 'NUMER' ], 5 ), ' ', '0' ) + '/' + param_rok
+      aDane[ 'data_dok_kor' ] := hb_Date( Val( param_rok ), Val( aBufDok[ 'MC' ] ), Val( aBufDok[ 'DZIEN' ] ) )
+      aDane[ 'pozycjeprzed' ] := {}
+      aDane[ 'sumyprzed' ] := {}
+      AEval( aBufDok[ 'pozycje' ], { | aPozKor |
+         PRIVATE cKlucz
+         IF aPozKor[ 'WARTOSC' ] == 0 .AND. aPozKor[ 'ILOSC' ] == 0 .AND. Len( AllTrim( aPozKor[ 'JM' ] ) ) == 0 .AND. Len( aDane[ 'pozycjeprzed' ] ) > 0
+            aPoz := ATail( aDane[ 'pozycjeprzed' ] )
+            aPoz[ 'towar' ] := aPoz[ 'towar' ] + hb_eol() + AllTrim( aPozKor[ 'TOWAR' ] )
+         ELSE
+            aPoz := {=>}
+            aPoz[ 'wartosc_netto' ] := aPozKor[ 'WARTOSC' ]
+            aPoz[ 'towar' ] := AllTrim( aPozKor[ 'TOWAR' ] )
+            aPoz[ 'ilosc' ] := aPozKor[ 'ILOSC' ]
+            aPoz[ 'jm' ] := AllTrim( aPozKor[ 'JM' ] )
+            aPoz[ 'cena' ] := aPozKor[ 'CENA' ]
+            //aPoz[ 'sww' ] := AllTrim( pozycje->sww )
+            aPoz[ 'vat' ] := AllTrim( aPozKor[ 'VAT' ] )
+            aPoz[ 'wartosc_vat' ] := round( ( Val( aPozKor[ 'VAT' ] ) / 100 ) * aPozKor[ 'WARTOSC' ], 2 )
+            cKlucz := AllTrim( aPozKor[ 'VAT' ] )
+            IF ( nIdx := hb_AScan( aDane[ 'sumyprzed' ], { | aS | aS[ 'vat' ] == cKlucz } ) ) > 0
+               aDane[ 'sumyprzed' ][ nIdx ][ 'w_netto' ] := aDane[ 'sumyprzed' ][ nIdx ][ 'w_netto' ] + aPozKor[ 'WARTOSC' ]
+               aDane[ 'sumyprzed' ][ nIdx ][ 'w_vat' ] := aDane[ 'sumyprzed' ][ nIdx ][ 'w_vat' ] + aPoz[ 'wartosc_vat' ]
+            ELSE
+               AAdd( aDane[ 'sumyprzed' ], { 'vat' => AllTrim( aPozKor[ 'VAT' ] ), ;
+                  'w_netto' => aPozKor[ 'WARTOSC' ], 'w_vat' => aPoz[ 'wartosc_vat' ] } )
+            ENDIF
+            nWartoscPrzed := nWartoscPrzed + aPoz[ 'wartosc_netto' ] + aPoz[ 'wartosc_vat' ]
+            AAdd( aDane[ 'pozycjeprzed' ], aPoz )
+         ENDIF
+      } )
+      aDane[ 'roznice' ] := {}
+      AEval( aDane[ 'sumy' ], { | aSumPoz |
+         LOCAL nI, aPoz
+         PUBLIC cKlucz
+         AAdd( aDane[ 'roznice' ], hb_HClone( aSumPoz ) )
+         cKlucz := aSumPoz[ 'vat' ]
+         nI := AScan( aDane[ 'sumyprzed' ], { | aSumPrzedPoz | aSumPrzedPoz[ 'vat' ] == cKlucz } )
+         IF nI > 0
+            aPoz := ATail( aDane[ 'roznice' ] )
+            aPoz[ 'w_netto' ] := aPoz[ 'w_netto' ] - aDane[ 'sumyprzed' ][ nI ][ 'w_netto' ]
+            aPoz[ 'w_vat' ] := aPoz[ 'w_vat' ] - aDane[ 'sumyprzed' ][ nI ][ 'w_vat' ]
+         ENDIF
+      } )
+      AEval( aDane[ 'sumyprzed' ], { | aPrzed |
+         PUBLIC cKlucz := aPrzed[ 'vat' ]
+         IF AScan( aDane[ 'roznice' ], { | aRoznica | aRoznica[ 'vat' ] == cKlucz } ) == 0
+            AAdd( aDane[ 'roznice' ], aPrzed )
+         ENDIF
+      } )
+   ENDIF
 
    aDane[ 'naglowki' ] := {}
 
@@ -1792,11 +1926,11 @@ PROCEDURE FakturyN_DrukGraf()
       aDane[ 'dopisek' ] := ''
    ENDIF
 
-   aDane[ 'wartosc' ] := nWartosc
-   aDane[ 'slownie' ] := slownie( nWartosc )
+   aDane[ 'wartosc' ] := nWartosc - nWartoscPrzed
+   aDane[ 'slownie' ] := slownie( nWartosc - nWartoscPrzed )
    aDane[ 'zaplacono' ] := faktury->zap_wart
    IF _round( nWartosc, 2 ) <> _round( faktury->zap_wart, 2 )
-      aDane[ 'do_zaplaty' ] := nWartosc - faktury->zap_wart
+      aDane[ 'do_zaplaty' ] := nWartosc - nWartoscPrzed - faktury->zap_wart
    ELSE
       aDane[ 'do_zaplaty' ] := 0
    ENDIF
@@ -1806,7 +1940,33 @@ PROCEDURE FakturyN_DrukGraf()
 
    aDane[ 'wystawil' ] := AllTrim( ewid_wyst )
 
-   FRDrukuj( 'frf\fv.frf', aDane )
+   FRDrukuj( iif( faktury->korekta <> 'T', 'frf\fv.frf', 'frf\kfv.frf' ), aDane )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE FakturyN_KorInfo()
+
+   LOCAL aDane
+   LOCAL cKolor
+
+   cKolor := ColSta()
+   @  2, 0 SAY 'ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ'
+   IF faktury->korekta == 'T' .AND. faktury->dokkorid > 0
+      aDane := FakturyN_DokRefPobierz( faktury->dokkorid )
+      ColStd()
+      @ 2,  3 SAY 'KOREKTA FAKTURY nr       z dnia            netto:           brutto:'
+      SetColor( 'w+' )
+      @ 2, 22 SAY StrTran( Str( aDane[ 'NUMER' ], 5 ), ' ', '0' )
+      @ 2, 35 SAY StrTran( aDane[ 'DZIEN' ], ' ', '0' ) + '.' + StrTran( aDane[ 'MC' ], ' ', '0' ) + '.' + param_rok
+      @ 2, 52 SAY Transform( aDane[ 'suma_netto' ], "999 999.99" )
+      @ 2, 70 SAY Transform( aDane[ 'suma_brutto' ], "999 999.99" )
+      aBufDok := aDane
+   ELSE
+      aBufDok := NIL
+   ENDIF
+   SetColor( cKolor )
 
    RETURN NIL
 
@@ -1881,6 +2041,26 @@ PROCEDURE FakturyN_RysujTlo()
    *endif
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION FakturyN_UstawRef( nRecNo, nRefRecNo )
+
+   LOCAL nTmpRecNo, cPopOrd, lRes
+
+   nTmpRecNo := faktury->( RecNo() )
+   cPopOrd := faktury->( ordSetFocus() )
+   faktury->( ordSetFocus( 4 ) )
+   IF ( lRes := faktury->( dbSeek( nRecNo ) ) )
+      BlokadaR()
+      faktury->dokkorid := nRefRecNo
+      faktury->( dbCommit() )
+      faktury->( dbUnlock() )
+   ENDIF
+   faktury->( ordSetFocus( cPopOrd ) )
+   faktury->( dbGoto( nTmpRecNo ) )
+
+   RETURN lRes
 
 /*----------------------------------------------------------------------*/
 

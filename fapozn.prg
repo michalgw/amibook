@@ -97,108 +97,116 @@ PROCEDURE FaPozN()
       CASE kl == K_INS .OR. kl == Asc( '0' ) .OR. _row == -1 .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' )
          @ 1, 47 SAY '          '
          ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
-         IF ins
-            ColStb()
-            center( 24, '‏                     ‏' )
-            ColSta()
-            center( 24, 'W P I S Y W A N I E' )
-            ColStd()
-            RestScreen( _row_g, _col_l, _row_d + 1, _col_p, _cls )
-            wiersz := _row_d
+         IF ins .AND. zKOREKTA == 'T'
+            Komun( "Nie mo¾na dodawa† pozycji do faktury koryguj¥cej" )
          ELSE
-            ColStb()
-            center( 24, '‏                       ‏' )
-            ColSta()
-            center( 24, 'M O D Y F I K A C J A' )
-            ColStd()
-            wiersz := _row
-         ENDIF
-         DO WHILE .T.
-            *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
             IF ins
-               zTOWAR := Space( 512 )
-   *              zSWW := space(14)
-               zILO := 0
-               zJM := Space( 5 )
-               zCENA := 0
-               zSTAWKA := '  '
-               zWARTOSC := 0
-            else
-               zTOWAR := TOWAR
- *              zSWW=SWW
-               zILO := ILOSC
-               zJM := JM
-               zCENA := CENA
-               zSTAWKA := VAT
-               zWARTOSC := WARTOSC
-            endif
-            *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
-            @ wiersz,  1 GET zTOWAR PICTURE '@S38 ' + repl( 'X', 512 ) WHEN w26_50vn()
-   *           @ wiersz,31 get zSWW   picture '@RS8 !!!!!!!!!!!!!!'
-            IF NR_UZYTK == 204
-               @ wiersz, 40 GET zILO PICTURE '999999.99' VALID vWARTOSCfn()
+               ColStb()
+               center( 24, '‏                     ‏' )
+               ColSta()
+               center( 24, 'W P I S Y W A N I E' )
+               ColStd()
+               RestScreen( _row_g, _col_l, _row_d + 1, _col_p, _cls )
+               wiersz := _row_d
             ELSE
-               @ wiersz, 40 GET zILO PICTURE '99999.999' VALID vWARTOSCfn()
-            endif
-            @ wiersz, 50 GET zJM    PICTURE 'XXXXX'
-            @ wiersz, 56 GET zCENA  PICTURE '999999.99' VALID vWARTOSCfn()
-            @ wiersz, 77 GET zSTAWKA PICTURE '!!' VALID vSTAWKAfn()
-            read_()
-            IF LastKey() == K_ESC
-               EXIT
+               ColStb()
+               center( 24, '‏                       ‏' )
+               ColSta()
+               center( 24, 'M O D Y F I K A C J A' )
+               ColStd()
+               wiersz := _row
             ENDIF
-            *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-            IF ins
-               app()
-               repl_( 'ident', zident_poz )
-            endif
-            do BLOKADAR
-            repl_( 'towar', ztowar )
-            repl_( 'ilosc', zilo )
-            repl_( 'jm', zjm )
-            repl_( 'cena', zcena )
-            repl_( 'wartosc', zwartosc )
- *           repl_( 'SWW', zSWW )
-            repl_( 'VAT', zSTAWKA )
- *!!!       repl_( 'VATWART', zSTAWKA )
- *!!!       repl_( 'BRUTTO', zSTAWKA )
-            commit_()
-            UNLOCK
-            *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
-            _row := Int( ( _row_g + _row_d ) / 2 )
-            IF ! ins
-               EXIT
-            ENDIF
-            @ _row_d, _col_l SAY &_proc
-            Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
-            @ _row_d, _col_l SAY '                                      ³         ³     ³         ³          ³  '
-         ENDDO
-         _disp := ins .OR. LastKey() # K_ESC
-         kl := iif( LastKey() == K_ESC .AND. _row == -1, K_ESC, kl )
- *        @ 23,0
-         @ 24, 0
+            DO WHILE .T.
+               *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
+               IF ins
+                  zTOWAR := Space( 512 )
+      *              zSWW := space(14)
+                  zILO := 0
+                  zJM := Space( 5 )
+                  zCENA := 0
+                  zSTAWKA := '  '
+                  zWARTOSC := 0
+               else
+                  zTOWAR := TOWAR
+    *              zSWW=SWW
+                  zILO := ILOSC
+                  zJM := JM
+                  zCENA := CENA
+                  zSTAWKA := VAT
+                  zWARTOSC := WARTOSC
+               endif
+               *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
+               @ wiersz,  1 GET zTOWAR PICTURE '@S38 ' + repl( 'X', 512 ) WHEN zKOREKTA <> 'T' .AND. w26_50vn()
+      *           @ wiersz,31 get zSWW   picture '@RS8 !!!!!!!!!!!!!!'
+               IF NR_UZYTK == 204
+                  @ wiersz, 40 GET zILO PICTURE '999999.99' VALID vWARTOSCfn()
+               ELSE
+                  @ wiersz, 40 GET zILO PICTURE '99999.999' VALID vWARTOSCfn()
+               endif
+               @ wiersz, 50 GET zJM    PICTURE 'XXXXX'
+               @ wiersz, 56 GET zCENA  PICTURE '999999.99' VALID vWARTOSCfn()
+               @ wiersz, 77 GET zSTAWKA PICTURE '!!' WHEN zKOREKTA <> 'T' VALID vSTAWKAfn()
+               read_()
+               IF LastKey() == K_ESC
+                  EXIT
+               ENDIF
+               *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+               IF ins
+                  app()
+                  repl_( 'ident', zident_poz )
+               endif
+               do BLOKADAR
+               repl_( 'towar', ztowar )
+               repl_( 'ilosc', zilo )
+               repl_( 'jm', zjm )
+               repl_( 'cena', zcena )
+               repl_( 'wartosc', zwartosc )
+    *           repl_( 'SWW', zSWW )
+               repl_( 'VAT', zSTAWKA )
+    *!!!       repl_( 'VATWART', zSTAWKA )
+    *!!!       repl_( 'BRUTTO', zSTAWKA )
+               commit_()
+               UNLOCK
+               *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
+               _row := Int( ( _row_g + _row_d ) / 2 )
+               IF ! ins
+                  EXIT
+               ENDIF
+               @ _row_d, _col_l SAY &_proc
+               Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
+               @ _row_d, _col_l SAY '                                      ³         ³     ³         ³          ³  '
+            ENDDO
+            _disp := ins .OR. LastKey() # K_ESC
+            kl := iif( LastKey() == K_ESC .AND. _row == -1, K_ESC, kl )
+    *        @ 23,0
+            @ 24, 0
+         ENDIF
 
       *################################ KASOWANIE #################################
       CASE kl == K_DEL .OR. kl == Asc( '.' )
          @ 1, 47 SAY '          '
-         RECS := RecNo()
-         ColStb()
-         center( 24, '‏                   ‏' )
-         ColSta()
-         center( 24, 'K A S O W A N I E' )
-         ColStd()
-         _disp := TNEsc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
-         IF _disp
-            BlokadaR()
-            DELETE
-            UNLOCK
-            SKIP
-            commit_()
-            IF &_bot
-               SKIP -1
+         IF zKOREKTA == 'T'
+            Komun( "Nie mo¾na kasowa† pozycji faktury koryguj¥cej" )
+         ELSE
+            RECS := RecNo()
+            ColStb()
+            center( 24, '‏                   ‏' )
+            ColSta()
+            center( 24, 'K A S O W A N I E' )
+            ColStd()
+            _disp := TNEsc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
+            IF _disp
+               BlokadaR()
+               DELETE
+               UNLOCK
+               SKIP
+               commit_()
+               IF &_bot
+                  SKIP -1
+               ENDIF
             ENDIF
+            @ 24, 0
          ENDIF
-         @ 24, 0
 
       *################################### POMOC ##################################
       CASE kl == K_F1
@@ -315,11 +323,18 @@ PROCEDURE linia61fsn()
    SET COLOR TO w
    @ 21, 45 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 PICTURE "999 999.99"
    @ 21, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "99 999.99"
+   IF faktury->KOREKTA == 'T'
+      @ 22, 45 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 - aBufDok[ 'suma_netto' ] PICTURE "999 999.99"
+      @ 22, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 - ( aBufDok[ 'suma_brutto' ] - aBufDok[ 'suma_netto' ] ) PICTURE "99 999.99"
+   ENDIF
    SET COLOR TO w+*
    @ 21, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "999 999.99"
+   IF faktury->KOREKTA == 'T'
+      @ 22, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 - aBufDok[ 'suma_brutto' ] PICTURE "999 999.99"
+   ENDIF
    GO reccc
    ColInf()
-   @ 24,  0 SAY PadC( ' M-modyfikacja   Ins-dopisanie   Del-kasowanie   Esc-zakonczenie ', 80, ' ' )
+   @ 24,  0 SAY PadC( ' M-modyfikacja   ' + iif( zKOREKTA <> 'T', 'Ins-dopisanie   Del-kasowanie', '' ) + '   Esc-zakonczenie ', 80, ' ' )
    ColStd()
    RETURN
 

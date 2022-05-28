@@ -28,7 +28,7 @@ FUNCTION Bufor_Dok_Znajdz( cRodzaj, nRecNo )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION Bufor_Dok_Wybierz( cRodzaj )
+FUNCTION Bufor_Dok_Wybierz( cRodzaj, lKorekta )
 
    IF ! HB_ISHASH( bufor_dok ) .OR. ! hb_HHasKey( bufor_dok, cRodzaj ) .OR. Len( bufor_dok[ cRodzaj ] ) == 0
       Komun( "Brak dokument¢w w buforze" )
@@ -45,7 +45,7 @@ FUNCTION Bufor_Dok_Wybierz( cRodzaj )
    CASE cRodzaj == 'rejz'
       RETURN Bufor_Dok_Wybierz_RejZ()
    CASE cRodzaj == 'faktury'
-      RETURN Bufor_Dok_Wybierz_Faktury()
+      RETURN Bufor_Dok_Wybierz_Faktury( @lKorekta )
    ENDCASE
 
    RETURN NIL
@@ -264,7 +264,7 @@ FUNCTION Bufor_Dok_Wybierz_RejZ()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION Bufor_Dok_Wybierz_Faktury()
+FUNCTION Bufor_Dok_Wybierz_Faktury( lKorekta )
 
    LOCAL xRes := NIL
    LOCAL nElem := 1
@@ -280,12 +280,24 @@ FUNCTION Bufor_Dok_Wybierz_Faktury()
       { || SubStr( bufor_dok[ 'faktury' ][ nElem ][ 'ADRES' ], 1, 20 ) }, ;
       { || bufor_dok[ 'faktury' ][ nElem ][ 'suma_netto' ] }, ;
       { || bufor_dok[ 'faktury' ][ nElem ][ 'suma_brutto' ] } }
+   LOCAL bKorekta := { | nElem, ar, b |
+      IF ar[ nElem ][ 'DOKKORID' ] <> 0 .AND. ar[ nElem ][ 'KOREKTA' ] <> 'T'
+         Komun( "Ten dokument posiada juæ korekt©." )
+      ELSE
+         lKorekta := .T.
+         hb_keyPut( K_ENTER )
+      ENDIF
+      RETURN NIL
+   }
+   LOCAL aKlawisze := { { Asc( 'K' ), bKorekta }, { Asc( 'k' ), bKorekta } }
+
+   hb_default( @lKorekta, .F. )
 
    SAVE SCREEN TO cEkran
 
    @  2, 0 SAY PadC( "BUFOR DOKUMENT‡W", 80 )
-   @ 22, 0 SAY PadC( "Enter - wyb¢r,   Delete - usuni©cie z bufora,   ESC - anuluj", 80 )
-   nElem := GM_ArEdit( 3, 0, 21, 79, bufor_dok[ 'faktury' ], @nElem, aNaglowki, aKolumny, NIL, NIL, NIL, NIL, SetColor() + ",N+/N" )
+   @ 22, 0 SAY PadC( "Enter - wyb¢r,  K - korekta,  Delete - usuni©cie z bufora,  ESC - anuluj", 80 )
+   nElem := GM_ArEdit( 3, 0, 21, 79, bufor_dok[ 'faktury' ], @nElem, aNaglowki, aKolumny, NIL, NIL, NIL, aKlawisze, SetColor() + ",N+/N" )
 
    IF LastKey() <> K_ESC .AND. nElem > 0 .AND. Len( bufor_dok[ 'faktury' ] ) >= nElem
       xRes := bufor_dok[ 'faktury' ][ nElem ]
