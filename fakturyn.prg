@@ -26,7 +26,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE FakturyN()
 
-   LOCAL nKsieguj
+   LOCAL nKsieguj, cEkranPrzKor, cKolorPrzKor
    LOCAL aKsiegWybor := { "1. Zaksi©guj w bie¾¥cym miesi¥cu", ;
       "2. Nie wprowadzaj do ksi©gi", "3. Zaksi©guj w poprzednim miesi¥cu" }
 
@@ -242,6 +242,7 @@ PROCEDURE FakturyN()
                      zPROCEDUR := aBufDok[ 'PROCEDUR' ]
                      zKSGDATA := 0
                      zKOREKTA := iif( lKorekta, 'T', 'N' )
+                     zPRZYCZKOR := Space( 200 )
                      FakturyN_KorInfo()
                   ELSE
                      BREAK
@@ -283,6 +284,7 @@ PROCEDURE FakturyN()
                   zPROCEDUR := Space( 32 )
                   zKSGDATA := 0
                   zKOREKTA := 'N'
+                  zPRZYCZKOR := Space( 200 )
                ELSE
                   zRACH := RACH
                   zNUMER&zRACH := NUMER
@@ -330,6 +332,7 @@ PROCEDURE FakturyN()
                   nPopKsgData := KSGDATA
                   dPopDataTrans := DATAS
                   zKOREKTA := KOREKTA
+                  zPRZYCZKOR := PRZYCZKOR
     *             endif
                ENDIF
                *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
@@ -350,11 +353,11 @@ PROCEDURE FakturyN()
                   @ 5,77 get zUE picture '!' WHEN zKOREKTA <> 'T' .AND. wfUE( 5, 78 ) valid vfUE( 5, 78 )
                   @ 6,77 get zKRAJ picture '!!' WHEN zKOREKTA <> 'T'
     *          endif
-               @  7,  9 GET zKOMENTARZ PICTURE "@S38" + repl( '!', 60 )
-               @  7, 59 GET zZAMOWIENIE PICTURE "@S20" + repl( '!', 30 )
+               @  7,  9 GET zKOMENTARZ PICTURE "@S38 " + repl( '!', 60 )
+               @  7, 59 GET zZAMOWIENIE PICTURE "@S20 " + repl( '!', 30 )
                @ 15, 11 GET zOPCJE PICTURE "@S8 " + Repl( '!', 32 ) WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
                @ 15, 30 GET zPROCEDUR PICTURE "@S14 " + Repl( '!', 32 ) WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
-               @ 17,  0 GET zFAKTTYP PICTURE "@S40" + repl( '!', 60 )
+               @ 17,  0 GET zFAKTTYP PICTURE "@S40 " + repl( '!', 60 )
                wiersz := 1
                CLEAR TYPE
                read_()
@@ -363,6 +366,20 @@ PROCEDURE FakturyN()
                   BREAK
                ENDIF
 
+               IF zKOREKTA == 'T'
+                  cEkranPrzKor := SaveScreen()
+                  cKolorPrzKor := ColStd()
+                  @ 11, 0 CLEAR TO 14, 79
+                  @ 11, 0 TO 14, 79
+                  @ 12, 1 SAY "Przyczyna korekty:"
+                  @ 13, 1 GET zPRZYCZKOR PICTURE "@S78 " + Replicate( "!", 200 )
+                  read_()
+                  RestScreen( , , , , cEkranPrzKor )
+                  SetColor( cKolorPrzKor )
+                  IF LastKey() == K_ESC
+                     BREAK
+                  ENDIF
+               ENDIF
                *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
 
                KontrApp()
@@ -406,6 +423,7 @@ PROCEDURE FakturyN()
                repl_( 'OPCJE', zOPCJE )
                repl_( 'PROCEDUR', zPROCEDUR )
                repl_( 'FAKTTYP', zFAKTTYP )
+               repl_( 'PRZYCZKOR', zPRZYCZKOR )
                IF ins
                   repl_( 'KOREKTA', zKOREKTA )
                   IF kl == K_F6
@@ -1853,6 +1871,7 @@ PROCEDURE FakturyN_DrukGraf()
    IF faktury->korekta == 'T' .AND. HB_ISHASH( aBufDok )
       aDane[ 'nr_dok_kor' ] := aBufDok[ 'RACH' ] + '-' + StrTran( Str( aBufDok[ 'NUMER' ], 5 ), ' ', '0' ) + '/' + param_rok
       aDane[ 'data_dok_kor' ] := hb_Date( Val( param_rok ), Val( aBufDok[ 'MC' ] ), Val( aBufDok[ 'DZIEN' ] ) )
+      aDane[ 'przyczyna_korekty' ] := AllTrim( faktury->przyczkor )
       aDane[ 'pozycjeprzed' ] := {}
       aDane[ 'sumyprzed' ] := {}
       AEval( aBufDok[ 'pozycje' ], { | aPozKor |

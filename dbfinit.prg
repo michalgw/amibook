@@ -472,7 +472,8 @@ public aFAKTURYdbf := {;
    { "PROCEDUR", "C", 32, 0 },;                   //  41
    { "KSGDATA", "N", 1, 0 },;                     //  42 Ksi©guj: 0 - w akt. miesi¥cu, 1 - nie ksieguj, 2 - w poprzednim miesi¥cu
    { "KOREKTA", "C", 1, 0 },;                     //  43 Czy faktura koryguj¥ca - 'T' - tak, 'N' - nie
-   { "DOKKORID", "N", 5, 0 } }                    //  44 Nr ID powi¥zanej faktury / faktury koryguj¥cej
+   { "DOKKORID", "N", 5, 0 },;                    //  44 Nr ID powi¥zanej faktury / faktury koryguj¥cej
+   { "PRZYCZKOR", "C", 200, 0 } }                 //  45 Przyczyna korekty
 
 // Create: FAKTURYW.DBF
 public aFAKTURYWdbf := {;
