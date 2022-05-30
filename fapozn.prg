@@ -143,7 +143,7 @@ PROCEDURE FaPozN()
                ELSE
                   @ wiersz, 40 GET zILO PICTURE '99999.999' VALID vWARTOSCfn()
                endif
-               @ wiersz, 50 GET zJM    PICTURE 'XXXXX'
+               @ wiersz, 50 GET zJM    PICTURE 'XXXXX' WHEN zKOREKTA <> 'T'
                @ wiersz, 56 GET zCENA  PICTURE '999999.99' VALID vWARTOSCfn()
                @ wiersz, 77 GET zSTAWKA PICTURE '!!' WHEN zKOREKTA <> 'T' VALID vSTAWKAfn()
                read_()

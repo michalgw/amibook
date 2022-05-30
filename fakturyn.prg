@@ -195,6 +195,10 @@ PROCEDURE FakturyN()
                   kom( 3, '*u', ' Miesi&_a.c jest zamkni&_e.ty ' )
                   BREAK
                ENDIF
+               IF ! ins .AND. faktury->korekta <> 'T' .AND. faktury->dokkorid <> 0
+                  kom( 3, '*u', '  Nie moพna modyfikowa. Ta faktura posiada korektฉ.  ' )
+                  BREAK
+               ENDIF
                *-------------------
                IF ins .AND. Month( Date() ) # Val( miesiac ) .AND. del == '+' .AND. firma == ident_fir .AND. mc == miesiac
                   IF ! tnesc( '*u', ' Jest ' + Upper( RTrim( miesiac( Month( Date( ) ) ) ) ) + ' - jeste&_s. pewny? (T/N) ' )
@@ -238,6 +242,7 @@ PROCEDURE FakturyN()
                      zPROCEDUR := aBufDok[ 'PROCEDUR' ]
                      zKSGDATA := 0
                      zKOREKTA := iif( lKorekta, 'T', 'N' )
+                     FakturyN_KorInfo()
                   ELSE
                      BREAK
                   ENDIF
@@ -673,7 +678,7 @@ PROCEDURE FakturyN()
                      ELSE
                         repl_( 'KOLUMNA', ' 7' )
                      ENDIF
-                     repl_( 'KOREKTA', 'N' )
+                     repl_( 'KOREKTA', zKOREKTA )
                      repl_( 'UWAGI', Space( 20 ) )
                      COMMIT
                      UNLOCK
@@ -694,7 +699,7 @@ PROCEDURE FakturyN()
                         ELSE
                            repl_( 'KOLUMNA', ' 7' )
                         ENDIF
-                        repl_( 'KOREKTA', 'N' )
+                        repl_( 'KOREKTA', zKOREKTA )
                         repl_( 'UWAGI', Space( 20 ) )
                         COMMIT
                         UNLOCK
@@ -1171,6 +1176,11 @@ PROCEDURE say260vn()
    zrach := rach
    *  set cent off
 
+   IF faktury->korekta == 'T' .AND. faktury->dokkorid > 0
+      aBufDok := FakturyN_DokRefPobierz( faktury->dokkorid )
+   ELSE
+      aBufDok := NIL
+   ENDIF
    FakturyN_KorInfo()
 
    ColStd()
@@ -1948,23 +1958,18 @@ PROCEDURE FakturyN_DrukGraf()
 
 PROCEDURE FakturyN_KorInfo()
 
-   LOCAL aDane
    LOCAL cKolor
 
    cKolor := ColSta()
    @  2, 0 SAY 'ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ'
-   IF faktury->korekta == 'T' .AND. faktury->dokkorid > 0
-      aDane := FakturyN_DokRefPobierz( faktury->dokkorid )
+   IF HB_ISHASH( aBufDok )
       ColStd()
       @ 2,  3 SAY 'KOREKTA FAKTURY nr       z dnia            netto:           brutto:'
       SetColor( 'w+' )
-      @ 2, 22 SAY StrTran( Str( aDane[ 'NUMER' ], 5 ), ' ', '0' )
-      @ 2, 35 SAY StrTran( aDane[ 'DZIEN' ], ' ', '0' ) + '.' + StrTran( aDane[ 'MC' ], ' ', '0' ) + '.' + param_rok
-      @ 2, 52 SAY Transform( aDane[ 'suma_netto' ], "999 999.99" )
-      @ 2, 70 SAY Transform( aDane[ 'suma_brutto' ], "999 999.99" )
-      aBufDok := aDane
-   ELSE
-      aBufDok := NIL
+      @ 2, 22 SAY StrTran( Str( aBufDok[ 'NUMER' ], 5 ), ' ', '0' )
+      @ 2, 35 SAY StrTran( aBufDok[ 'DZIEN' ], ' ', '0' ) + '.' + StrTran( aBufDok[ 'MC' ], ' ', '0' ) + '.' + param_rok
+      @ 2, 52 SAY Transform( aBufDok[ 'suma_netto' ], "999 999.99" )
+      @ 2, 70 SAY Transform( aBufDok[ 'suma_brutto' ], "999 999.99" )
    ENDIF
    SetColor( cKolor )
 
