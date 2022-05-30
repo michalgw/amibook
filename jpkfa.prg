@@ -31,8 +31,8 @@ FUNCTION JPK_FA_Dane()
    LOCAL _sbot := '+' + ident_fir + miesiac + 'þ'
    LOCAL _top_bot := _top + '.or.' + _bot
 
-   LOCAL cIdPoz, cVAT
-   LOCAL aPoz, aWiersz
+   LOCAL cIdPoz, cVAT, nIndeks, nWartosc
+   LOCAL aPoz, aWiersz, aDokKor
 
    LOCAL cFirmaNazwa
    LOCAL cFirmaAdres
@@ -147,9 +147,20 @@ FUNCTION JPK_FA_Dane()
       aPoz[ 'P_23' ] := .F.
       aPoz[ 'P_106E_2' ] := .F.
       aPoz[ 'P_106E_3' ] := .F.
-      aPoz[ 'RodzajFaktury' ] := 'VAT'
-      aPoz[ 'Pozycje' ] := {}
+      aPoz[ 'RodzajFaktury' ] := iif( faktury->korekta == 'T', 'KOREKTA', 'VAT' )
 
+      IF faktury->korekta == 'T'
+         aDokKor := FakturyN_DokRefPobierz( faktury->dokkorid )
+         aPoz[ 'NrFaKorygowanej' ] := aDokKor[ 'RACH' ] + '-' + StrTran( Str( aDokKor[ 'NUMER' ], 5 ), ' ', '0' ) + '/' + param_rok
+         IF Len( AllTrim( faktury->przyczkor ) ) > 0
+            aPoz[ 'PrzyczynaKorekty' ] := AllTrim( faktury->przyczkor )
+         ENDIF
+      ELSE
+         aDokKor := NIL
+      ENDIF
+
+      aPoz[ 'Pozycje' ] := {}
+      nIndeks := 1
       cIdPoz := Str( faktury->rec_no, 8 )
       pozycje->( dbSeek( "+" + cIdPoz ) )
       DO WHILE pozycje->del == "+" .AND. pozycje->ident == cIdPoz
@@ -164,46 +175,47 @@ FUNCTION JPK_FA_Dane()
             aWiersz[ 'P_8A' ] := AllTrim( pozycje->jm )
             aWiersz[ 'P_8B' ] := pozycje->ilosc
             aWiersz[ 'P_9A' ] := pozycje->cena
-            aWiersz[ 'P_11' ] := pozycje->ilosc * pozycje->cena
+            nWartosc := pozycje->cena * pozycje->ilosc - iif( faktury->korekta == 'T', aDokKor[ 'pozycje' ][ nIndeks ][ 'CENA' ] * aDokKor[ 'pozycje' ][ nIndeks ][ 'ILOSC' ], 0 )
+            aWiersz[ 'P_11' ] := nWartosc
 
             cVAT := AllTrim( pozycje->vat )
 
             DO CASE
             CASE cVAT == '23'
                aWiersz[ 'P_12' ] := '23'
-               aPoz[ 'P_13_1' ] := aPoz[ 'P_13_1' ] + pozycje->cena * pozycje->ilosc
-               aPoz[ 'P_14_1' ] := aPoz[ 'P_14_1' ] + pozycje->cena * pozycje->ilosc * 0.23
+               aPoz[ 'P_13_1' ] := aPoz[ 'P_13_1' ] + nWartosc
+               aPoz[ 'P_14_1' ] := aPoz[ 'P_14_1' ] + nWartosc * 0.23
             CASE cVAT == '22'
                aWiersz[ 'P_12' ] := '22'
-               aPoz[ 'P_13_1' ] := aPoz[ 'P_13_1' ] + pozycje->cena * pozycje->ilosc
-               aPoz[ 'P_14_1' ] := aPoz[ 'P_14_1' ] + pozycje->cena * pozycje->ilosc * 0.22
+               aPoz[ 'P_13_1' ] := aPoz[ 'P_13_1' ] + nWartosc
+               aPoz[ 'P_14_1' ] := aPoz[ 'P_14_1' ] + nWartosc * 0.22
             CASE cVAT == '8'
                aWiersz[ 'P_12' ] := '8'
-               aPoz[ 'P_13_2' ] := aPoz[ 'P_13_2' ] + pozycje->cena * pozycje->ilosc
-               aPoz[ 'P_14_2' ] := aPoz[ 'P_14_2' ] + pozycje->cena * pozycje->ilosc * 0.08
+               aPoz[ 'P_13_2' ] := aPoz[ 'P_13_2' ] + nWartosc
+               aPoz[ 'P_14_2' ] := aPoz[ 'P_14_2' ] + nWartosc * 0.08
             CASE cVAT == '7'
                aWiersz[ 'P_12' ] := '7'
-               aPoz[ 'P_13_2' ] := aPoz[ 'P_13_2' ] + pozycje->cena * pozycje->ilosc
-               aPoz[ 'P_14_2' ] := aPoz[ 'P_14_2' ] + pozycje->cena * pozycje->ilosc * 0.07
+               aPoz[ 'P_13_2' ] := aPoz[ 'P_13_2' ] + nWartosc
+               aPoz[ 'P_14_2' ] := aPoz[ 'P_14_2' ] + nWartosc * 0.07
             CASE cVAT == '5'
                aWiersz[ 'P_12' ] := '5'
-               aPoz[ 'P_13_3' ] := aPoz[ 'P_13_3' ] + pozycje->cena * pozycje->ilosc
-               aPoz[ 'P_14_3' ] := aPoz[ 'P_14_3' ] + pozycje->cena * pozycje->ilosc * 0.05
+               aPoz[ 'P_13_3' ] := aPoz[ 'P_13_3' ] + nWartosc
+               aPoz[ 'P_14_3' ] := aPoz[ 'P_14_3' ] + nWartosc * 0.05
             CASE cVAT == '0'
                aWiersz[ 'P_12' ] := '0'
-               aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + nWartosc
                //aPoz[ 'P_14_4' ] := aPoz[ 'P_14_4' ] + pozycje->cena * pozycje->ilosc * 0.05
             CASE cVAT == 'NP'
                aWiersz[ 'P_12' ] := '0'
-               aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + nWartosc
                aPoz[ 'P_19' ] := .T.
             CASE cVAT == 'PN' .OR. cVAT == 'PU'
                aWiersz[ 'P_12' ] := '0'
-               aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_13_4' ] := aPoz[ 'P_13_4' ] + nWartosc
                aPoz[ 'P_18' ] := .T.
             CASE cVAT == 'ZW'
                aWiersz[ 'P_12' ] := 'zw'
-               aPoz[ 'P_13_5' ] := aPoz[ 'P_13_5' ] + pozycje->cena * pozycje->ilosc
+               aPoz[ 'P_13_5' ] := aPoz[ 'P_13_5' ] + nWartosc
             ENDCASE
 
             aDane[ 'FakturaWierszCtrl' ][ 'LiczbaWierszyFaktur' ] := aDane[ 'FakturaWierszCtrl' ][ 'LiczbaWierszyFaktur' ] + 1
@@ -213,6 +225,7 @@ FUNCTION JPK_FA_Dane()
             AAdd( aDane[ 'Pozycje' ], aWiersz )
          ENDIF
          pozycje->( dbSkip() )
+         nIndeks++
       ENDDO
 
       aPoz[ 'P_15' ] := aPoz[ 'P_13_1' ] + aPoz[ 'P_14_1' ] + aPoz[ 'P_13_2' ] + aPoz[ 'P_14_2' ] + ;

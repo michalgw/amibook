@@ -1011,6 +1011,12 @@ FUNCTION jpk_fa4( aDane )
       cRes := cRes + '    <P_106E_2>' + bool2sxml(aDane[ 'Faktury' ][ nI ][ 'P_106E_2' ] ) + '</P_106E_2>' + nl
       cRes := cRes + '    <P_106E_3>' + bool2sxml(aDane[ 'Faktury' ][ nI ][ 'P_106E_3' ] ) + '</P_106E_3>' + nl
       cRes := cRes + '    <RodzajFaktury>' + str2sxml(aDane[ 'Faktury' ][ nI ][ 'RodzajFaktury' ] ) + '</RodzajFaktury>' + nl
+      IF hb_HHasKey( aDane[ 'Faktury' ][ nI ], 'PrzyczynaKorekty' )
+         cRes := cRes + '    <PrzyczynaKorekty>' + str2sxml(aDane[ 'Faktury' ][ nI ][ 'PrzyczynaKorekty' ] ) + '</PrzyczynaKorekty>' + nl
+      ENDIF
+      IF hb_HHasKey( aDane[ 'Faktury' ][ nI ], 'NrFaKorygowanej' )
+         cRes := cRes + '    <NrFaKorygowanej>' + str2sxml(aDane[ 'Faktury' ][ nI ][ 'NrFaKorygowanej' ] ) + '</NrFaKorygowanej>' + nl
+      ENDIF
       cRes := cRes + '  </Faktura>' + nl
    NEXT
    cRes := cRes + '  <FakturaCtrl>' + nl
