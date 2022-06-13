@@ -215,8 +215,8 @@ FUNCTION pause( _czas )
 
    _aa := Seconds() + _czas
    KEYBOARD Chr( 0 )
-   Inkey()
-   DO WHILE ( Seconds() <= _aa .OR. _czas == 0 ) .AND. Inkey( 1 ) == 0
+   Inkey( , INKEY_KEYBOARD )
+   DO WHILE ( Seconds() <= _aa .OR. _czas == 0 ) .AND. Inkey( 1, INKEY_KEYBOARD ) == 0
    ENDDO
 
    RETURN NIL
