@@ -1111,7 +1111,7 @@ PROCEDURE FakturyN()
          CASE kl == K_F1
             @ 1, 47 SAY '          '
             save screen to scr_
-            DECLARE p[ 13 ]
+            DECLARE p[ 14 ]
             *---------------------------------------
             p[  1 ] := '                                                        '
             p[  2 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna faktura  '
@@ -1121,14 +1121,15 @@ PROCEDURE FakturyN()
             p[  6 ] := '   [Del]...................kasowanie faktury            '
             p[  7 ] := '   [F5 ]..................kopiowanie dokumentu do bufora'
             p[  8 ] := '   [Shift+F5]........kopiowanie wsystkich dok. do bufora'
-            p[  9 ] := '   [F9]....................szukanie faktury/rachunku    '
-            p[ 10 ] := '   [F10]...................szukanie dnia                '
-            p[ 11 ] := '   [Enter].................wydruk faktury               '
-            p[ 12 ] := '   [Esc]...................wyj&_s.cie                      '
-            p[ 13 ] := '                                                        '
+            p[  9 ] := '   [F6]....................wstawianie z bufora / korekta'
+            p[ 10 ] := '   [F9]....................szukanie faktury/rachunku    '
+            p[ 11 ] := '   [F10]...................szukanie dnia                '
+            p[ 12 ] := '   [Enter].................wydruk faktury               '
+            p[ 13 ] := '   [Esc]...................wyj&_s.cie                      '
+            p[ 14 ] := '                                                        '
             *---------------------------------------
             SET COLOR TO i
-            i := 13
+            i := 14
             j := 24
             DO WHILE i > 0
                IF Type( 'p[i]' ) # 'U'
