@@ -297,6 +297,7 @@ FUNCTION Bufor_Dok_Wybierz_Faktury( lKorekta )
 
    @  2, 0 SAY PadC( "BUFOR DOKUMENT‡W", 80 )
    @ 22, 0 SAY PadC( "Enter - wyb¢r,  K - korekta,  Delete - usuni©cie z bufora,  ESC - anuluj", 80 )
+   @ 23, 0 CLEAR TO 24, 79
    nElem := GM_ArEdit( 3, 0, 21, 79, bufor_dok[ 'faktury' ], @nElem, aNaglowki, aKolumny, NIL, NIL, NIL, aKlawisze, SetColor() + ",N+/N" )
 
    IF LastKey() <> K_ESC .AND. nElem > 0 .AND. Len( bufor_dok[ 'faktury' ] ) >= nElem
