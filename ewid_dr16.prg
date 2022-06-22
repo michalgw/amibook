@@ -159,6 +159,10 @@ RETURN aRes
 PROCEDURE ewid_dr16rob()
    LOCAL aDane, oRap, nMonDruk, cScr, cKolor, nPoz := 1, cJPK, cPlik, nFile
    LOCAL nKorekta, oWorkbook, oWorksheet, cPlikWyj, nWiersz
+   LOCAL KolOrd := Array( 9 ), KolStaw := { 170, 150, 140, 125, 120, 100, 85, 55, 30 }
+   LOCAL nKol, nI, KolNaz := { 'staw_ry20', 'staw_ry17', 'staw_rk09', 'staw_uslu', ;
+      'staw_rk10', 'staw_prod', 'staw_hand', 'staw_rk07', 'staw_ry10' }
+
    aDane := ewid_dr16licz()
    IF Len(aDane['pozycje']) > 0
 
@@ -317,9 +321,20 @@ PROCEDURE ewid_dr16rob()
          aDane['SumaPrzychodow'] := 0
          AEval(aDane['pozycje'], {|aRec| aDane['SumaPrzychodow'] := aDane['SumaPrzychodow'] + aRec['k12']  } )
 
-         cJPK := jpk_ewp_2_11(aDane)
+         nI := 1
+         AEval( KolNaz, { | cNazwa |
+            nKol := AScan( KolStaw, Int( aDane[ cNazwa ] * 10 ) )
+            IF nKol > 0
+               KolOrd[ nI ] := 'k' + AllTrim( Str( nKol + 4 ) )
+            ENDIF
+            nI++
+         } )
 
-         edekZapiszXML( cJPK, normalizujNazwe( 'JPK_EWP_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKEWP-2', nKorekta == 2, Val(miesiac) )
+         aDane[ 'kolumny' ] := KolOrd
+
+         cJPK := jpk_ewp_3(aDane)
+
+         edekZapiszXML( cJPK, normalizujNazwe( 'JPK_EWP_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKEWP-3', nKorekta == 2, Val(miesiac) )
 
          EXIT
       CASE 5

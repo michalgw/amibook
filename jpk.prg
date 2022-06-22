@@ -310,6 +310,72 @@ RETURN cRes
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION jpk_ewp_3(aDane)
+   LOCAL cRes := '', nl := Chr(13) + Chr(10), nI
+   cRes :=        '<?xml version="1.0" encoding="UTF-8"?>'
+   cRes := cRes + '<JPK xmlns="http://jpk.mf.gov.pl/wzor/2022/02/01/02011/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2020/03/11/eD/DefinicjeTypy/" xmlns:kck="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2013/05/23/eD/KodyCECHKRAJOW/">' + nl
+   cRes := cRes + '  <Naglowek>' + nl
+   cRes := cRes + '    <KodFormularza kodSystemowy="JPK_EWP (3)" wersjaSchemy="1-1" >JPK_EWP</KodFormularza>' + nl
+   cRes := cRes + '    <WariantFormularza>3</WariantFormularza>' + nl
+   cRes := cRes + '    <CelZlozenia>' + aDane['CelZlozenia'] + '</CelZlozenia>' + nl
+   cRes := cRes + '    <DataWytworzeniaJPK>' + aDane['DataWytworzeniaJPK'] + '</DataWytworzeniaJPK>' + nl
+   cRes := cRes + '    <DataOd>' + date2strxml(aDane['DataOd']) + '</DataOd>' + nl
+   cRes := cRes + '    <DataDo>' + date2strxml(aDane['DataDo']) + '</DataDo>' + nl
+   cRes := cRes + '    <DomyslnyKodWaluty>PLN</DomyslnyKodWaluty>' + nl
+   cRes := cRes + '    <KodUrzedu>' + aDane['KodUrzedu'] + '</KodUrzedu>' + nl
+   cRes := cRes + '  </Naglowek>' + nl
+   cRes := cRes + '  <Podmiot1>' + nl
+   cRes := cRes + '    <IdentyfikatorPodmiotu>' + nl
+   cRes := cRes + '      <etd:NIP>' + trimnip(aDane['NIP']) + '</etd:NIP>' + nl
+   cRes := cRes + '      <etd:PelnaNazwa>' + str2sxml(AllTrim(aDane['PelnaNazwa'])) + '</etd:PelnaNazwa>' + nl
+   cRes := cRes + '    </IdentyfikatorPodmiotu>' + nl
+   cRes := cRes + '    <AdresPodmiotu>' + nl
+   cRes := cRes + '      <etd:KodKraju>PL</etd:KodKraju>' + nl
+   cRes := cRes + '      <etd:Wojewodztwo>' + str2sxml(AllTrim(aDane['Wojewodztwo'])) + '</etd:Wojewodztwo>' + nl
+   cRes := cRes + '      <etd:Powiat>' + str2sxml(AllTrim(aDane['Powiat'])) + '</etd:Powiat>' + nl
+   cRes := cRes + '      <etd:Gmina>' + str2sxml(AllTrim(aDane['Gmina'])) + '</etd:Gmina>' + nl
+   IF AllTrim(aDane['Ulica']) <> ''
+      cRes := cRes + '      <etd:Ulica>' + str2sxml(AllTrim(aDane['Ulica'])) + '</etd:Ulica>' + nl
+   ENDIF
+   cRes := cRes + '      <etd:NrDomu>' + str2sxml(AllTrim(aDane['NrDomu'])) + '</etd:NrDomu>' + nl
+   IF AllTrim(aDane['NrLokalu']) <> ''
+      cRes := cRes + '      <etd:NrLokalu>' + str2sxml(AllTrim(aDane['NrLokalu'])) + '</etd:NrLokalu>' + nl
+   ENDIF
+   cRes := cRes + '      <etd:Miejscowosc>' + str2sxml(AllTrim(aDane['Miejscowosc'])) + '</etd:Miejscowosc>' + nl
+   cRes := cRes + '      <etd:KodPocztowy>' + str2sxml(AllTrim(aDane['KodPocztowy'])) + '</etd:KodPocztowy>' + nl
+   //cRes := cRes + '      <etd:Poczta>' + str2sxml(AllTrim(aDane['Poczta'])) + '</etd:Poczta>' + nl
+   cRes := cRes + '    </AdresPodmiotu>' + nl
+   cRes := cRes + '  </Podmiot1>' + nl
+   FOR nI := 1 TO Len(aDane['pozycje'])
+      cRes := cRes + '  <EWPWiersz>' + nl
+      cRes := cRes + '    <K_1>' + AllTrim(Str(aDane['pozycje'][nI]['k1'])) + '</K_1>' + nl
+      cRes := cRes + '    <K_2>' + AllTrim(aDane['pozycje'][nI]['k2']) + '</K_2>' + nl
+      cRes := cRes + '    <K_3>' + AllTrim(aDane['pozycje'][nI]['k3']) + '</K_3>' + nl
+      cRes := cRes + '    <K_4>' + JPKStrND(aDane['pozycje'][nI]['k4']) + '</K_4>' + nl
+      cRes := cRes + '    <K_5>' + TKwota2( iif( ! Empty( aDane[ 'kolumny' ][ 1 ] ), aDane['pozycje'][nI][ aDane[ 'kolumny' ][ 1 ] ], 0 ) ) + '</K_5>' + nl
+      cRes := cRes + '    <K_6>' + TKwota2( iif( ! Empty( aDane[ 'kolumny' ][ 2 ] ), aDane['pozycje'][nI][ aDane[ 'kolumny' ][ 2 ] ], 0 ) ) + '</K_6>' + nl
+      cRes := cRes + '    <K_7>' + TKwota2( iif( ! Empty( aDane[ 'kolumny' ][ 3 ] ), aDane['pozycje'][nI][ aDane[ 'kolumny' ][ 3 ] ], 0 ) ) + '</K_7>' + nl
+      cRes := cRes + '    <K_8>' + TKwota2( iif( ! Empty( aDane[ 'kolumny' ][ 4 ] ), aDane['pozycje'][nI][ aDane[ 'kolumny' ][ 4 ] ], 0 ) ) + '</K_8>' + nl
+      cRes := cRes + '    <K_9>' + TKwota2( iif( ! Empty( aDane[ 'kolumny' ][ 5 ] ), aDane['pozycje'][nI][ aDane[ 'kolumny' ][ 5 ] ], 0 ) ) + '</K_9>' + nl
+      cRes := cRes + '    <K_10>' + TKwota2( iif( ! Empty( aDane[ 'kolumny' ][ 6 ] ), aDane['pozycje'][nI][ aDane[ 'kolumny' ][ 6 ] ], 0 ) ) + '</K_10>' + nl
+      cRes := cRes + '    <K_11>' + TKwota2( iif( ! Empty( aDane[ 'kolumny' ][ 7 ] ), aDane['pozycje'][nI][ aDane[ 'kolumny' ][ 7 ] ], 0 ) ) + '</K_11>' + nl
+      cRes := cRes + '    <K_12>' + TKwota2( iif( ! Empty( aDane[ 'kolumny' ][ 8 ] ), aDane['pozycje'][nI][ aDane[ 'kolumny' ][ 8 ] ], 0 ) ) + '</K_12>' + nl
+      cRes := cRes + '    <K_13>' + TKwota2( iif( ! Empty( aDane[ 'kolumny' ][ 9 ] ), aDane['pozycje'][nI][ aDane[ 'kolumny' ][ 9 ] ], 0 ) ) + '</K_13>' + nl
+      cRes := cRes + '    <K_14>' + TKwota2(aDane['pozycje'][nI][ 'k14' ]) + '</K_14>' + nl
+      IF Len( aDane['pozycje'][nI]['k15'] ) > 0
+         cRes := cRes + '    <K_15>' + str2sxml(aDane['pozycje'][nI]['k15']) + '</K_15>' + nl
+      ENDIF
+      cRes := cRes + '  </EWPWiersz>' + nl
+   NEXT
+   cRes := cRes + '  <EWPCtrl>' + nl
+   cRes := cRes + '    <LiczbaWierszy>' + AllTrim(Str(aDane['LiczbaWierszy'])) + '</LiczbaWierszy>' + nl
+   cRes := cRes + '    <SumaPrzychodow>' + TKwota2(aDane['SumaPrzychodow']) + '</SumaPrzychodow>' + nl
+   cRes := cRes + '  </EWPCtrl>' + nl
+   cRes := cRes + '</JPK>' + nl
+RETURN cRes
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION jpk_vat(aDane)
    LOCAL cRes := '', nl := Chr(13) + Chr(10), nI
    cRes :=        '<?xml version="1.0" encoding="UTF-8"?>'
