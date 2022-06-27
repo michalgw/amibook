@@ -421,7 +421,7 @@ do while .t.
               ValidTakNie( zULGAKLSRA, 12, 64 )
               ValidTakNie( zODLICZENIE, 14, 67 )
               @ 11,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID ValidTakNie( zOSWIAD26R, 11, 72 ) .AND. oblpl()
-              @ 12,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' VALID ValidTakNie( zULGAKLSRA, 12, 64 ) .AND. oblpl()
+              @ 12,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' WHEN Val( miesiacpla ) < 7 VALID ValidTakNie( zULGAKLSRA, 12, 64 ) .AND. oblpl()
               @ 12,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
               @ 13,43 say 'Podatek stawka..........%.='
               @ 13,62 get zSTAW_PODAT pict '99.99' valid oblpl()
@@ -432,7 +432,7 @@ do while .t.
               @ 16,43 say 'obliczono:     % ='
               @ 16,53 get zSTAW_PUZ pict '99.99' valid oblpl()
               @ 16,61 get zWAR_PUZB pict '99999.99' when oblpl().and..f.
-              @ 17,43 SAY 'Przedˆu¾enie terminu poboru' GET zWNIOSTERM PICTURE '!' VALID ValidTakNie( zWNIOSTERM, 17, 72 ) .AND. oblpl()
+              @ 17,43 SAY 'Przedˆu¾enie terminu poboru' GET zWNIOSTERM WHEN Val( miesiacpla ) < 7 PICTURE '!' VALID ValidTakNie( zWNIOSTERM, 17, 72 ) .AND. oblpl()
               @ 18,43 say 'do pobrania na ZUS........='
               @ 18,71 get zWAR_PUZ  pict '99999.99' when oblpl().and..f.
               *@ 16,43 say 'Do odliczenia od podatku   '
@@ -1054,11 +1054,18 @@ zPPK := PPK
 zZASI_BZUS := ZASI_BZUS
 
 zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) .AND. prac->oswiad26r == 'T', 'T', 'N' ), OSWIAD26R )
-zULGAKLSRA=iif( etaty->ulgaklsra $ 'TN', etaty->ulgaklsra, iif( prac->ulgaklsra == ' ', 'N', prac->ulgaklsra ) )
-zULGAKLSRK=ULGAKLSRK
+   IF Val( miesiacpla ) >= 7
+      zULGAKLSRA := 'N'
+      zULGAKLSRK=0
+      zWNIOSTERM := 'N'
+      zPODNIEP := 0
+   ELSE
+      zULGAKLSRA=iif( etaty->ulgaklsra $ 'TN', etaty->ulgaklsra, iif( prac->ulgaklsra == ' ', 'N', prac->ulgaklsra ) )
+      zULGAKLSRK=ULGAKLSRK
+      zWNIOSTERM := WNIOSTERM
+      zPODNIEP := PODNIEP
+   ENDIF
 zODLICZENIE := ODLICZENIE
-zWNIOSTERM := WNIOSTERM
-zPODNIEP := PODNIEP
 zWAR_PUZW := WAR_PUZW
 if val(miesiacpla)>1.and.zBRUT_ZASAD=0
    skip -1
