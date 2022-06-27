@@ -33,7 +33,9 @@ FUNCTION DomyslneParametry()
       // Tabela podatku doch.
       aPar[ 'tab_doch' ] := { ;
          { 'podstawa' => 0.0,       'procent' => 17, 'dataod' => 0d20220101 }, ;
-         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220101 } }
+         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220101 }, ;
+         { 'podstawa' => 0.0,       'procent' => 12, 'dataod' => 0d20220701 }, ;
+         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220701 } }
 
       aPar[ 'tab_dochuks' ] := { ;
          { 'podstod' => 5701.0,  'podstdo' => 8549.0,  'procent' => 0.17, 'mnoznik' => 6.68,  'kwota'=> -380.5, 'dataod' => 0d20220101 }, ;
