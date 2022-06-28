@@ -26,8 +26,8 @@ FUNCTION Main()
    dbfInicjujDane()
 
    ? 'Aktualizacja danych...'
-   aDane := { { 'podstawa' => 0.0,       'procent' => 12, 'dataod' => 0d20220701 }, ;
-              { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220701 } }
+   aDane := { { 'podstawa' => 0.0,       'procent' => 12, 'dataod' => 0d20220601 }, ;
+              { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220601 } }
 
    dbUseArea( .T., , 'tab_doch', , .F. )
    tab_doch->( dbSetIndex( 'tab_doch' ) )
@@ -44,7 +44,7 @@ FUNCTION Main()
    IF File( 'param.mem' )
       RESTORE FROM param.mem ADDITIVE
       param_kw := 5100
-      param_kwd := 0d20220701
+      param_kwd := 0d20220601
       param_kw2 := 3600
       SAVE TO param.mem ALL LIKE param_*
    ENDIF
@@ -55,7 +55,7 @@ FUNCTION Main()
       IF spolka->del == "+"
          spolka->( dbRLock() )
          spolka->param_kw := 5100
-         spolka->param_kwd := 0d20220701
+         spolka->param_kwd := 0d20220601
          spolka->param_kw2 := 3600
          spolka->( dbRUnlock() )
          spolka->( dbCommit() )
