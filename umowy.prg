@@ -251,13 +251,13 @@ PROCEDURE Umowy()
                zDATA_RACH := CToD( '    .  .  ' )
                zDATA_WYP := CToD( '    .  .  ' )
                zNAZWISKO := Space( 62 )
-               zSTAW_PODAT := parap_pod
+               zSTAW_PODAT := Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Month( Date() ), 1 ) )
                //002a nowa zmienna
                zTYT := ( 'Z' )
                zOSWIAD26R := 'N'
                zODLICZENIE := iif( prac->odliczenie == ' ', 'N', prac->odliczenie )
                IF zODLICZENIE == 'T'
-                  zODLICZ := parap_odl
+                  zODLICZ := Param_PPla_param( 'odlicz', hb_Date( Val( param_rok ), Month( Date() ), 1 ) )
                ELSE
                   zODLICZ := 0
                ENDIF
@@ -496,6 +496,7 @@ PROCEDURE Umowy()
          zPPK := ' '
          zWNIOSTERM := ' '
          zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
+         zDATA_RACH := DATA_RACH
          DO CASE
          *case TYTUL='0'
          *zTYT='O' //organy stanowiace
@@ -1123,7 +1124,7 @@ FUNCTION _infoskl_u()
 FUNCTION oblplu()
 
    IF zODLICZENIE == 'T'
-      zODLICZ := parap_odl
+      zODLICZ := Param_PPla_param( 'odlicz', iif( Empty( zDATA_RACH ), hb_Date( Val( param_rok ), Month( Date() ), 1 ), zDATA_RACH ) ) /*parap_odl*/
    ELSE
       zODLICZ := 0
    ENDIF
@@ -1415,7 +1416,7 @@ PROCEDURE PODSTAWu()
    zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
 
    zPOTRACENIA := POTRACENIA
-   zWNIOSTERM := iif( WNIOSTERM == ' ', 'T', WNIOSTERM )
+   zWNIOSTERM := iif( WNIOSTERM == ' ', 'N', WNIOSTERM )
 
    zNALPODAT := NALPODAT
 
