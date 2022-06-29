@@ -533,6 +533,9 @@ FUNCTION Main()
    // Stawka dla 3 progu
    PUBLIC parap_rs3 := 180
 
+   // Tablica parametr¢w pˆacowych
+   PUBLIC Param_PPla_Tab := NIL
+
    // ---
 
    // Parametry do obliczania korekt
@@ -1989,7 +1992,8 @@ FUNCTION _bg()
 FUNCTION _bh()
 
    o[ 1 ] := ' P - Og¢lne parametry ZUS       '
-   o[ 2 ] := ' R - Stawki dla ryczaˆtowc¢w    '
+   o[ 2 ] := ' T - Tabela stawek podatku...   '
+   o[ 3 ] := ' R - Stawki dla ryczaˆtowc¢w    '
 
    RETURN '15,4'
 
@@ -2002,8 +2006,16 @@ FUNCTION _bha()
    RETURN ''
 
 *******************************************
-// Parametry placowe i ZUS dla ryczaˆtowc¢w
+// Tabela stawek podatku...
 FUNCTION _bhb()
+
+   Param_PPla()
+
+   RETURN ''
+
+*******************************************
+// Parametry placowe i ZUS dla ryczaˆtowc¢w
+FUNCTION _bhc()
 
    Param_PRycz()
 

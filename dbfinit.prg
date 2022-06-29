@@ -1533,6 +1533,15 @@ public aTAB_DOCHUKSdbf := {;
    { "KWOTA", "N", 11, 2 },;                      //   7
    { "DATAOD", "D", 8, 0 } }                      //   8
 
+public aTAB_PLAdbf := {;
+   { "ID", "+", 4, 0 },;                          //   1
+   { "DATAOD", "D", 8, 0 },;                      //   2   Data od kidy obowiazuje
+   { "ODLICZ", "N", 11, 2 },;                     //   4   parap_odl
+   { "PODATEK", "N", 5, 2 },;                     //   5   parap_pod
+   { "OBNIZZUS", "L", 1, 0 },;                    //   6   Czy obnizac zdrowotne do poziomu z 2021
+   { "AKTUKS", "L", 1, 0 },;                      //   7   Czy aktywna ulga dla klasy sredniej
+   { "AKTPTERM", "L", 1, 0 } }                    //   8   Czy aktywna opcja przesuniecia terminu poboru zaliczki
+
 // Create: TAB_POJ.DBF
 public aTAB_POJdbf := {;
    { "ID", "+", 4, 0 },;                          //   1
@@ -1806,6 +1815,7 @@ public TabliceDbf := {;
    { "suma_mc",  "suma_mc.dbf",  aSUMA_MCdbf,  .T. },;
    { "tab_doch", "tab_doch.dbf", aTAB_DOCHdbf, .T. },;
    { "tab_dochuks","tab_dochuks.dbf",aTAB_DOCHUKSdbf, .T.},;
+   { "tab_pla",  "tab_pla.dbf",  aTAB_PLAdbf,  .T. },;
    { "tab_poj",  "tab_poj.dbf",  aTAB_POJdbf,  .T. },;
    { "tab_vat",  "tab_vat.dbf",  aTAB_VATdbf,  .T. },;
    { "tab_vatue","tab_vatue.dbf",aTAB_VATUEdbf,.T. },;
@@ -1876,6 +1886,13 @@ FUNCTION dbfIdxTAB_DOCHUKS()
 *pack
 *index on NUMVAT to tab_vat
 *index on SYMBVAT to tab_vat1
+****************************************
+FUNCTION dbfIdxTAB_PLA()
+   do while.not.dostepex('TAB_PLA')
+   enddo
+   pack
+   index on DToS( dataod ) TO tab_pla
+   RETURN
 ****************************************
 FUNCTION dbfIdxTAB_POJ()
    do while.not.dostepex('TAB_POJ')

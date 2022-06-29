@@ -2316,6 +2316,8 @@ PROCEDURE setind( ZB )
         SET INDEX TO viudokor
    CASE ZB == 'TAB_DOCHUKS'
         SET INDEX TO tab_dochuks
+   CASE ZB == 'TAB_PLA'
+        SET INDEX TO tab_pla
    ENDCASE
 
    RETURN

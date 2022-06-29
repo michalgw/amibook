@@ -25,7 +25,33 @@ FUNCTION Main()
 
    dbfInicjujDane()
 
+   ? 'Tworzenie nowych tablic...'
+   dbfUtworzTabele( 'TAB_PLA', 'tab_pla.dbf' )
+   dbCloseAll()
+
+   dbfIdxTAB_PLA()
+   dbCloseAll()
+
    ? 'Aktualizacja danych...'
+
+   aDane := { { 'dataod' => 0d20220101, 'odlicz' => 425.0, 'podatek' => 17.0, 'obnizzus' => .T., 'aktuks' => .T., 'aktpterm' => .T. }, ;
+              { 'dataod' => 0d20220601, 'odlicz' => 300.0, 'podatek' => 12.0, 'obnizzus' => .T., 'aktuks' => .F., 'aktpterm' => .F. } }
+
+   dbUseArea( .T., , 'tab_pla', , .F. )
+   tab_pla->( dbSetIndex( 'tab_pla' ) )
+   tab_pla->( dbGoTop() )
+   AEval( aDane, { | aPoz |
+      tab_pla->( dbAppend() )
+      tab_pla->odlicz := aPoz[ 'odlicz' ]
+      tab_pla->podatek := aPoz[ 'podatek' ]
+      tab_pla->dataod := aPoz[ 'dataod' ]
+      tab_pla->obnizzus := aPoz[ 'obnizzus' ]
+      tab_pla->aktuks := aPoz[ 'aktuks' ]
+      tab_pla->aktpterm := aPoz[ 'aktpterm' ]
+      tab_pla->( dbCommit() )
+   } )
+   tab_pla->( dbCloseArea() )
+
    aDane := { { 'podstawa' => 0.0,       'procent' => 12, 'dataod' => 0d20220601 }, ;
               { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220601 } }
 

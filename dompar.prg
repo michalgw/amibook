@@ -151,6 +151,8 @@ FUNCTION DomyslneParametry()
       // Stawka dla 3 progu
       aPar[ 'parap_rs3' ] := 180
 
+      aPar[ 'tab_pla' ] := { { 'dataod' => 0d20220101, 'odlicz' => 425.0, 'podatek' => 17.0, 'obnizzus' => .T., 'aktuks' => .T., 'aktpterm' => .T. }, ;
+                             { 'dataod' => 0d20220601, 'odlicz' => 300.0, 'podatek' => 12.0, 'obnizzus' => .T., 'aktuks' => .F., 'aktpterm' => .F. } }
 
       aDomyslneParametry[ '2022' ] := aPar
 
@@ -436,6 +438,44 @@ PROCEDURE DomParPrzywroc_TabRycz( lPrzypiszTmp, cRok )
       zstaw_ory10 := staw_ory10
       zstaw_ork07 := staw_ork07
       zstaw_ork08 := staw_ork08
+   ENDIF
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE DomParPrzywroc_TabPla( lOtworz, cRok )
+
+   IF Empty( cRok ) .OR. ! hb_HHasKey( aDomyslneParametry, cRok )
+      RETURN NIL
+   ENDIF
+
+   IF lOtworz
+      DO WHILE ! DostepPro( 'TAB_PLA', , .F., , 'TAB_PLA' )
+      ENDDO
+   ENDIF
+
+   Blokada()
+   tab_pla->( dbGoTop() )
+   DO WHILE ! tab_pla->( Eof() )
+      tab_pla->( dbDelete() )
+      tab_pla->( dbGoTop() )
+   ENDDO
+   AEval( aDomyslneParametry[ cRok ][ 'tab_pla' ], { | aPoz |
+      tab_pla->( dbAppend() )
+      tab_pla->dataod := aPoz[ 'dataod' ]
+      tab_pla->odlicz := aPoz[ 'odlicz' ]
+      tab_pla->podatek := aPoz[ 'podatek' ]
+      tab_pla->obnizzus := aPoz[ 'obnizzus' ]
+      tab_pla->aktuks := aPoz[ 'aktuks' ]
+      tab_pla->aktpterm := aPoz[ 'aktpterm' ]
+      tab_pla->( dbCommit() )
+   } )
+   COMMIT
+   UNLOCK
+
+   IF lOtworz
+      tab_pla->( dbCloseArea() )
    ENDIF
 
    RETURN NIL
