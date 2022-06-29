@@ -107,11 +107,11 @@ FUNCTION wersja2str(nWersja)
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION DostepPro(cTablica, cIndeks, lDzielony, cAlias, cAmiIndeks)
+FUNCTION DostepPro(cTablica, cIndeks, lDzielony, cAlias, cAmiIndeks, lReadOnly )
    LOCAL lRes
    hb_default(@lDzielony, .T.)
    DO WHILE .T.
-      dbUseArea(.T., , cTablica, cAlias, lDzielony)
+      dbUseArea(.T., , cTablica, cAlias, lDzielony, lReadOnly )
       IF .NOT. NetErr()
          IF !Empty(cIndeks)
             dbSetIndex(cIndeks)
