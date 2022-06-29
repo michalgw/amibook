@@ -421,7 +421,7 @@ do while .t.
               ValidTakNie( zULGAKLSRA, 12, 64 )
               ValidTakNie( zODLICZENIE, 14, 67 )
               @ 11,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID ValidTakNie( zOSWIAD26R, 11, 72 ) .AND. oblpl()
-              @ 12,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' WHEN Val( miesiacpla ) < 7 VALID ValidTakNie( zULGAKLSRA, 12, 64 ) .AND. oblpl()
+              @ 12,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' WHEN Param_PPla_param( 'aktuks', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) VALID ValidTakNie( zULGAKLSRA, 12, 64 ) .AND. oblpl()
               @ 12,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
               @ 13,43 say 'Podatek stawka..........%.='
               @ 13,62 get zSTAW_PODAT pict '99.99' valid oblpl()
@@ -432,7 +432,7 @@ do while .t.
               @ 16,43 say 'obliczono:     % ='
               @ 16,53 get zSTAW_PUZ pict '99.99' valid oblpl()
               @ 16,61 get zWAR_PUZB pict '99999.99' when oblpl().and..f.
-              @ 17,43 SAY 'Przedˆu¾enie terminu poboru' GET zWNIOSTERM WHEN Val( miesiacpla ) < 7 PICTURE '!' VALID ValidTakNie( zWNIOSTERM, 17, 72 ) .AND. oblpl()
+              @ 17,43 SAY 'Przedˆu¾enie terminu poboru' GET zWNIOSTERM WHEN Param_PPla_param( 'aktpterm', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) PICTURE '!' VALID ValidTakNie( zWNIOSTERM, 17, 72 ) .AND. oblpl()
               @ 18,43 say 'do pobrania na ZUS........='
               @ 18,71 get zWAR_PUZ  pict '99999.99' when oblpl().and..f.
               *@ 16,43 say 'Do odliczenia od podatku   '
@@ -762,7 +762,7 @@ function oblpl()
          zODLICZ=0
       ELSE
          IF zODLICZ == 0
-            zODLICZ := parap_odl
+            zODLICZ := Param_PPla_param( 'odlicz', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_odl*/
          ENDIF
       endif
       zSTA_ZASCHO=_round(((zBRUTTO6/zIL_MIE6)/30)*(zPRO_ZASCHO/100),2)
@@ -809,14 +809,14 @@ function oblpl()
       IF zOSWIAD26R == 'T'
          zODLICZ21 := 43.76
          B521 := zDOCHODPOD*(zSTAW_PODAT/100)
-         B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(parap_pod/100)
+         B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_pod*/ / 100)
          zWAR_PUZ21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
          zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PUZB=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
          zWAR_PZKB21=_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)
          zWAR_PUZO21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(7.75/100),2)))
          zWAR_PUZO=0
-         zPODATEK=max(0,_round(B5-(zWAR_PUZO+parap_odl),0))
+         zPODATEK=max(0,_round(B5-(zWAR_PUZO+Param_PPla_param( 'odlicz', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_odl*/ ),0))
          zPODATEK21=max(0,_round(B521-(zWAR_PUZO21+zODLICZ21),0))
          zNETTO=zBRUT_RAZEM-(zPODATEK+zWAR_PSUM+zWAR_PUZ+zWAR_PF3)
          zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZO21+zWAR_PF3)
@@ -830,7 +830,7 @@ function oblpl()
          B5 := 0.0
          zODLICZ := 0.0
          zWAR_PUZW := zWAR_PUZ
-         IF zBRUT_RAZEM < 12800 .AND. zWNIOSTERM == 'T' .AND. zNETTO21 > zNETTO
+         IF Param_PPla_param( 'obnizzus', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) .AND. zBRUT_RAZEM < 12800 .AND. zWNIOSTERM == 'T' .AND. zNETTO21 > zNETTO
             *IF zODLICZ <> 0
                zWAR_PUZ := zWAR_PUZO21
                *zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
@@ -863,7 +863,7 @@ function oblpl()
          zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZ21+zWAR_PF3)
          zPODNIEP := 0
          zWAR_PUZW := zWAR_PUZ
-         IF zBRUT_RAZEM < 12800 .AND. zNETTO21 > zNETTO
+         IF Param_PPla_param( 'obnizzus', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) .AND. zBRUT_RAZEM < 12800 .AND. zNETTO21 > zNETTO
             zWAR_PUZ := zWAR_PUZ21
             IF zWNIOSTERM == 'T'
                zPODNIEP := zPODATEK - zPODATEK21
@@ -981,7 +981,7 @@ function oblpl()
 
 return .t.
 **************************************************************************
-proc PODSTAW
+procedure PODSTAW()
 ***************************************************************************
 zBRUT_ZASAD=BRUT_ZASAD
 zBRUT_PREMI=BRUT_PREMI
@@ -1054,87 +1054,160 @@ zPPK := PPK
 zZASI_BZUS := ZASI_BZUS
 
 zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) .AND. prac->oswiad26r == 'T', 'T', 'N' ), OSWIAD26R )
-   IF Val( miesiacpla ) >= 7
+   IF ! Param_PPla_param( 'aktuks', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) )
       zULGAKLSRA := 'N'
       zULGAKLSRK=0
-      zWNIOSTERM := 'N'
-      zPODNIEP := 0
    ELSE
       zULGAKLSRA=iif( etaty->ulgaklsra $ 'TN', etaty->ulgaklsra, iif( prac->ulgaklsra == ' ', 'N', prac->ulgaklsra ) )
       zULGAKLSRK=ULGAKLSRK
+   ENDIF
+   IF ! Param_PPla_param( 'aktpterm', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) )
+      zWNIOSTERM := 'N'
+      zPODNIEP := 0
+   ELSE
       zWNIOSTERM := WNIOSTERM
       zPODNIEP := PODNIEP
    ENDIF
 zODLICZENIE := ODLICZENIE
 zWAR_PUZW := WAR_PUZW
+
 if val(miesiacpla)>1.and.zBRUT_ZASAD=0
-   skip -1
-   zBRUT_ZASAD=iif(zBRUT_ZASAD=0,BRUT_ZASAD,zBRUT_ZASAD)
-   zBRUT_PREMI=iif(zBRUT_PREMI=0,BRUT_PREMI,zBRUT_PREMI)
-   zDOPL_OPOD=iif(zDOPL_OPOD=0,DOPL_OPOD,zDOPL_OPOD)
+   nCoRobic := Etaty1CoRobic()
+   DO CASE
+   CASE nCoRobic == 1
+      skip -1
+      zBRUT_ZASAD=iif(zBRUT_ZASAD=0,BRUT_ZASAD,zBRUT_ZASAD)
+      zBRUT_PREMI=iif(zBRUT_PREMI=0,BRUT_PREMI,zBRUT_PREMI)
+      zDOPL_OPOD=iif(zDOPL_OPOD=0,DOPL_OPOD,zDOPL_OPOD)
 
-   zKOSZT=iif(zKOSZT=0,KOSZT,zKOSZT)
+      zKOSZT=iif(zKOSZT=0,KOSZT,zKOSZT)
 
-   zSTAW_PUE=iif(zSTAW_PUE=0,STAW_PUE,zSTAW_PUE)
-   zSTAW_PUR=iif(zSTAW_PUR=0,STAW_PUR,zSTAW_PUR)
-   zSTAW_PUC=iif(zSTAW_PUC=0,STAW_PUC,zSTAW_PUC)
-   zSTAW_PF3=iif(zSTAW_PF3=0,STAW_PF3,zSTAW_PF3)
-   zSTAW_PSUM=zSTAW_PUE+zSTAW_PUR+zSTAW_PUC
-   zWAR_PUE=iif(zWAR_PUE=0,WAR_PUE,zWAR_PUE)
-   zWAR_PUR=iif(zWAR_PUR=0,WAR_PUR,zWAR_PUR)
-   zWAR_PUC=iif(zWAR_PUC=0,WAR_PUC,zWAR_PUC)
-   zWAR_PSUM=zWAR_PUE+zWAR_PUR+zWAR_PUC
+      zSTAW_PUE=iif(zSTAW_PUE=0,STAW_PUE,zSTAW_PUE)
+      zSTAW_PUR=iif(zSTAW_PUR=0,STAW_PUR,zSTAW_PUR)
+      zSTAW_PUC=iif(zSTAW_PUC=0,STAW_PUC,zSTAW_PUC)
+      zSTAW_PF3=iif(zSTAW_PF3=0,STAW_PF3,zSTAW_PF3)
+      zSTAW_PSUM=zSTAW_PUE+zSTAW_PUR+zSTAW_PUC
+      zWAR_PUE=iif(zWAR_PUE=0,WAR_PUE,zWAR_PUE)
+      zWAR_PUR=iif(zWAR_PUR=0,WAR_PUR,zWAR_PUR)
+      zWAR_PUC=iif(zWAR_PUC=0,WAR_PUC,zWAR_PUC)
+      zWAR_PSUM=zWAR_PUE+zWAR_PUR+zWAR_PUC
 
-   zWAR_PF3=iif(zWAR_PF3=0,WAR_PF3,zWAR_PF3)
+      zWAR_PF3=iif(zWAR_PF3=0,WAR_PF3,zWAR_PF3)
 
-   zODLICZ=iif(zODLICZ=0,ODLICZ,zODLICZ)
-   zSTAW_PODAT=iif(zSTAW_PODAT=0,STAW_PODA2,zSTAW_PODAT)
-   zSTAW_PUZ=iif(zSTAW_PUZ=0,STAW_PUZ,zSTAW_PUZ)
-   //zSTAW_PZK=iif(zSTAW_PZK=0,STAW_PZK,zSTAW_PZK)
+      zODLICZ=iif(zODLICZ=0,Param_PPla_param( 'odlicz', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*ODLICZ*/,zODLICZ)
+      zSTAW_PODAT=iif(zSTAW_PODAT=0,Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*STAW_PODA2*/,zSTAW_PODAT)
+      zSTAW_PUZ=iif(zSTAW_PUZ=0,STAW_PUZ,zSTAW_PUZ)
+      //zSTAW_PZK=iif(zSTAW_PZK=0,STAW_PZK,zSTAW_PZK)
 
-   zDOPL_NIEOP=iif(zDOPL_NIEOP=0,DOPL_NIEOP,zDOPL_NIEOP)
-   zODL_NIEOP=iif(zODL_NIEOP=0,ODL_NIEOP,zODL_NIEOP)
+      zDOPL_NIEOP=iif(zDOPL_NIEOP=0,DOPL_NIEOP,zDOPL_NIEOP)
+      zODL_NIEOP=iif(zODL_NIEOP=0,ODL_NIEOP,zODL_NIEOP)
 
-   zSTAW_FUE=iif(zSTAW_FUE=0,STAW_FUE,zSTAW_FUE)
-   zSTAW_FUR=iif(zSTAW_FUR=0,STAW_FUR,zSTAW_FUR)
-   zSTAW_FUW=iif(zSTAW_FUW=0,STAW_FUW,zSTAW_FUW)
-   zSTAW_FFP=iif(zSTAW_FFP=0,STAW_FFP,zSTAW_FFP)
-   zSTAW_FFG=iif(zSTAW_FFG=0,STAW_FFG,zSTAW_FFG)
-   zSTAW_FSUM=zSTAW_FUE+zSTAW_FUR+zSTAW_FUW+zSTAW_FFP+zSTAW_FFG
-   zWAR_FUE=iif(zWAR_FUE=0,WAR_FUE,zWAR_FUE)
-   zWAR_FUR=iif(zWAR_FUR=0,WAR_FUR,zWAR_FUR)
-   zWAR_FUW=iif(zWAR_FUW=0,WAR_FUW,zWAR_FUW)
-   zWAR_FFP=iif(zWAR_FFP=0,WAR_FFP,zWAR_FFP)
-   zWAR_FFG=iif(zWAR_FFG=0,WAR_FFG,zWAR_FFG)
-   zWAR_FSUM=zWAR_FUE+zWAR_FUR+zWAR_FUW+zWAR_FFP+zWAR_FFG
+      zSTAW_FUE=iif(zSTAW_FUE=0,STAW_FUE,zSTAW_FUE)
+      zSTAW_FUR=iif(zSTAW_FUR=0,STAW_FUR,zSTAW_FUR)
+      zSTAW_FUW=iif(zSTAW_FUW=0,STAW_FUW,zSTAW_FUW)
+      zSTAW_FFP=iif(zSTAW_FFP=0,STAW_FFP,zSTAW_FFP)
+      zSTAW_FFG=iif(zSTAW_FFG=0,STAW_FFG,zSTAW_FFG)
+      zSTAW_FSUM=zSTAW_FUE+zSTAW_FUR+zSTAW_FUW+zSTAW_FFP+zSTAW_FFG
+      zWAR_FUE=iif(zWAR_FUE=0,WAR_FUE,zWAR_FUE)
+      zWAR_FUR=iif(zWAR_FUR=0,WAR_FUR,zWAR_FUR)
+      zWAR_FUW=iif(zWAR_FUW=0,WAR_FUW,zWAR_FUW)
+      zWAR_FFP=iif(zWAR_FFP=0,WAR_FFP,zWAR_FFP)
+      zWAR_FFG=iif(zWAR_FFG=0,WAR_FFG,zWAR_FFG)
+      zWAR_FSUM=zWAR_FUE+zWAR_FUR+zWAR_FUW+zWAR_FFP+zWAR_FFG
 
-   zZASIL_RODZ=iif(zZASIL_RODZ=0,ZASIL_RODZ,zZASIL_RODZ)
-   zZASIL_PIEL=iif(zZASIL_PIEL=0,ZASIL_PIEL,zZASIL_PIEL)
-   zILOSO_RODZ=iif(zILOSO_RODZ=0,ILOSO_RODZ,zILOSO_RODZ)
-   zILOSO_PIEL=iif(zILOSO_PIEL=0,ILOSO_PIEL,zILOSO_PIEL)
+      zZASIL_RODZ=iif(zZASIL_RODZ=0,ZASIL_RODZ,zZASIL_RODZ)
+      zZASIL_PIEL=iif(zZASIL_PIEL=0,ZASIL_PIEL,zZASIL_PIEL)
+      zILOSO_RODZ=iif(zILOSO_RODZ=0,ILOSO_RODZ,zILOSO_RODZ)
+      zILOSO_PIEL=iif(zILOSO_PIEL=0,ILOSO_PIEL,zILOSO_PIEL)
 
-   zSTANOWISKO=iif(empty(zSTANOWISKO),STANOWISKO,zSTANOWISKO)
-   zKOD_KASY=iif(empty(zKOD_KASY),KOD_KASY,zKOD_KASY)
-   zKOD_TYTU=iif(empty(zKOD_TYTU),KOD_TYTU,zKOD_TYTU)
-   zWYMIARL=iif(zWYMIARL=0,WYMIARL,zWYMIARL)
-   zWYMIARM=iif(zWYMIARM=0,WYMIARM,zWYMIARM)
+      zSTANOWISKO=iif(empty(zSTANOWISKO),STANOWISKO,zSTANOWISKO)
+      zKOD_KASY=iif(empty(zKOD_KASY),KOD_KASY,zKOD_KASY)
+      zKOD_TYTU=iif(empty(zKOD_TYTU),KOD_TYTU,zKOD_TYTU)
+      zWYMIARL=iif(zWYMIARL=0,WYMIARL,zWYMIARL)
+      zWYMIARM=iif(zWYMIARM=0,WYMIARM,zWYMIARM)
 
-   //zOSWIAD26R := OSWIAD26R
+      //zOSWIAD26R := OSWIAD26R
 
-   //002 nowe linie
-   zJAKI_PRZEL=prac->JAKI_PRZEL
-   do case
-   case zJAKI_PRZEL='N'
-        zKW_PRZELEW=0
-        zPRZEL_NAKO=0
-   case zJAKI_PRZEL='P'
-        zKW_PRZELEW=prac->KW_PRZELEW
-        zPRZEL_NAKO=_round(DO_WYPLATY*(prac->KW_PRZELEW/100),2)
-   case zJAKI_PRZEL='K'
-        zKW_PRZELEW=prac->KW_PRZELEW
-        zPRZEL_NAKO=prac->KW_PRZELEW
-   endcase
-   skip 1
+      //002 nowe linie
+      zJAKI_PRZEL=prac->JAKI_PRZEL
+      do case
+      case zJAKI_PRZEL='N'
+           zKW_PRZELEW=0
+           zPRZEL_NAKO=0
+      case zJAKI_PRZEL='P'
+           zKW_PRZELEW=prac->KW_PRZELEW
+           zPRZEL_NAKO=_round(DO_WYPLATY*(prac->KW_PRZELEW/100),2)
+      case zJAKI_PRZEL='K'
+           zKW_PRZELEW=prac->KW_PRZELEW
+           zPRZEL_NAKO=prac->KW_PRZELEW
+      endcase
+      skip 1
+   CASE nCoRobic == 2
+      zKOSZT=parap_kos
+      zKOD_KASY=parap_rkc
+      zKOD_TYTU='011000'
+      zSTAW_PODAT=Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_pod*/
+      zODLICZENIE := prac->odliczenie
+      IF zODLICZENIE='T'
+         zODLICZ=Param_PPla_param( 'odlicz', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_odl*/
+      else
+         zODLICZ=0
+      endif
+      zSTAW_PUE=parap_pue
+      zSTAW_PUR=parap_pur
+      zSTAW_PUC=parap_puc
+      zSTAW_PF3=parap_pf3
+      zSTAW_PUZ=parap_puz
+      //zSTAW_PZK=parap_pzk
+      zSTAW_FUE=parap_fue
+      zSTAW_FUR=parap_fur
+      zSTAW_FUW=parap_fuw
+      zSTAW_FFP=parap_ffp
+      zSTAW_FFG=parap_ffg
+      zWAR_PUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUE/100),2)
+      zWAR_PUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUR/100),2)
+      zWAR_PUC=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_PUC/100),2)
+      zWAR_PSUM=zWAR_PUE+zWAR_PUR+zWAR_PUC
+      zWAR_FUE=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUE/100),2)
+      zWAR_FUR=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUR/100),2)
+      zWAR_FUW=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FUW/100),2)
+      zWAR_FFP=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFP/100),2)
+      zWAR_FFG=_round((zPENSJA-zDOPL_BZUS - zZASI_BZUS)*(zSTAW_FFG/100),2)
+      zWAR_FSUM=zWAR_FUE+zWAR_FUR+zWAR_FUW+zWAR_FFP+zWAR_FFG
+      zJAKI_PRZEL=prac->JAKI_PRZEL
+      do case
+      case zJAKI_PRZEL='N'
+           zKW_PRZELEW=0
+           zPRZEL_NAKO=0
+      case zJAKI_PRZEL='P'
+           zKW_PRZELEW=prac->KW_PRZELEW
+           zPRZEL_NAKO=_round(DO_WYPLATY*(prac->KW_PRZELEW/100),2)
+      case zJAKI_PRZEL='K'
+           zKW_PRZELEW=prac->KW_PRZELEW
+           zPRZEL_NAKO=prac->KW_PRZELEW
+      endcase
+      zPPK := iif( prac->ppk $ 'TN', prac->ppk, 'N' )
+      IF zPPK == 'T'
+         zPPKZS1 := prac->ppkzs1
+         zPPKZK1 := zPENSJA * ( zPPKZS1 / 100 )
+         zPPKPS1 := parpk_sp
+         zPPKPK1 := zPENSJA * ( zPPKPS1 / 100 )
+         zPPKZS2 := prac->ppkzs2
+         zPPKZK2 := zPENSJA * ( zPPKZS2 / 100 )
+         zPPKPS2 := prac->ppkps2
+         zPPKPK2 := zPENSJA * ( zPPKPS2 / 100 )
+      ELSE
+         zPPKZS1 := 0
+         zPPKZK1 := 0
+         zPPKPS1 := 0
+         zPPKPK1 := 0
+         zPPKZS2 := 0
+         zPPKZK2 := 0
+         zPPKPS2 := 0
+         zPPKPK2 := 0
+      ENDIF
+      zWNIOSTERM := prac->wniosterm
+   ENDCASE
 endif
 zDNI_CHOROB=DNI_CHOROB
 zSTA_CHOROB=STA_CHOROB
@@ -1202,10 +1275,10 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
       zKOSZT=parap_kos
       zKOD_KASY=parap_rkc
       zKOD_TYTU='011000'
-      zSTAW_PODAT=parap_pod
+      zSTAW_PODAT=Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_pod*/
       zODLICZENIE := prac->odliczenie
       IF zODLICZENIE='T'
-         zODLICZ=parap_odl
+         zODLICZ=Param_PPla_param( 'odlicz', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_odl*/
       else
          zODLICZ=0
       endif
@@ -1448,4 +1521,20 @@ return .t.
 *endif
 *return R
 ***************************************************
+
+FUNCTION Etaty1CoRobic()
+
+   LOCAL cKolor := ColSta(), nRes
+
+   @ 24, 0 SAY PadC( "Wybierz co zrobi†...", 80 )
+   ColStd()
+   nRes := MenuEx( 20, 20, { "P - Podstaw z poprzedniego miesi¥ca", ;
+                             "D - Podstaw z parametr¢w", ;
+                             "Z - Pozostaw bez zmian" } )
+   ColStd()
+   @ 24, 0
+   SetColor( cKolor )
+   RETURN nRes
+
+/*----------------------------------------------------------------------*/
 
