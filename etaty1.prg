@@ -1094,8 +1094,8 @@ if val(miesiacpla)>1.and.zBRUT_ZASAD=0
 
       zWAR_PF3=iif(zWAR_PF3=0,WAR_PF3,zWAR_PF3)
 
-      zODLICZ=iif(zODLICZ=0,Param_PPla_param( 'odlicz', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*ODLICZ*/,zODLICZ)
-      zSTAW_PODAT=iif(zSTAW_PODAT=0,Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*STAW_PODA2*/,zSTAW_PODAT)
+      zODLICZ=iif(zODLICZ=0 .OR. zODLICZ <> Param_PPla_param( 'odlicz', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ), Param_PPla_param( 'odlicz', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*ODLICZ*/,zODLICZ)
+      zSTAW_PODAT=iif(zSTAW_PODAT=0 .OR. zSTAW_PODAT <> Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ), Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*STAW_PODA2*/,zSTAW_PODAT)
       zSTAW_PUZ=iif(zSTAW_PUZ=0,STAW_PUZ,zSTAW_PUZ)
       //zSTAW_PZK=iif(zSTAW_PZK=0,STAW_PZK,zSTAW_PZK)
 
