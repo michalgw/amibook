@@ -33,20 +33,21 @@ PROCEDURE Tab_Doch()
 
    *################################# GRAFIKA ##################################
    @  3,  42 CLEAR TO 22, 79
-   @  6,  43 SAY 'ษอออออออออออออออออออออออออออออออป'
-   @  7,  43 SAY 'บ Podstawa ณ Podatek ณ   Data   บ'
-   @  8,  43 SAY 'บopodatkow.ณ    %    ณ    od    บ'
-   @  9,  43 SAY 'บฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤบ'
-   @ 10,  43 SAY 'บ          ณ         ณ          บ'
-   @ 11,  43 SAY 'บ          ณ         ณ          บ'
-   @ 12,  43 SAY 'บ          ณ         ณ          บ'
-   @ 13,  43 SAY 'บ          ณ         ณ          บ'
-   @ 14,  43 SAY 'บ          ณ         ณ          บ'
-   @ 15,  43 SAY 'บ          ณ         ณ          บ'
-   @ 16,  43 SAY 'บ          ณ         ณ          บ'
-   @ 17,  43 SAY 'บ          ณ         ณ          บ'
-   @ 18,  43 SAY 'บ          ณ         ณ          บ'
-   @ 19,  43 SAY 'ศอออออออออออออออออออออออออออออออผ'
+   @  5,  33 CLEAR TO 20, 79
+   @  6,  36 SAY 'ษออออออออออออออออออออออออออออออออออออออออออป'
+   @  7,  36 SAY 'บ Podstawa ณ Podatek ณ   Data   ณ   Data   บ'
+   @  8,  36 SAY 'บopodatkow.ณ    %    ณ    od    ณ    do    บ'
+   @  9,  36 SAY 'บฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤบ'
+   @ 10,  36 SAY 'บ          ณ         ณ          ณ          บ'
+   @ 11,  36 SAY 'บ          ณ         ณ          ณ          บ'
+   @ 12,  36 SAY 'บ          ณ         ณ          ณ          บ'
+   @ 13,  36 SAY 'บ          ณ         ณ          ณ          บ'
+   @ 14,  36 SAY 'บ          ณ         ณ          ณ          บ'
+   @ 15,  36 SAY 'บ          ณ         ณ          ณ          บ'
+   @ 16,  36 SAY 'บ          ณ         ณ          ณ          บ'
+   @ 17,  36 SAY 'บ          ณ         ณ          ณ          บ'
+   @ 18,  36 SAY 'บ          ณ         ณ          ณ          บ'
+   @ 19,  36 SAY 'ศออออออออออออออออออออออออออออออออออออออออออผ'
 
    *############################### OTWARCIE BAZ ###############################
    DO WHILE.NOT.Dostep( 'TAB_DOCH' )
@@ -56,9 +57,9 @@ PROCEDURE Tab_Doch()
    *################################# OPERACJE #################################
    *----- parametry ------
    _row_g := 10
-   _col_l := 44
+   _col_l := 37
    _row_d := 18
-   _col_p := 74
+   _col_p := 78
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
@@ -110,16 +111,19 @@ PROCEDURE Tab_Doch()
                zPODSTAWA := 0
                zPROCENT := 0
                zDATAOD := SToD("")
+               zDATADO := SToD("")
             ELSE
                zPODSTAWA := PODSTAWA
                zPROCENT := PROCENT
                zDATAOD := DATAOD
+               zDATADO := DATADO
             ENDIF
 
             *๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐ GET ๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐
-            @ wiersz, 44 GET zPODSTAWA PICTURE "9999999.99" valid v2_1()
-            @ wiersz, 57 GET zPROCENT  PICTURE "99.99" valid v2_2()
-            @ wiersz, 65 GET zDATAOD   PICTURE "@D"
+            @ wiersz, 37 GET zPODSTAWA PICTURE "9999999.99" valid v2_1()
+            @ wiersz, 50 GET zPROCENT  PICTURE "99.99" valid v2_2()
+            @ wiersz, 58 GET zDATAOD   PICTURE "@D"
+            @ wiersz, 69 GET zDATADO   PICTURE "@D"
             read_()
             SET CURSOR OFF
             IF LastKey() == 27
@@ -134,6 +138,7 @@ PROCEDURE Tab_Doch()
             repl_( 'PODSTAWA', zPODSTAWA )
             repl_( 'PROCENT', zPROCENT )
             repl_( 'DATAOD', zDATAOD )
+            repl_( 'DATADO', zDATADO )
             commit_()
             UNLOCK
 
@@ -222,7 +227,7 @@ PROCEDURE Tab_Doch()
 *################################## FUNKCJE #################################
 FUNCTION linia2()
 
-   RETURN kwota( PODSTAWA, 10, 2 ) + "ณ  " + Str( PROCENT, 5, 2 ) + "  ณ" +  DToC( dataod )
+   RETURN kwota( PODSTAWA, 10, 2 ) + "ณ  " + Str( PROCENT, 5, 2 ) + "  ณ" +  DToC( dataod ) + "ณ" +  DToC( datado )
    //return [   ]+kwota(PODSTAWA,14,2)+[    ณ   ]+str(PROCENT,2)+[    ]
 
 ***************************************************

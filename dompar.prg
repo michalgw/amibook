@@ -32,10 +32,10 @@ FUNCTION DomyslneParametry()
 
       // Tabela podatku doch.
       aPar[ 'tab_doch' ] := { ;
-         { 'podstawa' => 0.0,       'procent' => 17, 'dataod' => 0d20220101 }, ;
-         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220101 }, ;
-         { 'podstawa' => 0.0,       'procent' => 12, 'dataod' => 0d20220601 }, ;
-         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220601 } }
+         { 'podstawa' => 0.0,       'procent' => 17, 'dataod' => 0d20220101, 'datado' => 0d20220531 }, ;
+         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220101, 'datado' => 0d20220531 }, ;
+         { 'podstawa' => 0.0,       'procent' => 12, 'dataod' => 0d20220601, 'datado' => CToD( '' ) }, ;
+         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220601, 'datado' => CToD( '' ) } }
 
       aPar[ 'tab_dochuks' ] := { ;
          { 'podstod' => 5701.0,  'podstdo' => 8549.0,  'procent' => 0.17, 'mnoznik' => 6.68,  'kwota'=> -380.5, 'dataod' => 0d20220101 }, ;
@@ -330,7 +330,7 @@ PROCEDURE DomParPrzywroc_TabDoch( lOtworz, cRok )
       //tab_doch->kwotade2 := aPoz[ 'kwotade2' ]
       tab_doch->dataod := aPoz[ 'dataod' ]
       // zostawiamy date do pusta
-      //tab_doch->datado := aPoz[ 'datado' ]
+      tab_doch->datado := aPoz[ 'datado' ]
    } )
    COMMIT
    UNLOCK

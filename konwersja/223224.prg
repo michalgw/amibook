@@ -27,9 +27,11 @@ FUNCTION Main()
 
    ? 'Tworzenie nowych tablic...'
    dbfUtworzTabele( 'TAB_PLA', 'tab_pla.dbf' )
+   dbfUtworzTabele( 'TAB_DOCH', 'tab_doch.dbf' )
    dbCloseAll()
 
    dbfIdxTAB_PLA()
+   dbfIdxTAB_DOCH()
    dbCloseAll()
 
    ? 'Aktualizacja danych...'
@@ -52,8 +54,11 @@ FUNCTION Main()
    } )
    tab_pla->( dbCloseArea() )
 
-   aDane := { { 'podstawa' => 0.0,       'procent' => 12, 'dataod' => 0d20220601 }, ;
-              { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220601 } }
+   aDane := { ;
+         { 'podstawa' => 0.0,       'procent' => 17, 'dataod' => 0d20220101, 'datado' => 0d20220531 }, ;
+         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220101, 'datado' => 0d20220531 }, ;
+         { 'podstawa' => 0.0,       'procent' => 12, 'dataod' => 0d20220601, 'datado' => CToD( '' ) }, ;
+         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220601, 'datado' => CToD( '' ) } }
 
    dbUseArea( .T., , 'tab_doch', , .F. )
    tab_doch->( dbSetIndex( 'tab_doch' ) )
@@ -63,6 +68,7 @@ FUNCTION Main()
       tab_doch->podstawa := aPoz[ 'podstawa' ]
       tab_doch->procent := aPoz[ 'procent' ]
       tab_doch->dataod := aPoz[ 'dataod' ]
+      tab_doch->datado := aPoz[ 'datado' ]
       tab_doch->( dbCommit() )
    } )
    tab_doch->( dbCloseArea() )

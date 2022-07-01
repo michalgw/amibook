@@ -1521,7 +1521,8 @@ public aTAB_DOCHdbf := {;
    { "ID", "+", 4, 0 },;                          //   1
    { "PODSTAWA", "N", 11, 2 },;                   //   3
    { "PROCENT", "N", 5, 2 },;                     //   4
-   { "DATAOD", "D", 8, 0 } }                      //   5
+   { "DATAOD", "D", 8, 0 },;                      //   5
+   { "DATADO", "D", 8, 0 } }                      //   6
 
 // Create: TAB_DOCHUKS.DBF
 public aTAB_DOCHUKSdbf := {;
