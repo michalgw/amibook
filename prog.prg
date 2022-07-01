@@ -533,6 +533,12 @@ FUNCTION Main()
    // Stawka dla 3 progu
    PUBLIC parap_rs3 := 180
 
+   // Limit odliczenia od dochodu skˆadki zdrowotnej dla liniowc¢w
+   PUBLIC parap_pli := 8700
+
+   // Procent zapˆaconej skˆadki zdrowotnej o jaki b©d¥ pomniejszane przychody
+   PUBLIC parap_rpz := 50
+
    // Tablica parametr¢w pˆacowych
    PUBLIC Param_PPla_Tab := NIL
 

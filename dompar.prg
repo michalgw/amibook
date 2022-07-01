@@ -133,6 +133,8 @@ FUNCTION DomyslneParametry()
       aPar[ 'parap_ffp' ] := 2.45
       aPar[ 'parap_ffg' ] := 0.1
       aPar[ 'parap_rkc' ] := '01R'
+      aPar[ 'parap_rpz' ] := 50
+      aPar[ 'parap_pli' ] := 8700
 
       aPar[ 'parpk_sz' ] := 2
       aPar[ 'parpk_sp' ] := 1.5
@@ -575,6 +577,7 @@ PROCEDURE DomParPrzywroc_Param_P( lPrzypiszTmp, cRok )
    parap_ffp := aDomyslneParametry[ cRok ][ 'parap_ffp' ]
    parap_ffg := aDomyslneParametry[ cRok ][ 'parap_ffg' ]
    parap_rkc := aDomyslneParametry[ cRok ][ 'parap_rkc' ]
+   parap_pli := aDomyslneParametry[ cRok ][ 'parap_pli' ]
 
    parpk_sz := aDomyslneParametry[ cRok ][ 'parpk_sz' ]
    parpk_sp := aDomyslneParametry[ cRok ][ 'parpk_sp' ]
@@ -599,6 +602,7 @@ PROCEDURE DomParPrzywroc_Param_PRycz( lPrzypiszTmp, cRok )
    parap_rs2 := aDomyslneParametry[ cRok ][ 'parap_rs2' ]
    parap_rk3 := aDomyslneParametry[ cRok ][ 'parap_rk3' ]
    parap_rs3 := aDomyslneParametry[ cRok ][ 'parap_rs3' ]
+   parap_rpz := aDomyslneParametry[ cRok ][ 'parap_rpz' ]
 
    SAVE TO param_p ALL LIKE parap_*
 

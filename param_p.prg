@@ -40,8 +40,10 @@ endif
 @  3,42 say '-liczba dni wolnych finans.100%       '
 @  4,42 say '-koszt uzyskania przychodu            '
 //@  5,42 say '-miesi&_e.czne odliczenie podatku        '
-@  6,42 say '-staw.zas.chorobowego (do33dni)     % '
+@  5,42 say '-staw.zas.chorobowego (do33dni)     % '
 //@  7,42 say '-stawka podatku dochodowego         % '
+@  6,42 say '-limit odlicz. zdrow. dl lin.         '
+@  7,42 say '                                      '
 @  8,42 say 'ֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽUbezpieczonyֽP&_l.atnik'
 set colo to /w+
 @  8,60 say 'Ubezpieczony'
@@ -85,6 +87,7 @@ zparap_p52=parap_p52
 zparap_kos=parap_kos
 //zparap_odl=parap_odl
 //zparap_pod=parap_pod
+zparap_pli=parap_pli
 zparap_cho=parap_cho
 zparap_puz=parap_puz
 zparap_pzk=parap_pzk
@@ -113,8 +116,9 @@ zparap_fzl := parap_fzl
 @  3,77 get zparap_ldw picture "999" range 0,999
 @  4,73 get zparap_kos picture "9999.99" range 0,9999
 //@  5,73 get zparap_odl picture "9999.99" range 0,9999
-@  6,75 get zparap_cho picture '99'
+@  5,75 get zparap_cho picture '99'
 //@  7,72 get zparap_pod picture '99.99'
+@  6,73 get zparap_pli picture "9999.99" range 0,9999
 @  9,73 get zparap_p51 picture "9999.99" range 0,9999
 @ 10,73 get zparap_p52 picture "9999.99" range 0,9999
 @ 11,65 get zparap_pue picture "99.99"
@@ -158,6 +162,7 @@ parap_p52=zparap_p52
 parap_kos=zparap_kos
 //parap_odl=zparap_odl
 //parap_pod=zparap_pod
+parap_pli=zparap_pli
 parap_cho=zparap_cho
 parap_puz=zparap_puz
 parap_pzk=zparap_pzk
@@ -236,8 +241,9 @@ set colo to w+
 @  3,77 say parap_ldw pict '999'
 @  4,73 say parap_kos pict '9999.99'
 //@  5,73 say parap_odl pict '9999.99'
-@  6,75 say parap_cho pict [99]
+@  5,75 say parap_cho pict [99]
 //@  7,72 say parap_pod pict '99.99'
+@  6,73 say parap_pli picture "9999.99"
 @  9,73 say parap_p51 picture "9999.99"
 @ 10,73 say parap_p52 picture "9999.99"
 @ 11,65 say parap_pue picture "99.99"
@@ -276,11 +282,12 @@ PROCEDURE Param_PRycz()
       @  9, 75 SAY parap_rs2 PICTURE '999'
       @ 10, 55 SAY parap_rk3 PICTURE '999999.99'
       @ 10, 75 SAY parap_rs3 PICTURE '999'
+      @ 13, 76 SAY parap_rpz PICTURE '99'
       SET COLOR TO
    }
    LOCAL Kl
 
-   PRIVATE zparap_frp, zparap_rk1, zparap_rs1, zparap_rk2, zparap_rs2, zparap_rk3, zparap_rs3
+   PRIVATE zparap_frp, zparap_rk1, zparap_rs1, zparap_rk2, zparap_rs2, zparap_rk3, zparap_rs3, zparap_rpz
 
    IF .NOT. File( 'param_p.mem' )
       SAVE TO param_p ALL LIKE parap_*
@@ -297,6 +304,9 @@ PROCEDURE Param_PRycz()
    @  8,42 say 'Przychody od            podstawa     %'
    @  9,42 say 'Przychody od            podstawa     %'
    @ 10,42 say 'Przychody od            podstawa     %'
+   @ 11,42 say 'ֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽֽ'
+   @ 12,42 say 'Procent zapˆaconej skˆadki zdrowotnej '
+   @ 13,42 say 'o jaki b©d¥ pomniejszane przych.     %'
    *################################# OPERACJE #################################
 
    Eval( bPRyczPisz )
@@ -325,6 +335,7 @@ PROCEDURE Param_PRycz()
             zparap_rs2 := parap_rs2
             zparap_rk3 := parap_rk3
             zparap_rs3 := parap_rs3
+            zparap_rpz := parap_rpz
 
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
             @  5, 70 GET zparap_frp PICTURE '99999.99'
@@ -334,6 +345,7 @@ PROCEDURE Param_PRycz()
             @  9, 75 GET zparap_rs2 PICTURE '999'
             @ 10, 55 GET zparap_rk3 PICTURE '999999.99'
             @ 10, 75 GET zparap_rs3 PICTURE '999'
+            @ 13, 76 GET zparap_rpz PICTURE '99'
 
             ****************************
             CLEAR TYPEAHEAD
@@ -349,6 +361,7 @@ PROCEDURE Param_PRycz()
             parap_rs2 := zparap_rs2
             parap_rk3 := zparap_rk3
             parap_rs3 := zparap_rs3
+            parap_rpz := zparap_rpz
 
             SAVE TO param_p ALL LIKE parap_*
             *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
