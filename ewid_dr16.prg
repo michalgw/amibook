@@ -319,7 +319,7 @@ PROCEDURE ewid_dr16rob()
 
          aDane['LiczbaWierszy'] := Len(aDane['pozycje'])
          aDane['SumaPrzychodow'] := 0
-         AEval(aDane['pozycje'], {|aRec| aDane['SumaPrzychodow'] := aDane['SumaPrzychodow'] + aRec['k12']  } )
+         AEval(aDane['pozycje'], {|aRec| aDane['SumaPrzychodow'] := aDane['SumaPrzychodow'] + aRec['k14']  } )
 
          nI := 1
          AEval( KolNaz, { | cNazwa |
