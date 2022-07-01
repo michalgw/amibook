@@ -209,8 +209,10 @@ FUNCTION Dane_MC( typpit )
          //pwar5_wuz := war5_wuz
          pwar5_wuz := 0
          pmc_wuz := mc_wuz
-         //zwar5_wuz := war5_wuz
-         zwar5_wuz := 0
+         zwar5_wuz := war5_wuz
+         IF zRYCZALT <> 'T' .AND. spolka->sposob <> 'L'
+            zwar5_wuz := 0
+         ENDIF
          zmc_wuz := mc_wuz
          zdochodzdr := dochodzdr
 /*         else
@@ -278,8 +280,10 @@ FUNCTION Dane_MC( typpit )
          @ 18, 41 SAY 'Zdro.do ZUS' GET zSTAW_WUZ PICTURE '99.99'
          @ 18, 59 GET zWAR_WUZ PICTURE '99999.99'
          //@ 18, 41 SAY '     do PIT' GET zSTAW5_WUZ PICTURE '99.99'
-         //@ 18, 68 GET zWAR5_WUZ PICTURE '99999.99'
-         //@ 18, 77 GET zMC_WUZ PICTURE '99' RANGE 0, 12
+         IF zRYCZALT == 'T' .OR. spolka->sposob == 'L'
+            @ 18, 68 GET zWAR5_WUZ PICTURE '99999.99'
+            @ 18, 77 GET zMC_WUZ PICTURE '99' RANGE 0, 12
+         ENDIF
          @ 19, 41 SAY 'FUNDUSZE   %stawki do ZUS do PIT5'
          @ 20, 41 SAY 'Pracy      ' GET zSTAW_WFP PICTURE '99.99'
          @ 20, 59 GET zWAR_WFP PICTURE '99999.99'
@@ -404,7 +408,18 @@ FUNCTION przeskla()
    //IF zzpodstzdr # zzzpodstzdr
       zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
       //zwar5_wuz := _round( zzpodstzdr * ( zstaw5_wuz / 100 ), 2 )
-      zwar5_wuz := 0
+      IF zRYCZALT <> 'T' .AND. spolka->sposob <> 'L'
+         zwar5_wuz := 0
+      ELSEIF zRYCZALT == 'T'
+         zwar5_wuz := _round( zwar_wuz * ( parap_rpz / 100 ), 2 )
+      ELSE
+         IF a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ] < parap_pli
+            zwar5_wuz := _round( zwar_wuz * ( parap_rpz / 100 ), 2 )
+            IF a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ] + zwar5_wuz > parap_pli
+               zwar5_wuz := _round( parap_pli - a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ], 2 )
+            ENDIF
+         ENDIF
+      ENDIF
    //ENDIF
    zwar_wsum := zwar_wue + zwar_wur + zwar_wuc + zwar_wuw
    zwar5_wsum := zwar5_wue + zwar5_wur + zwar5_wuc + zwar5_wuw
@@ -520,8 +535,10 @@ FUNCTION zrobcos()
 *                 pmc_wuz=mc_wuz
 *
 * usuwanie bledu naliczania
-      //zwar5_wuz := war5_wuz
-      zwar5_wuz := 0
+      zwar5_wuz := war5_wuz
+      IF zRYCZALT <> 'T' .AND. spolka->sposob <> 'L'
+         zwar5_wuz := 0
+      ENDIF
       zmc_wuz := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
 
    ENDIF
@@ -579,8 +596,10 @@ FUNCTION zrobcos()
 *                 pmc_wuz=0
 *
 * usuwanie bledu naliczania
-      //zwar5_wuz := war5_wuz
-      zwar5_wuz := 0
+      zwar5_wuz := war5_wuz
+      IF zRYCZALT <> 'T' .AND. spolka->sposob <> 'L'
+         zwar5_wuz := 0
+      ENDIF
       zmc_wuz := iif( mc_wuz + 1 < 13, mc_wuz + 1, 0 )
 *                przeskla()
       SKIP 1
@@ -649,8 +668,10 @@ FUNCTION zrobcos()
    @ 18, 53 SAY zSTAW_WUZ PICTURE '99.99'
    @ 18, 59 SAY zWAR_WUZ PICTURE '99999.99'
    //@ 18, 53 SAY zSTAW5_WUZ PICTURE '99.99'
-   //@ 18, 68 SAY zWAR5_WUZ PICTURE '99999.99'
-   //@ 18, 77 SAY zMC_WUZ PICTURE '99'
+   IF zRYCZALT == 'T' .OR. spolka->sposob == 'L'
+      @ 18, 68 SAY zWAR5_WUZ PICTURE '99999.99'
+      @ 18, 77 SAY zMC_WUZ PICTURE '99'
+   ENDIF
    @ 20, 53 SAY zSTAW_WFP PICTURE '99.99'
    @ 20, 59 SAY zWAR_WFP PICTURE '99999.99'
    @ 21, 53 SAY zSTAW_WFG PICTURE '99.99'

@@ -49,7 +49,7 @@ PROCEDURE P_Dochod( _OUT )
    PRIVATE a_pro2doch, a_pro1stra, a_pro2stra, a_pk5, a_p50, a_p51, a_p51a
    PRIVATE a_p51b, a_pkk7, a_pk6, a_pk75, a_pk7, a_ppodst, a_ppodstn, a_pk8, a_pk9, a_pk12
    PRIVATE a_pk13, a_sumzdro1, a_P97MMM, a_P887MMMa, a_P887MMM, a_P885, a_P887
-   PRIVATE a_P888, a_P889, a_wartprze
+   PRIVATE a_P888, a_P889, a_wartprze, a_sumzdro5
 
 
    @ 1, 47 SAY Space( 10 )
@@ -501,6 +501,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
          a_zalipod  := Array( 3, 12 )
          a_zalipodp := Array( 3, 12 )
          a_dochodzdr:= Array( 3, 12 )
+         a_sumzdro5 := Array( 3, 12 )
 
          FOR xxx := 1 TO 12
             FOR yyy := 1 TO 3
@@ -539,6 +540,7 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
                   a_przygos[ zzz, yyy, xxx ] := 0
                   a_koszgos[ zzz, yyy, xxx ] := 0
                NEXT
+               a_sumzdro5[ yyy, xxx ] := 0
             NEXT
          NEXT
          *---Podliczenie ksiegi (DANE_MC.dbf)------
@@ -607,6 +609,11 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
 
                      a_pit5105[ 1, i ] := pit5105
                      a_odseodma[ 1, i ] := odseodmaj
+
+                     IF mc_wuz <> 0
+                        a_sumzdro5[ 1, i ] := a_sumzdro5[ 1, i ] + war5_wuz
+                     ENDIF
+
                      skip
                   ENDDO
                ENDIF
