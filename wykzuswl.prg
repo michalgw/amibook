@@ -199,6 +199,8 @@ PROCEDURE Wlasciciel_SkladkiZus_Druk()
          'wypa_mc' => dane_mc->mc_wuw, ;
          'zdro_st' => dane_mc->staw_wuz, ;
          'zdro_war' => dane_mc->war_wuz, ;
+         'zdro_pit' => dane_mc->war5_wuz, ;
+         'zdro_mc' => dane_mc->mc_wuz, ;
          'fnpr_st' => dane_mc->staw_wfp, ;
          'fnpr_war' => dane_mc->war_wfp, ;
          'fngs_st' => dane_mc->staw_wfg, ;
