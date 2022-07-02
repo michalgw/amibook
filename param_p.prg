@@ -425,20 +425,26 @@ PROCEDURE Param_PPla()
 
    *################################# GRAFIKA ##################################
    @  3,  12 CLEAR TO 22, 79
-   @  6,  13 SAY 'ษออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป'
-   @  7,  13 SAY 'บ   Data   ณ Podatek ณOdlicz od ณObniพ zdroณ Ulga dla ณPrzes.termบ'
-   @  8,  13 SAY 'บ    od    ณ    %    ณ podatku  ณ do 2021  ณ kl. red.ณpob.zaliczบ'
-   @  9,  13 SAY 'บฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤบ'
+   @  3,  13 SAY 'ษออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป'
+   @  4,  13 SAY 'บ   Data   ณ Podatek ณOdlicz od ณObniพ zdroณ Ulga dla ณOdrocz.terบ'
+   @  5,  13 SAY 'บ    od    ณ    %    ณ podatku  ณ do 2021  ณ kl. red.ณpob.zaliczบ'
+   @  6,  13 SAY 'บฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤบ'
+   @  7,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
+   @  8,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
+   @  9,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
    @ 10,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
    @ 11,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
    @ 12,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
    @ 13,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
    @ 14,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
    @ 15,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
-   @ 16,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
-   @ 17,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
-   @ 18,  13 SAY 'บ          ณ         ณ          ณ          ณ          ณ          บ'
-   @ 19,  13 SAY 'ศออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ'
+   @ 16,  13 SAY 'ศออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ'
+   @ 17,  13 SAY 'Data od - data od kiedy bฉdฅ obowiฅzyway parametry.              '
+   @ 18,  13 SAY 'Podatek - procent stawki podatku.                                 '
+   @ 19,  13 SAY 'Odlicz od podatku - miesiฉczna kwota odliczenia od podatku.       '
+   @ 20,  13 SAY 'Obniพ zdro. do 2021 - obniพenie zdrowotnego to poziomu z 2021 r.  '
+   @ 21,  13 SAY 'Ulga dla kl. red. - czy ma by stosowana ulga dla klasy redniej.'
+   @ 22,  13 SAY 'Odrocz.ter.pob.zalicz - odroczenie terminu poboru zaliczki pod.   '
 
    *############################### OTWARCIE BAZ ###############################
    DO WHILE.NOT.Dostep( 'TAB_PLA' )
@@ -447,9 +453,9 @@ PROCEDURE Param_PPla()
 
    *################################# OPERACJE #################################
    *----- parametry ------
-   _row_g := 10
+   _row_g := 7
    _col_l := 14
-   _row_d := 18
+   _row_d := 15
    _col_p := 77
    _invers := 'i'
    _curs_l := 0
