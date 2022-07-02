@@ -37,7 +37,7 @@ FUNCTION Main()
    ? 'Aktualizacja danych...'
 
    aDane := { { 'dataod' => 0d20220101, 'odlicz' => 425.0, 'podatek' => 17.0, 'obnizzus' => .T., 'aktuks' => .T., 'aktpterm' => .T. }, ;
-              { 'dataod' => 0d20220601, 'odlicz' => 300.0, 'podatek' => 12.0, 'obnizzus' => .T., 'aktuks' => .F., 'aktpterm' => .F. } }
+              { 'dataod' => 0d20220601, 'odlicz' => 300.0, 'podatek' => 12.0, 'obnizzus' => .F., 'aktuks' => .F., 'aktpterm' => .F. } }
 
    dbUseArea( .T., , 'tab_pla', , .F. )
    tab_pla->( dbSetIndex( 'tab_pla' ) )

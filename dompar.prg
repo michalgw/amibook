@@ -154,7 +154,7 @@ FUNCTION DomyslneParametry()
       aPar[ 'parap_rs3' ] := 180
 
       aPar[ 'tab_pla' ] := { { 'dataod' => 0d20220101, 'odlicz' => 425.0, 'podatek' => 17.0, 'obnizzus' => .T., 'aktuks' => .T., 'aktpterm' => .T. }, ;
-                             { 'dataod' => 0d20220601, 'odlicz' => 300.0, 'podatek' => 12.0, 'obnizzus' => .T., 'aktuks' => .F., 'aktpterm' => .F. } }
+                             { 'dataod' => 0d20220601, 'odlicz' => 300.0, 'podatek' => 12.0, 'obnizzus' => .F., 'aktuks' => .F., 'aktpterm' => .F. } }
 
       aDomyslneParametry[ '2022' ] := aPar
 
