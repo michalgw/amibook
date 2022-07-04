@@ -286,7 +286,7 @@ PROCEDURE P_RyczLicz( Okres, lPobierzPrzychody )
    DO WHILE del == '+' .AND. ident == zident .AND. mc <= koniecokr
       dochody := dochody + _round( ( g_przych1 - g_koszty1 ) * Val( Left( g_udzial1, 2 ) ) / Val( Right( g_udzial1, 3 ) ), 2 ) + _round( ( g_przych2 - g_koszty2 ) * Val( Left( g_udzial2, 2 ) ) / Val( Right( g_udzial2, 3 ) ), 2 )
       dochody := dochody + _round( ( n_przych1 - n_koszty1 ) * val( Left( n_udzial1, 2 ) ) / Val( Right( n_udzial1, 3 ) ), 2 ) + _round( ( n_przych2 - n_koszty2 ) * Val( Left( n_udzial2, 2 ) ) / Val( Right( n_udzial2, 3 ) ), 2 )
-      k5 := straty + straty_n + powodz + rentalim + skladki + skladkiw + organy + zwrot_ren + zwrot_swi + rehab + kopaliny + darowiz + wynagro + inne + budowa + inwest11 + dochzwol + ubiegbud + ubieginw - g21
+      k5 := straty + straty_n + powodz + rentalim + skladki + skladkiw + organy + zwrot_ren + zwrot_swi + rehab + kopaliny + darowiz + wynagro + inne + budowa + inwest11 + dochzwol + ubiegbud + ubieginw - g21 + zdrowie + zdrowiew
       wydatki := wydatki + k5
       zzdrowie := zzdrowie + zdrowie + zdrowiew
       zaaa := zaaa + aaa

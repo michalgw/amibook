@@ -206,8 +206,8 @@ FUNCTION Dane_MC( typpit )
          //zstaw5_wuz := staw5_wuz
          zstaw5_wuz := 0
          zwar_wuz := war_wuz
-         //pwar5_wuz := war5_wuz
-         pwar5_wuz := 0
+         pwar5_wuz := war5_wuz
+         //pwar5_wuz := 0
          pmc_wuz := mc_wuz
          zwar5_wuz := war5_wuz
          IF zRYCZALT <> 'T' .AND. spolka->sposob <> 'L'
@@ -413,11 +413,13 @@ FUNCTION przeskla()
       ELSEIF zRYCZALT == 'T'
          zwar5_wuz := _round( zwar_wuz * ( parap_rpz / 100 ), 2 )
       ELSE
-         IF a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ] < parap_pli
+         IF Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) > 0 .AND. a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ] < parap_pli
             zwar5_wuz := zwar_wuz
             IF a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ] + zwar5_wuz > parap_pli
                zwar5_wuz := _round( parap_pli - a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ], 2 )
             ENDIF
+         ELSE
+            zwar5_wuz := Min( zwar_wuz, parap_pli )
          ENDIF
       ENDIF
    //ENDIF

@@ -581,8 +581,8 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
                      a_straty_n[ 1, i ]  := a_straty_n[ 1, i ] + straty_n
                      a_powodz[ 1, i ]    := a_powodz[ 1, i ] + powodz
                      IF spolka->sposob == 'L'
-                        a_wydatkim[ 1, i ]  := a_wydatkim[ 1, i ] + skladki + skladkiw
-                        a_wydatkid[ 1, i ]  := a_wydatkid[ 1, i ] + skladki + skladkiw
+                        a_wydatkim[ 1, i ]  := a_wydatkim[ 1, i ] + skladki + skladkiw + zdrowie + zdrowiew
+                        a_wydatkid[ 1, i ]  := a_wydatkid[ 1, i ] + skladki + skladkiw + zdrowie + zdrowiew
                      ELSE
                         a_wydatkim[ 1, i ]  := a_wydatkim[ 1, i ] + skladki + skladkiw + organy + zwrot_ren + zwrot_swi + rehab + kopaliny + darowiz + wynagro + inne + budowa + ubieginw
                         a_wydatkid[ 1, i ]  := a_wydatkid[ 1, i ] + organy + zwrot_ren + zwrot_swi + rehab + kopaliny + darowiz + wynagro + inne
@@ -1760,7 +1760,7 @@ PROCEDURE infodoch()
    ENDIF
    @  8, 55 SAY a_pK5[ okrpod, Val( miesiac ) ] PICTURE DRPIC
    @  9, 68 SAY a_pKK7[ okrpod, Val( miesiac ) ] PICTURE DRPIC
-   @ 10, 55 SAY a_sumemer[ okrpod, Val( miesiac ) ] PICTURE DRPIC
+   @ 10, 55 SAY a_sumemer[ okrpod, Val( miesiac ) ] + a_sumzdro[ okrpod, Val( miesiac ) ] PICTURE DRPIC
    @ 10, 68 SAY a_wydatkim[ okrpod, Val( miesiac ) ] PICTURE DRPIC
    @ 11, 68 SAY a_pK6[ okrpod, Val( miesiac ) ] PICTURE DRPIC
    @ 12, 68 SAY a_pk75[ okrpod, Val( miesiac ) ] PICTURE DRPIC

@@ -181,8 +181,24 @@ FUNCTION Odlicz()
                   BREAK
                ENDIF
                *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
-               zZDROWIE := ZDROWIE
-               @  6, 68 GET zZDROWIE   PICTURE FPICold
+               IF TNEsc( , 'Czy przeliczy† sum©?' )
+                  zZDROWIE := 0
+                  cAktMc := dane_mc->mc
+                  nAktRec := dane_mc->( RecNo() )
+                  cAktIdent := dane_mc->ident
+                  IF dane_mc->( dbSeek( '+' + cAktIdent + ' 1' ) )
+                     DO WHILE ! dane_mc->( Eof() ) .AND. dane_mc->ident == cAktIdent .AND. dane_mc->del == '+'
+                        IF dane_mc->mc_wuz == Val( cAktMc )
+                           zZDROWIE := zZDROWIE + dane_mc->war5_wuz
+                        ENDIF
+                        dane_mc->( dbSkip() )
+                     ENDDO
+                  ENDIF
+                  dane_mc->( dbGoto( nAktRec ) )
+               ELSE
+                  zZDROWIE := ZDROWIE
+               ENDIF
+               @  4, 68 GET zZDROWIE   PICTURE FPICold
                CLEAR TYPE
                read_()
                IF LastKey() == K_ESC

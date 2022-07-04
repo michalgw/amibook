@@ -186,6 +186,7 @@ FUNCTION Dodat5L()
                *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
                IF TNEsc( , 'Czy przeliczy† sum©?' )
                   zSKLADKI := 0
+                  zZDROWIE := 0
                   cAktMc := dane_mc->mc
                   nAktRec := dane_mc->( RecNo() )
                   cAktIdent := dane_mc->ident
@@ -203,14 +204,17 @@ FUNCTION Dodat5L()
                         IF dane_mc->mc_wuw == Val( cAktMc )
                            zSKLADKI := zSKLADKI + dane_mc->war5_wuw
                         ENDIF
+                        IF dane_mc->mc_wuz == Val( cAktMc )
+                           zZDROWIE := zZDROWIE + dane_mc->war5_wuz
+                        ENDIF
                         dane_mc->( dbSkip() )
                      ENDDO
                   ENDIF
                   dane_mc->( dbGoto( nAktRec ) )
                ELSE
                   zSKLADKI := SKLADKI
+                  zZDROWIE := ZDROWIE
                ENDIF
-               zZDROWIE := ZDROWIE
                @  6, 68 GET zSKLADKI   PICTURE FPICold
                @ 10, 68 GET zZDROWIE   PICTURE FPICold
                CLEAR TYPE
