@@ -414,7 +414,7 @@ FUNCTION przeskla()
          zwar5_wuz := _round( zwar_wuz * ( parap_rpz / 100 ), 2 )
       ELSE
          IF a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ] < parap_pli
-            zwar5_wuz := _round( zwar_wuz * ( parap_rpz / 100 ), 2 )
+            zwar5_wuz := zwar_wuz
             IF a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ] + zwar5_wuz > parap_pli
                zwar5_wuz := _round( parap_pli - a_sumzdro5[ 2, Val( mc ) - iif( firma->zuspodmie == 'B', 0, 1 ) ], 2 )
             ENDIF
