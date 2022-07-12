@@ -808,7 +808,7 @@ function oblpl()
       ENDIF
       IF zOSWIAD26R == 'T'
          zODLICZ21 := 43.76
-         B521 := zDOCHODPOD*(zSTAW_PODAT/100)
+         B521 := zDOCHODPOD*(17/100)
          B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_pod*/ / 100)
          zWAR_PUZ21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
          zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
