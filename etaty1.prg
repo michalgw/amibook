@@ -841,7 +841,7 @@ function oblpl()
          ENDIF
       ELSE
          B5=zDOCHODPOD*(zSTAW_PODAT/100)
-         B521=(zDOCHODPOD+zULGAKLSRK)*(zSTAW_PODAT/100)
+         B521=(zDOCHODPOD+zULGAKLSRK)*(17/100)
    *--> Gdy potracanie skladki do wysokosci podatku
          zODLICZ21 := iif(zODLICZENIE<>'N'.AND.zODLICZ<>0,43.76,0)
          zWAR_PUZ21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
