@@ -21,6 +21,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
 #include "achoice.ch"
+#include "inkey.ch"
+
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Obsluga podstawowych operacji na bazie ......                             ±
@@ -141,6 +143,7 @@ zPPK := iif( etaty->ppk $ 'TN', etaty->ppk, 'N' )
 zULGAKLSRA := ' '
 zODLICZENIE := ' '
 zWNIOSTERM := ' '
+
 //002 ostatnia zmienna jest nowa
 
 mmm=array(12)
@@ -266,6 +269,8 @@ do while .t.
 *           _infoskl_()
 *        endif
       save scre to scr_sklad
+      zSTAWKAPODAT21 := 17
+      SET KEY K_CTRL_F10 TO Etaty1_UstawWewPar
       do while .t.
          IF ! Empty( prac->data_zwol ) .AND. prac->data_zwol < hb_Date( Val( param_rok ), Val( miesiacpla ), 1 )
             IF ! TNEsc( , 'Pracownik jest ju¾ zwolniony. Czy kontynuowa†? (T/N)' )
@@ -559,6 +564,9 @@ do while .t.
 *      ColStd()
       @ 19,18 say ' Sk&_l.adki na ZUS         '
       @ 20,18 say ' Wyp&_l.aty z ZUS          '
+
+      SET KEY K_CTRL_F10 TO
+
    endcase
 enddo
 sele prac
@@ -808,7 +816,7 @@ function oblpl()
       ENDIF
       IF zOSWIAD26R == 'T'
          zODLICZ21 := 43.76
-         B521 := zDOCHODPOD*(17/100)
+         B521 := zDOCHODPOD*(zSTAWKAPODAT21/100)
          B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_pod*/ / 100)
          zWAR_PUZ21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
          zWAR_PUZ= _round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)
@@ -841,7 +849,7 @@ function oblpl()
          ENDIF
       ELSE
          B5=zDOCHODPOD*(zSTAW_PODAT/100)
-         B521=(zDOCHODPOD+zULGAKLSRK)*(17/100)
+         B521=(zDOCHODPOD+zULGAKLSRK)*(zSTAWKAPODAT21/100)
    *--> Gdy potracanie skladki do wysokosci podatku
          zODLICZ21 := iif(zODLICZENIE<>'N'.AND.zODLICZ<>0,43.76,0)
          zWAR_PUZ21=iif(B521<=zODLICZ21,0,min(B521-zODLICZ21,_round((zBRUT_RAZEM-(zDOPL_BZUS+zWAR_PF3+zWAR_PSUM + zZASI_BZUS))*(zSTAW_PUZ/100),2)))
@@ -1535,6 +1543,28 @@ FUNCTION Etaty1CoRobic()
    @ 24, 0
    SetColor( cKolor )
    RETURN nRes
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Etaty1_UstawWewPar()
+
+   LOCAL cEkran := SaveScreen()
+   LOCAL cKolor := ColStd()
+   LOCAL nStawka := zSTAWKAPODAT21
+
+   @ 12, 30 CLEAR TO 14, 52
+   @ 12, 30 TO 14, 52
+   @ 13, 32 SAY "Stawka pod. 2021" GET nStawka PICTURE '99'
+   READ
+
+   IF LastKey() <> K_ESC
+      zSTAWKAPODAT21 := nStawka
+   ENDIF
+
+   RestScreen( , , , , cEkran )
+   SetColor( cKolor )
+
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 
