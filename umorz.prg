@@ -179,7 +179,7 @@ PROCEDURE UmorzGr( cMiesiac )
 
 PROCEDURE Umorz( cMiesiac )
 
-   SWITCH GraficznyCzyTekst()
+   SWITCH GraficznyCzyTekst( "Umorz" )
    CASE 1
       UmorzGr( cMiesiac )
       EXIT

@@ -137,3 +137,100 @@ PROCEDURE FRDrukuj( cPlikFrp, aDane )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION GraficznyCzyTekst( cIdentyfikator )
+
+   LOCAL cKolor, nMenu
+
+   cKolor := ColStd()
+
+   IF param_zgt == 'T' .AND. ! Empty( cIdentyfikator )
+      nMenu := GrafTekst_Wczytaj( ident_fir, cIdentyfikator, 1 )
+   ENDIF
+
+   @ 24, 0
+   @ 24, 26 PROMPT '[ Graficzny ]'
+   @ 24, 44 PROMPT '[ Tekstowy ]'
+   CLEAR TYPE
+   nMenu := Menu( nMenu )
+   IF LastKey() = 27
+      nMenu := 0
+   ENDIF
+   @ 24, 0
+   SetColor(cKolor)
+
+   IF param_zgt == 'T' .AND. nMenu > 0 .AND. ! Empty( cIdentyfikator )
+      GrafTekst_Zapisz( ident_fir, cIdentyfikator, nMenu )
+   ENDIF
+
+   RETURN nMenu
+
+/*----------------------------------------------------------------------*/
+
+#define GRAFTEKSTDBF "graftekst.dbf"
+#define GRAFTEKSTIDX "graftekst"
+#define AMIHOMEDIR "AMi-BOOK\"
+
+FUNCTION GrafTekst_Wczytaj( cFirma, cIdentyfikator, nWartoscDomyslna )
+
+   LOCAL cUserDir := DodajBackslash( GetEnv( "LOCALAPPDATA" ) ) + AMIHOMEDIR
+   LOCAL nWSpace, nResult
+
+   hb_default( @nWartoscDomyslna, 1 )
+
+   IF param_zgt <> 'T' .OR. ! IsDir( cUserDir ) .OR. ! File( cUserDir + GRAFTEKSTDBF )
+      RETURN nWartoscDomyslna
+   ENDIF
+
+   nWSpace := Select()
+
+   dbUseArea( .T., , cUserDir + GRAFTEKSTDBF, , .T., .T. )
+   graftekst->( ordListAdd( cUserDir + GRAFTEKSTIDX ) )
+   graftekst->( ordSetFocus( 1 ) )
+   IF graftekst->( dbSeek( cFirma + cIdentyfikator ) )
+      nResult := graftekst->wartosc
+   ELSE
+      nResult := nWartoscDomyslna
+   ENDIF
+   graftekst->( dbCloseArea() )
+
+   RETURN nResult
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE GrafTekst_Zapisz( cFirma, cIdentyfikator, nWartosc )
+
+   LOCAL cUserDir := DodajBackslash( GetEnv( "LOCALAPPDATA" ) ) + AMIHOMEDIR
+   LOCAL nWSpace := Select()
+
+   IF param_zgt <> 'T' .OR. ! IsDir( cUserDir ) .AND. DirMake( cUserDir ) != 0
+      RETURN
+   ENDIF
+
+   IF ! File( cUserDir + GRAFTEKSTDBF )
+      dbCreate( cUserDir + GRAFTEKSTDBF, { { "FIRMA", "C", 3, 0 }, { "IDENT", "C", 64, 0 }, { "WARTOSC", "N", 6, 0 } } )
+      dbUseArea( .T., , cUserDir + GRAFTEKSTDBF )
+      graftekst->( dbCreateIndex( cUserDir + GRAFTEKSTIDX, "firma+ident", { || firma + ident } ) )
+   ELSE
+      dbUseArea( .T., , cUserDir + GRAFTEKSTDBF )
+      graftekst->( ordListAdd( cUserDir + GRAFTEKSTIDX ) )
+      graftekst->( ordSetFocus( 1 ) )
+   ENDIF
+
+   IF graftekst->( dbSeek( cFirma + cIdentyfikator ) )
+      graftekst->( RLock() )
+      graftekst->wartosc := nWartosc
+      graftekst->( dbUnlock() )
+   ELSE
+      graftekst->( dbAppend() )
+      graftekst->firma := cFirma
+      graftekst->ident := cIdentyfikator
+      graftekst->wartosc := nWartosc
+   ENDIF
+   graftekst->( dbCommit() )
+   graftekst->( dbCloseArea() )
+
+   Select( nWSpace )
+
+   RETURN
+
+/*----------------------------------------------------------------------*/

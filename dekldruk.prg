@@ -305,25 +305,6 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION GraficznyCzyTekst()
-   LOCAL cKolor, nMenu
-   cKolor := ColStd()
-   @ 24, 0
-   @ 24, 26 PROMPT '[ Graficzny ]'
-   @ 24, 44 PROMPT '[ Tekstowy ]'
-   CLEAR TYPE
-   nMenu := Menu(1)
-   IF LastKey() = 27
-      nMenu := 0
-   ENDIF
-   @ 24, 0
-   SetColor(cKolor)
-   RETURN nMenu
-
-/*----------------------------------------------------------------------*/
-
-
-
 FUNCTION DaneDek_PIT4Rw6()
    LOCAL hPodmiot1, cTmp, hPozycje
    LOCAL hDane := hb_Hash()

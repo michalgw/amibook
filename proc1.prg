@@ -2793,6 +2793,22 @@ function ROZRDEL( fZRODLO, fRECNO )
 
    RETURN .T.
 
+*****************************************************************************
+FUNCTION DodajBackslash( cSciezka )
+
+   cSciezka = AllTrim( cSciezka )
+
+   IF Len( cSciezka ) == 0
+      RETURN cSciezka
+   ENDIF
+
+   IF SubStr( cSciezka, Len( cSciezka ), 1 ) <> '\'
+      cSciezka := cSciezka + '\'
+   ENDIF
+
+   RETURN cSciezka
+
+
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±± K O N I E C ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±

@@ -410,7 +410,7 @@ PROCEDURE TabAmWGr()
 
 PROCEDURE TabAmW()
 
-   SWITCH GraficznyCzyTekst()
+   SWITCH GraficznyCzyTekst( "TabAmW" )
    CASE 1
       TabAmWGr()
       EXIT

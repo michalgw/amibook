@@ -1084,7 +1084,7 @@ PROCEDURE VAT_Sprzwdz_GrpNIP_WLApi( cTablica, bEof )
          ENDIF
       } )
 
-      nGrTx := GraficznyCzyTekst()
+      nGrTx := GraficznyCzyTekst( "WerVAT" )
 
       DO CASE
       CASE nGrTx == 1

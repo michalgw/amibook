@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE Suma_McR()
 
-   SWITCH GraficznyCzyTekst()
+   SWITCH GraficznyCzyTekst( "SumaMCR" )
    CASE 1
       Suma_McRGraf()
       EXIT

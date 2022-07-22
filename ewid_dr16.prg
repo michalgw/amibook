@@ -166,6 +166,8 @@ PROCEDURE ewid_dr16rob()
    aDane := ewid_dr16licz()
    IF Len(aDane['pozycje']) > 0
 
+      nPoz := GrafTekst_Wczytaj( ident_fir, "EwidDr16", nPoz )
+
       SAVE SCREEN TO cScr
       cKolor := ColPro()
       @ 16, 1  CLEAR TO 22, 40
@@ -180,6 +182,8 @@ PROCEDURE ewid_dr16rob()
       IF LastKey() == 27
          RETURN
       ENDIF
+
+      GrafTekst_Zapisz( ident_fir, "EwidDr16", nPoz )
 
       SetColor( cKolor )
 

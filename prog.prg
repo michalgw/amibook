@@ -420,6 +420,9 @@ FUNCTION Main()
    // Wlasny tytul okna
    PUBLIC param_tyt := '                   '
 
+   // Zachowaj wybor rodzaju wydruku (grf/tekst)
+   PUBLIC param_zgt := 'N'
+
    // ---
 
    // Parametry placowe
@@ -1254,7 +1257,7 @@ FUNCTION _ab()
    IF zRYCZALT == 'T'
       suma_mcr()
    ELSE
-      IF ( nRes := GraficznyCzyTekst() ) > 0
+      IF ( nRes := GraficznyCzyTekst( "SumyMC" ) ) > 0
          suma_mc( nRes == 1 )
       ENDIF
    ENDIF
@@ -1318,7 +1321,7 @@ FUNCTION _adc()
 // Obroty z kontrahentem (dla nazw)
 FUNCTION _add()
 
-   SWITCH GraficznyCzyTekst()
+   SWITCH GraficznyCzyTekst( "ObrotyNazwa" )
    CASE 1
       Obroty( 2, .F. )
       EXIT
@@ -1334,7 +1337,7 @@ FUNCTION _add()
 // Obroty z kontrahentem (dla NIP)
 FUNCTION _ade()
 
-   SWITCH GraficznyCzyTekst()
+   SWITCH GraficznyCzyTekst( "ObrotyNIP" )
    CASE 1
       Obroty( 1, .F. )
       EXIT

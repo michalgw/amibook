@@ -85,19 +85,6 @@ function IsDir( cDir )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION DodajBackslash(cSciezka)
-   cSciezka = AllTrim(cSciezka)
-   IF Len(cSciezka) == 0
-      RETURN cSciezka
-   ENDIF
-   IF SubStr(cSciezka, Len(cSciezka), 1) <> '\'
-      cSciezka = cSciezka + '\'
-   ENDIF
-   RETURN cSciezka
-
-
-/*----------------------------------------------------------------------*/
-
 FUNCTION wersja2str(nWersja)
    LOCAL n1, n2, n3, cWer := PadL(AllTrim(Str(nWersja)), 6)
    n1 := Val(SubStr(cWer, 1, 2))

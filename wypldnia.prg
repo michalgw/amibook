@@ -222,7 +222,7 @@ PROCEDURE WyplDnia()
       INDEX ON DToS( data ) + mcwyp + nazwisko + pesel TO robwyp
       GO TOP
 
-      nMenu := GraficznyCzyTekst()
+      nMenu := GraficznyCzyTekst( "WyplDnia" )
       IF nMenu == 0
          BREAK
       ENDIF

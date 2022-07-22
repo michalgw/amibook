@@ -526,8 +526,12 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
    LOCAL aTylkoUE := { .F., .F., .F., .T. }
    LOCAL aPlikiMem := { '', 'rejzpzze', 'rejzsze', 'rejszuep' }
 
+   nDruk := GrafTekst_Wczytaj( ident_fir, "RejVATZak", 1 )
+
    IF ( nDruk := MenuEx( 14, 2, { "T - Druk tekstowy", "P - Druk graficzny A4 (poziomo)", ;
-      "Z - Zapisz do pliku..." } ) ) > 0
+      "Z - Zapisz do pliku..." }, nDruk ) ) > 0
+
+      GrafTekst_Zapisz( ident_fir, "RejVATZak", nDruk )
 
       SAVE TO ewid ALL LIKE ewid_*
       ColStd()
@@ -1724,7 +1728,12 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
       RETURN
    ENDIF
 
-   IF ( nDruk := MenuEx( 14, 2, { "T - Druk tekstowy", "P - Druk graficzny A4 (poziomo)", "Z - Zapisz do pliku..." } ) ) > 0
+   nDruk := GrafTekst_Wczytaj( ident_fir, "RejVATSp", 1 )
+
+   IF ( nDruk := MenuEx( 14, 2, { "T - Druk tekstowy", "P - Druk graficzny A4 (poziomo)", "Z - Zapisz do pliku..." }, nDruk ) ) > 0
+
+      GrafTekst_Zapisz( ident_fir, "RejVATSp", nDruk )
+
       SWITCH nDruk
       CASE 1
 

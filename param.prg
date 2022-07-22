@@ -56,8 +56,8 @@ ColStd()
 @ 17,42 say '   Wojew&_o.dztwo            Powiat      '
 @ 18,42 say '                                      '
 @ 19,42 say 'ออออออออออออออออออออออออออออออออออออออ'
-@ 20,42 say '    Obsuga myszki                    '
-@ 21,42 say 'ออออออออออออออออออออออออออออออออออออออ'
+@ 20,42 say 'Obsuga myszki                        '
+@ 21,42 say 'Zachowaj rodzaj wydruku               '
 @ 22,42 say 'Wasny tytu okna:                    '
 *################################# OPERACJE #################################
 do say_p
@@ -91,6 +91,7 @@ do while kl#27
               zparam_woj=param_woj
               zparam_pow=param_pow
               zparam_dzw=param_dzw
+              zparam_zgt=param_zgt
               zprofil_mysz=iif(hProfilUzytkownika['mysz'], 'T', 'N')
               IF Len(param_tyt) = 0
                  zparam_tyt = '                   '
@@ -110,7 +111,8 @@ do while kl#27
               @ 15,60 get zparam_lp picture "!" valid vp_5()
               @ 18,42 get zparam_woj picture "@S18 !!!!!!!!!!!!!!!!!!!!"
               @ 18,62 get zparam_pow picture "@S18 !!!!!!!!!!!!!!!!!!!!"
-              @ 20,68 get zprofil_mysz picture "!" valid vp_mysz()
+              @ 20,57 get zprofil_mysz picture "!" valid vp_mysz()
+              @ 21,66 get zparam_zgt picture "!" valid ValidTakNie( zparam_zgt, 21, 67 )
               @ 22,61 get zparam_tyt picture "XXXXXXXXXXXXXXXXXXX"
               ****************************
               clear type
@@ -132,6 +134,7 @@ do while kl#27
               param_pow=zparam_pow
               param_dzw=zparam_dzw
               param_tyt=zparam_tyt
+              param_zgt=zparam_zgt
               *--------------
               /*
               if param_lp=[T]
@@ -250,7 +253,8 @@ set colo to w+
 @ 15,60 say iif(param_lp=[T],[Tak],[Nie])
 @ 18,42 say padc(alltrim(param_woj),18)
 @ 18,62 say padc(alltrim(param_pow),18)
-@ 20,68 say iif(hProfilUzytkownika['mysz'], 'Tak', 'Nie')
+@ 20,57 say iif(hProfilUzytkownika['mysz'], 'Tak', 'Nie')
+@ 21,66 say iif( param_zgt == 'T', 'Tak', 'Nie' )
 @ 22,61 say param_tyt
 ColStd()
 ***************************************************
@@ -340,7 +344,7 @@ endif
    return .f.
    endif
 set colo to w+
-@ 20,69 say iif(zparam_lp=[T],[ak],[ie])
+@ 20,58 say iif(zprofil_mysz=[T],[ak],[ie])
 ColStd()
 return .T.
 

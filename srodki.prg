@@ -231,7 +231,7 @@ PROCEDURE SrodkiGr()
 
 PROCEDURE Srodki()
 
-   SWITCH GraficznyCzyTekst()
+   SWITCH GraficznyCzyTekst( "Srodki" )
    CASE 1
       SrodkiGr()
       EXIT

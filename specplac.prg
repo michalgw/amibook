@@ -108,7 +108,7 @@ PROCEDURE SpecPlac()
          ENDIF
       ENDIF
 
-      nMenu := GraficznyCzyTekst()
+      nMenu := GraficznyCzyTekst( "SpecPlac" )
       IF nMenu == 0
          BREAK
       ENDIF

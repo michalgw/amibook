@@ -249,7 +249,7 @@ PROCEDURE Wyplacon()
          glowka := PadC( ' ' + paras_wyp + ' ', 71, ' ' ) + PadL( ' okres od ' + Str( mcod, 2 ) + ' do ' + Str( mcdo, 2 ) + '.' + param_rok, 24, ' ' )
       ENDIF
 
-      nMenu := GraficznyCzyTekst()
+      nMenu := GraficznyCzyTekst( "Wyplacon" )
       IF nMenu == 0
          BREAK
       ENDIF

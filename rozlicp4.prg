@@ -155,7 +155,7 @@ PROCEDURE RozlicP4()
       SELECT robwyp
       GO TOP
 
-      nMenu := GraficznyCzyTekst()
+      nMenu := GraficznyCzyTekst( "RozlicP4" )
       IF nMenu == 0
          BREAK
       ENDIF

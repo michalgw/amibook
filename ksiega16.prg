@@ -158,6 +158,8 @@ PROCEDURE ksiega16()
    aDane := ksiega16licz()
    IF Len(aDane['pozycje']) > 0
 
+      nPoz := GrafTekst_Wczytaj( ident_fir, "Ksiega16", nPoz )
+
       SAVE SCREEN TO cScr
       cKolor := ColPro()
       @ 15, 0  CLEAR TO 22, 41
@@ -173,6 +175,8 @@ PROCEDURE ksiega16()
       IF LastKey() == 27
          RETURN
       ENDIF
+
+      GrafTekst_Zapisz( ident_fir, "Ksiega16", nPoz )
 
       SetColor( cKolor )
 

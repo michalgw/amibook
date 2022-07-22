@@ -84,7 +84,7 @@ PROCEDURE ListaPla()
          ENDIF
       ENDIF
 
-      nMenu := GraficznyCzyTekst()
+      nMenu := GraficznyCzyTekst( "ListaPla" )
       IF nMenu == 0
          BREAK
       ENDIF

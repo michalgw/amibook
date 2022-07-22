@@ -118,7 +118,7 @@ PROCEDURE UmowySum()
          BREAK
       ENDIF
 
-      nDruk := GraficznyCzyTekst()
+      nDruk := GraficznyCzyTekst( "UmowySum" )
       IF nDruk == 0
          BREAK
       ENDIF
