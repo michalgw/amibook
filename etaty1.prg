@@ -804,10 +804,10 @@ function oblpl()
          IF zPPKPS1 == 0
             zPPKPS1 := parpk_sp
          ENDIF
-         zPPKZK1 := zPENSJA * ( zPPKZS1 / 100 )
-         zPPKZK2 := zPENSJA * ( zPPKZS2 / 100 )
-         zPPKPK1 := zPENSJA * ( zPPKPS1 / 100 )
-         zPPKPK2 := zPENSJA * ( zPPKPS2 / 100 )
+         zPPKZK1 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKZS1 / 100 )
+         zPPKZK2 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKZS2 / 100 )
+         zPPKPK1 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKPS1 / 100 )
+         zPPKPK2 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKPS2 / 100 )
       ELSE
          zPPKZK1 := 0
          zPPKZK2 := 0
@@ -1197,13 +1197,13 @@ if val(miesiacpla)>1.and.zBRUT_ZASAD=0
       zPPK := iif( prac->ppk $ 'TN', prac->ppk, 'N' )
       IF zPPK == 'T'
          zPPKZS1 := prac->ppkzs1
-         zPPKZK1 := zPENSJA * ( zPPKZS1 / 100 )
+         zPPKZK1 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKZS1 / 100 )
          zPPKPS1 := parpk_sp
-         zPPKPK1 := zPENSJA * ( zPPKPS1 / 100 )
+         zPPKPK1 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKPS1 / 100 )
          zPPKZS2 := prac->ppkzs2
-         zPPKZK2 := zPENSJA * ( zPPKZS2 / 100 )
+         zPPKZK2 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKZS2 / 100 )
          zPPKPS2 := prac->ppkps2
-         zPPKPK2 := zPENSJA * ( zPPKPS2 / 100 )
+         zPPKPK2 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKPS2 / 100 )
       ELSE
          zPPKZS1 := 0
          zPPKZK1 := 0
@@ -1326,13 +1326,13 @@ if val(miesiacpla)=1.or.substr(dtos(prac->data_przy),1,6)==param_rok+strtran(mie
       zPPK := iif( prac->ppk $ 'TN', prac->ppk, 'N' )
       IF zPPK == 'T'
          zPPKZS1 := prac->ppkzs1
-         zPPKZK1 := zPENSJA * ( zPPKZS1 / 100 )
+         zPPKZK1 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKZS1 / 100 )
          zPPKPS1 := parpk_sp
-         zPPKPK1 := zPENSJA * ( zPPKPS1 / 100 )
+         zPPKPK1 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKPS1 / 100 )
          zPPKZS2 := prac->ppkzs2
-         zPPKZK2 := zPENSJA * ( zPPKZS2 / 100 )
+         zPPKZK2 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKZS2 / 100 )
          zPPKPS2 := prac->ppkps2
-         zPPKPK2 := zPENSJA * ( zPPKPS2 / 100 )
+         zPPKPK2 := ( zPENSJA - zDOPL_BZUS - zZASI_BZUS ) * ( zPPKPS2 / 100 )
       ELSE
          zPPKZS1 := 0
          zPPKZK1 := 0
