@@ -98,6 +98,7 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
             ENDIF
 
             aPoz[ 'opis' ] := AllTrim( oper->tresc )
+            aPoz[ 'uwagi' ] := AllTrim( oper->uwagi )
 
             nI := AScan( aLista, { | aElem | aElem[ 'klucz' ] == cKlucz } )
             IF nI == 0
@@ -153,6 +154,7 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
             aPoz[ 'kol' ] := AllTrim( AllTrim( rejs->kolumna ) + ' ' + AllTrim( rejs->kolumna2 ) )
             aPoz[ 'opis' ] := AllTrim( rejs->tresc )
+            aPoz[ 'uwagi' ] := AllTrim( rejs->uwagi )
 
             nI := AScan( aLista, { | aElem | aElem[ 'klucz' ] == cKlucz } )
             IF nI == 0
@@ -208,6 +210,7 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
             aPoz[ 'kol' ] := AllTrim( AllTrim( rejz->kolumna ) + ' ' + AllTrim( rejz->kolumna2 ) )
             aPoz[ 'opis' ] := AllTrim( rejz->tresc )
+            aPoz[ 'uwagi' ] := AllTrim( rejz->uwagi )
 
             nI := AScan( aLista, { | aElem | aElem[ 'klucz' ] == cKlucz } )
             IF nI == 0
