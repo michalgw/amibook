@@ -96,6 +96,7 @@ PROCEDURE Oper()
                BREAK
             ENDIF
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
+            zKOLUMNA := ""
             IF ins .AND. kl == K_F6
                aBufDok := Bufor_Dok_Wybierz( 'oper' )
                IF ! Empty( aBufDok ) .AND. HB_ISHASH( aBufDok )
@@ -927,6 +928,8 @@ FUNCTION w1_3()
 ***************************************************
 FUNCTION v1_5()
 
+   LOCAL nKol
+
    IF Empty( ztresc )
       SELECT tresc
       SEEK '+' + ident_fir
@@ -941,6 +944,7 @@ FUNCTION v1_5()
             RETURN .T.
          ENDIF
          ztresc := Left( tresc->tresc, 30 )
+         zKOLUMNA := tresc->kolumna
          SET COLOR TO i
          @ 8, 37 SAY ztresc
          SET COLOR TO
@@ -948,6 +952,23 @@ FUNCTION v1_5()
    ENDIF
    IF AllTrim( znumer ) == 'REM-P' .OR. AllTrim( znumer ) == 'REM-K'
       KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER )
+   ENDIF
+   nKol := Val( zKOLUMNA )
+   IF nKol > 7
+      DO CASE
+      CASE nKol == 8
+         KEYBOARD Chr( K_ENTER )
+      CASE nKol == 10
+         KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER )
+      CASE nKol == 11
+         KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
+      CASE nKol == 12
+         KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
+      CASE nKol == 13
+         KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
+      CASE nKol == 16
+         KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
+      ENDCASE
    ENDIF
    RETURN .T.
 

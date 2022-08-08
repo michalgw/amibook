@@ -1724,6 +1724,8 @@ FUNCTION v1_4s() // ta funkcja nic nie robi
 ***************************************************
 FUNCTION v1_5s()
 
+   LOCAL cKol := "  "
+
    IF LastKey() == K_UP
       RETURN .T.
    ENDIF
@@ -1741,11 +1743,17 @@ FUNCTION v1_5s()
             RETURN .T.
          ENDIF
          ztresc := Left( tresc->tresc, 30 )
+         cKol := tresc->kolumna
          SET COLOR TO i
          @ 7, 29 SAY ztresc
          SET COLOR TO
       ENDIF
    ENDIF
+
+   IF ( Empty( zKOLUMNA ) .OR. ins ) .AND. ! Empty( cKol )
+      zKOLUMNA := cKol
+   ENDIF
+
    RETURN .T.
 
 ***************************************************

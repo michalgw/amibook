@@ -1331,6 +1331,9 @@ FUNCTION v1_4z() // ta funkcja nic nie robi
 
 ***************************************************
 FUNCTION v1_5z()
+
+   LOCAL cKol := "  "
+
    IF LastKey() == K_UP
       RETURN .T.
    ENDIF
@@ -1348,6 +1351,7 @@ FUNCTION v1_5z()
             RETURN .T.
          ENDIF
          ztresc := Left( tresc->tresc, 30 )
+         cKol := tresc->kolumna
          IF zOPCJE == " "
             zOPCJE := tresc->opcje
             oGetOPCJE:setFocus()
@@ -1360,6 +1364,11 @@ FUNCTION v1_5z()
          SET COLOR TO
       ENDIF
    ENDIF
+
+   IF ( Empty( zKOLUMNA ) .OR. ins ) .AND. ! Empty( cKol )
+      zKOLUMNA := cKol
+   ENDIF
+
    RETURN .T.
 
 ***************************************************

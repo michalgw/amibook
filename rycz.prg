@@ -111,6 +111,7 @@ PROCEDURE Rycz()
                BREAK
             ENDIF
             *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
+            zKOLUMNA := ''
             IF ins .AND. kl == K_F6
                aBufDok := Bufor_Dok_Wybierz( 'rycz' )
                IF ! Empty( aBufDok ) .AND. HB_ISHASH( aBufDok )
@@ -870,6 +871,7 @@ FUNCTION v1_5r()
             RETURN .T.
          ENDIF
          ztresc := Left( tresc->tresc, 30 )
+         zKOLUMNA := tresc->kolumna
          SET COLOR TO i
          @ 5, 40 SAY ztresc
          SET COLOR TO
@@ -883,6 +885,9 @@ FUNCTION v1_5r()
 ***************************************************
 FUNCTION V1_2r()
 ***************************************************
+
+   LOCAL nKol := Val( zKOLUMNA )
+
    IF ' ' $ AllTrim( znumer )
       RETURN .F.
    ENDIF
@@ -914,7 +919,13 @@ FUNCTION V1_2r()
       Kom( 4, '*u', ' Symbol dowodu (RZ-) jest zastrzezony dla dokument&_o.w z rejestru zakupu ' )
       RETURN .F.
    ENDCASE
+
    EwidSprawdzNrDok( 'EWID', ident_fir, miesiac, znumer, iif( ins, 0, RecNo() ) )
+
+   IF nKol > 5 .AND. nKol <= 13
+      KEYBOARD Replicate( Chr( 13 ), nKol - 5 )
+   ENDIF
+
    RETURN .T.
 
 ***************************************************

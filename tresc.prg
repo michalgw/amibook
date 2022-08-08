@@ -33,23 +33,23 @@ private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop
 @  3, 0 say '                                                                                '
 @  4, 0 say '          K A T A L O G    Z D A R Z E &__N.    G O S P O D A R C Z Y C H           '
 @  5, 0 say '                                                                                '
-@  6, 0 say '              Nazwa                     Stan         Rodzaj         Opcje       '
-@  7, 0 say 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿'
-@  8, 0 say '³                                ³                ³          ³                 ³'
-@  9, 0 say '³                                ³                ³          ³                 ³'
-@ 10, 0 say '³                                ³                ³          ³                 ³'
-@ 11, 0 say '³                                ³                ³          ³                 ³'
-@ 12, 0 say '³                                ³                ³          ³                 ³'
-@ 13, 0 say '³                                ³                ³          ³                 ³'
-@ 14, 0 say '³                                ³                ³          ³                 ³'
-@ 15, 0 say '³                                ³                ³          ³                 ³'
-@ 16, 0 say '³                                ³                ³          ³                 ³'
-@ 17, 0 say '³                                ³                ³          ³                 ³'
-@ 18, 0 say '³                                ³                ³          ³                 ³'
-@ 19, 0 say '³                                ³                ³          ³                 ³'
-@ 20, 0 say '³                                ³                ³          ³                 ³'
-@ 21, 0 say '³                                ³                ³          ³                 ³'
-@ 22, 0 say 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
+@  6, 0 say '            Nazwa                    Stan         Rodzaj         Opcje      Kol.'
+@  7, 0 say 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄ¿'
+@  8, 0 say '³                             ³                ³          ³                 ³  ³'
+@  9, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 10, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 11, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 12, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 13, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 14, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 15, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 16, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 17, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 18, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 19, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 20, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 21, 0 say '³                             ³                ³          ³                 ³  ³'
+@ 22, 0 say 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÙ'
 *############################### OTWARCIE BAZ ###############################
 select 1
 do while.not.dostep('TRESC')
@@ -113,17 +113,20 @@ if ins
    zSTAN=0
    zRODZAJ := "O"
    zOPCJE := " "
+   zKOLUMNA := "  "
 else
    zTRESC=TRESC
    zSTAN=STAN
    zRODZAJ := RODZAJ
    zOPCJE := OPCJE
+   zKOLUMNA := KOLUMNA
 endif
 *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-@ wiersz, 2 get zTRESC PICTURE "@S30 " + Replicate( 'X', 512 ) valid v14_1()
-@ wiersz,35 get zSTAN picture "   99999999.99"
-@ wiersz,51 get zRODZAJ PICTURE "!" WHEN w14_2() valid v14_2()
-@ wiersz,62 get zOPCJE PICTURE "!" WHEN w14_3() valid v14_3()
+@ wiersz, 2 get zTRESC PICTURE "@S27 " + Replicate( 'X', 512 ) valid v14_1()
+@ wiersz,32 get zSTAN picture "   99999999.99"
+@ wiersz,48 get zRODZAJ PICTURE "!" WHEN w14_2() valid v14_2()
+@ wiersz,59 get zOPCJE PICTURE "!" WHEN w14_3() valid v14_3()
+@ wiersz,77 get zKOLUMNA PICTURE "99" WHEN w14_4() valid v14_4()
 read_()
 if lastkey()=27
 exit
@@ -138,6 +141,7 @@ repl_([TRESC],zTRESC)
 repl_([STAN],zSTAN)
 repl_([RODZAJ],zRODZAJ)
 repl_([OPCJE],zOPCJE)
+repl_([KOLUMNA],zKOLUMNA)
 commit_()
 unlock
 *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
@@ -147,7 +151,7 @@ exit
 endif
 @ _row_d,_col_l say &_proc
 scroll(_row_g,_col_l,_row_d,_col_p,1)
-@ _row_d,_col_l say [                                ³                ³          ³                 ]
+@ _row_d,_col_l say [                             ³                ³          ³                 ³  ]
                              enddo
 _disp=ins.or.lastkey()#27
 kl=iif(lastkey()=27.and._row=-1,27,kl)
@@ -241,7 +245,7 @@ function linia14
       ENDIF
    ELSE
    ENDIF
-return [ ]+Left(TRESC,30)+[ ³ ]+kwota(STAN,14,2)+[ ³]+cRodzaj+[³]+cOpcje
+return [ ]+Left(TRESC,27)+[ ³ ]+kwota(STAN,14,2)+[ ³]+cRodzaj+[³]+cOpcje+[³]+KOLUMNA
 ***************************************************
 function v14_1
 if empty(zTRESC)
@@ -267,7 +271,7 @@ FUNCTION v14_2()
          zOPCJE := " "
       ENDIF
       ColStd()
-      @ wiersz, 51 SAY rodzaj2str(zRODZAJ)
+      @ wiersz, 48 SAY rodzaj2str(zRODZAJ)
       @ 24, 0
    ENDIF
    RETURN lRes
@@ -287,7 +291,7 @@ FUNCTION v14_3()
    IF lRes
       ColStd()
       @ 24, 0
-      @ wiersz, 51 SAY rodzaj2str(zRODZAJ)
+      @ wiersz, 48 SAY rodzaj2str(zRODZAJ)
    ENDIF
    RETURN lRes
 
@@ -300,6 +304,67 @@ FUNCTION w14_3()
       @ 24,0 say padc('Wpisz: P - zakup paliwa itp (50% kwoty VAT) lub pozostaw puste',80,' ')
       ColStd()
    ENDIF
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION wv14_4_kol( cRodzaj )
+
+   LOCAL aRes
+
+   DO CASE
+   CASE cRodzaj == "S"
+      IF zRYCZALT == 'T'
+         aRes := { "5", "6", "7", "8", "9", "10", "11", "12", "13" }
+      ELSE
+         aRes := { "7", "8" }
+      ENDIF
+   CASE cRodzaj == "Z"
+      IF zRYCZALT == 'T'
+         aRes := {}
+      ELSE
+         aRes := { "10", "11", "12", "13", "16" }
+      ENDIF
+   OTHERWISE
+      IF zRYCZALT == 'T'
+         aRes := { "5", "6", "7", "8", "9", "10", "11", "12", "13" }
+      ELSE
+         aRes := { "7", "8", "10", "11", "12", "13", "16" }
+      ENDIF
+   ENDCASE
+
+   RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION v14_4()
+
+   LOCAL lRes := AScan( wv14_4_kol( zRODZAJ ), AllTrim( zKOLUMNA ) ) > 0
+
+   IF lRes
+      ColStd()
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION w14_4()
+
+   LOCAL aKol
+   LOCAL lRes := .NOT. ( zRODZAJ == "Z" .AND. zRYCZALT == 'T' )
+   LOCAL cKol := ""
+
+   IF lRes
+      aKol := wv14_4_kol( zRODZAJ )
+      AEval( aKol, { | cItem | cKol := cKol + iif( cKol <> "", ', ', '' ) + cItem } )
+
+      ColInf()
+      @ 24, 0 say PadC( 'Wpisz: ' + cKol, 80, ' ' )
+      ColStd()
+   ENDIF
+
    RETURN lRes
 
 /*----------------------------------------------------------------------*/

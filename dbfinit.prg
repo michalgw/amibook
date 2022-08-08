@@ -1580,7 +1580,8 @@ public aTRESCdbf := {;
    { "TRESC", "C", 512, 0 },;                     //   4
    { "STAN", "N", 12, 2 },;                       //   5
    { "RODZAJ", "C", 1, 0 },;                      //   6
-   { "OPCJE", "C", 1, 0 } }                       //   7
+   { "OPCJE", "C", 1, 0 },;                       //   7
+   { "KOLUMNA", "C", 2, 0 } }                     //   8   Domyslna kolumna
 
 // Create: TRESC.DBF
 public aTRESCKORdbf := {;
