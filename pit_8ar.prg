@@ -40,6 +40,13 @@ PROCEDURE Pit_8AR( _G, _M, _STR, _OU )
    _czy_close := .F.
    *#################################     PIT_8AR    #############################
    BEGIN SEQUENCE
+      SELECT 10
+      IF Dostep( 'PRAC_HZ' )
+         SetInd( 'PRAC_HZ' )
+      ELSE
+         BREAK
+      ENDIF
+
       SELECT 9
       IF DostepEx( 'TABPIT8R' )
          ZAP
@@ -208,12 +215,18 @@ PROCEDURE Pit_8AR( _G, _M, _STR, _OU )
             SELECT etaty
             STORE .F. TO DOD
             STORE .T. TO DDO
+
+            DOD := Prac_HZ_Aktywny( Val( xxmiesiac ) )
+
+            /*
             IF .NOT. Empty( PRAC->DATA_PRZY )
                DOD := SubStr( DToS( PRAC->DATA_PRZY ), 1, 6 ) <= param_rok + StrTran( xxmiesiac, ' ', '0' )
             ENDIF
             IF .NOT. Empty( PRAC->DATA_ZWOL )
                DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + StrTran( xxmiesiac, ' ', '0' )
             ENDIF
+            */
+
             IF DO_WYPLATY <> 0.0 .OR. ( BRUT_RAZEM - WAR_PSUM ) <> 0.0 .OR. PODATEK <> 0.0 .OR. ( DOD .AND. DDO )
                IF mc = xxmiesiac .AND. IDPRAC <> IDENT
                   P29++

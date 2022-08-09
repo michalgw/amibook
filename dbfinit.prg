@@ -991,6 +991,14 @@ public aPRACdbf := {;
    { "ULGAKLSRA", "C", 1, 0 },;                   //  88 Ulga dla klasy sredniej ('T'- tak )
    { "WNIOSTERM", "C", 1, 0 } }                   //  89 Wniosek o nieprzedluzanie terminu
 
+// Create: PRAC_HZ.DBF
+public aPRAC_HZdbf := {;
+   { "ID", "+", 4, 0 }, ;                         //   1
+   { "DEL", "C", 1, 0 },;                         //   2
+   { "FIRMA", "C", 3, 0 },;                       //   3
+   { "PRACID", "N", 8, 0 },;                      //   4 ID PRAC - id pracownika
+   { "DATA_PRZY", "D", 8, 0 },;                   //   5 Data przyjecia
+   { "DATA_ZWOL", "D", 8, 0 } }                   //   6 Data zwolnienia
 
 // Create: PROFIL.DBF
 public aPROFILdbf := { ;
@@ -1800,6 +1808,7 @@ public TabliceDbf := {;
    { "pozycje",  "pozycje.dbf",  aPOZYCJEdbf,  .T. },;
    { "pozycjew", "pozycjew.dbf", aPOZYCJEWdbf, .T. },;
    { "prac",     "prac.dbf",     aPRACdbf,     .T. },;
+   { "prac_hz",  "prac_hz.dbf",  aPRAC_HZdbf,  .T. },;
    { "profil",   "profil.dbf",   aPROFILdbf,   .F. },;
    { "przelewy", "przelewy.dbf", aPRZELEWYdbf, .T. },;
    { "przelpod", "przelpod.dbf", aPRZELPODdbf, .T. },;
@@ -2097,6 +2106,13 @@ FUNCTION dbfIdxPRAC()
    index on del+firma+iif(status<'U','-','+')+nazwisko+imie1+imie2 to prac2
    index on rec_no to prac3
    index on del+firma+pesel to prac4
+   RETURN
+****************************************
+FUNCTION dbfIdxPRAC_HZ()
+   do while.not.dostepex('PRAC_HZ')
+   enddo
+   pack
+   index on del+firma+Str(pracid,8)+DToS(data_przy) TO prac_hz
    RETURN
 ****************************************
 FUNCTION dbfIdxUMOWY()

@@ -70,6 +70,11 @@ FUNCTION Etaty( mieskart )
    SET COLOR TO
 
    *############################### OTWARCIE BAZ ###############################
+   SELECT 6
+   DO WHILE .NOT. Dostep( 'PRAC_HZ' )
+   ENDDO
+   SetInd( 'PRAC_HZ' )
+   SEEK '+' + ident_fir
    SELECT 5
    DO WHILE .NOT. Dostep( 'ZALICZKI' )
    ENDDO
@@ -111,7 +116,7 @@ FUNCTION Etaty( mieskart )
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,-9,13,247,75,107,77,109,7,28,80,87,89,112,119,121,52,1006'
+   _esc := '27,-9,13,247,75,107,77,109,7,28,80,87,89,112,119,121,52,1006,71,103,72,104'
    _top := "firma#ident_fir.or.status>'U'"
    _bot := "del#'+'.or.firma#ident_fir.or.status>'U'"
    _stop := '+' + ident_fir + '+'
@@ -168,8 +173,10 @@ FUNCTION Etaty( mieskart )
          p[  8 ] := '  [W].............dokonywane wyp&_l.aty/zaliczki - aktualizacja wybranego '
          p[  9 ] := '  [P].............data wp&_l.aty zaliczki na podatek dochodowy            '
          p[ 10 ] := '  [4].............okres PIT-4 i PIT-11/8B w kt&_o.rym uwzgl&_e.dni&_c. podatek   '
-         p[ 11 ] := '  [Esc]...........wyj&_s.cie                                              '
-         p[ 12 ] := '                                                                       '
+         p[ 11 ] := '  [H].............historia zatrudnienia pracownika                     '
+         p[ 12 ] := '  [G].............ponowne zatrudnienie pracownika                      '
+         p[ 13 ] := '  [Esc]...........wyj&_s.cie                                              '
+         p[ 14 ] := '                                                                       '
          *---------------------------------------
          SET COLOR TO i
          i := 20
@@ -721,6 +728,35 @@ FUNCTION Etaty( mieskart )
                @ 23, 0
             ENDIF
          ENDDO
+      CASE kl == Asc( 'G' ) .OR. kl == Asc( 'g' )
+         IF ! Empty( prac->data_przy ) .AND. ! Empty( prac->data_zwol )
+            zDATA_PRZY := Date()
+            zDATA_ZWOL := SToD()
+            @  4, 42 GET zdata_przy PICTURE '@D' VALID .NOT. Empty( zdata_przy )
+            @  4, 68 GET zdata_zwol PICTURE '@D'
+            SET CURSOR ON
+            READ
+            SET CURSOR OFF
+            IF LastKey() == 13
+               prac_hz->( dbAppend() )
+               prac_hz->del := '+'
+               prac_hz->firma := ident_fir
+               prac_hz->pracid := prac->id
+               prac_hz->data_przy := prac->data_przy
+               prac_hz->data_zwol := prac->data_zwol
+               prac_hz->( dbCommit() )
+
+               BlokadaR()
+               prac->data_przy := zDATA_PRZY
+               prac->data_zwol := zDATA_ZWOL
+               COMMIT
+               UNLOCK
+            ENDIF
+         ELSE
+            Komun( "Pracownik nadal jest zatrudniony" )
+         ENDIF
+      CASE kl == Asc( 'H' ) .OR. kl == Asc( 'h' )
+         Prac_HZ_Pokaz()
       ENDCASE
    ENDDO
    close_()
@@ -910,3 +946,211 @@ FUNCTION v_dopit4()
    RETURN .T.
 
 *############################################################################
+
+PROCEDURE Prac_HZ_Pokaz()
+
+   LOCAL cEkran := SaveScreen( 5, 41, 9, 64 )
+
+   PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, ;
+      _top, _bot, _stop, _sbot, _proc, _row, _proc_spe, _disp, _cls, kl, ins, ;
+      nr_rec, wiersz, f10, rec, fou, _top_bot
+
+
+   SELECT prac_hz
+   *@ 1,47 say [          ]
+   *################################# GRAFIKA ##################################
+   @ 5, 41 SAY 'ÚData przyjÂData zwoln¿'
+   @ 6, 41 SAY '³          ³          ³'
+   @ 7, 41 SAY '³          ³          ³'
+   @ 8, 41 SAY '³          ³          ³'
+   @ 9, 41 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÙ'
+
+   *############################### OTWARCIE BAZ ###############################
+   SEEK '+' + ident_fir + Str( prac->id, 8 )
+
+   *################################# OPERACJE #################################
+   *----- parametry ------
+   _row_g := 6
+   _col_l := 42
+   _row_d := 8
+   _col_p := 63
+   _invers := 'i'
+   _curs_l := 0
+   _curs_p := 0
+   _esc := '27,-9,247,22,48,77,109,7,46,28'
+   _top := "del#'+'.or.firma#ident_fir.or.pracid<>prac->id"
+   _bot := "del#'+'.or.firma#ident_fir.or.pracid<>prac->id"
+   _stop := '+' + ident_fir + Str( prac->id, 8 )
+   _sbot := '+' + ident_fir + Str( prac->id, 8 ) + '‏'
+   *_sbot=[+]+ident_fir+_zident_+mmmie
+   _proc := 'Prac_HZ_Linia()'
+   _row := Int( ( _row_g + _row_d ) / 2 )
+   _proc_spe := ''
+   _disp := .T.
+   _cls := ''
+   _top_bot := _top + '.or.' + _bot
+   *----------------------
+   kl := 0
+   DO WHILE kl # 27
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      SET COLOR TO
+      _row := wybor( _row )
+      ColStd()
+      kl := LastKey()
+      DO CASE
+      *########################### INSERT/MODYFIKACJA #############################
+      CASE kl == 22 .OR. kl == 48 .OR. _row == -1 .OR. kl == 77 .OR. kl == 109
+         ins := ( kl # 109 .AND. kl # 77 ) .OR. &_top_bot
+         @ 1, 47 SAY '          '
+         IF ins
+            ColStb()
+            center( 23, '‏                     ‏' )
+            ColSta()
+            center( 23, 'W P I S Y W A N I E' )
+            ColStd()
+            RestScreen( _row_g, _col_l, _row_d + 1, _col_p, _cls )
+            wiersz := _row_d
+         ELSE
+            ColStb()
+            center( 23, '‏                       ‏' )
+            ColSta()
+            center( 23, 'M O D Y F I K A C J A' )
+            ColStd()
+            wiersz := _row
+         ENDIF
+         BEGIN SEQUENCE
+         *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
+            IF ins
+               zDATA_PRZY := Date()
+               zDATA_ZWOL := SToD('')
+            ELSE
+               zDATA_PRZY := data_przy
+               zDATA_ZWOL := data_zwol
+            ENDIF
+            *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
+            *if ins
+            @ wiersz, _col_l      GET zDATA_PRZY PICTURE '@D' VALID ! Empty( zDATA_PRZY )
+            *endif
+            @ wiersz, _col_l + 11 GET zDATA_ZWOL PICTURE '@D' VALID ! Empty( zDATA_ZWOL )
+            read_()
+            IF LastKey() == 27
+               BREAK
+            ENDIF
+            ColStd()
+            @ 24, 0
+            SET COLOR TO
+            *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+            IF ins
+               app()
+               repl_( 'FIRMA', ident_fir )
+               repl_( 'PRACID', prac->id )
+            ENDIF
+            BlokadaR()
+            repl_( 'DATA_PRZY', zDATA_PRZY )
+            repl_( 'DATA_ZWOL', zDATA_ZWOL )
+            commit_()
+            UNLOCK
+            *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
+
+            _row := Int( ( _row_g + _row_d ) / 2 )
+            kl := 27
+            IF .NOT. ins
+               BREAK
+            ENDIF
+            * @ _row_d,_col_l say &_proc
+            Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
+            @ _row_d, _col_l SAY '          ³          '
+         END
+         _disp := ins .OR. LastKey() # 27
+         kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
+         @ 23, 0
+      *################################ KASOWANIE #################################
+      CASE kl == 7 .OR. kl == 46
+         @ 1, 47 SAY '          '
+         ColStb()
+         center( 23, '‏                   ‏' )
+         ColSta()
+         center( 23, 'K A S O W A N I E' )
+         ColStd()
+         _disp := tnesc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
+         IF _disp
+            BlokadaR()
+            del()
+            COMMIT
+            UNLOCK
+            SKIP
+            commit_()
+            IF &_bot
+               SKIP -1
+            ENDIF
+            kl := 27
+         ENDIF
+         @ 23, 0
+      *################################### POMOC ##################################
+      CASE kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY '          '
+         DECLARE p[ 20 ]
+         *---------------------------------------
+         p[ 1 ] := '                                                        '
+         p[ 2 ] := '   [' + Chr( 24 ) + '/' + Chr( 25 ) + ']...................poprzednia/nast&_e.pna pozycja  '
+         p[ 3 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
+         p[ 4 ] := '   [Ins]...................wpisywanie                   '
+         p[ 5 ] := '   [M].....................modyfikacja pozycji          '
+         p[ 6 ] := '   [Del]...................kasowanie pozycji            '
+         p[ 7 ] := '   [Esc]...................wyj&_s.cie                      '
+         p[ 8 ] := '                                                        '
+         *---------------------------------------
+         SET COLOR TO i
+         i := 20
+         j := 24
+         DO WHILE i > 0
+            IF Type( 'p[i]' ) # 'U'
+               center( j, p[ i ] )
+               j := j - 1
+            ENDIF
+            i := i - 1
+         ENDDO
+         SET COLOR TO
+         Pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            KEYBOARD Chr( LastKey() )
+         ENDIF
+         RESTORE SCREEN FROM scr_
+         _disp := .F.
+      ******************** ENDCASE
+      ENDCASE
+   ENDDO
+
+   SELECT PRAC
+   RestScreen( 5, 41, 9, 64, cEkran )
+
+   RETURN
+
+*################################## FUNKCJE #################################
+FUNCTION Prac_HZ_Linia()
+
+   RETURN Transform( DATA_PRZY, '@D' ) + '³' + Transform( DATA_ZWOL, '@D' )
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Prac_HZ_Aktywny( nMiesiac )
+
+   LOCAL lRes := .F., dDataNa := hb_Date( Val( param_rok ), nMiesiac, 1 )
+
+   lRes := dDataNa >= hb_Date( Year( prac->data_przy ), Month( prac->data_przy ), 1 ) .AND. ;
+     ( Empty( prac->data_zwol ) .OR. dDataNa <= hb_Date( Year( prac->data_zwol ), Month( prac->data_zwol ), 1 ) )
+
+   IF ! lRes .AND. prac_hz->( dbSeek( '+' + ident_fir + Str( prac->id, 8 ) ) )
+      DO WHILE ! lRes .AND. ! prac_hz->( Eof() ) .AND. prac_hz->del == '+' .AND. prac_hz->firma == ident_fir .AND. prac_hz->pracid == prac->id
+         lRes := dDataNa >= hb_Date( Year( prac_hz->data_przy ), Month( prac_hz->data_przy ), 1 ) .AND. ;
+           dDataNa <= hb_Date( Year( prac_hz->data_zwol ), Month( prac_hz->data_zwol ), 1 )
+         prac_hz->( dbSkip() )
+      ENDDO
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+

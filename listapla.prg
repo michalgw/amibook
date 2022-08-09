@@ -48,6 +48,12 @@ PROCEDURE ListaPla()
       czesc := 1
 
       *@@@@@@@@@@@@@@@@@@@@ OTWARCIE BAZ DANYCH @@@@@@@@@@@@@@@@@@@@@@
+      SELECT 3
+      IF Dostep( 'PRAC_HZ' )
+         SetInd( 'PRAC_HZ' )
+      ELSE
+         BREAK
+      ENDIF
       SELECT 2
       IF Dostep( 'PRAC' )
          SetInd( 'PRAC' )
@@ -114,12 +120,18 @@ PROCEDURE ListaPla()
             seek '+' + ident_fir + Str( REC, 5 ) + miesiac
             STORE .F. TO DOD
             STORE .T. TO DDO
+
+            DOD := Prac_HZ_Aktywny( Val( miesiac ) ) .AND. prac->status <> 'Z'
+
+            /*
             IF .NOT. Empty( PRAC->DATA_PRZY )
                DOD := SubStr( DToS( PRAC->DATA_PRZY ), 1, 6 ) <= param_rok + strtran( miesiac, ' ', '0' ) .AND. prac->status <> 'Z'
             ENDIF
             IF .NOT. Empty( PRAC->DATA_ZWOL )
                DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + strtran( miesiac, ' ', '0' ) .AND. prac->status <> 'Z'
             ENDIF
+            */
+
             IF Found() .AND. ( DO_WYPLATY <> 0 .OR. ( DOD .AND. DDO ) ) .AND. ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
                aWiersz[ 'k3' ] := BRUT_RAZEM
                aWiersz[ 'k4' ] := PODATEK
@@ -154,12 +166,18 @@ PROCEDURE ListaPla()
             seek '+' + ident_fir + Str( REC, 5 ) + miesiac
             STORE .F. TO DOD
             STORE .T. TO DDO
+
+            DOD := Prac_HZ_Aktywny( Val( miesiac ) ) .AND. prac->status <> 'Z'
+
+            /*
             IF .NOT. Empty( PRAC->DATA_PRZY )
                DOD := SubStr( DToS( PRAC->DATA_PRZY ), 1, 6 ) <= param_rok + strtran( miesiac, ' ', '0' )
             ENDIF
             IF .NOT. Empty( PRAC->DATA_ZWOL )
                DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + strtran( miesiac, ' ', '0' )
             ENDIF
+            */
+
             IF Found() .AND. ( DO_WYPLATY <> 0 .OR. ( DOD .AND. DDO ) ) .AND. ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
                IF _grupa .OR. _grupa1 # Int( strona / Max( 1, _druk_2 - 7 ) )
                   _grupa1 := Int( strona / Max( 1, _druk_2 - 7 ) )

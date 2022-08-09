@@ -393,6 +393,10 @@ PROCEDURE Firma1()
                seek [+]+zident
             enddo
 
+            select 104
+            do while.not.dostep('PRAC_HZ')
+            enddo
+            do setind with 'PRAC_HZ'
             select 103
             do while.not.dostep('NIEOBEC')
             enddo
@@ -433,6 +437,15 @@ PROCEDURE Firma1()
                select nieobec
                seek [+]+zident+zm
                do while del=[+].and.firma=zident.and.ident=zm
+                  do BLOKADAR
+                  del()
+                  COMMIT
+                  unlock
+                  skip
+               enddo
+               select prac_hz
+               seek [+]+zident+Str(prac->id,8)
+               do while del=[+].and.firma=zident.and.pracid=prac->id
                   do BLOKADAR
                   del()
                   COMMIT

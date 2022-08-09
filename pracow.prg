@@ -61,6 +61,13 @@ PROCEDURE Pracow()
    @ 22, 0 SAY '읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸'
 
    *############################### OTWARCIE BAZ ###############################
+   SELECT 8
+   IF Dostep( 'PRAC_HZ' )
+      SetInd( 'PRAC_HZ' )
+   ELSE
+      close_()
+      RETURN
+   ENDIF
    SELECT 7
    IF Dostep( 'ZALICZKI' )
       SetInd( 'ZALICZKI' )
@@ -494,6 +501,15 @@ PROCEDURE Pracow()
                SELECT umowy
                SEEK '+' + ident_fir + Str( RECS, 5 )
                DO WHILE del = '+' .AND. firma = ident_fir .AND. ident = Str( RECS, 5 )
+                  BlokadaR()
+                  del()
+                  COMMIT
+                  UNLOCK
+                  SKIP
+               ENDDO
+               SELECT prac_hz
+               SEEK '+' + ident_fir + Str( prac->id, 8 )
+               DO WHILE del = '+' .AND. firma = ident_fir .AND. pracid = prac->id
                   BlokadaR()
                   del()
                   COMMIT

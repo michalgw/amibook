@@ -1,4 +1,4 @@
-               /************************************************************************
+/************************************************************************
 
 AMi-BOOK
 
@@ -24,7 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE SpecPlac()
 
-   LOCAL nMenu, aDane, aWiersz, nZakres, aRekordy := {}
+   LOCAL nMenu, aDane, aWiersz, nZakres, aRekordy := {}, lDrukPlac
 
    PRIVATE _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
    PRIVATE _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15,koniep
@@ -68,6 +68,12 @@ PROCEDURE SpecPlac()
          BREAK
       ENDIF
       *@@@@@@@@@@@@@@@@@@@@ OTWARCIE BAZ DANYCH @@@@@@@@@@@@@@@@@@@@@@
+      SELECT 4
+      IF Dostep( 'PRAC_HZ' )
+         SetInd( 'PRAC_HZ' )
+      ELSE
+         BREAK
+      ENDIF
       SELECT 3
       DO WHILE.NOT.Dostep( 'NIEOBEC' )
       ENDDO
@@ -140,16 +146,26 @@ PROCEDURE SpecPlac()
             aWiersz[ 'imie2' ] := AllTrim( imie2 )
             aWiersz[ 'pesel' ] := AllTrim( pesel )
 
+            /*
             STORE .F. TO DOD
             STORE .T. TO DDO
+
             IF .NOT. Empty( PRAC->DATA_PRZY )
                DOD := SubStr( DToS( PRAC->DATA_PRZY ), 1, 6 ) <= param_rok + StrTran( Str( mcdo, 2 ), ' ', '0' ) .AND. prac->status <> 'Z'
             ENDIF
             IF .NOT. Empty( PRAC->DATA_ZWOL )
                DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + StrTran( Str( mcod, 2 ), ' ', '0' ) .AND. prac->status <> 'Z'
             ENDIF
+
             IF DOD .AND. DDO .AND. ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
+            */
+            lDrukPlac := .F.
+            IF ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
                FOR xxe := mcod TO mcdo
+                  IF ! Prac_HZ_Aktywny( xxe )
+                     LOOP
+                  ENDIF
+                  lDrukPlac := .T.
                   xxes := Str( xxe, 2 )
                   SELECT etaty
                   SEEK '+' + ident_fir + Str( REC, 5 ) + xxes
@@ -245,6 +261,7 @@ PROCEDURE SpecPlac()
                      zzus_zascho := zus_zascho
                      zzus_rkch := zus_rkch
                      zzus_podat := zus_podat
+                     zulgaklsrk := ulgaklsrk
                      zppkppm := zppkppm + ppkppm
                      zppkzs1 := ppkzs1
                      zppkzk1 := zppkzk1 + ppkzk1
@@ -256,91 +273,92 @@ PROCEDURE SpecPlac()
                      zppkpk2 := zppkpk2 + ppkpk2
                   ENDIF
                NEXT
-               mm := mcdo - mcod
+               IF lDrukPlac
+                  mm := mcdo - mcod
 
-               aWiersz[ 'brut_zasad' ] := zbrut_zasad
-               aWiersz[ 'brut_premi' ] := zbrut_premi
-               aWiersz[ 'dopl_opod' ] := zdopl_opod
-               aWiersz[ 'dopl_bzus' ] := zdopl_bzus
-               aWiersz[ 'wolu' ] := zwolu
-               aWiersz[ 'wolc' ] := zwolc
-               aWiersz[ 'wolz' ] := zwolz
-               aWiersz[ 'wolo' ] := zwolo
-               aWiersz[ 'wolb' ] := zwolb
-               aWiersz[ 'wolm' ] := zwolm
-               aWiersz[ 'woln' ] := zwoln
-               aWiersz[ 'wolw' ] := zwolw
-               aWiersz[ 'woli' ] := zwoli
-               aWiersz[ 's7' ] := zs7
-               aWiersz[ 'war_pf3' ] := zwar_pf3
-               aWiersz[ 's10' ] := zs10
-               aWiersz[ 'brut_razem' ] := zbrut_razem
-               aWiersz[ 'koszt' ] := zkoszt
-               aWiersz[ 'dochod' ] := zdochod
-               aWiersz[ 'war_pur' ] := zwar_pur
-               aWiersz[ 'war_puc' ] := zwar_puc
-               aWiersz[ 'war_pue' ] := zwar_pue
-               aWiersz[ 'war_psum' ] := zwar_psum
-               aWiersz[ 'b4' ] := zb4
-               aWiersz[ 'war_puz' ] := zwar_puz
-               aWiersz[ 'war_puzo' ] := zwar_puzo
-               aWiersz[ 'odlicz' ] := zodlicz
-               aWiersz[ 'podatek' ] := zpodatek
-               aWiersz[ 'netto' ] := znetto
-               aWiersz[ 'zasil_rodz' ] := zzasil_rodz
-               aWiersz[ 'iloso_rodz' ] := ziloso_rodz
-               aWiersz[ 'zasil_piel' ] := zzasil_piel
-               aWiersz[ 'iloso_piel' ] := ziloso_piel
-               aWiersz[ 'dopl_nieop' ] := zdopl_nieop
-               aWiersz[ 'odl_nieop' ] := zodl_nieop
-               aWiersz[ 'do_wyplaty' ] := zdo_wyplaty
-               aWiersz[ 'przel_nako' ] := zprzel_nako
-               aWiersz[ 'war_fue' ] := zwar_fue
-               aWiersz[ 'war_fur' ] := zwar_fur
-               aWiersz[ 'war_fuw' ] := zwar_fuw
-               aWiersz[ 'war_ffp' ] := zwar_ffp
-               aWiersz[ 'war_ffg' ] := zwar_ffg
-               aWiersz[ 'war_fsum' ] := zwar_fsum
-               aWiersz[ 'staw_podat' ] := iif( mm == 0, '(' + Str( staw_poda2, 5, 2 ) + '%)', '' )
-               aWiersz[ 'staw_pue' ] := iif( mm == 0, '(' + Str( staw_pue, 4, 2 ) + '%)', '' )
-               aWiersz[ 'staw_pur' ] := iif( mm == 0, '(' + Str( staw_pur, 4, 2 ) + '%)', '' )
-               aWiersz[ 'staw_puc' ] := iif( mm == 0, '(' + Str( staw_puc, 4, 2 ) + '%)', '' )
-               aWiersz[ 'staw_puz' ] := iif( mm == 0, '(' + Str( staw_puz, 4, 2 ) + '%)', '' )
-               aWiersz[ 'staw_fue' ] := iif( mm == 0, '(' + Str( staw_fue, 4, 2 ) + '%)', '' )
-               aWiersz[ 'staw_fur' ] := iif( mm == 0, '(' + Str( staw_fur, 4, 2 ) + '%)', '' )
-               aWiersz[ 'staw_fuw' ] := iif( mm == 0, '(' + Str( staw_fuw, 4, 2 ) + '%)', '' )
-               aWiersz[ 'staw_ffp' ] := iif( mm == 0, '(' + Str( staw_ffp, 4, 2 ) + '%)', '' )
-               aWiersz[ 'staw_ffg' ] := iif( mm == 0, '(' + Str( staw_ffg, 4, 2 ) + '%)', '' )
-               aWiersz[ 'kod_kasy' ] := kod_kasy
-               aWiersz[ 'kod_tytu' ] := kod_tytu
-               aWiersz[ 'zus_zascho' ] := zus_zascho
-               aWiersz[ 'zus_rkch' ] := zus_rkch
-               aWiersz[ 'zus_podat' ] := zus_podat
-               aWiersz[ 'ulgaklsrk' ] := ulgaklsrk
+                  aWiersz[ 'brut_zasad' ] := zbrut_zasad
+                  aWiersz[ 'brut_premi' ] := zbrut_premi
+                  aWiersz[ 'dopl_opod' ] := zdopl_opod
+                  aWiersz[ 'dopl_bzus' ] := zdopl_bzus
+                  aWiersz[ 'wolu' ] := zwolu
+                  aWiersz[ 'wolc' ] := zwolc
+                  aWiersz[ 'wolz' ] := zwolz
+                  aWiersz[ 'wolo' ] := zwolo
+                  aWiersz[ 'wolb' ] := zwolb
+                  aWiersz[ 'wolm' ] := zwolm
+                  aWiersz[ 'woln' ] := zwoln
+                  aWiersz[ 'wolw' ] := zwolw
+                  aWiersz[ 'woli' ] := zwoli
+                  aWiersz[ 's7' ] := zs7
+                  aWiersz[ 'war_pf3' ] := zwar_pf3
+                  aWiersz[ 's10' ] := zs10
+                  aWiersz[ 'brut_razem' ] := zbrut_razem
+                  aWiersz[ 'koszt' ] := zkoszt
+                  aWiersz[ 'dochod' ] := zdochod
+                  aWiersz[ 'war_pur' ] := zwar_pur
+                  aWiersz[ 'war_puc' ] := zwar_puc
+                  aWiersz[ 'war_pue' ] := zwar_pue
+                  aWiersz[ 'war_psum' ] := zwar_psum
+                  aWiersz[ 'b4' ] := zb4
+                  aWiersz[ 'war_puz' ] := zwar_puz
+                  aWiersz[ 'war_puzo' ] := zwar_puzo
+                  aWiersz[ 'odlicz' ] := zodlicz
+                  aWiersz[ 'podatek' ] := zpodatek
+                  aWiersz[ 'netto' ] := znetto
+                  aWiersz[ 'zasil_rodz' ] := zzasil_rodz
+                  aWiersz[ 'iloso_rodz' ] := ziloso_rodz
+                  aWiersz[ 'zasil_piel' ] := zzasil_piel
+                  aWiersz[ 'iloso_piel' ] := ziloso_piel
+                  aWiersz[ 'dopl_nieop' ] := zdopl_nieop
+                  aWiersz[ 'odl_nieop' ] := zodl_nieop
+                  aWiersz[ 'do_wyplaty' ] := zdo_wyplaty
+                  aWiersz[ 'przel_nako' ] := zprzel_nako
+                  aWiersz[ 'war_fue' ] := zwar_fue
+                  aWiersz[ 'war_fur' ] := zwar_fur
+                  aWiersz[ 'war_fuw' ] := zwar_fuw
+                  aWiersz[ 'war_ffp' ] := zwar_ffp
+                  aWiersz[ 'war_ffg' ] := zwar_ffg
+                  aWiersz[ 'war_fsum' ] := zwar_fsum
+                  aWiersz[ 'staw_podat' ] := iif( mm == 0, '(' + Str( zstaw_podat, 5, 2 ) + '%)', '' )
+                  aWiersz[ 'staw_pue' ] := iif( mm == 0, '(' + Str( zstaw_pue, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'staw_pur' ] := iif( mm == 0, '(' + Str( zstaw_pur, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'staw_puc' ] := iif( mm == 0, '(' + Str( zstaw_puc, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'staw_puz' ] := iif( mm == 0, '(' + Str( zstaw_puz, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'staw_fue' ] := iif( mm == 0, '(' + Str( zstaw_fue, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'staw_fur' ] := iif( mm == 0, '(' + Str( zstaw_fur, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'staw_fuw' ] := iif( mm == 0, '(' + Str( zstaw_fuw, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'staw_ffp' ] := iif( mm == 0, '(' + Str( zstaw_ffp, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'staw_ffg' ] := iif( mm == 0, '(' + Str( zstaw_ffg, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'kod_kasy' ] := zkod_kasy
+                  aWiersz[ 'kod_tytu' ] := zkod_tytu
+                  aWiersz[ 'zus_zascho' ] := zzus_zascho
+                  aWiersz[ 'zus_rkch' ] := zzus_rkch
+                  aWiersz[ 'zus_podat' ] := zzus_podat
+                  aWiersz[ 'ulgaklsrk' ] := zulgaklsrk
 
-               aWiersz[ 'zwolstr' ] := iif( zwolU # 0, 'U=' + AllTrim( Str( zwolU, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolC # 0, 'C=' + AllTrim( Str( zwolC, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolZ # 0, 'Z=' + AllTrim( Str( zwolZ, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolO # 0, 'O=' + Alltrim( Str( zwolO, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolB # 0, 'B=' + Alltrim( Str( zwolB, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolM # 0, 'M=' + Alltrim( Str( zwolM, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolN # 0, 'N=' + Alltrim( Str( zwolN, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolW # 0, 'W=' + Alltrim( Str( zwolW, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' )
+                  aWiersz[ 'zwolstr' ] := iif( zwolU # 0, 'U=' + AllTrim( Str( zwolU, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolC # 0, 'C=' + AllTrim( Str( zwolC, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolZ # 0, 'Z=' + AllTrim( Str( zwolZ, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolO # 0, 'O=' + Alltrim( Str( zwolO, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolB # 0, 'B=' + Alltrim( Str( zwolB, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolM # 0, 'M=' + Alltrim( Str( zwolM, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolN # 0, 'N=' + Alltrim( Str( zwolN, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolW # 0, 'W=' + Alltrim( Str( zwolW, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' )
 
-               aWiersz[ 'ppkppm' ] := zppkppm
-               aWiersz[ 'ppkzs1' ] := zppkzs1
-               aWiersz[ 'ppkzk1' ] := zppkzk1
-               aWiersz[ 'ppkzs2' ] := zppkzs2
-               aWiersz[ 'ppkzk2' ] := zppkzk2
-               aWiersz[ 'ppkps1' ] := zppkps1
-               aWiersz[ 'ppkpk1' ] := zppkpk1
-               aWiersz[ 'ppkps2' ] := zppkps2
-               aWiersz[ 'ppkpk2' ] := zppkpk2
-               aWiersz[ 'ppkzs' ] := iif( mm == 0, '(' + Str( zppkzs1 + zppkzs2, 4, 2 ) + '%)', '' )
-               aWiersz[ 'ppkps' ] := iif( mm == 0, '(' + Str( zppkps1 + zppkps2, 4, 2 ) + '%)', '' )
-               AAdd( aDane[ 'wiersze' ], aWiersz )
-
+                  aWiersz[ 'ppkppm' ] := zppkppm
+                  aWiersz[ 'ppkzs1' ] := zppkzs1
+                  aWiersz[ 'ppkzk1' ] := zppkzk1
+                  aWiersz[ 'ppkzs2' ] := zppkzs2
+                  aWiersz[ 'ppkzk2' ] := zppkzk2
+                  aWiersz[ 'ppkps1' ] := zppkps1
+                  aWiersz[ 'ppkpk1' ] := zppkpk1
+                  aWiersz[ 'ppkps2' ] := zppkps2
+                  aWiersz[ 'ppkpk2' ] := zppkpk2
+                  aWiersz[ 'ppkzs' ] := iif( mm == 0, '(' + Str( zppkzs1 + zppkzs2, 4, 2 ) + '%)', '' )
+                  aWiersz[ 'ppkps' ] := iif( mm == 0, '(' + Str( zppkps1 + zppkps2, 4, 2 ) + '%)', '' )
+                  AAdd( aDane[ 'wiersze' ], aWiersz )
+               ENDIF
             ENDIF
 
             swolU := swolU + zwolU
@@ -404,6 +422,7 @@ PROCEDURE SpecPlac()
             k3 := symbol_fir
             zkod_kasy := '   '
             zkod_tytu := '      '
+            /*
             STORE .F. TO DOD
             STORE .T. TO DDO
             IF .NOT. Empty( PRAC->DATA_PRZY )
@@ -413,7 +432,14 @@ PROCEDURE SpecPlac()
                DDO := SubStr( DToS( PRAC->DATA_ZWOL ), 1, 6 ) >= param_rok + StrTran( Str( mcod, 2 ), ' ', '0' )
             ENDIF
             IF DOD .AND. DDO .AND. ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
+            */
+            lDrukPlac := .F.
+            IF ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
                FOR xxe := mcod TO mcdo
+                  IF ! Prac_HZ_Aktywny( xxe )
+                     LOOP
+                  ENDIF
+                  lDrukPlac := .T.
                   xxes := Str( xxe, 2 )
                   SELECT etaty
                   SEEK '+' + ident_fir + Str( REC, 5 ) + xxes
@@ -512,90 +538,92 @@ PROCEDURE SpecPlac()
                      zulgaklsrk := zulgaklsrk + ulgaklsrk
                   ENDIF
                NEXT
-               mm := mcdo - mcod
-               mon_drk( k1 + '   PESEL:' + k2 + Space( 50 ) + 'FIRMA:' + k3 )
-               mon_drk( 'Zasadnicza........:' + kwota( zBRUT_ZASAD, 11, 2 ) + '  Ubezp.emeryt.' + iif( mm == 0, Str( zstaw_pue, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_pue, 11, 2 ) + '  ****PLACA NETTO***:' + kwota( zNETTO, 11, 2 ) ;
-                  + '  -SKLAD.FINANS.PRZEZ PRACODAWCE' )
-               mon_drk( 'Premia............:' + kwota( zBRUT_PREMI, 11, 2 ) + '  Ubezp.rentowe' + iif( mm == 0, Str( zstaw_pur, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_pur, 11, 2 ) + '  Zasilek rodzinny..:' + kwota( zZASIL_RODZ, 11, 2 ) ;
-                  + '  Emerytalne...' + iif( mm == 0, Str( zSTAW_fUE, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_fue, 11, 2 ) )
-               mon_drk( 'Dodatki,itp.......:' + kwota( zDOPL_OPOD , 11, 2 ) + '  Ubezp.chorob.' + iif( mm == 0, Str( zstaw_puc, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_puc, 11, 2 ) + '  Dla osob..........:' + kwota( zILOSO_RODZ, 11 ) ;
-                  + '  Rentowe......' + iif( mm == 0, Str( zSTAW_fUr, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_fur, 11, 2 ) )
-               mon_drk( 'Dodatki bez ZUS...:' + kwota( zDOPL_BZUS , 11, 2 ) + '  ***UBEZPIECZENIA**:' + kwota( zwar_psum, 11, 2 ) + '  Zasilek pielegnac.:' + kwota( zZASIL_PIEL, 11, 2 ) ;
-                  + '  Wypadkowe....' + iif( mm == 0, Str( zSTAW_fUw, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_fuw, 11, 2 ) )
-               mon_drk('NIEOBEC:' + ;
-               PadR( iif( zwolU # 0, 'U=' + AllTrim( Str( zwolU, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolC # 0, 'C=' + AllTrim( Str( zwolC, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolZ # 0, 'Z=' + AllTrim( Str( zwolZ, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolO # 0, 'O=' + Alltrim( Str( zwolO, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolB # 0, 'B=' + Alltrim( Str( zwolB, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolM # 0, 'M=' + Alltrim( Str( zwolM, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolN # 0, 'N=' + Alltrim( Str( zwolN, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolW # 0, 'W=' + Alltrim( Str( zwolW, 3 ) ) + ' ', '' ) + ;
-                  iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' ), 22 ) + ;
-                  '  **III filar(PPE)**:' + kwota( zWAR_PF3, 11, 2 ) + '  Dla osob..........:' + kwota( zILOSO_PIEL, 11 ) ;
-                  + '  Fundusz Pracy' + iif( mm == 0, Str( zSTAW_ffp, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_ffp, 11, 2 ) )
-               mon_drk( 'Za czas przepracow:' + kwota( zs7, 11, 2 ) + '  Oblicz.poda.' + iif( mm == 0, Str( zSTAW_PODAT, 5, 2 ), Space( 5 ) ) + '%=' + kwota( zb4, 11, 2 ) + '  Dop&_l.at.nieopodat..:' + kwota( zDOPL_NIEOP, 11, 2 );
-                  + '  FG&__S.P         ' + iif( mm == 0, Str( zSTAW_ffg, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_ffg, 11, 2 ) )
-               mon_drk( 'Za chorobowe itp..:' + kwota( zs10, 11, 2 ) + '  Odliczenie od pod.:' + kwota( zODLICZ, 11, 2 ) + '  Potr&_a.c.nieopodat..:' + kwota( zODL_NIEOP, 11, 2 ) ;
-                  + '  ***RAZEM SK&__L.ADKI**:' + kwota( zwar_fsum, 11, 2 ) )
-               mon_drk( '***P&__L.ACA BRUTTO***:' + kwota( zBRUT_RAZEM, 11, 2 ) + '  Kasa chorych.' + iif( mm == 0, Str( zSTAW_PUZ, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_puz, 11, 2 ) + '  ****DO WYP&__L.ATY****:' + kwota( zDO_WYPLATY, 11, 2 ) ;
-                  + '  Z ZUS:zasilek.....:' + kwota( zzus_zascho, 11, 2 ) )
-               mon_drk( 'Koszt uzyskania...:' + kwota( zKOSZT, 11, 2 ) + '  ulga klasy ˜redni.:' + kwota( zULGAKLSRK, 11, 2 ) + '  z tego: przelewem.:' + kwota( zPRZEL_NAKO, 11, 2 ) ;
-                  + '        zdro:' + kwota( zzus_rkch, 6, 2 ) + ' podat:' + kwota( zzus_podat, 6, 2 ) )
-               mon_drk( '******DOCH&__O.D******:' + kwota( zDOCHOD, 11, 2 ) + '  ******PODATEK*****:' + kwota( zPODATEK, 11, 2 ) + '          got&_o.wk&_a....:' + kwota( zDO_WYPLATY - zPRZEL_NAKO, 11, 2 ) ;
-                  + '  NFZ:' + zkod_kasy + '   Kod tyt.ub.:' + zkod_tytu )
-               mon_drk('')
-               mon_drk('')
-               s1 := s1 + zbrut_zasad
-               s2 := s2 + zbrut_premi
-               s3 := s3 + zdopl_opod
-               s3a := s3a + zdopl_bzus
-               s5a := s5a + zwolU
-               s5b := s5b + zwolC
-               s5c := s5c + zwolZ
-               s5d := s5d + zwolO
-               s5e := s5e + zwolB
-               s5f := s5f + zwolM
-               s5g := s5g + zwolW
-               s5h := s5h + zwolI
-               s5i := s5i + zwolN
-               s7 := s7 + zs7
-               s9 := s9 + zwar_pf3
-               s10 := s10 + zs10
-               s11 := s11 + zbrut_razem
-               s12 := s12 + zkoszt
-               s13 := s13 + zdochod
-               s131 := s131 + zwar_pue
-               s132 := s132 + zwar_pur
-               s133 := s133 + zwar_puc
-               s134 := s134 + zwar_psum
-               s14 := s14 + zb4
-               s141 := s141 + zwar_puz
-               s141a := s141a + zwar_puzo
-               s15 := s15 + zodlicz
-               s16 := s16 + zpodatek
-               s17 := s17 + znetto
-               s17a := s17a + zzasil_rodz
-               s17b := s17b + ziloso_rodz
-               s17c := s17c + zzasil_piel
-               s17d := s17d + ziloso_piel
-               s18 := s18 + zdopl_nieop
-               s19 := s19 + zodl_nieop
-               s20 := s20 + zdo_wyplaty
-               s20a := s20a + zprzel_nako
-               s21 := s21 + zwar_fue
-               s22 := s22 + zwar_fur
-               s23 := s23 + zwar_fuw
-               s23a := s23a + zwar_ffp
-               s23b := s23b + zwar_ffg
-               s24 := s24 + zwar_fsum
-               sz1 := sz1 + zzus_zascho
-               sz2 := sz2 + zzus_rkch
-               sz3 := sz3 + zzus_podat
-               IF mcdo - mcod == 0
-                  mon_drk( Space( 19 ) + 'ÄÄÄ' + PadC( ' ' + paras_nag + ' ', 80, 'Ä' ) + PadL( ' okres: ' + Str( mcod, 2 ) + '.' + param_rok, 24, 'Ä' ) )
-               ELSE
-                  mon_drk( Space( 19 ) + 'ÄÄÄ' + PadC( ' ' + paras_nag + ' ', 80, 'Ä' ) + PadL( ' okres od ' + Str( mcod, 2 ) + ' do ' + Str( mcdo, 2 ) + '  ' + param_rok, 24, 'Ä' ) )
+               IF lDrukPlac
+                  mm := mcdo - mcod
+                  mon_drk( k1 + '   PESEL:' + k2 + Space( 50 ) + 'FIRMA:' + k3 )
+                  mon_drk( 'Zasadnicza........:' + kwota( zBRUT_ZASAD, 11, 2 ) + '  Ubezp.emeryt.' + iif( mm == 0, Str( zstaw_pue, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_pue, 11, 2 ) + '  ****PLACA NETTO***:' + kwota( zNETTO, 11, 2 ) ;
+                     + '  -SKLAD.FINANS.PRZEZ PRACODAWCE' )
+                  mon_drk( 'Premia............:' + kwota( zBRUT_PREMI, 11, 2 ) + '  Ubezp.rentowe' + iif( mm == 0, Str( zstaw_pur, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_pur, 11, 2 ) + '  Zasilek rodzinny..:' + kwota( zZASIL_RODZ, 11, 2 ) ;
+                     + '  Emerytalne...' + iif( mm == 0, Str( zSTAW_fUE, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_fue, 11, 2 ) )
+                  mon_drk( 'Dodatki,itp.......:' + kwota( zDOPL_OPOD , 11, 2 ) + '  Ubezp.chorob.' + iif( mm == 0, Str( zstaw_puc, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_puc, 11, 2 ) + '  Dla osob..........:' + kwota( zILOSO_RODZ, 11 ) ;
+                     + '  Rentowe......' + iif( mm == 0, Str( zSTAW_fUr, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_fur, 11, 2 ) )
+                  mon_drk( 'Dodatki bez ZUS...:' + kwota( zDOPL_BZUS , 11, 2 ) + '  ***UBEZPIECZENIA**:' + kwota( zwar_psum, 11, 2 ) + '  Zasilek pielegnac.:' + kwota( zZASIL_PIEL, 11, 2 ) ;
+                     + '  Wypadkowe....' + iif( mm == 0, Str( zSTAW_fUw, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_fuw, 11, 2 ) )
+                  mon_drk('NIEOBEC:' + ;
+                  PadR( iif( zwolU # 0, 'U=' + AllTrim( Str( zwolU, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolC # 0, 'C=' + AllTrim( Str( zwolC, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolZ # 0, 'Z=' + AllTrim( Str( zwolZ, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolO # 0, 'O=' + Alltrim( Str( zwolO, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolB # 0, 'B=' + Alltrim( Str( zwolB, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolM # 0, 'M=' + Alltrim( Str( zwolM, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolN # 0, 'N=' + Alltrim( Str( zwolN, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolW # 0, 'W=' + Alltrim( Str( zwolW, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' ), 22 ) + ;
+                     '  **III filar(PPE)**:' + kwota( zWAR_PF3, 11, 2 ) + '  Dla osob..........:' + kwota( zILOSO_PIEL, 11 ) ;
+                     + '  Fundusz Pracy' + iif( mm == 0, Str( zSTAW_ffp, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_ffp, 11, 2 ) )
+                  mon_drk( 'Za czas przepracow:' + kwota( zs7, 11, 2 ) + '  Oblicz.poda.' + iif( mm == 0, Str( zSTAW_PODAT, 5, 2 ), Space( 5 ) ) + '%=' + kwota( zb4, 11, 2 ) + '  Dop&_l.at.nieopodat..:' + kwota( zDOPL_NIEOP, 11, 2 );
+                     + '  FG&__S.P         ' + iif( mm == 0, Str( zSTAW_ffg, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_ffg, 11, 2 ) )
+                  mon_drk( 'Za chorobowe itp..:' + kwota( zs10, 11, 2 ) + '  Odliczenie od pod.:' + kwota( zODLICZ, 11, 2 ) + '  Potr&_a.c.nieopodat..:' + kwota( zODL_NIEOP, 11, 2 ) ;
+                     + '  ***RAZEM SK&__L.ADKI**:' + kwota( zwar_fsum, 11, 2 ) )
+                  mon_drk( '***P&__L.ACA BRUTTO***:' + kwota( zBRUT_RAZEM, 11, 2 ) + '  Kasa chorych.' + iif( mm == 0, Str( zSTAW_PUZ, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_puz, 11, 2 ) + '  ****DO WYP&__L.ATY****:' + kwota( zDO_WYPLATY, 11, 2 ) ;
+                     + '  Z ZUS:zasilek.....:' + kwota( zzus_zascho, 11, 2 ) )
+                  mon_drk( 'Koszt uzyskania...:' + kwota( zKOSZT, 11, 2 ) + '  ulga klasy ˜redni.:' + kwota( zULGAKLSRK, 11, 2 ) + '  z tego: przelewem.:' + kwota( zPRZEL_NAKO, 11, 2 ) ;
+                     + '        zdro:' + kwota( zzus_rkch, 6, 2 ) + ' podat:' + kwota( zzus_podat, 6, 2 ) )
+                  mon_drk( '******DOCH&__O.D******:' + kwota( zDOCHOD, 11, 2 ) + '  ******PODATEK*****:' + kwota( zPODATEK, 11, 2 ) + '          got&_o.wk&_a....:' + kwota( zDO_WYPLATY - zPRZEL_NAKO, 11, 2 ) ;
+                     + '  NFZ:' + zkod_kasy + '   Kod tyt.ub.:' + zkod_tytu )
+                  mon_drk('')
+                  mon_drk('')
+                  s1 := s1 + zbrut_zasad
+                  s2 := s2 + zbrut_premi
+                  s3 := s3 + zdopl_opod
+                  s3a := s3a + zdopl_bzus
+                  s5a := s5a + zwolU
+                  s5b := s5b + zwolC
+                  s5c := s5c + zwolZ
+                  s5d := s5d + zwolO
+                  s5e := s5e + zwolB
+                  s5f := s5f + zwolM
+                  s5g := s5g + zwolW
+                  s5h := s5h + zwolI
+                  s5i := s5i + zwolN
+                  s7 := s7 + zs7
+                  s9 := s9 + zwar_pf3
+                  s10 := s10 + zs10
+                  s11 := s11 + zbrut_razem
+                  s12 := s12 + zkoszt
+                  s13 := s13 + zdochod
+                  s131 := s131 + zwar_pue
+                  s132 := s132 + zwar_pur
+                  s133 := s133 + zwar_puc
+                  s134 := s134 + zwar_psum
+                  s14 := s14 + zb4
+                  s141 := s141 + zwar_puz
+                  s141a := s141a + zwar_puzo
+                  s15 := s15 + zodlicz
+                  s16 := s16 + zpodatek
+                  s17 := s17 + znetto
+                  s17a := s17a + zzasil_rodz
+                  s17b := s17b + ziloso_rodz
+                  s17c := s17c + zzasil_piel
+                  s17d := s17d + ziloso_piel
+                  s18 := s18 + zdopl_nieop
+                  s19 := s19 + zodl_nieop
+                  s20 := s20 + zdo_wyplaty
+                  s20a := s20a + zprzel_nako
+                  s21 := s21 + zwar_fue
+                  s22 := s22 + zwar_fur
+                  s23 := s23 + zwar_fuw
+                  s23a := s23a + zwar_ffp
+                  s23b := s23b + zwar_ffg
+                  s24 := s24 + zwar_fsum
+                  sz1 := sz1 + zzus_zascho
+                  sz2 := sz2 + zzus_rkch
+                  sz3 := sz3 + zzus_podat
+                  IF mcdo - mcod == 0
+                     mon_drk( Space( 19 ) + 'ÄÄÄ' + PadC( ' ' + paras_nag + ' ', 80, 'Ä' ) + PadL( ' okres: ' + Str( mcod, 2 ) + '.' + param_rok, 24, 'Ä' ) )
+                  ELSE
+                     mon_drk( Space( 19 ) + 'ÄÄÄ' + PadC( ' ' + paras_nag + ' ', 80, 'Ä' ) + PadL( ' okres od ' + Str( mcod, 2 ) + ' do ' + Str( mcdo, 2 ) + '  ' + param_rok, 24, 'Ä' ) )
+                  ENDIF
                ENDIF
             ENDIF
             SELECT prac

@@ -25,8 +25,22 @@ FUNCTION Main()
 
    dbfInicjujDane()
 
+   ? 'Tworzenie tablic...'
+   dbfUtworzTabele( 'PRAC_HZ', 'prac_hz.dbf' )
+
+   dbCloseAll()
+
+   ? 'Aktualizacja struktur...'
    dbfUtworzTabele( 'TRESC', 'tresc.tym' )
    dbfImportujDaneTym('', 'TYM')
+
+   dbCloseAll()
+
+   ? 'Indeksowanie...'
+   dbfIdxTRESC()
+   dbfIdxPRAC_HZ()
+
+   dbCloseAll()
 
    RETURN
 

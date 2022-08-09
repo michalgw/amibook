@@ -2256,6 +2256,8 @@ PROCEDURE setind( ZB )
       ENDIF
    CASE ZB == 'PRAC'
         SET INDEX TO prac,prac1,prac2,prac3,prac4
+   CASE ZB == 'PRAC_HZ'
+        SET INDEX TO prac_hz
    CASE ZB == 'ETATY'
         SET INDEX TO etaty,etaty1
    CASE ZB == 'NIEOBEC'

@@ -226,6 +226,8 @@ do while .t.
    do case
    case lastkey()=27
         exit
+   CASE ! Prac_HZ_Aktywny( Val( miesiacpla ) ) .AND. ! TNEsc( , 'Pracownik zostaˆ zwolniony. Czy kontynuowa†?  (T/N)' )
+
    case lastkey()=77.or.lastkey()=109
         do podstaw
         save scre to scr_sklad
