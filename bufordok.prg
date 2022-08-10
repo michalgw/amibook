@@ -46,6 +46,8 @@ FUNCTION Bufor_Dok_Wybierz( cRodzaj, lKorekta )
       RETURN Bufor_Dok_Wybierz_RejZ()
    CASE cRodzaj == 'faktury'
       RETURN Bufor_Dok_Wybierz_Faktury( @lKorekta )
+   CASE cRodzaj == 'faktury3'
+      RETURN Bufor_Dok_Wybierz_Faktury3()
    ENDCASE
 
    RETURN NIL
@@ -302,6 +304,42 @@ FUNCTION Bufor_Dok_Wybierz_Faktury( lKorekta )
 
    IF LastKey() <> K_ESC .AND. nElem > 0 .AND. Len( bufor_dok[ 'faktury' ] ) >= nElem
       xRes := bufor_dok[ 'faktury' ][ nElem ]
+   ENDIF
+
+   CLEAR TYPEAHEAD
+   RESTORE SCREEN FROM cEkran
+   SetColor( cKolor )
+
+   RETURN xRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Bufor_Dok_Wybierz_Faktury3( lKorekta )
+
+   LOCAL xRes := NIL
+   LOCAL nElem := 1
+   LOCAL cEkran
+   LOCAL cKolor := ColStd()
+   LOCAL aNaglowki := { "Dz.", "Nr fakt.", "NIP", "Nazwa", "Adres", "Wartosc" }
+   LOCAL aKolumny := { ;
+      { || bufor_dok[ 'faktury3' ][ nElem ][ 'DZIEN' ] }, ;
+      { || bufor_dok[ 'faktury3' ][ nElem ][ 'NUMER' ] }, ;
+      { || SubStr( bufor_dok[ 'faktury3' ][ nElem ][ 'NR_IDENT' ], 1, 12 ) }, ;
+      { || SubStr( bufor_dok[ 'faktury3' ][ nElem ][ 'NAZWA' ], 1, 20 ) }, ;
+      { || SubStr( bufor_dok[ 'faktury3' ][ nElem ][ 'ADRES' ], 1, 20 ) }, ;
+      { || bufor_dok[ 'faktury3' ][ nElem ][ 'suma_netto' ] } }
+
+   hb_default( @lKorekta, .F. )
+
+   SAVE SCREEN TO cEkran
+
+   @  2, 0 SAY PadC( "BUFOR DOKUMENT‡W", 80 )
+   @ 22, 0 SAY PadC( "Enter - wyb¢r,  Delete - usuni©cie z bufora,  ESC - anuluj", 80 )
+   @ 23, 0 CLEAR TO 24, 79
+   nElem := GM_ArEdit( 3, 0, 21, 79, bufor_dok[ 'faktury3' ], @nElem, aNaglowki, aKolumny, NIL, NIL, NIL, NIL, SetColor() + ",N+/N" )
+
+   IF LastKey() <> K_ESC .AND. nElem > 0 .AND. Len( bufor_dok[ 'faktury3' ] ) >= nElem
+      xRes := bufor_dok[ 'faktury3' ][ nElem ]
    ENDIF
 
    CLEAR TYPEAHEAD

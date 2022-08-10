@@ -148,8 +148,8 @@ PROCEDURE Faktury3()
       Ster()
       DO CASE
       *########################### INSERT/MODYFIKACJA #############################
-      CASE kl == 22 .OR. kl == 48 .OR. kl == 109 .OR. kl == 77 .OR. &_top_bot
-         ins := ( kl # 109 .AND. kl # 77 ) .OR. &_top_bot
+      CASE kl == 22 .OR. kl == 48 .OR. kl == 109 .OR. kl == 77 .OR. kl == K_F6 .OR. &_top_bot
+         ins := ( kl # 109 .AND. kl # 77 ) .OR. kl == K_F6 .OR. &_top_bot
          KtorOper()
          BEGIN SEQUENCE
             *-------zamek-------
@@ -172,7 +172,32 @@ PROCEDURE Faktury3()
                 zcena[ i ] := 0
                 zwartosc[ i ] := 0
             NEXT
-            IF ins
+            IF ins .AND. kl == K_F6
+               aBufDok := Bufor_Dok_Wybierz( 'faktury3' )
+               IF ! Empty( aBufDok )
+                  @ 6, 65 CLEAR TO 20, 75
+                  zrach := aBufDok[ 'RACH' ]
+                  zNUMER := firma->nr_rach
+                  zDZIEN := '  '
+                  znazwa := aBufDok[ 'NAZWA' ]
+                  zADRES := aBufDok[ 'ADRES' ]
+                  zsposob_p := aBufDok[ 'SPOSOB_P' ]
+                  zkwota := aBufDok[ 'KWOTA' ]
+                  znr_ident := aBufDok[ 'NR_IDENT' ]
+                  ztermin_z := aBufDok[ 'TERMIN_Z' ]
+                  i := 0
+                  AEval( aBufDok[ 'pozycje' ], { | aPoz |
+                     i := i + 1
+                     ztowar[ i ] := aPoz[ 'TOWAR' ]
+                     zilosc[ i ] := aPoz[ 'ILOSC' ]
+                     zjm[ i ] := aPoz[ 'JM' ]
+                     zcena[ i ] := aPoz[ 'CENA' ]
+                     zwartosc[ i ] := aPoz[ 'WARTOSC' ]
+                  } )
+               ELSE
+                  BREAK
+               ENDIF
+            ELSEIF ins
                @ 6, 65 CLEAR TO 20, 75
                zrach := iif( firma->rodzajfnv $ 'FR', firma->rodzajfnv, 'F' )
                zNUMER := firma->nr_rach
@@ -645,9 +670,12 @@ PROCEDURE Faktury3()
          p[  5 ] := '   [M].....................modyfikacja pozycji          '
          p[  6 ] := '   [Del]...................kasowanie pozycji            '
          p[  7 ] := '   [F10]...................szukanie                     '
-         p[  8 ] := '   [Enter].................wydruk faktury               '
-         p[  9 ] := '   [Esc]...................wyj&_s.cie                      '
-         p[ 10 ] := '                                                        '
+         p[  8 ] := '   [F5 ]..................kopiowanie dokumentu do bufora'
+         p[  9 ] := '   [Shift+F5]........kopiowanie wsystkich dok. do bufora'
+         p[ 10 ] := '   [F6]....................wstawianie z bufora          '
+         p[ 11 ] := '   [Enter].................wydruk faktury               '
+         p[ 12 ] := '   [Esc]...................wyj&_s.cie                      '
+         p[ 13 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
          i := 20
@@ -666,6 +694,42 @@ PROCEDURE Faktury3()
          ENDIF
          RESTORE SCREEN FROM scr_
          _disp := .F.
+
+      CASE kl == K_F5
+         IF faktury->korekta <> 'T'
+            aBufRec := FakturyN_PobierzDok()
+            IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'faktury3', id ) ) > 0
+               bufor_dok[ 'faktury3' ][ nBufRecIdx ] := aBufRec
+            ELSE
+               AAdd( bufor_dok[ 'faktury3' ], aBufRec )
+            ENDIF
+            Komun( "Dokument zostaˆ skopiowany" )
+         ELSE
+            Komun( "Nie mo¾na kopiowa† faktury koryguj¥cej" )
+         ENDIF
+
+      CASE kl == K_SH_F5
+         IF TNEsc( , "Czy skopiowa† wszytkie faktury do bufora? (Tak/Nie)" )
+            nAktRec := RecNo()
+            nLicznik := 0
+            GO TOP
+            SEEK "+" + ident_fir + miesiac
+            DO WHILE ! &_bot
+               IF faktury->korekta <> 'T'
+                  aBufRec := FakturyN_PobierzDok()
+                  IF ( nBufRecIdx := Bufor_Dok_Znajdz( 'faktury3', id ) ) > 0
+                     bufor_dok[ 'faktury3' ][ nBufRecIdx ] := aBufRec
+                  ELSE
+                     AAdd( bufor_dok[ 'faktury3' ], aBufRec )
+                  ENDIF
+                  nLicznik++
+               ENDIF
+               SKIP
+            ENDDO
+            dbGoto( nAktRec )
+            Komun( "Skopiowano " + AllTrim( Str( nLicznik ) ) + " dokument¢w" )
+         ENDIF
+
       ******************** ENDCASE
       ENDCASE
    ENDDO
