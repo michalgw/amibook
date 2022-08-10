@@ -21,17 +21,6 @@ FUNCTION main(cKatalog, cKatDanych)
    dbfUtworzIndeksy({ | aTab, nAkt, nIlosc | QOut( "Tworzenie indeksu: " + Str(nAkt) + "/" + Str(nIlosc) + "  " + aTab[1] ) }, cKatalog)
    RETURN
 
-FUNCTION DodajBackslash(cSciezka)
-   cSciezka = AllTrim(cSciezka)
-   IF Len(cSciezka) == 0
-      RETURN cSciezka
-   ENDIF
-   IF SubStr(cSciezka, Len(cSciezka), 1) <> '\'
-      cSciezka = cSciezka + '\'
-   ENDIF
-   RETURN cSciezka
-
-
 /*----------------------------------------------------------------------*/
 
 FUNCTION importujDane(cKatalog, cKatalogDanych, cRozszerzenie)
