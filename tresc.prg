@@ -128,6 +128,7 @@ endif
 @ wiersz,59 get zOPCJE PICTURE "!" WHEN w14_3() valid v14_3()
 @ wiersz,77 get zKOLUMNA PICTURE "99" WHEN w14_4() valid v14_4()
 read_()
+@ 24, 0
 if lastkey()=27
 exit
 endif
@@ -339,7 +340,7 @@ FUNCTION wv14_4_kol( cRodzaj )
 
 FUNCTION v14_4()
 
-   LOCAL lRes := AScan( wv14_4_kol( zRODZAJ ), AllTrim( zKOLUMNA ) ) > 0
+   LOCAL lRes := Empty( zKOLUMNA ) .OR. AScan( wv14_4_kol( zRODZAJ ), AllTrim( zKOLUMNA ) ) > 0
 
    IF lRes
       ColStd()
