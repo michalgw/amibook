@@ -20,6 +20,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+#include "Inkey.ch"
+
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Obsluga podstawowych operacji na bazie ......                             ±
@@ -27,9 +29,23 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION KartST()
 
+   LOCAL cKolor
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, _top, ;
       _bot, _stop, _sbot, _proc, _row, _proc_spe, _disp, _cls, kl, ins, nr_rec, ;
       wiersz, f10, rec, fou, _top_bot
+
+   PRIVATE aPolaFiltru := KartSt_Filtr_Czysty()
+
+   PRIVATE bFiltr := { | |
+      RETURN iif( ! Empty( aPolaFiltru[ 'DataPrzyOd' ] ), kartst->data_zak >= aPolaFiltru[ 'DataPrzyOd' ], .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'DataPrzyDo' ] ), kartst->data_zak <= aPolaFiltru[ 'DataPrzyDo' ], .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'NrEwid' ] ), At( AllTrim( aPolaFiltru[ 'NrEwid' ] ), kartst->nrewid ) > 0, .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'Nazwa' ] ), At( AllTrim( aPolaFiltru[ 'Nazwa' ] ), kartst->nazwa ) > 0, .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'KST' ] ), SubStr( kartst->krst, 1, Len( AllTrim( aPolaFiltru[ 'KST' ] ) ) ) == AllTrim( aPolaFiltru[ 'KST' ] ), .T. ) .AND. ;
+      iif( aPolaFiltru[ 'Rodzaj' ] <> 'W', iif( aPolaFiltru[ 'Rodzaj' ] == 'A', Empty( kartst->data_lik ) .AND. Empty( kartst->data_sprz ), ! Empty( kartst->data_lik ) .OR. ! Empty( kartst->data_sprz ) ), .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'DataLikOd' ] ), ( ! Empty( kartst->data_lik ) .AND. kartst->data_lik >= aPolaFiltru[ 'DataLikOd' ] ) .OR. ( ! Empty( kartst->data_sprz ) .AND. kartst->data_sprz >= aPolaFiltru[ 'DataLikOd' ] ), .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'DataLikDo' ] ), ( ! Empty( kartst->data_lik ) .AND. kartst->data_lik <= aPolaFiltru[ 'DataLikDo' ] ) .OR. ( ! Empty( kartst->data_sprz ) .AND. kartst->data_sprz <= aPolaFiltru[ 'DataLikDo' ] ), .T. )
+   }
 
    @ 1, 47 SAY '          '
 
@@ -95,7 +111,7 @@ FUNCTION KartST()
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,-9,247,22,48,77,109,7,46,28,13'
+   _esc := '27,-9,247,22,48,77,109,7,46,28,13,70,102,67,99'
    _top := 'firma#ident_fir'
    _bot := "eof().or.del#'+'.or.firma#ident_fir"
    _stop := '+' + ident_fir
@@ -442,6 +458,7 @@ FUNCTION KartST()
          BEGIN SEQUENCE
             SAVE SCREEN TO scrst
             Srodki()
+            SELECT 1
             RESTORE SCREEN FROM scrst
          END
       *################################# SZUKANIE #################################
@@ -476,10 +493,12 @@ FUNCTION KartST()
          p[  4 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
          p[  5 ] := '   [Ins]...................wpisywanie                   '
          p[  6 ] := '   [M].....................modyfikacja pozycji          '
-         p[  7 ] := '   [Del]...................kasowanie pozycji            '
-         p[  8 ] := '   [F10]...................szukanie                     '
-         p[  9 ] := '   [Esc]...................wyj&_s.cie                      '
-         p[ 10 ] := '                                                        '
+         p[  7 ] := '   [F].....................filtrowanie danych           '
+         p[  8 ] := '   [C].....................czyszczenie filtra           '
+         p[  9 ] := '   [Del]...................kasowanie pozycji            '
+         p[ 10 ] := '   [F10]...................szukanie                     '
+         p[ 11 ] := '   [Esc]...................wyj&_s.cie                      '
+         p[ 12 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
          i := 20
@@ -498,6 +517,34 @@ FUNCTION KartST()
          ENDIF
          RESTORE SCREEN FROM scr_
          _disp := .F.
+
+      CASE kl == Asc( 'F' ) .OR. kl == Asc( 'f' )
+         IF KartSt_Filtr()
+            kartst->( dbSetFilter( bFiltr ) )
+            SEEK _stop
+            IF &_top_bot
+               kartst->( dbClearFilter() )
+               SEEK _stop
+               komun( "Brak danych w zadanym zakresie" )
+               cKolor := ColStd()
+               @ 3, 72 SAY "       "
+               SetColor( cKolor )
+            ELSE
+               cKolor := ColInf()
+               @ 3, 72 SAY " FILTR "
+               SetColor( cKolor )
+            ENDIF
+            _disp := .T.
+         ELSE
+            _disp := .F.
+         ENDIF
+      CASE kl == Asc( 'C' ) .OR. kl == Asc( 'c' )
+         kartst->( dbClearFilter() )
+         aPolaFiltru := KartSt_Filtr_Czysty()
+         cKolor := ColStd()
+         @ 3, 72 SAY "       "
+         SetColor( cKolor )
+         _disp := .T.
       ******************** ENDCASE
       ENDCASE
    ENDDO
@@ -724,3 +771,70 @@ FUNCTION vVATSPRZ()
    RETURN R
 
 *############################################################################
+
+FUNCTION KartSt_Filtr()
+
+   LOCAL dDataPrzyOd, dDataPrzyDo, cNrEwid, cNazwa, cKST, cRodzaj, dDataLikOd
+   LOCAL dDataLikDo, cEkran, cKolor
+
+   dDataPrzyOd := aPolaFiltru[ 'DataPrzyOd' ]
+   dDataPrzyDo := aPolaFiltru[ 'DataPrzyDo' ]
+   cNrEwid := aPolaFiltru[ 'NrEwid' ]
+   cNazwa := aPolaFiltru[ 'Nazwa' ]
+   cKST := aPolaFiltru[ 'KST' ]
+   cRodzaj := aPolaFiltru[ 'Rodzaj' ]
+   dDataLikOd := aPolaFiltru[ 'DataLikOd' ]
+   dDataLikDo := aPolaFiltru[ 'DataLikDo' ]
+
+   cEkran := SaveScreen()
+   cKolor := ColStd()
+   @ 10, 10 CLEAR TO 19, 69
+   @ 10, 10 TO 19, 69
+   @ 11, 12 SAY "Przyj©to data od" GET dDataPrzyOd PICTURE "@D"
+   @ 12, 12 SAY "Przyj©to data do" GET dDataPrzyDo PICTURE "@D"
+   @ 13, 12 SAY "Nr ewidencyjny" GET cNrEwid PICTURE Replicate( '!', 10 )
+   @ 14, 12 SAY "Nazwa" GET cNazwa PICTURE Replicate( '!', 40 )
+   @ 15, 12 SAY "KST" GET cKST PICTURE Replicate( '!', 10 )
+   @ 16, 12 SAY "Rodzaj" GET cRodzaj PICTURE '!' VALID cRodzaj $ 'AWZ'
+   @ 17, 12 SAY "Data likwidacji / zbycia od" GET dDataLikOd PICTURE "@D"
+   @ 18, 12 SAY "Data likwidacji / zbycia do" GET dDataLikDo PICTURE "@D"
+
+   READ
+   IF LastKey() == K_ESC
+      RestScreen( , , , , cEkran )
+      SetColor( cKolor )
+      RETURN .F.
+   ENDIF
+
+   aPolaFiltru[ 'DataPrzyOd' ] := dDataPrzyOd
+   aPolaFiltru[ 'DataPrzyDo' ] := dDataPrzyDo
+   aPolaFiltru[ 'NrEwid' ] := cNrEwid
+   aPolaFiltru[ 'Nazwa' ] := cNazwa
+   aPolaFiltru[ 'KST' ] := cKST
+   aPolaFiltru[ 'Rodzaj' ] := cRodzaj
+   aPolaFiltru[ 'DataLikOd' ] := dDataLikOd
+   aPolaFiltru[ 'DataLikDo' ] := dDataLikDo
+
+   RestScreen( , , , , cEkran )
+   SetColor( cKolor )
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KartSt_Filtr_Czysty()
+
+   LOCAL aCzystePolaFiltru := { ;
+      'DataPrzyOd' => SToD( '' ), ;
+      'DataPrzyDo' => SToD( '' ), ;
+      'NrEwid' => Space( 10 ), ;
+      'Nazwa' => Space( 40 ), ;
+      'KST' => Space( 8 ), ;
+      'Rodzaj' => 'W', ;
+      'DataLikOd' => SToD( '' ), ;
+      'DataLikDo' => SToD( '' ) }
+
+   RETURN aCzystePolaFiltru
+
+/*----------------------------------------------------------------------*/
+

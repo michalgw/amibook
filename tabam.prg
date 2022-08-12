@@ -30,6 +30,19 @@ FUNCTION TabAm( mieskart )
       _top, _bot, _stop, _sbot, _proc, _row, _proc_spe, _disp, _cls, kl, ins, ;
       nr_rec, wiersz, f10, rec, fou, mieslok
 
+   PRIVATE aPolaFiltru := KartSt_Filtr_Czysty()
+
+   PRIVATE bFiltr := { | |
+      RETURN iif( ! Empty( aPolaFiltru[ 'DataPrzyOd' ] ), kartst->data_zak >= aPolaFiltru[ 'DataPrzyOd' ], .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'DataPrzyDo' ] ), kartst->data_zak <= aPolaFiltru[ 'DataPrzyDo' ], .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'NrEwid' ] ), At( AllTrim( aPolaFiltru[ 'NrEwid' ] ), kartst->nrewid ) > 0, .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'Nazwa' ] ), At( AllTrim( aPolaFiltru[ 'Nazwa' ] ), kartst->nazwa ) > 0, .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'KST' ] ), SubStr( kartst->krst, 1, Len( AllTrim( aPolaFiltru[ 'KST' ] ) ) ) == AllTrim( aPolaFiltru[ 'KST' ] ), .T. ) .AND. ;
+      iif( aPolaFiltru[ 'Rodzaj' ] <> 'W', iif( aPolaFiltru[ 'Rodzaj' ] == 'A', Empty( kartst->data_lik ) .AND. Empty( kartst->data_sprz ), ! Empty( kartst->data_lik ) .OR. ! Empty( kartst->data_sprz ) ), .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'DataLikOd' ] ), ( ! Empty( kartst->data_lik ) .AND. kartst->data_lik >= aPolaFiltru[ 'DataLikOd' ] ) .OR. ( ! Empty( kartst->data_sprz ) .AND. kartst->data_sprz >= aPolaFiltru[ 'DataLikOd' ] ), .T. ) .AND. ;
+      iif( ! Empty( aPolaFiltru[ 'DataLikDo' ] ), ( ! Empty( kartst->data_lik ) .AND. kartst->data_lik <= aPolaFiltru[ 'DataLikDo' ] ) .OR. ( ! Empty( kartst->data_sprz ) .AND. kartst->data_sprz <= aPolaFiltru[ 'DataLikDo' ] ), .T. )
+   }
+
    mieslok := mieskart
 
    @ 1, 47 SAY '          '
@@ -90,7 +103,7 @@ FUNCTION TabAm( mieskart )
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,-9,13,247,77,109,90,122,79,111,76,108,7,28'
+   _esc := '27,-9,13,247,77,109,90,122,79,111,76,108,7,28,70,102,67,99'
    _top := 'firma#ident_fir'
    _bot := "eof().or.del#'+'.or.firma#ident_fir"
    _stop := '+' + ident_fir
@@ -100,6 +113,7 @@ FUNCTION TabAm( mieskart )
    _proc_spe := 'say41esst'
    _disp := .T.
    _cls := ''
+   _top_bot := _top + '.or.' + _bot
 
    *----------------------
    kl := 0
@@ -342,6 +356,7 @@ FUNCTION TabAm( mieskart )
          SAVE SCREEN TO robs
          IF mieslok='C'
             TabAmW()
+            SELECT 1
          ELSE
             Umorz( mieslok )
          ENDIF
@@ -364,8 +379,10 @@ FUNCTION TabAm( mieskart )
            p[  6 ] := '   [O]................informacja o dacie przyj&_e.cia     '
            p[  7 ] := '   [L]................informacja o dacie likwidacji    '
            p[  8 ] := '   [Z]................zmiana warto&_s.ci pocz&_a.tkowej      '
-           p[  9 ] := '   [Esc]..............wyj&_s.cie                          '
-           p[ 10 ] := '                                                       '
+           p[  9 ] := '   [F]................filtrowanie danych               '
+           p[ 10 ] := '   [C]................czyszczenie filtra               '
+           p[ 11 ] := '   [Esc]..............wyj&_s.cie                          '
+           p[ 12 ] := '                                                       '
            *---------------------------------------
            SET COLOR TO i
            i := 20
@@ -384,6 +401,33 @@ FUNCTION TabAm( mieskart )
            ENDIF
            RESTORE SCREEN FROM scr_
            _disp := .F.
+      CASE kl == Asc( 'F' ) .OR. kl == Asc( 'f' )
+         IF KartSt_Filtr()
+            kartst->( dbSetFilter( bFiltr ) )
+            kartst->( dbSeek( _stop ) )
+            IF kartst->( &_top_bot )
+               kartst->( dbClearFilter() )
+               kartst->( dbSeek( _stop ) )
+               komun( "Brak danych w zadanym zakresie" )
+               cKolor := ColStd()
+               @ 3, 75 SAY "     "
+               SetColor( cKolor )
+            ELSE
+               cKolor := ColInf()
+               @ 3, 75 SAY "FILTR"
+               SetColor( cKolor )
+            ENDIF
+            _disp := .T.
+         ELSE
+            _disp := .F.
+         ENDIF
+      CASE kl == Asc( 'C' ) .OR. kl == Asc( 'c' )
+         kartst->( dbClearFilter() )
+         aPolaFiltru := KartSt_Filtr_Czysty()
+         cKolor := ColStd()
+         @ 3, 75 SAY "     "
+         SetColor( cKolor )
+         _disp := .T.
       ENDCASE
    ENDDO
    *set cent on
