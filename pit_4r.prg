@@ -218,7 +218,7 @@ PROCEDURE Pit_4R( _G, _M, _STR, _OU )
             STORE .F. TO DOD
             STORE .T. TO DDO
 
-            DOD := Prac_HZ_Aktywny( Val( xxmiesiac ) )
+            DOD := Prac_HZ_Aktywny( Val( xxmiesiac ) ) .AND. prac->status <> 'Z'
 
             /*
             IF .NOT. Empty( PRAC->DATA_PRZY )
