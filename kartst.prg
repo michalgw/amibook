@@ -776,6 +776,29 @@ FUNCTION KartSt_Filtr()
 
    LOCAL dDataPrzyOd, dDataPrzyDo, cNrEwid, cNazwa, cKST, cRodzaj, dDataLikOd
    LOCAL dDataLikDo, cEkran, cKolor
+   LOCAL bRodzajW := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 SAY PadC( "W - wszystkie pozycje,  A - tylko aktywne,  Z - tylko zlikwidowane/zbyte", 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bRodzajV := { | |
+      LOCAL lRes := cRodzaj $ 'AWZ'
+      LOCAL cKolor
+      IF lRes
+         cKolor := SetColor( "W+" )
+         DO CASE
+         CASE cRodzaj == "W"
+            @ 16, 20 SAY "szystkie   "
+         CASE cRodzaj == "A"
+            @ 16, 20 SAY "ktywne     "
+         CASE cRodzaj == "Z"
+            @ 16, 20 SAY "likwidowane"
+         ENDCASE
+         @ 24, 0
+      ENDIF
+      RETURN lRes
+   }
 
    dDataPrzyOd := aPolaFiltru[ 'DataPrzyOd' ]
    dDataPrzyDo := aPolaFiltru[ 'DataPrzyDo' ]
@@ -795,10 +818,10 @@ FUNCTION KartSt_Filtr()
    @ 13, 12 SAY "Nr ewidencyjny" GET cNrEwid PICTURE Replicate( '!', 10 )
    @ 14, 12 SAY "Nazwa" GET cNazwa PICTURE Replicate( '!', 40 )
    @ 15, 12 SAY "KST" GET cKST PICTURE Replicate( '!', 10 )
-   @ 16, 12 SAY "Rodzaj" GET cRodzaj PICTURE '!' VALID cRodzaj $ 'AWZ'
+   @ 16, 12 SAY "Rodzaj" GET cRodzaj PICTURE '!' WHEN Eval( bRodzajW ) VALID Eval( bRodzajV )
    @ 17, 12 SAY "Data likwidacji / zbycia od" GET dDataLikOd PICTURE "@D"
    @ 18, 12 SAY "Data likwidacji / zbycia do" GET dDataLikDo PICTURE "@D"
-
+   Eval( bRodzajV )
    READ
    IF LastKey() == K_ESC
       RestScreen( , , , , cEkran )
