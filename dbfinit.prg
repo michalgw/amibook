@@ -459,7 +459,7 @@ public aFAKTURYdbf := {;
    { "UE", "C", 1, 0 },;                          //  28
    { "WARDOST", "C", 3, 0 },;                     //  29
    { "WARTRANSA", "C", 2, 0 },;                   //  30
-   { "WARTRANSP", "C", 1, 0 },;                   //  31
+   { "WARTRANSP", "C", 1, 0 },;                   //  31 T - nowa wersja faktury VAT (z bruttem) (do wer. 22.5.0 nieu¾ywane)
    { "PRZEZNACZ", "C", 40, 0 },;                  //  32
    { "DATA2TYP", "C", 1, 0 },;                    //  33
    { "FAKTTYP", "C", 60, 0 },;                    //  34

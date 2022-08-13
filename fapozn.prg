@@ -28,6 +28,9 @@ PROCEDURE FaPozN()
    *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
    *± Zbiorcze zestawienia sprzedazy                                           ±
    *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+
+   LOCAL cEkran, cKolor
+
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, _top, _bot, _stop,;
       _sbot, _proc, _row, _proc_spe, _disp, _cls, kl, ins, nr_rec, wiersz, f10, rec, fou, _top_bot
    *################################# GRAFIKA ##################################
@@ -120,33 +123,57 @@ PROCEDURE FaPozN()
                *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
                IF ins
                   zTOWAR := Space( 512 )
-      *              zSWW := space(14)
+                  *zSWW := space(14)
                   zILO := 0
                   zJM := Space( 5 )
                   zCENA := 0
                   zSTAWKA := '  '
                   zWARTOSC := 0
+                  zVATWART := 0
+                  zBRUTTO := 0
+                  zCENABRUTTO := 0
                else
                   zTOWAR := TOWAR
-    *              zSWW=SWW
+                  *zSWW=SWW
                   zILO := ILOSC
                   zJM := JM
                   zCENA := CENA
                   zSTAWKA := VAT
                   zWARTOSC := WARTOSC
+                  zVATWART := VATWART
+                  zBRUTTO := BRUTTO
+                  zCENABRUTTO := iif( Val( VAT ) > 0, _round( zCENA * ( 1 + Val( VAT ) / 100 ), 2 ), zCENA )
                endif
-               *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-               @ wiersz,  1 GET zTOWAR PICTURE '@S38 ' + repl( 'X', 512 ) WHEN zKOREKTA <> 'T' .AND. w26_50vn()
-      *           @ wiersz,31 get zSWW   picture '@RS8 !!!!!!!!!!!!!!'
-               IF NR_UZYTK == 204
-                  @ wiersz, 40 GET zILO PICTURE '999999.99' VALID vWARTOSCfn()
+               IF zWARTRANSP == 'T'
+                  cEkran := SaveScreen()
+                  cKolor := ColStd()
+                  @  8, 10 CLEAR TO 17, 69
+                  @  8, 10 TO 17, 69
+                  @  9, 12 SAY "          Nazwa" GET zTOWAR PICTURE '@S40 ' + Replicate( 'X', 512 ) WHEN zKOREKTA <> 'T' .AND. w26_50vn()
+                  @ 10, 12 SAY "          Ilo˜†" GET zILO PICTURE '99999.999' VALID vWARTOSCfn2( 1 )
+                  @ 11, 12 SAY "Jednostka miary" GET zJM PICTURE 'XXXXX' WHEN zKOREKTA <> 'T'
+                  @ 12, 12 SAY "     Cena netto" GET zCENA PICTURE '999999.99' VALID vWARTOSCfn2( 2 )
+                  @ 13, 12 SAY "     Stawka VAT" GET zSTAWKA PICTURE '!!' WHEN zKOREKTA <> 'T' VALID vSTAWKAfn() .AND. vWARTOSCfn2( 3 )
+                  @ 14, 12 SAY "    Cena brutto" GET zCENABRUTTO PICTURE '999999.99' VALID vWARTOSCfn2( 4 )
+                  @ 15, 12 SAY "    Wartosc VAT" GET zVATWART PICTURE '999999.99' WHEN .F.
+                  @ 16, 12 SAY " Wartosc brutto" GET zBRUTTO PICTURE '999999.99' WHEN .F.
                ELSE
-                  @ wiersz, 40 GET zILO PICTURE '99999.999' VALID vWARTOSCfn()
-               endif
-               @ wiersz, 50 GET zJM    PICTURE 'XXXXX' WHEN zKOREKTA <> 'T'
-               @ wiersz, 56 GET zCENA  PICTURE '999999.99' VALID vWARTOSCfn()
-               @ wiersz, 77 GET zSTAWKA PICTURE '!!' WHEN zKOREKTA <> 'T' VALID vSTAWKAfn()
+                  *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
+                  @ wiersz,  1 GET zTOWAR PICTURE '@S38 ' + repl( 'X', 512 ) WHEN zKOREKTA <> 'T' .AND. w26_50vn()
+                  *@ wiersz,31 get zSWW   picture '@RS8 !!!!!!!!!!!!!!'
+                  IF NR_UZYTK == 204
+                     @ wiersz, 40 GET zILO PICTURE '999999.99' VALID vWARTOSCfn()
+                  ELSE
+                     @ wiersz, 40 GET zILO PICTURE '99999.999' VALID vWARTOSCfn()
+                  endif
+                  @ wiersz, 50 GET zJM    PICTURE 'XXXXX' WHEN zKOREKTA <> 'T'
+                  @ wiersz, 56 GET zCENA  PICTURE '999999.99' VALID vWARTOSCfn()
+                  @ wiersz, 77 GET zSTAWKA PICTURE '!!' WHEN zKOREKTA <> 'T' VALID vSTAWKAfn()
+               ENDIF
                read_()
+               IF zWARTRANSP == 'T'
+                  RestScreen( , , , , cEkran )
+               ENDIF
                IF LastKey() == K_ESC
                   EXIT
                ENDIF
@@ -161,10 +188,10 @@ PROCEDURE FaPozN()
                repl_( 'jm', zjm )
                repl_( 'cena', zcena )
                repl_( 'wartosc', zwartosc )
-    *           repl_( 'SWW', zSWW )
+               *repl_( 'SWW', zSWW )
                repl_( 'VAT', zSTAWKA )
-    *!!!       repl_( 'VATWART', zSTAWKA )
-    *!!!       repl_( 'BRUTTO', zSTAWKA )
+               repl_( 'VATWART', zVATWART )
+               repl_( 'BRUTTO', zBRUTTO )
                commit_()
                UNLOCK
                *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
@@ -178,7 +205,7 @@ PROCEDURE FaPozN()
             ENDDO
             _disp := ins .OR. LastKey() # K_ESC
             kl := iif( LastKey() == K_ESC .AND. _row == -1, K_ESC, kl )
-    *        @ 23,0
+            *@ 23,0
             @ 24, 0
          ENDIF
 
@@ -272,6 +299,10 @@ PROCEDURE linia61fsn()
    zVAT02 := 0
    zVAT22 := 0
    zVAT12 := 0
+   zBRUT07 := 0
+   zBRUT02 := 0
+   zBRUT22 := 0
+   zBRUT12 := 0
    DO WHILE del == '+' .AND. ident == zident_poz
       DO CASE
       CASE VAT == 'ZW'
@@ -282,32 +313,48 @@ PROCEDURE linia61fsn()
          zWART00 := zWART00 + WARTOSC
       CASE AllTrim( VAT ) == Str( vat_B, 1 )
          zWART07 := zWART07 + WARTOSC
+         zVAT07 := zVAT07 + VATWART
+         zBRUT07 := zBRUT07 + BRUTTO
       CASE AllTrim( VAT ) == Str( vat_C, 1 )
          zWART02 := zWART02 + WARTOSC
+         zVAT02 := zVAT02 + VATWART
+         zBRUT02 := zBRUT02 + BRUTTO
       CASE AllTrim( VAT ) == Str( vat_A, 2 )
          zWART22 := zWART22 + WARTOSC
+         zVAT22 := zVAT22 + VATWART
+         zBRUT22 := zBRUT22 + BRUTTO
       CASE AllTrim( VAT ) == Str( vat_D, 1 )
          zWART12 := zWART12 + WARTOSC
+         zVAT12 := zVAT12 + VATWART
+         zBRUT12 := zBRUT12 + BRUTTO
       ENDCASE
       SKIP
    ENDDO
-   zVAT07 := _round( zwart07 * ( vat_B / 100 ), 2 )
-   zVAT02 := _round( zwart02 * ( vat_C / 100 ), 2 )
-   zVAT22 := _round( zwart22 * ( vat_A / 100 ), 2 )
-   zVAT12 := _round( zwart12 * ( vat_D / 100 ), 2 )
+   IF zWARTRANSP == 'T'
+
+   ELSE
+      zVAT07 := _round( zwart07 * ( vat_B / 100 ), 2 )
+      zBRUT07 := zWART07 + zVAT07
+      zVAT02 := _round( zwart02 * ( vat_C / 100 ), 2 )
+      zBRUT02 := zWART02 + zVAT02
+      zVAT22 := _round( zwart22 * ( vat_A / 100 ), 2 )
+      zBRUT22 := zWART22 + zVAT22
+      zVAT12 := _round( zwart12 * ( vat_D / 100 ), 2 )
+      zBRUT12 := zWART12 + zVAT12
+   ENDIF
    SET COLOR TO +w
    @ 15, 45 SAY zWART22 PICTURE "@Z 999 999.99"
    @ 15, 59 SAY zVAT22 PICTURE "@Z 99 999.99"
-   @ 15, 69 SAY zWART22 + zVAT22 PICTURE "@Z 999 999.99"
+   @ 15, 69 SAY zBRUT22 PICTURE "@Z 999 999.99"
    @ 16, 45 SAY zWART07 PICTURE "@Z 999 999.99"
    @ 16, 59 SAY zVAT07 PICTURE "@Z 99 999.99"
-   @ 16, 69 SAY zWART07 + zVAT07 PICTURE "@Z 999 999.99"
+   @ 16, 69 SAY zBRUT07 PICTURE "@Z 999 999.99"
    @ 17, 45 SAY zWART02 PICTURE "@Z 999 999.99"
    @ 17, 59 SAY zVAT02 PICTURE "@Z 99 999.99"
-   @ 17, 69 SAY zWART02 + zVAT02 PICTURE "@Z 999 999.99"
+   @ 17, 69 SAY zBRUT02 PICTURE "@Z 999 999.99"
    @ 18, 45 SAY zWART12 PICTURE "@Z 999 999.99"
    @ 18, 59 SAY zVAT12 PICTURE "@Z 99 999.99"
-   @ 18, 69 SAY zWART12 + zVAT12 PICTURE "@Z 999 999.99"
+   @ 18, 69 SAY zBRUT12 PICTURE "@Z 999 999.99"
    @ 19, 45 SAY zWART00 PICTURE "@Z 999 999.99"
    @ 19, 59 SAY 0 PICTURE "@Z 99 999.99"
    @ 19, 69 SAY zWART00 PICTURE "@Z 999 999.99"
@@ -328,9 +375,9 @@ PROCEDURE linia61fsn()
       @ 22, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 - ( aBufDok[ 'suma_brutto' ] - aBufDok[ 'suma_netto' ] ) PICTURE "99 999.99"
    ENDIF
    SET COLOR TO w+*
-   @ 21, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "999 999.99"
+   @ 21, 69 SAY zWARTZW + zWART08 + zWART00 + zBRUT22 + zBRUT02 + zBRUT12 + zBRUT07 PICTURE "999 999.99"
    IF faktury->KOREKTA == 'T'
-      @ 22, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 - aBufDok[ 'suma_brutto' ] PICTURE "999 999.99"
+      @ 22, 69 SAY zWARTZW + zWART08 + zWART00 + zBRUT22 + zBRUT02 + zBRUT12 + zBRUT07 - aBufDok[ 'suma_brutto' ] PICTURE "999 999.99"
    ENDIF
    GO reccc
    ColInf()
@@ -390,3 +437,28 @@ FUNCTION w26_50vn()
    RETURN .T.
 
 *############################################################################
+
+FUNCTION vWARTOSCfn2( nRodzaj )
+
+   DO CASE
+   CASE nRodzaj == 1 .OR. nRodzaj == 2 .OR. nRodzaj == 3
+      zCENABRUTTO := iif( Val( zSTAWKA ) > 0, _round( zCENA * ( 1 + Val( zSTAWKA ) / 100 ), 2 ), zCENA )
+      zWARTOSC := _round( zCENA * zILO, 2 )
+      zBRUTTO := iif( Val( zSTAWKA ) > 0, _round( zWARTOSC * ( 1 + Val( zSTAWKA ) / 100 ), 2 ), zWARTOSC )
+      zVATWART := zBRUTTO - zWARTOSC
+   CASE nRodzaj == 4 .AND. zCENA == 0
+      zCENA := iif( Val( zSTAWKA ) > 0, _round( zCENABRUTTO / ( 1 + Val( zSTAWKA ) / 100 ), 2 ), zCENABRUTTO )
+      zWARTOSC := _round( zCENA * zILO, 2 )
+      zBRUTTO := iif( Val( zSTAWKA ) > 0, _round( zWARTOSC * ( 1 + Val( zSTAWKA ) / 100 ), 2 ), zWARTOSC )
+      zVATWART := zBRUTTO - zWARTOSC
+   ENDCASE
+
+   GetList[ 4 ]:display()
+   GetList[ 6 ]:display()
+   GetList[ 7 ]:display()
+   GetList[ 8 ]:display()
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+

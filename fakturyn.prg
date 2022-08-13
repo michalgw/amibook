@@ -243,6 +243,7 @@ PROCEDURE FakturyN()
                      zKSGDATA := 0
                      zKOREKTA := iif( lKorekta, 'T', 'N' )
                      zPRZYCZKOR := Space( 200 )
+                     zWARTRANSP := aBufDok[ 'WARTRANSP' ]
                      FakturyN_KorInfo()
                   ELSE
                      BREAK
@@ -285,6 +286,7 @@ PROCEDURE FakturyN()
                   zKSGDATA := 0
                   zKOREKTA := 'N'
                   zPRZYCZKOR := Space( 200 )
+                  zWARTRANSP := 'T'
                ELSE
                   zRACH := RACH
                   zNUMER&zRACH := NUMER
@@ -333,6 +335,7 @@ PROCEDURE FakturyN()
                   dPopDataTrans := DATAS
                   zKOREKTA := KOREKTA
                   zPRZYCZKOR := PRZYCZKOR
+                  zWARTRANSP := WARTRANSP
     *             endif
                ENDIF
                *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
@@ -424,6 +427,7 @@ PROCEDURE FakturyN()
                repl_( 'PROCEDUR', zPROCEDUR )
                repl_( 'FAKTTYP', zFAKTTYP )
                repl_( 'PRZYCZKOR', zPRZYCZKOR )
+               repl_( 'WARTRANSP', zWARTRANSP )
                IF ins
                   repl_( 'KOREKTA', zKOREKTA )
                   IF kl == K_F6
@@ -450,6 +454,8 @@ PROCEDURE FakturyN()
                      pozycje->cena := aPoz[ 'CENA' ]
                      pozycje->wartosc := aPoz[ 'WARTOSC' ]
                      pozycje->vat := aPoz[ 'VAT' ]
+                     pozycje->vatwart := aPoz[ 'VATWART' ]
+                     pozycje->brutto := aPoz[ 'BRUTTO' ]
                      COMMIT
                   } )
                ENDIF
@@ -496,6 +502,10 @@ PROCEDURE FakturyN()
                zVAT02 := 0
                zVAT22 := 0
                zVAT12 := 0
+               zBRUT07 := 0
+               zBRUT02 := 0
+               zBRUT22 := 0
+               zBRUT12 := 0
                zSEK_CV7 := '  '
 
                kor_zWARTZW := 0
@@ -505,6 +515,14 @@ PROCEDURE FakturyN()
                kor_zWART02 := 0
                kor_zWART22 := 0
                kor_zWART12 := 0
+               kor_zVAT07 := 0
+               kor_zVAT02 := 0
+               kor_zVAT22 := 0
+               kor_zVAT12 := 0
+               kor_zBRUT07 := 0
+               kor_zBRUT02 := 0
+               kor_zBRUT22 := 0
+               kor_zBRUT12 := 0
 
                IF zKOREKTA == 'T'
                   AEval( aBufDok[ 'pozycje' ], { | aPoz |
@@ -520,15 +538,23 @@ PROCEDURE FakturyN()
 
                         CASE AllTrim( aPoz[ 'VAT' ] ) == Str( vat_B, 1 )
                            kor_zWART07 := kor_zWART07 + aPoz[ 'WARTOSC' ]
+                           kor_zVAT07 := kor_zVAT07 + aPoz[ 'VATWART' ]
+                           kor_zBRUT07 := kor_zBRUT07 + aPoz[ 'BRUTTO' ]
 
                         CASE AllTrim( aPoz[ 'VAT' ] ) == Str( vat_C, 1 )
                            kor_zWART02 := kor_zWART02 + aPoz[ 'WARTOSC' ]
+                           kor_zVAT02 := kor_zVAT02 + aPoz[ 'VATWART' ]
+                           kor_zBRUT02 := kor_zBRUT02 + aPoz[ 'BRUTTO' ]
 
                         CASE AllTrim( aPoz[ 'VAT' ] ) == Str( vat_A, 2 )
                            kor_zWART22 := kor_zWART22 + aPoz[ 'WARTOSC' ]
+                           kor_zVAT22 := kor_zVAT22 + aPoz[ 'VATWART' ]
+                           kor_zBRUT22 := kor_zBRUT22 + aPoz[ 'BRUTTO' ]
 
                         CASE AllTrim( aPoz[ 'VAT' ] ) == Str( vat_D, 1 )
                            kor_zWART12 := kor_zWART12 + aPoz[ 'WARTOSC' ]
+                           kor_zVAT12 := kor_zVAT12 + aPoz[ 'VATWART' ]
+                           kor_zBRUT12 := kor_zBRUT12 + aPoz[ 'BRUTTO' ]
 
                      ENDCASE
 
@@ -551,15 +577,23 @@ PROCEDURE FakturyN()
 
                      CASE AllTrim( VAT ) == Str( vat_B, 1 )
                         zWART07 := zWART07 + WARTOSC
+                        zVAT07 := zVAT07 + VATWART
+                        zBRUT07 := zBRUT07 + BRUTTO
 
                      CASE AllTrim( VAT ) == Str( vat_C, 1 )
                         zWART02 := zWART02 + WARTOSC
+                        zVAT02 := zVAT02 + VATWART
+                        zBRUT02 := zBRUT02 + BRUTTO
 
                      CASE AllTrim( VAT ) == Str( vat_A, 2 )
                         zWART22 := zWART22 + WARTOSC
+                        zVAT22 := zVAT22 + VATWART
+                        zBRUT22 := zBRUT22 + BRUTTO
 
                      CASE AllTrim( VAT ) == Str( vat_D, 1 )
                         zWART12 := zWART12 + WARTOSC
+                        zVAT12 := zVAT12 + VATWART
+                        zBRUT12 := zBRUT12 + BRUTTO
 
                   ENDCASE
                   SKIP
@@ -577,10 +611,19 @@ PROCEDURE FakturyN()
                zWART22 := zWART22 - kor_zWART22
                zWART12 := zWART12 - kor_zWART12
 
-               zVAT07 := _round( zWART07 * ( vat_B / 100 ), 2 )
-               zVAT02 := _round( zWART02 * ( vat_C / 100 ), 2 )
-               zVAT22 := _round( zWART22 * ( vat_A / 100 ), 2 )
-               zVAT12 := _round( zWART12 * ( vat_D / 100 ), 2 )
+               IF zWARTRANSP == 'T'
+
+               ELSE
+                  zVAT07 := _round( zWART07 * ( vat_B / 100 ), 2 )
+                  zBRUT07 := zWART07 + zVAT07
+                  zVAT02 := _round( zWART02 * ( vat_C / 100 ), 2 )
+                  zBRUT02 := zWART02 + zVAT02
+                  zVAT22 := _round( zWART22 * ( vat_A / 100 ), 2 )
+                  zBRUT22 := zWART22 + zVAT22
+                  zVAT12 := _round( zWART12 * ( vat_D / 100 ), 2 )
+                  zBRUT12 := zWART12 + zVAT12
+               ENDIF
+
                razem := zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12
 
                @ 23, 0
@@ -1292,6 +1335,10 @@ PROCEDURE say260vn()
    zVAT02 := 0
    zVAT22 := 0
    zVAT12 := 0
+   zBRUT07 := 0
+   zBRUT02 := 0
+   zBRUT22 := 0
+   zBRUT12 := 0
    ColStd()
    @ 11, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
    @ 12, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
@@ -1332,36 +1379,52 @@ PROCEDURE say260vn()
 
          CASE AllTrim( VAT ) == Str( vat_B, 1 )
             zWART07 := zWART07 + WARTOSC
+            zVAT07 := zVAT07 + VATWART
+            zBRUT07 := zBRUT07 + BRUTTO
 
          CASE AllTrim( VAT ) == Str( vat_C, 1 )
             zWART02 := zWART02 + WARTOSC
+            zVAT02 := zVAT02 + VATWART
+            zBRUT02 := zBRUT02 + BRUTTO
 
          CASE AllTrim( VAT ) == Str( vat_A, 2 )
             zWART22 := zWART22 + WARTOSC
+            zVAT22 := zVAT22 + VATWART
+            zBRUT22 := zBRUT22 + BRUTTO
 
          CASE AllTrim( VAT ) == Str( vat_D, 1 )
             zWART12 := zWART12 + WARTOSC
+            zVAT12 := zVAT12 + VATWART
+            zBRUT12 := zBRUT12 + BRUTTO
 
       ENDCASE
       SKIP
    ENDDO
-   zVAT07 := _round( zwart07 * ( vat_B / 100 ), 2 )
-   zVAT02 := _round( zwart02 * ( vat_C / 100 ), 2 )
-   zVAT22 := _round( zwart22 * ( vat_A / 100 ), 2 )
-   zVAT12 := _round( zwart12 * ( vat_D / 100 ), 2 )
+   IF faktury->WARTRANSP == 'T'
+
+   ELSE
+      zVAT07 := _round( zwart07 * ( vat_B / 100 ), 2 )
+      zBRUT07 := zWART07 + zVAT07
+      zVAT02 := _round( zwart02 * ( vat_C / 100 ), 2 )
+      zBRUT02 := zWART02 + zVAT02
+      zVAT22 := _round( zwart22 * ( vat_A / 100 ), 2 )
+      zBRUT22 := zWART22 + zVAT22
+      zVAT12 := _round( zwart12 * ( vat_D / 100 ), 2 )
+      zBRUT12 := zWART12 + zVAT12
+   ENDIF
    SET COLOR TO +w
    @ 15, 45 SAY zWART22 PICTURE "@Z 999 999.99"
    @ 15, 59 SAY zVAT22 PICTURE "@Z 99 999.99"
-   @ 15, 69 SAY zWART22 + zVAT22 PICTURE "@Z 999 999.99"
+   @ 15, 69 SAY zBRUT22 PICTURE "@Z 999 999.99"
    @ 16, 45 SAY zWART07 PICTURE "@Z 999 999.99"
    @ 16, 59 SAY zVAT07 PICTURE "@Z 99 999.99"
-   @ 16, 69 SAY zWART07 + zVAT07 PICTURE "@Z 999 999.99"
+   @ 16, 69 SAY zBRUT07 PICTURE "@Z 999 999.99"
    @ 17, 45 SAY zWART02 PICTURE "@Z 999 999.99"
    @ 17, 59 SAY zVAT02 PICTURE "@Z 99 999.99"
-   @ 17, 69 SAY zWART02 + zVAT02 PICTURE "@Z 999 999.99"
+   @ 17, 69 SAY zBRUT02 PICTURE "@Z 999 999.99"
    @ 18, 45 SAY zWART12 PICTURE "@Z 999 999.99"
    @ 18, 59 SAY zVAT12 PICTURE "@Z 99 999.99"
-   @ 18, 69 SAY zWART12 + zVAT12 PICTURE "@Z 999 999.99"
+   @ 18, 69 SAY zBRUT12 PICTURE "@Z 999 999.99"
    @ 19, 45 SAY zWART00 PICTURE "@Z 999 999.99"
    @ 19, 59 SAY 0 PICTURE "@Z 99 999.99"
    @ 19, 69 SAY zWART00 PICTURE "@Z 999 999.99"
@@ -1382,9 +1445,9 @@ PROCEDURE say260vn()
       @ 22, 59 SAY zVAT07 + zVAT22 + zVAT02 + zVAT12 - ( aBufDok[ 'suma_brutto' ] - aBufDok[ 'suma_netto' ] ) PICTURE "99 999.99"
    ENDIF
    SET COLOR TO w+*
-   @ 21, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 PICTURE "999 999.99"
+   @ 21, 69 SAY zWARTZW + zWART08 + zWART00 + zBRUT07 + zBRUT22 + zBRUT02 + zBRUT12 PICTURE "999 999.99"
    IF faktury->KOREKTA == 'T'
-      @ 22, 69 SAY zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12 + zVAT07 + zVAT22 + zVAT02 + zVAT12 - aBufDok[ 'suma_brutto' ] PICTURE "999 999.99"
+      @ 22, 69 SAY zWARTZW + zWART08 + zWART00 + zBRUT07 + zBRUT22 + zBRUT02 + zBRUT12 - aBufDok[ 'suma_brutto' ] PICTURE "999 999.99"
    ENDIF
    SELECT faktury
    SET COLOR TO
@@ -1855,15 +1918,22 @@ PROCEDURE FakturyN_DrukGraf()
          aPoz[ 'cena' ] := pozycje->cena
          //aPoz[ 'sww' ] := AllTrim( pozycje->sww )
          aPoz[ 'vat' ] := AllTrim( pozycje->vat )
-         aPoz[ 'wartosc_vat' ] := round( ( Val( pozycje->vat ) / 100 ) * pozycje->wartosc, 2 )
+         IF faktury->WARTRANSP == 'T'
+            aPoz[ 'wartosc_vat' ] := pozycje->vatwart
+           aPoz[ 'wartosc_brutto' ] := pozycje->brutto
+         ELSE
+            aPoz[ 'wartosc_vat' ] := _round( ( Val( pozycje->vat ) / 100 ) * pozycje->wartosc, 2 )
+            aPoz[ 'wartosc_brutto' ] := pozycje->wartosc + aPoz[ 'wartosc_vat' ]
+         ENDIF
          IF ( nIdx := hb_AScan( aDane[ 'sumy' ], { | aS | aS[ 'vat' ] == AllTrim( pozycje->vat ) } ) ) > 0
             aDane[ 'sumy' ][ nIdx ][ 'w_netto' ] := aDane[ 'sumy' ][ nIdx ][ 'w_netto' ] + pozycje->wartosc
             aDane[ 'sumy' ][ nIdx ][ 'w_vat' ] := aDane[ 'sumy' ][ nIdx ][ 'w_vat' ] + aPoz[ 'wartosc_vat' ]
+            aDane[ 'sumy' ][ nIdx ][ 'w_brutto' ] := aDane[ 'sumy' ][ nIdx ][ 'w_brutto' ] + aPoz[ 'wartosc_brutto' ]
          ELSE
             AAdd( aDane[ 'sumy' ], { 'vat' => AllTrim( pozycje->vat ), ;
-               'w_netto' => pozycje->wartosc, 'w_vat' => aPoz[ 'wartosc_vat' ] } )
+               'w_netto' => pozycje->wartosc, 'w_vat' => aPoz[ 'wartosc_vat' ], 'w_brutto' => aPoz[ 'wartosc_brutto' ] } )
          ENDIF
-         nWartosc := nWartosc + aPoz[ 'wartosc_netto' ] + aPoz[ 'wartosc_vat' ]
+         nWartosc := nWartosc + aPoz[ 'wartosc_brutto' ]
          AAdd( aDane[ 'pozycje' ], aPoz )
       ENDIF
       pozycje->( dbSkip() )
@@ -1889,16 +1959,24 @@ PROCEDURE FakturyN_DrukGraf()
             aPoz[ 'cena' ] := aPozKor[ 'CENA' ]
             //aPoz[ 'sww' ] := AllTrim( pozycje->sww )
             aPoz[ 'vat' ] := AllTrim( aPozKor[ 'VAT' ] )
+            IF aBufDok[ 'WARTRANSP' ] == 'T'
+               aPoz[ 'wartosc_vat' ] := aPozKor[ 'VATWART' ]
+               aPoz[ 'wartosc_brutto' ] := aPozKor[ 'BRUTTO' ]
+            ELSE
+               aPoz[ 'wartosc_vat' ] := round( ( Val( aPozKor[ 'VAT' ] ) / 100 ) * aPozKor[ 'WARTOSC' ], 2 )
+               aPoz[ 'wartosc_brutto' ] := aPozKor[ 'WARTOSC' ] + aPoz[ 'wartosc_vat' ]
+            ENDIF
             aPoz[ 'wartosc_vat' ] := round( ( Val( aPozKor[ 'VAT' ] ) / 100 ) * aPozKor[ 'WARTOSC' ], 2 )
             cKlucz := AllTrim( aPozKor[ 'VAT' ] )
             IF ( nIdx := hb_AScan( aDane[ 'sumyprzed' ], { | aS | aS[ 'vat' ] == cKlucz } ) ) > 0
                aDane[ 'sumyprzed' ][ nIdx ][ 'w_netto' ] := aDane[ 'sumyprzed' ][ nIdx ][ 'w_netto' ] + aPozKor[ 'WARTOSC' ]
                aDane[ 'sumyprzed' ][ nIdx ][ 'w_vat' ] := aDane[ 'sumyprzed' ][ nIdx ][ 'w_vat' ] + aPoz[ 'wartosc_vat' ]
+               aDane[ 'sumyprzed' ][ nIdx ][ 'w_brutto' ] := aDane[ 'sumyprzed' ][ nIdx ][ 'w_brutto' ] + aPoz[ 'wartosc_brutto' ]
             ELSE
                AAdd( aDane[ 'sumyprzed' ], { 'vat' => AllTrim( aPozKor[ 'VAT' ] ), ;
-                  'w_netto' => aPozKor[ 'WARTOSC' ], 'w_vat' => aPoz[ 'wartosc_vat' ] } )
+                  'w_netto' => aPozKor[ 'WARTOSC' ], 'w_vat' => aPoz[ 'wartosc_vat' ], 'w_brutto' => aPoz[ 'wartosc_brutto' ] } )
             ENDIF
-            nWartoscPrzed := nWartoscPrzed + aPoz[ 'wartosc_netto' ] + aPoz[ 'wartosc_vat' ]
+            nWartoscPrzed := nWartoscPrzed + aPoz[ 'wartosc_brutto' ]
             AAdd( aDane[ 'pozycjeprzed' ], aPoz )
          ENDIF
       } )
@@ -1913,6 +1991,7 @@ PROCEDURE FakturyN_DrukGraf()
             aPoz := ATail( aDane[ 'roznice' ] )
             aPoz[ 'w_netto' ] := aPoz[ 'w_netto' ] - aDane[ 'sumyprzed' ][ nI ][ 'w_netto' ]
             aPoz[ 'w_vat' ] := aPoz[ 'w_vat' ] - aDane[ 'sumyprzed' ][ nI ][ 'w_vat' ]
+            aPoz[ 'w_brutto' ] := aPoz[ 'w_brutto' ] - aDane[ 'sumyprzed' ][ nI ][ 'w_brutto' ]
          ENDIF
       } )
       AEval( aDane[ 'sumyprzed' ], { | aPrzed |
