@@ -40,7 +40,7 @@ PROCEDURE FakturyN()
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, _top, _bot, _stop, _sbot
    PRIVATE _proc, _row, _proc_spe, _disp, _cls, kl, ins, nr_rec, wiersz, f10, rec, fou, _top_bot
 
-   PRIVATE nPopKsgData, dPopDataTrans, aBufDok, lKorekta
+   PRIVATE nPopKsgData, dPopDataTrans, aBufDok, lKorekta, cScrRodzDow
 
    *********************** lp
    m->liczba := 1
@@ -244,6 +244,7 @@ PROCEDURE FakturyN()
                      zKOREKTA := iif( lKorekta, 'T', 'N' )
                      zPRZYCZKOR := Space( 200 )
                      zWARTRANSP := aBufDok[ 'WARTRANSP' ]
+                     zRODZDOW := aBufDok[ 'RODZDOW' ]
                      FakturyN_KorInfo()
                   ELSE
                      BREAK
@@ -287,6 +288,7 @@ PROCEDURE FakturyN()
                   zKOREKTA := 'N'
                   zPRZYCZKOR := Space( 200 )
                   zWARTRANSP := 'T'
+                  zRODZDOW := Space( 6 )
                ELSE
                   zRACH := RACH
                   zNUMER&zRACH := NUMER
@@ -336,6 +338,7 @@ PROCEDURE FakturyN()
                   zKOREKTA := KOREKTA
                   zPRZYCZKOR := PRZYCZKOR
                   zWARTRANSP := WARTRANSP
+                  zRODZDOW := RODZDOW
     *             endif
                ENDIF
                *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
@@ -358,7 +361,8 @@ PROCEDURE FakturyN()
     *          endif
                @  7,  9 GET zKOMENTARZ PICTURE "@S38 " + repl( '!', 60 )
                @  7, 59 GET zZAMOWIENIE PICTURE "@S20 " + repl( '!', 30 )
-               @ 15, 11 GET zOPCJE PICTURE "@S8 " + Repl( '!', 32 ) WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
+               @ 15,  6 GET zRODZDOW PICTURE "!!!" WHEN KRejSWRodzDow() VALID KRejSVRodzDow()
+               @ 15, 15 GET zOPCJE PICTURE "@S8 " + Repl( '!', 32 ) WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
                @ 15, 30 GET zPROCEDUR PICTURE "@S14 " + Repl( '!', 32 ) WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
                @ 17,  0 GET zFAKTTYP PICTURE "@S40 " + repl( '!', 60 )
                wiersz := 1
@@ -428,6 +432,7 @@ PROCEDURE FakturyN()
                repl_( 'FAKTTYP', zFAKTTYP )
                repl_( 'PRZYCZKOR', zPRZYCZKOR )
                repl_( 'WARTRANSP', zWARTRANSP )
+               repl_( 'RODZDOW', zRODZDOW )
                IF ins
                   repl_( 'KOREKTA', zKOREKTA )
                   IF kl == K_F6
@@ -810,6 +815,7 @@ PROCEDURE FakturyN()
                   repl_( 'DATATRAN', hb_Date( Val( param_rok ), Val( miesiac ), Val( zdzien ) ) )
                   repl_( 'OPCJE', zOPCJE )
                   repl_( 'PROCEDUR', zPROCEDUR )
+                  repl_( 'RODZDOW', zRODZDOW )
    *           if zsposob_p=1.or.zsposob_p=3
    *              if zsposob_p=3.and.nr_uzytk=6
    *                 repl_([zaplata],[1])
@@ -1276,7 +1282,8 @@ PROCEDURE say260vn()
    //003 nowa linia
    @  7,  9 SAY SubStr( KOMENTARZ, 1, 38 )
    @  7, 59 SAY SubStr( ZAMOWIENIE, 1, 20 )
-   @ 15, 11 SAY SubStr( OPCJE, 1, 8 )
+   @ 15,  6 SAY SubStr( RODZDOW, 1, 3 )
+   @ 15, 15 SAY SubStr( OPCJE, 1, 8 )
    @ 15, 30 SAY SubStr( PROCEDUR, 1, 14 )
    @ 17,  0 SAY SubStr( FAKTTYP, 1, 40 )
    @ 19,  6 SAY SubStr( ODBNAZWA, 1, 30 )
@@ -2129,7 +2136,7 @@ PROCEDURE FakturyN_RysujTlo()
    @ 12, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
    @ 13, 0 SAY '³                                      ³         ³     ³         ³          ³  ³'
    @ 14, 0 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÂÄÄÄÄÁÄÄÄÄÄÅÄÄÂÄÄÄÄÄÄÁÄÄÂÄÄÄÄÄÄÄÁÄÄ´'
-   @ 15, 0 SAY 'Oznaczenie:         Procedura:              ³          ³' + Str( vat_A, 2 ) + '³         ³          ³'
+   @ 15, 0 SAY 'Ro.d.:    Ozn.:         Proc.:              ³          ³' + Str( vat_A, 2 ) + '³         ³          ³'
    @ 16, 0 SAY 'TYP FAKT.(opis typu/podstawy fakturowania): ³          ³' + Str( vat_B, 2 ) + '³         ³          ³'
    @ 17, 0 SAY '                                            ³          ³' + Str( vat_C, 2 ) + '³         ³          ³'
    @ 18, 0 SAY 'ODBIORCA:                                   ³          ³' + Str( vat_D, 2 ) + '³         ³          ³'

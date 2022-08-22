@@ -44,7 +44,7 @@ PROCEDURE FaPozN()
    @ 12,  0 SAY 'Ё                                      Ё         Ё     Ё         Ё          Ё  Ё'
    @ 13,  0 SAY 'Ё                                      Ё         Ё     Ё         Ё          Ё  Ё'
    @ 14,  0 SAY 'юддддддддддддддддддддддддддддддддддддддаддддбддддадддддеддбддддддаддбдддддддадд╢'
-   @ 15,  0 SAY 'Oznaczenie:         Procedura:              Ё          Ё' + Str( vat_A, 2 ) + 'Ё         Ё          Ё'
+   @ 15,  0 SAY 'Ro.d.:    Ozn.:         Proc.:              Ё          Ё' + Str( vat_A, 2 ) + 'Ё         Ё          Ё'
    @ 16,  0 SAY 'TYP FAKT.(opis typu/podstawy fakturowania): Ё          Ё' + Str( vat_B, 2 ) + 'Ё         Ё          Ё'
    @ 17,  0 SAY '                                            Ё          Ё' + Str( vat_C, 2 ) + 'Ё         Ё          Ё'
    @ 18,  0 SAY 'ODBIORCA:                                   Ё          Ё' + Str( vat_D, 2 ) + 'Ё         Ё          Ё'
@@ -53,7 +53,8 @@ PROCEDURE FaPozN()
    @ 21,  0 SAY '                                       RAZEMЁ          Ё  Ё         Ё          Ё'
    @ 22,  0 SAY '                                            юддддддддддаддадддддддддадддддддддды'
    SET COLO TO w+
-   @ 15, 11 SAY SubStr( OPCJE, 1, 8 )
+   @ 15,  6 SAY SubStr( RODZDOW, 1, 3 )
+   @ 15, 15 SAY SubStr( OPCJE, 1, 8 )
    @ 15, 30 SAY SubStr( PROCEDUR, 1, 14 )
    @ 17,  0 SAY SubStr( FAKTTYP, 1, 40 )
    @ 19,  6 SAY SubStr( ODBNAZWA, 1, 30 )
