@@ -245,6 +245,7 @@ PROCEDURE FakturyN()
                      zPRZYCZKOR := Space( 200 )
                      zWARTRANSP := aBufDok[ 'WARTRANSP' ]
                      zRODZDOW := aBufDok[ 'RODZDOW' ]
+                     oldzRODZDOW := ""
                      FakturyN_KorInfo()
                   ELSE
                      BREAK
@@ -289,6 +290,7 @@ PROCEDURE FakturyN()
                   zPRZYCZKOR := Space( 200 )
                   zWARTRANSP := 'T'
                   zRODZDOW := Space( 6 )
+                  oldzRODZDOW := ""
                ELSE
                   zRACH := RACH
                   zNUMER&zRACH := NUMER
@@ -339,6 +341,7 @@ PROCEDURE FakturyN()
                   zPRZYCZKOR := PRZYCZKOR
                   zWARTRANSP := WARTRANSP
                   zRODZDOW := RODZDOW
+                  oldzRODZDOW := RODZDOW
     *             endif
                ENDIF
                *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
@@ -807,7 +810,11 @@ PROCEDURE FakturyN()
                      repl_( 'VAT12', 0)
                   ENDIF*/
                   IF zRYCZALT <> 'T'
-                     repl_( 'NETTO', razem )
+                     IF AllTrim( zRODZDOW ) <> 'FP'
+                        repl_( 'NETTO', razem )
+                     ELSE
+                        repl_( 'NETTO', 0 )
+                     ENDIF
                   ENDIF
                   repl_( 'ROKS', Str( Year( zDATAS ), 4 ) )
                   repl_( 'MCS', Str( Month( zDATAS ), 2 ) )
@@ -843,10 +850,12 @@ PROCEDURE FakturyN()
                      IF ! ins
                         SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac ) + 'RS-7'
                         IF Found()
-                           BlokadaR()
-                           repl_( 'wyr_tow', wyr_tow - razem_ )
-                           COMMIT
-                           UNLOCK
+                           IF AllTrim( oldzRODZDOW ) <> 'FP'
+                              BlokadaR()
+                              repl_( 'wyr_tow', wyr_tow - razem_ )
+                              COMMIT
+                              UNLOCK
+                           ENDIF
                         ELSE
                            *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
                            SELECT &USEBAZ
@@ -855,7 +864,9 @@ PROCEDURE FakturyN()
                            repl_( 'DZIEN', DAYM )
                            repl_( 'NUMER', 'RS-7' )
                            repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-                           repl_( 'WYR_TOW', -razem_ )
+                           IF AllTrim( oldzRODZDOW ) <> 'FP'
+                              repl_( 'WYR_TOW', -razem_ )
+                           ENDIF
        *                    repl_([zaplata],'1')
        *                   repl_([kwota],zkwota)
                            COMMIT
@@ -900,77 +911,85 @@ PROCEDURE FakturyN()
                      SET ORDER TO 3
                      SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac ) + 'RS-7'
                      IF Found()
-                        BlokadaR()
-                        repl_( 'wyr_tow', wyr_tow + razem )
-                        COMMIT
-                        UNLOCK
+                        IF AllTrim( zRODZDOW ) <> 'FP'
+                           BlokadaR()
+                           repl_( 'wyr_tow', wyr_tow + razem )
+                           COMMIT
+                           UNLOCK
+                        ENDIF
                         SELECT suma_mc
                         SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac )
                         BlokadaR()
-                        repl_( 'wyr_tow', wyr_tow - razem_ )
-                        repl_( 'wyr_tow', wyr_tow + razem )
-                        COMMIT
-                        UNLOCK
-                     ELSE
-                        *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                        SELECT oper
-                        app()
-                        repl_( 'firma', ident_fir )
-                        repl_( 'mc', Faktury_McKsieg( zKSGDATA, miesiac ) )
-                        repl_( 'DZIEN', DAYM )
-                        repl_( 'NUMER', 'RS-7' )
-                        repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-                        repl_( 'WYR_TOW', RAZEM )
-       *                 repl_([zaplata],'1')
-       *                repl_([kwota],zkwota)
-                        COMMIT
-                        UNLOCK
-                        *********************** lp
-                        SET ORDER TO 1
-                        IF nr_uzytk >= 0
-                           IF param_lp == 'T'
-                              IF param_kslp == '3'
-                                 SET ORDER TO 4
-                              ENDIF
-                              Blokada()
-                              Czekaj()
-                              rec := RecNo()
-
-                              SKIP -1
-                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Faktury_McKsieg( zKSGDATA, miesiac ), .F. )
-                                 zlp := liczba
-                              ELSE
-                                 zlp := lp + 1
-                              ENDIF
-                              GO rec
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Faktury_McKsieg( zKSGDATA, miesiac ), .T. )
-                                 repl_( 'lp', zlp )
-                                 zlp := zlp + 1
-                                 SKIP
-                              ENDDO
-
-                              GO rec
-                              COMMIT
-                              UNLOCK
-                              IF param_kslp == '3'
-                                 SET ORDER TO 1
-                              ENDIF
-                           ENDIF
+                        IF AllTrim( oldzRODZDOW ) <> 'FP'
+                           repl_( 'wyr_tow', wyr_tow - razem_ )
+                        ENDIF
+                        IF AllTrim( zRODZDOW ) <> 'FP'
+                           repl_( 'wyr_tow', wyr_tow + razem )
                         ENDIF
                         COMMIT
                         UNLOCK
-                        ***********************
-                        SELECT suma_mc
-                        SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac )
-                        BlokadaR()
-                        repl_( 'wyr_tow', wyr_tow - razem_ )
-                        repl_( 'wyr_tow', wyr_tow + razem )
-                        repl_( 'pozycje', pozycje + 1 )
-                        COMMIT
-                        UNLOCK
+                     ELSE
+                        IF AllTrim( zRODZDOW ) <> 'FP'
+                           *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                           SELECT oper
+                           app()
+                           repl_( 'firma', ident_fir )
+                           repl_( 'mc', Faktury_McKsieg( zKSGDATA, miesiac ) )
+                           repl_( 'DZIEN', DAYM )
+                           repl_( 'NUMER', 'RS-7' )
+                           repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+                           repl_( 'WYR_TOW', RAZEM )
+          *                 repl_([zaplata],'1')
+          *                repl_([kwota],zkwota)
+                           COMMIT
+                           UNLOCK
+                           *********************** lp
+                           SET ORDER TO 1
+                           IF nr_uzytk >= 0
+                              IF param_lp == 'T'
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 4
+                                 ENDIF
+                                 Blokada()
+                                 Czekaj()
+                                 rec := RecNo()
+
+                                 SKIP -1
+                                 IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Faktury_McKsieg( zKSGDATA, miesiac ), .F. )
+                                    zlp := liczba
+                                 ELSE
+                                    zlp := lp + 1
+                                 ENDIF
+                                 GO rec
+                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Faktury_McKsieg( zKSGDATA, miesiac ), .T. )
+                                    repl_( 'lp', zlp )
+                                    zlp := zlp + 1
+                                    SKIP
+                                 ENDDO
+
+                                 GO rec
+                                 COMMIT
+                                 UNLOCK
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 1
+                                 ENDIF
+                              ENDIF
+                           ENDIF
+                           COMMIT
+                           UNLOCK
+                           ***********************
+                           SELECT suma_mc
+                           SEEK '+' + ident_fir + Faktury_McKsieg( zKSGDATA, miesiac )
+                           BlokadaR()
+                           repl_( 'wyr_tow', wyr_tow - razem_ )
+                           repl_( 'wyr_tow', wyr_tow + razem )
+                           repl_( 'pozycje', pozycje + 1 )
+                           COMMIT
+                           UNLOCK
+                        ENDIF
+                        ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
+                        SET ORDER TO 1
                      ENDIF
-                     ************* KONIEC ZAPISU REJESTRU DO KSIEGI *******************
-                     SET ORDER TO 1
                   ENDIF
                ENDIF
                SELECT faktury
@@ -1747,68 +1766,72 @@ PROCEDURE Faktury_UsunKsieg( cMiesiac )
          SET ORDER TO 3
          SEEK '+' + ident_fir + cMiesiac + 'RS-7'
          IF Found()
-            BlokadaR()
-            repl_( 'wyr_tow', wyr_tow - razem_ )
-            COMMIT
-            UNLOCK
-            SELECT suma_mc
-            SEEK '+' + ident_fir + cMiesiac
-            BlokadaR()
-            repl_( 'wyr_tow', wyr_tow - razem_ )
-            COMMIT
-            UNLOCK
+            IF AllTrim( faktury->rodzdow ) <> 'FP'
+               BlokadaR()
+               repl_( 'wyr_tow', wyr_tow - razem_ )
+               COMMIT
+               UNLOCK
+               SELECT suma_mc
+               SEEK '+' + ident_fir + cMiesiac
+               BlokadaR()
+               repl_( 'wyr_tow', wyr_tow - razem_ )
+               COMMIT
+               UNLOCK
+            ENDIF
          ELSE
-            *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-            SELECT &USEBAZ
-            app()
-            //ADDDOC
-            repl_( 'FIRMA', ident_fir )
-            repl_( 'MC', cMiesiac )
-            repl_( 'DZIEN', DAYM )
-            repl_( 'NUMER', 'RS-7' )
-            repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-            repl_( 'WYR_TOW', -razem_ )
-            COMMIT
-            UNLOCK
-            *********************** lp
-            SET ORDER TO 1
-            IF nr_uzytk >= 0
-               IF param_lp == 'T'
-                  IF param_kslp == '3'
-                     SET ORDER TO 4
-                  ENDIF
-                  Blokada()
-                  Czekaj()
-                  rec := RecNo()
+            IF AllTrim( faktury->rodzdow ) <> 'FP'
+               *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+               SELECT &USEBAZ
+               app()
+               //ADDDOC
+               repl_( 'FIRMA', ident_fir )
+               repl_( 'MC', cMiesiac )
+               repl_( 'DZIEN', DAYM )
+               repl_( 'NUMER', 'RS-7' )
+               repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+               repl_( 'WYR_TOW', -razem_ )
+               COMMIT
+               UNLOCK
+               *********************** lp
+               SET ORDER TO 1
+               IF nr_uzytk >= 0
+                  IF param_lp == 'T'
+                     IF param_kslp == '3'
+                        SET ORDER TO 4
+                     ENDIF
+                     Blokada()
+                     Czekaj()
+                     rec := RecNo()
 
-                  SKIP -1
-                  IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # cMiesiac, .F. )
-                     zlp := liczba
-                  ELSE
-                     zlp := lp + 1
-                  ENDIF
-                  GO rec
-                  DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == cMiesiac, .T. )
-                     repl_( 'lp', zlp )
-                     zlp := zlp + 1
-                     SKIP
-                  ENDDO
+                     SKIP -1
+                     IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # cMiesiac, .F. )
+                        zlp := liczba
+                     ELSE
+                        zlp := lp + 1
+                     ENDIF
+                     GO rec
+                     DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == cMiesiac, .T. )
+                        repl_( 'lp', zlp )
+                        zlp := zlp + 1
+                        SKIP
+                     ENDDO
 
-                  GO rec
-                  COMMIT
-                  UNLOCK
-                  IF param_kslp == '3'
-                     SET ORDER TO 1
+                     GO rec
+                     COMMIT
+                     UNLOCK
+                     IF param_kslp == '3'
+                        SET ORDER TO 1
+                     ENDIF
                   ENDIF
                ENDIF
+               SELECT suma_mc
+               SEEK '+' + ident_fir + cMiesiac
+               BlokadaR()
+               repl_( 'wyr_tow', wyr_tow - razem_ )
+               repl_( 'pozycje', pozycje + 1 )
+               COMMIT
+               UNLOCK
             ENDIF
-            SELECT suma_mc
-            SEEK '+' + ident_fir + cMiesiac
-            BlokadaR()
-            repl_( 'wyr_tow', wyr_tow - razem_ )
-            repl_( 'pozycje', pozycje + 1 )
-            COMMIT
-            UNLOCK
          ENDIF
       ELSE
          SELECT EWID
