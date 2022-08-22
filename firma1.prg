@@ -809,7 +809,7 @@ PROCEDURE Firma1()
             *ZVATOKRES=iif(VATOKRES='K','K','M')
             zVAT=iif(VAT=' ','N',VAT)
             zVATOKRES=iif(VATOKRES=' ','M',VATOKRES)
-            zVATOKRESDR=iif(VATOKRESDR=' ',VATOKRES,VATOKRESDR)
+            zVATOKRESDR=VATOKRESDR
             if VATFORDR=='  '
                if zVATOKRES='M'
                   *if zVATOKRESDR='M'

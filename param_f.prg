@@ -182,7 +182,7 @@ do while kl#27
                  zUEOKRES='M'
               endif
               zVATOKRES=iif(VATOKRES=' ','M',VATOKRES)
-              zVATOKRESDR=iif(VATOKRESDR=' ',VATOKRES,VATOKRESDR)
+              *zVATOKRESDR=iif(VATOKRESDR=' ',VATOKRES,VATOKRESDR)
               if VATFORDR=='  '
                  if zVATOKRES='M'
 *                   if zVATOKRESDR='M'

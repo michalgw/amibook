@@ -1816,8 +1816,9 @@ FUNCTION _aj()
    o[ 2 ] := ' Z - Inne zr&_o.d&_l.a przychod&_o.w            '
    o[ 3 ] := ' F - Informacje o firmie               '
    o[ 4 ] := ' P - Parametry ZUS i stawki na wypadk. '
+   o[ 5 ] := ' I - Inne parametry...                 '
 
-   RETURN '17,1'
+   RETURN '16,1'
 
 *******************************************
 // Parametry firmy...Informacje o wlascicielach firmy
@@ -1848,6 +1849,14 @@ FUNCTION _ajc()
 FUNCTION _ajd()
 
    Param_PF()
+
+   RETURN ''
+
+*******************************************
+// Inne parametry firmy...
+FUNCTION _aje()
+
+   Param_FI()
 
    RETURN ''
 

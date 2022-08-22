@@ -1532,9 +1532,9 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
          ( hb_HHasKey( aPoz, 'P_14_5' ) .AND. aPoz[ 'P_14_5' ] <> 0 ) ) .AND. ;
          aPoz[ 'P_16' ] == .F. .AND. aPoz[ 'P_17' ] == .F. .AND. /*aPoz[ 'P_19' ] == .F. .AND.*/ ;
          aPoz[ 'P_20' ] == .F. .AND. aPoz[ 'P_21' ] == .F. .AND. aPoz[ 'P_106E_2' ] == .F. .AND. ;
-         ( ( ( Month( aPoz[ 'P_1' ] ) == Val( miesiac ) ) .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ;
+         ( zVATOKRESDR == 'T' .OR. ( ( ( Month( aPoz[ 'P_1' ] ) == Val( miesiac ) ) .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ;
          .OR. ( hb_HHasKey( aPoz, 'P_6' ) .AND. ( Month( aPoz[ 'P_6' ] ) == Val( miesiac ) ) ;
-         .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ) .AND. ( iif( cNip == '', .T., cNip == cNipFir ) )
+         .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ) ) .AND. ( iif( cNip == '', .T., cNip == cNipFir ) )
 /*         ( iif( cNip == '', .T., cNip == cNipFir ) ) .AND. ;
          ( ( hb_HHasKey( aPoz, 'P_6' ) .AND. ( Month( aPoz[ 'P_6' ] ) == Val( miesiac ) ) .AND. ( Year( aPoz[ 'P_6' ] ) == Val( miesiac ) ) ) .OR. ;
          ( ! hb_HHasKey( aPoz, 'P_6' ) .AND. ( Month( aPoz[ 'P_1' ] ) == Val( miesiac ) ) .AND. ( Year( aPoz[ 'P_1' ] ) == Val( miesiac ) ) ) )
@@ -1687,9 +1687,9 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
          ( hb_HHasKey( aPoz, 'P_14_5' ) .AND. aPoz[ 'P_14_5' ] <> 0 ) ) .AND. ;
          aPoz[ 'P_16' ] == .F. .AND. aPoz[ 'P_17' ] == .F. .AND. /*aPoz[ 'P_19' ] == .F. .AND.*/ ;
          aPoz[ 'P_20' ] == .F. .AND. aPoz[ 'P_21' ] == .F. .AND. aPoz[ 'P_106E_2' ] == .F. .AND. ;
-         ( ( ( Month( aPoz[ 'P_1' ] ) == Val( miesiac ) ) .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ;
+         ( zVATOKRESDR == 'T' .OR. ( ( ( Month( aPoz[ 'P_1' ] ) == Val( miesiac ) ) .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ;
          .OR. ( hb_HHasKey( aPoz, 'P_6' ) .AND. ( Month( aPoz[ 'P_6' ] ) == Val( miesiac ) ) ;
-         .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ) .AND. ( iif( cNip == '', .T., cNip == cNipFir ) )
+         .AND. ( Year( aPoz[ 'P_1' ] ) == Val( param_rok ) ) ) ) ) .AND. ( iif( cNip == '', .T., cNip == cNipFir ) )
 
 /*         IF hb_HHasKey( aPoz, 'KodWaluty' ) .AND. aPoz[ 'KodWaluty' ] <> 'PLN'
             IF ( hb_HHasKey( aPoz, 'P_14_1W' ) .AND. aPoz[ 'P_14_1W' ] <> 0 ) .OR. ;
@@ -1854,10 +1854,10 @@ PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
          ( hb_HHasKey( aPoz, 'K_21' ) .AND. aPoz[ 'K_21' ] <> 0 ) .OR. ;
          ( hb_HHasKey( aPoz, 'K_22' ) .AND. aPoz[ 'K_22' ] <> 0 ) .OR. ;
          ( hb_HHasKey( aPoz, 'K_31' ) .AND. aPoz[ 'K_31' ] <> 0 ) ) .AND. ;
-         ( ( Month( aPoz[ 'DataWystawienia' ] ) == Val( miesiac ) .AND. ;
+         ( zVATOKRESDR == 'T' .OR. ( ( Month( aPoz[ 'DataWystawienia' ] ) == Val( miesiac ) .AND. ;
          Year( aPoz[ 'DataWystawienia' ] ) == Val( param_rok ) ) .OR. ;
          ( Month( aPoz[ 'DataSprzedazy' ] ) == Val( miesiac ) .AND. ;
-         Year( aPoz[ 'DataSprzedazy' ] ) == Val( param_rok ) ) )
+         Year( aPoz[ 'DataSprzedazy' ] ) == Val( param_rok ) ) ) )
 
 /*         ( ( Month( aPoz[ 'DataSprzedazy' ] ) == Val( miesiac ) .AND. ;
          Year( aPoz[ 'DataSprzedazy' ] ) == Val( param_rok ) ) )
@@ -1948,8 +1948,8 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
          ( hb_HHasKey( aPoz, 'K_29' ) .AND. aPoz[ 'K_29' ] <> 0 ) .OR. ;
          ( hb_HHasKey( aPoz, 'K_27' ) .AND. aPoz[ 'K_27' ] <> 0 ) .OR. ;
          ( hb_HHasKey( aPoz, 'K_34' ) .AND. aPoz[ 'K_34' ] <> 0 ) ) .AND. ;
-         Month( aPoz[ 'DataWystawienia' ] ) == Val( miesiac ) .AND. ;
-         Year( aPoz[ 'DataWystawienia' ] ) == Val( param_rok )
+         ( zVATOKRESDR == 'T' .OR. ( Month( aPoz[ 'DataWystawienia' ] ) == Val( miesiac ) .AND. ;
+         Year( aPoz[ 'DataWystawienia' ] ) == Val( param_rok ) ) )
 
          aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
 
@@ -2190,10 +2190,10 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
          ( hb_HHasKey( aPoz, 'K_22' ) .AND. aPoz[ 'K_22' ] <> 0 ) .OR. ;
          ( hb_HHasKey( aPoz, 'K_31' ) .AND. aPoz[ 'K_31' ] <> 0 ) .OR. ;
          ( hb_HHasKey( aPoz, 'SprzedazVAT_Marza' ) .AND. aPoz[ 'SprzedazVAT_Marza' ] <> 0 ) ) .AND. ;
-         ( ( Month( aPoz[ 'DataWystawienia' ] ) == Val( miesiac ) .AND. ;
+         ( zVATOKRESDR == 'T' .OR. ( ( Month( aPoz[ 'DataWystawienia' ] ) == Val( miesiac ) .AND. ;
          Year( aPoz[ 'DataWystawienia' ] ) == Val( param_rok ) ) .OR. ;
          ( Month( aPoz[ 'DataSprzedazy' ] ) == Val( miesiac ) .AND. ;
-         Year( aPoz[ 'DataSprzedazy' ] ) == Val( param_rok ) ) )
+         Year( aPoz[ 'DataSprzedazy' ] ) == Val( param_rok ) ) ) )
 
 /*         ( ( Month( aPoz[ 'DataSprzedazy' ] ) == Val( miesiac ) .AND. ;
          Year( aPoz[ 'DataSprzedazy' ] ) == Val( param_rok ) ) )
@@ -2292,8 +2292,8 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
          ( hb_HHasKey( aPoz, 'K_29' ) .AND. aPoz[ 'K_29' ] <> 0 ) .OR. ;
          ( hb_HHasKey( aPoz, 'K_27' ) .AND. aPoz[ 'K_27' ] <> 0 ) .OR. ;
          ( hb_HHasKey( aPoz, 'K_34' ) .AND. aPoz[ 'K_34' ] <> 0 ) ) .AND. ;
-         Month( aPoz[ 'DataWystawienia' ] ) == Val( miesiac ) .AND. ;
-         Year( aPoz[ 'DataWystawienia' ] ) == Val( param_rok )
+         ( zVATOKRESDR == 'T' .OR. ( Month( aPoz[ 'DataWystawienia' ] ) == Val( miesiac ) .AND. ;
+         Year( aPoz[ 'DataWystawienia' ] ) == Val( param_rok ) ) )
 
          aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
 

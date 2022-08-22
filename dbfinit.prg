@@ -588,7 +588,7 @@ public aFIRMAdbf := {;
    { "DEKLTEL", "C", 25, 0 },;                    //  61 PRZESTARZALE Telefon na podpisie wydruku deklaracji
    { "DATAKS", "C", 1, 0 },;                      //  62 Domyslna data ksiegowania do ksiegi - 'W' - wplywu, 'D' - dokumentu
    { "PITOKRES", "C", 1, 0 },;                    //  63 Podatek dochodowy obliczac Miesiecznie/Kwartalnie - 'M' - miesiecznie, 'K' - kwartalnie
-   { "VATOKRESDR", "C", 1, 0 },;                  //  64 NIEUZYWANE
+   { "VATOKRESDR", "C", 1, 0 },;                  //  64 Sprawd« dat© dokumentu przy imporcie z JPK - NIEUZYWANE do wer 22.5b
    { "VATFORDR", "C", 2, 0 },;                    //  65 Rodzaj VAT (miesiecznie/kwartalnie) - ' 7' - miesiecznie, '7K' - kwartalnie
    { "UEOKRES", "C", 1, 0 },;                     //  66 PRZESTAZALE Deklaracja VAT-UE Miesiecznie/Kwartalnie - 'M' - miesiecznie, 'K' - kwartalnie
    { "DATA2TYP", "C", 1, 0 },;                    //  67 Domyslna druga data na fakturze - D-dokonanie dostawy,T-zakonczenie dostawy,U-wykonanie uslugi,Z-zaliczka
