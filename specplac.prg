@@ -160,7 +160,7 @@ PROCEDURE SpecPlac()
             IF DOD .AND. DDO .AND. ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
             */
             lDrukPlac := .F.
-            IF ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 )
+            IF ( Len( aRekordy ) == 0 .OR. AScan( aRekordy, prac->( RecNo() ) ) > 0 ) .AND. prac->status <> 'Z'
                FOR xxe := mcod TO mcdo
                   IF ! Prac_HZ_Aktywny( xxe )
                      LOOP
