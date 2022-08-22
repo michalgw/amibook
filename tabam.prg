@@ -356,10 +356,10 @@ FUNCTION TabAm( mieskart )
          SAVE SCREEN TO robs
          IF mieslok='C'
             TabAmW()
-            SELECT 1
          ELSE
             Umorz( mieslok )
          ENDIF
+         SELECT 1
          RESTORE SCREEN FROM robs
       *################################### POMOC ##################################
       CASE kl == 28
