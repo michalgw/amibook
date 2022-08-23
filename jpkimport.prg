@@ -2402,6 +2402,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
       LOCAL cNip, cKraj := "PL"
       IF ( hb_HHasKey( aPoz, 'K_40' ) .AND. aPoz[ 'K_40' ] <> 0 ) .OR. ;
          ( hb_HHasKey( aPoz, 'K_42' ) .AND. aPoz[ 'K_42' ] <> 0 ) .OR. ;
+         ( hb_HHasKey( aPoz, 'ZakupVAT_Marza' ) .AND. aPoz[ 'ZakupVAT_Marza' ] <> 0 ) .OR. ;
          Month( aPoz[ 'DataZakupu' ] ) == Val( miesiac ) .AND. ;
          Year( aPoz[ 'DataZakupu' ] ) == Val( param_rok )
 
