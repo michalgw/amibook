@@ -2415,7 +2415,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
          aPozDek[ 'zsek_cv7' ] := '  '
          aPozDek[ 'zkolumna' ] := '10'
          aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataZakupu' ] ), 2 )
-         aPozDek[ 'zdatatran' ] := aPoz[ 'DataZakupu' ]
+         aPozDek[ 'zdatatran' ] := aPoz[ 'DataWplywu' ]
          aPozDek[ 'znumer' ] := aPoz[ 'DowodZakupu' ]
 
          cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrDostawcy' ] ) ) == "BRAK", "", aPoz[ 'NrDostawcy' ] ), @cKraj )
@@ -2424,7 +2424,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
          aPozDek[ 'znr_ident' ] := cNip
          aPozDek[ 'znazwa' ] := aPoz[ 'NazwaDostawcy' ]
          aPozDek[ 'zadres' ] := ''
-         aPozDek[ 'zdatas' ] := aPoz[ 'DataWplywu' ]
+         aPozDek[ 'zdatas' ] := aPoz[ 'DataZakupu' ]
 
          aPozDek[ 'zexport' ] := 'N'
          aPozDek[ 'zkorekta' ] := 'N'
