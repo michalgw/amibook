@@ -143,6 +143,7 @@ zPPK := iif( etaty->ppk $ 'TN', etaty->ppk, 'N' )
 zULGAKLSRA := ' '
 zODLICZENIE := ' '
 zWNIOSTERM := ' '
+zSTAWKAPODAT21 := 17
 
 //002 ostatnia zmienna jest nowa
 
