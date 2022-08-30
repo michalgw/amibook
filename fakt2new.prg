@@ -163,6 +163,10 @@ sprawdzVAT(10,faktury->DATAS)
       zVAT22=0
       zVAT12=0
       zVATOO=0
+      zBRUT07=0
+      zBRUT02=0
+      zBRUT22=0
+      zBRUT12=0
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       _grupa=.t.
       do while .not.&_koniec
@@ -189,8 +193,13 @@ sprawdzVAT(10,faktury->DATAS)
          k4=iif(wartosc=0,space(12),kwota(cena,12,2))
          k5=wartosc
          k6=iif(wartosc=0,space(2),vat)
-         k7=_round((val(vat)/100)*wartosc,2)
-         k8=k5+k7
+         IF faktury->wartransp == 'T'
+            k7 := VATWART
+            k8 := BRUTTO
+         ELSE
+            k7=_round((val(vat)/100)*wartosc,2)
+            k8=k5+k7
+         ENDIF
          skip
          *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          s0_5=s0_5+k5
@@ -206,12 +215,20 @@ sprawdzVAT(10,faktury->DATAS)
               DrukujPN := .T.
          case alltrim(k6)=str(vat_B,1)
               zWART07=zWART07+k5
+              zVAT07 := zVAT07 + k7
+              zBRUT07 := zBRUT07 + k8
          case alltrim(k6)=str(vat_C,1)
               zWART02=zWART02+k5
+              zVAT02 := zVAT02 + k7
+              zBRUT07 := zBRUT07 + k8
          case alltrim(k6)=str(vat_D,1)
               zWART12=zWART12+k5
+              zVAT12 := zVAT12 + k7
+              zBRUT07 := zBRUT07 + k8
          case alltrim(k6)=str(vat_A,2)
               zWART22=zWART22+k5
+              zVAT22 := zVAT22 + k7
+              zBRUT07 := zBRUT07 + k8
          endcase
          k5=iif(k5=0,space(12),kwota(k5,12,2))
          k7=iif(k7=0,space(12),kwota(k7,12,2))
@@ -223,14 +240,21 @@ sprawdzVAT(10,faktury->DATAS)
          endcase
          _grupa=.f.
       enddo
-      zVAT12=_round(zWART12*(vat_D/100),2)
-      zVAT07=_round(zWART07*(vat_B/100),2)
-      zVAT02=_round(zWART02*(vat_C/100),2)
-      zVAT22=_round(zWART22*(vat_A/100),2)
+      IF faktury->wartransp <> 'T'
+         zVAT12=_round(zWART12*(vat_D/100),2)
+         zVAT07=_round(zWART07*(vat_B/100),2)
+         zVAT02=_round(zWART02*(vat_C/100),2)
+         zVAT22=_round(zWART22*(vat_A/100),2)
+      ENDIF
       *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
       s0_7=zVAT07+zVAT02+zVAT22+zVAT12
-      s0_8=zWARTZW+zWART08+zWART00+zWART07+zWART02+zWART22+zWART12+zVAT07+zVAT02+zVAT22+zVAT12+zWARTOO+zVATOO
-      s1_8=zWARTZW+zWART08+zWART00+zWART07+zWART02+zWART22+zWART12+zVAT07+zVAT02+zVAT22+zVAT12+zWARTOO+zVATOO
+      IF faktury->wartransp == 'T'
+         s0_8=zWARTZW+zWART08+zWART00+zBRUT07+zBRUT02+zBRUT22+zBRUT12+zWARTOO+zVATOO
+         s1_8=zWARTZW+zWART08+zWART00+zBRUT07+zBRUT02+zBRUT22+zBRUT12+zWARTOO+zVATOO
+      ELSE
+         s0_8=zWARTZW+zWART08+zWART00+zWART07+zWART02+zWART22+zWART12+zVAT07+zVAT02+zVAT22+zVAT12+zWARTOO+zVATOO
+         s1_8=zWARTZW+zWART08+zWART00+zWART07+zWART02+zWART22+zWART12+zVAT07+zVAT02+zVAT22+zVAT12+zWARTOO+zVATOO
+      ENDIF
       zm=wyraz(slownie(s1_8),50)
       zm=zm+space(150-len(zm))
       k1=left(zm,50)
