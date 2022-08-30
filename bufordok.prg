@@ -286,6 +286,7 @@ FUNCTION Bufor_Dok_Wybierz_Faktury( lKorekta )
       IF ar[ nElem ][ 'DOKKORID' ] <> 0 .AND. ar[ nElem ][ 'KOREKTA' ] <> 'T'
          Komun( "Ten dokument posiada ju¾ korekt©." )
       ELSE
+
          lKorekta := .T.
          hb_keyPut( K_ENTER )
       ENDIF
@@ -293,7 +294,7 @@ FUNCTION Bufor_Dok_Wybierz_Faktury( lKorekta )
    }
    LOCAL aKlawisze := { { Asc( 'K' ), bKorekta }, { Asc( 'k' ), bKorekta } }
 
-   hb_default( @lKorekta, .F. )
+   lKorekta := .F.
 
    SAVE SCREEN TO cEkran
 

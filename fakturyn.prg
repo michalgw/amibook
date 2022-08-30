@@ -207,6 +207,7 @@ PROCEDURE FakturyN()
                ENDIF
                *๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐ ZMIENNE ๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐
                IF ins .AND. kl == K_F6
+                  FakturyN_RysujTlo()
                   aBufDok := Bufor_Dok_Wybierz( 'faktury', @lKorekta )
                   IF ! Empty( aBufDok ) .AND. HB_ISHASH( aBufDok )
                      @  4, 78 CLEAR TO 5, 79
@@ -216,7 +217,9 @@ PROCEDURE FakturyN()
                      @ 15, 45 CLEAR TO 21, 54
                      @ 15, 59 CLEAR TO 21, 67
                      @ 15, 69 CLEAR TO 21, 78
-                     @ 22, 29 SAY 'WARTO— KOREKTYภฤฤฤฤฤฤฤฤฤฤมฤฤมฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤู'
+                     IF lKorekta
+                        @ 22, 29 SAY 'WARTO— KOREKTYภฤฤฤฤฤฤฤฤฤฤมฤฤมฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤู'
+                     ENDIF
 
                      zRACH := aBufDok[ 'RACH' ]
                      zNUMER&zRACH := firma->nr_fakt
@@ -246,11 +249,14 @@ PROCEDURE FakturyN()
                      zWARTRANSP := aBufDok[ 'WARTRANSP' ]
                      zRODZDOW := aBufDok[ 'RODZDOW' ]
                      oldzRODZDOW := ""
-                     FakturyN_KorInfo()
+                     IF lKorekta
+                        FakturyN_KorInfo()
+                     ENDIF
                   ELSE
                      BREAK
                   ENDIF
                ELSEIF ins
+                  FakturyN_RysujTlo()
                   @  4, 78 CLEAR TO 5, 79
                   @ 11, 0 SAY 'ณ                                      ณ         ณ     ณ         ณ          ณ  ณ'
                   @ 12, 0 SAY 'ณ                                      ณ         ณ     ณ         ณ          ณ  ณ'
@@ -438,14 +444,14 @@ PROCEDURE FakturyN()
                repl_( 'RODZDOW', zRODZDOW )
                IF ins
                   repl_( 'KOREKTA', zKOREKTA )
-                  IF kl == K_F6
+                  IF kl == K_F6 .AND. lKorekta
                      repl_( 'DOKKORID', aBufDok[ 'REC_NO' ] )
                   ENDIF
                ENDIF
                COMMIT
                UNLOCK
 
-               IF ins .AND. kl == K_F6
+               IF ins .AND. kl == K_F6 .AND. lKorekta
                   FakturyN_UstawRef( aBufDok[ 'REC_NO' ], z_rec_no )
                ENDIF
 
@@ -2147,6 +2153,11 @@ FUNCTION FakturyN_PobierzDok()
 
 PROCEDURE FakturyN_RysujTlo()
 
+   LOCAL cKolor
+
+   cKolor := ColSta()
+   @  2, 0 SAY 'ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ'
+   ColStd()
    @  3, 0 SAY 'Faktura  Nr       z dnia                 data                                   '
    @  4, 0 SAY 'NABYWCA: Nr ident.(NIP).                                 SplitPay.:      Exp:   '
    @  5, 0 SAY '         Nazwa..........                                                  UE:   '
@@ -2173,6 +2184,8 @@ PROCEDURE FakturyN_RysujTlo()
    *   @ 21,0  say 'Od darowiz.'
    *   @ 21,22 say 'Od czynnos.'
    *endif
+
+   SetColor( cKolor )
 
    RETURN NIL
 
