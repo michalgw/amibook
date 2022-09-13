@@ -1,4 +1,4 @@
-       /************************************************************************
+/************************************************************************
 
 AMi-BOOK
 
@@ -1255,6 +1255,22 @@ PROCEDURE FakturyN()
                Komun( "Skopiowano " + AllTrim( Str( nLicznik ) ) + " dokument¢w" )
             ENDIF
 
+         CASE kl == K_CTRL_F10
+            IF faktury->korekta <> 'T' .AND. faktury->dokkorid <> 0
+               aTmpRec := FakturyN_DokRefPobierz( faktury->dokkorid )
+               IF aTmpRec[ 'KOREKTA' ] <> 'T' //.AND. aTmpRec[ 'DOKKORID' ] == faktury->( RecNo() )
+                  IF TNEsc( , "Czy odblokowa† faktur©? (Tak/Nie)" )
+                     BlokadaR()
+                     faktury->dokkorid := 0
+                     faktury->( dbCommit() )
+                     faktury->( dbUnlock() )
+                  ENDIF
+               ELSE
+                  Komun( "Nie mo¾na odblokowa† tej faktury." )
+               ENDIF
+            ELSE
+               Komun( "Nie mo¾na odblokowa† tej faktury." )
+            ENDIF
          ******************** ENDCASE
       ENDCASE
    ENDDO
