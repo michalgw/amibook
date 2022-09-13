@@ -1139,6 +1139,10 @@ FUNCTION Prac_HZ_Aktywny( nMiesiac )
 
    LOCAL lRes := .F., dDataNa := hb_Date( Val( param_rok ), nMiesiac, 1 )
 
+   IF Empty( prac->data_przy )
+      RETURN lRes
+   ENDIF
+
    lRes := dDataNa >= hb_Date( Year( prac->data_przy ), Month( prac->data_przy ), 1 ) .AND. ;
      ( Empty( prac->data_zwol ) .OR. dDataNa <= hb_Date( Year( prac->data_zwol ), Month( prac->data_zwol ), 1 ) )
 
