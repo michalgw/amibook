@@ -109,12 +109,15 @@ PROCEDURE KRejS()
          @ 2, 70 SAY iif( fDETALISTA <> 'T', ' netto  ', ' brutto ' )
          Komun( "Zmieniono metod© wprowadzania kwot na " + iif( fDETALISTA <> 'T', 'NETTO', 'BRUTTO' ) )
       *########################### INSERT/MODYFIKACJA #############################
-      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. kl == K_F6 .OR. &_top_bot ) .AND. kl # K_ESC .AND. kl # K_F1
+      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. kl == K_F6 .OR. kl = K_CTRL_F10 .OR. &_top_bot ) .AND. kl # K_ESC .AND. kl # K_F1
          @ 1, 47 SAY '          '
-         ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
+         ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) .AND. kl # K_CTRL_F10 ) .OR. &_top_bot
          JESTNIP := .F.
          BEGIN SEQUENCE
             IF ZamSum1()
+               BREAK
+            ENDIF
+            IF ! ins .AND. kl = K_CTRL_F10 .AND. ! TNEsc( , "Czy chcesz edytowa† ten dokument? (T/N)" )
                BREAK
             ENDIF
             KRejSRysujTlo()
@@ -339,12 +342,12 @@ PROCEDURE KRejS()
                   IF Left( LTrim( numer ), 2 ) == 'F-'
                      lRyczModSys := .T.
                   ELSE
-                     IF DocSys()
+                     IF kl # K_CTRL_F10 .AND. DocSys()
                         BREAK
                      ENDIF
                   ENDIF
                ELSE
-                  IF DocSys()
+                  IF kl # K_CTRL_F10 .AND. DocSys()
                      BREAK
                   ENDIF
                ENDIF
@@ -1520,6 +1523,9 @@ FUNCTION V1_2s()
    /* IF ' ' $ AllTrim( znumer )
       RETURN .F.
    ENDIF */
+   IF kl == K_CTRL_F10
+      RETURN .T.
+   ENDIF
    @ 24, 0
    DO CASE
    CASE AllTrim( znumer ) == 'REM-P'
