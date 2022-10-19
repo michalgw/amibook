@@ -29,8 +29,9 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
    PRIVATE P20,P21,P22,P23,P24,DP28,DP10 := 'T'
    PRIVATE tresc_korekty_pit11 := '', id_pracownika, DP28Scr
    PRIVATE P_KrajID, P_DokIDTyp, P_DokIDNr, P_18Kraj, cIgnoruj26r := 'N'
+   PRIVATE SklZdrow
 
-   STORE 0 TO P29,P30,P31
+   STORE 0 TO P29,P30,P31, SklZdrow
    STORE '' TO P3,P4,P4d,P6,P1,P11,P12,P13,P15,P16,P17,P18,P19,P20
    STORE '' TO P21
 
@@ -429,7 +430,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                  p93,p94,p96,;
                  p97,p98,p100,;
                  p93,p94,p96,;
-                 p101,p102,p103,p104
+                 p101,p102,p103,p104, SklZdrow
       store 0 to p50_1,p51_1,p51a_1,p52_1,p52_1a,p52a_1,p52b_1,p53_1,;
                  p50_5,p51_5,p51a_5,p52_5,p52_5a,p52a_5,p52b_5,p53_5,;
                  p50_6,p51_6,p51a_6,p52_6,p52_6a,p52a_6,p52b_6,p53_6,;
@@ -510,6 +511,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
             p61 := p61 + ZUS_ZASCHO
             p63 := p63 + ZUS_PODAT
             P50_7 := P50_7 + zasi_bzus
+            SklZdrow := SklZdrow + war_puz
          ENDIF
          SKIP 1
       ENDDO
@@ -667,6 +669,8 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
             *        P53za=P53za+max(0,BRUT_RAZEM-koszt)
             P54z := P54z + war_puz
             P55z := P55z + podatek
+
+            SklZdrow := SklZdrow + war_puz
             *     endif
          ENDIF
          SKIP 1
@@ -692,13 +696,13 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                tresc_korekty_pit11 := edekOrdZuTrescPobierz('PIT-11', Val(ident_fir), id_pracownika)
             ENDIF
             IF JAKICEL != 'K' .OR. ValType(tresc_korekty_pit11) == "C"
-               edeklaracja_plik = 'PIT_11_27_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(Str(Year(p4d))) + '_' + AllTrim(P31) + '_' + AllTrim(P32)
+               edeklaracja_plik = 'PIT_11_29_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(Str(Year(p4d))) + '_' + AllTrim(P31) + '_' + AllTrim(P32)
                private danedeklar
-               danedeklar = edek_pit11_27()
-               edekZapiszXml(danedeklar, edeklaracja_plik, wys_edeklaracja, 'PIT11-27', JAKICEL == 'K', 0, id_pracownika)
+               danedeklar = edek_pit11_29()
+               edekZapiszXml(danedeklar, edeklaracja_plik, wys_edeklaracja, 'PIT11-29', JAKICEL == 'K', 0, id_pracownika)
             ENDIF
          CASE _OU='K'
-            DeklarDrukuj('PIT11-27')
+            DeklarDrukuj('PIT11-29')
       ENDCASE
    END
    SELECT prac
