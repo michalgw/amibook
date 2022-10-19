@@ -203,7 +203,7 @@ FUNCTION TabAm( mieskart )
                      cMCRozp := StrTran( Str( wybpol + nMCRozp - 2, 2, 0 ), ' ', '0' )
                      NMC := MC&cMCRozp
                      SET CURSOR ON
-                     @ 8 + wybpol - 1 + nMCRozp - 1, 41 + ( ( wybrok - 1 ) * 10 ) GET NMC PICTURE '999999.99' VALID NMC # 0
+                     @ 8 + wybpol - 1 + nMCRozp - 1, 41 + ( ( wybrok - 1 ) * 10 ) GET NMC PICTURE '999999.99' /* VALID NMC # 0 */
                      READ
                      SET CURSOR OFF
                      IF LastKey() # 27
