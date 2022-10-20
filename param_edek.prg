@@ -43,7 +43,7 @@ FUNCTION edekKonfig()
       @ 15,42 say 'ออออออออออออออออออออออออออออออออออออออ'
       @ 16,42 say ' Czy weryfikowa deklaracjฉ ?         '
       @ 17,42 say ' (Tak / Nie / Pytaj)                  '
-      @ 18,42 say 'ออออออออออออออออออออออออออออออออออออออ'
+      @ 18,42 say ' Sp.weryfikacji (M-MSXML, L-libXml):  '
       @ 19,42 say ' JPK - Metoda obsugi  (W/Zew):      '
       @ 20,42 say ' JPK - Bramka testowa (Tak/Nie):      '
       @ 21,42 SAY ' Rodzaj SHA (1 - SHA1, 2 - SHA256):   '
@@ -76,6 +76,7 @@ FUNCTION edekKonfig()
                        zparam_edsh = param_edsh
                        zparam_eiku = param_eiku
                        zparam_evku = param_evku
+                       zparam_edrv = param_edrv
                        *๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐ GET ๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐๐
                        @  3, 75 get zparam_edmo PICTURE '!' VALID edekKonfigPoleEdmo()
                        @  6, 43 get zparamedek_katalog picture '@S36' WHEN zparam_edmo == 'Z'
@@ -83,6 +84,7 @@ FUNCTION edekKonfig()
                        @ 11, 68 GET zparam_edpz PICTURE '!' WHEN zparam_edmo == 'Z' VALID edekKonfigPoleEdpz()
                        @ 14, 63 GET zparam_edpw PICTURE '!' WHEN zparam_edmo == 'Z' VALID edekKonfigPoleEdpw()
                        @ 17, 63 GET zparam_edpv PICTURE '!' WHEN zparam_edmo == 'Z' VALID edekKonfigPoleEdpv()
+                       @ 18, 78 GET zparam_edrv PICTURE '!' VALID zparam_edrv $ 'ML'
                        @ 19, 76 GET zparam_ejmo PICTURE '!' VALID edekKonfigPoleEjmo()
                        @ 20, 76 GET zparam_ejts PICTURE '!' VALID edekKonfigPoleEjts()
                        @ 21, 78 GET zparam_edsh PICTURE '!' VALID edekKonfigPoleEdsh()
@@ -106,6 +108,7 @@ FUNCTION edekKonfig()
                        param_edsh = zparam_edsh
                        param_eiku = zparam_eiku
                        param_evku = zparam_evku
+                       param_edrv = zparam_edrv
                        save to paramedek all like param_e*
                  end
                  edekKonfigPokaz()
@@ -239,6 +242,7 @@ FUNCTION edekKonfigPokaz()
       @ 11, 68 SAY iif(param_edpz == 'T', 'Tak', 'Nie')
       @ 14, 63 SAY txt_param_edpw
       @ 17, 63 SAY txt_param_edpv
+      @ 18, 78 SAY param_edrv
       @ 19, 76 SAY param_ejmo
       @ 20, 76 SAY param_ejts
       @ 21, 78 SAY param_edsh

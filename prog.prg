@@ -144,6 +144,9 @@ FUNCTION Main()
    // Urz¥d skarbowy dla VIU-DO
    param_evku := '1436'
 
+   // Rodzaj weryfikacji - M - MSXML2, L - libXml2
+   param_edrv = 'L'
+
    // Parametry edeklaracji
    IF File( 'paramedek.mem' )
       RESTORE FROM paramedek ADDITIVE
@@ -154,7 +157,7 @@ FUNCTION Main()
       Alert( 'Nie znaleziono pliku "amibook.dll".;Program dziaˆa z ograniczon¥ funkcjonalno˜ci¥.', { 'OK' } )
    ELSE
 
-      wersjadll = amiInicjuj( wersjaprogramu, win_P2N( hb_gtInfo( HB_GTI_WINHANDLE ) ), edek_transport, Val( param_edsh ) )
+      wersjadll = amiInicjuj( wersjaprogramu, win_P2N( hb_gtInfo( HB_GTI_WINHANDLE ) ), edek_transport, Val( param_edsh ), iif( param_edrv == 'L', 1, 0 ) )
 
       DO CASE
       CASE wersjadll == 0

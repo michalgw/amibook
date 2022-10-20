@@ -44,19 +44,21 @@ FUNCTION amiDllZakoncz()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION amiInicjuj( iWersja, nAppHandle, nTransport, nRodzajSHA )
+FUNCTION amiInicjuj( iWersja, nAppHandle, nTransport, nRodzajSHA, nRodzajWer )
 
    IF Empty( amiDllH )
       RETURN 0
    ENDIF
 
    hb_default( @nTransport, 1 )
+   hb_default( @nRodzajWer, 1 )
 
    RETURN hb_DynCall( { 'amiInicjuj', amiDllH, ;
       hb_bitOr( HB_DYN_CTYPE_INT_UNSIGNED, HB_DYN_CALLCONV_STDCALL ), ;
       HB_DYN_CTYPE_INT_UNSIGNED, HB_DYN_CTYPE_INT_UNSIGNED, ;
-      HB_DYN_CTYPE_INT_UNSIGNED, HB_DYN_CTYPE_INT_UNSIGNED }, iWersja, ;
-      nAppHandle, nTransport, nRodzajSHA )
+      HB_DYN_CTYPE_INT_UNSIGNED, HB_DYN_CTYPE_INT_UNSIGNED, ;
+      HB_DYN_CTYPE_INT_UNSIGNED }, iWersja, ;
+      nAppHandle, nTransport, nRodzajSHA, nRodzajWer )
 
 /*----------------------------------------------------------------------*/
 
