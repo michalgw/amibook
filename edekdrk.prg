@@ -5471,19 +5471,19 @@ FUNCTION DaneXML_PIT11w29(oDoc, cNrRef, hNaglowek)
    ENDIF
    hDane['P_11_1'] := iif( xmlWartoscH( hPozycje, 'P_11' ) == '1', '1', '0' )
    hDane['P_11_2'] := iif( xmlWartoscH( hPozycje, 'P_11' ) == '2', '1', '0' )
-   IF xmlWartoscH( hPodmiot2, 'etd:NIP' ) == ''
+   IF xmlWartoscH( hPodmiot2, 'NIP' ) == ''
       hDane['P_12_R'] := 'P'
-      hDane['P_12_N'] := xmlWartoscH( hPodmiot2, 'etd:PESEL' )
+      hDane['P_12_N'] := xmlWartoscH( hPodmiot2, 'PESEL' )
    ELSE
       hDane['P_12_R'] := 'N'
-      hDane['P_12_N'] := xmlWartoscH( hPodmiot2, 'etd:NIP' )
+      hDane['P_12_N'] := xmlWartoscH( hPodmiot2, 'NIP' )
    ENDIF
    hDane['P_13'] := xmlWartoscH( hPodmiot2, 'NrId' )
    hDane['P_14'] := PracDokRodzajStr( xmlWartoscH( hPodmiot2, 'RodzajNrId' ) )
    hDane['P_15'] := xmlWartoscH( hPodmiot2, 'KodKrajuWydania' )
-   hDane['P_16'] := xmlWartoscH( hPodmiot2, 'etd:Nazwisko' )
-   hDane['P_17'] := xmlWartoscH( hPodmiot2, 'etd:ImiePierwsze' )
-   hDane['P_18'] := xmlWartoscH( hPodmiot2, 'etd:DataUrodzenia' )
+   hDane['P_16'] := xmlWartoscH( hPodmiot2, 'Nazwisko' )
+   hDane['P_17'] := xmlWartoscH( hPodmiot2, 'ImiePierwsze' )
+   hDane['P_18'] := xmlWartoscH( hPodmiot2, 'DataUrodzenia' )
    hDane['P_19'] := xmlWartoscH( hPodmiot2, 'KodKraju' )
    hDane['P_20'] := xmlWartoscH( hPodmiot2, 'Wojewodztwo' )
    hDane['P_21'] := xmlWartoscH( hPodmiot2, 'Powiat' )
