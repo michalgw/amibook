@@ -262,6 +262,9 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       AEval( aRaporty, { | aPoz |
          oSubRap := TFreeReport():New()
          oSubRap:LoadFromFile( aPoz[ 2 ] )
+         IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+            oSubRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+         ENDIF
          RaportUstawDane( oSubRap, aPoz[ 1 ] )
          oRap:AddReport( oSubRap )
          AAdd( aPoz, oSubRap )

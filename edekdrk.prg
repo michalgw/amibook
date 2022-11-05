@@ -410,6 +410,9 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
    AEval( aRaporty, { | aPoz |
       oRap := TFreeReport():New()
       oRap:LoadFromFile( aPoz[ 2 ] )
+      IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+         oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+      ENDIF
       RaportUstawDane( oRap, aPoz[ 1 ] )
       AAdd( aFRObj, oRap )
       } )
