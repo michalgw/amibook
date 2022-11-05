@@ -24,6 +24,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Dane_MC( typpit )
 
+   LOCAL nDANE_MCRecNo
+
    SELECT dane_mc
    opc := 0
    STORE 0 TO zwar_wue,zwar_wur,zwar_wuc,zwar_wuw,zwar_wuz,zwar_wfp,zwar_wfg,;
@@ -33,6 +35,8 @@ FUNCTION Dane_MC( typpit )
    STORE 0 TO zmc_wue,zmc_wur,zmc_wuc,zmc_wuw,zmc_wuz
    STORE 0 TO pwar5_wue,pwar5_wur,pwar5_wuc,pwar5_wuw,pwar5_wuz
    STORE 0 TO pmc_wue,pmc_wur,pmc_wuc,pmc_wuw,pmc_wuz,zDOCHODZDR
+
+   nDANE_MCRecNo := dane_mc->( RecNo() )
 
    ColStd()
    @ 11, 42 CLEAR TO 22, 79
@@ -292,8 +296,9 @@ FUNCTION Dane_MC( typpit )
          READ
          SET CURSOR OFF
          RESTORE SCREEN FROM scr_sklad
+         dane_mc->( dbGoto( nDANE_MCRecNo ) )
          IF LastKey() # K_ESC
-            blokada()
+            BlokadaR()
             REPLACE podstawa WITH zzpodstawa, podstzdr WITH zzpodstzdr, ;
                staw_wue WITH zstaw_wue, staw_wur WITH zstaw_wur, ;
                staw_wuc WITH zstaw_wuc, staw_wuw WITH zstaw_wuw, ;
@@ -306,54 +311,84 @@ FUNCTION Dane_MC( typpit )
                war5_wuw WITH zwar5_wuw, war5_wuz WITH zwar5_wuz, ;
                mc_wue WITH zmc_wue, mc_wur WITH zmc_wur, mc_wuc WITH zmc_wuc, ;
                mc_wuw WITH zmc_wuw, mc_wuz WITH zmc_wuz, dochodzdr WITH zdochodzdr
+            COMMIT
+            UNLOCK
 
             rrre := RecNo()
             SEEK '+' + zident + Str( pmc_wue, 2 )
             IF Found()
+               BlokadaR()
                REPLACE skladki WITH skladki-pwar5_wue
+               COMMIT
+               UNLOCK
             ENDIF
             SEEK '+' + zident + Str( zmc_wue, 2 )
             IF Found()
+               BlokadaR()
                REPLACE skladki WITH skladki + zwar5_wue
+               COMMIT
+               UNLOCK
             ENDIF
 
             SEEK '+' + zident + Str( pmc_wur, 2 )
             IF Found()
+               BlokadaR()
                REPLACE skladki WITH skladki - pwar5_wur
+               COMMIT
+               UNLOCK
             ENDIF
             SEEK '+' + zident + Str( zmc_wur, 2 )
             IF Found()
+               BlokadaR()
                REPLACE skladki WITH skladki + zwar5_wur
+               COMMIT
+               UNLOCK
             ENDIF
 
             SEEK '+' + zident + Str( pmc_wuc, 2 )
             IF Found()
+               BlokadaR()
                REPLACE skladki WITH skladki - pwar5_wuc
+               COMMIT
+               UNLOCK
             ENDIF
             SEEK '+' + zident + Str( zmc_wuc, 2 )
             IF Found()
+               BlokadaR()
                REPLACE skladki WITH skladki + zwar5_wuc
+               COMMIT
+               UNLOCK
             ENDIF
 
             SEEK '+' + zident + Str( pmc_wuw, 2 )
             IF Found()
+               BlokadaR()
                REPLACE skladki WITH skladki - pwar5_wuw
+               COMMIT
+               UNLOCK
             ENDIF
             SEEK '+' + zident + Str( zmc_wuw, 2 )
             IF Found()
+               BlokadaR()
                REPLACE skladki WITH skladki + zwar5_wuw
+               COMMIT
+               UNLOCK
             ENDIF
 
             SEEK '+' + zident + Str( pmc_wuz, 2 )
             IF Found()
+               BlokadaR()
                REPLACE zdrowie WITH zdrowie - pwar5_wuz
+               COMMIT
+               UNLOCK
             ENDIF
             SEEK '+' + zident + Str( zmc_wuz, 2 )
             IF Found()
+               BlokadaR()
                REPLACE zdrowie WITH zdrowie + zwar5_wuz
+               COMMIT
+               UNLOCK
             ENDIF
-            COMMIT
-            UNLOCK
             GO rrre
          ENDIF
       CASE opc == 3
@@ -444,7 +479,9 @@ FUNCTION zrobcos()
 *           zzpodstzdr=podstzdr
 *           zzzpodstzdr=podstzdr
 
-   LOCAL nPrzychod
+   LOCAL nPrzychod, nDANE_MCRecNo
+
+   nDANE_MCRecNo := dane_mc->( RecNo() )
 
    if ( corobic == 1 .AND. mc == ' 1' ) .OR. corobic == 2
       zzpodstawa := parap_p51
@@ -489,6 +526,7 @@ FUNCTION zrobcos()
             ENDIF
          ENDIF
       ENDIF
+      dane_mc->( dbGoto( nDANE_MCRecNo ) )
       zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
 *          zzzpodstzdr=parap_p52
       zstaw_wue := parap_pue + parap_fue
@@ -644,6 +682,7 @@ FUNCTION zrobcos()
             ENDIF
          ENDIF
       ENDIF
+      dane_mc->( dbGoto( nDANE_MCRecNo ) )
       zwar_wuz := Max( _round( zzpodstzdr * ( zstaw_wuz / 100 ), 2 ), _round( parap_p52 * ( parap_fuz / 100 ), 2 ) )
    ENDIF
    przeskla()
