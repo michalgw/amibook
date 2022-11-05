@@ -1689,7 +1689,7 @@ FUNCTION vKOLz()
    LOCAL oGOpis
 
    R := .F.
-   IF ( zKOLUMNA <> '10' .AND. zKOLUMNA <> '11' .AND. zKOLUMNA <> '12' .AND. zKOLUMNA <> '13' .AND. zKOLUMNA <> '16' ) == .T.
+   IF ( zKOLUMNA <> '10' .AND. zKOLUMNA <> '11' .AND. zKOLUMNA <> '12' .AND. zKOLUMNA <> '13' .AND. zKOLUMNA <> '15' .AND. zKOLUMNA <> '16' ) == .T.
       R := .F.
    ELSE
       RestScreen( 7, 40, 20, 79, scr_kolum )
@@ -1716,7 +1716,7 @@ FUNCTION vKOLz2()
    LOCAL oGOpis
 
    R := .F.
-   IF ( ( zKOLUMNA2 <> '10' .AND. zKOLUMNA2 <> '11' .AND. zKOLUMNA2 <> '12' .AND. zKOLUMNA2 <> '13' .AND. zKOLUMNA2 <> '16' ) == .T. ) .OR. zKOLUMNA == zKOLUMNA2
+   IF ( ( zKOLUMNA2 <> '10' .AND. zKOLUMNA2 <> '11' .AND. zKOLUMNA2 <> '12' .AND. zKOLUMNA2 <> '13' .AND. zKOLUMNA2 <> '15' .AND. zKOLUMNA2 <> '16' ) == .T. ) .OR. zKOLUMNA == zKOLUMNA2
       R := .F.
    ELSE
       RestScreen( 7, 40, 20, 79, scr_kolum )
@@ -1754,9 +1754,9 @@ FUNCTION wKOLz()
       @ 14, 41 SAY '11 - koszty uboczne zakupu            '
       @ 15, 41 SAY '12 - wynagrodzenia w gotowce i naturze'
       @ 16, 41 SAY '13 - pozostale koszty                 '
-      @ 17, 41 SAY '16 - koszty dziaˆalno˜ci badawczej    '
-      @ 18, 41 SAY '======================================'
-      @ 19, 41 SAY 'UWAGA !!! Nowa numeracja.             '
+      @ 17, 41 SAY '15 - (kolumna wolna)                  '
+      @ 18, 41 SAY '16 - koszty dziaˆalno˜ci badawczej    '
+      @ 19, 41 SAY '======================================'
       ColStd()
    ENDIF
    RETURN .T.
@@ -1778,9 +1778,9 @@ FUNCTION wKOLz2()
       @ 14, 41 SAY '11 - koszty uboczne zakupu            '
       @ 15, 41 SAY '12 - wynagrodzenia w gotowce i naturze'
       @ 16, 41 SAY '13 - pozostale koszty                 '
-      @ 17, 41 SAY '16 - koszty dziaˆalno˜ci badawczej    '
-      @ 18, 41 SAY '======================================'
-      @ 19, 41 SAY 'UWAGA !!! Nowa numeracja.             '
+      @ 17, 41 SAY '15 - (kolumna wolna)                  '
+      @ 18, 41 SAY '16 - koszty dziaˆalno˜ci badawczej    '
+      @ 19, 41 SAY '======================================'
       ColStd()
    ENDIF
    RETURN .T.
@@ -2325,6 +2325,7 @@ PROCEDURE KRejZ_Ksieguj()
                   repl_( 'uboczne', iif( zKOLUMNA == '11', znetto, 0 ) )
                   repl_( 'wynagr_g', iif( zKOLUMNA == '12', znetto, 0 ) )
                   repl_( 'wydatki', iif( zKOLUMNA == '13' .OR. zKOLUMNA == '16', znetto, 0 ) )
+                  repl_( 'PUSTA', iif( zKOLUMNA == '15', znetto, 0) )
                   repl_( 'K16WART', iif( zKOLUMNA == '16', znetto, 0) )
                   repl_( 'K16OPIS', iif( zKOLUMNA == '16', zK16OPIS, Space( 30 ) ) )
                   IF zNETTO2 <> 0 .AND. Val( zKOLUMNA ) > 0
@@ -2337,6 +2338,8 @@ PROCEDURE KRejZ_Ksieguj()
                         repl_( 'wynagr_g', zNETTO2 )
                      CASE zKOLUMNA2 == '13'
                         repl_( 'wydatki', zNETTO2 )
+                     CASE zKOLUMNA2 == '15'
+                        repl_( 'PUSTA', zNETTO2 )
                      CASE zKOLUMNA2 == '16'
                         repl_( 'K16WART', zNETTO2 )
                         repl_( 'K16OPIS', zK16OPIS )
@@ -2413,6 +2416,8 @@ PROCEDURE KRejZ_Ksieguj()
                   repl_( 'wynagr_g', znetto )
                CASE zKOLUMNA == '13'
                   repl_( 'wydatki', znetto)
+               CASE zKOLUMNA == '15'
+                  repl_( 'PUSTA', znetto)
                CASE zKOLUMNA == '16'
                   repl_(  'wydatki',  znetto )
                   repl_(  'K16WART',  znetto )
@@ -2427,6 +2432,8 @@ PROCEDURE KRejZ_Ksieguj()
                   repl_( 'wynagr_g', znetto2 )
                CASE zKOLUMNA2 == '13'
                   repl_( 'wydatki', znetto2 )
+               CASE zKOLUMNA2 == '15'
+                  repl_( 'PUSTA', znetto2 )
                CASE zKOLUMNA2 == '16'
                   repl_(  'wydatki',  znetto2 )
                   repl_(  'K16WART',  znetto2 )
@@ -2503,6 +2510,8 @@ PROCEDURE KRejZ_Ksieguj()
                repl_( 'wynagr_g', znetto )
             CASE zKOLUMNA == '13'
                repl_( 'wydatki', znetto )
+            CASE zKOLUMNA == '15'
+               repl_( 'PUSTA', znetto )
             CASE zKOLUMNA == '16'
                repl_( 'wydatki' , znetto )
                repl_( 'K16WART' , znetto )
@@ -2517,6 +2526,8 @@ PROCEDURE KRejZ_Ksieguj()
                repl_( 'wynagr_g', znetto2 )
             CASE zKOLUMNA2 == '13'
                repl_( 'wydatki', znetto2 )
+            CASE zKOLUMNA2 == '15'
+               repl_( 'PUSTA', znetto2 )
             CASE zKOLUMNA2 == '16'
                repl_( 'wydatki' , znetto2 )
                repl_( 'K16WART' , znetto2 )
