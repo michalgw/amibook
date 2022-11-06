@@ -557,10 +557,10 @@ FUNCTION zrobcos()
       zwar5_wur := war5_wur
       zwar5_wuc := war5_wuc
       zwar5_wuw := war5_wuw
-      zmc_wue := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
-      zmc_wur := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
-      zmc_wuc := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
-      zmc_wuw := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
+      zmc_wue := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
+      zmc_wur := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
+      zmc_wuc := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
+      zmc_wuw := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
 
       zstaw_wuz := /*parap_puz +*/ parap_fuz
       IF spolka->sposob == 'L' //.AND. Val( mc ) > 1
@@ -616,10 +616,10 @@ FUNCTION zrobcos()
       zwar5_wur := war5_wur
       zwar5_wuc := war5_wuc
       zwar5_wuw := war5_wuw
-      zmc_wue := iif( mc_wue + 1 < 13, mc_wue + 1, 0 )
-      zmc_wur := iif( mc_wur + 1 < 13, mc_wur + 1, 0 )
-      zmc_wuc := iif( mc_wuc + 1 < 13, mc_wuc + 1, 0 )
-      zmc_wuw := iif( mc_wuw + 1 < 13, mc_wuw + 1, 0 )
+      zmc_wue := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
+      zmc_wur := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
+      zmc_wuc := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
+      zmc_wuw := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
 *                przeskla()
 *                skip 1
 

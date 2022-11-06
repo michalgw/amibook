@@ -57,6 +57,21 @@ FUNCTION Param_PF()
       ENDIF
       RETURN lRes
    }
+   LOCAL bZusSklMieW := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 say PadC( "B - bie¾¥cy miesi¥c      N - nast©pny miesi¥c", 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bZusSklMieV := { | |
+      LOCAL lRes, cKolor
+      IF ( lRes := zzussklmie $ 'BN' )
+         @ 24, 0
+         cKolor := SetColor( 'w+' )
+         @ 6, 63 SAY iif( zzussklmie == 'B', 'ie¾¥cy miesi¥c ', 'ast©pny miesi¥c' )
+      ENDIF
+      RETURN lRes
+   }
 
 *############################# PARAMETRY POCZATKOWE #########################
 if .not.file([param_p.mem])
@@ -81,6 +96,7 @@ set colo to /w+
 set colo to
 @  4,42 say ' Doch¢d za                            '
 @  5,42 say ' Doch¢d naliczaj                      '
+@  6,42 say ' Skˆadki odliczaj w                   '
 
 @ 12,42 say ' Na ubezpieczenia wypadkowe:          '
 @ 13,42 say ' pracownik&_o.w                          '
@@ -109,9 +125,11 @@ zparap_fuw=A->parap_fuw
 zparap_fww=A->parap_fww
 zzuspodmie := iif( A->zuspodmie $ 'BP', A->zuspodmie, 'P' )
 zzuspodnar := iif( A->zuspodnar $ 'MN', A->zuspodnar, 'N' )
+zzussklmie := iif( A->zussklmie $ 'BN', A->zussklmie, 'N' )
 *ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ GET ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ
 @  4,62 get zzuspodmie PICTURE '!' WHEN Eval( bZusPodMieW ) VALID Eval( bZusPodMieV )
 @  5,62 get zzuspodnar PICTURE '!' WHEN Eval( bZusPodNarW ) VALID Eval( bZusPodNarV )
+@  6,62 get zzussklmie PICTURE '!' WHEN Eval( bZusSklMieW ) VALID Eval( bZusSklMieV )
 *@ 15,65 get zparap_puw picture "99.99"
 @ 13,75 get zparap_fuw picture "99.99"
 @ 14,75 get zparap_fww picture "99.99"
@@ -128,6 +146,7 @@ repl_([A->parap_fuw],zparap_fuw)
 repl_([A->parap_fww],zparap_fww)
 repl_([A->zuspodmie],zzuspodmie)
 repl_([A->zuspodnar],zzuspodnar)
+repl_([A->zussklmie],zzussklmie)
 
 commit_()
 unlock
@@ -180,6 +199,7 @@ clear type
 set colo to w+
 @ 4,62 say iif( A->zuspodmie == 'B', 'Bie¾¥cy miesi¥c  ', 'Poprzedni miesi¥c' )
 @ 5,62 say iif( A->zuspodnar == 'N', 'Narastaj¥co', 'Miesi©cznie' )
+@ 6,62 say iif( A->zussklmie == 'B', 'Bie¾¥cy miesi¥c ', 'Nast©pny miesi¥c' )
 *@ 15,65 say parap_puw picture "99.99"
 @ 13,75 say parap_fuw picture "99.99"
 @ 14,75 say parap_fww picture "99.99"
