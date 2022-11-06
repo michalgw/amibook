@@ -25,6 +25,24 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 FUNCTION Dane_MC( typpit )
 
    LOCAL nDANE_MCRecNo
+   LOCAL bPrzelW := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 say PadC( "R - r©cznie, bez przeliczanie    A - automatycznie, przelicz warto˜ci", 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bPrzelV := { | cPole |
+      LOCAL lRes, cKolor
+      IF ( lRes := &( 'przel_' + cPole ) $ 'AR' )
+         IF &( 'przel_' + cPole ) == 'A'
+            &( 'zwar_' + cPole ) := _round( zzpodstawa * ( &( 'zstaw_' + cPole ) / 100 ), 2 )
+            &( 'zwar5_' + cPole ) := _round( zzpodstawa * ( &( 'zstaw_' + cPole ) / 100 ), 2 )
+         ENDIF
+         DaneMC_Sumuj()
+         @ 24, 0
+      ENDIF
+      RETURN lRes
+   }
 
    SELECT dane_mc
    opc := 0
@@ -35,6 +53,7 @@ FUNCTION Dane_MC( typpit )
    STORE 0 TO zmc_wue,zmc_wur,zmc_wuc,zmc_wuw,zmc_wuz
    STORE 0 TO pwar5_wue,pwar5_wur,pwar5_wuc,pwar5_wuw,pwar5_wuz
    STORE 0 TO pmc_wue,pmc_wur,pmc_wuc,pmc_wuw,pmc_wuz,zDOCHODZDR
+   STORE 'R' TO przel_wue, przel_wur, przel_wuc, przel_wuw, przel_wuz, przel_wfp, przel_wfg
 
    nDANE_MCRecNo := dane_mc->( RecNo() )
 
@@ -248,10 +267,11 @@ FUNCTION Dane_MC( typpit )
          ELSE
             corobic := 0
          ENDIF
+         STORE 'R' TO przel_wue, przel_wur, przel_wuc, przel_wuw, przel_wuz, przel_wfp, przel_wfg
          SAVE SCREEN TO scr_sklad
          SET CURSOR ON
-         @  4, 40 CLEAR TO 22, 79
-         @  4, 40 TO 22, 79
+         @  4, 38 CLEAR TO 22, 79
+         @  4, 38 TO 22, 79
          @  5, 41 SAY 'Wybierz: 2-podstawic z parametrow     '
          @  6, 41 SAY '         1-przepisz z poprzed.miesiaca'
          @  7, 41 SAY '         0-zostawic jak jest          '
@@ -262,36 +282,42 @@ FUNCTION Dane_MC( typpit )
          @  9, 71 GET zzPODSTAWA PICTURE '99999.99' VALID przeskla()
          @ 10, 41 SAY 'Podstawa tylko do zdrow.(52)'
          @ 10, 69 GET zzPODSTZDR PICTURE '9999999.99' VALID przeskla()
-         @ 11, 41 SAY 'SK&__L.ADKI    %stawki do ZUS do PIT5 za'
-         @ 12, 41 SAY 'Emerytalna ' GET zSTAW_WUE PICTURE '99.99'
-         @ 12, 59 GET zWAR_WUE PICTURE '99999.99'
-         @ 12, 68 GET zWAR5_WUE PICTURE '99999.99'
+         @ 11, 39 SAY 'SK&__L.ADKI    %stawki   do ZUS   do PIT5 za'
+         @ 12, 39 SAY 'Emerytalna ' GET zSTAW_WUE PICTURE '99.99'
+         @ 12, 57 GET przel_wue PICTURE '!' WHEN Eval( bPrzelW ) VALID Eval( bPrzelV, 'WUE' )
+         @ 12, 59 GET zWAR_WUE PICTURE '99999.99' VALID DaneMC_Sumuj()
+         @ 12, 68 GET zWAR5_WUE PICTURE '99999.99' VALID DaneMC_Sumuj()
          @ 12, 77 GET zMC_WUE PICTURE '99' RANGE 0, 12
-         @ 13, 41 SAY 'Rentowa    ' GET zSTAW_WUR PICTURE '99.99'
-         @ 13, 59 GET zWAR_WUR PICTURE '99999.99'
-         @ 13, 68 GET zWAR5_WUR PICTURE '99999.99'
+         @ 13, 39 SAY 'Rentowa    ' GET zSTAW_WUR PICTURE '99.99'
+         @ 13, 57 GET przel_wur PICTURE '!' WHEN Eval( bPrzelW ) VALID Eval( bPrzelV, 'WUR' )
+         @ 13, 59 GET zWAR_WUR PICTURE '99999.99' VALID DaneMC_Sumuj()
+         @ 13, 68 GET zWAR5_WUR PICTURE '99999.99' VALID DaneMC_Sumuj()
          @ 13, 77 GET zMC_WUR PICTURE '99' RANGE 0, 12
-         @ 14, 41 SAY 'Chorobowa  ' GET zSTAW_WUC PICTURE '99.99'
-         @ 14, 59 GET zWAR_WUC PICTURE '99999.99'
-         @ 14, 68 GET zWAR5_WUC PICTURE '99999.99'
+         @ 14, 39 SAY 'Chorobowa  ' GET zSTAW_WUC PICTURE '99.99'
+         @ 14, 57 GET przel_wuc PICTURE '!' WHEN Eval( bPrzelW ) VALID Eval( bPrzelV, 'WUC' )
+         @ 14, 59 GET zWAR_WUC PICTURE '99999.99' VALID DaneMC_Sumuj()
+         @ 14, 68 GET zWAR5_WUC PICTURE '99999.99' VALID DaneMC_Sumuj()
          @ 14, 77 GET zMC_WUC PICTURE '99' RANGE 0, 12
-         @ 15, 41 SAY 'Wypadkowa  ' GET zSTAW_WUW PICTURE '99.99'
-         @ 15, 59 GET zWAR_WUW PICTURE '99999.99'
-         @ 15, 68 GET zWAR5_WUW PICTURE '99999.99'
+         @ 15, 39 SAY 'Wypadkowa  ' GET zSTAW_WUW PICTURE '99.99'
+         @ 15, 57 GET przel_wuw PICTURE '!' WHEN Eval( bPrzelW ) VALID Eval( bPrzelV, 'WUW' )
+         @ 15, 59 GET zWAR_WUW PICTURE '99999.99' VALID DaneMC_Sumuj()
+         @ 15, 68 GET zWAR5_WUW PICTURE '99999.99' VALID DaneMC_Sumuj()
          @ 15, 77 GET zMC_WUW PICTURE '99' RANGE 0, 12
-         @ 16, 41 SAY 'RAZEM      '
-         @ 17, 41 SAY 'Doch¢d do podst. zdrow. ' GET zDOCHODZDR PICTURE '9999999.99'
-         @ 18, 41 SAY 'Zdro.do ZUS' GET zSTAW_WUZ PICTURE '99.99'
+         @ 16, 39 SAY 'RAZEM      '
+         @ 17, 39 SAY 'Doch¢d do podst. zdrow.   ' GET zDOCHODZDR PICTURE '9999999.99'
+         @ 18, 39 SAY 'Zdro.do ZUS' GET zSTAW_WUZ PICTURE '99.99'
          @ 18, 59 GET zWAR_WUZ PICTURE '99999.99'
          //@ 18, 41 SAY '     do PIT' GET zSTAW5_WUZ PICTURE '99.99'
          IF zRYCZALT == 'T' .OR. spolka->sposob == 'L'
             @ 18, 68 GET zWAR5_WUZ PICTURE '99999.99'
             @ 18, 77 GET zMC_WUZ PICTURE '99' RANGE 0, 12
          ENDIF
-         @ 19, 41 SAY 'FUNDUSZE   %stawki do ZUS do PIT5'
-         @ 20, 41 SAY 'Pracy      ' GET zSTAW_WFP PICTURE '99.99'
+         @ 19, 39 SAY 'FUNDUSZE   %stawki   do ZUS   do PIT5'
+         @ 20, 39 SAY 'Pracy      ' GET zSTAW_WFP PICTURE '99.99'
+         @ 20, 57 GET przel_wfp PICTURE '!' WHEN Eval( bPrzelW ) VALID Eval( bPrzelV, 'WFP' )
          @ 20, 59 GET zWAR_WFP PICTURE '99999.99'
-         @ 21, 41 SAY 'GSP        ' GET zSTAW_WFG PICTURE '99.99'
+         @ 21, 39 SAY 'GSP        ' GET zSTAW_WFG PICTURE '99.99'
+         @ 21, 57 GET przel_wfg PICTURE '!' WHEN Eval( bPrzelW ) VALID Eval( bPrzelV, 'WFG' )
          @ 21, 59 GET zWAR_WFG PICTURE '99999.99'
          READ
          SET CURSOR OFF
@@ -463,7 +489,7 @@ FUNCTION przeskla()
    zstaw_wsum := zstaw_wue + zstaw_wur + zstaw_wuc + zstaw_wuw
    zzskladki := zwar_wsum
    SET COLOR TO w+
-   @ 16, 41 SAY 'RAZEM       ' + Str( zSTAW_WSUM, 5, 2 )
+   @ 16, 39 SAY 'RAZEM       ' + Str( zSTAW_WSUM, 5, 2 )
    @ 16, 59 SAY zWAR_WSUM PICTURE '99999.99'
    @ 16, 68 SAY zWAR5_WSUM PICTURE '99999.99'
    ColStd()
@@ -535,12 +561,15 @@ FUNCTION zrobcos()
       zstaw_wuw := parap_puw + parap_fww
       zstaw_wfp := parap_pfp + parap_ffp
       zstaw_wfg := parap_pfg + parap_ffg
+
+      /*
       zwar_wue := war_wue
       zwar_wur := war_wur
       zwar_wuc := war_wuc
       zwar_wuw := war_wuw
       zwar_wfp := war_wfp
       zwar_wfg := war_wfg
+      */
 * usuwanie bledu naliczania
 *
 *                 pwar5_wue=war5_wue
@@ -553,10 +582,13 @@ FUNCTION zrobcos()
 *                 pmc_wuw=mc_wuw
 *
 * usuwanie bledu naliczania
+      /*
       zwar5_wue := war5_wue
       zwar5_wur := war5_wur
       zwar5_wuc := war5_wuc
       zwar5_wuw := war5_wuw
+      */
+
       zmc_wue := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
       zmc_wur := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
       zmc_wuc := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
@@ -579,7 +611,18 @@ FUNCTION zrobcos()
       IF zRYCZALT <> 'T' .AND. spolka->sposob <> 'L'
          zwar5_wuz := 0
       ENDIF
-      zmc_wuz := iif( Val( mc ) + 1 < 13, Val( mc ) + 1, 0 )
+      zmc_wuz := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
+
+      zwar_wue := _round( zzpodstawa * ( zstaw_wue / 100 ), 2 )
+      zwar_wur := _round( zzpodstawa * ( zstaw_wur / 100 ), 2 )
+      zwar_wuc := _round( zzpodstawa * ( zstaw_wuc / 100 ), 2 )
+      zwar_wuw := _round( zzpodstawa * ( zstaw_wuw / 100 ), 2 )
+      zwar_wfp := _round( zzpodstawa * ( zstaw_wfp / 100 ), 2 )
+      zwar_wfg := _round( zzpodstawa * ( zstaw_wfg / 100 ), 2 )
+      zwar5_wue := _round( zzpodstawa * ( zstaw_wue / 100 ), 2 )
+      zwar5_wur := _round( zzpodstawa * ( zstaw_wur / 100 ), 2 )
+      zwar5_wuc := _round( zzpodstawa * ( zstaw_wuc / 100 ), 2 )
+      zwar5_wuw := _round( zzpodstawa * ( zstaw_wuw / 100 ), 2 )
 
    ENDIF
    IF (corobic == 1 .AND. mc # ' 1' )
@@ -640,7 +683,7 @@ FUNCTION zrobcos()
       IF zRYCZALT <> 'T' .AND. spolka->sposob <> 'L'
          zwar5_wuz := 0
       ENDIF
-      zmc_wuz := iif( mc_wuz + 1 < 13, mc_wuz + 1, 0 )
+      zmc_wuz := iif( mc_wuz + iif( firma->zussklmie == 'B', 0, 1 ) < 13, mc_wuz + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
 *                przeskla()
       SKIP 1
       IF zRYCZALT == 'T'
@@ -689,33 +732,51 @@ FUNCTION zrobcos()
    SET COLOR TO /w+
    @  9, 71 SAY zzPODSTAWA PICTURE '99999.99'
    @ 10, 69 SAY zzPODSTZDR PICTURE '9999999.99'
-   @ 12, 53 SAY zSTAW_WUE PICTURE '99.99'
+   @ 12, 51 SAY zSTAW_WUE PICTURE '99.99'
    @ 12, 59 SAY zWAR_WUE PICTURE '99999.99'
    @ 12, 68 SAY zWAR5_WUE PICTURE '99999.99'
    @ 12, 77 SAY zMC_WUE PICTURE '99'
-   @ 13, 53 SAY zSTAW_WUR PICTURE '99.99'
+   @ 13, 51 SAY zSTAW_WUR PICTURE '99.99'
    @ 13, 59 SAY zWAR_WUR PICTURE '99999.99'
    @ 13, 68 SAY zWAR5_WUR PICTURE '99999.99'
    @ 13, 77 SAY zMC_WUR PICTURE '99'
-   @ 14, 53 SAY zSTAW_WUC PICTURE '99.99'
+   @ 14, 51 SAY zSTAW_WUC PICTURE '99.99'
    @ 14, 59 SAY zWAR_WUC PICTURE '99999.99'
    @ 14, 68 SAY zWAR5_WUC PICTURE '99999.99'
    @ 14, 77 SAY zMC_WUC PICTURE '99'
-   @ 15, 53 SAY zSTAW_WUW PICTURE '99.99'
+   @ 15, 51 SAY zSTAW_WUW PICTURE '99.99'
    @ 15, 59 SAY zWAR_WUW PICTURE '99999.99'
    @ 15, 68 SAY zWAR5_WUW PICTURE '99999.99'
    @ 15, 77 SAY zMC_WUW PICTURE '99'
    @ 17, 66 SAY zDOCHODZDR PICTURE '9999999.99'
-   @ 18, 53 SAY zSTAW_WUZ PICTURE '99.99'
+   @ 18, 51 SAY zSTAW_WUZ PICTURE '99.99'
    @ 18, 59 SAY zWAR_WUZ PICTURE '99999.99'
    //@ 18, 53 SAY zSTAW5_WUZ PICTURE '99.99'
    IF zRYCZALT == 'T' .OR. spolka->sposob == 'L'
       @ 18, 68 SAY zWAR5_WUZ PICTURE '99999.99'
       @ 18, 77 SAY zMC_WUZ PICTURE '99'
    ENDIF
-   @ 20, 53 SAY zSTAW_WFP PICTURE '99.99'
+   @ 20, 51 SAY zSTAW_WFP PICTURE '99.99'
    @ 20, 59 SAY zWAR_WFP PICTURE '99999.99'
-   @ 21, 53 SAY zSTAW_WFG PICTURE '99.99'
+   @ 21, 51 SAY zSTAW_WFG PICTURE '99.99'
    @ 21, 59 SAY zWAR_WFG PICTURE '99999.99'
    ColStd()
    RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneMC_Sumuj()
+
+   zwar_wsum := zwar_wue + zwar_wur + zwar_wuc + zwar_wuw
+   zwar5_wsum := zwar5_wue + zwar5_wur + zwar5_wuc + zwar5_wuw
+   zstaw_wsum := zstaw_wue + zstaw_wur + zstaw_wuc + zstaw_wuw
+   zzskladki := zwar_wsum
+   SET COLOR TO w+
+   @ 16, 39 SAY 'RAZEM       ' + Str( zSTAW_WSUM, 5, 2 )
+   @ 16, 59 SAY zWAR_WSUM PICTURE '99999.99'
+   @ 16, 68 SAY zWAR5_WSUM PICTURE '99999.99'
+   ColStd()
+
+   RETURN .T.
+
+
