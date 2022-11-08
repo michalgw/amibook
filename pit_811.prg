@@ -63,7 +63,8 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       *idpr=str(recno(),5)
       idpr := Str( rec_no, 5 )
 
-      id_pracownika := RecNo()
+      //id_pracownika := RecNo()
+      id_pracownika := prac->id
 
       IF DToS( data_przy ) <> Space( 8 )
          zdataprzy := data_przy

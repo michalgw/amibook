@@ -100,7 +100,7 @@ METHOD Inicjuj() CLASS TEDeklaracje
       ::nPracOrd := dbOrderInfo( DBOI_NUMBER )
       ::nPracRecNo := prac->( RecNo() )
    ENDIF
-   prac->( dbSetOrder( 4 ) )
+   prac->( dbSetOrder( 5 ) )
    bColorBlock := {|| iif(AScan(::aWybrane, { |n| n == edeklar->(RecNo()) }) > 0, {5,2}, {1,2}) }
    ::oBrowser := TBrowseNew(3, 0, 22, 79)
    ::oBrowser:border := B_SINGLE

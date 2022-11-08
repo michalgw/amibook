@@ -2108,6 +2108,7 @@ FUNCTION dbfIdxPRAC()
    index on del+firma+iif(status<'U','-','+')+nazwisko+imie1+imie2 to prac2
    index on rec_no to prac3
    index on del+firma+pesel to prac4
+   index on Str( id, 8 ) TO prac5
    RETURN
 ****************************************
 FUNCTION dbfIdxPRAC_HZ()
