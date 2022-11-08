@@ -290,9 +290,9 @@ FUNCTION Main()
          CColPro := C2 + ',' + C1 + ',,&CCCN,' + C2
          CColInv := '&CCCGR/&CCCN,&CCCN/&CCCW,,&CCCN,&CCCGR/&CCCN'
       ENDIF
+      SAVE TO kolor ALL LIKE KINESKOP
    ENDIF
 
-   SAVE TO kolor ALL LIKE KINESKOP
 
    //---
 
