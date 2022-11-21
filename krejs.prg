@@ -340,7 +340,7 @@ PROCEDURE KRejS()
                lRyczModSys := .F.
                IF zRYCZALT == 'T'
                   IF Left( LTrim( numer ), 2 ) == 'F-'
-                     lRyczModSys := .T.
+                     lRyczModSys := kl # K_CTRL_F10
                   ELSE
                      IF kl # K_CTRL_F10 .AND. DocSys()
                         BREAK
