@@ -617,14 +617,6 @@ PROCEDURE FakturyN()
                   zSEK_CV7 := 'SP'
                ENDIF
 
-               zWARTZW := zWARTZW - kor_zWARTZW
-               zWART08 := zWART08 - kor_zWART08
-               zWART00 := zWART00 - kor_zWART00
-               zWART07 := zWART07 - kor_zWART07
-               zWART02 := zWART02 - kor_zWART02
-               zWART22 := zWART22 - kor_zWART22
-               zWART12 := zWART12 - kor_zWART12
-
                IF zWARTRANSP == 'T'
 
                ELSE
@@ -637,6 +629,24 @@ PROCEDURE FakturyN()
                   zVAT12 := _round( zWART12 * ( vat_D / 100 ), 2 )
                   zBRUT12 := zWART12 + zVAT12
                ENDIF
+
+               zWARTZW := zWARTZW - kor_zWARTZW
+               zWART08 := zWART08 - kor_zWART08
+               zWART00 := zWART00 - kor_zWART00
+               zWART07 := zWART07 - kor_zWART07
+               zWART02 := zWART02 - kor_zWART02
+               zWART22 := zWART22 - kor_zWART22
+               zWART12 := zWART12 - kor_zWART12
+
+               zVAT07 := zVAT07 - kor_zVAT07
+               zVAT02 := zVAT02 - kor_zVAT02
+               zVAT22 := zVAT22 - kor_zVAT22
+               zVAT12 := zVAT12 - kor_zVAT12
+
+               zBRUT07 := zBRUT07 - kor_zBRUT07
+               zBRUT02 := zBRUT02 - kor_zBRUT02
+               zBRUT22 := zBRUT22 - kor_zBRUT22
+               zBRUT12 := zBRUT12 - kor_zBRUT12
 
                razem := zWARTZW + zWART08 + zWART00 + zWART07 + zWART22 + zWART02 + zWART12
 
