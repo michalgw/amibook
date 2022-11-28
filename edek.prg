@@ -100,7 +100,7 @@ METHOD Inicjuj() CLASS TEDeklaracje
       ::nPracOrd := dbOrderInfo( DBOI_NUMBER )
       ::nPracRecNo := prac->( RecNo() )
    ENDIF
-   prac->( dbSetOrder( 5 ) )
+   prac->( dbSetOrder( 6 ) )
    bColorBlock := {|| iif(AScan(::aWybrane, { |n| n == edeklar->(RecNo()) }) > 0, {5,2}, {1,2}) }
    ::oBrowser := TBrowseNew(3, 0, 22, 79)
    ::oBrowser:border := B_SINGLE
@@ -310,7 +310,7 @@ METHOD Uruchom(nID) CLASS TEDeklaracje
    RETURN
 
 METHOD PobierzPrac() CLASS TEDeklaracje
-   IF (Val(edeklar->osoba) > 0) .AND. prac->( dbSeek( Val( edeklar->osoba ) ) )
+   IF (Val(edeklar->osoba) > 0) .AND. prac->( dbSeek( Str( Val( edeklar->osoba ), 8 ) ) )
       //prac->(dbGoto(Val(edeklar->osoba)))
       RETURN PadR(SubStr(AllTrim(prac->nazwisko) + ' ' + AllTrim(prac->imie1), 1, 16), 16)
    ENDIF
