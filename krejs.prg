@@ -1322,6 +1322,7 @@ PROCEDURE KRejS()
 
       CASE kl == Asc( 'W' ) .OR. kl == Asc( 'w' )
          VAT_Sprzwdz_GrpNIP_WLApi( 'rejs', { || &_bot }  )
+         SELECT rejs
 
       CASE kl == K_F5
          IF ! docsys()

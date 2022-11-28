@@ -879,6 +879,7 @@ PROCEDURE KRejZ()
 
       CASE kl == Asc( 'W' ) .OR. kl == Asc( 'w' )
          VAT_Sprzwdz_GrpNIP_WLApi( 'rejz', { || &_bot }  )
+         SELECT rejz
 
       CASE kl == Asc( 'F' ) .OR. kl == Asc( 'f' )
          KRejZIFT2()
