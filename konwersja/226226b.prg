@@ -14,7 +14,7 @@ REQUEST DBFCDX
 FUNCTION Main()
 
    LOCAL aDane, cFirma, cSpolka
-   PUBLIC param_rok
+   PUBLIC wersja_db := 0
 
    rddSetDefault( "DBFCDX" )
    HB_LANGSELECT( 'PL' )
@@ -23,37 +23,48 @@ FUNCTION Main()
    SET DBFLOCKSCHEME TO DB_DBFLOCK_VFP
    hb_GtInfo( HB_GTI_CLOSABLE, .F. )
 
-   dbfInicjujDane()
+   IF File( 'wersjadb.mem' )
+      RESTORE FROM wersjadb ADDITIVE
+   ENDIF
 
-   ? 'Indeksowanie...'
-   dbfIdxPRAC()
-   dbCloseAll()
+   IF wersja_db < 2262
 
-   ? 'Aktualizacja danych...'
+      dbfInicjujDane()
 
-   SELECT 1
-   DO WHILE .NOT. Dostep( 'EDEKLAR' )
-   ENDDO
+      ? 'Indeksowanie...'
+      dbfIdxPRAC()
+      dbCloseAll()
 
-   SELECT 2
-   DO WHILE .NOT. Dostep( 'PRAC' )
-   ENDDO
+      ? 'Aktualizacja danych...'
 
-   edeklar->( dbGoTop() )
-   DO WHILE ! edeklar->( Eof() )
-      IF Val( edeklar->osoba ) > 0
-         prac->( dbGoto( Val( edeklar->osoba ) ) )
-         IF prac->del == '+' .AND. prac->firma == edeklar->firma
-            edeklar->( dbRLock() )
-            edeklar->osoba := Str( prac->id, 3 )
-            edeklar->( dbCommit() )
-            edeklar->( dbUnlock() )
+      SELECT 1
+      DO WHILE .NOT. Dostep( 'EDEKLAR' )
+      ENDDO
+
+      SELECT 2
+      DO WHILE .NOT. Dostep( 'PRAC' )
+      ENDDO
+
+      edeklar->( dbGoTop() )
+      DO WHILE ! edeklar->( Eof() )
+         IF Val( edeklar->osoba ) > 0
+            prac->( dbGoto( Val( edeklar->osoba ) ) )
+            IF prac->del == '+' .AND. prac->firma == edeklar->firma
+               edeklar->( dbRLock() )
+               edeklar->osoba := Str( prac->id, 3 )
+               edeklar->( dbCommit() )
+               edeklar->( dbUnlock() )
+            ENDIF
          ENDIF
-      ENDIF
-      edeklar->( dbSkip() )
-   ENDDO
+         edeklar->( dbSkip() )
+      ENDDO
 
-   dbCloseAll()
+      dbCloseAll()
+
+      wersja_db := 2262
+      SAVE ALL LIKE wersja_db TO wersjadb
+
+   ENDIF
 
    RETURN
 
