@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION ZUS_Zglo()
 
-   LOCAL aWersje := { '1.3', '5.2' }
+   LOCAL aWersje := { '1.3', '5.4' }
 
    opc := 0
    RR := 0
@@ -78,7 +78,7 @@ FUNCTION ZUS_Zglo()
          DO WHILE .T.
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
             @ 20, 47 GET zparaz_cel PICTURE repl( '!', 60 )
-            @ 22, 58, 22, 64 GET zparaz_wer LISTBOX aWersje DROPDOWN
+            @ 22, 58, 24, 64 GET zparaz_wer LISTBOX aWersje DROPDOWN
             SET CURSOR ON
             READ
             SET CURSOR OFF

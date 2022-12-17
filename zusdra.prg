@@ -37,6 +37,15 @@ PROCEDURE ZusDra( ubezp )
    ENDIF
    zspolka := iif( spolka, 'T', 'N' )
 
+   SELECT 5
+   IF Dostep( 'UMOWY' )
+      SetInd( 'UMOWY' )
+      SET ORDER TO 4
+   ELSE
+      Close_()
+      RETURN
+   ENDIF
+
    SELECT 4
    IF Dostep( 'DANE_MC' )
       SET INDEX TO dane_mc
@@ -126,6 +135,7 @@ PROCEDURE ZusDra( ubezp )
       sum_wyp := 0
       zwar_puc := 0
       zwar_puw := 0
+      zwar_fuc := 0
       zwar_fuw := 0
       zwar_puz := 0
       zwar_ffp := 0
@@ -164,6 +174,7 @@ PROCEDURE ZusDra( ubezp )
                sum_wyp := sum_wyp + war_puw + war_fuw
                zwar_puc := zwar_puc + war_puc
                zwar_puw := zwar_puw + war_puw
+               zwar_fuc := zwar_fuc + war_fuc
                zwar_fuw := zwar_fuw + war_fuw
                zwar_puz := zwar_puz + war_puz
                zwar_ffp := zwar_ffp + war_ffp
@@ -174,10 +185,41 @@ PROCEDURE ZusDra( ubezp )
          SKIP
       ENDDO
 
+      SELECT umowy
+      GO TOP
+      SEEK '+' + ident_fir + param_rok + StrTran( miesiac, ' ', '0' )
+      DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma = ident_fir ;
+         .AND. umowy->data_wyp >= hb_Date( Val( param_rok ), Val( miesiac ), 1 ) ;
+         .AND. umowy->data_wyp <= EoM( hb_Date( Val( param_rok ), Val( miesiac ), 1 ) )
+
+         IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0
+            ilub := ilub + 1
+            //ilet := ilet + ( wymiarl / wymiarm )
+            sum_eme := sum_eme + war_pue + war_fue
+            sum_ren := sum_ren + war_pur + war_fur
+            zwar_pue := zwar_pue + war_pue
+            zwar_pur := zwar_pur + war_pur
+            zwar_fue := zwar_fue + war_fue
+            zwar_fur := zwar_fur + war_fur
+            sum_cho := sum_cho + war_puc + war_fuc
+            sum_wyp := sum_wyp + war_puw + war_fuw
+            zwar_puc := zwar_puc + war_puc
+            zwar_puw := zwar_puw + war_puw
+            zwar_fuc := zwar_fuc + war_fuc
+            zwar_fuw := zwar_fuw + war_fuw
+            zwar_puz := zwar_puz + war_puz
+            zwar_ffp := zwar_ffp + war_ffp
+            zwar_ffg := zwar_ffg + war_ffg
+         ENDIF
+
+         SKIP
+
+      ENDDO
+
       kedu_pocz()
       dp_pocz( 'DRA' )
       zus_pocz( 'DRA', 1 )
-      dadra( '3', miesiac, param_rok )
+      dadra( '6', miesiac, param_rok )
       IF zSPOLKA = 'T'
          dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
       ELSE
@@ -188,7 +230,7 @@ PROCEDURE ZusDra( ubezp )
       zsdrai( sum_eme, sum_ren, sum_eme + sum_ren, zwar_pue, zwar_pur, zwar_pue + zwar_pur, ;
          zwar_fue, zwar_fur, zwar_fue + zwar_fur, sum_cho, sum_wyp, sum_cho + sum_wyp, ;
          zwar_puc, zwar_puw, zwar_puc + zwar_puw, ;
-         zwar_fuw, zwar_fuw, sum_eme + sum_ren + sum_cho + sum_wyp )
+         zwar_fuw, zwar_fuw + iif( paraz_wer == 2, zwar_fuc, 0 ), sum_eme + sum_ren + sum_cho + sum_wyp, zwar_fuc )
       zwdra()
       rivdra()
       zsdra( zwar_puz )
@@ -248,7 +290,7 @@ PROCEDURE ZusDra( ubezp )
          kedu_pocz()
          dp_pocz( 'DRA' )
          zus_pocz( 'DRA', 1 )
-         dadra( '2', miesiac, param_rok )
+         dadra( '6', miesiac, param_rok )
          *dipl rozne dla spolki i osoby fizycznej
          subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
          dipl( A->NIP, '', A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, A->NAZ_IMIE, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
@@ -350,15 +392,15 @@ PROCEDURE ZusDra( ubezp )
             SET PRINTER TO &aaaa
             kedu_pocz()
             dp_pocz('DRA')
-            zus_pocz( 'DRA' )
-            dadra( '2', miesiac, param_rok )
+            zus_pocz( 'DRA', 1 )
+            dadra( '6', miesiac, param_rok )
             *dipl rozne dla spolki i osoby fizycznej
             subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
             dipl( A->NIP, '', A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, A->NAZ_IMIE, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
             inn7( 1, 0, d->staw_wuw )
             zsdrai( d->war_wue, d->war_wur, d->war_wue + d->war_wur, d->war_wue, d->war_wur, d->war_wue + d->war_wur, ;
                0, 0, 0, d->war_wuc, d->war_wuw, d->war_wuc + d->war_wuw, d->war_wuc, d->war_wuw, d->war_wuc + d->war_wuw, ;
-               0, 0, d->war_wue + d->war_wur + d->war_wuc + d->war_wuw )
+               0, 0, d->war_wue + d->war_wur + d->war_wuc + d->war_wuw, 0 )
             zwdra()
             rivdra()
             zsdra( d->war_wuz )
@@ -366,6 +408,12 @@ PROCEDURE ZusDra( ubezp )
             lskd()
             kndk()
             dddu( A->KOD_TYTU, d->podstawa, d->podstzdr )
+            IF zRYCZALT <> 'T'
+               nRodzaj := iif( spolka->sposob == 'L', 2, 1 )
+            ELSE
+               nRodzaj := iif( spolka->ryczstzdr $ '123', 4, 3 )
+            ENDIF
+            ZUS_FormaOpodat( nRodzaj, D->PODSTZDR, D->WAR_wUZ, D->dochodzdr, A->ryczprzpr, 'XI' )
             opls()
             zus_kon( 'DRA' )
             dp_kon('DRA')
@@ -465,6 +513,7 @@ PROCEDURE ZusDra( ubezp )
       sum_wyp := 0
       zwar_puc := 0
       zwar_puw := 0
+      zwar_fuc := 0
       zwar_fuw := 0
       zwar_puz := 0
       zwar_ffp := 0
@@ -503,6 +552,7 @@ PROCEDURE ZusDra( ubezp )
                sum_wyp := sum_wyp + war_puw + war_fuw
                zwar_puc := zwar_puc + war_puc
                zwar_puw := zwar_puw + war_puw
+               zwar_fuc := zwar_fuc + war_fuc
                zwar_fuw := zwar_fuw + war_fuw
                zwar_puz := zwar_puz + war_puz
                zwar_ffp := zwar_ffp + war_ffp
@@ -511,6 +561,37 @@ PROCEDURE ZusDra( ubezp )
          ENDIF
          SELECT prac
          SKIP
+      ENDDO
+
+      SELECT umowy
+      GO TOP
+      SEEK '+' + ident_fir + param_rok + StrTran( miesiac, ' ', '0' )
+      DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma = ident_fir ;
+         .AND. umowy->data_wyp >= hb_Date( Val( param_rok ), Val( miesiac ), 1 ) ;
+         .AND. umowy->data_wyp <= EoM( hb_Date( Val( param_rok ), Val( miesiac ), 1 ) )
+
+         IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0
+            ilub := ilub + 1
+            //ilet := ilet + ( wymiarl / wymiarm )
+            sum_eme := sum_eme + war_pue + war_fue
+            sum_ren := sum_ren + war_pur + war_fur
+            zwar_pue := zwar_pue + war_pue
+            zwar_pur := zwar_pur + war_pur
+            zwar_fue := zwar_fue + war_fue
+            zwar_fur := zwar_fur + war_fur
+            sum_cho := sum_cho + war_puc + war_fuc
+            sum_wyp := sum_wyp + war_puw + war_fuw
+            zwar_puc := zwar_puc + war_puc
+            zwar_puw := zwar_puw + war_puw
+            zwar_fuc := zwar_fuc + war_fuc
+            zwar_fuw := zwar_fuw + war_fuw
+            zwar_puz := zwar_puz + war_puz
+            zwar_ffp := zwar_ffp + war_ffp
+            zwar_ffg := zwar_ffg + war_ffg
+         ENDIF
+
+         SKIP
+
       ENDDO
 
       SELECT spolka
@@ -545,7 +626,7 @@ PROCEDURE ZusDra( ubezp )
       kedu_pocz()
       dp_pocz( 'DRA' )
       zus_pocz( 'DRA', 1 )
-      dadra( '3', miesiac, param_rok )
+      dadra( '6', miesiac, param_rok )
       IF zSPOLKA = 'T'
          dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
       ELSE
@@ -557,7 +638,7 @@ PROCEDURE ZusDra( ubezp )
       zsdrai( sum_eme, sum_ren, sum_eme + sum_ren, zwar_pue, zwar_pur, zwar_pue + zwar_pur, ;
          zwar_fue, zwar_fur, zwar_fue + zwar_fur, sum_cho, sum_wyp, sum_cho + sum_wyp, ;
          zwar_puc, zwar_puw, zwar_puc + zwar_puw, ;
-         zwar_fuw, zwar_fuw, sum_eme + sum_ren + sum_cho + sum_wyp )
+         zwar_fuw, zwar_fuw + iif( paraz_wer == 2, zwar_fuc, 0 ), sum_eme + sum_ren + sum_cho + sum_wyp, zwar_fuc )
       zwdra()
       rivdra()
       zsdra( zwar_puz )

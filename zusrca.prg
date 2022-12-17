@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE ZusRca( ubezp )
 
-   LOCAL nNumBlok := 1
+   LOCAL nNumBlok := 1, nRodzaj
    PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
 
    @ 1, 47 SAY '          '
@@ -36,6 +36,15 @@ PROCEDURE ZusRca( ubezp )
       RETURN
    ENDIF
    zspolka := iif( spolka, 'T', 'N' )
+
+   SELECT 5
+   IF Dostep( 'UMOWY' )
+      SetInd( 'UMOWY' )
+      SET ORDER TO 4
+   ELSE
+      Close_()
+      RETURN
+   ENDIF
 
    SELECT 4
    IF Dostep( 'DANE_MC' )
@@ -167,18 +176,69 @@ PROCEDURE ZusRca( ubezp )
                   ETATY->WAR_FUR, ;
                   ETATY->WAR_FUW, ;
                   ETATY->WAR_PF3, ;
-                  ETATY->WAR_PSUM + ETATY->WAR_PUZ + ETATY->WAR_FSUM - ( ETATY->WAR_FFP + ETATY->WAR_FFG ), ;
+                  ETATY->WAR_PSUM + iif( paraz_wer == 2, 0, ETATY->WAR_PUZ ) + ETATY->WAR_FSUM - ( ETATY->WAR_FFP + ETATY->WAR_FFG ), ;
                   ETATY->ILOSO_RODZ, ;
                   ETATY->ZASIL_RODZ, ;
                   ETATY->ILOSO_PIEL, ;
                   ETATY->ZASIL_PIEL, ;
                   ETATY->ZASIL_PIEL + ETATY->ZASIL_RODZ, ;
                   nNumBlok )
+               nNumBlok++
             ENDIF
          ENDIF
          SELECT prac
          SKIP
-         nNumBlok++
+      ENDDO
+
+      SELECT prac
+      SET ORDER TO 4
+
+      SELECT umowy
+      GO TOP
+      SEEK '+' + ident_fir + param_rok + StrTran( miesiac, ' ', '0' )
+      DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma = ident_fir ;
+         .AND. umowy->data_wyp >= hb_Date( Val( param_rok ), Val( miesiac ), 1 ) ;
+         .AND. umowy->data_wyp <= EoM( hb_Date( Val( param_rok ), Val( miesiac ), 1 ) )
+
+         IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0
+
+            prac->( dbSeek( Val( umowy->ident ) ) )
+
+            IF prac->( Found() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
+
+               ddorca( PRAC->NAZWISKO,;
+                  PRAC->IMIE1,;
+                  iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;
+                  iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
+                  UMOWY->KOD_TYTU, ;
+                  '', ;
+                  UMOWY->PENSJA, ;
+                  UMOWY->PENSJA, ;
+                  UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM ), ;
+                  UMOWY->WAR_PUE, ;
+                  UMOWY->WAR_PUR, ;
+                  UMOWY->WAR_PUC, ;
+                  UMOWY->WAR_PUZ, ;
+                  UMOWY->WAR_FUE, ;
+                  UMOWY->WAR_FUR, ;
+                  UMOWY->WAR_FUW, ;
+                  UMOWY->WAR_PF3, ;
+                  UMOWY->WAR_PSUM + iif( paraz_wer == 2, 0, UMOWY->WAR_PUZ ) + UMOWY->WAR_FSUM - ( UMOWY->WAR_FFP + UMOWY->WAR_FFG ), ;
+                  0, ;
+                  0, ;
+                  0, ;
+                  0, ;
+                  0, ;
+                  nNumBlok )
+
+               nNumBlok++
+
+            ENDIF
+
+         ENDIF
+
+         SKIP
+
       ENDDO
 
       SELECT spolka
@@ -189,6 +249,11 @@ PROCEDURE ZusRca( ubezp )
          SELECT dane_mc
          SEEK '+' + zident + miesiac
          IF Found()
+            IF zRYCZALT <> 'T'
+               nRodzaj := iif( spolka->sposob == 'L', 2, 1 )
+            ELSE
+               nRodzaj := iif( spolka->ryczstzdr $ '123', 4, 3 )
+            ENDIF
             subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
             ddorca( SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), ;
                SubStr( subim, 1, At( ' ', subim ) ), ;
@@ -207,17 +272,18 @@ PROCEDURE ZusRca( ubezp )
                0, ;
                D->war_wuw, ;
                0, ;
-               D->WAR_wue + D->war_wur + D->war_wuc + D->WAR_wUZ + D->WAR_wuw, ;
+               D->WAR_wue + D->war_wur + D->war_wuc + iif( paraz_wer == 2, 0, D->WAR_wUZ ) + D->WAR_wuw, ;
                0, ;
                0, ;
                0, ;
                0, ;
                0, ;
-               nNumBlok )
+               nNumBlok, nRodzaj, D->dochodzdr, A->ryczprzpr )
+
+            nNumBlok++
          ENDIF
          SELECT spolka
          SKIP
-         nNumBlok++
       ENDDO
 
       oplr()
@@ -334,6 +400,7 @@ PROCEDURE ZusRca( ubezp )
                      ETATY->ZASIL_PIEL, ;
                      ETATY->ZASIL_PIEL + ETATY->ZASIL_RODZ, ;
                      nNumBlok )
+                  nNumBlok++
                ELSE
                   brakpra := .T.
                   EXIT
@@ -341,11 +408,63 @@ PROCEDURE ZusRca( ubezp )
             ENDIF
             SELECT prac
             SKIP
-            nNumBlok++
          ENDDO
       ELSE
          brakpra := .T.
       ENDIF
+
+      SELECT prac
+      SET ORDER TO 4
+
+      SELECT umowy
+      GO TOP
+      SEEK '+' + ident_fir + param_rok + StrTran( miesiac, ' ', '0' )
+      DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma = ident_fir ;
+         .AND. umowy->data_wyp >= hb_Date( Val( param_rok ), Val( miesiac ), 1 ) ;
+         .AND. umowy->data_wyp <= EoM( hb_Date( Val( param_rok ), Val( miesiac ), 1 ) )
+
+         IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0
+
+            prac->( dbSeek( Val( umowy->ident ) ) )
+
+            IF prac->( Found() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
+
+               brakpra := .F.
+               ddorca( PRAC->NAZWISKO,;
+                  PRAC->IMIE1,;
+                  iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;
+                  iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
+                  UMOWY->KOD_TYTU, ;
+                  '', ;
+                  UMOWY->PENSJA, ;
+                  UMOWY->PENSJA, ;
+                  UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM ), ;
+                  UMOWY->WAR_PUE, ;
+                  UMOWY->WAR_PUR, ;
+                  UMOWY->WAR_PUC, ;
+                  UMOWY->WAR_PUZ, ;
+                  UMOWY->WAR_FUE, ;
+                  UMOWY->WAR_FUR, ;
+                  UMOWY->WAR_FUW, ;
+                  UMOWY->WAR_PF3, ;
+                  UMOWY->WAR_PSUM + iif( paraz_wer == 2, 0, UMOWY->WAR_PUZ ) + UMOWY->WAR_FSUM - ( UMOWY->WAR_FFP + UMOWY->WAR_FFG ), ;
+                  0, ;
+                  0, ;
+                  0, ;
+                  0, ;
+                  0, ;
+                  nNumBlok )
+
+               nNumBlok++
+
+            ENDIF
+
+         ENDIF
+
+         SKIP
+
+      ENDDO
+
       oplr()
       zus_kon( 'RCA' )
       dp_kon( 'RCA' )

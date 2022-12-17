@@ -304,7 +304,7 @@ FUNCTION Dane_MC( typpit )
          @ 15, 68 GET zWAR5_WUW PICTURE '99999.99' VALID DaneMC_Sumuj()
          @ 15, 77 GET zMC_WUW PICTURE '99' RANGE 0, 12
          @ 16, 39 SAY 'RAZEM      '
-         @ 17, 39 SAY 'Doch¢d do podst. zdrow.   ' GET zDOCHODZDR PICTURE '9999999.99'
+         @ 17, 39 SAY iif( zRYCZALT == 'T', 'Przych¢d narastaj¥co      ','Doch¢d do podst. zdrow.   ' ) GET zDOCHODZDR PICTURE '9999999.99'
          @ 18, 39 SAY 'Zdro.do ZUS' GET zSTAW_WUZ PICTURE '99.99'
          @ 18, 59 GET zWAR_WUZ PICTURE '99999.99'
          //@ 18, 41 SAY '     do PIT' GET zSTAW5_WUZ PICTURE '99.99'
@@ -520,6 +520,7 @@ FUNCTION zrobcos()
             DO CASE
             CASE spolka->ryczstzdr $ ' 0'
                nPrzychod := P_RyczLicz( 'N', .T. )
+               zdochodzdr := nPrzychod
                DO CASE
                CASE nPrzychod < parap_rk2
                   zzpodstzdr := _round( parap_frp * ( parap_rs1 / 100 ), 2 )
@@ -693,6 +694,7 @@ FUNCTION zrobcos()
             DO CASE
             CASE spolka->ryczstzdr $ ' 0'
                nPrzychod := P_RyczLicz( 'N', .T. )
+               zdochodzdr := nPrzychod
                DO CASE
                CASE nPrzychod < parap_rk2
                   zzpodstzdr := _round( parap_frp * ( parap_rs1 / 100 ), 2 )

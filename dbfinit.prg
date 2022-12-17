@@ -1361,7 +1361,8 @@ public aSPOLKAdbf := {;
    { "PARAM_KWD", "D", 8, 0 },;                   //  73   Kwota wolna do daty
    { "PARAM_KW2", "N", 9, 2 },;                   //  74   Wartosc kwoty wolnej od daty
    { "ULGAKLSRA", "C", 1, 0 },;                   //  75   Ulga dla klasy ˜redniej 'T' - tak
-   { "RYCZSTZDR", "C", 1, 0 } }                   //  76   Stawka zdrowotnego dla ryczaltowcow '0' - auto, '1' - 60%, '2' - 100%, '3' - 180%
+   { "RYCZSTZDR", "C", 1, 0 },;                   //  76   Stawka zdrowotnego dla ryczaltowcow '0' - auto, '1' - 60%, '2' - 100%, '3' - 180%
+   { "RYCZPRZPR", "N", 12, 2 } }                  //  77   Przychody ryczaltowca za poprzedni rok do deklaracji ZUS
 
 // Create: SUMA_MC.DBF
 public aSUMA_MCdbf := {;
@@ -1703,7 +1704,8 @@ public aUMOWYdbf := {;
    { "WNIOSTERM", "C", 1, 0 },;                   //  98 Przedˆu¾enie terminu poboru podatku (rozp. 07.01.2022)
    { "NALPODAT", "N", 12, 2 },;                   //  99 Naliczony podatek
    { "ODLICZ", "N", 8, 2 },;                      // 100 Kwota wolna do odliczenia
-   { "ODLICZENIE", "C", 1, 0 } }                  // 101 Odlicz kwote wolna
+   { "ODLICZENIE", "C", 1, 0 },;                  // 101 Odlicz kwote wolna
+   { "KOD_TYTU", "C", 6, 0 } }                    // 102 Kod tytuˆu ubezpieczenia
 
 // Create: URZEDY.DBF
 public aURZEDYdbf := {;

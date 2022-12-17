@@ -51,7 +51,8 @@ PROCEDURE KEDU_POCZ1()
 
 PROCEDURE KEDU_POCZ2()
 
-   ?? '<KEDU wersja_schematu="1" xsi:schemaLocation="http://www.zus.pl/2020/KEDU_5_2 kedu_5_2.xsd">'
+   ?? '<?xml version="1.0" encoding="UTF-8"?>'
+   ? '<KEDU wersja_schematu="1" xmlns="http://www.zus.pl/2021/KEDU_5_4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zus.pl/2021/KEDU_5_4 kedu_5_4.xsd">'
    ? '  <naglowek.KEDU>'
    ? '    <program>'
    ? '      <producent>GM Systems</producent>'
@@ -222,8 +223,6 @@ PROCEDURE DP_KON1( FORMA )
 
 PROCEDURE DP_KON2( FORMA )
 
-   ? '</ZUS' + FORMA + '>'
-
    RETURN
 
 *±±±±±± ZUSWYMIAR    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
@@ -253,7 +252,6 @@ FUNCTION ZUSWYMIAR1( WYML, WYMM )
 FUNCTION ZUSWYMIAR2( WYML, WYMM )
 
    LOCAL WYMIZUS := ''
-   WYMIZUS := StrTran( Str( WYML, 3 ) + Str( WYMM, 3 ), ' ', '0' )
    IF WYML > 0 .OR. WYMM > 0
       WYMIZUS := '<p1>' + StrTran( Str( WYML, 3 ), ' ' , '0' ) + '</p1><p2>' + StrTran( Str( WYMM, 3 ), ' ' , '0' ) + '</p2>'
    ENDIF
@@ -545,13 +543,10 @@ PROCEDURE DADRA1( PTERMIN, PMM, PRRRR )
 
 PROCEDURE DADRA2( PTERMIN, PMM, PRRRR )
 
-   ? '<DADRA>'
-   ? PTERMIN
-   ? '01' + StrTran( pmm, ' ', '0' ) + prrrr
-   ? Space( 8 )
-   ? Space( 6 )
-   ? Space( 12 )
-   ? '</DADRA>'
+   ? '<I>'
+   ? '  <p1>' + PTERMIN + '</p1>'
+   ? '  <p2><p1>01</p1><p2>' + prrrr + '-' + StrTran( pmm, ' ', '0' ) + '</p2></p2>'
+   ? '</I>'
 
    RETURN
 
@@ -731,19 +726,15 @@ PROCEDURE DDDU1( PTYT, PPODS, PPODSZDR )
 
 PROCEDURE DDDU2( PTYT, PPODS, PPODSZDR )
 
-   ? '<DDDU>'
-   ? PadR( PTYT, 6 )
    IF .NOT. Empty( ptyt )
-      ? StrTran( Str( ppods * 100, 10 ), ' ', '0' )
-      ? StrTran( Str( ppods * 100, 10 ), ' ', '0' )
-      ? StrTran( Str( ppodszdr * 100, 10 ), ' ', '0' )
-   ELSE
-      ? Space( 10 )
-      ? Space( 10 )
-      ? Space( 10 )
+      ? '<X>'
+      ? '  <p1>' + ZUS_KodTytulu( ptyt ) + '</p1>'
+      ? '  <p2>' + TKwota2( ppods ) + '</p2>'
+      ? '  <p3>' + TKwota2( ppods ) + '</p3>'
+      ? '  <p4>' + TKwota2( ppods ) + '</p4>'
+      ? '  <p5>' + TKwota2( ppodszdr ) + '</p5>'
+      ? '</X>'
    ENDIF
-   ? ' '
-   ? '</DDDU>'
 
    RETURN
 
@@ -751,13 +742,13 @@ PROCEDURE DDDU2( PTYT, PPODS, PPODSZDR )
 PROCEDURE DDORCA( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
    PPODSCHO, PPODSZDR, PWAR_PUE, PWAR_PUR, PWAR_PUC, PWAR_PUZ, PWAR_FUE, ;
    PWAR_FUR, PWAR_FUW, PWAR_PF3, PWAR_SUM, PILOSORODZ, PWARRODZ, PILOSOPIEL, ;
-   PWARPIEL, PSUM_ZAS, nNumer )
+   PWARPIEL, PSUM_ZAS, nNumer, nRodzaj, nDochodPop, nDochodPopRok )
 
    IF paraz_wer == 2
       DDORCA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
          PPODSCHO, PPODSZDR, PWAR_PUE, PWAR_PUR, PWAR_PUC, PWAR_PUZ, PWAR_FUE, ;
          PWAR_FUR, PWAR_FUW, PWAR_PF3, PWAR_SUM, PILOSORODZ, PWARRODZ, PILOSOPIEL, ;
-         PWARPIEL, PSUM_ZAS, nNumer )
+         PWARPIEL, PSUM_ZAS, nNumer, nRodzaj, nDochodPop, nDochodPopRok )
    ELSE
       DDORCA1( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
          PPODSCHO, PPODSZDR, PWAR_PUE, PWAR_PUR, PWAR_PUC, PWAR_PUZ, PWAR_FUE, ;
@@ -812,7 +803,7 @@ PROCEDURE DDORCA1( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
 PROCEDURE DDORCA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
    PPODSCHO, PPODSZDR, PWAR_PUE, PWAR_PUR, PWAR_PUC, PWAR_PUZ, PWAR_FUE, ;
    PWAR_FUR, PWAR_FUW, PWAR_PF3, PWAR_SUM, PILOSORODZ, PWARRODZ, PILOSOPIEL, ;
-   PWARPIEL, PSUM_ZAS, nNumer )
+   PWARPIEL, PSUM_ZAS, nNumer, nRodzaj, nDochodPop, nDochodPopRok )
 
    LOCAL cTmp
 
@@ -832,26 +823,49 @@ PROCEDURE DDORCA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
    ENDIF
    ? '    <p4>' + TKwota2( ppodseme ) + '</p4>'
    ? '    <p5>' + TKwota2( ppodscho ) + '</p5>'
-   ? '    <p6>' + TKwota2( ppodszdr ) + '</p6>'
+   //? '    <p6>' + TKwota2( ppodszdr ) + '</p6>'
+   ? '    <p6>' + TKwota2( ppodscho ) + '</p6>'
    ? '    <p7>' + TKwota2( pwar_pue ) + '</p7>'
    ? '    <p8>' + TKwota2( pwar_pur ) + '</p8>'
    ? '    <p9>' + TKwota2( pwar_puc ) + '</p9>'
-   ? '    <p10>' + TKwota2( pwar_puz ) + '</p10>'
+   //? '    <p10>' + TKwota2( pwar_puz ) + '</p10>'
    ? '    <p11>' + TKwota2( pwar_fue ) + '</p11>'
    ? '    <p12>' + TKwota2( pwar_fur ) + '</p12>'
    ? '    <p14>' + TKwota2( pwar_fuw ) + '</p14>'
    ? '    <p29>' + TKwota2( pwar_sum ) + '</p29>'
-   //
-   ? '    <p16>' + TKwota2( pilosorodz ) + '</p16>'
-   ? '    <p17>' + TKwota2( pwarrodz ) + '</p17>'
-   ? '0000000'
-   ? StrTran( Str( pilosopiel, 2 ), ' ', '0' )
-   ? StrTran( Str( pwarpiel * 100, 7 ), ' ', '0' )
-   ? StrTran( Str( psum_zas * 100, 8 ), ' ', '0' )
-   ? repl( '0', 16 )
-   ? repl( '0', 16 )
-   ? '  '
-   ? '</DDORCA>'
+   ? '  </B>'
+   ? '  <C>'
+   ? '    <p1>' + TKwota2( ppodszdr ) + '</p1>'
+   ? '    <p4>' + TKwota2( pwar_puz ) + '</p4>'
+   ? '  </C>'
+   IF ! Empty( nRodzaj )
+      ZUS_FormaOpodat( nRodzaj, ppodszdr, pwar_puz, nDochodPop, nDochodPopRok, 'E' )
+      /*
+      ? '  <E>'
+      DO CASE
+      CASE nRodzaj == 1  // Zasady ogolne
+         ? '    <p1>true</p1>'
+         ? '    <p2>' + TKwota2( nDochodPop ) + '</p2>'
+         ? '    <p3>' + TKwota2( ppodszdr ) + '</p3>'
+         ? '    <p4>' + TKwota2( pwar_puz ) + '</p4>'
+      CASE nRodzaj == 2  // Liniowo
+         ? '    <p5>true</p5>'
+         ? '    <p6>' + TKwota2( nDochodPop ) + '</p6>'
+         ? '    <p7>' + TKwota2( ppodszdr ) + '</p7>'
+         ? '    <p8>' + TKwota2( pwar_puz ) + '</p8>'
+      CASE nRodzaj == 3  // Ryczalt
+         ? '    <p12>true</p12>'
+         ? '    <p13>' + TKwota2( nDochodPop ) + '</p13>'
+      CASE nRodzaj == 4  // Ryczalt na podstawie dochodu za poprzedni rok
+         ? '    <p14>true</p14>'
+         ? '    <p15>' + TKwota2( nDochodPopRok ) + '</p15>'
+         ? '    <p16>' + TKwota2( ppodszdr ) + '</p16>'
+         ? '    <p17>' + TKwota2( pwar_puz ) + '</p17>'
+      ENDCASE
+      ? '  </E>'
+      */
+   ENDIF
+   ? '</III>'
 
    RETURN
 
@@ -1277,7 +1291,7 @@ PROCEDURE DIPL2( PNIP, PREGON, PPESEL, PRODZ_DOK, PDOWOD_OSOB, PSKROT, PNAZWISKO
       ? '  <p8>' + str2sxml( PIMIE ) + '</p8>'
    ENDIF
    IF ! Empty( PDATA_UR )
-      ? '  <p10>' + date2strxml( PDATA_UR ) + '</p10>'
+      ? '  <p9>' + date2strxml( PDATA_UR ) + '</p9>'
    ENDIF
    ? '</II>'
 
@@ -1713,8 +1727,10 @@ PROCEDURE DORCA1( PMM, PRRRR, PSUMA )
 PROCEDURE DORCA2( PMM, PRRRR, PSUMA )
 
    ? '<I>'
-   ? '  <p1>01</p1>'
-   ? '  <p2>' + prrrr + '-' + StrTran( pmm, ' ', '0' ) + '</p2>'
+   ? '  <p1>'
+   ? '    <p1>01</p1>'
+   ? '    <p2>' + prrrr + '-' + StrTran( pmm, ' ', '0' ) + '</p2>'
+   ? '  </p1>'
    ? '</I>'
 
    RETURN
@@ -2047,12 +2063,10 @@ PROCEDURE INN71( PILUB, PILET, PSTAW_WYP )
 
 PROCEDURE INN72( PILUB, PILET, PSTAW_WYP )
 
-   ? '<INN7>'
-   ? StrTran( Str( pilub, 6 ), ' ', '0' )
-   ? StrTran( Str( pilet * 100, 8 ), ' ', '0' )
-   ? '0'
-   ? StrTran( Str( pstaw_wyp * 100, 4 ), ' ', '0' )
-   ? '</INN7>'
+   ? '<III>'
+   ? '  <p1>' + TNaturalny( pilub ) + '</p1>'
+   ? '  <p3>' + TKwota2( pstaw_wyp ) + '</p3>'
+   ? '</III>'
 
    RETURN
 
@@ -2133,13 +2147,6 @@ PROCEDURE KNDK1()
 
 PROCEDURE KNDK2()
 
-   ? '<KNDK>'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '00000000000'
-   ? '</KNDK>'
-
    RETURN
 
 *±±±±±± LSKD     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
@@ -2166,10 +2173,6 @@ PROCEDURE LSKD1( PWAR_PUZ )
 /*----------------------------------------------------------------------*/
 
 PROCEDURE LSKD2( PWAR_PUZ )
-
-   ? '<LSKD>'
-   ? '000000000000'
-   ? '</LSKD>'
 
    RETURN
 
@@ -2264,10 +2267,6 @@ PROCEDURE OPLR1( PDATA )
 
 PROCEDURE OPLR2( PDATA )
 
-   ? '<OPLR>'
-   ? '        '
-   ? '</OPLR>'
-
    RETURN
 
 *±±±±±± OPLS     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
@@ -2301,17 +2300,6 @@ PROCEDURE OPLS1()
 /*----------------------------------------------------------------------*/
 
 PROCEDURE OPLS2()
-
-   ?     '<OPLS>'
-   ?'     '
-   ?'     '
-   ?'     '
-   ?'     '
-   ?'     '
-   ?'     '
-   ?'        '
-   ?'        '
-   ?    '</OPLS>'
 
    RETURN
 
@@ -2382,11 +2370,6 @@ PROCEDURE RIVDRA1()
 
 PROCEDURE RIVDRA2()
 
-   ? '<RIVDRA>'
-   ? '00000000000'
-   ? '00000000000'
-   ? '</RIVDRA>'
-
    RETURN
 
 *±±±±±± TYUB     ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
@@ -2449,11 +2432,11 @@ PROCEDURE ZDRAV1( PWAR_Pfp, pwar_pfg, psum )
 
 PROCEDURE ZDRAV2( PWAR_Pfp, pwar_pfg, psum )
 
-   ? '<ZDRAV>'
-   ? StrTran( Str( pwar_pfp * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwar_pfg * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( psum * 100, 11 ), ' ', '0' )
-   ? '</ZDRAV>'
+   ? '<VII>'
+   ? '  <p1>' + TKwota2( pwar_pfp ) + '</p1>'
+   ? '  <p2>' + TKwota2( pwar_pfg ) + '</p2>'
+   ? '  <p3>' + TKwota2( psum ) + '</p3>'
+   ? '</VII>'
 
    RETURN
 
@@ -2485,24 +2468,23 @@ PROCEDURE ZSDRA1( PWAR_PUZ )
 
 PROCEDURE ZSDRA2( PWAR_PUZ )
 
-   ? '<ZSDRA>'
-   ? StrTran( Str( pwar_puz * 100, 10 ), ' ', '0' )
-   ? '0000000000'
-   ? '0000000000'
-   ? StrTran( Str( pwar_puz * 100, 11 ), ' ', '0' )
-   ? '</ZSDRA>'
+   ? '<VI>'
+   ? '  <p2>' + TKwota2( pwar_puz ) + '</p2>'
+   ? '  <p5>' + TKwota2( pwar_puz ) + '</p5>'
+   ? '  <p7>' + TKwota2( pwar_puz ) + '</p7>'
+   ? '</VI>'
 
    RETURN
 
 *±±±±±± ZSDRAI   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 PROCEDURE ZSDRAI( PSUM_EME, PSUM_REN, PSUMEMEREN, PWAR_PUE, PWAR_PUR, PWARSUMP, ;
    PWAR_FUE, PWAR_FUR, PWARSUMF, PSUM_CHO, PSUM_WYP, PSUMCHOWYP, PWAR_PUC, ;
-   PWAR_PUW, PWARSUMPC, PWAR_FUC, PWARSUMFC, PRAZEM )
+   PWAR_PUW, PWARSUMPC, PWAR_FUC, PWARSUMFC, PRAZEM, PWAR_FUW )
 
    IF paraz_wer == 2
       ZSDRAI2( PSUM_EME, PSUM_REN, PSUMEMEREN, PWAR_PUE, PWAR_PUR, PWARSUMP, ;
          PWAR_FUE, PWAR_FUR, PWARSUMF, PSUM_CHO, PSUM_WYP, PSUMCHOWYP, PWAR_PUC, ;
-         PWAR_PUW, PWARSUMPC, PWAR_FUC, PWARSUMFC, PRAZEM )
+         PWAR_PUW, PWARSUMPC, PWAR_FUC, PWARSUMFC, PRAZEM, PWAR_FUW )
    ELSE
       ZSDRAI1( PSUM_EME, PSUM_REN, PSUMEMEREN, PWAR_PUE, PWAR_PUR, PWARSUMP, ;
          PWAR_FUE, PWAR_FUR, PWARSUMF, PSUM_CHO, PSUM_WYP, PSUMCHOWYP, PWAR_PUC, ;
@@ -2558,42 +2540,29 @@ PROCEDURE ZSDRAI1( PSUM_EME, PSUM_REN, PSUMEMEREN, PWAR_PUE, PWAR_PUR, PWARSUMP,
 
 PROCEDURE ZSDRAI2( PSUM_EME, PSUM_REN, PSUMEMEREN, PWAR_PUE, PWAR_PUR, PWARSUMP, ;
    PWAR_FUE, PWAR_FUR, PWARSUMF, PSUM_CHO, PSUM_WYP, PSUMCHOWYP, PWAR_PUC, ;
-   PWAR_PUW, PWARSUMPC, PWAR_FUC, PWARSUMFC, PRAZEM )
+   PWAR_PUW, PWARSUMPC, PWAR_FUC, PWARSUMFC, PRAZEM, PWAR_FUW )
 
-   ? '<ZSDRAI>'
-   ? StrTran( Str( psum_eme * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( psum_ren * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( psumemeren * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwar_pue * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwar_pur * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwarsump * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwar_fue * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwar_fur * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwarsumf * 100, 10 ), ' ', '0' )
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? StrTran( Str( psum_cho * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( psum_wyp * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( psumchowyp * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwar_puc * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwar_puw * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwarsumpc * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwar_fuc * 100, 10 ), ' ', '0' )
-   ? StrTran( Str( pwarsumfc * 100, 10 ), ' ', '0' )
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? StrTran( Str( prazem * 100, 11 ), ' ', '0' )
-   ? '</ZSDRAI>'
+   ? '<IV>'
+   ? '  <p1>' + TKwota2( psum_eme ) + '</p1>'
+   ? '  <p2>' + TKwota2( psum_ren ) + '</p2>'
+   ? '  <p3>' + TKwota2( psumemeren ) + '</p3>'
+   ? '  <p4>' + TKwota2( pwar_pue ) + '</p4>'
+   ? '  <p5>' + TKwota2( pwar_pur ) + '</p5>'
+   ? '  <p6>' + TKwota2( pwarsump ) + '</p6>'
+   ? '  <p7>' + TKwota2( pwar_fue ) + '</p7>'
+   ? '  <p8>' + TKwota2( pwar_fur ) + '</p8>'
+   ? '  <p9>' + TKwota2( pwarsumf ) + '</p9>'
+   ? '  <p19>' + TKwota2( psum_cho ) + '</p19>'
+   ? '  <p20>' + TKwota2( psum_wyp ) + '</p20>'
+   ? '  <p21>' + TKwota2( psumchowyp ) + '</p21>'
+   ? '  <p22>' + TKwota2( pwar_puc ) + '</p22>'
+   ? '  <p23>' + TKwota2( pwar_puw ) + '</p23>'
+   ? '  <p24>' + TKwota2( psumchowyp ) + '</p24>'
+   ? '  <p25>' + TKwota2( pwar_fuw ) + '</p25>'
+   ? '  <p26>' + TKwota2( pwar_fuc ) + '</p26>'
+   ? '  <p27>' + TKwota2( pwarsumfc ) + '</p27>'
+   ? '  <p37>' + TKwota2( prazem ) + '</p37>'
+   ? '</IV>'
 
    RETURN
 
@@ -2625,14 +2594,6 @@ PROCEDURE ZWDRA1()
 /*----------------------------------------------------------------------*/
 
 PROCEDURE ZWDRA2()
-
-   ? '<ZWDRA>'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '0000000000'
-   ? '00000000000'
-   ? '</ZWDRA>'
 
    RETURN
 
@@ -2679,12 +2640,45 @@ FUNCTION ZUS_KodTytulu( cKod )
 
    IF Len( AllTrim( cKod ) ) == 6
       cRes := '<p1>' + SubStr( cKod, 1, 4 ) + '</p1><p2>' + SubStr( cKod, 5, 1 ) ;
-         + '<p2><p3>' + SubStr( cKod, 6, 1 ) + '</p3>'
+         + '</p2><p3>' + SubStr( cKod, 6, 1 ) + '</p3>'
    ENDIF
 
    RETURN cRes
 
 /*----------------------------------------------------------------------*/
+
+PROCEDURE ZUS_FormaOpodat( nRodzaj, ppodszdr, pwar_puz, nDochodPop, nDochodPopRok, cTag )
+
+   IF paraz_wer == 2 .AND. ! Empty( nRodzaj )
+      ? '<' + cTag + '>'
+      DO CASE
+      CASE nRodzaj == 1  // Zasady ogolne
+         ? '    <p1>true</p1>'
+         ? '    <p2>' + TKwota2( nDochodPop ) + '</p2>'
+         ? '    <p3>' + TKwota2( ppodszdr ) + '</p3>'
+         ? '    <p4>' + TKwota2( pwar_puz ) + '</p4>'
+      CASE nRodzaj == 2  // Liniowo
+         ? '    <p5>true</p5>'
+         ? '    <p6>' + TKwota2( nDochodPop ) + '</p6>'
+         ? '    <p7>' + TKwota2( ppodszdr ) + '</p7>'
+         ? '    <p8>' + TKwota2( pwar_puz ) + '</p8>'
+      CASE nRodzaj == 3  // Ryczalt
+         ? '    <p12>true</p12>'
+         ? '    <p13>' + TKwota2( nDochodPop ) + '</p13>'
+      CASE nRodzaj == 4  // Ryczalt na podstawie dochodu za poprzedni rok
+         ? '    <p14>true</p14>'
+         ? '    <p15>' + TKwota2( nDochodPopRok ) + '</p15>'
+         ? '    <p16>' + TKwota2( ppodszdr ) + '</p16>'
+         ? '    <p17>' + TKwota2( pwar_puz ) + '</p17>'
+      ENDCASE
+      ? '</' + cTag + '>'
+   ENDIF
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
+
 
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±± K O N I E C ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±

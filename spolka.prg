@@ -20,6 +20,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+#include "inkey.ch"
+
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Obsluga podstawowych operacji na bazie ......                             ±
@@ -178,6 +180,7 @@ if ins
    store [   /   ] to zudzial1,zudzial2,zudzial3,zudzial4,zudzial5,zudzial6,zudzial7,zudzial8,zudzial9,zudzial10,zudzial11,zudzial12
    *zOBLKWWOL := 'S'
    zRYCZSTZDR := '0'
+   zRYCZPRZPR := 0
 else
    zNAZ_IMIE=NAZ_IMIE
    zPESEL=PESEL
@@ -230,6 +233,7 @@ else
    zUDZIAL12=UDZIAL12
    *zOBLKWWOL := iif( spolka->oblkwwol == ' ', 'S', spolka->oblkwwol )
    zRYCZSTZDR := iif( spolka->ryczstzdr == ' ', '0', spolka->ryczstzdr )
+   zRYCZPRZPR := RYCZPRZPR
 endif
 *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
 @ 5,20 get zNAZ_IMIE picture "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" valid v3_1()
@@ -860,6 +864,7 @@ FUNCTION SpolkaRyczstzdrW()
    IF ( lRes := zRYCZALT == 'T' )
       cKolor := ColInf()
       @ 24, 0 SAY PadC( "0 - na podst. przychodu,    1 - 60%,    2 - 100%,    3 - 180%", 80 )
+      SetColor( cKolor )
    ENDIF
 
    RETURN lRes
@@ -869,9 +874,26 @@ FUNCTION SpolkaRyczstzdrW()
 FUNCTION SpolkaRyczstzdrV()
 
    LOCAL lRes
+   LOCAL cEkran, cKolor, nRYCZPRZPR, GetList := {}
 
    IF ( lRes := zRYCZSTZDR $ '0123' )
       @ 24, 0
+      IF zRYCZSTZDR $ '123'
+         cEkran := SaveScreen()
+         cKolor := ColInf()
+         @ 24, 0 SAY PadC( "Wprowad« kwot© przychod¢w uzyskanych w poprzednim roku kalendarzowym", 80 )
+         ColStd()
+         nRYCZPRZPR := zRYCZPRZPR
+         @ 12, 16 CLEAR TO 14, 64
+         @ 12, 16 TO 14, 64
+         @ 13, 18 SAY "Kwota przychod¢w za ubiegˆy rok" GET nRYCZPRZPR PICTURE FPIC
+         READ
+         IF LastKey() <> K_ESC
+            zRYCZPRZPR := nRYCZPRZPR
+         ENDIF
+         RestScreen( , , , , cEkran )
+         SetColor( cKolor )
+      ENDIF
    ENDIF
 
    RETURN lRes

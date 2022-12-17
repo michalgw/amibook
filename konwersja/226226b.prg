@@ -27,9 +27,9 @@ FUNCTION Main()
       RESTORE FROM wersjadb ADDITIVE
    ENDIF
 
-   IF wersja_db < 2262
+   dbfInicjujDane()
 
-      dbfInicjujDane()
+   IF wersja_db < 2262
 
       ? 'Indeksowanie...'
       dbfIdxPRAC()
@@ -62,6 +62,24 @@ FUNCTION Main()
       dbCloseAll()
 
       wersja_db := 2262
+      SAVE ALL LIKE wersja_db TO wersjadb
+
+   ENDIF
+
+   IF wersja_db < 2270
+
+      ? 'Aktualizacja struktury danych...'
+      dbfUtworzTabele( 'SPOLKA', 'spolka.tym' )
+      dbfUtworzTabele( 'UMOWY', 'umowy.tym' )
+      dbfImportujDaneTym('', 'TYM')
+      dbCloseAll()
+
+      ? 'Indeksowanie...'
+      dbfIdxSPOLKA()
+      dbfIdxUMOWY()
+      dbCloseAll()
+
+      wersja_db := 2270
       SAVE ALL LIKE wersja_db TO wersjadb
 
    ENDIF

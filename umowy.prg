@@ -239,6 +239,7 @@ PROCEDURE Umowy()
                zPPK := ' '
                zWNIOSTERM := ' '
                zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
+               zKOD_TYTU := KOD_TYTU
 
                PodstawU()
             ELSEIF ins
@@ -261,6 +262,7 @@ PROCEDURE Umowy()
                ELSE
                   zODLICZ := 0
                ENDIF
+               zKOD_TYTU := Space( 6 )
             ELSE
                zIDENT := IDENT
                zNUMER := NUMER
@@ -302,6 +304,7 @@ PROCEDURE Umowy()
                zOSWIAD26R := iif( OSWIAD26R = ' ', 'N', OSWIAD26R )
                zPPK := iif( PPK $ 'TN', PPK, 'N' )
                zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
+               zKOD_TYTU := KOD_TYTU
                SELECT prac
                SET ORDER TO 4
                SEEK Val( zident )
@@ -497,6 +500,7 @@ PROCEDURE Umowy()
          zWNIOSTERM := ' '
          zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
          zDATA_RACH := DATA_RACH
+         zKOD_TYTU := KOD_TYTU
          DO CASE
          *case TYTUL='0'
          *zTYT='O' //organy stanowiace
@@ -585,24 +589,25 @@ PROCEDURE Umowy()
             CASE skladn == 3
                SAVE SCREEN TO scr_sklad
                SET CURSOR on
-               @ 16, 25 CLEAR TO 22, 66
-               @ 16, 25 TO 22, 66
-               @ 17, 26 SAY 'SK&__L.ADKI    %stawki wart.obli. wart.odli.'
-               @ 18, 26 SAY 'Emerytalna ' GET zSTAW_PUE PICTURE '99.99' VALID OBLPLu()
-               @ 18, 45 GET oWAR_PUE PICTURE '999999.99' WHEN oblplu() .AND. .F.
-               @ 18, 55 GET zAPUE PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUE $ 'AR' .AND. vAUTOKOM()
-               @ 18, 57 GET zWAR_PUE PICTURE '999999.99' WHEN oblplu()
-               @ 19, 26 SAY 'Rentowa    ' GET zSTAW_PUR PICTURE '99.99' VALID OBLPLu()
-               @ 19, 45 GET oWAR_PUR PICTURE '999999.99' WHEN oblplu() .AND. .F.
-               @ 19, 55 GET zAPUR PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUR $ 'AR' .AND. vAUTOKOM()
-               @ 19, 57 GET zWAR_PUR PICTURE '999999.99' WHEN oblplu()
-               @ 20, 26 SAY 'Chorobowa  ' GET zSTAW_PUC PICTURE '99.99' VALID OBLPLu()
-               @ 20, 45 GET oWAR_PUC PICTURE '999999.99' WHEN oblplu() .AND. .F.
-               @ 20, 55 GET zAPUC PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUC $ 'AR' .AND. vAUTOKOM()
-               @ 20, 57 GET zWAR_PUC PICTURE '999999.99' WHEN oblplu()
-               @ 21, 26 SAY 'RAZEM      ' GET zSTAW_PSUM PICTURE '99.99' WHEN oblplu() .AND. .F.
-               @ 21, 45 GET oWAR_PSUM PICTURE '999999.99' WHEN oblplu() .AND. .F.
-               @ 21, 57 GET zWAR_PSUM PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 15, 25 CLEAR TO 22, 66
+               @ 15, 25 TO 22, 66
+               @ 16, 26 SAY 'SK&__L.ADKI    %stawki wart.obli. wart.odli.'
+               @ 17, 26 SAY 'Emerytalna ' GET zSTAW_PUE PICTURE '99.99' VALID OBLPLu()
+               @ 17, 45 GET oWAR_PUE PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 17, 55 GET zAPUE PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUE $ 'AR' .AND. vAUTOKOM()
+               @ 17, 57 GET zWAR_PUE PICTURE '999999.99' WHEN oblplu()
+               @ 18, 26 SAY 'Rentowa    ' GET zSTAW_PUR PICTURE '99.99' VALID OBLPLu()
+               @ 18, 45 GET oWAR_PUR PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 18, 55 GET zAPUR PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUR $ 'AR' .AND. vAUTOKOM()
+               @ 18, 57 GET zWAR_PUR PICTURE '999999.99' WHEN oblplu()
+               @ 19, 26 SAY 'Chorobowa  ' GET zSTAW_PUC PICTURE '99.99' VALID OBLPLu()
+               @ 19, 45 GET oWAR_PUC PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 19, 55 GET zAPUC PICTURE '!' WHEN oblplu() .AND. wAUTOKOM() VALID zAPUC $ 'AR' .AND. vAUTOKOM()
+               @ 19, 57 GET zWAR_PUC PICTURE '999999.99' WHEN oblplu()
+               @ 20, 26 SAY 'RAZEM      ' GET zSTAW_PSUM PICTURE '99.99' WHEN oblplu() .AND. .F.
+               @ 20, 45 GET oWAR_PSUM PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 20, 57 GET zWAR_PSUM PICTURE '999999.99' WHEN oblplu() .AND. .F.
+               @ 21, 26 SAY 'Kod tytuˆu ubezpieczenia' GET zKOD_TYTU PICTURE '999999'
                READ
                SET CURSOR OFF
                RESTORE SCREEN FROM scr_sklad
@@ -1420,6 +1425,8 @@ PROCEDURE PODSTAWu()
 
    zNALPODAT := NALPODAT
 
+   zKOD_TYTU := KOD_TYTU
+
    IF PPK $ 'TN'
       zPPK := PPK
       zPPKZS1 := PPKZS1
@@ -1568,6 +1575,8 @@ PROCEDURE ZAPISZPLAu()
 
    repl_( 'ODLICZENIE', zODLICZENIE )
    repl_( 'ODLICZ', zODLICZ )
+
+   repl_( 'KOD_TYTU', zKOD_TYTU )
 
    RETURN
 
