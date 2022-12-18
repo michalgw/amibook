@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
 #include "inkey.ch"
+#include "hbwin.ch"
 
 ***blad ponownych wydrukow przy wydrukach dzielonych
 ***bez raport.dbf
@@ -284,6 +285,7 @@ function mon_drk( _linia )
          RETURN 0
       CASE _mon_drk == 3
          _wiersz := 0
+         /*
          ColStd()
          @ 24, 0
          _pk := Space( 8 )
@@ -293,6 +295,19 @@ function mon_drk( _linia )
             BREAK
          ENDIF
          _pk := AllTrim( _pk ) + '.txt'
+         */
+
+         _pk := ''
+         IF ( _pk := win_GetSaveFileName( WIN_OFN_OVERWRITEPROMPT + WIN_OFN_EXPLORER ;
+            + WIN_OFN_ALLOWMULTISELECT + WIN_OFN_HIDEREADONLY + WIN_OFN_NOCHANGEDIR, ;
+            'Zapisz raport jako...', , 'txt', ;
+            { {'Pliki tekstowe (*.txt)', '*.txt'}, {'Wszystkie pliki', '*.*'} }, ;
+            , , 'raport' ) ) == ''
+
+           BREAK
+
+         ENDIF
+
          ColInb()
          @ 24, 0
          center( 24, 'Prosz&_e. czeka&_c....' )
