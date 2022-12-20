@@ -108,7 +108,7 @@ PROCEDURE ZusRca( ubezp )
          '8' + ;
          'F' + ;
          '0' + ;
-         '0.kdu'
+         '0.' + iif( paraz_wer == 2, 'xml', 'kdu' )
       aaaa := AllTrim( paraz_cel ) + PLIK_KDU
       SET PRINTER TO &aaaa
 
@@ -321,7 +321,7 @@ PROCEDURE ZusRca( ubezp )
          '8' + ;
          'P' + ;
          '0' + ;
-         '0.kdu'
+         '0.' + iif( paraz_wer == 2, 'xml', 'kdu' )
       aaaa := AllTrim( paraz_cel ) + PLIK_KDU
       SET PRINTER TO &aaaa
 

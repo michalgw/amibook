@@ -107,7 +107,7 @@ PROCEDURE ZusDra( ubezp )
          '9' + ;
          'P' + ;
          '0' + ;
-         '0.kdu'
+         '0.' + iif( paraz_wer == 2, 'xml', 'kdu' )
       aaaa := AllTrim( paraz_cel ) + PLIK_KDU
       SET PRINTER TO &aaaa
 
@@ -280,7 +280,7 @@ PROCEDURE ZusDra( ubezp )
             '9' + ;
             'W' + ;
             iif( nupla1 > 9, Chr( 55 + nupla1 ), Str( nupla1, 1 ) ) + ;
-            iif( nupla2 > 9, Chr( 55 + nupla2 ), Str( nupla2, 1 ) ) + '.kdu'
+            iif( nupla2 > 9, Chr( 55 + nupla2 ), Str( nupla2, 1 ) ) + '.' + iif( paraz_wer == 2, 'xml', 'kdu' )
          aaaa := AllTrim( paraz_cel ) + PLIK_KDU
          zident := Str( RecNo(), 5 )
          SELECT dane_mc
@@ -297,7 +297,7 @@ PROCEDURE ZusDra( ubezp )
          inn7( 1, 0, d->staw_wuw )
          zsdrai( d->war_wue, d->war_wur, d->war_wue + d->war_wur, d->war_wue, d->war_wur, d->war_wue + d->war_wur, ;
             0, 0, 0, d->war_wuc, d->war_wuw, d->war_wuc + d->war_wuw, d->war_wuc, d->war_wuw, d->war_wuc + d->war_wuw, ;
-            0, 0, d->war_wue + d->war_wur + d->war_wuc + d->war_wuw )
+            0, 0, d->war_wue + d->war_wur + d->war_wuc + d->war_wuw, 0 )
          zwdra()
          rivdra()
          zsdra( d->war_wuz )
@@ -383,7 +383,7 @@ PROCEDURE ZusDra( ubezp )
                'W' + ;
                iif( nupla1 > 9, Chr( 55 + nupla1 ), Str( nupla1, 1 ) ) + ;
                iif( nupla2 > 9, Chr( 55 + nupla2 ), Str( nupla2, 1 ) ) + ;
-               '.kdu'
+               '.' + iif( paraz_wer == 2, 'xml', 'kdu' )
             aaaa := AllTrim( paraz_cel ) + PLIK_KDU
             zident := Str( RecNo(), 5 )
             SELECT dane_mc
@@ -485,7 +485,7 @@ PROCEDURE ZusDra( ubezp )
          '9' + ;
          'F' + ;
          '0' + ;
-         '0.kdu'
+         '0.' + iif( paraz_wer == 2, 'xml', 'kdu' )
       aaaa := AllTrim( paraz_cel ) + PLIK_KDU
       SET PRINTER TO &aaaa
 

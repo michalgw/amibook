@@ -828,16 +828,38 @@ PROCEDURE DDORCA2( PNAZWISKO, PIMIE, PTYPID, PNRID, PTYTUB, PWYMIAR, PPODSEME, ;
    ? '    <p7>' + TKwota2( pwar_pue ) + '</p7>'
    ? '    <p8>' + TKwota2( pwar_pur ) + '</p8>'
    ? '    <p9>' + TKwota2( pwar_puc ) + '</p9>'
+   ? '    <p10>0.00</p10>'
    //? '    <p10>' + TKwota2( pwar_puz ) + '</p10>'
    ? '    <p11>' + TKwota2( pwar_fue ) + '</p11>'
    ? '    <p12>' + TKwota2( pwar_fur ) + '</p12>'
+   ? '    <p13>0.00</p13>'
    ? '    <p14>' + TKwota2( pwar_fuw ) + '</p14>'
+   ? '    <p15>0.00</p15>'
+   ? '    <p16>0.00</p16>'
+   ? '    <p17>0.00</p17>'
+   ? '    <p18>0.00</p18>'
+   ? '    <p19>0.00</p19>'
+   ? '    <p20>0.00</p20>'
+   ? '    <p21>0.00</p21>'
+   ? '    <p22>0.00</p22>'
+   ? '    <p23>0.00</p23>'
+   ? '    <p24>0.00</p24>'
+   ? '    <p25>0.00</p25>'
+   ? '    <p26>0.00</p26>'
+   ? '    <p27>0.00</p27>'
+   ? '    <p28>0.00</p28>'
    ? '    <p29>' + TKwota2( pwar_sum ) + '</p29>'
    ? '  </B>'
    ? '  <C>'
    ? '    <p1>' + TKwota2( ppodszdr ) + '</p1>'
+   ? '    <p2>0.00</p2>'
+   ? '    <p3>0.00</p3>'
    ? '    <p4>' + TKwota2( pwar_puz ) + '</p4>'
+   ? '    <p5>0.00</p5>'
    ? '  </C>'
+   ? '  <D>'
+   ? '    <p4>0.00</p4>'
+   ? '  </D>'
    IF ! Empty( nRodzaj )
       ZUS_FormaOpodat( nRodzaj, ppodszdr, pwar_puz, nDochodPop, nDochodPopRok, 'E' )
       /*
@@ -1267,13 +1289,13 @@ PROCEDURE DIPL2( PNIP, PREGON, PPESEL, PRODZ_DOK, PDOWOD_OSOB, PSKROT, PNAZWISKO
 
    ? '<II>'
    IF ! Empty( PNIP )
-      ? '  <p1>' + StrTran( PNIP, '-', '' ) + '</p1>'
+      ? '  <p1>' + AllTrim( StrTran( PNIP, '-', '' ) ) + '</p1>'
    ENDIF
    IF ! Empty( PREGON )
-      ? '  <p2>' + SubStr( StrTran( PREGON, '-', '' ), 1, 9 ) + '</p2>'
+      ? '  <p2>' + AllTrim( SubStr( StrTran( PREGON, '-', '' ), 1, 9 ) ) + '</p2>'
    ENDIF
    IF ! Empty( PPESEL )
-      ? '  <p3>' + PPESEL + '</p3>'
+      ? '  <p3>' + AllTrim( PPESEL ) + '</p3>'
    ENDIF
    IF ! Empty( PDOWOD_OSOB ) .AND. PDOWOD_OSOB $ 'DP'
       ? '  <p4>' + iif( PRODZ_DOK = 'D', '1', '2' ) + '</p4>'
@@ -1282,7 +1304,7 @@ PROCEDURE DIPL2( PNIP, PREGON, PPESEL, PRODZ_DOK, PDOWOD_OSOB, PSKROT, PNAZWISKO
       ? '  <p5>' + AllTrim( PDOWOD_OSOB ) + '</p5>'
    ENDIF
    IF ! Empty( PSKROT  )
-      ? '  <p6>' + str2sxml( qq( PSKROT ) ) + '</p6>'
+      ? '  <p6>' + str2sxml( SubStr( PSKROT, 1, 31 ) ) + '</p6>'
    ENDIF
    IF ! Empty( PNAZWISKO )
       ? '  <p7>' + str2sxml( PNAZWISKO ) + '</p7>'
