@@ -226,7 +226,7 @@ PROCEDURE ZusDra( ubezp )
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
          dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
-      inn7( ilub, ilet, parap_fuw )
+      inn7( ilub, ilet, F->parap_fuw )
       zsdrai( sum_eme, sum_ren, sum_eme + sum_ren, zwar_pue, zwar_pur, zwar_pue + zwar_pur, ;
          zwar_fue, zwar_fur, zwar_fue + zwar_fur, sum_cho, sum_wyp, sum_cho + sum_wyp, ;
          zwar_puc, zwar_puw, zwar_puc + zwar_puw, ;
@@ -637,7 +637,7 @@ PROCEDURE ZusDra( ubezp )
          dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
       *dipl() with F->NIP,substr(F->NR_REGON,3),'','','',F->nazwa_skr,'','',ctod('    /  /  ')
-      inn7( ilub, ilet, parap_fuw )
+      inn7( ilub, ilet, F->parap_fuw )
       zsdrai( sum_eme, sum_ren, sum_eme + sum_ren, zwar_pue, zwar_pur, zwar_pue + zwar_pur, ;
          zwar_fue, zwar_fur, zwar_fue + zwar_fur, sum_cho, sum_wyp, sum_cho + sum_wyp, ;
          zwar_puc, zwar_puw, zwar_puc + zwar_puw, ;
