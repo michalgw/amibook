@@ -213,7 +213,7 @@ PROCEDURE ZusRca( ubezp )
                   UMOWY->KOD_TYTU, ;
                   '', ;
                   UMOWY->PENSJA, ;
-                  UMOWY->PENSJA, ;
+                  iif( UMOWY->WAR_PUC == 0, 0, UMOWY->PENSJA ), ;
                   UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM ), ;
                   UMOWY->WAR_PUE, ;
                   UMOWY->WAR_PUR, ;
@@ -437,7 +437,7 @@ PROCEDURE ZusRca( ubezp )
                   UMOWY->KOD_TYTU, ;
                   '', ;
                   UMOWY->PENSJA, ;
-                  UMOWY->PENSJA, ;
+                  iif( UMOWY->WAR_PUC == 0, 0, UMOWY->PENSJA ), ;
                   UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM ), ;
                   UMOWY->WAR_PUE, ;
                   UMOWY->WAR_PUR, ;
