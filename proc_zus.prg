@@ -2700,6 +2700,22 @@ PROCEDURE ZUS_FormaOpodat( nRodzaj, ppodszdr, pwar_puz, nDochodPop, nDochodPopRo
 
 /*----------------------------------------------------------------------*/
 
+PROCEDURE ZUS_DataUtworzenia( cSekcja, cPole, dData )
+
+   IF paraz_wer == 2
+
+      hb_default( @dData, Date() )
+
+      ? '  <' + cSekcja + '>'
+      ? '    <' + cPole + '>' + date2strxml( dData ) + '</' + cPole + '>'
+      ? '  </' + cSekcja + '>'
+
+   ENDIF
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
 
 
 *北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北

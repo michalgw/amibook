@@ -287,6 +287,7 @@ PROCEDURE ZusRca( ubezp )
       ENDDO
 
       oplr()
+      ZUS_DataUtworzenia( 'IV', 'p1' )
       zus_kon( 'RCA' )
       dp_kon('RCA')
       kedu_kon()
@@ -466,6 +467,7 @@ PROCEDURE ZusRca( ubezp )
       ENDDO
 
       oplr()
+      ZUS_DataUtworzenia( 'IV', 'p1' )
       zus_kon( 'RCA' )
       dp_kon( 'RCA' )
       kedu_kon()
