@@ -544,7 +544,7 @@ public aFIRMAdbf := {;
    { "TEL", "C", 10, 0 },;                        //  17 Nr tel
    { "FAX", "C", 10, 0 },;                        //  18 Nr fax
    { "TLX", "C", 10, 0 },;                        //  19 NIEUZYWANE Nr telex
-   { "PRZEDM", "C", 40, 0 },;                     //  20 NIEUZYWANE
+   { "PRZEDM", "C", 40, 0 },;                     //  20 Nazwa skrocona do deklaracji ZUS
    { "KGN1", "C", 8, 0 },;                        //  21 NIEUZYWANE KGN
    { "EKD1", "C", 8, 0 },;                        //  22 NIEUZYWANE KPD
    { "NR_REGON", "C", 35, 0 },;                   //  23 REGON

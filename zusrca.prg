@@ -130,10 +130,10 @@ PROCEDURE ZusRca( ubezp )
       zus_pocz( 'RCA', 1 )
       dorca( miesiac, param_rok, 0 )
       IF zSPOLKA = 'T'
-         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
+         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
       ELSE
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
-         dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, F->nazwa_skr, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+         dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
       *dipl() with F->NIP,substr(F->NR_REGON,3),'','','',F->nazwa_skr,'','',ctod('    /  /  ')
 
@@ -343,10 +343,10 @@ PROCEDURE ZusRca( ubezp )
       zus_pocz( 'RCA', 1 )
       dorca( miesiac, param_rok, 0 )
       IF zSPOLKA = 'T'
-         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
+         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
       ELSE
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
-         dipl( A->NIP, substr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, F->nazwa_skr, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+         dipl( A->NIP, substr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
       *dipl() with F->NIP,substr(F->NR_REGON,3),'','','',F->nazwa_skr,'','',ctod('    /  /  ')
 

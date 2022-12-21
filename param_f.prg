@@ -41,7 +41,7 @@ ColStd()
 @ 10, 0 say '³ Dekl.podpisuje: Nazwisko..               Imie..               Tel..          ³'
 @ 11, 0 say '³ Organ rej...                                 Data rejestracji....            ³'
 @ 12, 0 say '³ Nazwa rej...                                 Numer w rejestrze...            ³'
-@ 13, 0 say '³ R.Dzia&_l..1.                                         KGN.         PKD.         ³'
+@ 13, 0 say '³ Nazwa do dekl.ZUS.                                 KGN.         PKD.         ³'
 @ 14, 0 say '³ Platnik VAT.Tak        Formularz:VAT-      Info UE Mies/Kwart ?..            ³'
 @ 15, 0 say '³ Ryczalt...        Num.ks.(Roczn/Mies).     Pod.doch.oblicz Mies/Kwart ?..    ³'
 @ 16, 0 say '³ W rej.zak.VAT domy&_s.lna data ksi&_e.gowania do ksi&_e.gi (data Wp&_l.ywu/Dokumentu) ?. ³'
@@ -234,7 +234,7 @@ ColStd()
 @ 12,14 get zNAZWA_REJ pict '@S30 '+repl('!',60) valid v3_14r()
 @ 11,67 get zDATA_REJ  pict '@D'
 @ 12,67 get zNUMER_REJ pict '!!!!!!!!!!!'
-@ 13,12 get zPRZEDM    pict repl('!',40)
+@ 13,20 get zPRZEDM    pict repl('!',31)
 @ 13,57 get zKGN1      pict '!!!!!!!!'
 @ 13,70 get zEKD1      pict '!!!!!!!!'
 @ 14,14 get zVAT       pict "!" valid zVAT$'TN' .and. vTN(zVAT,14,14)
@@ -446,7 +446,7 @@ zNAZWA_REJ=NAZWA_REJ
 sele firma
 @ 11,67 say DATA_REJ
 @ 12,67 say NUMER_REJ
-@ 13,12 say PRZEDM
+@ 13,20 say SubStr( PRZEDM, 1, 31 )
 @ 13,57 say KGN1
 @ 13,70 say EKD1
 @ 14,14 say iif(VAT='T','Tak','Nie')

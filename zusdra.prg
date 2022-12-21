@@ -221,10 +221,10 @@ PROCEDURE ZusDra( ubezp )
       zus_pocz( 'DRA', 1 )
       dadra( '6', miesiac, param_rok )
       IF zSPOLKA = 'T'
-         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
+         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
       ELSE
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
-         dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, F->nazwa_skr, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+         dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
       inn7( ilub, ilet, parap_fuw )
       zsdrai( sum_eme, sum_ren, sum_eme + sum_ren, zwar_pue, zwar_pur, zwar_pue + zwar_pur, ;
@@ -628,10 +628,10 @@ PROCEDURE ZusDra( ubezp )
       zus_pocz( 'DRA', 1 )
       dadra( '6', miesiac, param_rok )
       IF zSPOLKA = 'T'
-         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', F->nazwa_skr, '', '', CToD( '    /  /  ' ) )
+         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
       ELSE
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
-         dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, F->nazwa_skr, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+         dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
       *dipl() with F->NIP,substr(F->NR_REGON,3),'','','',F->nazwa_skr,'','',ctod('    /  /  ')
       inn7( ilub, ilet, parap_fuw )
