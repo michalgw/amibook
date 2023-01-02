@@ -3353,9 +3353,9 @@ FUNCTION edek_pit11_29()
          tmp_cel = '2'
       ENDIF
       r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
-      r = r + '<Deklaracja  xmlns="http://crd.gov.pl/wzor/2022/08/18/11723/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/03/15/eD/DefinicjeTypy/">' + nl
+      r = r + '<Deklaracja  xmlns="http://crd.gov.pl/wzor/2022/11/09/11890/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/03/15/eD/DefinicjeTypy/">' + nl
       r = r + '  <Naglowek>' + nl
-      r = r + '    <KodFormularza kodPodatku="PIT" kodSystemowy="PIT-11 (29)" rodzajZobowiazania="Z" wersjaSchemy="1-0E">PIT-11</KodFormularza>' + nl
+      r = r + '    <KodFormularza kodPodatku="PIT" kodSystemowy="PIT-11 (29)" rodzajZobowiazania="Z" wersjaSchemy="1-1E">PIT-11</KodFormularza>' + nl
       r = r + '    <WariantFormularza>29</WariantFormularza>' + nl
 		r = r + '    <CelZlozenia poz="P_7">' + tmp_cel + '</CelZlozenia>' + nl
       r = r + '    <Rok>' + AllTrim(Str(Year(p4d))) + '</Rok>' + nl
