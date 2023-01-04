@@ -200,7 +200,7 @@ PROCEDURE ZusRca( ubezp )
          .AND. umowy->data_wyp >= hb_Date( Val( param_rok ), Val( miesiac ), 1 ) ;
          .AND. umowy->data_wyp <= EoM( hb_Date( Val( param_rok ), Val( miesiac ), 1 ) )
 
-         IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0
+         IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0 .OR. umowy->war_puz <> 0
 
             prac->( dbSeek( Val( umowy->ident ) ) )
 
@@ -212,7 +212,7 @@ PROCEDURE ZusRca( ubezp )
                   iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
                   UMOWY->KOD_TYTU, ;
                   '', ;
-                  UMOWY->PENSJA, ;
+                  iif( UMOWY->WAR_PUE == 0 .AND. UMOWY->WAR_PUR == 0 , 0, UMOWY->PENSJA ), ;
                   iif( UMOWY->WAR_PUC == 0, 0, UMOWY->PENSJA ), ;
                   UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM ), ;
                   UMOWY->WAR_PUE, ;
@@ -424,7 +424,7 @@ PROCEDURE ZusRca( ubezp )
          .AND. umowy->data_wyp >= hb_Date( Val( param_rok ), Val( miesiac ), 1 ) ;
          .AND. umowy->data_wyp <= EoM( hb_Date( Val( param_rok ), Val( miesiac ), 1 ) )
 
-         IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0
+         IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0 .OR. umowy->war_puz <> 0
 
             prac->( dbSeek( Val( umowy->ident ) ) )
 
@@ -437,7 +437,7 @@ PROCEDURE ZusRca( ubezp )
                   iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
                   UMOWY->KOD_TYTU, ;
                   '', ;
-                  UMOWY->PENSJA, ;
+                  iif( UMOWY->WAR_PUE == 0 .AND. UMOWY->WAR_PUR == 0 , 0, UMOWY->PENSJA ), ;
                   iif( UMOWY->WAR_PUC == 0, 0, UMOWY->PENSJA ), ;
                   UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM ), ;
                   UMOWY->WAR_PUE, ;
