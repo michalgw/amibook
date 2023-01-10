@@ -33,6 +33,7 @@ FUNCTION Main()
 
       ? 'Indeksowanie...'
       dbfIdxPRAC()
+      dbfIdxEDEKLAR()
       dbCloseAll()
 
       ? 'Aktualizacja danych...'
