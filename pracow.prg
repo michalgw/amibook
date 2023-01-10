@@ -213,7 +213,7 @@ PROCEDURE Pracow()
                zPPKIDKADR := Pad( AllTrim( Str( RecNo(), 10 ) ), 10 )
                zPPKIDEPPK := Space( 20 )
                zPPKIDPZIF := Space( 50 )
-               zULGAKLSRA := 'T'
+               zULGAKLSRA := 'N'
                zODLICZENIE := 'N'
             else
                zNREWID := NREWID
@@ -270,7 +270,7 @@ PROCEDURE Pracow()
                zPPKIDEPPK := PPKIDEPPK
                zPPKIDPZIF := PPKIDPZIF
 
-               zULGAKLSRA := iif( ULGAKLSRA == ' ', 'T', ULGAKLSRA )
+               zULGAKLSRA := iif( ULGAKLSRA == ' ', 'N', ULGAKLSRA )
                zODLICZENIE := iif( ODLICZENIE == ' ', 'N', ODLICZENIE )
 
                SELECT urzedy
@@ -692,7 +692,7 @@ PROCEDURE say31s()
    @ 18, 62 SAY iif( ODLICZENIE == 'T', 'Tak', 'Nie' )
    @ 19, 23 SAY SubStr( ZATRUD, 1, 23 )
    @ 19, 52 SAY iif( iif( PPK == ' ', 'N', PPK ) == 'T', 'Tak', 'Nie' )
-   @ 19, 76 SAY iif( iif( ULGAKLSRA == ' ', 'T', ULGAKLSRA ) == 'T', 'Tak', 'Nie' )
+   @ 19, 76 SAY iif( iif( ULGAKLSRA == ' ', 'N', ULGAKLSRA ) == 'T', 'Tak', 'Nie' )
    //002 skrocenia pol banku
    @ 20,  7 SAY SubStr( BANK, 1, 15 )
    @ 20, 29 SAY substr( KONTO,1, 15 )

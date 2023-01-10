@@ -426,11 +426,15 @@ do while .t.
               @ 10,42 clear to 21,79
               @ 10,42 to 21,79
               ValidTakNie( zOSWIAD26R, 11, 72 )
-              ValidTakNie( zULGAKLSRA, 12, 64 )
+              IF param_rok < '2023'
+                 ValidTakNie( zULGAKLSRA, 12, 64 )
+              ENDIF
               ValidTakNie( zODLICZENIE, 14, 67 )
               @ 11,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID ValidTakNie( zOSWIAD26R, 11, 72 ) .AND. oblpl()
-              @ 12,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' WHEN Param_PPla_param( 'aktuks', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) VALID ValidTakNie( zULGAKLSRA, 12, 64 ) .AND. oblpl()
-              @ 12,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
+              IF param_rok < '2023'
+                 @ 12,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' WHEN Param_PPla_param( 'aktuks', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) VALID ValidTakNie( zULGAKLSRA, 12, 64 ) .AND. oblpl()
+                 @ 12,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
+              ENDIF
               @ 13,43 say 'Podatek stawka..........%.='
               @ 13,62 get zSTAW_PODAT pict '99.99' valid oblpl()
               @ 13,71 get B5          pict '99999.99' when oblpl().and..f.
@@ -1065,7 +1069,7 @@ zPPK := PPK
 zZASI_BZUS := ZASI_BZUS
 
 zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) .AND. prac->oswiad26r == 'T', 'T', 'N' ), OSWIAD26R )
-   IF ! Param_PPla_param( 'aktuks', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) )
+   IF param_rok >= '2023' .OR. ! Param_PPla_param( 'aktuks', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) )
       zULGAKLSRA := 'N'
       zULGAKLSRK=0
    ELSE
