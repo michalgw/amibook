@@ -336,7 +336,7 @@ PROCEDURE Pit_8AR( _G, _M, _STR, _OU )
          p_wyplar()
       CASE _OU == 'X'
          IF Pit48_Covid()
-           edeklaracja_plik  :=  'PIT_8AR_11_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
+           edeklaracja_plik  :=  'PIT_8AR_12_' + normalizujNazwe(AllTrim(symbol_fir)) + '_' + AllTrim(p4r)
            IF ( zCzyKorekta := edekCzyKorekta() ) > 0
               IF zCzyKorekta == 2
                  rodzaj_korekty := edekRodzajKorekty()
@@ -345,15 +345,15 @@ PROCEDURE Pit_8AR( _G, _M, _STR, _OU )
               ENDIF
               IF zDEKLKOR != 'K' .OR. (zDEKLKOR == 'K' .AND. ValType(tresc_korekty_pit8ar) == "C")
                  PRIVATE cWynikXml := ''
-                 cWynikXml  :=  edek_pit8ar_11()
-                 edekZapiszXml(cWynikXml, edeklaracja_plik, wys_edeklaracja, 'PIT8AR-11', zDEKLKOR == 'K')
+                 cWynikXml  :=  edek_pit8ar_12()
+                 edekZapiszXml(cWynikXml, edeklaracja_plik, wys_edeklaracja, 'PIT8AR-12', zDEKLKOR == 'K')
               ENDIF
            ENDIF
          ENDIF
       OTHERWISE //_OU='K'
          IF Pit48_Covid()
             DeklPodp( 'T' )
-            DeklarDrukuj( 'PIT8AR-11' )
+            DeklarDrukuj( 'PIT8AR-12' )
          ENDIF
       ENDCASE
    END
