@@ -196,16 +196,16 @@ FUNCTION IFT1_Rob( lEDeklaracja )
             IF aDane[ 'Parametry' ][ 'Korekta' ]
                aDane[ 'ORDZU' ] := edekOrdZuTrescPobierz( iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT-1R', 'IFT-1' ), Val( ident_fir ), prac->( RecNo() ) )
             ENDIF
-            cXML := edek_ift1_15( aDane )
-            cNazwaPlikuXML := iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT_1R_15_', 'IFT_1_15_' ) ;
+            cXML := edek_ift1_16( aDane )
+            cNazwaPlikuXML := iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT_1R_16_', 'IFT_1_16_' ) ;
                + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' ;
                + AllTrim( Str( Year( aDane[ 'Parametry' ][ 'DataOd' ] ) ) ) + '_' ;
                + AllTrim( aDane[ 'Dane' ][ 'OsobaNazwisko' ] )
             edekZapiszXml(cXML, cNazwaPlikuXML, wys_edeklaracja, ;
-               iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT1R-15', 'IFT1-15' ), ;
+               iif( aDane[ 'Parametry' ][ 'Roczny' ], 'IFT1R-16', 'IFT1-16' ), ;
                aDane[ 'Parametry' ][ 'Korekta' ], 0, prac->( RecNo() ) )
          ELSE
-            DeklarDrukuj( 'IFT1-15', aDane )
+            DeklarDrukuj( 'IFT1-16', aDane )
          ENDIF
       ENDIF
    ENDIF

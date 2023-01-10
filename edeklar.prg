@@ -7453,6 +7453,104 @@ FUNCTION edek_ift1_15( aDane )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION edek_ift1_16( aDane )
+   LOCAL r, nl := Chr( 13 ) + Chr( 10 )
+   r := '<?xml version="1.0" encoding="UTF-8"?>' + nl
+   IF aDane[ 'Parametry' ][ 'Roczny' ]
+      r := r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2022/03/28/11450/">' + nl
+   ELSE
+      r := r + '<Deklaracja xmlns="http://crd.gov.pl/wzor/2022/03/28/11451/">' + nl
+   ENDIF
+   r := r + '  <Naglowek>' + nl
+   IF aDane[ 'Parametry' ][ 'Roczny' ]
+      r := r + '    <KodFormularza kodPodatku="PIT" kodSystemowy="IFT-1R (16)" rodzajZobowiazania="Z" wersjaSchemy="2-0E">IFT-1/IFT-1R</KodFormularza>'
+   ELSE
+      r := r + '    <KodFormularza kodPodatku="PIT" kodSystemowy="IFT-1 (16)" rodzajZobowiazania="Z" wersjaSchemy="2-0E">IFT-1/IFT-1R</KodFormularza>'
+   ENDIF
+   r := r + '    <WariantFormularza>16</WariantFormularza>' + nl
+   r := r + '    <CelZlozenia poz="P_7">' + iif( aDane[ 'Parametry' ][ 'Korekta' ], '2', '1' ) + '</CelZlozenia>' + nl
+   r := r + '    <OkresOd poz="P_4">' + date2strxml( aDane[ 'Parametry' ][ 'DataOd' ] ) + '</OkresOd>' + nl
+   r := r + '    <OkresDo poz="P_5">' + date2strxml( aDane[ 'Parametry' ][ 'DataDo' ] ) + '</OkresDo>' + nl
+   r := r + '    <KodUrzedu>' + str2sxml( aDane[ 'Dane' ][ 'KodUrzedu' ] ) + '</KodUrzedu>' + nl
+   r := r + '  </Naglowek>' + nl
+   r := r + '  <Podmiot1 rola="' + str2sxml( 'Pˆatnik/Podmiot Wypˆacaj¥cy' ) + '">' + nl
+   IF aDane[ 'Dane' ][ 'FirmaSpolka' ]
+      r := r + '    <OsobaNiefizyczna>' + nl
+      r := r + '      <NIP>' + trimnip( str2sxml( aDane[ 'Dane' ][ 'FirmaNIP' ] ) ) + '</NIP>' + nl
+      r := r + '      <PelnaNazwa>' + str2sxml( aDane[ 'Dane' ][ 'FirmaNazwa' ] ) + '</PelnaNazwa>' + nl
+      r := r + '    </OsobaNiefizyczna>' + nl
+   ELSE
+      r := r + '    <OsobaFizyczna>' + nl
+      r := r + '      <etd:NIP xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + trimnip( str2sxml( aDane[ 'Dane' ][ 'FirmaNIP' ] ) ) + '</etd:NIP>' + nl
+      r := r + '      <etd:ImiePierwsze xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + str2sxml( aDane[ 'Dane' ][ 'FirmaImie' ] ) + '</etd:ImiePierwsze>' + nl
+      r := r + '      <etd:Nazwisko xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + str2sxml( aDane[ 'Dane' ][ 'FirmaNazwisko' ] ) + '</etd:Nazwisko>' + nl
+      r := r + '      <etd:DataUrodzenia xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + date2strxml( aDane[ 'Dane' ][ 'FirmaData' ] ) + '</etd:DataUrodzenia>' + nl
+      r := r + '    </OsobaFizyczna>' + nl
+   ENDIF
+   r := r + '    <AdresZamieszkaniaSiedziby rodzajAdresu="RAD">' + nl
+   r := r + '      <etd:AdresPol xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + nl
+   r := r + '        <etd:KodKraju>PL</etd:KodKraju>' + nl
+   r := r + '        <etd:Wojewodztwo>' + str2sxml( aDane[ 'Dane' ][ 'FirmaWojewodztwo' ] ) + '</etd:Wojewodztwo>' + nl
+   r := r + '        <etd:Powiat>' + str2sxml( aDane[ 'Dane' ][ 'FirmaPowiat' ] ) + '</etd:Powiat>' + nl
+   r := r + '        <etd:Gmina>' + str2sxml( aDane[ 'Dane' ][ 'FirmaGmina' ] ) + '</etd:Gmina>' + nl
+   r := r + '        <etd:Ulica>' + str2sxml( aDane[ 'Dane' ][ 'FirmaUlica' ] ) + '</etd:Ulica>' + nl
+   r := r + '        <etd:NrDomu>' + str2sxml( aDane[ 'Dane' ][ 'FirmaNrDomu' ] ) + '</etd:NrDomu>' + nl
+   IF Len( aDane[ 'Dane' ][ 'FirmaNrLokalu' ] ) > 0
+      r := r + '        <etd:NrLokalu>' + str2sxml( aDane[ 'Dane' ][ 'FirmaNrLokalu' ] ) + '</etd:NrLokalu>' + nl
+   ENDIF
+   r := r + '        <etd:Miejscowosc>' + str2sxml( aDane[ 'Dane' ][ 'FirmaMiejscowosc' ] ) + '</etd:Miejscowosc>' + nl
+   r := r + '        <etd:KodPocztowy>' + str2sxml( aDane[ 'Dane' ][ 'FirmaKodPocztowy' ] ) + '</etd:KodPocztowy>' + nl
+   //r := r + '        <etd:Poczta>' + str2sxml( aDane[ 'Dane' ][ 'FirmaPoczta' ] ) + '</etd:Poczta>' + nl
+   r := r + '      </etd:AdresPol>' + nl
+   r := r + '    </AdresZamieszkaniaSiedziby>' + nl
+   r := r + '  </Podmiot1>' + nl
+   r := r + '  <Podmiot2 rola="' + str2sxml( 'Odbiorca Nale¾no˜ci' ) + '">' + nl
+   r := r + '    <OsobaFizZagr>' + nl
+   r := r + '      <ImiePierwsze>' + str2sxml( aDane[ 'Dane' ][ 'OsobaImiePierwsze' ] ) + '</ImiePierwsze>' + nl
+   r := r + '      <Nazwisko>' + str2sxml( aDane[ 'Dane' ][ 'OsobaNazwisko' ] ) + '</Nazwisko>' + nl
+   r := r + '      <DataUrodzenia>' + date2strxml( aDane[ 'Dane' ][ 'OsobaDataUrodzenia' ] ) + '</DataUrodzenia>' + nl
+   r := r + '      <MiejsceUrodzenia>' + str2sxml( aDane[ 'Dane' ][ 'OsobaMiejsceUrodzenia' ] ) + '</MiejsceUrodzenia>' + nl
+   r := r + '      <ImieOjca>' + str2sxml( aDane[ 'Dane' ][ 'OsobaImieOjca' ] ) + '</ImieOjca>' + nl
+   r := r + '      <ImieMatki>' + str2sxml( aDane[ 'Dane' ][ 'OsobaImieMatki' ] ) + '</ImieMatki>' + nl
+   r := r + '      <NrId poz="P_25">' + str2sxml( aDane[ 'Dane' ][ 'OsobaNrId' ] ) + '</NrId>' + nl
+   r := r + '      <RodzajNrId poz="P_26">' + aDane[ 'Dane' ][ 'OsobaRodzajNrId' ] + '</RodzajNrId>' + nl
+   r := r + '      <KodKrajuWydania poz="P_27A">' + str2sxml( aDane[ 'Dane' ][ 'OsobaKraj' ] ) + '</KodKrajuWydania>' + nl
+   r := r + '    </OsobaFizZagr>' + nl
+   r := r + '    <AdresZamieszkania rodzajAdresu="RAD">' + nl
+   r := r + '      <etd:KodKraju xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + str2sxml( aDane[ 'Dane' ][ 'OsobaKraj' ] ) + '</etd:KodKraju>' + nl
+   r := r + '      <etd:KodPocztowy xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + str2sxml( aDane[ 'Dane' ][ 'OsobaKodPocztowy' ] ) + '</etd:KodPocztowy>' + nl
+   r := r + '      <etd:Miejscowosc xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + str2sxml( aDane[ 'Dane' ][ 'OsobaMiejscowosc' ] ) + '</etd:Miejscowosc>' + nl
+   r := r + '      <etd:Ulica xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + str2sxml( aDane[ 'Dane' ][ 'OsobaUlica' ] ) + '</etd:Ulica>' + nl
+   r := r + '      <etd:NrDomu xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + str2sxml( aDane[ 'Dane' ][ 'OsobaNrDomu' ] ) + '</etd:NrDomu>' + nl
+   IF Len( aDane[ 'Dane' ][ 'OsobaNrLokalu' ] ) > 0
+      r := r + '      <etd:NrLokalu xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + str2sxml( aDane[ 'Dane' ][ 'OsobaNrLokalu' ] ) + '</etd:NrLokalu>' + nl
+   ENDIF
+   r := r + '    </AdresZamieszkania>' + nl
+   r := r + '  </Podmiot2>' + nl
+   r := r + '  <PozycjeSzczegolowe>' + nl
+   r := r + '    <P_D>' + nl
+   r := r + '      <P_D70>0.00</P_D70>' + nl
+   r := r + '      <P_D71>' + TKwota2Nieujemna( aDane[ 'Dane' ][ 'P_71' ] ) + '</P_D71>' + nl
+   r := r + '      <P_D72>' + TProcentowy( aDane[ 'Dane' ][ 'P_72' ] ) + '</P_D72>' + nl
+   r := r + '      <P_D73>' + TKwota2Nieujemna( aDane[ 'Dane' ][ 'P_73' ] ) + '</P_D73>' + nl
+   r := r + '    </P_D>' + nl
+   IF ! aDane[ 'Parametry' ][ 'Roczny' ]
+      r := r + '    <P_74>' + date2strxml( aDane[ 'Parametry' ][ 'DataZlozenia' ] ) + '</P_74>' + nl
+   ENDIF
+   r := r + '    <P_75>' + date2strxml( aDane[ 'Parametry' ][ 'DataPrzekazania' ] ) + '</P_75>' + nl
+   r := r + '  </PozycjeSzczegolowe>' + nl
+   r := r + '  <Pouczenie>1</Pouczenie>' + nl
+   IF aDane[ 'Parametry' ][ 'Korekta' ] .AND. HB_ISCHAR( aDane[ 'ORDZU' ] ) .AND. Len( AllTrim( aDane[ 'ORDZU' ] ) ) > 0
+      r := r + '  <Zalaczniki>' + nl
+      r := r + edek_ord_zu2( aDane[ 'ORDZU' ] ) + nl
+      r := r + '  </Zalaczniki>' + nl
+   ENDIF
+   r := r + '</Deklaracja>'
+
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION edek_ift2_9( aDane, lRocznie )
 
    LOCAL r, nl := Chr( 13 ) + Chr( 10 )
