@@ -625,7 +625,7 @@ PROCEDURE Umowy()
                SET CURSOR ON
                @ 15, 25 CLEAR TO 22, 75
                @ 15, 25 TO 22, 75
-               @ 16, 26 SAY 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' WHEN CzyPracowPonizej26R( Month( Date() ), Year( Date() ) ) VALID zOSWIAD26R $ 'TN' .AND. oblplu()
+               @ 16, 26 SAY 'Rodzaj ulgi...............:' GET zOSWIAD26R PICTURE '!' WHEN UmowyWOswiad26r() /* CzyPracowPonizej26R( Month( Date() ), Year( Date() ) ) */ VALID UmowyVOswiad26r() /* zOSWIAD26R $ 'TN' */ .AND. oblplu()
                @ 17, 26 SAY 'Podatek stawka..........%.='
                @ 17, 45 GET zSTAW_PODAT PICTURE '99.99' VALID oblplu()
                @ 17, 66 GET B5          PICTURE '999999.99' WHEN oblplu() .AND. .F.
@@ -646,6 +646,7 @@ PROCEDURE Umowy()
                @ 21, 26 SAY 'Podatek do zap&_l.aty........:'
                @ 21, 66 GET zPODATEK  PICTURE '999999.99' WHEN oblplu() .AND. .F.
                ValidTakNie( zWNIOSTERM, 20, 67 )
+               UmowyVOswiad26r()
                READ
                SET CURSOR OFF
                RESTORE SCREEN FROM scr_sklad
@@ -1019,7 +1020,8 @@ FUNCTION v4_141()
    IF LastKey() == 13
       znazwisko := nazwisko + ',' + imie1 + ',' + imie2
       IF ! Empty( zDATA_WYP )
-         zOSWIAD26R := iif( CzyPracowPonizej26R( Month( zDATA_WYP ), Year( zDATA_WYP ) ) .AND. OSWIAD26R == 'T', 'T', 'N' )
+         //zOSWIAD26R := iif( CzyPracowPonizej26R( Month( zDATA_WYP ), Year( zDATA_WYP ) ) .AND. OSWIAD26R == 'T', 'T', 'N' )
+         zOSWIAD26R := iif( OSWIAD26R == ' ', 'N', OSWIAD26R )
       ENDIF
       SET COLOR TO i
       @ 14, 9 SAY znazwisko
@@ -1234,7 +1236,7 @@ FUNCTION oblplu()
       ENDIF
       zDOCHOD := Max( 0, zBRUT_RAZEM - ( zKOSZT + zWAR_PSUM ) )
       zDOCHODPOD := _round( zDOCHOD + zPPKPPM, 0 )
-      IF zOSWIAD26R = 'T'
+      IF zOSWIAD26R $ 'TE'
          B5 := 0.0
          oWAR_PUZ := _round( ( zPENSJA - zWAR_PSUM ) * ( zSTAW_PUZ / 100 ), 2 )
          //oWAR_PZK := _round( ( zBRUT_RAZEM - zWAR_PSUM ) * ( zSTAW_PZK / 100 ), 2 )
@@ -1633,3 +1635,28 @@ FUNCTION vAUTOKOM()
 *endif
 *return R
 ***************************************************
+
+FUNCTION UmowyWOswiad26r()
+
+   LOCAL cKolor := ColInf()
+
+   @ 24, 0 SAY PadC( "N - brak ulgi,    T - ulga do 26 lat,    E - ulga dla emeryt¢w", 80 )
+   SetColor( cKolor )
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION UmowyVOswiad26r()
+
+   LOCAL lRes := zOSWIAD26R $ 'TNE'
+
+   IF lRes
+      @ 16, 55 SAY iif( zOSWIAD26R == 'T', '-do 26l', iif( zOSWIAD26R == 'E', '-emeryt', '-brak  '  ) )
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+

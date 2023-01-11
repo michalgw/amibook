@@ -54,7 +54,7 @@ PROCEDURE Pracow()
    @ 15, 0 SAY '³ Miejsce zamieszkania.                        Kod..        Poczta..           ³'
    @ 16, 0 SAY '³ Ulica,dom,lokal......                              /        Tel...           ³'
    @ 17, 0 SAY '³ Gmina.                   Powiat.                   Wojew.                    ³'
-   @ 18, 0 SAY '³ Urz¥d Skarbowy.                              Odlicz kw.wol.      O˜w.<26r:   ³'
+   @ 18, 0 SAY '³ Urz¥d Skarbowy.                              Odlicz kw.wol.     Ulga:        ³'
    @ 19, 0 SAY '³ Miejsce zatrudnienia.                        PPK:        Ulga klasy ˜red.:   ³'
    @ 20, 0 SAY '³ Bank:                Konto:                Kwota przelewu:                   ³'
    @ 21, 0 SAY '³ Nr id. podat.                  Rodzaj nr id.                                 ³'
@@ -308,7 +308,7 @@ PROCEDURE Pracow()
             @ 17, 59 GET zPARAM_WOJ  PICTURE "!!!!!!!!!!!!!!!!!!!!"
             @ 18, 17 GET zURZAD      PICTURE "@S29 !!!!!!!!!!!!!!!!!!!! - !!!!!!!!!!!!!!!!!!!!!!!!!" VALID v3_141()
             @ 18, 62 GET zODLICZENIE PICTURE "!" VALID ValidPracOdliczenie()
-            @ 18, 76 GET zOSWIAD26R  PICTURE "!" VALID ValidPracOswiad26r()
+            @ 18, 71 GET zOSWIAD26R  PICTURE "!" WHEN WhenPracOswiad26r() VALID ValidPracOswiad26r()
             @ 19, 23 GET zZATRUD     PICTURE '@S23 ' + Replicate( '!', 70 )
             @ 19, 52 GET zPPK        PICTURE '!' VALID etatyvppk( 19, 53 )
             @ 19, 76 GET zULGAKLSRA  PICTURE '!' VALID ValidTakNie( zULGAKLSRA, 19, 77 )
@@ -683,7 +683,7 @@ PROCEDURE say31s()
    @ 17,  8 SAY SubStr( GMINA, 1, 17 )
    @ 17, 34 SAY SubStr( PARAM_POW, 1, 17 )
    @ 17, 59 SAY PARAM_WOJ
-   @ 18, 76 SAY iif( iif( OSWIAD26R = ' ', 'N', OSWIAD26R ) = 'T', 'Tak', 'Nie' )
+   @ 18, 71 SAY OSWIAD26R + iif( OSWIAD26R == 'T', '-do 26l', iif( OSWIAD26R == 'E', '-emeryt', '-brak  '  ) )
    SELECT urzedy
    GO prac->skarb
    zurzad := miejsc_us + ' - ' + urzad
@@ -831,15 +831,25 @@ FUNCTION v3_141()
 
    RETURN .NOT. Empty( zurzad )
 
+FUNCTION WhenPracOswiad26r()
+
+   LOCAL cKolor := ColInf()
+
+   @ 24, 0 SAY PadC( "N - brak ulgi,    T - ulga do 26 lat,    E - ulga dla emeryt¢w", 80 )
+   SetColor( cKolor )
+
+   RETURN .T.
+
 FUNCTION ValidPracOswiad26r()
 
    LOCAL R := .F.
 
-   IF zOSWIAD26R $ 'NT'
+   IF zOSWIAD26R $ 'NTE'
       R := .T.
       SET COLOR TO w+
-      @ 18, 77 SAY iif( zOSWIAD26R == 'T', 'ak', 'ie' )
+      @ 18, 72 SAY iif( zOSWIAD26R == 'T', '-do 26l', iif( zOSWIAD26R == 'E', '-emeryt', '-brak  '  ) )
       SET COLOR TO
+      @ 24, 0
    ENDIF
 
    RETURN R

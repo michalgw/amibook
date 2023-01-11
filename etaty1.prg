@@ -425,12 +425,12 @@ do while .t.
               set curs on
               @ 10,42 clear to 21,79
               @ 10,42 to 21,79
-              ValidTakNie( zOSWIAD26R, 11, 72 )
+              Et1VOswiad26r()
               IF param_rok < '2023'
                  ValidTakNie( zULGAKLSRA, 12, 64 )
               ENDIF
               ValidTakNie( zODLICZENIE, 14, 67 )
-              @ 11,43 say 'O˜w. o zwol. od pod.<26 r.:' GET zOSWIAD26R PICTURE '!' /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID ValidTakNie( zOSWIAD26R, 11, 72 ) .AND. oblpl()
+              @ 11,43 say 'Rodzaj ulgi...............:' GET zOSWIAD26R PICTURE '!' WHEN Et1WOswiad26r() /*WHEN CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) )*/ VALID Et1VOswiad26r() .AND. oblpl()
               IF param_rok < '2023'
                  @ 12,43 say 'Ulga klasy ˜redniej' GET zULGAKLSRA PICTURE '!' WHEN Param_PPla_param( 'aktuks', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) VALID ValidTakNie( zULGAKLSRA, 12, 64 ) .AND. oblpl()
                  @ 12,71 GET zULGAKLSRK picture '99999.99' when oblpl() .AND. .F.
@@ -821,7 +821,7 @@ function oblpl()
          zPPKPK1 := 0
          zPPKPK2 := 0
       ENDIF
-      IF zOSWIAD26R == 'T'
+      IF zOSWIAD26R $ 'TE'
          zODLICZ21 := 43.76
          B521 := zDOCHODPOD*(zSTAWKAPODAT21/100)
          B5=_round(max(0,zBRUT_RAZEM-(parap_kos+zWAR_PSUM)),0)*(Param_PPla_param( 'podatek', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) /*parap_pod*/ / 100)
@@ -1068,7 +1068,15 @@ zPPK := PPK
 
 zZASI_BZUS := ZASI_BZUS
 
-zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) .AND. prac->oswiad26r == 'T', 'T', 'N' ), OSWIAD26R )
+   zOSWIAD26R := 'N'
+   DO CASE
+   CASE prac->oswiad26r == 'T'
+      zOSWIAD26R := iif( CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ), 'T', 'N' )
+   CASE prac->oswiad26r == 'E'
+      zOSWIAD26R := 'E'
+   ENDCASE
+   //zOSWIAD26R=iif( OSWIAD26R == ' ', iif( CzyPracowPonizej26R( Val( miesiacpla ), Val( param_rok ) ) .AND. prac->oswiad26r == 'T', 'T', 'N' ), OSWIAD26R )
+
    IF param_rok >= '2023' .OR. ! Param_PPla_param( 'aktuks', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) )
       zULGAKLSRA := 'N'
       zULGAKLSRK=0
@@ -1262,7 +1270,7 @@ zPODATEK=PODATEK
 zNETTO=NETTO
 zDO_WYPLATY=DO_WYPLATY
 zUWAGI=UWAGI
-   IF zOSWIAD26R == 'T'
+   IF zOSWIAD26R $ 'TE'
       B5 := 0
    ELSE
       B5=zDOCHODPOD*(zSTAW_PODAT/100)
@@ -1572,6 +1580,30 @@ PROCEDURE Etaty1_UstawWewPar()
    SetColor( cKolor )
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Et1WOswiad26r()
+
+   LOCAL cKolor := ColInf()
+
+   @ 24, 0 SAY PadC( "N - brak ulgi,    T - ulga do 26 lat,    E - ulga dla emeryt¢w", 80 )
+   SetColor( cKolor )
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Et1VOswiad26r()
+
+   LOCAL lRes := zOSWIAD26R $ 'TNE'
+
+   IF lRes
+      @ 11, 72 SAY iif( zOSWIAD26R == 'T', '-do 26l', iif( zOSWIAD26R == 'E', '-emeryt', '-brak  '  ) )
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
 
 /*----------------------------------------------------------------------*/
 

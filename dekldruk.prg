@@ -4901,18 +4901,34 @@ FUNCTION DaneDek_PIT11w29()
    hDane['P_33'] := P55
    hDane['P_34'] := 0
    hDane['P_35'] := 0
-   hDane['P_36'] := P50_R262
-   hDane['P_37'] := P51_R262
-   hDane['P_38'] := P53a_R262
-   hDane['P_39'] := zKOR_ZWET
-   hDane['P_40'] := P55_R262
+   IF RodzajUlgi == 'T'
+      hDane['P_36'] := P50_R262
+      hDane['P_37'] := P51_R262
+      hDane['P_38'] := P53a_R262
+      hDane['P_39'] := zKOR_ZWET
+      hDane['P_40'] := P55_R262
+   ELSE
+      hDane['P_36'] := 0
+      hDane['P_37'] := 0
+      hDane['P_38'] := 0
+      hDane['P_39'] := 0
+      hDane['P_40'] := 0
+   ENDIF
    hDane['P_41'] := 0
    hDane['P_42'] := 0
-   hDane['P_43'] := 0
-   hDane['P_44'] := 0
-   hDane['P_45'] := 0
-   hDane['P_46'] := 0
-   hDane['P_47'] := 0
+   IF RodzajUlgi == 'E'
+      hDane['P_43'] := P50_R262
+      hDane['P_44'] := P51_R262
+      hDane['P_45'] := P53a_R262
+      hDane['P_46'] := zKOR_ZWET
+      hDane['P_47'] := P55_R262
+   ELSE
+      hDane['P_43'] := 0
+      hDane['P_44'] := 0
+      hDane['P_45'] := 0
+      hDane['P_46'] := 0
+      hDane['P_47'] := 0
+   ENDIF
    hDane['P_48'] := 0
    hDane['P_49'] := 0
    hDane['P_50'] := p50_3
@@ -4927,14 +4943,28 @@ FUNCTION DaneDek_PIT11w29()
    hDane['P_59'] := p51_5
    hDane['P_60'] := p52_5a
    hDane['P_61'] := p53_5
-   hDane['P_62'] := P50_5_R262
-   hDane['P_63'] := P51_5_R262
-   hDane['P_64'] := P52_5a_R262
-   hDane['P_65'] := P53_5_R262
-   hDane['P_66'] := 0
-   hDane['P_67'] := 0
-   hDane['P_68'] := 0
-   hDane['P_69'] := 0
+   IF RodzajUlgi == 'T'
+      hDane['P_62'] := P50_5_R262
+      hDane['P_63'] := P51_5_R262
+      hDane['P_64'] := P52_5a_R262
+      hDane['P_65'] := P53_5_R262
+   ELSE
+      hDane['P_62'] := 0
+      hDane['P_63'] := 0
+      hDane['P_64'] := 0
+      hDane['P_65'] := 0
+   ENDIF
+   IF RodzajUlgi == 'E'
+      hDane['P_66'] := P50_5_R262
+      hDane['P_67'] := P51_5_R262
+      hDane['P_68'] := P52_5a_R262
+      hDane['P_69'] := P53_5_R262
+   ELSE
+      hDane['P_66'] := 0
+      hDane['P_67'] := 0
+      hDane['P_68'] := 0
+      hDane['P_69'] := 0
+   ENDIF
    hDane['P_70'] := 0
    hDane['P_71'] := p52_6a
    hDane['P_72'] := p53_6
@@ -4980,15 +5010,29 @@ FUNCTION DaneDek_PIT11w29()
    hDane['P_107'] := 0
    hDane['P_108'] := 0
 
-   hDane['P_109'] := P50_R26 + P50_5_R26
-   hDane['P_110'] := P50_R26
-   hDane['P_111'] := P50_5_R26
+   IF RodzajUlgi == 'T'
+      hDane['P_109'] := P50_R26 + P50_5_R26
+      hDane['P_110'] := P50_R26
+      hDane['P_111'] := P50_5_R26
+   ELSE
+      hDane['P_109'] := 0
+      hDane['P_110'] := 0
+      hDane['P_111'] := 0
+   ENDIF
 
    hDane['P_112'] := 0
    hDane['P_113'] := 0
-   hDane['P_114'] := 0
-   hDane['P_115'] := 0
-   hDane['P_116'] := 0
+
+   IF RodzajUlgi == 'E'
+      hDane['P_114'] := P50_R26 + P50_5_R26
+      hDane['P_115'] := P50_R26
+      hDane['P_116'] := P50_5_R26
+   ELSE
+      hDane['P_114'] := 0
+      hDane['P_115'] := 0
+      hDane['P_116'] := 0
+   ENDIF
+
    hDane['P_117'] := 0
 
    hDane['P_118_1'] := '0'
