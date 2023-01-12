@@ -109,7 +109,9 @@ PROCEDURE Pit_8AR( _G, _M, _STR, _OU )
 
       SELECT 2
       IF Dostep( 'PRAC' )
-         SET INDEX TO prac3
+         SetInd( 'PRAC' )
+         //SET INDEX TO prac3
+         SET ORDER TO 4
       ELSE
          BREAK
       ENDIF
