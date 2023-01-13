@@ -193,6 +193,8 @@ FUNCTION GrafTekst_Wczytaj( cFirma, cIdentyfikator, nWartoscDomyslna )
    ENDIF
    graftekst->( dbCloseArea() )
 
+   Select( nWSpace )
+
    RETURN nResult
 
 /*----------------------------------------------------------------------*/
