@@ -1129,3 +1129,15 @@ FUNCTION FPSFileSaveDialog()
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION ZaciemnijPESEL( cPESEL )
+
+   LOCAL cRes := SubStr( cPESEL, 1, 4 )
+
+   IF Len( cPESEL ) > 4
+      cRes := cRes + Replicate( '*', Len( cPESEL ) - 4 )
+   ENDIF
+
+   RETURN cRes
+
+/*----------------------------------------------------------------------*/
+

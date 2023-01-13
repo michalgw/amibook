@@ -114,7 +114,7 @@ PROCEDURE ListaPla()
             aWiersz[ 'nazwisko' ] := AllTrim( nazwisko )
             aWiersz[ 'imie1' ] := AllTrim( imie1 )
             aWiersz[ 'imie2' ] := AllTrim( imie2 )
-            aWiersz[ 'pesel' ] := AllTrim( pesel )
+            aWiersz[ 'pesel' ] := ZaciemnijPESEL( AllTrim( pesel ) )
 
             SELECT etaty
             seek '+' + ident_fir + Str( REC, 5 ) + miesiac
@@ -161,7 +161,7 @@ PROCEDURE ListaPla()
             *   REC=recno()
             REC := rec_no
             k1 := PadR( AllTrim( nazwisko ) + ' ' + AllTrim( imie1 ) + ' ' + AllTrim( imie2 ), 40 )
-            k2 := pesel
+            k2 := Pad( ZaciemnijPESEL( pesel ), Len( pesel ) )
             SELECT etaty
             seek '+' + ident_fir + Str( REC, 5 ) + miesiac
             STORE .F. TO DOD
