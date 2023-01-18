@@ -22,6 +22,19 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE Pit_811( _G, _M, _STR, _OU )
 
+   LOCAL bWRodzPrzychZwol := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 SAY PadC( "1 - pkt 162,      2 - pkt 163,      3 - pkt 164,     puste - brak", 80 )
+      RETURN .T.
+   }
+   LOCAL bVRodzPrzychZwol := { | |
+      LOCAL bRes
+      IF ( bRes := cRodzPrzychZwol $ ' 123' )
+         @ 24, 0
+      ENDIF
+      RETURN bRes
+   }
+
    RAPORT := RAPTEMP
 
    PRIVATE P4,P4d,P5,P6,P6_kod,p7,p8,p8n,p8r,p8d,p9,p10
@@ -29,7 +42,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
    PRIVATE P20,P21,P22,P23,P24,DP28,DP10 := 'T'
    PRIVATE tresc_korekty_pit11 := '', id_pracownika, DP28Scr
    PRIVATE P_KrajID, P_DokIDTyp, P_DokIDNr, P_18Kraj, cIgnoruj26r := 'N'
-   PRIVATE SklZdrow, RodzajUlgi := 'N'
+   PRIVATE SklZdrow, RodzajUlgi := 'N', cRodzPrzychZwol := ' '
 
    STORE 0 TO P29,P30,P31, SklZdrow
    STORE '' TO P3,P4,P4d,P6,P1,P11,P12,P13,P15,P16,P17,P18,P19,P20
@@ -223,7 +236,8 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       @ LINI + 4, LGKol + 56 SAY 'ZUS(p.74)' GET zKOR_ZDROZ PICTURE '99999.99'
       @ LINI + 5, LGKol + 2  SAY 'Informacje o kosztach uzyskania przychodu (sek. D p. 28):' GET DP28 PICT '!' WHEN PIT11_DP28When() VALID PIT11_DP28Valid()
       @ LINI + 6, LGKol + 2  SAY 'Nieograniczony obowi¥zek podatkowy (sek. C p. 10):' GET DP10 PICT '!' VALID DP10 $ 'TN'
-      @ LINI + 7, LGKol + 2  SAY 'Wykazuj jako osob© powy¾ej 26 r. ¾ycia (Tak/Nie):' GET cIgnoruj26r PICT '!' VALID cIgnoruj26r $ 'TN'
+      @ LINI + 7, LGKol + 2  SAY 'Ignoruj ulgi (Tak/Nie):' GET cIgnoruj26r PICT '!' VALID cIgnoruj26r $ 'TN'
+      @ LINI + 7, LGKol + 32  SAY 'Rodzaj przychodu zw.od podatku:' GET cRodzPrzychZwol PICT '!' WHEN Eval( bWRodzPrzychZwol ) VALID Eval( bVRodzPrzychZwol )
       read_()
       SET CONF OFF
       IF LastKey() <> 13

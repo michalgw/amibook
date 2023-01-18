@@ -5035,9 +5035,9 @@ FUNCTION DaneDek_PIT11w29()
 
    hDane['P_117'] := 0
 
-   hDane['P_118_1'] := '0'
-   hDane['P_119_1'] := '0'
-   hDane['P_120_1'] := '0'
+   hDane['P_118_1'] := iif( RodzajUlgi == 'E' .AND. cRodzPrzychZwol == '1', '1', '0' )
+   hDane['P_119_1'] := iif( RodzajUlgi == 'E' .AND. cRodzPrzychZwol == '2', '1', '0' )
+   hDane['P_120_1'] := iif( RodzajUlgi == 'E' .AND. cRodzPrzychZwol == '3', '1', '0' )
 
    hDane['P_121_1'] := '0'
    hDane['P_121_2'] := '1'

@@ -3650,6 +3650,14 @@ FUNCTION edek_pit11_29()
          r = r + '    <P_114>' + TKwota2Nieujemna(P50_R26 + P50_5_R26) + '</P_114>' + nl
          r = r + '    <P_115>' + TKwota2Nieujemna(P50_R26) + '</P_115>' + nl
          r = r + '    <P_116>' + TKwota2Nieujemna(P50_5_R26) + '</P_116>' + nl
+         DO CASE
+         CASE cRodzPrzychZwol == '1'
+      		r = r + '    <P_118>1</P_118>' + nl
+         CASE cRodzPrzychZwol == '2'
+      		r = r + '    <P_119>1</P_119>' + nl
+         CASE cRodzPrzychZwol == '3'
+      		r = r + '    <P_120>1</P_120>' + nl
+         ENDCASE
       ENDIF
 		r = r + '    <P_121>2</P_121>' + nl
       r = r + '    <P_122>' + TKwota2Nieujemna(SklZdrow) + '</P_122>' + nl
