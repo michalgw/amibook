@@ -41,10 +41,10 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
    PRIVATE P1,P1s,P11,P12,P13,P14,P15,P16,P17,P18,P19
    PRIVATE P20,P21,P22,P23,P24,DP28,DP10 := 'T'
    PRIVATE tresc_korekty_pit11 := '', id_pracownika, DP28Scr
-   PRIVATE P_KrajID, P_DokIDTyp, P_DokIDNr, P_18Kraj, cIgnoruj26r := 'N'
+   PRIVATE P_KrajID, P_DokIDTyp, P_DokIDNr, P_18Kraj, cIgnoruj26r := 'N', SklZdrowKor
    PRIVATE SklZdrow, RodzajUlgi := 'N', cRodzPrzychZwol := ' ', lEmeryt := .F., lPonizej26l := .F.
 
-   STORE 0 TO P29,P30,P31, SklZdrow
+   STORE 0 TO P29,P30,P31, SklZdrow, SklZdrowKor
    STORE '' TO P3,P4,P4d,P6,P1,P11,P12,P13,P15,P16,P17,P18,P19,P20
    STORE '' TO P21
 
@@ -225,6 +225,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       @ LINI + 2, LGKol + 2 SAY  'Przy' GET zKOR_PRZY PICTURE '999999.99'
       @ LINI + 2, LGKol + 17 SAY 'Kosz' GET zKOR_KOSZ PICTURE '999999.99'
       @ LINI + 2, LGKol + 32 SAY 'Zali' GET zKOR_ZALI PICTURE '99999.99'
+      @ LINI + 2, LGKol + 48 SAY 'Zdrow' GET SklZdrowKor PICTURE '99999.99'
       *      @ LINI+2,LGKol+46 say 'ZUS-76' get zKOR_SPOL pict '99999.99'
       *      @ LINI+2,LGKol+62 say 'ZUS-78' get zKOR_ZDRO pict '99999.99'
       @ LINI + 3, LGKol + 2  SAY 'Zw.(p.32)' GET zKOR_ZWET PICTURE '99999.99'
@@ -544,6 +545,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       P52 := P52 + zKOR_SPOL
       P54a := P54a + zKOR_ZDRO
       P53a := Max( 0, P50 - P51 )
+      SklZdrow := SklZdrow + SklZdrowKor
 
 //      P50_R26 := P50_R26 + zKOR_PRZY
 //      P51_R26 := P51_R26 + zKOR_KOSZ
