@@ -3582,14 +3582,14 @@ FUNCTION edek_pit11_29()
 		r = r + '    <P_33>' + TKwotaCNieujemna(P55) + '</P_33>' + nl
 		//r = r + '    <P_34>' + TKwota2Nieujemna(0) + '</P_34>' + nl
 		//r = r + '    <P_35>' + TKwota2Nieujemna(0) + '</P_35>' + nl
-      IF RodzajUlgi == 'T'
+      IF lPonizej26l
    		r = r + '    <P_36>' + TKwota2Nieujemna(P50_R262) + '</P_36>' + nl
    		r = r + '    <P_37>' + TKwota2Nieujemna(P51_R262) + '</P_37>' + nl
    		r = r + '    <P_38>' + TKwota2Nieujemna(P53a_R262) + '</P_38>' + nl
    		r = r + xmlNiePusty(zKOR_ZWET, '    <P_39>' + TKwota2Nieujemna(zKOR_ZWET) + '</P_39>' + nl)
    		r = r + '    <P_40>' + TKwotaCNieujemna(P55_R262) + '</P_40>' + nl
       ENDIF
-      IF RodzajUlgi == 'E'
+      IF lEmeryt
    		r = r + '    <P_43>' + TKwota2Nieujemna(P50_R262) + '</P_43>' + nl
    		r = r + '    <P_44>' + TKwota2Nieujemna(P51_R262) + '</P_44>' + nl
    		r = r + '    <P_45>' + TKwota2Nieujemna(P53a_R262) + '</P_45>' + nl
@@ -3610,13 +3610,13 @@ FUNCTION edek_pit11_29()
 		r = r + xmlNiePusty(p51_5, '    <P_59>' + TKwota2Nieujemna(p51_5) + '</P_59>' + nl)
 		r = r + '    <P_60>' + TKwota2Nieujemna(p52_5a) + '</P_60>' + nl
 		r = r + '    <P_61>' + TKwotaCNieujemna(p53_5) + '</P_61>' + nl
-      IF RodzajUlgi == 'T'
+      IF lPonizej26l
    		r = r + '    <P_62>' + TKwota2Nieujemna(P50_5_R262) + '</P_62>' + nl
    		r = r + xmlNiePusty(P51_5_R262, '    <P_63>' + TKwota2Nieujemna(P51_5_R262) + '</P_63>' + nl)
    		r = r + '    <P_64>' + TKwota2Nieujemna(P52_5a_R262) + '</P_64>' + nl
    		r = r + '    <P_65>' + TKwotaCNieujemna(P53_5_R262) + '</P_65>' + nl
       ENDIF
-      IF RodzajUlgi == 'E'
+      IF lEmeryt
    		r = r + '    <P_66>' + TKwota2Nieujemna(P50_5_R262) + '</P_66>' + nl
    		r = r + xmlNiePusty(P51_5_R262, '    <P_67>' + TKwota2Nieujemna(P51_5_R262) + '</P_67>' + nl)
    		r = r + '    <P_68>' + TKwota2Nieujemna(P52_5a_R262) + '</P_68>' + nl

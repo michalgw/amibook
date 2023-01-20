@@ -4901,7 +4901,7 @@ FUNCTION DaneDek_PIT11w29()
    hDane['P_33'] := P55
    hDane['P_34'] := 0
    hDane['P_35'] := 0
-   IF RodzajUlgi == 'T'
+   IF lPonizej26l
       hDane['P_36'] := P50_R262
       hDane['P_37'] := P51_R262
       hDane['P_38'] := P53a_R262
@@ -4916,7 +4916,7 @@ FUNCTION DaneDek_PIT11w29()
    ENDIF
    hDane['P_41'] := 0
    hDane['P_42'] := 0
-   IF RodzajUlgi == 'E'
+   IF lEmeryt
       hDane['P_43'] := P50_R262
       hDane['P_44'] := P51_R262
       hDane['P_45'] := P53a_R262
@@ -4943,7 +4943,7 @@ FUNCTION DaneDek_PIT11w29()
    hDane['P_59'] := p51_5
    hDane['P_60'] := p52_5a
    hDane['P_61'] := p53_5
-   IF RodzajUlgi == 'T'
+   IF lPonizej26l
       hDane['P_62'] := P50_5_R262
       hDane['P_63'] := P51_5_R262
       hDane['P_64'] := P52_5a_R262
@@ -4954,7 +4954,7 @@ FUNCTION DaneDek_PIT11w29()
       hDane['P_64'] := 0
       hDane['P_65'] := 0
    ENDIF
-   IF RodzajUlgi == 'E'
+   IF lEmeryt
       hDane['P_66'] := P50_5_R262
       hDane['P_67'] := P51_5_R262
       hDane['P_68'] := P52_5a_R262

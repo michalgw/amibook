@@ -1018,6 +1018,25 @@ FUNCTION CzyPracowPonizej26R( nMiesiac, nRok )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION CzyPracowEmeryt( nMiesiac, nRok )
+
+   LOCAL lRes := .F.
+   LOCAL nLata := nRok - Year( prac->data_ur )
+
+   IF nLata >= iif( prac->plec == 'K', 60, 65 )
+      IF nLata == iif( prac->plec == 'K', 60, 65 )
+         IF nMiesiac >= Month( prac->data_ur )
+            lRes := .T.
+         ENDIF
+      ELSE
+         lRes := .T.
+      ENDIF
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION PracWybierz()
 
    LOCAL aRes := {}, cEkran

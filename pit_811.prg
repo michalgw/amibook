@@ -42,7 +42,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
    PRIVATE P20,P21,P22,P23,P24,DP28,DP10 := 'T'
    PRIVATE tresc_korekty_pit11 := '', id_pracownika, DP28Scr
    PRIVATE P_KrajID, P_DokIDTyp, P_DokIDNr, P_18Kraj, cIgnoruj26r := 'N'
-   PRIVATE SklZdrow, RodzajUlgi := 'N', cRodzPrzychZwol := ' '
+   PRIVATE SklZdrow, RodzajUlgi := 'N', cRodzPrzychZwol := ' ', lEmeryt := .F., lPonizej26l := .F.
 
    STORE 0 TO P29,P30,P31, SklZdrow
    STORE '' TO P3,P4,P4d,P6,P1,P11,P12,P13,P15,P16,P17,P18,P19,P20
@@ -497,7 +497,13 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       SEEK '+' + ident_fir + idpr + ' 1'
       DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma = ident_fir .AND. ident = idpr
          IF do_pit4 >= SubStr( DToS( ODKIEDY ), 1, 6 ) .AND. do_pit4 <= SubStr( DToS( DOKIEDY ), 1, 6 )
-            IF  cIgnoruj26r == 'N' /* .AND. SToD( do_pit4 + '01' ) >= 0d20190801 .AND. CzyPracowPonizej26R( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) ) */
+            IF  cIgnoruj26r == 'N' /* .AND. SToD( do_pit4 + '01' ) >= 0d20190801 */ .AND. ( CzyPracowPonizej26R( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) ) .OR. CzyPracowEmeryt( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) ) )
+               IF CzyPracowPonizej26R( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) )
+                  lPonizej26l := .T.
+               ENDIF
+               IF CzyPracowEmeryt( Month( SToD( do_pit4 + '01' ) ), Year( SToD( do_pit4 + '01' ) ) )
+                  lEmeryt := .T.
+               ENDIF
                IF OSWIAD26R $ 'TE'
                   RodzajUlgi := OSWIAD26R
                   P50_R26 := P50_R26 + BRUT_RAZEM - zasi_bzus
@@ -639,7 +645,13 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                *        P52b_8=P52b_8+war_puzo
                *        P53_8=P53_8+podatek
             OTHERWISE
-               IF cIgnoruj26r == 'N' /* .AND. data_wyp >= 0d20190801 .AND. CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) ) */
+               IF cIgnoruj26r == 'N' /* .AND. data_wyp >= 0d20190801 */ .AND. ( CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) ) .OR. CzyPracowEmeryt( Month( data_wyp ), Year( data_wyp ) ) )
+                  IF CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) )
+                     lPonizej26l := .T.
+                  ENDIF
+                  IF CzyPracowEmeryt( Month( data_wyp ), Year( data_wyp ) )
+                     lEmeryt := .T.
+                  ENDIF
                   IF OSWIAD26R $ 'TE'
                      RodzajUlgi := OSWIAD26R
                      P50_5_R26 := P50_5_R26 + BRUT_RAZEM - ZASI_BZUS + PPKPPM
@@ -668,7 +680,13 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
                P52b_5 := P52b_5 + war_puzo
             ENDCASE
             *     if alltrim(TYTUL)#'1'
-            IF cIgnoruj26r == 'N' /* .AND. data_wyp >= 0d20190801 .AND. CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) ) */
+            IF cIgnoruj26r == 'N' /* .AND. data_wyp >= 0d20190801 */ .AND. ( CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) ) .OR. CzyPracowEmeryt( Month( data_wyp ), Year( data_wyp ) ) )
+               IF CzyPracowPonizej26R( Month( data_wyp ), Year( data_wyp ) )
+                  lPonizej26l := .T.
+               ENDIF
+               IF CzyPracowEmeryt( Month( data_wyp ), Year( data_wyp ) )
+                  lEmeryt := .T.
+               ENDIF
                IF OSWIAD26R $ 'TE'
                   RodzajUlgi := OSWIAD26R
                   P52z_R26 := P52z_R26 + war_psum
