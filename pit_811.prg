@@ -25,6 +25,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
    LOCAL bWRodzPrzychZwol := { | |
       LOCAL cKolor := ColInf()
       @ 24, 0 SAY PadC( "1 - pkt 162,      2 - pkt 163,      3 - pkt 164,     puste - brak", 80 )
+      SetColor( cKolor )
       RETURN .T.
    }
    LOCAL bVRodzPrzychZwol := { | |
@@ -34,6 +35,19 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       ENDIF
       RETURN bRes
    }
+   LOCAL bPIT11_KorWierszW := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 SAY PadC( "Modyfikuj w polu: 1 - 29.    2 - 36. lub 43.    3 - 110. lub 115.", 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bPIT11_KorWierszV := { | |
+      LOCAL lRes := cKorWiersz $ '123'
+      IF lRes
+         @ 24, 0
+      ENDIF
+      RETURN lRes
+   }
 
    RAPORT := RAPTEMP
 
@@ -41,7 +55,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
    PRIVATE P1,P1s,P11,P12,P13,P14,P15,P16,P17,P18,P19
    PRIVATE P20,P21,P22,P23,P24,DP28,DP10 := 'T'
    PRIVATE tresc_korekty_pit11 := '', id_pracownika, DP28Scr
-   PRIVATE P_KrajID, P_DokIDTyp, P_DokIDNr, P_18Kraj, cIgnoruj26r := 'N', SklZdrowKor
+   PRIVATE P_KrajID, P_DokIDTyp, P_DokIDNr, P_18Kraj, cIgnoruj26r := 'N', SklZdrowKor, cKorWiersz := '1'
    PRIVATE SklZdrow, RodzajUlgi := 'N', cRodzPrzychZwol := ' ', lEmeryt := .F., lPonizej26l := .F.
 
    STORE 0 TO P29,P30,P31, SklZdrow, SklZdrowKor
@@ -226,6 +240,7 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
       @ LINI + 2, LGKol + 17 SAY 'Kosz' GET zKOR_KOSZ PICTURE '999999.99'
       @ LINI + 2, LGKol + 32 SAY 'Zali' GET zKOR_ZALI PICTURE '99999.99'
       @ LINI + 2, LGKol + 48 SAY 'Zdrow' GET SklZdrowKor PICTURE '99999.99'
+      @ LINI + 2, LGKol + 64 SAY 'Dotyczy' GET cKorWiersz PICTURE '9' WHEN Eval( bPIT11_KorWierszW ) VALID Eval( bPIT11_KorWierszV )
       *      @ LINI+2,LGKol+46 say 'ZUS-76' get zKOR_SPOL pict '99999.99'
       *      @ LINI+2,LGKol+62 say 'ZUS-78' get zKOR_ZDRO pict '99999.99'
       @ LINI + 3, LGKol + 2  SAY 'Zw.(p.32)' GET zKOR_ZWET PICTURE '99999.99'
@@ -539,13 +554,29 @@ PROCEDURE Pit_811( _G, _M, _STR, _OU )
          SKIP 1
       ENDDO
       *  P53a=P53a+max(0,BRUT_RAZEM-koszt)
-      P50 := P50 + zKOR_PRZY
-      P51 := P51 + zKOR_KOSZ
-      P55 := P55 + zKOR_ZALI
-      P52 := P52 + zKOR_SPOL
-      P54a := P54a + zKOR_ZDRO
-      P53a := Max( 0, P50 - P51 )
+      DO CASE
+      CASE cKorWiersz == '1'
+         P50 := P50 + zKOR_PRZY
+         P51 := P51 + zKOR_KOSZ
+         P55 := P55 + zKOR_ZALI
+         P52 := P52 + zKOR_SPOL
+         P54a := P54a + zKOR_ZDRO
+      CASE cKorWiersz == '2'
+         P50_R262 := P50_R262 + zKOR_PRZY
+         P51_R262 := P51_R262 + zKOR_KOSZ
+         P55_R262 := P55_R262 + zKOR_ZALI
+         P52_R262 := P52_R262 + zKOR_SPOL
+         P54a_R262 := P54a_R262 + zKOR_ZDRO
+      CASE cKorWiersz == '3'
+         P50_R26 := P50_R26 + zKOR_PRZY
+         P51_R26 := P51_R26 + zKOR_KOSZ
+         P55_R26 := P55_R26 + zKOR_ZALI
+         P52_R26 := P52_R26 + zKOR_SPOL
+         P54a_R26 := P54a_R26 + zKOR_ZDRO
+      ENDCASE
       SklZdrow := SklZdrow + SklZdrowKor
+
+      P53a := Max( 0, P50 - P51 )
 
 //      P50_R26 := P50_R26 + zKOR_PRZY
 //      P51_R26 := P51_R26 + zKOR_KOSZ
