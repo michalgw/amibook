@@ -103,7 +103,7 @@ PROCEDURE Kartot_W( mmr )
             aPoz[ 'podatek' ] := etaty->podatek
             nZaliczkaNar := nZaliczkaNar + etaty->podatek
             aPoz[ 'podatek_nar' ] := nZaliczkaNar
-            aPoz[ 'war_puz' ] := iif( etaty->war_puzo == 0 .AND. etaty->oswiad26r $ 'TE', etaty->war_puz, etaty->war_puzo )
+            aPoz[ 'war_puz' ] := etaty->war_puz //iif( etaty->war_puzo == 0 .AND. etaty->oswiad26r $ 'TE', etaty->war_puz, etaty->war_puzo )
             aPoz[ 'data_zal' ] := iif( Empty( etaty->data_zal ), '', etaty->data_zal )
             aPoz[ 'kod_tytu' ] := AllTrim( etaty->kod_tytu )
 
@@ -182,7 +182,7 @@ PROCEDURE Kartot_W( mmr )
             k4 := dochod
             k5 := dochod + s0_4
             k6 := podatek
-            k61 := iif( war_puzo == 0 .AND. OSWIAD26R $ 'TE', war_puz, war_puzo )
+            k61 := war_puz //iif( war_puzo == 0 .AND. OSWIAD26R $ 'TE', war_puz, war_puzo )
             k7 := podatek + s0_6
             k8 := data_zal
             k9 := kod_tytu
