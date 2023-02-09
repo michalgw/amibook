@@ -118,7 +118,7 @@ zparap_fzl := parap_fzl
 //@  5,73 get zparap_odl picture "9999.99" range 0,9999
 @  5,75 get zparap_cho picture '99'
 //@  7,72 get zparap_pod picture '99.99'
-@  6,73 get zparap_pli picture "9999.99" range 0,9999
+@  6,72 get zparap_pli picture "99999.99" range 0,9999
 @  9,73 get zparap_p51 picture "9999.99" range 0,9999
 @ 10,73 get zparap_p52 picture "9999.99" range 0,9999
 @ 11,65 get zparap_pue picture "99.99"
