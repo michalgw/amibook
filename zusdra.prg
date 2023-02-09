@@ -221,10 +221,10 @@ PROCEDURE ZusDra( ubezp )
       zus_pocz( 'DRA', 1 )
       dadra( '6', miesiac, param_rok )
       IF zSPOLKA = 'T'
-         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
+         dipl( NormalizujNipPL( F->NIP ), SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
       ELSE
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
-         dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+         dipl( NormalizujNipPL( A->NIP ), SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
       inn7( ilub, ilet, F->parap_fuw )
       zsdrai( sum_eme, sum_ren, sum_eme + sum_ren, zwar_pue, zwar_pur, zwar_pue + zwar_pur, ;
@@ -294,7 +294,7 @@ PROCEDURE ZusDra( ubezp )
          dadra( '6', miesiac, param_rok )
          *dipl rozne dla spolki i osoby fizycznej
          subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
-         dipl( A->NIP, '', A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, A->NAZ_IMIE, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+         dipl( NormalizujNipPL( A->NIP ), '', A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, A->NAZ_IMIE, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
          inn7( 1, 0, d->staw_wuw )
          zsdrai( d->war_wue, d->war_wur, d->war_wue + d->war_wur, d->war_wue, d->war_wur, d->war_wue + d->war_wur, ;
             0, 0, 0, d->war_wuc, d->war_wuw, d->war_wuc + d->war_wuw, d->war_wuc, d->war_wuw, d->war_wuc + d->war_wuw, ;
@@ -404,7 +404,7 @@ PROCEDURE ZusDra( ubezp )
             dadra( '6', miesiac, param_rok )
             *dipl rozne dla spolki i osoby fizycznej
             subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
-            dipl( A->NIP, '', A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, A->NAZ_IMIE, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+            dipl( NormalizujNipPL( A->NIP ), '', A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, A->NAZ_IMIE, SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
             inn7( 1, 0, d->staw_wuw )
             zsdrai( d->war_wue, d->war_wur, d->war_wue + d->war_wur, d->war_wue, d->war_wur, d->war_wue + d->war_wur, ;
                0, 0, 0, d->war_wuc, d->war_wuw, d->war_wuc + d->war_wuw, d->war_wuc, d->war_wuw, d->war_wuc + d->war_wuw, ;
@@ -637,10 +637,10 @@ PROCEDURE ZusDra( ubezp )
       zus_pocz( 'DRA', 1 )
       dadra( '6', miesiac, param_rok )
       IF zSPOLKA = 'T'
-         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
+         dipl( NormalizujNipPL( F->NIP ), SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
       ELSE
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
-         dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+         dipl( NormalizujNipPL( A->NIP ), SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
       *dipl() with F->NIP,substr(F->NR_REGON,3),'','','',F->nazwa_skr,'','',ctod('    /  /  ')
       inn7( ilub, ilet, F->parap_fuw )

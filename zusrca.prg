@@ -130,10 +130,10 @@ PROCEDURE ZusRca( ubezp )
       zus_pocz( 'RCA', 1 )
       dorca( miesiac, param_rok, 0 )
       IF zSPOLKA = 'T'
-         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
+         dipl( NormalizujNipPL( F->NIP ), SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
       ELSE
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
-         dipl( A->NIP, SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+         dipl( NormalizujNipPL( A->NIP ), SubStr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
       *dipl() with F->NIP,substr(F->NR_REGON,3),'','','',F->nazwa_skr,'','',ctod('    /  /  ')
 
@@ -162,7 +162,7 @@ PROCEDURE ZusRca( ubezp )
                ddorca( PRAC->NAZWISKO,;
                   PRAC->IMIE1,;
                   iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;
-                  iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
+                  iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), NormalizujNipPL( PRAC->NIP ), PRAC->DOWOD_OSOB ) ), ;
                   ETATY->KOD_TYTU, ;
                   ZUSWYMIAR( ETATY->WYMIARL,ETATY->WYMIARM ), ;
                   ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
@@ -209,7 +209,7 @@ PROCEDURE ZusRca( ubezp )
                ddorca( PRAC->NAZWISKO,;
                   PRAC->IMIE1,;
                   iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;
-                  iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
+                  iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), NormalizujNipPL( PRAC->NIP ), PRAC->DOWOD_OSOB ) ), ;
                   UMOWY->KOD_TYTU, ;
                   '', ;
                   iif( UMOWY->WAR_PUE == 0 .AND. UMOWY->WAR_PUR == 0 , 0, UMOWY->PENSJA ), ;
@@ -258,7 +258,7 @@ PROCEDURE ZusRca( ubezp )
             ddorca( SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), ;
                SubStr( subim, 1, At( ' ', subim ) ), ;
                iif( .NOT. Empty( A->PESEL ), 'P', iif( .NOT. Empty( A->NIP ), 'N', A->RODZ_DOK ) ), ;
-               iif( .NOT. Empty( A->PESEL ), A->PESEL, iif( .NOT. Empty( A->NIP ), A->NIP, A->DOWOD_OSOB ) ), ;
+               iif( .NOT. Empty( A->PESEL ), A->PESEL, iif( .NOT. Empty( A->NIP ), NormalizujNipPL( A->NIP ), A->DOWOD_OSOB ) ), ;
                A->KOD_TYTU, ;
                '      ', ;
                D->PODSTAWA, ;
@@ -344,10 +344,10 @@ PROCEDURE ZusRca( ubezp )
       zus_pocz( 'RCA', 1 )
       dorca( miesiac, param_rok, 0 )
       IF zSPOLKA = 'T'
-         dipl( F->NIP, SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
+         dipl( NormalizujNipPL( F->NIP ), SubStr( F->NR_REGON, 3 ), '', '', '', iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), '', '', CToD( '    /  /  ' ) )
       ELSE
          subim := SubStr( A->NAZ_IMIE, At( ' ', A->NAZ_IMIE ) + 1 )
-         dipl( A->NIP, substr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
+         dipl( NormalizujNipPL( A->NIP ), substr( F->NR_REGON, 3 ), A->PESEL, A->RODZ_DOK, A->DOWOD_OSOB, iif( ! Empty( F->przedm ), F->przedm, F->nazwa_skr ), SubStr( A->NAZ_IMIE, 1, At( ' ', A->NAZ_IMIE ) ), SubStr( subim, 1, At( ' ', subim ) ), A->DATA_UR )
       ENDIF
       *dipl() with F->NIP,substr(F->NR_REGON,3),'','','',F->nazwa_skr,'','',ctod('    /  /  ')
 
@@ -380,7 +380,7 @@ PROCEDURE ZusRca( ubezp )
                   ddorca( PRAC->NAZWISKO, ;
                      PRAC->IMIE1, ;
                      iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;
-                     iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
+                     iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), NormalizujNipPL( PRAC->NIP ), PRAC->DOWOD_OSOB ) ), ;
                      ETATY->KOD_TYTU, ;
                      ZUSWYMIAR( ETATY->WYMIARL, ETATY->WYMIARM ), ;
                      ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
@@ -434,7 +434,7 @@ PROCEDURE ZusRca( ubezp )
                ddorca( PRAC->NAZWISKO,;
                   PRAC->IMIE1,;
                   iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;
-                  iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), PRAC->NIP, PRAC->DOWOD_OSOB ) ), ;
+                  iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), NormalizujNipPL( PRAC->NIP ), PRAC->DOWOD_OSOB ) ), ;
                   UMOWY->KOD_TYTU, ;
                   '', ;
                   iif( UMOWY->WAR_PUE == 0 .AND. UMOWY->WAR_PUR == 0 , 0, UMOWY->PENSJA ), ;
