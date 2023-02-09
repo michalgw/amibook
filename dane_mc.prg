@@ -514,7 +514,7 @@ FUNCTION zrobcos()
 *          zzzpodstawa=parap_p51
       //zzpodstzdr := parap_p52
       IF zRYCZALT == 'T'
-         IF mc == ' 1' .AND. ( param_rok < '2023' .OR. spolka->ryczstzdr $ ' 0' )
+         IF mc == ' 1' .AND. param_rok < '2023' //( param_rok < '2023' .OR. spolka->ryczstzdr $ ' 0' )
             zzpodstzdr := parap_p52
          ELSE
             DO CASE
@@ -688,7 +688,7 @@ FUNCTION zrobcos()
 *                przeskla()
       SKIP 1
       IF zRYCZALT == 'T'
-         IF mc == ' 1' .AND. ( param_rok < '2023' .OR. spolka->ryczstzdr $ ' 0' )
+         IF mc == ' 1' .AND. param_rok < '2023' //( param_rok < '2023' .OR. spolka->ryczstzdr $ ' 0' )
             zzpodstzdr := parap_p52
          ELSE
             DO CASE
