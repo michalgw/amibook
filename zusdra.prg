@@ -306,6 +306,12 @@ PROCEDURE ZusDra( ubezp )
          lskd()
          kndk()
          dddu( A->KOD_TYTU, d->podstawa, d->podstzdr )
+         IF zRYCZALT <> 'T'
+            nRodzaj := iif( spolka->sposob == 'L', 2, 1 )
+         ELSE
+            nRodzaj := iif( spolka->ryczstzdr $ '123', 4, 3 )
+         ENDIF
+         ZUS_FormaOpodat( nRodzaj, D->PODSTZDR, D->WAR_wUZ, D->dochodzdr, A->ryczprzpr, 'XI' )
          opls()
          ZUS_DataUtworzenia( 'XIII', 'p1' )
          zus_kon( 'DRA' )
