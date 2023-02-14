@@ -679,7 +679,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
             aPoz[ 'AdresKontrahenta' ] := rejz->adres
             aPoz[ 'TypDokumentu' ] := ""
             aPoz[ 'GTU' ] := ""
-            aPoz[ 'Procedura' ] := ""
+            aPoz[ 'Procedura' ] := iif( rejz->trojstr == "T" .AND. ( rejz->sek_cv7 == "WT" .OR. rejz->sek_cv7 == "WS" ), "TT_WNT", "" )
             aPoz[ 'MPP' ] := .F.
          ENDIF
          aPoz[ 'DokumentZakupu' ] := AllTrim( rejz->rodzdow )
