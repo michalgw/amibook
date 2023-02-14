@@ -131,7 +131,8 @@ PROCEDURE VUE_Info( nWersja )
          IF UE == 'T'
             sumuenet := wartzw + wart00 + wart02 + wart07 + wart22 + wart12
             zwart08 := wart08
-            ztrojstr := iif( trojstr == ' ', 'N', trojstr )
+            //ztrojstr := iif( trojstr == ' ', 'N', trojstr )
+            ztrojstr := iif( ( ',TT_D,' $ ',' + AllTrim( procedur ) + ',' ) .OR. ( ',TT_WNT,' $ ',' + AllTrim( procedur ) + ',' ), 'T', 'N' )
             IF sumuenet <> 0.0
                vidue := PadR( iif( SubStr( a->Nr_ident, 3, 1 ) == '-', SubStr( a->Nr_ident, 4 ), a->Nr_ident ), 30, ' ' )
                SELECT 2

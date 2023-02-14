@@ -28,7 +28,7 @@ FUNCTION VatUE4Oblicz()
    LOCAL p45,p46,p47,p48,p49,p50,p51,p52,p61,p62,p61a,p62a,p64,p65,p67,p69,p70,p71,p72,p75,p76,p77,p78,p79,p98,p99
    LOCAL pp8,pp9,pp10,pp11,pp12,pp13,kkasa_odl,kkasa_zwr,p37,p38,p39,p40,p41,p42,p43,p44
    LOCAL aDane := hb_Hash()
-   LOCAL nPoz
+   LOCAL nPoz, lTrojstr
 
 
    ColInb()
@@ -106,24 +106,24 @@ FUNCTION VatUE4Oblicz()
          zwart08 := wart08
          IF sumuenet <> 0.0
             vidue := PadR( iif( SubStr( a->Nr_ident, 3, 1 ) == '-', SubStr( a->Nr_ident, 4 ), a->Nr_ident ), 30, ' ' )
-
-            nPoz := AScan( aDane[ 'poz_c' ], { | aPoz | aPoz[ 'kraj' ] == kraj .AND. aPoz[ 'nip' ] == vidue .AND. aPoz[ 'trojstr' ] == trojstr } )
+            lTrojstr := ( ',TT_D,' $ ',' + AllTrim( procedur ) + ',' ) .OR. ( ',TT_WNT,' $ ',' + AllTrim( procedur ) + ',' )
+            nPoz := AScan( aDane[ 'poz_c' ], { | aPoz | aPoz[ 'kraj' ] == kraj .AND. aPoz[ 'nip' ] == vidue .AND. aPoz[ 'trojstr' ] == lTrojstr } )
 
             IF nPoz > 0
                aDane[ 'poz_c' ][ nPoz ][ 'wartosc' ] := aDane[ 'poz_c' ][ nPoz ][ 'wartosc' ] + sumuenet
             ELSE
-               AAdd( aDane[ 'poz_c' ], hb_Hash( 'kraj', kraj, 'nip', vidue, 'wartosc', sumuenet, 'trojstr', trojstr ) )
+               AAdd( aDane[ 'poz_c' ], hb_Hash( 'kraj', kraj, 'nip', vidue, 'wartosc', sumuenet, 'trojstr', lTrojstr ) )
             ENDIF
          ENDIF
          IF zwart08 <> 0.0
             vidue := PadR( iif( SubStr( a->Nr_ident, 3, 1 ) == '-', SubStr( a->Nr_ident, 4 ), a->Nr_ident ), 30, ' ' )
-
-            nPoz := AScan( aDane[ 'poz_e' ], { | aPoz | aPoz[ 'kraj' ] == kraj .AND. aPoz[ 'nip' ] == vidue .AND. aPoz[ 'trojstr' ] == trojstr } )
+            lTrojstr := ( ',TT_D,' $ ',' + AllTrim( procedur ) + ',' ) .OR. ( ',TT_WNT,' $ ',' + AllTrim( procedur ) + ',' )
+            nPoz := AScan( aDane[ 'poz_e' ], { | aPoz | aPoz[ 'kraj' ] == kraj .AND. aPoz[ 'nip' ] == vidue .AND. aPoz[ 'trojstr' ] == lTrojstr } )
 
             IF nPoz > 0
                aDane[ 'poz_e' ][ nPoz ][ 'wartosc' ] := aDane[ 'poz_e' ][ nPoz ][ 'wartosc' ] + zwart08
             ELSE
-               AAdd( aDane[ 'poz_e' ], hb_Hash( 'kraj', kraj, 'nip', vidue, 'wartosc', zwart08, 'trojstr', trojstr ) )
+               AAdd( aDane[ 'poz_e' ], hb_Hash( 'kraj', kraj, 'nip', vidue, 'wartosc', zwart08, 'trojstr', lTrojstr ) )
             ENDIF
          ENDIF
       ENDIF
