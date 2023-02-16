@@ -88,7 +88,7 @@ PROCEDURE Firma1()
    _invers=[i]
    _curs_l=0
    _curs_p=0
-   _esc=[27,-9,247,22,48,77,109,7,46,28,13,1006]
+   _esc=[27,-9,247,22,48,77,109,7,46,28,13,1006,75,107]
    _top=[.f.]
    _bot=[del#'+']
    _stop=[]
@@ -757,11 +757,12 @@ PROCEDURE Firma1()
          p[ 4]='   [Home/End]..............pierwsza/ostatnia pozycja    '
          p[ 5]='   [Ins]...................wpisywanie                   '
          p[ 6]='   [M].....................modyfikacja pozycji          '
-         p[ 7]='   [Del]...................kasowanie pozycji            '
-         p[ 8]='   [F10]...................szukanie                     '
-         p[ 9]='   [Enter].................akceptacja firmy             '
-         p[10]='   [Esc]...................wyj&_s.cie                      '
-         p[11]='                                                        '
+         p[ 7]='   [K].....................konwersja ryczaàt <> PKPiR   '
+         p[ 8]='   [Del]...................kasowanie pozycji            '
+         p[ 9]='   [F10]...................szukanie                     '
+         p[10]='   [Enter].................akceptacja firmy             '
+         p[11]='   [Esc]...................wyj&_s.cie                      '
+         p[12]='                                                        '
          *---------------------------------------
          set color to i
             i=20
@@ -780,6 +781,11 @@ PROCEDURE Firma1()
          endif
          restore screen from scr_
          _disp=.f.
+
+      *################################### EKSPORT ################################
+      CASE kl == Asc( 'K' ) .OR. kl == Asc( 'k' )
+         Firma_Konwertuj()
+
       *################################### WYBOR ##################################
       case kl=13 .OR. kl == 1006
          zhaslo=space(10)
@@ -1015,6 +1021,570 @@ PROCEDURE Firma_Zapisz( aPola )
    dbSelectArea( nWorkNo )
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Firma_UtworzTabliceExp( cNazwa, cPlik, cAlias, nWA )
+
+   LOCAL aTabInfo := dbfZnajdzTablice( cNazwa )
+   LOCAL aDbStruct := {}
+
+   hb_default( @nWA, 0 )
+
+   IF aTabInfo <> NIL
+      aDbStruct := AClone( aTabInfo[ 3 ] )
+      AAdd( aDbStruct, { "RECNO_", "N", 8, 0 } )
+      IF aDbStruct[ 1 ][ 2 ] == "+"
+         aDbStruct[ 1 ][ 2 ] := "N"
+         aDbStruct[ 1 ][ 3 ] := 8
+      ENDIF
+      dbCreate( cPlik, aDbStruct, "ARRAYRDD" )
+
+      IF HB_ISCHAR( cAlias ) .AND. ! Empty( cAlias )
+         IF nWA > 0
+            dbSelectArea( nWA )
+         ENDIF
+         dbUseArea( nWA == 0, "ARRAYRDD", cPlik, cAlias, .F. )
+      ENDIF
+
+      RETURN .T.
+   ENDIF
+
+   RETURN .F.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Firma_ImportRec( cAliasFrom, cAliasTo, aStructFrom, aStructTo, aSkip, aValues, lDoAppend )
+
+   LOCAL nWAFrom := Select( cAliasFrom ), nWATo := Select( cAliasTo )
+   LOCAL nCnt := 0, nI, aTmpStruct
+   LOCAL cFldName, nFldFrom, nFldTo
+
+   hb_default( @aSkip, {} )
+   hb_default( @aValues, {=>} )
+   hb_default( @lDoAppend, .T. )
+
+   IF ! HB_ISARRAY( aStructFrom )
+      aStructFrom := {}
+      aTmpStruct := ( nWAFrom )->( dbStruct() )
+      AEval( aTmpStruct, { | aFld | AAdd( aStructFrom, aFld[ 1 ] ) } )
+   ENDIF
+   IF ! HB_ISARRAY( aStructTo )
+      aStructTo := {}
+      aTmpStruct := ( nWATo )->( dbStruct() )
+      AEval( aTmpStruct, { | aFld | AAdd( aStructTo, aFld[ 1 ] ) } )
+   ENDIF
+
+   IF lDoAppend
+      ( nWATo )->( dbAppend() )
+   ENDIF
+
+   FOR nI := 1 TO Len( aStructFrom )
+      IF ( nFldTo := AScan( aStructTo, aStructFrom[ nI ] ) ) > 0 .AND. AScan( aSkip, aStructFrom[ nI ] ) == 0
+         ( nWATo )->( FieldPut( nFldTo, ( nWAFrom )->( FieldGet( nI ) ) ) )
+      ENDIF
+   NEXT
+
+   IF AScan( aStructTo, "RECNO_" ) > 0
+      ( nWATo )->recno_ := ( nWAFrom )->( RecNo() )
+   ENDIF
+
+   hb_HEval( aValues, { | cKey, xValue |
+      LOCAL nFld := AScan( aStructTo, Upper( cKey ) )
+      IF nFld > 0
+         ( nWATo )->( FieldPut( nFld, xValue ) )
+      ENDIF
+      RETURN NIL
+   } )
+
+   IF lDoAppend
+      ( nWATo )->( dbCommit() )
+   ENDIF
+
+   RETURN nCnt
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Firma_Konwertuj()
+
+   LOCAL cSymbol, cKolSp, cKolZk
+   LOCAL cEkran, cKolor
+   LOCAL nI, nCnt
+   LOCAL cIdentFirmy
+   LOCAL aStructFrom, aStructTo
+   LOCAL cRyczalt
+   LOCAL bVSymbol := { | |
+      LOCAL nTmpNrRec := firma->( RecNo() )
+      LOCAL lRes := .T.
+      IF Empty( cSymbol )
+         RETURN .F.
+      ENDIF
+      IF firma->( dbSeek( "+" + dos_l( cSymbol ) ) )
+         Komun( "Taki symbol juæ istnieje" )
+         lRes := .F.
+      ENDIF
+      firma->( dbGoto( nTmpNrRec ) )
+      RETURN lRes
+   }
+
+   IF firma->vat <> 'T' .OR. AScan( { "7", "7K" }, AllTrim( firma->vatfordr ) ) == 0
+      Komun( "Konwersja jest moæliwa tylko dla pàatnik¢w VAT" )
+      RETURN
+   ENDIF
+
+   cEkran := SaveScreen()
+   cKolor := ColStd()
+
+   cRyczalt := iif( firma->ryczalt == "T", "N", "T" )
+
+   cSymbol := AllTrim( firma->symbol )
+   IF Len( cSymbol ) < 10
+      cSymbol := Pad( cSymbol + "K", 10 )
+   ELSE
+      cSymbol := SubStr( cSymbol, 1, 9 ) + "K"
+   ENDIF
+
+   IF cRyczalt == "T"
+      cKolSp := " 5"
+   ELSE
+      cKolSp := "7"
+   ENDIF
+
+   @ 12, 10 CLEAR TO 16, 65
+   @ 12, 10 TO 16, 65
+   @ 13, 11 SAY "Konwersja " + iif( firma->ryczalt == "T", "RYCZAùT", "ZASADY OG‡LNE" ) + " -> " + iif( firma->ryczalt == "T", "ZASADY OG‡LNE", "RYCZAùT" )
+   @ 14, 11 SAY "Nowy symbol firmy:" GET cSymbol VALID Eval( bVSymbol )
+   IF cRyczalt <> "T"
+      @ 15, 11 SAY "Domyòlna kolumna ksi©gi dla sprzedaæy (7,8):" GET cKolSp VALID cKolSp $ '78'
+   ELSE
+      @ 15, 11 SAY "Domyòlna kolumna ewidencji dla sprzedaæy (5-13):" GET cKolSp PICTURE '@K 99' VALID Val( cKolSp ) >= 5 .AND. Val( cKolSp ) <= 13
+   ENDIF
+   READ
+
+   RestScreen( , , , , cEkran )
+
+   IF LastKey() == 27
+      SetColor( cKolor )
+      RETURN
+   ENDIF
+
+   @ 10, 18 CLEAR TO 14, 62
+   @ 10, 18 TO 14, 62
+   @ 11, 20 SAY "Konwersja... prosz© czekaÜ..."
+   @ 12, 20 SAY "Krok 1 z 6: pobieranie danych firmy      "
+
+   cIdentFirmy := Str( firma->( RecNo() ), 3 )
+
+   dbfInicjujDane()
+
+   Firma_UtworzTabliceExp( "FIRMA", "FIRMA_EXP", "FIRMA_EXP", 200 )
+   Firma_UtworzTabliceExp( "KAT_SPR", "KAT_SPR_EXP", "KAT_SPR_EXP", 201 )
+   Firma_UtworzTabliceExp( "KAT_ZAK", "KAT_ZAK_EXP", "KAT_ZAK_EXP", 202 )
+   Firma_UtworzTabliceExp( "SPOLKA", "SPOLKA_EXP", "SPOLKA_EXP", 203 )
+   Firma_UtworzTabliceExp( "REJS", "REJS_EXP", "REJS_EXP", 204 )
+   Firma_UtworzTabliceExp( "REJZ", "REJZ_EXP", "REJZ_EXP", 205 )
+   //Firma_UtworzTabliceExp( "ROZR", "ROZR_EXP", "ROZR_EXP", 206 )
+
+   Firma_ImportRec( "FIRMA", "FIRMA_EXP" )
+   firma_exp->ryczalt := iif( firma->ryczalt == "T", "N", "T" )
+   firma_exp->( dbCommit() )
+
+   aStructFrom := NIL
+   aStructTo := NIL
+   IF spolka->( dbSeek( "+" + cIdentFirmy ) )
+      DO WHILE spolka->del == "+" .AND. spolka->firma == cIdentFirmy .AND. ! spolka->( Eof() )
+         Firma_ImportRec( "SPOLKA", "SPOLKA_EXP", @aStructFrom, @aStructTo )
+         spolka->( dbSkip() )
+      ENDDO
+   ENDIF
+
+   aStructFrom := NIL
+   aStructTo := NIL
+   DO WHILE ! DostepPro( "KAT_SPR", , , , "KAT_SPR" )
+   ENDDO
+   IF kat_spr->( dbSeek( "+" + cIdentFirmy ) )
+      DO WHILE kat_spr->del == "+" .AND. kat_spr->firma == cIdentFirmy .AND. ! kat_spr->( Eof() )
+         Firma_ImportRec( "KAT_SPR", "KAT_SPR_EXP", @aStructFrom, @aStructTo )
+         kat_spr->( dbSkip() )
+      ENDDO
+   ENDIF
+   kat_spr->( dbCloseArea() )
+
+   aStructFrom := NIL
+   aStructTo := NIL
+   DO WHILE ! DostepPro( "KAT_ZAK", , , , "KAT_ZAK" )
+   ENDDO
+   IF kat_zak->( dbSeek( "+" + cIdentFirmy ) )
+      DO WHILE kat_zak->del == "+" .AND. kat_zak->firma == cIdentFirmy .AND. ! kat_zak->( Eof() )
+         Firma_ImportRec( "KAT_ZAK", "KAT_ZAK_EXP", @aStructFrom, @aStructTo )
+         kat_zak->( dbSkip() )
+      ENDDO
+   ENDIF
+   kat_zak->( dbCloseArea() )
+
+   @ 12, 20 SAY "Krok 2 z 6: pobieranie rejestru sprzedaæy"
+   aStructFrom := NIL
+   aStructTo := NIL
+   DO WHILE ! DostepPro( "REJS", , , , "REJS" )
+   ENDDO
+   IF rejs->( dbSeek( "+" + cIdentFirmy ) )
+      DO WHILE rejs->del == "+" .AND. rejs->firma == cIdentFirmy .AND. ! rejs->( Eof() )
+         Firma_ImportRec( "REJS", "REJS_EXP", @aStructFrom, @aStructTo )
+         rejs->( dbSkip() )
+      ENDDO
+   ENDIF
+   rejs->( dbCloseArea() )
+
+   @ 12, 20 SAY "Krok 3 z 6: pobieranie rejestru zakup¢w  "
+   aStructFrom := NIL
+   aStructTo := NIL
+   DO WHILE ! DostepPro( "REJZ", , , , "REJZ" )
+   ENDDO
+   IF rejz->( dbSeek( "+" + cIdentFirmy ) )
+      DO WHILE rejz->del == "+" .AND. rejz->firma == cIdentFirmy .AND. ! rejz->( Eof() )
+         Firma_ImportRec( "REJZ", "REJZ_EXP", @aStructFrom, @aStructTo )
+         rejz->( dbSkip() )
+      ENDDO
+   ENDIF
+   rejz->( dbCloseArea() )
+
+   @ 12, 20 SAY "Krok 4 z 6: zapisywanie danych firmy     "
+   Firma_ImportRec( "FIRMA_EXP", "FIRMA", , , { "ID" }, { "SYMBOL" => cSymbol } )
+
+   cIdentFirmy := Str( firma->( RecNo() ), 3 )
+
+   FOR nI := 1 TO 12
+      suma_mc->( dbAppend() )
+      suma_mc->del := "+"
+      suma_mc->firma := cIdentFirmy
+      suma_mc->mc := Str( nI, 2 )
+      suma_mc->( dbCommit() )
+      suma_mc->( dbRUnlock() )
+   NEXT
+
+   aStructFrom := NIL
+   aStructTo := NIL
+   DO WHILE ! DostepPro( "DANE_MC", , , , "DANE_MC" )
+   ENDDO
+   spolka_exp->( dbGoTop() )
+   DO WHILE ! spolka_exp->( Eof() )
+      Firma_ImportRec( "SPOLKA_EXP", "SPOLKA", @aStructFrom, @aStructTo, { "ID" }, { "FIRMA" => cIdentFirmy } )
+      FOR nI := 1 TO 12
+         dane_mc->( dbAppend() )
+         dane_mc->del := "+"
+         dane_mc->ident := Str( spolka->( RecNo() ), 5 )
+         dane_mc->mc := Str( nI, 2 )
+         dane_mc->g_udzial1 := " 1/1  "
+         dane_mc->g_udzial2 := " 1/1  "
+         dane_mc->n_udzial1 := " 1/1  "
+         dane_mc->n_udzial2 := " 1/1  "
+         dane_mc->( dbCommit() )
+      NEXT
+      spolka_exp->( dbSkip() )
+   ENDDO
+   dane_mc->( dbCloseArea() )
+
+   aStructFrom := NIL
+   aStructTo := NIL
+   DO WHILE ! DostepPro( "KAT_SPR", , , , "KAT_SPR" )
+   ENDDO
+   kat_spr_exp->( dbGoTop() )
+   DO WHILE ! kat_spr_exp->( Eof() )
+      Firma_ImportRec( "KAT_SPR_EXP", "KAT_SPR", @aStructFrom, @aStructTo, { "ID" }, { "FIRMA" => cIdentFirmy } )
+      kat_spr_exp->( dbSkip() )
+   ENDDO
+   kat_spr->( dbCloseArea() )
+
+   aStructFrom := NIL
+   aStructTo := NIL
+   DO WHILE ! DostepPro( "KAT_ZAK", , , , "KAT_ZAK" )
+   ENDDO
+   kat_zak_exp->( dbGoTop() )
+   DO WHILE ! kat_zak_exp->( Eof() )
+      Firma_ImportRec( "KAT_ZAK_EXP", "KAT_ZAK", @aStructFrom, @aStructTo, { "ID" }, { "FIRMA" => cIdentFirmy } )
+      kat_zak_exp->( dbSkip() )
+   ENDDO
+   kat_zak->( dbCloseArea() )
+
+   @ 12, 20 SAY "Krok 5 z 6: zapis rejestru sprzedaæy     "
+
+   ident_fir := cIdentFirmy
+   miesiac := ' 1'
+
+   symbol_fir=firma->symbol
+   ident_fir=str( firma->( RecNo() ), 3 )
+   Firma_RodzNrKs := firma->rodznrks
+   zVAT=iif(firma->VAT=' ','N',firma->VAT)
+   zVATOKRES=iif(firma->VATOKRES=' ','M',firma->VATOKRES)
+   zVATOKRESDR=firma->VATOKRESDR
+   if firma->VATFORDR=='  '
+      if zVATOKRES='M'
+         *if zVATOKRESDR='M'
+            zVATFORDR='7 '
+         *else
+            *zVATFORDR='7D'
+         *endif
+      else
+         zVATFORDR='7K'
+      endif
+   else
+      zVATFORDR=firma->VATFORDR
+   endif
+   zUEOKRES=iif(firma->UEOKRES='K','K','M')
+   DETALISTA=firma->DETAL
+   ZRYCZALT=firma->RYCZALT
+   pzROZRZAPK=firma->ROZRZAPK
+   pzROZRZAPS=firma->ROZRZAPS
+   pzROZRZAPZ=firma->ROZRZAPZ
+   pzROZRZAPF=firma->ROZRZAPF
+
+   liczba := 1
+
+   spolka->( dbCloseArea() )
+   suma_mc->( dbCloseArea() )
+   firma->( dbCloseArea() )
+
+   nCnt := rejs_exp->( RecCount() )
+   nI := 1
+
+   OpenOper( "REJS" )
+
+   rejs_exp->( dbGoTop() )
+   DO WHILE ! rejs_exp->( Eof() )
+
+      ins := .T.
+
+      miesiac := rejs_exp->mc
+
+      suma_mc->( dbSeek( "+" + cIdentFirmy + miesiac ) )
+
+      DO CASE
+      CASE miesiac == ' 1' .OR. miesiac == ' 3' .OR. miesiac == ' 5' .OR. miesiac == ' 7' .OR. miesiac == ' 8' .OR. miesiac == '10' .OR. miesiac == '12'
+         DAYM := '31'
+      CASE miesiac == ' 4' .OR. miesiac == ' 6' .OR. miesiac == ' 9' .OR. miesiac == '11'
+         DAYM := '30'
+      CASE miesiac == ' 2'
+         DAYM := '29'
+         IF Day( CToD( param_rok + '.' + miesiac + '.' + DAYM ) ) == 0
+            DAYM := '28'
+         ENDIF
+      ENDCASE
+
+      zDZIEN := rejs_exp->dzien
+      znazwa := rejs_exp->nazwa
+      zNR_IDENT := rejs_exp->nr_ident
+      zNUMER := JPKImp_NrDokumentu( rejs_exp->numer )
+      zADRES := rejs_exp->adres
+      zTRESC := rejs_exp->tresc
+      zROKS := rejs_exp->roks
+      zMCS := rejs_exp->mcs
+      zDZIENS := rejs_exp->dziens
+      zDATAS := hb_Date( Val( rejs_exp->roks ), Val( rejs_exp->mcs ), Val( rejs_exp->dziens ) )
+      zDATATRAN := rejs_exp->datatran
+      zKOLUMNA := cKolSp
+      zuwagi := rejs_exp->uwagi
+      zWARTZW := rejs_exp->wartzw
+      zWART08 := rejs_exp->wart08
+      zWART00 := rejs_exp->wart00
+      zWART02 := rejs_exp->wart02
+      zVAT02 := rejs_exp->vat02
+      zWART07 := rejs_exp->wart07
+      zVAT07 := rejs_exp->vat07
+      zWART22 := rejs_exp->wart22
+      zVAT22 := rejs_exp->vat22
+      zWART12 := rejs_exp->wart12
+      zVAT12 := rejs_exp->vat12
+      zBRUTZW := rejs_exp->wartzw
+      zBRUT08 := rejs_exp->wart08
+      zBRUT00 := rejs_exp->wart00
+      zBRUT02 := rejs_exp->wart02 + rejs_exp->vat02
+      zBRUT07 := rejs_exp->wart07 + rejs_exp->vat07
+      zBRUT22 := rejs_exp->wart22 + rejs_exp->vat22
+      zBRUT12 := rejs_exp->wart12 + rejs_exp->vat12
+      zRODZDOW := rejs_exp->rodzdow
+      zVATMARZA := rejs_exp->vatmarza
+      zNETTO := rejs_exp->netto + rejs_exp->netto2
+      zExPORT := rejs_exp->export
+      zUE := rejs_exp->ue
+      zKRAJ := rejs_exp->kraj
+      zSEK_CV7 := rejs_exp->sek_cv7
+      zRACH := rejs_exp->rach
+      zDETAL := rejs_exp->detal
+      zKOREKTA :=  rejs_exp->korekta
+      zROZRZAPS := rejs_exp->rozrzaps
+      zZAP_TER := rejs_exp->zap_ter
+      zZAP_DAT := rejs_exp->zap_dat
+      zZAP_WART := rejs_exp->zap_wart
+      zTROJSTR := rejs_exp->trojstr
+      zSYMB_REJ := rejs_exp->symb_rej
+      zTRESC := rejs_exp->tresc
+      zOPCJE := rejs_exp->opcje
+      zPROCEDUR := rejs_exp->procedur
+      zKOL36 := rejs_exp->kol36
+      zKOL37 := rejs_exp->kol37
+      zKOL38 := rejs_exp->kol38
+      zKOL39 := rejs_exp->kol39
+      zNETTO2 := 0 //rejs_exp->netto2
+      zKOLUMNA2 := ' ' //rejs_exp->kolumna2
+      zDATA_ZAP := rejs_exp->data_zap
+
+      KRejS_Ksieguj()
+
+      rejs_exp->( dbSkip() )
+
+      @ 13, 20 SAY Pad( "Zapisano " + AllTrim( Str( nI ) ) + " z " + AllTrim( Str( nCnt ) ), 20 )
+
+      nI++
+   ENDDO
+
+   FOR nI := 1 TO 199
+      ( nI )->( dbCloseArea() )
+   NEXT
+
+   @ 12, 20 SAY "Krok 6 z 6: zapis rejestru zakup¢w       "
+
+   nCnt := rejz_exp->( RecCount() )
+   nI := 1
+
+   miesiac := ' 1'
+
+   OpenOper( "REJZ" )
+
+   rejz_exp->( dbGoTop() )
+   DO WHILE ! rejz_exp->( Eof() )
+
+      ins := .T.
+
+      miesiac := rejz_exp->mc
+
+      suma_mc->( dbSeek( "+" + cIdentFirmy + miesiac ) )
+
+      DO CASE
+      CASE miesiac == ' 1' .OR. miesiac == ' 3' .OR. miesiac == ' 5' .OR. miesiac == ' 7' .OR. miesiac == ' 8' .OR. miesiac == '10' .OR. miesiac == '12'
+         DAYM := '31'
+      CASE miesiac == ' 4' .OR. miesiac == ' 6' .OR. miesiac == ' 9' .OR. miesiac == '11'
+         DAYM := '30'
+      CASE miesiac == ' 2'
+         DAYM := '29'
+         IF Day( CToD( param_rok + '.' + miesiac + '.' + DAYM ) ) == 0
+            DAYM := '28'
+         ENDIF
+      ENDCASE
+
+      zDZIEN := rejz_exp->dzien
+      znazwa := rejz_exp->nazwa
+      zNR_IDENT := rejz_exp->NR_IDENT
+      zNUMER := JPKImp_NrDokumentu( rejz_exp->NUMER )
+      zADRES := rejz_exp->ADRES
+      zTRESC := rejz_exp->TRESC
+      zROKS := rejz_exp->ROKS
+      zMCS := rejz_exp->MCS
+      zDZIENS := rejz_exp->DZIENS
+      zDATAS := hb_Date( Val( rejz_exp->roks ), Val( rejz_exp->mcs ), Val( rejz_exp->dziens ) )
+      zDATAKS := rejz_exp->DATAKS
+      zDATATRAN := rejz_exp->DATATRAN
+      IF cRyczalt <> 'T'
+         zKOLUMNA := '10' // rejz_exp->KOLUMNA
+      ELSE
+         zKOLUMNA := '  '
+      ENDIF
+      zuwagi := rejz_exp->uwagi
+      zWARTZW := rejz_exp->WARTZW
+      zWART00 := rejz_exp->WART00
+      zWART02 := rejz_exp->WART02
+      zVAT02 := rejz_exp->VAT02
+      zWART07 := rejz_exp->WART07
+      zVAT07 := rejz_exp->VAT07
+      zWART22 := rejz_exp->WART22
+      zVAT22 := rejz_exp->VAT22
+      zWART12 := rejz_exp->WART12
+      zVAT12 := rejz_exp->VAT12
+      zBRUTZW := rejz_exp->WARTZW
+      zBRUT00 := rejz_exp->WART00
+      zBRUT02 := rejz_exp->WART02 + rejz_exp->vat02
+      zBRUT07 := rejz_exp->wart07 + rejz_exp->vat07
+      zBRUT22 := rejz_exp->wart22 + rejz_exp->vat22
+      zBRUT12 := rejz_exp->wart12 + rejz_exp->vat12
+      IF cRyczalt <> 'T' .AND. rejz_exp->NETTO + rejz_exp->NETTO2 == 0
+         zNETTO := rejz_exp->WARTZW + rejz_exp->WART00 + rejz_exp->WART02 + rejz_exp->WART07 + rejz_exp->WART22 + rejz_exp->WART12
+      ELSE
+         zNETTO := rejz_exp->NETTO + rejz_exp->NETTO2
+      ENDIF
+      zExPORT := rejz_exp->ExPORT
+      zUE := rejz_exp->UE
+      zKRAJ := rejz_exp->KRAJ
+      zSEK_CV7 := rejz_exp->SEK_CV7
+      zRACH := rejz_exp->RACH
+      zDETAL := rejz_exp->DETAL
+      zKOREKTA := rejz_exp->KOREKTA
+      zROZRZAPZ := rejz_exp->ROZRZAPZ
+      zZAP_TER := rejz_exp->ZAP_TER
+      zZAP_DAT := rejz_exp->ZAP_DAT
+      zZAP_WART := rejz_exp->ZAP_WART
+      zTROJSTR := rejz_exp->TROJSTR
+      zSYMB_REJ := rejz_exp->SYMB_REJ
+      zTRESC := rejz_exp->TRESC
+      zUSLUGAUE := rejz_exp->USLUGAUE
+      zWEWDOS := rejz_exp->WEWDOS
+      zPALIWA := rejz_exp->PALIWA
+      zPOJAZDY := rejz_exp->POJAZDY
+      zSP22 := rejz_exp->SP22
+      zSP12 := rejz_exp->SP12
+      zSP07 := rejz_exp->SP07
+      zSP02 := rejz_exp->SP02
+      zSP00 := rejz_exp->SP00
+      zSPZW := rejz_exp->SPZW
+      zZOM22 := rejz_exp->ZOM22
+      zZOM00 := rejz_exp->ZOM00
+      zZOM12 := rejz_exp->ZOM12
+      zZOM07 := rejz_exp->ZOM07
+      zZOM02 := rejz_exp->ZOM02
+      zOPCJE := rejz_exp->OPCJE
+
+      zKOL47 := rejz_exp->KOL47
+      zKOL48 := rejz_exp->KOL48
+      zKOL49 := rejz_exp->KOL49
+      zKOL50 := rejz_exp->KOL50
+
+      zNETTO2 := 0  //rejz_exp->NETTO2
+      zKOLUMNA2 := '  '  //rejz_exp->KOLUMNA2
+
+      zRODZDOW := rejz_exp->RODZDOW
+      zVATMARZA := rejz_exp->VATMARZA
+
+      KRejZ_Ksieguj()
+
+      rejz_exp->( dbSkip() )
+
+      @ 13, 20 SAY Pad( "Zapisano " + AllTrim( Str( nI ) ) + " z " + AllTrim( Str( nCnt ) ), 20 )
+
+      nI++
+   ENDDO
+
+   Close_()
+
+   SELECT 3
+   DO WHILE ! Dostep( 'SPOLKA' )
+   ENDDO
+   SET INDEX TO spolka
+
+   SELECT 2
+   DO WHILE ! Dostep('SUMA_MC')
+   ENDDO
+   SET INDEX TO suma_mc
+
+   SELECT 1
+   DO WHILE ! Dostep('FIRMA')
+   ENDDO
+   SET INDEX TO firma
+
+   RestScreen( , , , , cEkran )
+   SetColor( cKolor )
+   SELECT firma
+
+   Komun( "Konwersja zako‰czona" )
+
+   RETURN
 
 /*----------------------------------------------------------------------*/
 
