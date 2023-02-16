@@ -1141,3 +1141,45 @@ FUNCTION ZaciemnijPESEL( cPESEL )
 
 /*----------------------------------------------------------------------*/
 
+#pragma BEGINDUMP
+
+#include "hbapi.h"
+#include <windows.h>
+#include "hbapiitm.h"
+#include <shlobj.h>
+#include "hbvm.h"
+#include "hbstack.h"
+
+//SYNTAX: SHBrowseForFolder([<hWnd>],[<cTitle>],<nFlags>,[<nFolderType>])
+HB_FUNC( SHBROWSEFORFOLDER )
+{
+   HWND hwnd = HB_ISNIL(1) ? GetActiveWindow() : (HWND)hb_parnl(1);
+   BROWSEINFO BrowseInfo;
+   char *lpBuffer = (char*)hb_xgrab( MAX_PATH + 1 );
+   LPITEMIDLIST pidlBrowse;
+
+   SHGetSpecialFolderLocation(hwnd, HB_ISNIL(4) ? CSIDL_DRIVES : hb_parni(4), &pidlBrowse);
+   BrowseInfo.hwndOwner = hwnd;
+   BrowseInfo.pidlRoot = pidlBrowse;
+   BrowseInfo.pszDisplayName = lpBuffer;
+   BrowseInfo.lpszTitle = HB_ISNIL(2) ? "Select a Folder" : hb_parcx(2);
+   BrowseInfo.ulFlags = hb_parni(3);
+   BrowseInfo.lpfn = NULL;
+   BrowseInfo.lParam = 1;
+   BrowseInfo.iImage = 0;
+   pidlBrowse = SHBrowseForFolder(&BrowseInfo);
+
+   if ( pidlBrowse )
+   {
+     SHGetPathFromIDList(pidlBrowse,lpBuffer);
+     hb_retc( lpBuffer );
+   }
+   else
+   {
+     hb_retc( "" );
+   }
+
+   hb_xfree( lpBuffer);
+}
+
+#pragma ENDDUMP
