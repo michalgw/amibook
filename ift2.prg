@@ -581,10 +581,10 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
                   ENDIF
                   cEkran2 := SaveScreen()
                   IF nWybor == 5
-                     DeklarDrukuj( iif( lRocznie, 'IFT2R-9', 'IFT2-9' ), aDane )
+                     DeklarDrukuj( iif( lRocznie, 'IFT2R-10', 'IFT2-10' ), aDane )
                   ELSE
-                     cDeklaracja := edek_ift2_9( aDane, lRocznie )
-                     edekZapiszXML( cDeklaracja, normalizujNazwe( 'IFT2' + iif( lRocznie, 'R', '' ) + '_' + param_rok + '_' + DToS( dDataOd ) + DToS( dDataDo ) ), wys_edeklaracja, 'IFT2' + iif( lRocznie, 'R', '' ) + '-9', aDane[ 'korekta' ] == '2', Month( dDataOd ) )
+                     cDeklaracja := edek_ift2_10( aDane, lRocznie )
+                     edekZapiszXML( cDeklaracja, normalizujNazwe( 'IFT2' + iif( lRocznie, 'R', '' ) + '_' + param_rok + '_' + DToS( dDataOd ) + DToS( dDataDo ) ), wys_edeklaracja, 'IFT2' + iif( lRocznie, 'R', '' ) + '-10', aDane[ 'korekta' ] == '2', Month( dDataOd ) )
                   ENDIF
                   RestScreen( , , , , cEkran2 )
                ENDIF

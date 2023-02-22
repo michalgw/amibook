@@ -224,6 +224,11 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_IFT2w9( xDane )
       cPlikRap := 'frf\ift2_w9.frf'
       EXIT
+   CASE 'IFT2-10'
+   CASE 'IFT2R-10'
+      hDane := DaneDek_IFT2w9( xDane )
+      cPlikRap := 'frf\ift2_w10.frf'
+      EXIT
    CASE 'VATINFO'
       hDane := DaneDek_VAT7w17()
       cPlikRap := 'frf\vatinfo.frf'

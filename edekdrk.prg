@@ -322,6 +322,12 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\ift2_w9.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'IFT2-10'
+   CASE 'IFT2R-10'
+      hDane := DaneXML_IFT2w9( oDoc, cNrRef )
+      cPlikRap := 'frf\ift2_w10.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'UPO'
       hDane := DaneXML_UPO( oDoc )
       cPlikRap := 'frf\upo_w6.frf'
