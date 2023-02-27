@@ -495,16 +495,20 @@ METHOD PodpiszAut() CLASS TEDeklaracje
 
 METHOD Usun() CLASS TEDeklaracje
    IF ! Empty( edeklar->wyslano ) .AND. ! edeklar->test
-      komun('Nie mo¾na usun¥† wysˆanej deklaracji.')
-      RETURN
+      IF ! TNEsc( .F., 'Ta deklaracja zostaˆa wysˆana. Czy chcesz usun¥† deklaracj©? (T/N)' )
+         //komun('Nie mo¾na usun¥† wysˆanej deklaracji.')
+         RETURN
+      ENDIF
    ENDIF
    IF TNEsc(.F., 'Czy usun¥† wybran¥ deklaracj©? (T/N)')
       blokadar('edeklar')
-      IF File(edekNazwaPliku(edeklar->id))
-         FErase(edekNazwaPliku(edeklar->id))
-      ENDIF
-      IF File(edekNazwaPliku(edeklar->id, '.xml.sig'))
-         FErase(edekNazwaPliku(edeklar->id, '.xml.sig'))
+      IF Empty( edeklar->wyslano ) .OR. edeklar->test
+         IF File(edekNazwaPliku(edeklar->id))
+            FErase(edekNazwaPliku(edeklar->id))
+         ENDIF
+         IF File(edekNazwaPliku(edeklar->id, '.xml.sig'))
+            FErase(edekNazwaPliku(edeklar->id, '.xml.sig'))
+         ENDIF
       ENDIF
       edeklar->(dbDelete())
       edeklar->(dbCommit())
