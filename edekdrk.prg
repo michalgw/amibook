@@ -8367,7 +8367,7 @@ FUNCTION DaneXML_VAT8w11(oDoc, cNrRef, hNaglowek)
 
    hPozycje := edekXmlGrupa( oDoc, 'PozycjeSzczegolowe' )
 
-   hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
+   hDane['P_1'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
    hDane['P_2'] := iif( HB_ISSTRING( cNrRef ), cNrRef, '' )
    hDane['P_4'] := sxml2num( xmlWartoscH( hNaglowek, 'Miesiac' ) )
    hDane['P_5'] := sxml2num( xmlWartoscH( hNaglowek, 'Rok' ) )
