@@ -379,7 +379,7 @@ FUNCTION WczytajProfilUzytkownika()
       profil->( dbCommit() )
    ELSE
       hRes[ 'mysz' ] := profil->mysz
-      hRes[ 'drukarka' ] := profil->drukarka
+      hRes[ 'drukarka' ] := AllTrim( profil->drukarka )
       hRes[ 'marginl' ] := profil->marginl
       hRes[ 'marginp' ] := profil->marginp
       hRes[ 'marging' ] := profil->marging
