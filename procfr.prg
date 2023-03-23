@@ -60,13 +60,13 @@ FUNCTION RaportUstawDane(oRap, hDane)
 /*----------------------------------------------------------------------*/
 
 FUNCTION FRUstawMarginesy( oRap, nLewy, nPrawy, nGora, nDol )
-
+/*
    LOCAL nI
 
    FOR nI := 0 TO oRap:GetPageCount() - 1
       oRap:SetMargins( nI, nLewy, nPrawy, nGora, nDol )
    NEXT
-
+*/
    RETURN NIL
 
 /*----------------------------------------------------------------------*/
