@@ -126,7 +126,7 @@ FUNCTION Suma_MC( lGraficzny )
             DO WHILE oper->del == '+' .AND. oper->firma == ident_fir .AND. oper->mc == suma_mc->mc
                nK16 := nK16 + oper->k16wart
 
-               IF xRem .AND. RTrim( oper->numer ) == Chr( 1 ) + 'REM-P'
+               IF xRem .AND. ( RTrim( oper->numer ) == Chr( 1 ) + 'REM-P' .OR. RTrim( oper->numer ) == Chr( 254 ) + 'REM-K' )
                   hPoz[ 'RP7' ] := hPoz[ 'RP7' ] + oper->wyr_tow
                   hPoz[ 'RP8' ] := hPoz[ 'RP8' ] + oper->uslugi
                   hPoz[ 'RP9' ] := hPoz[ 'RP9' ] + oper->wyr_tow + oper->uslugi
