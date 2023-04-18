@@ -147,12 +147,12 @@ FUNCTION VatUE4Oblicz()
          IF p65dekue <> 0.0
             vidue := PadR( iif( SubStr( e->Nr_ident, 3, 1 ) == '-', SubStr( e->Nr_ident, 4 ), e->Nr_ident ), 30, ' ' )
 
-            nPoz := AScan( aDane[ 'poz_d' ], { | aPoz | aPoz[ 'kraj' ] == kraj .AND. aPoz[ 'nip' ] == vidue .AND. aPoz[ 'trojstr' ] == trojstr } )
+            nPoz := AScan( aDane[ 'poz_d' ], { | aPoz | aPoz[ 'kraj' ] == kraj .AND. aPoz[ 'nip' ] == vidue .AND. aPoz[ 'trojstr' ] == ( trojstr == 'T' ) } )
 
             IF nPoz > 0
                aDane[ 'poz_d' ][ nPoz ][ 'wartosc' ] := aDane[ 'poz_d' ][ nPoz ][ 'wartosc' ] + p65dekue
             ELSE
-               AAdd( aDane[ 'poz_d' ], hb_Hash( 'kraj', kraj, 'nip', vidue, 'wartosc', p65dekue, 'trojstr', trojstr ) )
+               AAdd( aDane[ 'poz_d' ], hb_Hash( 'kraj', kraj, 'nip', vidue, 'wartosc', p65dekue, 'trojstr', trojstr == 'T' ) )
             ENDIF
          ENDIF
       ENDIF
@@ -280,11 +280,11 @@ FUNCTION VatUEEdytuj( aDane, cTytul, lTrojstr )
       { || PadR( SubStr( aDane[ nElem ][ 'kraj' ], 1, 2 ), 2 ) }, ;
       { || PadR( SubStr( aDane[ nElem ][ 'nip' ], 1, 16 ), 16 ) }, ;
       { || Transform( aDane[ nElem ][ 'wartosc' ], RPIC ) }, ;
-      { || iif( aDane[ nElem ][ 'trojstr' ] == 'T', 'Tak', 'Nie' ) }, ;
+      { || iif( aDane[ nElem ][ 'trojstr' ] /* == 'T' */, 'Tak', 'Nie' ) }, ;
       { || PadR( SubStr( aDane[ nElem ][ 'jkraj' ], 1, 2 ), 2 ) }, ;
       { || PadR( SubStr( aDane[ nElem ][ 'jnip' ], 1, 16 ), 16 ) }, ;
       { || Transform( aDane[ nElem ][ 'jwartosc' ], RPIC ) }, ;
-      { || iif( aDane[ nElem ][ 'jtrojstr' ] == 'T', 'Tak', 'Nie' ) } }, ;
+      { || iif( aDane[ nElem ][ 'jtrojstr' ] /* == 'T' */, 'Tak', 'Nie' ) } }, ;
       { { || PadR( SubStr( aDane[ nElem ][ 'kraj' ], 1, 2 ), 2 ) }, ;
       { || PadR( SubStr( aDane[ nElem ][ 'nip' ], 1, 16 ), 16 ) }, ;
       { || Transform( aDane[ nElem ][ 'wartosc' ], RPIC ) }, ;
@@ -298,18 +298,18 @@ FUNCTION VatUEEdytuj( aDane, cTytul, lTrojstr )
       hb_ADel( ar, nEl, .T. )
       IF Len( ar ) == 0
          IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
-            AAdd( ar, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'wartosc', 0, 'trojstr', 'N', 'jkraj', '  ', 'jnip', Space(16), 'jwartosc', 0, 'jtrojstr', 'N'  ) )
+            AAdd( ar, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'wartosc', 0, 'trojstr', .F. /* 'N' */ , 'jkraj', '  ', 'jnip', Space(16), 'jwartosc', 0, 'jtrojstr', .F. /* 'N' */ ) )
          ENDIF
       ENDIF
       RETURN NIL
    }
-   LOCAL bInsert := { | nEl, ar | AAdd( ar, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'wartosc', 0, 'trojstr', 'N', 'jkraj', '  ', 'jnip', Space(16), 'jwartosc', 0, 'jtrojstr', 'N'  ) ) }
+   LOCAL bInsert := { | nEl, ar | AAdd( ar, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'wartosc', 0, 'trojstr', .F. /* 'N' */ , 'jkraj', '  ', 'jnip', Space(16), 'jwartosc', 0, 'jtrojstr', .F. /* 'N' */ ) ) }
    LOCAL bDeleteAll := { | nEl, ar |
       DO WHILE Len( ar ) > 0
          hb_ADel( ar, 1, .T. )
       ENDDO
       IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
-         AAdd( ar, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'wartosc', 0, 'trojstr', 'N', 'jkraj', '  ', 'jnip', Space(16), 'jwartosc', 0, 'jtrojstr', 'N'  ) )
+         AAdd( ar, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'wartosc', 0, 'trojstr', .F. /* 'N' */ , 'jkraj', '  ', 'jnip', Space(16), 'jwartosc', 0, 'jtrojstr', .F. /* 'N' */ ) )
       ENDIF
       RETURN NIL
    }
@@ -321,7 +321,7 @@ FUNCTION VatUEEdytuj( aDane, cTytul, lTrojstr )
    cScr := SaveScreen()
    IF Len( aDane ) == 0
       IF tnesc( , "Brak pozycji. Czy utworzy† pust¥ pozycj©? (T/N)" )
-         AAdd( aDane, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'wartosc', 0, 'trojstr', 'N', 'jkraj', '  ', 'jnip', Space(16), 'jwartosc', 0, 'jtrojstr', 'N'  ) )
+         AAdd( aDane, hb_Hash( 'kraj', '  ', 'nip', Space(16), 'wartosc', 0, 'trojstr', .F. /* 'N' */ , 'jkraj', '  ', 'jnip', Space(16), 'jwartosc', 0, 'jtrojstr', .F. /* 'N' */ ) )
       ENDIF
    ENDIF
    IF Len( aDane ) > 0
@@ -375,11 +375,11 @@ FUNCTION VatUEEdytujGet( b, ar, nDim, nElem )
       ENDIF
       b:refreshAll()
    CASE nDim == 4
-      xValue := ar[ nElem ][ 'trojstr' ]
+      xValue := iif( ar[ nElem ][ 'trojstr' ], 'T', 'N' )
       @ nRow, nCol GET xValue PICTURE "!" VALID xValue$'TN'
       READ
       IF LastKey() <> K_ESC
-         ar[ nElem ][ 'trojstr' ] := xValue
+         ar[ nElem ][ 'trojstr' ] := xValue == 'T'
       ENDIF
       b:refreshAll()
    CASE nDim == 5
@@ -407,11 +407,11 @@ FUNCTION VatUEEdytujGet( b, ar, nDim, nElem )
       ENDIF
       b:refreshAll()
    CASE nDim == 8
-      xValue := ar[ nElem ][ 'jtrojstr' ]
+      xValue := iif( ar[ nElem ][ 'jtrojstr' ], 'T', 'N' )
       @ nRow, nCol GET xValue PICTURE "!" VALID xValue$'TN'
       READ
       IF LastKey() <> K_ESC
-         ar[ nElem ][ 'jtrojstr' ] := xValue
+         ar[ nElem ][ 'jtrojstr' ] := xValue == 'T'
       ENDIF
       b:refreshAll()
    ENDCASE

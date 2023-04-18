@@ -6796,7 +6796,7 @@ FUNCTION edek_vatuek_5e2( aDane )
                r = r + '      <P_DBa>' + AllTrim( aDane[ 'poz_c' ][ i ][ 'kraj' ] ) + '</P_DBa>' + nl
                r = r + '      <P_DBb>' + edekNipUE( AllTrim( aDane[ 'poz_c' ][ i ][ 'nip' ] ) ) + '</P_DBb>' + nl
                r = r + '      <P_DBc>' + TKwotaC( aDane[ 'poz_c' ][ i ][ 'wartosc' ] ) + '</P_DBc>' + nl
-               r = r + '      <P_DBd>' + iif( aDane[ 'poz_c' ][ i ][ 'trojstr' ] == 'T', '2', '1' ) + '</P_DBd>' + nl
+               r = r + '      <P_DBd>' + iif( aDane[ 'poz_c' ][ i ][ 'trojstr' ] /* == 'T' */, '2', '1' ) + '</P_DBd>' + nl
             ENDIF
 
             IF ! Empty( AllTrim( aDane[ 'poz_c' ][ i ][ 'jkraj' ] ) ) .AND. ;
@@ -6805,7 +6805,7 @@ FUNCTION edek_vatuek_5e2( aDane )
                r = r + '      <P_DJa>' + AllTrim( aDane[ 'poz_c' ][ i ][ 'jkraj' ] ) + '</P_DJa>' + nl
                r = r + '      <P_DJb>' + edekNipUE( AllTrim( aDane[ 'poz_c' ][ i ][ 'jnip' ] ) ) + '</P_DJb>' + nl
                r = r + '      <P_DJc>' + TKwotaC( aDane[ 'poz_c' ][ i ][ 'jwartosc' ] ) + '</P_DJc>' + nl
-               r = r + '      <P_DJd>' + iif( aDane[ 'poz_c' ][ i ][ 'jtrojstr' ] == 'T', '2', '1' ) + '</P_DJd>' + nl
+               r = r + '      <P_DJd>' + iif( aDane[ 'poz_c' ][ i ][ 'jtrojstr' ] /* == 'T' */, '2', '1' ) + '</P_DJd>' + nl
             ENDIF
             r = r + '    </Grupa1>' + nl
          NEXT
@@ -6819,7 +6819,7 @@ FUNCTION edek_vatuek_5e2( aDane )
                r = r + '      <P_NBa>' + AllTrim( aDane[ 'poz_d' ][ i ][ 'kraj' ] ) + '</P_NBa>' + nl
                r = r + '      <P_NBb>' + edekNipUE( AllTrim( aDane[ 'poz_d' ][ i ][ 'nip' ] ) ) + '</P_NBb>' + nl
                r = r + '      <P_NBc>' + TKwotaC( aDane[ 'poz_d' ][ i ][ 'wartosc' ] ) + '</P_NBc>' + nl
-               r = r + '      <P_NBd>' + iif( aDane[ 'poz_d' ][ i ][ 'trojstr' ] == 'T', '2', '1' ) + '</P_NBd>' + nl
+               r = r + '      <P_NBd>' + iif( aDane[ 'poz_d' ][ i ][ 'trojstr' ] /* == 'T' */, '2', '1' ) + '</P_NBd>' + nl
             ENDIF
 
             IF ! Empty( AllTrim( aDane[ 'poz_d' ][ i ][ 'jkraj' ] ) ) .AND. ;
@@ -6828,7 +6828,7 @@ FUNCTION edek_vatuek_5e2( aDane )
                r = r + '      <P_NJa>' + AllTrim( aDane[ 'poz_d' ][ i ][ 'jkraj' ] ) + '</P_NJa>' + nl
                r = r + '      <P_NJb>' + edekNipUE( AllTrim( aDane[ 'poz_d' ][ i ][ 'jnip' ] ) ) + '</P_NJb>' + nl
                r = r + '      <P_NJc>' + TKwotaC( aDane[ 'poz_d' ][ i ][ 'jwartosc' ] ) + '</P_NJc>' + nl
-               r = r + '      <P_NJd>' + iif( aDane[ 'poz_d' ][ i ][ 'jtrojstr' ] == 'T', '2', '1' ) + '</P_NJd>' + nl
+               r = r + '      <P_NJd>' + iif( aDane[ 'poz_d' ][ i ][ 'jtrojstr' ] /* == 'T' */, '2', '1' ) + '</P_NJd>' + nl
             ENDIF
             r = r + '    </Grupa2>' + nl
          NEXT
