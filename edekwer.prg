@@ -87,14 +87,24 @@ FUNCTION edekWeryfikuj( cZawartosc, cDeklaracja, lPlik, cNazwaOpcji, lPokazKomun
 FUNCTION naz_imie_imie(naz_imie)
    LOCAL imie, pozycja, pozkon
    imie = naz_imie
-   pozycja = At(' ', naz_imie)
+
+   pozycja = At( ',', naz_imie )
    IF pozycja > 0
-      imie = SubStr(naz_imie, pozycja + 1) //, Len(naz_imie) - pozycja)
+      imie := AllTrim( SubStr( naz_imie, pozycja + 1 ) )
       pozkon = At(' ', imie)
       IF pozkon > 0
          imie = SubStr(imie, 1, pozkon - 1)
       ENDIF
-   endif
+   ELSE
+      pozycja = At(' ', naz_imie)
+      IF pozycja > 0
+         imie = SubStr(naz_imie, pozycja + 1) //, Len(naz_imie) - pozycja)
+         pozkon = At(' ', imie)
+         IF pozkon > 0
+            imie = SubStr(imie, 1, pozkon - 1)
+         ENDIF
+      ENDIF
+   ENDIF
    RETURN imie
 
 /*----------------------------------------------------------------------*/
@@ -102,10 +112,16 @@ FUNCTION naz_imie_imie(naz_imie)
 FUNCTION naz_imie_naz(naz_imie)
    LOCAL naz, pozycja
    naz = naz_imie
-   pozycja = At(' ', naz_imie)
+
+   pozycja := At( ',', naz_imie )
    IF pozycja > 0
-      naz = SubStr(naz_imie, 1, pozycja - 1)
-   endif
+      naz := SubStr(naz_imie, 1, pozycja - 1)
+   ELSE
+      pozycja = At(' ', naz_imie)
+      IF pozycja > 0
+         naz = SubStr(naz_imie, 1, pozycja - 1)
+      ENDIF
+   ENDIF
    RETURN naz
 
 /*----------------------------------------------------------------------*/
