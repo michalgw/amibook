@@ -24,7 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Suma_MC( lGraficzny )
 
-   LOCAL aDane := {}, hPoz, nK16, xRem
+   LOCAL aDane := {}, hPoz, nK16, xRem, nRemP, nRemK
    PRIVATE _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
    PRIVATE _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15
 
@@ -89,12 +89,19 @@ FUNCTION Suma_MC( lGraficzny )
 
    IF lGraficzny
 
-      xRem := TNEsc( .T., "Uwzgl©dni† remanent pocz¥tkowy? (Tak/Nie)" )
-      @ 24, 0
-      IF xRem == K_ESC
-         BREAK
+      IF od_mc == 1 .AND. do_mc == 12
+         xRem := TNEsc( .T., "Uwzgl©dni† remanent pocz¥tkowy? (Tak/Nie)" )
+         @ 24, 0
+         IF xRem == K_ESC
+            BREAK
+         ENDIF
+         xRem := xRem == Asc( 'T' ) .OR. xRem == Asc( 't' )
+      ELSE
+         xRem := .F.
       ENDIF
-      xRem := xRem == Asc( 'T' ) .OR. xRem == Asc( 't' )
+
+      nRemP := 0
+      nRemK := 0
 
       SELECT suma_mc
       DO WHILE ! &_koniec
@@ -127,17 +134,25 @@ FUNCTION Suma_MC( lGraficzny )
                nK16 := nK16 + oper->k16wart
 
                IF xRem .AND. ( RTrim( oper->numer ) == Chr( 1 ) + 'REM-P' .OR. RTrim( oper->numer ) == Chr( 254 ) + 'REM-K' )
-                  hPoz[ 'RP7' ] := hPoz[ 'RP7' ] + oper->wyr_tow
-                  hPoz[ 'RP8' ] := hPoz[ 'RP8' ] + oper->uslugi
-                  hPoz[ 'RP9' ] := hPoz[ 'RP9' ] + oper->wyr_tow + oper->uslugi
-                  hPoz[ 'RP10' ] := hPoz[ 'RP10' ] + oper->zakup
-                  hPoz[ 'RP11' ] := hPoz[ 'RP11' ] + oper->uboczne
-                  hPoz[ 'RP12' ] := hPoz[ 'RP12' ] + oper->wynagr_g
-                  hPoz[ 'RP13' ] := hPoz[ 'RP13' ] + oper->wydatki
-                  hPoz[ 'RP14' ] := hPoz[ 'RP14' ] + oper->wynagr_g + oper->wydatki
-                  hPoz[ 'RP15' ] := hPoz[ 'RP15' ] + oper->pusta
-                  hPoz[ 'RP16' ] := hPoz[ 'RP16' ] + oper->k16wart
-                  hPoz[ 'RPJest' ] := 1
+                  //hPoz[ 'RP7' ] := hPoz[ 'RP7' ] + oper->wyr_tow
+                  //hPoz[ 'RP8' ] := hPoz[ 'RP8' ] + oper->uslugi
+                  //hPoz[ 'RP9' ] := hPoz[ 'RP9' ] + oper->wyr_tow + oper->uslugi
+                  //hPoz[ 'RP10' ] := hPoz[ 'RP10' ] + oper->zakup
+                  //hPoz[ 'RP11' ] := hPoz[ 'RP11' ] + oper->uboczne
+                  //hPoz[ 'RP12' ] := hPoz[ 'RP12' ] + oper->wynagr_g
+                  //hPoz[ 'RP13' ] := hPoz[ 'RP13' ] + oper->wydatki
+                  //hPoz[ 'RP14' ] := hPoz[ 'RP14' ] + oper->wynagr_g + oper->wydatki
+                  //hPoz[ 'RP15' ] := hPoz[ 'RP15' ] + oper->pusta
+                  //hPoz[ 'RP16' ] := hPoz[ 'RP16' ] + oper->k16wart
+                  //hPoz[ 'RPJest' ] := 1
+                  IF SubStr( oper->numer, 1, 1 ) == Chr( 1 )
+                     nRemP := oper->zakup
+                  ENDIF
+                  IF SubStr( oper->numer, 1, 1 ) == Chr( 254 )
+                     nRemK := oper->zakup
+                     hPoz[ 'RP10' ] := nRemK - nRemP
+                     hPoz[ 'RPJest' ] := 1
+                  ENDIF
                ENDIF
 
                oper->( dbSkip() )
@@ -145,6 +160,8 @@ FUNCTION Suma_MC( lGraficzny )
          ENDIF
          hPoz[ 'P16' ] := nK16
 
+         //hPoz[ 'P10' ] += hPoz[ 'RP10' ]
+         /*
          hPoz[ 'P7' ] += hPoz[ 'RP7' ]
          hPoz[ 'P8' ] += hPoz[ 'RP8' ]
          hPoz[ 'P9' ] += hPoz[ 'RP9' ]
@@ -155,6 +172,7 @@ FUNCTION Suma_MC( lGraficzny )
          hPoz[ 'P14' ] += hPoz[ 'RP14' ]
          hPoz[ 'P15' ] += hPoz[ 'RP15' ]
          hPoz[ 'P16' ] += hPoz[ 'RP16' ]
+         */
 
          AAdd( aDane, hPoz )
          suma_mc->( dbSkip() )
