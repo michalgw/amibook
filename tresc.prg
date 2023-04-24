@@ -121,6 +121,7 @@ else
    zOPCJE := OPCJE
    zKOLUMNA := KOLUMNA
 endif
+@ wiersz, 59 SAY "                 "
 *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 @ wiersz, 2 get zTRESC PICTURE "@S27 " + Replicate( 'X', 512 ) valid v14_1()
 @ wiersz,32 get zSTAN picture "   99999999.99"
@@ -242,7 +243,7 @@ function linia14
    cOpcje := "                 "
    IF RODZAJ == "Z"
       IF OPCJE $ "27P"
-         cOpcje := "Paliwo (50%VAT)  "
+         cOpcje := "Paliwo (" + iif( OPCJE == "P", "5", OPCJE ) + "0%)     "
       ENDIF
    ELSE
    ENDIF
@@ -302,7 +303,7 @@ FUNCTION w14_3()
    LOCAL lRes := zRODZAJ=="Z"
    IF lRes
       ColInf()
-      @ 24,0 say padc('Wpisz: P - zakup paliwa itp (50% kwoty VAT) lub pozostaw puste',80,' ')
+      @ 24,0 say padc('Wpisz: P - paliwo 50%, 2 - paliwo 20%, 7 - paliwo 70%',80,' ')
       ColStd()
    ENDIF
    RETURN lRes
