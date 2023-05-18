@@ -2299,7 +2299,7 @@ PROCEDURE setind( ZB )
    CASE ZB == 'NOTES'
         SET INDEX TO notes
    CASE ZB == 'KONTR'
-        SET INDEX TO kontr,kontr1,kontr2
+        SET INDEX TO kontr,kontr1,kontr2,kontr3
    CASE ZB == 'ROZR'
         SET INDEX TO rozr,rozr1,rozr2
    CASE ZB == 'TRESC'

@@ -2035,6 +2035,7 @@ FUNCTION dbfIdxKONTR()
    index on del+firma+substr(nazwa,1,15)+substr(adres,1,15) to kontr
    index on del+firma+substr(nr_ident,1,15) to kontr1
    index on Str( id, 6 ) TO kontr2
+   index on del + firma + SubStr( salsalid, 1, 16 ) TO kontr3
    RETURN
 ****************************************
 FUNCTION dbfIdxKONTRSPR()

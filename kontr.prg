@@ -198,8 +198,7 @@ PROCEDURE Kontr()
          _disp := tnesc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
          IF _disp
             BlokadaR()
-            //del()
-            kontr->del := '-'
+            del()
             COMMIT
             UNLOCK
             SKIP
@@ -646,7 +645,7 @@ FUNCTION KontrahZnajdz( cNip, aPola, ncWrkplcNo )
       SEEK '+' + ident_fir + cNip
       lFound := Found()
       IF lFound
-         IF olparam_ra .AND. ( zrodlo != 'R' .OR. dataspr < Date() - olparam_rd )
+         IF olparam_ra .AND. ( ( zrodlo != 'R' .AND. zrodlo != 'S' ) .OR. dataspr < Date() - olparam_rd )
             lRes := .F.
          ELSE
             aPola[ 'nazwa' ] := nazwa
@@ -738,7 +737,7 @@ FUNCTION KontrahZnajdzA( aNipy, aDane, ncWrkplcNo )
          lFound := Found()
          IF lFound
             aPola := hb_Hash()
-            IF olparam_ra .AND. ( zrodlo != 'R' .OR. dataspr < Date() - olparam_rd )
+            IF olparam_ra .AND. ( ( zrodlo != 'R' .AND. zrodlo != 'S' ) .OR. dataspr < Date() - olparam_rd )
                aPola[ 'nip' ] := aNipy[ nI ]
                aPola[ 'jestwdb' ] := .T.
                aPola[ 'recno' ] := RecNo()
@@ -927,7 +926,7 @@ FUNCTION KontrahAktualizuj( nRecNo )
       kontr->( dbGoto( nRecNo ) )
    ENDIF
 
-   IF kontr->del == '+' .AND. kontr->firma == ident_fir .AND. ! Empty( kontr->nr_ident ) .AND. olparam_ra .AND. ( kontr->zrodlo != 'R' .OR. kontr->dataspr < Date() - olparam_rd )
+   IF kontr->del == '+' .AND. kontr->firma == ident_fir .AND. ! Empty( kontr->nr_ident ) .AND. olparam_ra .AND. ( ( kontr->zrodlo != 'R' .AND. kontr->zrodlo != 'S' ) .OR. kontr->dataspr < Date() - olparam_rd )
       aDane := KontrahZnajdzRegonNip( AllTrim( kontr->nr_ident ) )
       IF Len( aDane ) > 0
 

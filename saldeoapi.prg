@@ -539,7 +539,7 @@ FUNCTION SalKontrahenciWyslij()
 
    nPrevOrd := kontr->( ordSetFocus( 3 ) )
 
-   FOR nI := 1 TO Min( Len( aDaneDo ), 1000 )
+   FOR nI := 1 TO Min( Len( aDaneDo ), 500 )
       AAdd( aDaneWys, aDaneDo[ nI ] )
       IF aDaneDo[ nI ][ 'gus' ]
          AAdd( aNipyGus, aDaneDo[ nI ][ 'nip' ] )
@@ -859,6 +859,44 @@ FUNCTION SalImp_DokRej( cSalRej, nRodzaj )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION SalImp_DodajKontrahent( aKontrahent )
+
+   LOCAL nOrdIdx, cKraj
+
+   IF HB_ISHASH( aKontrahent ) .AND. hb_HHasKey( aKontrahent, 'CONTRACTOR_ID' ) .AND. ! Empty( aKontrahent[ 'CONTRACTOR_ID' ] )
+      nOrdIdx := kontr->( ordSetFocus( 4 ) )
+      IF ! kontr->( dbSeek( "+" + ident_fir + aKontrahent[ 'CONTRACTOR_ID' ] ) )
+         kontr->( dbAppend() )
+         kontr->del := "+"
+         kontr->firma := ident_fir
+         kontr->nazwa := HGetDefault( aKontrahent, 'FULL_NAME', '' )
+         kontr->adres := SalKontrahentAdres( aKontrahent )
+         kontr->nr_ident := HGetDefault( aKontrahent, 'VAT_NUMBER', '' )
+         cKraj := HGetDefault( aKontrahent, 'COUNTRY_ISO3166A2', 'PL' )
+         kontr->kraj := cKraj
+         IF cKraj <> 'PL'
+            kontr->export := iif( KrajUE( cKraj ), 'N', 'T' )
+            kontr->ue := iif( KrajUE( cKraj ), 'T', 'N' )
+         ELSE
+            kontr->export := 'N'
+            kontr->ue := 'N'
+         ENDIF
+         kontr->zrodlo := "S"
+         kontr->dataspr := Date()
+         kontr->nazwaskr := HGetDefault( aKontrahent, 'SHORT_NAME', '' )
+         kontr->kodpoczt := HGetDefault( aKontrahent, 'POSTCODE', '' )
+         kontr->miasto := HGetDefault( aKontrahent, 'CITY', '' )
+         kontr->ulica := HGetDefault( aKontrahent, 'STREET', '' )
+         kontr->salsalid := aKontrahent[ 'CONTRACTOR_ID' ]
+         kontr->( dbCommit() )
+      ENDIF
+      kontr->( ordSetFocus( nOrdIdx ) )
+   ENDIF
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION SalImp_DekretujS( aDaneWej )
 
    LOCAL aDekret, nI, aDane, nC := 0
@@ -919,6 +957,11 @@ FUNCTION SalImp_DekretujS( aDaneWej )
          ENDIF
          aDekret[ 'zsymb_rej' ] := SalImp_DokRej( aDane[ 'REGISTRY' ], 1 )
          aDekret[ 'ztresc' ] := aDane[ 'DESCRIPTION' ]
+
+         IF ! hb_HHasKey( aDane, 'CONTRACTOR_PROGRAM_ID' ) .AND. hb_HHasKey( aDane, 'CONTRACTOR' )
+            aDekret[ 'Kontrahent' ] := aDane[ 'CONTRACTOR' ]
+         ENDIF
+
          nC++
       ENDIF
       aDane[ 'Dekret' ] := aDekret
@@ -972,6 +1015,10 @@ FUNCTION SalImp_DekretujZ( aDaneWej )
          aDekret[ 'ztresc' ] := aDane[ 'DESCRIPTION' ]
          aDekret[ 'SierTrwaly' ] := .F.
          aDekret[ 'UwagaVat' ] := .F.
+
+         IF ! hb_HHasKey( aDane, 'CONTRACTOR_PROGRAM_ID' ) .AND. hb_HHasKey( aDane, 'CONTRACTOR' )
+            aDekret[ 'Kontrahent' ] := aDane[ 'CONTRACTOR' ]
+         ENDIF
 
          nC++
       ENDIF
@@ -1143,6 +1190,10 @@ FUNCTION SalImp_VatS_Importuj( aDane )
          zKOLUMNA2 := '  '
          zDATA_ZAP := CToD('')
 
+         IF hb_HHasKey( aPoz, 'Kontrahent' )
+            SalImp_DodajKontrahent( aPoz[ 'Kontrahent' ] )
+         ENDIF
+
          IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'REJS', ident_fir, miesiac, znumer, @aIstniejacyRec )
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
             AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje ju¾ dokument o tym numerze' ) )
@@ -1279,6 +1330,10 @@ FUNCTION SalImp_VatZ_Importuj( aDane )
 
          zRODZDOW := HGetDefault( aPoz, 'RodzDow', '' )
          zVATMARZA := HGetDefault( aPoz, 'VATMarza', 0 )
+
+         IF hb_HHasKey( aPoz, 'Kontrahent' )
+            SalImp_DodajKontrahent( aPoz[ 'Kontrahent' ] )
+         ENDIF
 
          IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'REJZ', ident_fir, miesiac, znumer, @aIstniejacyRec )
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
