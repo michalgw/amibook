@@ -510,13 +510,14 @@ FUNCTION SalPolaczFirme( aFirma )
 FUNCTION SalKontrahenciWyslij()
 
    LOCAL aDaneDo := {}, aDaneOd, nLicz := 0, aKontr, nI, aNipyGus := {}
-   LOCAL aDaneRegon, aDaneWys := {}, nJ, nK, nPrevOrd, nPrevRecNo
+   LOCAL aDaneRegon, aDaneWys := {}, nJ, nK, nPrevOrd, nPrevRecNo, nGusCnt := 0
 
    nPrevRecNo := kontr->( RecNo() )
    kontr->( dbGoTop() )
    kontr->( dbSeek( "+" + ident_fir ) )
    DO WHILE kontr->del == "+" .AND. kontr->firma == ident_fir .AND. ! kontr->( Eof() )
-      IF kontr->zrodlo == "R" .AND. ( Empty( kontr->salsalid ) .OR. Empty( kontr->salprgid ) )
+      IF ( kontr->zrodlo == "R" .AND. ( Empty( kontr->salsalid ) .OR. Empty( kontr->salprgid ) ) ) ;
+         .OR. ( kontr->zrodlo == "S" .AND. ! Empty( kontr->salsalid ) .AND. Empty( kontr->salprgid ) )
          aKontr := { ;
             'id' => kontr->id, ;
             'nip' => AllTrim( NormalizujNipPL( kontr->nr_ident ) ), ;
@@ -539,12 +540,17 @@ FUNCTION SalKontrahenciWyslij()
 
    nPrevOrd := kontr->( ordSetFocus( 3 ) )
 
-   FOR nI := 1 TO Min( Len( aDaneDo ), 500 )
-      AAdd( aDaneWys, aDaneDo[ nI ] )
+   FOR nI := 1 TO Len( aDaneDo )
       IF aDaneDo[ nI ][ 'gus' ]
-         AAdd( aNipyGus, aDaneDo[ nI ][ 'nip' ] )
+         IF nGusCnt < 500
+            AAdd( aNipyGus, aDaneDo[ nI ][ 'nip' ] )
+            AAdd( aDaneWys, aDaneDo[ nI ] )
+            nGusCnt++
+         ENDIF
+      ELSE
+         AAdd( aDaneWys, aDaneDo[ nI ] )
       ENDIF
-      IF nI % 20 == 0 .OR. nI == Len( aDaneDo )
+      IF ( Len( aDaneWys ) > 0 .AND. Len( aDaneWys ) % 20 == 0 ) .OR. ( nI == Len( aDaneDo ) .AND. Len( aDaneWys ) > 0 )
          IF Len( aNipyGus ) > 0
             aDaneRegon := KontrahZnajdzRegonNip( aNipyGus )
             FOR nJ := 1 TO Len( aDaneRegon )
