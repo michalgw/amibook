@@ -202,17 +202,18 @@ FUNCTION xmlNiePusty(xWartosc, cTekst)
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION str2sxml(cStr)
+FUNCTION str2sxml(cStr, lKonwUTF8)
    LOCAL cRes
    IF !HB_ISSTRING(cStr)
       RETURN ''
    ENDIF
-   cRes := StrTran( AllTrim( cStr ), '"', '&quot;')
-   cRes := StrTran(cRes, "'", '&apos;')
-   cRes := StrTran(cRes, '<', '&lt;')
-   cRes := StrTran(cRes, '>', '&gt;')
-   cRes := StrTran(cRes, '&', '&amp;')
-   RETURN hb_StrToUTF8(cRes)
+   hb_default( @lKonwUTF8, .T. )
+   //cRes := StrTran( AllTrim( cStr ), '"', '&#34;' /* '&quot;' */ )
+   //cRes := StrTran(cRes, "'", '&#39;' /* '&apos;' */ )
+   cRes := StrTran( AllTrim( cStr ), '<', '&#60;' /* '&lt;' */ )
+   //cRes := StrTran(cRes, '>', '&#62;' /* '&gt;' */ )
+   cRes := StrTran(cRes, '&', '&#38;' /* '&amp;' */ )
+   RETURN iif( lKonwUTF8, hb_StrToUTF8(cRes), cRes )
 
 /*----------------------------------------------------------------------*/
 

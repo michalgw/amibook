@@ -1068,7 +1068,7 @@ PROCEDURE OpenOper( bazy )
    SELECT 4
    DO WHILE ! Dostep( 'TRESC' )
    ENDDO
-   SET INDEX TO tresc
+   SetInd( 'TRESC' )
 
    SELECT 3
    DO WHILE ! Dostep( 'KONTR' )

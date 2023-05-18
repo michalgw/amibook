@@ -25,6 +25,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 *±Obsluga podstawowych operacji na bazie ......                             ±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 
+#include "inkey.ch"
+
 FUNCTION Kat_Rej( ZBIOR )
 
 private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou,_top_bot
@@ -55,8 +57,8 @@ endif
 @ 22,2 say 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
 *############################### OTWARCIE BAZ ###############################
 select 1
-if dostep(ZBIOR)
-   set inde to &ZBIOR
+if dostep( ZBIOR )
+   SetInd( ZBIOR )
 else
    close_()
    return
@@ -71,7 +73,7 @@ _col_p=76
 _invers=[i]
 _curs_l=0
 _curs_p=0
-_esc=[27,-9,247,22,48,77,109,7,46,28]
+_esc=[27,-9,247,22,48,77,109,7,46,28,287]
 _top=[firma#ident_fir]
 _bot=[del#'+'.or.firma#ident_fir]
 _stop=[+]+ident_fir
@@ -208,10 +210,11 @@ p[ 3]='   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
 p[ 4]='   [Home/End]..............pierwsza/ostatnia pozycja    '
 p[ 5]='   [Ins]...................wpisywanie                   '
 p[ 6]='   [M].....................modyfikacja pozycji          '
-p[ 7]='   [Del]...................kasowanie pozycji            '
-p[ 8]='   [F10]...................szukanie                     '
-p[ 9]='   [Esc]...................wyj&_s.cie                      '
-p[10]='                                                        '
+p[ 7]='   [ALT-S].................wy˜lij do SaldeoSMART        '
+p[ 8]='   [Del]...................kasowanie pozycji            '
+p[ 9]='   [F10]...................szukanie                     '
+p[10]='   [Esc]...................wyj&_s.cie                      '
+p[11]='                                                        '
 *---------------------------------------
 set color to i
    i=20
@@ -230,6 +233,14 @@ keyboard chr(lastkey())
 endif
 restore screen from scr_
 _disp=.f.
+
+   CASE kl == K_ALT_S
+      IF SalSprawdz()
+         IF TNEsc( , "Czy wysˆa† rejestry do SaldeoSMART? (Tak/Nie)" )
+            SalRejVatWyslij( ZBIOR )
+         ENDIF
+      ENDIF
+
 ******************** ENDCASE
 endcase
 enddo

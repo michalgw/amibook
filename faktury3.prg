@@ -35,7 +35,7 @@ PROCEDURE Faktury3()
    *############################### OTWARCIE BAZ ###############################
    SELECT 7
    IF Dostep( 'TRESC' )
-      SET INDEX TO tresc
+      SetInd( 'TRESC' )
    ELSE
       SELECT 2
       close_()

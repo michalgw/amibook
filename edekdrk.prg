@@ -585,8 +585,9 @@ FUNCTION edekXmlPodmiot2(oDoc)
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION edekXmlGrupa(oDoc, cNazwaWezla)
+FUNCTION edekXmlGrupa(oDoc, cNazwaWezla, lKonwertuj)
    LOCAL hRes := hb_Hash(), oNode, oIt, oEl
+   hb_default( @lKonwertuj, .T. )
    oNode := oDoc:FindFirst(cNazwaWezla)
    IF oNode != NIL
       oIt := TXMLIterator():New(oNode)
@@ -595,15 +596,16 @@ FUNCTION edekXmlGrupa(oDoc, cNazwaWezla)
          IF oEl == NIL
             EXIT
          ENDIF
-         hRes[oEl:cName] := sxml2str( oEl:cData )
+         hRes[oEl:cName] := iif( lKonwertuj, sxml2str( oEl:cData ), oEl:cData )
       ENDDO
    ENDIF
    RETURN hRes
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION edekXmlGrupaTab(oDoc, cNazwaWezla, cNazwaEl)
+FUNCTION edekXmlGrupaTab(oDoc, cNazwaWezla, cNazwaEl, lKonwertuj)
    LOCAL aRes := {}, hPoz := hb_Hash(), oNode, oIt, oEl, oEl2, oIt2
+   hb_default( @lKonwertuj, .T. )
    oNode := oDoc:FindFirst(cNazwaWezla)
    IF oNode != NIL
       oIt := TXMLIterator():New(oNode)
@@ -620,7 +622,7 @@ FUNCTION edekXmlGrupaTab(oDoc, cNazwaWezla, cNazwaEl)
                IF oEl2 == NIL
                   EXIT
                ENDIF
-               hPoz[oEl2:cName] := sxml2str( oEl2:cData )
+               hPoz[oEl2:cName] := iif( lKonwertuj, sxml2str( oEl2:cData ), oEl2:cData )
             ENDDO
             AAdd(aRes, hPoz)
          ENDIF

@@ -76,7 +76,7 @@ PROCEDURE Kontr()
    _invers := 'i'
    _curs_l := 0
    _curs_p := 0
-   _esc := '27,-9,247,22,48,77,109,7,46,28,-4,-5,-37'
+   _esc := '27,-9,247,22,48,77,109,7,46,28,-4,-5,-37,287'
    _top := 'firma#ident_fir'
    _bot := "del#'+'.or.firma#ident_fir"
    _stop := '+' + ident_fir
@@ -198,7 +198,8 @@ PROCEDURE Kontr()
          _disp := tnesc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
          IF _disp
             BlokadaR()
-            del()
+            //del()
+            kontr->del := '-'
             COMMIT
             UNLOCK
             SKIP
@@ -244,8 +245,9 @@ PROCEDURE Kontr()
          p[  8 ] := '   [F10]...................szukanie                     '
          p[  9 ] := '   [F5]....................eksport kartoteki do pliku   '
          p[ 10 ] := '   [F6]....................import kartoteki z pliku     '
-         p[ 11 ] := '   [Esc]...................wyj&_s.cie                      '
-         p[ 12 ] := '                                                        '
+         p[ 11 ] := '   [ALT-S].................eksport kartoteki do Saldeo  '
+         p[ 12 ] := '   [Esc]...................wyj&_s.cie                      '
+         p[ 13 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
          i := 20
@@ -369,6 +371,14 @@ PROCEDURE Kontr()
 
       CASE kl == K_ALT_F8
          VAT_Sprzwdz_NIP_Rej()
+
+      CASE kl == K_ALT_S
+         IF SalSprawdz()
+            IF TNEsc( , "Czy wysˆa† kartotek© kontrahent¢w do SaldeoSMART? (Tak/Nie)" )
+               SalKontrahenciWyslij()
+            ENDIF
+         ENDIF
+
       ******************** ENDCASE
       ENDCASE
    ENDDO
@@ -677,6 +687,21 @@ FUNCTION KontrahZnajdz( cNip, aPola, ncWrkplcNo )
                kontr->kraj := 'PL'
                kontr->zrodlo := 'R'
                kontr->dataspr := Date()
+               IF hb_HHasKey( aRekord, 'zipCode' )
+                  kontr->kodpoczt := aRekord[ 'zipCode' ]
+               ENDIF
+               IF hb_HHasKey( aRekord, 'city' )
+                  kontr->miasto := aRekord[ 'city' ]
+               ENDIF
+               IF hb_HHasKey( aRekord, 'street' )
+                  kontr->ulica := aRekord[ 'street' ]
+               ENDIF
+               IF hb_HHasKey( aRekord, 'propertyNumber' )
+                  kontr->nrbud := aRekord[ 'propertyNumber' ]
+               ENDIF
+               IF hb_HHasKey( aRekord, 'apartmentNumber' )
+                  kontr->nrlok := aRekord[ 'apartmentNumber' ]
+               ENDIF
                COMMIT
                UNLOCK
                lRes := .T.
@@ -782,6 +807,21 @@ FUNCTION KontrahZnajdzA( aNipy, aDane, ncWrkplcNo )
                   kontr->kraj := 'PL'
                   kontr->zrodlo := 'R'
                   kontr->dataspr := Date()
+                  IF hb_HHasKey( aDaneRegon[ nJ ], 'zipCode' )
+                     kontr->kodpoczt := aDaneRegon[ nJ ][ 'zipCode' ]
+                  ENDIF
+                  IF hb_HHasKey( aDaneRegon[ nJ ], 'city' )
+                     kontr->miasto := aDaneRegon[ nJ ][ 'city' ]
+                  ENDIF
+                  IF hb_HHasKey( aDaneRegon[ nJ ], 'street' )
+                     kontr->ulica := aDaneRegon[ nJ ][ 'street' ]
+                  ENDIF
+                  IF hb_HHasKey( aDaneRegon[ nJ ], 'propertyNumber' )
+                     kontr->nrbud := aDaneRegon[ nJ ][ 'propertyNumber' ]
+                  ENDIF
+                  IF hb_HHasKey( aDaneRegon[ nJ ], 'apartmentNumber' )
+                     kontr->nrlok := aDaneRegon[ nJ ][ 'apartmentNumber' ]
+                  ENDIF
                   COMMIT
                   UNLOCK
                ENDIF
@@ -906,6 +946,21 @@ FUNCTION KontrahAktualizuj( nRecNo )
             kontr->kraj := 'PL'
             kontr->zrodlo := 'R'
             kontr->dataspr := Date()
+            IF hb_HHasKey( aRekord, 'zipCode' )
+               kontr->kodpoczt := aRekord[ 'zipCode' ]
+            ENDIF
+            IF hb_HHasKey( aRekord, 'city' )
+               kontr->miasto := aRekord[ 'city' ]
+            ENDIF
+            IF hb_HHasKey( aRekord, 'street' )
+               kontr->ulica := aRekord[ 'street' ]
+            ENDIF
+            IF hb_HHasKey( aRekord, 'propertyNumber' )
+               kontr->nrbud := aRekord[ 'propertyNumber' ]
+            ENDIF
+            IF hb_HHasKey( aRekord, 'apartmentNumber' )
+               kontr->nrlok := aRekord[ 'apartmentNumber' ]
+            ENDIF
             COMMIT
             UNLOCK
             lRes := .T.

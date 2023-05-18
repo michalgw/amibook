@@ -639,3 +639,52 @@ FUNCTION amiViesCheckVat( cKraj, cNIP, aPowrot )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION amiSalGet( cAkcja, cParametry )
+
+   IF Empty( amiDllH )
+      RETURN
+   ENDIF
+
+   RETURN hb_DynCall( { 'salGet', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ) }, cAkcja, cParametry )
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION amiSalPost( cAkcja, cParametry, cDane )
+
+   IF Empty( amiDllH )
+      RETURN
+   ENDIF
+
+   RETURN hb_DynCall( { 'salPost', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ) }, cAkcja, cParametry, cDane )
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION amiSalGotowe()
+
+   IF Empty( amiDllH )
+      RETURN
+   ENDIF
+
+   RETURN hb_DynCall( { 'salGotowe', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ) } )
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION amiSalPobProgID()
+
+   IF Empty( amiDllH )
+      RETURN
+   ENDIF
+
+   RETURN hb_DynCall( { 'salPobProgID', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_CALLCONV_STDCALL ) } )
+
+/*----------------------------------------------------------------------*/
+

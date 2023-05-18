@@ -53,7 +53,7 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
    IF ewid_rzi <> '**'
       DO WHILE ! dostep( 'KAT_ZAK' )
       ENDDO
-      SET INDEX TO KAT_ZAK
+      SetInd( 'KAT_ZAK' )
       SEEK '+' + cFirma + ewid_rzi
       IF Found()
          cOpisRej := AllTrim( kat_zak->opis )
@@ -1427,7 +1427,7 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
    IF ewid_rsi <> '**'
       DO WHILE ! dostep( 'KAT_SPR' )
       ENDDO
-      SET INDEX TO kat_spr
+      SetInd( 'KAT_SPR' )
       SEEK '+' + cFirma + ewid_rsi
       IF Found()
          cOpisRej := AllTrim( kat_spr->opis )

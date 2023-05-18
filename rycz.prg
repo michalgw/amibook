@@ -42,7 +42,7 @@ PROCEDURE Rycz()
    *############################### OTWARCIE BAZ ###############################
    SELECT 3
    IF Dostep( 'TRESC' )
-      SET INDEX TO tresc
+      SetInd( 'TRESC' )
    ELSE
       SELECT 1
       close_()

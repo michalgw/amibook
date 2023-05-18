@@ -27,7 +27,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE KRejS()
 
-   LOCAL lRyczModSys := .F.
+   LOCAL lRyczModSys := .F., nImpMenu, cKolor
 
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou
    PRIVATE zDzien, zNazwa, zNr_Ident, zNumer, zAdres, zTresc, zRokS, zMcS, zDzienS
@@ -93,7 +93,24 @@ PROCEDURE KRejS()
          Notes()
       CASE kl == Asc( 'I' ) .OR. kl == Asc( 'i' )
          // Import z JPK
-         JPKImp_VatS()
+         nImpMenu := 1
+         IF SalSprawdz( .F. )
+            cKolor := ColInf()
+            @ 24, 0 SAY PadC( "Wybierz «r¢dˆo importu", 80 )
+            SetColor( cKolor )
+            nImpMenu := MenuEx( 10, 10, { ;
+               "J - Importuj z pliku JPK", ;
+               "S - importuj z SaldeoSMART (wysˆane)", ;
+               "D - importuj z SaldeoSMART (ostatnie 10 dni)", ;
+               "O - importuj z SaldeoSMART (odczytane ost. 10 dni)" }, nImpMenu )
+            @ 24, 0
+         ENDIF
+         DO CASE
+         CASE nImpMenu == 1
+            JPKImp_VatS()
+         CASE nImpMenu >= 2 .AND. nImpMenu <= 4
+            SalImp_VatS( nImpMenu - 1 )
+         ENDCASE
          IF &_bot
             SEEK '+' + ident_fir + miesiac
          ENDIF
@@ -1499,7 +1516,7 @@ FUNCTION V11_1s()
    SELECT 7
    DO WHILE ! Dostep( 'KAT_SPR' )
    ENDDO
-   SET INDEX TO KAT_SPR
+   SetInd( 'KAT_SPR' )
    SEEK '+' + ident_fir + zSYMB_REJ
    IF del # '+' .OR. firma # ident_fir
       SKIP -1

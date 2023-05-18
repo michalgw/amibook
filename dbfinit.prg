@@ -609,7 +609,9 @@ public aFIRMAdbf := {;
    { "RODZAJFNV", "C", 1, 0 },;                   //  82 Rodzaj dok. sprzedazy dla nie watowca: F - faktura, R - rachunek
    { "ZUSPODMIE", "C", 1, 0 },;                   //  83 Podstawa do zdrowotnego - przych¢d z 'B' - biezacy miesiac, 'P' - poprzedni miesiac
    { "ZUSPODNAR", "C", 1, 0 },;                   //  84 Podstawa do zdrowotnego - przych¢d: 'M' - miesi©cznie, 'N' - narastaj¥co
-   { "ZUSSKLMIE", "C", 1, 0 } }                   //  83 Skˆadki spoˆeczne odliczaj w - 'B' - biezacy miesiac, 'N' - nast©pny miesiac
+   { "ZUSSKLMIE", "C", 1, 0 },;                   //  83 Skˆadki spoˆeczne odliczaj w - 'B' - biezacy miesiac, 'N' - nast©pny miesiac
+   { "SALPRGID", "C", 64, 0 },;                   //  84 Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //  85 Saldeo saldeo id
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;
@@ -665,7 +667,9 @@ public aKAT_SPRdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //   3
    { "SYMB_REJ", "C", 2, 0 },;                    //   4
    { "OPIS", "C", 40, 0 },;                       //   5
-   { "OPCJE", "C", 1, 0 } }                       //   6
+   { "OPCJE", "C", 1, 0 },;                       //   6
+   { "SALPRGID", "C", 64, 0 },;                   //   7 Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //   8 Saldeo saldeo id
 
 // Create: KAT_ZAK.DBF
 public aKAT_ZAKdbf := {;
@@ -674,7 +678,9 @@ public aKAT_ZAKdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //   3
    { "SYMB_REJ", "C", 2, 0 },;                    //   4
    { "OPIS", "C", 40, 0 },;                       //   5
-   { "OPCJE", "C", 1, 0 } }                       //   6
+   { "OPCJE", "C", 1, 0 },;                       //   6
+   { "SALPRGID", "C", 64, 0 },;                   //   7 Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //   8 Saldeo saldeo id
 
 // Create: KONTR.DBF
 public aKONTRdbf := {;
@@ -701,7 +707,9 @@ public aKONTRdbf := {;
    { "MIASTO", "C", 56, 0 },;                     //  21  Miejscowosc
    { "ULICA", "C", 65, 0 },;                      //  22  Ulica
    { "NRBUD", "C", 9, 0 },;                       //  23  Nr budynku
-   { "NRLOK", "C", 10, 0 } }                      //  24  Nr lokalu
+   { "NRLOK", "C", 10, 0 },;                      //  24  Nr lokalu
+   { "SALPRGID", "C", 64, 0 },;                   //  25 Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //  26 Saldeo saldeo id
 
 public aKONTRSPRdbf := {;
    { "ID", "+", 4, 0 }, ;                         //  1
@@ -1135,7 +1143,9 @@ public aREJSdbf := {;
    { "DATATRAN", "D", 8, 0 },;                    //  52
    { "PROCEDUR", "C", 32, 0 },;                   //  53
    { "RODZDOW", "C", 6, 0 },;                     //  54
-   { "VATMARZA", "N", 11, 2 } }                   //  55
+   { "VATMARZA", "N", 11, 2 },;                   //  55
+   { "SALPRGID", "C", 64, 0 },;                   //  56 Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //  57 Saldeo saldeo id
 
 // Create: REJZ.DBF
 public aREJZdbf := {;
@@ -1209,7 +1219,9 @@ public aREJZdbf := {;
    { "VATMARZA", "N", 11, 2 },;                   //  68
    { "IFT2", "C", 1, 0 },;                        //  69
    { "IFT2SEK", "C", 3, 0 },;                     //  70
-   { "IFT2KWOT", "N", 11, 0 } }                   //  71
+   { "IFT2KWOT", "N", 11, 0 },;                   //  71
+   { "SALPRGID", "C", 64, 0 },;                   //  72 Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //  73 Saldeo saldeo id
 
 // Create: RELACJE.DBF
 public aRELACJEdbf := {;
@@ -1592,7 +1604,10 @@ public aTRESCdbf := {;
    { "STAN", "N", 12, 2 },;                       //   5
    { "RODZAJ", "C", 1, 0 },;                      //   6
    { "OPCJE", "C", 1, 0 },;                       //   7
-   { "KOLUMNA", "C", 2, 0 } }                     //   8   Domyslna kolumna
+   { "KOLUMNA", "C", 2, 0 },;                     //   8   Domyslna kolumna
+   { "SALPRGID", "C", 64, 0 },;                   //   9 Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //  10 Saldeo saldeo id
+
 
 // Create: TRESC.DBF
 public aTRESCKORdbf := {;
@@ -2019,6 +2034,7 @@ FUNCTION dbfIdxKONTR()
    pack
    index on del+firma+substr(nazwa,1,15)+substr(adres,1,15) to kontr
    index on del+firma+substr(nr_ident,1,15) to kontr1
+   index on Str( id, 6 ) TO kontr2
    RETURN
 ****************************************
 FUNCTION dbfIdxKONTRSPR()
@@ -2033,6 +2049,7 @@ FUNCTION dbfIdxKAT_ZAK()
    enddo
    pack
    index on del+firma+symb_rej to kat_zak
+   index on Str( id, 6 ) TO kat_zak1
    RETURN
 ****************************************
 FUNCTION dbfIdxKAT_SPR()
@@ -2040,6 +2057,7 @@ FUNCTION dbfIdxKAT_SPR()
    enddo
    pack
    index on del+firma+symb_rej to kat_spr
+   index on Str( id, 6 ) TO kat_spr1
    RETURN
 ****************************************
 FUNCTION dbfIdxTRESC()
@@ -2047,6 +2065,7 @@ FUNCTION dbfIdxTRESC()
    enddo
    pack
    index on del+firma+tresc to tresc
+   index on Str( id, 6 ) TO tresc1
    RETURN
 ****************************************
 FUNCTION dbfIdxTRESCKOR()

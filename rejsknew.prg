@@ -51,7 +51,7 @@ begin sequence
    if ewid_rsi<>'**'
       DO WHILE.NOT.dostep('KAT_SPR')
       ENDDO
-      set inde to KAT_SPR
+      SetInd( 'KAT_SPR' )
       seek [+]+ident_fir+ewid_rsi
       if found()
          OPRE=alltrim(opis)

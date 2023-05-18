@@ -31,7 +31,7 @@ PROCEDURE Firma1()
 
    private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
    @ 1,47 say [          ]
-   public symbol_fir,ident_fir
+   public symbol_fir,ident_fir, SalCompanyProgramId
    * ,VAT,DETALISTA,RYCZALT
    *################################# GRAFIKA ##################################
    @  3,42 say […ÕÕÕÕÕÕÕÕÕÕPe&_l.na nazwa firmyÕÕÕÕÕÕÕÕÕª]
@@ -88,7 +88,7 @@ PROCEDURE Firma1()
    _invers=[i]
    _curs_l=0
    _curs_p=0
-   _esc=[27,-9,247,22,48,77,109,7,46,28,13,1006,75,107]
+   _esc=[27,-9,247,22,48,77,109,7,46,28,13,1006,75,107,287]
    _top=[.f.]
    _bot=[del#'+']
    _stop=[]
@@ -573,7 +573,7 @@ PROCEDURE Firma1()
 
             do while.not.dostep('TRESC')
             enddo
-            set inde to tresc
+            SetInd( 'TRESC' )
             seek [+]+zident
             do while del=[+].and.firma=zident
                do BLOKADAR
@@ -758,11 +758,12 @@ PROCEDURE Firma1()
          p[ 5]='   [Ins]...................wpisywanie                   '
          p[ 6]='   [M].....................modyfikacja pozycji          '
          p[ 7]='   [K].....................konwersja ryczaàt <> PKPiR   '
-         p[ 8]='   [Del]...................kasowanie pozycji            '
-         p[ 9]='   [F10]...................szukanie                     '
-         p[10]='   [Enter].................akceptacja firmy             '
-         p[11]='   [Esc]...................wyj&_s.cie                      '
-         p[12]='                                                        '
+         p[ 8]='   [ALT-S].................poà•czenie firmy z Saldeo    '
+         p[ 9]='   [Del]...................kasowanie pozycji            '
+         p[10]='   [F10]...................szukanie                     '
+         p[11]='   [Enter].................akceptacja firmy             '
+         p[12]='   [Esc]...................wyj&_s.cie                      '
+         p[13]='                                                        '
          *---------------------------------------
          set color to i
             i=20
@@ -786,6 +787,9 @@ PROCEDURE Firma1()
       CASE kl == Asc( 'K' ) .OR. kl == Asc( 'k' )
          Firma_Konwertuj()
 
+      CASE kl == 287
+         SalPolaczFirme()
+
       *################################### WYBOR ##################################
       case kl=13 .OR. kl == 1006
          zhaslo=space(10)
@@ -805,6 +809,7 @@ PROCEDURE Firma1()
             symbol_fir=symbol
             ident_fir=str(recno(),3)
             Firma_RodzNrKs := firma->rodznrks
+            SalCompanyProgramId := AllTrim( firma->salprgid )
             restore screen from scr
             ColSta()
             @ 0,41 say 'Alt+K=kalkul. Alt+N=notes'

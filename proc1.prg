@@ -2277,9 +2277,9 @@ PROCEDURE setind( ZB )
    CASE ZB == 'PRZELPOD'
         SET INDEX TO przelpod
    CASE ZB == 'KAT_SPR'
-        SET INDEX TO kat_spr
+        SET INDEX TO kat_spr,kat_spr1
    CASE ZB == 'KAT_ZAK'
-        SET INDEX TO kat_zak
+        SET INDEX TO kat_zak,kat_zak1
    CASE ZB == 'RELACJE'
         SET INDEX TO relacje
    CASE ZB == 'SAMOCHOD'
@@ -2299,9 +2299,11 @@ PROCEDURE setind( ZB )
    CASE ZB == 'NOTES'
         SET INDEX TO notes
    CASE ZB == 'KONTR'
-        SET INDEX TO kontr,kontr1
+        SET INDEX TO kontr,kontr1,kontr2
    CASE ZB == 'ROZR'
         SET INDEX TO rozr,rozr1,rozr2
+   CASE ZB == 'TRESC'
+        SET INDEX TO tresc,tresc1
    CASE ZB == 'TRESCKOR'
         SET INDEX TO tresckor
    CASE ZB == 'EDEKLAR'

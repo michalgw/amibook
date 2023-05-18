@@ -1239,7 +1239,7 @@ FUNCTION wRzI( im, wi, ko )
    SELECT 7
    DO WHILE ! dostep( 'KAT_ZAK' )
    ENDDO
-   SET INDEX TO KAT_ZAK
+   SetInd( 'KAT_ZAK' )
    SEEK '+' + ident_fir + &( 'ewid_' + im + 'i' )
    IF del # '+' .OR. firma # ident_fir
       SKIP -1
@@ -1268,7 +1268,7 @@ FUNCTION wRsI( im, wi, ko )
    SELECT 7
    DO WHILE ! dostep( 'KAT_SPR' )
    ENDDO
-   SET INDEX TO KAT_SPR
+   SetInd( 'KAT_SPR' )
    SEEK '+' + ident_fir + &( 'ewid_' + im + 'i' )
    IF del # '+' .OR. firma # ident_fir
       SKIP -1

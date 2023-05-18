@@ -88,7 +88,7 @@ if tnesc([*i],[   Jeste&_s. pewny? (T/N)   ])
    zap_()
    do while.not.dostepex('TRESC')
    enddo
-   set inde to tresc
+   SetInd( 'TRESC' )
    do while .not.eof()
       repl_([stan],0)
       skip

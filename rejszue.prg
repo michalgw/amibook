@@ -149,7 +149,7 @@ begin sequence
       if ewid_rzi<>'**'
          DO WHILE.NOT.dostep('KAT_ZAK')
          ENDDO
-         set inde to KAT_ZAK
+         SetInd( 'KAT_ZAK' )
          seek [+]+ident_fir+ewid_rzi
          if found()
             OPRE=alltrim(opis)

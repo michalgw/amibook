@@ -74,6 +74,7 @@ FUNCTION Main()
    rob_edeklaracja := .F. // Czy robimy edeklaracje (j.w.)
    wys_edeklaracja := .F. // Czy wysylamy eDeklaracje (uruchamiamy program zewnetrzny)
    edeklaracja_plik := '' // Plik docelowy edeklaracji
+   trybSerwisowy := .F.
    PUBLIC edek_transport := 1 // Transport 1 - WinHTTP, 2 - Synapse + OpenSSL
 
    // Tytul okna
