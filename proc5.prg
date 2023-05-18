@@ -700,7 +700,7 @@ FUNCTION GM_ArEdit( nTop, nLeft, nBot, nRight, ;
       ELSE
          meth_no := AScan( aCustomKeys, { | elem | iif( HB_ISARRAY( elem[ KEY_ELEM ] ), AScan( elem[ KEY_ELEM ], nKey ) > 0, nKey == elem[ KEY_ELEM ] ) } )
          IF meth_no != 0
-            Eval( aCustomKeys[ meth_no, BLK_ELEM ], nElem, ar, b )
+            Eval( aCustomKeys[ meth_no, BLK_ELEM ], nElem, ar, b, @exit_requested )
             IF Len( ar ) == 0
                exit_requested := .T.
                nElem := 0
