@@ -1303,7 +1303,7 @@ PROCEDURE KRejS()
          pppp[  3 ] := '   [Home/End]....pierwsza/ostatnia pozycja              '
          pppp[  4 ] := '   [Ins].........wpisywanie                             '
          pppp[  5 ] := '   [M]...........modyfikacja pozycji                    '
-         pppp[  6 ] := '   [I]...........import z pliku JPK                     '
+         pppp[  6 ] := '   [I]...........import z pliku JPK / SaldeoSMART       '
          pppp[  7 ] := '   [K]...........kopiuj dokument                        '
          pppp[  8 ] := '   [W]...........grupowa weryf. stat. VAT               '
          pppp[  9 ] := '   [B]...........przeˆ¥cz wprowadzanie nettem/bruttem   '
