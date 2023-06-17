@@ -151,7 +151,7 @@ PROCEDURE Inne()
 
 FUNCTION linia24()
 
-   RETURN ' ' + dos_c( naz_imie ) + ' '
+   RETURN ' ' + dos_c( SubStr( naz_imie, 1, 30 ) ) + ' '
 
 *############################################################################
 *北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北
@@ -203,7 +203,7 @@ PROCEDURE inne_()
    ENDIF
    @ 22, 0 SAY '鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍鞍'
    ColInf()
-   center( 3, AllTrim( naz_imie ) + ' - INNE &__X.R&__O.D&__L.A PRZYCHOD&__O.W OD POCZ&__A.TKU ROKU' )
+   center( 3, AllTrim( SubStr( naz_imie, 1, 30 ) ) + ' - INNE &__X.R&__O.D&__L.A PRZYCHOD&__O.W OD POCZ&__A.TKU ROKU' )
    ColStd()
    *################################# OPERACJE #################################
    *----- parametry ------

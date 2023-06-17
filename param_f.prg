@@ -226,7 +226,7 @@ ColStd()
 @  7,18 get zURZAD     pict repl('!',20)+' - '+repl('!',25) valid v3_14f()
 @  8,18 get zPARAM_WOJ pict repl('!',20)
 @  8,48 get zPARAM_POW pict repl('!',20)
-@  9,48 get zNAZWISKO  pict repl('!',30) valid vf_NAZW()
+@  9,48 get zNAZWISKO  pict "@S30 "+repl('!',60) valid vf_NAZW()
 @ 10,28 get zDEKLNAZWI pict "@S14 "+repl('!',20)
 @ 10,49 get zDEKLIMIE  pict "@S14 "+repl('!',15)
 @ 10,69 get zDEKLTEL   pict "@S10 "+repl('!',25)
@@ -431,7 +431,7 @@ zURZAD=miejsc_us+' - '+urzad
 sele firma
 @  8,18 say PARAM_WOJ
 @  8,48 say PARAM_POW
-@  9,48 say NAZWISKO
+@  9,48 say SubStr( NAZWISKO, 1, 30 )
 @ 10,28 say substr(DEKLNAZWI,1,14)
 @ 10,49 say substr(DEKLIMIE,1,14)
 @ 10,69 say substr(DEKLTEL,1,10)
@@ -665,7 +665,7 @@ restore screen from scr2
 if lastkey()=13 .OR. LastKey() == 1006
    znazwisko=naz_imie
    set color to i
-   @  9,48 say zNAZWISKO
+   @  9,48 say SubStr( zNAZWISKO, 1, 30 )
    set color to
    pause(.5)
 endif

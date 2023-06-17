@@ -139,7 +139,7 @@ FUNCTION Wlasciciel_Wybierz( bRobWybor )
 
 FUNCTION Wlasciciel_Wybierz_Linia()
 
-   RETURN ' ' + dos_c( spolka->naz_imie ) + ' '
+   RETURN ' ' + dos_c( SubStr( spolka->naz_imie, 1, 30 ) ) + ' '
 
 /*----------------------------------------------------------------------*/
 

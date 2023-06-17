@@ -175,7 +175,7 @@ PROCEDURE P_Rycz( okres )
 *################################## FUNKCJE #################################
 FUNCTION linia12R()
 
-   RETURN ' ' + dos_c( naz_imie ) + ' '
+   RETURN ' ' + dos_c( SubStr( naz_imie, 1, 30 ) ) + ' '
 
 *############################################################################
 PROCEDURE P_RyczLicz( Okres, lPobierzPrzychody )
@@ -495,7 +495,7 @@ PROCEDURE zestaw_R( Okres )
    ENDIF
    */
    ColInf()
-   Center( 4, dos_c( ' Podatnik - ' + naz_imie + ' ' ) )
+   Center( 4, dos_c( ' Podatnik - ' + SubStr( naz_imie, 1, 30 ) + ' ' ) )
    DO CASE
    CASE OKRES == 'M'
       center( 5, dos_c( ' Za miesi&_a.c ' ) )
@@ -625,7 +625,7 @@ PROCEDURE zestaw_R( Okres )
    SET COLOR TO
    SELECT spolka
    *################################## PRZEKAZ #################################
-   zNAZWA_PLA := naz_imie
+   zNAZWA_PLA := SubStr( naz_imie, 1, 30 )
    zULICA_PLA := AllTrim( ulica ) + ' ' + AllTrim( nr_domu ) + iif( Len( AllTrim( nr_mieszk ) ) > 0, '/' + AllTrim( nr_mieszk ), '' )
    zMIEJSC_PLA := AllTrim( kod_poczt ) + ' ' + AllTrim( miejsc_zam )
    zBANK_PLA := firma->bank

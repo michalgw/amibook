@@ -36,7 +36,7 @@ private _top,_bot,_top_bot,_stop,_sbot,_proc,kl,ins,nr_rec,f10,rec,fou
 *################################# GRAFIKA ##################################
 @  3, 0 say '                 I N F O R M A C J E   O   W &__L. A &__S. C I C I E L U                '
 @  4, 0 say 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿'
-@  5, 0 say '³ Nazwisko i imiona.                                        Dokument.          ³'
+@  5, 0 say '³ Nazwisko i imie p.                                        Dokument.          ³'
 @  6, 0 say '³ Nr PESEL..             NIP..              P&_l.e&_c...           nr dok.:          ³'
 @  7, 0 say '³ Nazwisko rodowe...                Obyw-stwo.            UDZIA&__L. OD MIESI&__A.CA:  ³'
 @  8, 0 say '³ Miejsce i data ur.                                      1 Stycze&_n.            ³'
@@ -145,7 +145,7 @@ ktoroper()
                              begin sequence
 *ננננננננננננננננננננננננננננננ ZMIENNE ננננננננננננננננננננננננננננננננ
 if ins
-   zNAZ_IMIE=space(30)
+   zNAZ_IMIE=Space(60)
    zPESEL=space(11)
    zNIP=[             ]
    zPLEC=' '
@@ -236,7 +236,7 @@ else
    zRYCZPRZPR := RYCZPRZPR
 endif
 *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
-@ 5,20 get zNAZ_IMIE picture "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" valid v3_1()
+@ 5,20 get zNAZ_IMIE picture "@S38 " + repl( "!", 60 ) valid v3_1()
 @ 5,69 get zRODZ_DOK picture "!" when w3_1331() valid v3_1331()
 @ 6,12 get zPESEL picture "!!!!!!!!!!!"
 @ 6,30 get zNIP picture "!!!!!!!!!!!!!"
@@ -457,7 +457,7 @@ close_()
 procedure say3
 clear type
 set color to +w
-@ 5,20 say NAZ_IMIE
+@ 5,20 say SubStr( NAZ_IMIE, 1, 38 )
 @ 5,69 say RODZ_DOK+iif(RODZ_DOK='D','ow&_o.d   ','aszport')
 @ 6,12 say PESEL
 @ 6,30 say NIP

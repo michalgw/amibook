@@ -193,8 +193,10 @@ PROCEDURE P_Dochod( _OUT )
          P3 := StrTran( NIP, '-', '' )
          P3 := rozrzut( SubStr( P3, 1, 3 ) ) + ' ' + rozrzut( SubStr( P3, 4, 3 ) ) + ' ' + rozrzut( SubStr( P3, 7, 2 ) ) + ' ' + rozrzut( SubStr( P3, 9, 2 ) )
          P6 := PESEL
-         P7 := SubStr( NAZ_IMIE, 1, At( ' ', NAZ_IMIE ) )
-         subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
+         //P7 := SubStr( NAZ_IMIE, 1, At( ' ', NAZ_IMIE ) )
+         P7 := naz_imie_naz( NAZ_IMIE )
+         //subim := SubStr( NAZ_IMIE, At( ' ', NAZ_IMIE ) + 1 )
+         subim := naz_imie_imie( NAZ_IMIE )
          P8 := iif( At( ' ', subim ) == 0, subim, SubStr( subim, 1, At( ' ', subim ) ) )
          P9 := iif( At( ' ', subim ) + 1 == 1, '', SubStr( subim, At( ' ', subim ) + 1 ) )
          P10 := IMIE_O
@@ -309,7 +311,7 @@ PROCEDURE P_Dochod( _OUT )
 *################################## FUNKCJE #################################
 FUNCTION linia12()
 
-   RETURN ' ' + dos_c( naz_imie ) + ' '
+   RETURN ' ' + dos_c( SubStr( naz_imie, 1, 30 ) ) + ' '
 
 *############################################################################
 PROCEDURE P_Dochod_Licz( lDoZUS )
@@ -1792,7 +1794,7 @@ PROCEDURE infodoch()
    SET COLOR TO
    SELE spolka
    *################################## PRZEKAZ #################################
-   zNAZWA_PLA := naz_imie
+   zNAZWA_PLA := SubStr( naz_imie, 1, 30 )
    zULICA_PLA := AllTrim( ulica ) + ' ' + AllTrim( nr_domu ) + iif( Len( AllTrim( nr_mieszk ) ) > 0, '/' + AllTrim( nr_mieszk ), '' )
    zMIEJSC_PLA := AllTrim( kod_poczt ) + ' ' + AllTrim( miejsc_zam )
    zBANK_PLA := firma->bank

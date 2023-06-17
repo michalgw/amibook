@@ -550,7 +550,7 @@ public aFIRMAdbf := {;
    { "NR_REGON", "C", 35, 0 },;                   //  23 REGON
    { "NR_KONTA", "C", 32, 0 },;                   //  24 Nr konta bankowego
    { "BANK", "C", 30, 0 },;                       //  25 Nazwa banku
-   { "NAZWISKO", "C", 30, 0 },;                   //  26 Nazwisko wˆa˜ciciela - Klucz do tablicy "spolka" pole "nazwiako"
+   { "NAZWISKO", "C", 60, 0 },;                   //  26 Nazwisko wˆa˜ciciela - Klucz do tablicy "spolka" pole "nazwiako"
    { "NIP", "C", 13, 0 },;                        //  27 NIP
    { "NKP", "C", 15, 0 },;                        //  28 NIEUZYWANE NKP
    { "ODZUS", "C", 20, 0 },;                      //  29 NIEUZYWANE
@@ -611,7 +611,8 @@ public aFIRMAdbf := {;
    { "ZUSPODNAR", "C", 1, 0 },;                   //  84 Podstawa do zdrowotnego - przych¢d: 'M' - miesi©cznie, 'N' - narastaj¥co
    { "ZUSSKLMIE", "C", 1, 0 },;                   //  83 Skˆadki spoˆeczne odliczaj w - 'B' - biezacy miesiac, 'N' - nast©pny miesiac
    { "SALPRGID", "C", 64, 0 },;                   //  84 Saldeo company_program_id
-   { "SALSALID", "C", 64, 0 } }                   //  85 Saldeo saldeo id
+   { "SALSALID", "C", 64, 0 },;                   //  85 Saldeo saldeo id
+   { "SYGNALVAT", "C", 1, 0 } }                   //  86 Sygnaˆ o przekroczeniu VAT
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;
@@ -796,7 +797,9 @@ public aOPERdbf := {;
    { "IFT2", "C", 1, 0 },;                        //  33
    { "IFT2SEK", "C", 3, 0 },;                     //  34
    { "IFT2KWOT", "N", 11, 0 },;                   //  35
-   { "WARTZUS", "N", 11, 2 } }                    //  36 Wartosc przychodu do ZUS
+   { "WARTZUS", "N", 11, 2 },;                    //  36 Wartosc przychodu do ZUS
+   { "SALPRGID", "C", 64, 0 },;                   //  37 Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //  38 Saldeo saldeo id
 
 // Create: ORGANY.DBF
 public aORGANYdbf := {;
@@ -1301,7 +1304,7 @@ public aSPOLKAdbf := {;
    { "ID", "+", 4, 0 },;                          //  1
    { "DEL", "C", 1, 0 },;                         //  2
    { "FIRMA", "C", 3, 0 },;                       //  3    Nr rekordu tablicy 'firma'
-   { "NAZ_IMIE", "C", 30, 0 },;                   //  4    Nazwisko i imie
+   { "NAZ_IMIE", "C", 60, 0 },;                   //  4    Nazwisko i imie
    { "PESEL", "C", 11, 0 },;                      //  5    PESEL
    { "NIP", "C", 13, 0 },;                        //  6    NIP
    { "IMIE_O", "C", 15, 0 },;                     //  7    NIEAKTUALNE Imie ojca
