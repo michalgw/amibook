@@ -42,6 +42,9 @@ FUNCTION Param_FI()
    @  3, 42 SAY 'ÍÍ Parametry importu z JPK ÍÍÍÍÍÍÍÍÍÍÍ'
    @  4, 42 SAY ' Zezw¢l na import dokument¢w z dat¥   '
    @  5, 42 SAY ' inn¥ ni¾ aktualny miesi¥c            '
+   @  6, 42 SAY 'ÍÍ Inne parametry ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ'
+   @  7, 42 SAY ' Sygnaˆ o VAT (Tak/Nie)               '
+
    *################################# OPERACJE #################################
    Param_FI_Say()
    kl := 0
@@ -62,8 +65,10 @@ FUNCTION Param_FI()
          BEGIN SEQUENCE
             *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
             zzVATOKRESDR := iif( firma->vatokresdr $ 'TN', firma->vatokresdr, 'N' )
+            zsygnalvat := iif( firma->sygnalvat $ 'TN', firma->sygnalvat, 'T' )
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-            @  5, 70 GET zzVATOKRESDR PICTURE '!'
+            @  5, 70 GET zzVATOKRESDR PICTURE '!' VALID zzVATOKRESDR $ 'TN'
+            @  7, 66 GET zsygnalvat PICTURE '!' VALID zsygnalvat $ 'TN'
             ****************************
             CLEAR TYPE
             Read_()
@@ -74,6 +79,8 @@ FUNCTION Param_FI()
             BlokadaR()
             firma->vatokresdr := zzVATOKRESDR
             zVATOKRESDR := zzVATOKRESDR
+            firma->sygnalvat := zsygnalvat
+            fsygnalvat := zsygnalvat
             Commit_()
             UNLOCK
          END
@@ -118,6 +125,7 @@ PROCEDURE Param_FI_Say()
    CLEAR TYPE
    SET COLOR TO w+
    @ 5, 70 say iif( firma->vatokresdr== 'T', 'Tak', 'Nie' )
+   @ 7, 66 say iif( firma->sygnalvat== 'N', 'Nie', 'Tak' )
    ColStd()
 
    RETURN NIL

@@ -2493,7 +2493,7 @@ PROCEDURE ZAMEK()
 // TODO: Zmienne globalne: param_vat, zvat
 PROCEDURE czyobrvat( kwota_obr )
 
-   IF kwota_obr >= param_vat .AND. zvat#'T'
+   IF kwota_obr >= param_vat .AND. zvat#'T' .AND. fsygnalvat == 'T'
       KOMUN( 'Firma przekroczy&_l.a obroty ' + AllTrim( Str( param_vat, 9, 2 ) ) + '. Musisz przej&_s.&_c. na VAT (Parametry Firmy).' )
    ENDIF
 

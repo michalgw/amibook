@@ -31,7 +31,7 @@ PROCEDURE Firma1()
 
    private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
    @ 1,47 say [          ]
-   public symbol_fir,ident_fir, SalCompanyProgramId
+   public symbol_fir,ident_fir, SalCompanyProgramId, fsygnalvat
    * ,VAT,DETALISTA,RYCZALT
    *################################# GRAFIKA ##################################
    @  3,42 say [ÉÍÍÍÍÍÍÍÍÍÍPe&_l.na nazwa firmyÍÍÍÍÍÍÍÍÍ»]
@@ -845,6 +845,8 @@ PROCEDURE Firma1()
             *m->parap_puw=parap_puw
             m->parap_fuw=parap_fuw
             m->parap_fww=parap_fww
+
+            fsygnalvat := iif( sygnalvat $ 'TN', sygnalvat, 'T' )
 
             bufor_dok := { 'oper' => {}, 'rycz' => {}, 'rejs' => {}, 'rejz' => {}, 'faktury' => {}, 'faktury3' => {} }
 
