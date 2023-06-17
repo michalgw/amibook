@@ -957,6 +957,9 @@ PROCEDURE FakturyN()
 
          CASE kl == K_F7
             IF HB_ISHASH( bufor_dok ) .AND. hb_HHasKey( bufor_dok, 'faktury' ) .AND. HB_ISARRAY( bufor_dok[ 'faktury' ] ) .AND. Len( bufor_dok[ 'faktury' ] ) > 0
+
+               IF TNEsc( , "Czy wstawi† wsystkie faktury z bufora? (Tak/Nie)" )
+
                ins := .T.
                lKorekta := .F.
                ColInf()
@@ -1231,8 +1234,15 @@ PROCEDURE FakturyN()
                FakturyN_Ksieguj()
 
                } )
+            IF &_top_bot
+               EXIT
+            ELSE
+               DO &_proc
+            ENDIF
+
                ColStd()
                @ 24, 0
+               ENDIF
             ELSE
                Komun( "Brak dokument¢w w buforze" )
             ENDIF
