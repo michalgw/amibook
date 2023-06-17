@@ -383,7 +383,7 @@ PROCEDURE Oper()
          @ 24, 0
 
       *################################# MODYFIKACJA SUMY RS- #####################
-      case kl == K_CTRL_F10 .AND. SubStr( NUMER, 1, 3 ) == 'RS-'
+      case kl == K_CTRL_F10 .AND. ( SubStr( NUMER, 1, 3 ) == 'RS-' .OR. SubStr( NUMER, 1, 3 ) == 'RZ-' )
          @ 1, 47 SAY '          '
          ColStb()
          center( 23, 'þ                                 þ' )
@@ -391,19 +391,32 @@ PROCEDURE Oper()
          center( 23, 'M O D Y F I K A C J A   S U M Y' )
          ColStd()
          SELECT oper
-         zWYR_TOW := WYR_TOW
-         zUSLUGI := USLUGI
-         IF AllTrim( NUMER ) == 'RS-7'
-            @ 10, 67 GET zWYR_TOW PICTURE FPIC
-         ELSE
-            @ 11, 67 GET zUSLUGI  PICTURE FPIC
-         ENDIF
+         DO CASE
+         CASE SubStr( NUMER, 1, 3 ) == 'RS-'
+            zWYR_TOW := WYR_TOW
+            zUSLUGI := USLUGI
+            IF AllTrim( NUMER ) == 'RS-7'
+               @ 10, 67 GET zWYR_TOW PICTURE FPIC
+            ELSE
+               @ 11, 67 GET zUSLUGI  PICTURE FPIC
+            ENDIF
+         CASE SubStr( NUMER, 1, 3 ) == 'RZ-'
+            zK16OPIS := K16OPIS
+            zK16WART := K16WART
+            @ 19, 49 GET zK16OPIS  PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            @ 20, 67 GET zK16WART  PICTURE FPIC
+         ENDCASE
          SET CURSOR ON
          READ
          SET CURSOR OFF
          IF LastKey() <> K_ESC
             BlokadaR()
-            REPLACE WYR_TOW WITH zWYR_TOW, USLUGI WITH zUSLUGI
+            DO CASE
+            CASE SubStr( NUMER, 1, 3 ) == 'RS-'
+               REPLACE WYR_TOW WITH zWYR_TOW, USLUGI WITH zUSLUGI
+            CASE SubStr( NUMER, 1, 3 ) == 'RZ-'
+               REPLACE K16OPIS WITH zK16OPIS, K16WART WITH zK16WART
+            ENDCASE
             COMMIT
             UNLOCK
          ENDIF
