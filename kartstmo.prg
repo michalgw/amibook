@@ -355,6 +355,76 @@ PROCEDURE modyst( da_mo_, wa_mo_ )
       ENDDO
       COMMIT
       UNLOCK
+   ELSE
+      zstawka := kartst->stawka
+      if zstawka > 0.0 .AND. wa_mo_ > 0
+         kon := .F.
+         zwart_pocz := wa_mo_
+         zwspdeg := kartst->wspdeg
+         zSPOSOB := kartst->sposob
+         zprzel := 1
+         zwart_akt := zwart_pocz * zprzel
+         zodpis_rok := 0
+         zodpis_sum := 0
+         zumorz_akt := zodpis_sum * zprzel
+         zliniowo := _round( zwart_akt * ( zstawka / 100 ), 2 )
+         zdegres := _round( ( zwart_akt - zumorz_akt ) * ( ( zstawka * zwspdeg ) / 100 ), 2 )
+         zodpis_mie := iif( zSPOSOB='L', _round( zliniowo / 12, 2 ), iif( zSPOSOB='J', zwartosc, _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) ) )
+         odm := Month( da_mo_ )
+         odr := Year( da_mo_ )
+         DO WHILE .T.
+            CURR := ColInf()
+            @ 24, 0
+            center( 24, 'Dopisuj&_e. rok ' + Str( odr, 4 ) )
+            SetColor( CURR )
+            app()
+            REPLACE firma WITH ident_fir, ;
+               ident WITH zidp, ;
+               rok WITH Str( odr, 4 ), ;
+               wart_pocz WITH zwart_pocz, ;
+               przel WITH zprzel, ;
+               wart_akt WITH zwart_akt, ;
+               umorz_akt WITH zumorz_akt, ;
+               stawka WITH zstawka, ;
+               wspdeg WITH zwspdeg, ;
+               liniowo WITH zliniowo, ;
+               degres WITH zdegres
+            FOR i := odm TO 12
+               zmcn := StrTran( Str( i, 2 ), ' ', '0' )
+               IF zodpis_mie > zwart_akt - zodpis_sum
+                  REPLACE mc&zmcn WITH zwart_akt - zodpis_sum
+                  zodpis_rok := zodpis_rok + ( zwart_akt - zodpis_sum )
+                  zodpis_sum := zodpis_sum + ( zwart_akt - zodpis_sum )
+                  kon := .T.
+                  EXIT
+               ELSE
+                  REPLACE mc&zmcn WITH zodpis_mie
+                  zodpis_rok := zodpis_rok + zodpis_mie
+                  zodpis_sum := zodpis_sum + zodpis_mie
+               ENDIF
+            NEXT
+            REPLACE odpis_rok WITH zodpis_rok, ;
+               odpis_sum WITH zodpis_sum
+            COMMIT
+            UNLOCK
+            IF kon
+               EXIT
+            ELSE
+               odm := 1
+               odr++
+               zwart_pocz := zwart_akt
+               zprzel := 1
+               zwart_akt := zwart_pocz * zprzel
+               zodpis_rok := 0
+               zumorz_akt := zodpis_sum * zprzel
+               zliniowo := _round( zwart_akt * ( zstawka / 100 ), 2 )
+               zdegres := _round( ( zwart_akt - zumorz_akt ) * ( ( zstawka * zwspdeg ) / 100 ), 2 )
+               zodpis_mie := iif( zSPOSOB = 'L', _round( zliniowo / 12, 2 ), iif( zSPOSOB='J', zwartosc, _round( iif( zliniowo >= zdegres, zliniowo / 12, zdegres / 12 ), 2 ) ) )
+            ENDIF
+         ENDDO
+         COMMIT
+         UNLOCK
+      ENDIF
    ENDIF
    SELECT kartstmo
    @ 24, 0
