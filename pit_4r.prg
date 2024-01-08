@@ -386,15 +386,15 @@ PROCEDURE Pit_4R( _G, _M, _STR, _OU )
               ENDIF
               IF zDEKLKOR != 'K' .OR. (zDEKLKOR == 'K' .AND. ValType(tresc_korekty_pit4r) == "C")
                  private danedekl
-                 danedekl := edek_pit4r_12()
-                 edekZapiszXml(danedekl, edeklaracja_plik, wys_edeklaracja, 'PIT4R-12', zDEKLKOR == 'K')
+                 danedekl := edek_pit4r_13()
+                 edekZapiszXml(danedekl, edeklaracja_plik, wys_edeklaracja, 'PIT4R-13', zDEKLKOR == 'K')
               ENDIF
            ENDIF
          ENDIF
       OTHERWISE //_OU='K'
          IF Pit48_Covid()
            DeklPodp( 'T' )
-           DeklarDrukuj( 'PIT4R-12' )
+           DeklarDrukuj( 'PIT4R-13' )
          ENDIF
       ENDCASE
    END
