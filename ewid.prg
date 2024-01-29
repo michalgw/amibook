@@ -433,7 +433,7 @@ FUNCTION Ewid()
 
                   @  7, 1 TO 22, 39
                   @  8, 2 PROMPT ' 4 - PIT-4R   (13)                   '
-                  @  9, 2 PROMPT ' 8 - PIT-8AR  (12)                   '
+                  @  9, 2 PROMPT ' 8 - PIT-8AR  (13)                   '
                   @ 10, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
                   @ 11, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
                   @ 12, 2 PROMPT verdekold
