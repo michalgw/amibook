@@ -22,6 +22,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE DoWewW()
 
+   LOCAL nMenu, aDane, aPoz
+
    PRIVATE _grupa1, _grupa2, _grupa3, _grupa4, _grupa5, _grupa, _koniec, _szerokosc, _numer, _lewa, _prawa, _strona, _czy_mon, _czy_close
    PRIVATE _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9, _t10, _t11, _t12, _t13, _t14, _t15
 
@@ -86,48 +88,76 @@ PROCEDURE DoWewW()
          ENDIF
          SKIP
       ENDDO
-      mon_drk( 'Ж' + ProcName() )
-      *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      STORE 0 TO sum7
-      *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      SELECT dowew
-      SEEK '+' + ident_fir + zzestaw
-      k1 := DToC( DATA )
-      k2 := nrdok
-      k3 := firma->nazwa
-      k31 := AllTrim( firma->miejsc )
-      k4 := Int( strona / Max( 1, _druk_2 - 9 ) ) + 1
-      mon_drk( 'Firma: ' + k3 + Space( 14 ) + PadL( k31 + ', ' + k1, 37 ) )
-      mon_drk( '                                            DOW&__O.D WEWN&__E.TRZNY NR ' + k2 )
-      mon_drk( 'здддбддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддбдддддддддддд©' )
-      mon_drk( 'ЁL.pЁ                                                O P I S                                             Ё   WARTO&__S.&__C.  Ё' )
-      mon_drk( 'Ё(1)Ё                                                  (2)                                               Ё     (3)    Ё' )
-      mon_drk( 'юдддаддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддадддддддддддды' )
-      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      SELECT dowew
-      DO WHILE .NOT. &_koniec
-         *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
-         IF drukowac
-            liczba := liczba + 1
-            k1 := Str( liczba, 3 )
-            k2 := opis
-            k3 := Transform( wartosc, '9 999 999.99' )
-            k3w := wartosc
-            *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            sum7 := sum7 + k3w
-            mon_drk( ' ' + k1 + ' ' + k2 + ' ' + k3 )
-         ENDIF
+
+      nMenu := GraficznyCzyTekst( "DoWewW" )
+      IF nMenu == 0
+         BREAK
+      ENDIF
+
+      IF nMenu == 1
          SELECT dowew
-         SKIP
+         SEEK '+' + ident_fir + zzestaw
+         aDane := { ;
+            'uzytkownik' => AllTrim( code() ), ;
+            'firma' => AllTrim( firma->nazwa ), ;
+            'miejsc' => AllTrim( firma->miejsc ), ;
+            'nrdok' => AllTrim( nrdok ), ;
+            'data' => data, ;
+            'pozycje' => {} }
+         DO WHILE .NOT. &_koniec
+            IF drukowac
+               aPoz := { ;
+                  'opis' => AllTrim( opis ), ;
+                  'wartosc' => wartosc }
+               AAdd( aDane[ 'pozycje' ], aPoz )
+            ENDIF
+            SKIP
+         ENDDO
+         FRDrukuj( 'frf\doweww.frf', aDane )
+      ELSE
+         mon_drk( 'Ж' + ProcName() )
+         *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         STORE 0 TO sum7
+         *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         SELECT dowew
+         SEEK '+' + ident_fir + zzestaw
+         k1 := DToC( DATA )
+         k2 := nrdok
+         k3 := firma->nazwa
+         k31 := AllTrim( firma->miejsc )
+         k4 := Int( strona / Max( 1, _druk_2 - 9 ) ) + 1
+         mon_drk( 'Firma: ' + k3 + Space( 14 ) + PadL( k31 + ', ' + k1, 37 ) )
+         mon_drk( '                                            DOW&__O.D WEWN&__E.TRZNY NR ' + k2 )
+         mon_drk( 'здддбддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддбдддддддддддд©' )
+         mon_drk( 'ЁL.pЁ                                                O P I S                                             Ё   WARTO&__S.&__C.  Ё' )
+         mon_drk( 'Ё(1)Ё                                                  (2)                                               Ё     (3)    Ё' )
+         mon_drk( 'юдддаддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддадддддддддддды' )
          *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      ENDDO
-      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      k29 := dos_c( Pad( code(), 50 ) )
-      mon_drk( 'дддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддбдддддддддддд©' )
-      mon_drk( '             U&_z.ytkownik programu komputerowego                                                           Ё' + kwota( sum7, 12, 2 ) + 'Ё' )
-      mon_drk( '      ' + k29 + Space( 49 ) + 'юдддддддддддды' )
-      *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
-      mon_drk( 'Ч' )
+         SELECT dowew
+         DO WHILE .NOT. &_koniec
+            *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
+            IF drukowac
+               liczba := liczba + 1
+               k1 := Str( liczba, 3 )
+               k2 := opis
+               k3 := Transform( wartosc, '9 999 999.99' )
+               k3w := wartosc
+               *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+               sum7 := sum7 + k3w
+               mon_drk( ' ' + k1 + ' ' + k2 + ' ' + k3 )
+            ENDIF
+            SELECT dowew
+            SKIP
+            *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         ENDDO
+         *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         k29 := dos_c( Pad( code(), 50 ) )
+         mon_drk( 'дддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддбдддддддддддд©' )
+         mon_drk( '             U&_z.ytkownik programu komputerowego                                                           Ё' + kwota( sum7, 12, 2 ) + 'Ё' )
+         mon_drk( '      ' + k29 + Space( 49 ) + 'юдддддддддддды' )
+         *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
+         mon_drk( 'Ч' )
+      ENDIF
    END
    IF _czy_close
       close_()
