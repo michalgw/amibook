@@ -438,7 +438,7 @@ FUNCTION Ewid()
                   @ 11, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
                   @ 12, 2 PROMPT verdekold
                   @ 13, 2 PROMPT ' U - VAT-UE   (5)                    '
-                  @ 14, 2 PROMPT ' I - IFT-2/2R (9)                    '
+                  @ 14, 2 PROMPT ' I - IFT-2/2R (10)                   '
                   @ 15, 2 PROMPT ' V - VIU-DO   (1)                    '
                   @ 16, 2 TO 16, 38
                   @ 17, 2 PROMPT ' C - RCA raport imienny              '
