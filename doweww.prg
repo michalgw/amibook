@@ -20,115 +20,120 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
-private _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
-private _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15
-begin sequence
-      @ 1,47 say space(10)
+PROCEDURE DoWewW()
+
+   PRIVATE _grupa1, _grupa2, _grupa3, _grupa4, _grupa5, _grupa, _koniec, _szerokosc, _numer, _lewa, _prawa, _strona, _czy_mon, _czy_close
+   PRIVATE _t1, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9, _t10, _t11, _t12, _t13, _t14, _t15
+
+   BEGIN SEQUENCE
+      @ 1, 47 SAY Space( 10 )
       *-----parametry wewnetrzne-----
-      _papsz=1
-      _lewa=1
-      _prawa=119
-      _strona=.f.
-      _czy_mon=.t.
-      _czy_close=.f.
-      czesc=1
+      _papsz := 1
+      _lewa := 1
+      _prawa := 119
+      _strona := .F.
+      _czy_mon := .T.
+      _czy_close := .F.
+      czesc := 1
       *------------------------------
-      _szerokosc=119
-      _koniec="del#[+].or.firma#ident_fir.or.zzestaw#zestaw"
+      _szerokosc := 119
+      _koniec := "del#[+].or.firma#ident_fir.or.zzestaw#zestaw"
       *@@@@@@@@@@@@@@@@@@@@@@@@@@ ZAKRES @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      save scre to pardow
-      zdata=data
-      znrdok=nrdok
-      zzestaw=zestaw
-      set curs on
-      @ 10,23 clear to 14,57
-      @ 10,23 to 14,57
-      @ 11,25 say '     Pozycje z zestawu '+zzestaw
-      @ 12,25 say 'drukowa&_c. jako dow&_o.d wewn&_e.trzny'
-      @ 13,25 say 'nr            z dnia           '
-      @ 13,28 get znrdok pict '!!!!!!!!!!'
-      @ 13,46 get zdata pict '@D'
-      read
-      set curs off
-      rest scre from pardow
-      stronap=1
-      stronak=99999
+      SAVE SCREEN TO pardow
+      zdata := data
+      znrdok := nrdok
+      zzestaw := zestaw
+      SET CURSOR ON
+      @ 10, 23 CLEAR TO 14, 57
+      @ 10, 23 TO 14, 57
+      @ 11, 25 SAY '     Pozycje z zestawu ' + zzestaw
+      @ 12, 25 SAY 'drukowa&_c. jako dow&_o.d wewn&_e.trzny'
+      @ 13, 25 SAY 'nr            z dnia           '
+      @ 13, 28 GET znrdok pict '!!!!!!!!!!'
+      @ 13, 46 GET zdata pict '@D'
+      READ
+      SET CURSOR OFF
+      RESTORE SCREEN FROM pardow
+      stronap := 1
+      stronak := 99999
       *@@@@@@@@@@@@@@@@@@@@ OTWARCIE BAZ DANYCH @@@@@@@@@@@@@@@@@@@@@@
-      select 5
-      if dostep('FIRMA')
-         go val(ident_fir)
-      else
-         sele dowew
-         break
-      endif
-      liczba=0
-      if lastkey()=27
-         sele dowew
-         break
-      endif
-      sele dowew
-      seek [+]+ident_fir+zzestaw
-      strona=0
+      SELECT 5
+      IF Dostep( 'FIRMA' )
+         GO Val( ident_fir )
+      ELSE
+         SELECT dowew
+         BREAK
+      ENDIF
+      liczba := 0
+      IF LastKey() == 27
+         SELECT dowew
+         BREAK
+      ENDIF
+      SELECT dowew
+      SEEK '+' + ident_fir + zzestaw
+      strona := 0
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      if &_koniec
-         kom(3,[*w],[b r a k   d a n y c h])
-         break
-      endif
-      do while .not.&_koniec
-         if drukowac
-            do blokadar
-            repl data with zdata,nrdok with znrdok
+      IF &_koniec
+         kom( 3, '*w', 'b r a k   d a n y c h' )
+         BREAK
+      ENDIF
+      DO WHILE .NOT. &_koniec
+         IF drukowac
+            BlokadaR()
+            REPLACE DATA WITH zdata, nrdok WITH znrdok
             COMMIT
-            unlock
-         endif
-         skip
-      enddo
-      mon_drk([Ж]+procname())
+            UNLOCK
+         ENDIF
+         SKIP
+      ENDDO
+      mon_drk( 'Ж' + ProcName() )
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      store 0 to sum7
+      STORE 0 TO sum7
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      sele dowew
-      seek [+]+ident_fir+zzestaw
-      k1=dtoc(data)
-      k2=nrdok
-      k3=firma->nazwa
-      k31=alltrim(firma->miejsc)
-      k4=int(strona/max(1,_druk_2-9))+1
-      MON_DRK([Firma: ]+k3+space(14)+padl(k31+[, ]+k1,37))
-      mon_drk([                                            DOW&__O.D WEWN&__E.TRZNY NR ]+k2)
-      mon_drk([здддбддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддбдддддддддддд©])
-      mon_drk([ЁL.pЁ                                                O P I S                                             Ё   WARTO&__S.&__C.  Ё])
-      mon_drk([Ё(1)Ё                                                  (2)                                               Ё     (3)    Ё])
-      mon_drk([юдддаддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддадддддддддддды])
+      SELECT dowew
+      SEEK '+' + ident_fir + zzestaw
+      k1 := DToC( DATA )
+      k2 := nrdok
+      k3 := firma->nazwa
+      k31 := AllTrim( firma->miejsc )
+      k4 := Int( strona / Max( 1, _druk_2 - 9 ) ) + 1
+      mon_drk( 'Firma: ' + k3 + Space( 14 ) + PadL( k31 + ', ' + k1, 37 ) )
+      mon_drk( '                                            DOW&__O.D WEWN&__E.TRZNY NR ' + k2 )
+      mon_drk( 'здддбддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддбдддддддддддд©' )
+      mon_drk( 'ЁL.pЁ                                                O P I S                                             Ё   WARTO&__S.&__C.  Ё' )
+      mon_drk( 'Ё(1)Ё                                                  (2)                                               Ё     (3)    Ё' )
+      mon_drk( 'юдддаддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддадддддддддддды' )
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      sele dowew
-      do while .not.&_koniec
+      SELECT dowew
+      DO WHILE .NOT. &_koniec
          *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
-         if drukowac
-            liczba=liczba+1
-            k1=str(liczba,3)
-            k2=opis
-            k3=transform(wartosc,'9 999 999.99')
-            k3w=wartosc
+         IF drukowac
+            liczba := liczba + 1
+            k1 := Str( liczba, 3 )
+            k2 := opis
+            k3 := Transform( wartosc, '9 999 999.99' )
+            k3w := wartosc
             *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            sum7=sum7+k3w
-            mon_drk([ ]+k1+[ ]+k2+[ ]+k3)
-         endif
-         sele dowew
-         skip
+            sum7 := sum7 + k3w
+            mon_drk( ' ' + k1 + ' ' + k2 + ' ' + k3 )
+         ENDIF
+         SELECT dowew
+         SKIP
          *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      enddo
-            *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            k29=dos_c(code())
-            mon_drk([дддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддбдддддддддддд©])
-            mon_drk([             U&_z.ytkownik programu komputerowego                                                           Ё]+kwota(sum7,12,2)+[Ё])
-            mon_drk([      ]+k29+space(49)+[юдддддддддддды])
+      ENDDO
+      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      k29 := dos_c( Pad( code(), 50 ) )
+      mon_drk( 'дддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддбдддддддддддд©' )
+      mon_drk( '             U&_z.ytkownik programu komputerowego                                                           Ё' + kwota( sum7, 12, 2 ) + 'Ё' )
+      mon_drk( '      ' + k29 + Space( 49 ) + 'юдддддддддддды' )
       *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
-      mon_drk([Ч])
-end
-if _czy_close
-   close_()
-endif
-sele firma
-use
-sele dowew
+      mon_drk( 'Ч' )
+   END
+   IF _czy_close
+      close_()
+   ENDIF
+   SELECT firma
+   USE
+   SELECT dowew
+
+   RETURN

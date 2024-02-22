@@ -24,213 +24,227 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Obsluga podstawowych operacji na bazie ......                             ±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
-private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou,_top_bot
-@  1,47 say [          ]
-*################################# GRAFIKA ##################################
-@  3, 0 say padc('D O W &__O. D   W E W N &__E. T R Z N Y',80)
-@  4, 0 say 'Zes Nr                                                 Zestaw drukow.jako  Druk '
-@  5, 0 say 'taw kol.          Opis pozycji               Wartosc     Data     Nr dok.  owac '
-      KKOLG='ÚÄÄÂÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄ¿'
-      KKOL ='³  ³  ³                                   ³          ³          ³          ³   ³'
-      KKOLS='ÀÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÙ'
-@  6, 0 say KKOLG
-for x=7 to 20
-    @ x, 0 say KKOL
-next
-@ 21, 0 say KKOLS
-@ 22, 0 say space(80)
-*############################### OTWARCIE BAZ ###############################
-sele 1
-if dostep('DOWEW')
-   do setind with 'DOWEW'
-   seek [+]+ident_fir
-else
+
+PROCEDURE DoWew()
+
+   PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc
+   PRIVATE _top, _bot, _stop, _sbot, _proc, _row, _proc_spe, _disp, _cls, kl
+   PRIVATE ins, nr_rec, wiersz, f10, rec, fou, _top_bot
+
+   @  1, 47 SAY "          "
+   *################################# GRAFIKA ##################################
+   @  3,  0 SAY PadC( 'D O W &__O. D   W E W N &__E. T R Z N Y', 80 )
+   @  4,  0 SAY 'Zes Nr                                                 Zestaw drukow.jako  Druk '
+   @  5,  0 SAY 'taw kol.          Opis pozycji               Wartosc     Data     Nr dok.  owac '
+      KKOLG := 'ÚÄÄÂÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄ¿'
+      KKOL  := '³  ³  ³                                   ³          ³          ³          ³   ³'
+      KKOLS := 'ÀÄÄÁÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÙ'
+   @  6,  0 SAY KKOLG
+   FOR x := 7 TO 20
+      @ x,  0 SAY KKOL
+   NEXT
+   @ 21,  0 SAY KKOLS
+   @ 22,  0 SAY Space( 80 )
+   *############################### OTWARCIE BAZ ###############################
+   SELECT 1
+   IF Dostep( 'DOWEW' )
+      SetInd( 'DOWEW' )
+      SEEK '+' + ident_fir
+   ELSE
+      Close_()
+      RETURN
+   ENDIF
+   *################################# OPERACJE #################################
+   *----- parametry ------
+   _row_g := 7
+   _col_l := 1
+   _row_d := 20
+   _col_p := 78
+   _invers := [i]
+   _curs_l := 0
+   _curs_p := 0
+   _esc := [27,68,100,22,48,77,109,7,46,28,13]
+   _top := [del#'+'.or.firma#ident_fir]
+   _bot := [del#'+'.or.firma#ident_fir]
+   _stop := [+]+ident_fir
+   _sbot := [+]+ident_fir+[þ]
+   _proc := [linia622a()]
+   _row := int((_row_g+_row_d)/2)
+   _proc_spe := []
+   _disp := .t.
+   _cls := ''
+   _top_bot := _top+[.or.]+_bot
+   *----------------------
+   kl := 0
+   DO WHILE kl # 27
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      SET COLOR TO
+      _row := Wybor( _row )
+      ColStd()
+      kl := LastKey()
+      DO CASE
+      *################################## INSERT ##################################
+      CASE kl == 22 .OR. kl == 48 .OR. _row == -1 .OR. kl == 77 .OR. kl == 109
+         @ 1, 47 SAY "          "
+         ins := ( kl # 77 .AND. kl # 109 ) .OR. &_top_bot
+         IF ins
+            ColStb()
+            Center( 23, "þ                     þ" )
+            ColSta()
+            Center( 23, "W P I S Y W A N I E" )
+            ColStd()
+            RestScreen( _row_g, _col_l, _row_d + 1, _col_p, _cls )
+            wiersz := _row_d
+         ELSE
+            ColStb()
+            Center( 23, "þ                       þ" )
+            ColSta()
+            Center( 23, "M O D Y F I K A C J A" )
+            ColStd()
+            wiersz := _row
+         ENDIF
+         DO WHILE .T.
+         *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
+            IF ins
+               zDATA := CToD( '    .  .  ' )
+               zNRDOK := Space( 10 )
+               zZESTAW := '  '
+               zNRKOL := '  '
+               zOPIS := Space( 100 )
+               zWARTOSC := 0
+               zDRUKOWAC := .T.
+            ELSE
+               zDATA := DATA
+               zNRDOK := NRDOK
+               zZESTAW := ZESTAW
+               zNRKOL := NRKOL
+               zOPIS := OPIS
+               zWARTOSC := WARTOSC
+               zDRUKOWAC := DRUKOWAC
+            ENDIF
+            *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
+            @ wiersz, 1  GET zZESTAW  PICTURE '!!'
+            @ wiersz, 4  GET zNRKOL   PICTURE '!!'
+            @ wiersz, 7  GET zOPIS    PICTURE '@S35 X' + repl( 'X', 100 )
+            @ wiersz, 43 GET zWARTOSC PICTURE '9999999.99'
+            read_()
+            IF LastKey() == 27
+               EXIT
+            ENDIF
+            *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
+            IF ins
+               app()
+            ENDIF
+            BlokadaR()
+            repl_( 'FIRMA', ident_fir )
+            repl_( 'DATA', zDATA )
+            repl_( 'NRDOK', zNRDOK )
+            repl_( 'ZESTAW', zZESTAW )
+            repl_( 'NRKOL', zNRKOL )
+            repl_( 'OPIS', zOPIS )
+            repl_( 'WARTOSC', zWARTOSC )
+            repl_( 'DRUKOWAC', zDRUKOWAC )
+            commit_()
+            UNLOCK
+            *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
+            _row := Int( (_row_g + _row_d ) / 2 )
+            IF .NOT. ins
+               EXIT
+            ENDIF
+            @ _row_d, _col_l SAY &_proc
+            Scroll( _row_g, _col_l, _row_d ,_col_p, 1 )
+            @ _row_d, _col_l SAY "  ³  ³                                     ³        ³          ³          ³   "
+         enddo
+         _disp := ins .OR. LastKey() # 27
+         kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
+         @ 23, 0
+         @ 24, 0
+      *################################ KASOWANIE #################################
+      CASE kl == 7 .OR. kl == 46
+         RECS := RecNo()
+         @ 1, 47 SAY "          "
+         ColStb()
+         Center( 23, "þ                   þ" )
+         ColSta()
+         Center( 23, "K A S O W A N I E" )
+         ColStd()
+         _disp := TNEsc( "*i", "   Czy skasowa&_c.? (T/N)   " )
+         IF _disp
+            BlokadaR()
+            DELETE
+            COMMIT
+            UNLOCK
+            SKIP
+            commit_()
+            IF &_bot
+               SKIP -1
+            ENDIF
+         ENDIF
+         @ 23, 0
+      *############################### WYDRUK EWIDENCJI ###########################
+      CASE kl == 13
+         BEGIN SEQUENCE
+            SAVE SCREEN TO scr_
+            RECS := RecNo()
+            DoWewW()
+            GO RECS
+            RESTORE SCREEN FROM scr_
+         END
+      *############################### WYDRUK EWIDENCJI ###########################
+      CASE kl == 68 .OR. kl == 100
+         BlokadaR()
+         REPLACE drukowac WITH .NOT. drukowac
+         COMMIT
+         UNLOCK
+      *################################### POMOC ##################################
+      CASE kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY "          "
+         DECLARE p[ 20 ]
+         *---------------------------------------
+         p[ 1] := '                                                        '
+         p[ 2] := '   [' + Chr( 24 ) + '/' + Chr( 25 ) + ']...................poprzednia/nast&_e.pna pozycja  '
+         p[ 3] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
+         p[ 4] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
+         p[ 5] := '   [Ins]...................dopisanie pozycji            '
+         p[ 6] := '   [M].....................modyfikacja pozycji          '
+         p[ 7] := '   [D].....................drukowa&_c./nie drukowa&_c. pozycje'
+         p[ 8] := '   [Del]...................kasowanie pozycji            '
+         p[ 9] := '   [Enter].................wydruk dowodu wewn&_e.trznego   '
+         p[10] := '   [Esc]...................wyj&_s.cie                      '
+         p[11] := '                                                        '
+         *---------------------------------------
+         SET COLOR TO i
+         i := 20
+         j := 24
+         DO WHILE i > 0
+            IF Type( 'p[i]' ) # 'U'
+               Center( j, p[ i ] )
+               j := j - 1
+            ENDIF
+            i := i - 1
+         ENDDO
+         SET COLOR TO
+         Pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            KEYBOARD Chr( LastKey() )
+         ENDIF
+         RESTORE SCREEN FROM scr_
+         _disp := .F.
+      ******************** ENDCASE
+      ENDCASE
+   ENDDO
    close_()
-   return
-endif
-*################################# OPERACJE #################################
-*----- parametry ------
-_row_g=7
-_col_l=1
-_row_d=20
-_col_p=78
-_invers=[i]
-_curs_l=0
-_curs_p=0
-_esc=[27,68,100,22,48,77,109,7,46,28,13]
-_top=[del#'+'.or.firma#ident_fir]
-_bot=[del#'+'.or.firma#ident_fir]
-_stop=[+]+ident_fir
-_sbot=[+]+ident_fir+[þ]
-_proc=[linia622a()]
-_row=int((_row_g+_row_d)/2)
-_proc_spe=[]
-_disp=.t.
-_cls=''
-_top_bot=_top+[.or.]+_bot
-*----------------------
-kl=0
-do while kl#27
-   ColSta()
-   @ 1,47 say '[F1]-pomoc'
-   set colo to
-   _row=wybor(_row)
-   ColStd()
-   kl=lastkey()
-   do case
-   *################################## INSERT ##################################
-   case kl=22.or.kl=48.or._row=-1.or.kl=77.or.kl=109
-        @ 1,47 say [          ]
-        ins=(kl#77.and.kl#109).OR.&_top_bot
-        if ins
-           ColStb()
-           center(23,[þ                     þ])
-           ColSta()
-           center(23,[W P I S Y W A N I E])
-           ColStd()
-           restscreen(_row_g,_col_l,_row_d+1,_col_p,_cls)
-           wiersz=_row_d
-        else
-           ColStb()
-           center(23,[þ                       þ])
-           ColSta()
-           center(23,[M O D Y F I K A C J A])
-           ColStd()
-           wiersz=_row
-        endif
-        do while .t.
-        *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
-           if ins
-              zDATA=ctod('    .  .  ')
-              zNRDOK=space(10)
-              zZESTAW='  '
-              zNRKOL='  '
-              zOPIS=space(100)
-              zWARTOSC=0
-              zDRUKOWAC=.t.
-           else
-              zDATA=DATA
-              zNRDOK=NRDOK
-              zZESTAW=ZESTAW
-              zNRKOL=NRKOL
-              zOPIS=OPIS
-              zWARTOSC=WARTOSC
-              zDRUKOWAC=DRUKOWAC
-           endif
-           *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-           @ wiersz,1  get zZESTAW picture '!!'
-           @ wiersz,4  get zNRKOL picture '!!'
-           @ wiersz,7  get zOPIS  picture '@S35 X'+repl('X',100)
-           @ wiersz,43 get zWARTOSC picture '9999999.99'
-           read_()
-           if lastkey()=27
-              exit
-           endif
-           *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
-           if ins
-              app()
-           endif
-           do BLOKADAR
-           repl_([FIRMA],ident_fir)
-           repl_([DATA],zDATA)
-           repl_([NRDOK],zNRDOK)
-           repl_([ZESTAW],zZESTAW)
-           repl_([NRKOL],zNRKOL)
-           repl_([OPIS],zOPIS)
-           repl_([WARTOSC],zWARTOSC)
-           repl_([DRUKOWAC],zDRUKOWAC)
-           commit_()
-           unlock
-           *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
-           _row=int((_row_g+_row_d)/2)
-           if .not.ins
-              exit
-           endif
-           @ _row_d,_col_l say &_proc
-           scroll(_row_g,_col_l,_row_d,_col_p,1)
-           @ _row_d,_col_l say [  ³  ³                                     ³        ³          ³          ³   ]
-        enddo
-        _disp=ins.or.lastkey()#27
-        kl=iif(lastkey()=27.and._row=-1,27,kl)
-        @ 23,0
-        @ 24,0
-   *################################ KASOWANIE #################################
-   case kl=7.or.kl=46
-        RECS=recno()
-        @ 1,47 say [          ]
-        ColStb()
-        center(23,[þ                   þ])
-        ColSta()
-        center(23,[K A S O W A N I E])
-        ColStd()
-        _disp=tnesc([*i],[   Czy skasowa&_c.? (T/N)   ])
-        if _disp
-           do BLOKADAR
-           dele
-           COMMIT
-           unlock
-           skip
-           commit_()
-           if &_bot
-              skip -1
-           endif
-        endif
-        @ 23,0
-   *############################### WYDRUK EWIDENCJI ###########################
-   case kl=13
-        begin sequence
-              save screen to scr_
-              RECS=recno()
-              do doweww
-              go RECS
-              restore screen from scr_
-        end
-   *############################### WYDRUK EWIDENCJI ###########################
-   case kl=68.or.kl=100
-        do BLOKADAR
-        repl drukowac with .not.drukowac
-        COMMIT
-        unlock
-   *################################### POMOC ##################################
-   case kl=28
-        save screen to scr_
-        @ 1,47 say [          ]
-        declare p[20]
-        *---------------------------------------
-        p[ 1]='                                                        '
-        p[ 2]='   ['+chr(24)+'/'+chr(25)+']...................poprzednia/nast&_e.pna pozycja  '
-        p[ 3]='   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
-        p[ 4]='   [Home/End]..............pierwsza/ostatnia pozycja    '
-        p[ 5]='   [Ins]...................dopisanie pozycji            '
-        p[ 6]='   [M].....................modyfikacja pozycji          '
-        p[ 7]='   [D].....................drukowa&_c./nie drukowa&_c. pozycje'
-        p[ 8]='   [Del]...................kasowanie pozycji            '
-        p[ 9]='   [Enter].................wydruk dowodu wewn&_e.trznego   '
-        p[10]='   [Esc]...................wyj&_s.cie                      '
-        p[11]='                                                        '
-        *---------------------------------------
-        set color to i
-        i=20
-        j=24
-        do while i>0
-           if type('p[i]')#[U]
-              center(j,p[i])
-              j=j-1
-           endif
-           i=i-1
-        enddo
-        set color to
-        pause(0)
-        if lastkey()#27.and.lastkey()#28
-           keyboard chr(lastkey())
-        endif
-        restore screen from scr_
-        _disp=.f.
-   ******************** ENDCASE
-   endcase
-enddo
-close_()
+
+   RETURN
+
 *############################################################################
-function linia622a
-return ZESTAW+[³]+NRKOL+[³]+substr(OPIS,1,35)+[³]+str(WARTOSC,10,2)+[³]+dtoc(DATA)+[³]+NRDOK+[³]+iif(DRUKOWAC,'Tak','Nie')
+
+FUNCTION linia622a()
+
+   RETURN ZESTAW + '³' + NRKOL + '³' + SubStr( OPIS, 1, 35 ) + '³' ;
+      + Str( WARTOSC, 10, 2 ) + '³' + DToC( DATA ) + '³' + NRDOK + '³' ;
+      + iif( DRUKOWAC, 'Tak', 'Nie' )
+
 *############################################################################
