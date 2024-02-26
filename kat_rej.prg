@@ -29,247 +29,258 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Kat_Rej( ZBIOR )
 
-private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou,_top_bot
-@ 1,47 say [          ]
-*################################# GRAFIKA ##################################
-@  3, 0 clear to 22,79
-if upper(ZBIOR)='KAT_ZAK'
-   @  4, 0 say padc('K A T A L O G   R E J E S T R &__O. W   Z A K U P &__O. W',80)
-else
-   @  4, 0 say padc('K A T A L O G   R E J E S T R &__O. W   S P R Z E D A &__Z. Y',80)
-endif
-@  6,2 say ' Symbol rejestru                    Opis                        Opcje       '
-@  7,2 say 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿'
-@  8,2 say '³               ³                                        ³                 ³'
-@  9,2 say '³               ³                                        ³                 ³'
-@ 10,2 say '³               ³                                        ³                 ³'
-@ 11,2 say '³               ³                                        ³                 ³'
-@ 12,2 say '³               ³                                        ³                 ³'
-@ 13,2 say '³               ³                                        ³                 ³'
-@ 14,2 say '³               ³                                        ³                 ³'
-@ 15,2 say '³               ³                                        ³                 ³'
-@ 16,2 say '³               ³                                        ³                 ³'
-@ 17,2 say '³               ³                                        ³                 ³'
-@ 18,2 say '³               ³                                        ³                 ³'
-@ 19,2 say '³               ³                                        ³                 ³'
-@ 20,2 say '³               ³                                        ³                 ³'
-@ 21,2 say '³               ³                                        ³                 ³'
-@ 22,2 say 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
-*############################### OTWARCIE BAZ ###############################
-select 1
-if dostep( ZBIOR )
-   SetInd( ZBIOR )
-else
-   close_()
-   return
-endif
-seek [+]+ident_fir
-*################################# OPERACJE #################################
-*----- parametry ------
-_row_g=8
-_col_l=3
-_row_d=21
-_col_p=76
-_invers=[i]
-_curs_l=0
-_curs_p=0
-_esc=[27,-9,247,22,48,77,109,7,46,28,287]
-_top=[firma#ident_fir]
-_bot=[del#'+'.or.firma#ident_fir]
-_stop=[+]+ident_fir
-_sbot=[+]+ident_fir+[þ]
-_proc=[linia133()]
-_row=int((_row_g+_row_d)/2)
-_proc_spe=[]
-_disp=.t.
-_cls=''
-_top_bot=_top+[.or.]+_bot
-*----------------------
-kl=0
-do while kl#27
-ColSta()
-@ 1,47 say '[F1]-pomoc'
-set colo to
-_row=wybor(_row)
-ColStd()
-kl=lastkey()
-do case
-*############################ INSERT/MODYFIKACJA ############################
-              case kl=22.or.kl=48.or._row=-1.or.kl=77.or.kl=109
-@ 1,47 say [          ]
-ins=(kl#77.and.kl#109).OR.&_top_bot
-if ins
-ColStb()
-center(23,[þ                     þ])
-ColSta()
-  center(23,[W P I S Y W A N I E])
-ColStd()
-restscreen(_row_g,_col_l,_row_d+1,_col_p,_cls)
-wiersz=_row_d
-else
-ColStb()
-center(23,[þ                       þ])
-ColSta()
-  center(23,[M O D Y F I K A C J A])
-ColStd()
-wiersz=_row
-endif
-                             do while .t.
-*ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
-if ins
-   zSYMB_REJ='  '
-   zOPIS=space(40)
-   zOPCJE=" "
-else
-   zSYMB_REJ=SYMB_REJ
-   zOPIS=OPIS
-   zOPCJE := OPCJE
-endif
-*ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-@ wiersz,9 get zSYMB_REJ picture "!!" valid v133_1()
-@ wiersz,19 get zOPIS picture "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-@ wiersz,61 get zOPCJE PICTURE "!" WHEN w133_opcje( ZBIOR ) VALID v133_opcje()
-read_()
-if lastkey()=27
-exit
-endif
-*ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
-if ins
-   app()
-   repl_([firma],ident_fir)
-endif
-do BLOKADAR
-repl_([SYMB_REJ],zSYMB_REJ)
-repl_([OPIS],zOPIS)
-repl_([OPCJE],zOPCJE)
-COMMIT
-unlock
-commit_()
-*ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
-_row=int((_row_g+_row_d)/2)
-if .not.ins
-exit
-endif
-@ _row_d,_col_l say &_proc
-scroll(_row_g,_col_l,_row_d,_col_p,1)
-@ _row_d,_col_l say [               ³                                        ]
-                             enddo
-_disp=ins.or.lastkey()#27
-kl=iif(lastkey()=27.and._row=-1,27,kl)
-@ 23,0
-*################################ KASOWANIE #################################
-                   case kl=7.or.kl=46
-@ 1,47 say [          ]
-ColStb()
-center(23,[þ                   þ])
-ColSta()
-  center(23,[K A S O W A N I E])
-ColStd()
-_disp=tnesc([*i],[   Czy skasowa&_c.? (T/N)   ])
-if _disp
-do BLOKADAR
-del()
-COMMIT
-unlock
-skip
-commit_()
-   if &_bot
-   skip -1
-   endif
-endif
-@ 23,0
-*################################# SZUKANIE #################################
-                   case kl=-9.or.kl=247
-@ 1,47 say [          ]
-ColStb()
-center(23,[þ                 þ])
-ColSta()
-  center(23,[S Z U K A N I E])
-f10=space(20)
-ColStd()
-@ _row,18 get f10 picture "!!"
-read_()
-_disp=.not.empty(f10).and.lastkey()#27
-if _disp
-   seek [+]+ident_fir+dos_l(f10)
-   if &_bot
-   skip -1
-   endif
-_row=int((_row_g+_row_d)/2)
-endif
-@ 23,0
-*################################### POMOC ##################################
-              case kl=28
-save screen to scr_
-@ 1,47 say [          ]
-declare p[20]
-*---------------------------------------
-p[ 1]='                                                        '
-p[ 2]='   ['+chr(24)+'/'+chr(25)+']...................poprzednia/nast&_e.pna pozycja  '
-p[ 3]='   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
-p[ 4]='   [Home/End]..............pierwsza/ostatnia pozycja    '
-p[ 5]='   [Ins]...................wpisywanie                   '
-p[ 6]='   [M].....................modyfikacja pozycji          '
-p[ 7]='   [ALT-S].................wy˜lij do SaldeoSMART        '
-p[ 8]='   [Del]...................kasowanie pozycji            '
-p[ 9]='   [F10]...................szukanie                     '
-p[10]='   [Esc]...................wyj&_s.cie                      '
-p[11]='                                                        '
-*---------------------------------------
-set color to i
-   i=20
-   j=24
-   do while i>0
-      if type('p[i]')#[U]
-      center(j,p[i])
-      j=j-1
-      endif
-   i=i-1
-   enddo
-set color to
-pause(0)
-if lastkey()#27.and.lastkey()#28
-keyboard chr(lastkey())
-endif
-restore screen from scr_
-_disp=.f.
+   PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, ;
+      _top, _bot, _stop, _sbot, _proc, _row, _proc_spe, _disp, _cls, kl, ins, ;
+      nr_rec, wiersz, f10, rec, fou, _top_bot
 
-   CASE kl == K_ALT_S
-      IF SalSprawdz()
-         IF TNEsc( , "Czy wysˆa† rejestry do SaldeoSMART? (Tak/Nie)" )
-            SalRejVatWyslij( ZBIOR )
+   @  1, 47 SAY "          "
+   *################################# GRAFIKA ##################################
+   @  3,  0 CLEAR TO 22, 79
+   IF Upper( ZBIOR ) = 'KAT_ZAK'
+      @  4, 0 SAY PadC( 'K A T A L O G   R E J E S T R &__O. W   Z A K U P &__O. W', 80 )
+   ELSE
+      @  4, 0 SAY PadC( 'K A T A L O G   R E J E S T R &__O. W   S P R Z E D A &__Z. Y', 80 )
+   ENDIF
+   @  6, 2 SAY ' Symbol rejestru                    Opis                        Opcje       '
+   @  7, 2 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿'
+   @  8, 2 SAY '³               ³                                        ³                 ³'
+   @  9, 2 SAY '³               ³                                        ³                 ³'
+   @ 10, 2 SAY '³               ³                                        ³                 ³'
+   @ 11, 2 SAY '³               ³                                        ³                 ³'
+   @ 12, 2 SAY '³               ³                                        ³                 ³'
+   @ 13, 2 SAY '³               ³                                        ³                 ³'
+   @ 14, 2 SAY '³               ³                                        ³                 ³'
+   @ 15, 2 SAY '³               ³                                        ³                 ³'
+   @ 16, 2 SAY '³               ³                                        ³                 ³'
+   @ 17, 2 SAY '³               ³                                        ³                 ³'
+   @ 18, 2 SAY '³               ³                                        ³                 ³'
+   @ 19, 2 SAY '³               ³                                        ³                 ³'
+   @ 20, 2 SAY '³               ³                                        ³                 ³'
+   @ 21, 2 SAY '³               ³                                        ³                 ³'
+   @ 22, 2 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
+   *############################### OTWARCIE BAZ ###############################
+   SELECT 1
+   IF Dostep( ZBIOR )
+      SetInd( ZBIOR )
+   ELSE
+      Close_()
+      RETURN
+   ENDIF
+   SEEK "+" + ident_fir
+   *################################# OPERACJE #################################
+   *----- parametry ------
+   _row_g := 8
+   _col_l := 3
+   _row_d := 21
+   _col_p := 76
+   _invers := 'i'
+   _curs_l := 0
+   _curs_p := 0
+   _esc := '27,-9,247,22,48,77,109,7,46,28,287'
+   _top := 'firma#ident_fir'
+   _bot := "del#'+'.or.firma#ident_fir"
+   _stop := "+" + ident_fir
+   _sbot := "+" + ident_fir + "þ"
+   _proc := "linia133()"
+   _row := Int( ( _row_g + _row_d ) / 2 )
+   _proc_spe := ''
+   _disp := .T.
+   _cls := ''
+   _top_bot := _top + ".OR." + _bot
+   *----------------------
+   kl := 0
+   DO WHILE kl # 27
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      SET COLOR TO
+      _row := Wybor( _row )
+      ColStd()
+      kl := LastKey()
+      DO CASE
+      *############################ INSERT/MODYFIKACJA ############################
+      CASE kl == 22 .OR. kl == 48 .OR. _row == -1 .OR. kl == 77 .OR. kl == 109
+         @ 1, 47 SAY '          '
+         ins := ( kl # 77 .AND. kl # 109 ) .OR. &_top_bot
+         IF ins
+            ColStb()
+            center( 23, 'þ                     þ' )
+            ColSta()
+            center( 23, 'W P I S Y W A N I E' )
+            ColStd()
+            RestScreen( _row_g, _col_l, _row_d + 1, _col_p, _cls )
+            wiersz := _row_d
+         ELSE
+            ColStb()
+            center( 23, 'þ                       þ' )
+            ColSta()
+            center( 23, 'M O D Y F I K A C J A' )
+            ColStd()
+            wiersz := _row
          ENDIF
-      ENDIF
+         DO WHILE .T.
+            *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
+            IF ins
+               zSYMB_REJ := '  '
+               zOPIS := Space( 40 )
+               zOPCJE := " "
+            ELSE
+               zSYMB_REJ := SYMB_REJ
+               zOPIS := OPIS
+               zOPCJE := OPCJE
+            ENDIF
+            *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
+            @ wiersz,  9 GET zSYMB_REJ PICTURE "!!" valid v133_1()
+            @ wiersz, 19 GET zOPIS PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            @ wiersz, 61 GET zOPCJE PICTURE "!" WHEN w133_opcje( ZBIOR ) VALID v133_opcje()
+            read_()
+            IF LASTKEY() == 27
+               EXIT
+            ENDIF
+            *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
+            IF ins
+               app()
+               repl_( 'firma', ident_fir )
+            ENDIF
+            BlokadaR()
+            repl_( 'SYMB_REJ', zSYMB_REJ )
+            repl_( 'OPIS', zOPIS )
+            repl_( 'OPCJE', zOPCJE )
+            COMMIT
+            UNLOCK
+            commit_()
+            *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
+            _row := Int( ( _row_g + _row_d ) / 2 )
+            IF .NOT. ins
+               EXIT
+            ENDIF
+            @ _row_d, _col_l SAY &_proc
+            Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
+            @ _row_d, _col_l SAY '               ³                                        '
+         ENDDO
+         _disp := ins .OR. LastKey() # 27
+         kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
+         @ 23,0
+      *################################ KASOWANIE #################################
+      CASE kl == 7 .OR. kl == 46
+         @ 1, 47 SAY '          '
+         ColStb()
+         center( 23, 'þ                   þ' )
+         ColSta()
+         center( 23, 'K A S O W A N I E' )
+         ColStd()
+         _disp := TNEsc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
+         IF _disp
+            BlokadaR()
+            del()
+            COMMIT
+            UNLOCK
+            SKIP
+            commit_()
+            IF &_bot
+               SKIP -1
+            ENDIF
+         ENDIF
+         @ 23, 0
+      *################################# SZUKANIE #################################
+      CASE kl == -9 .OR. kl == 247
+         @ 1, 47 SAY '          '
+         ColStb()
+         center( 23, 'þ                 þ' )
+         ColSta()
+         center( 23, 'S Z U K A N I E' )
+         f10 := Space( 20 )
+         ColStd()
+         @ _row, 18 GET f10 PICTURE "!!"
+         read_()
+         _disp := .NOT. Empty( f10 ) .AND. LastKey() # 27
+         IF _disp
+            SEEK '+' + ident_fir + dos_l( f10 )
+            IF &_bot
+               SKIP -1
+            ENDIF
+            _row := Int( ( _row_g + _row_d ) / 2 )
+         ENDIF
+         @ 23, 0
+      *################################### POMOC ##################################
+      CASE kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY '          '
+         DECLARE p[ 20 ]
+         *---------------------------------------
+         p[  1 ] := '                                                        '
+         p[  2 ] := '   ['+chr(24)+'/'+chr(25)+']...................poprzednia/nast&_e.pna pozycja  '
+         p[  3 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
+         p[  4 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
+         p[  5 ] := '   [Ins]...................wpisywanie                   '
+         p[  6 ] := '   [M].....................modyfikacja pozycji          '
+         p[  7 ] := '   [ALT-S].................wy˜lij do SaldeoSMART        '
+         p[  8 ] := '   [Del]...................kasowanie pozycji            '
+         p[  9 ] := '   [F10]...................szukanie                     '
+         p[ 10 ] := '   [Esc]...................wyj&_s.cie                      '
+         p[ 11 ] := '                                                        '
+         *---------------------------------------
+         SET COLOR TO i
+         i := 20
+         j := 24
+         DO WHILE i > 0
+            IF Type( 'p[i]' ) # 'U'
+               center( j, p[ i ] )
+               j := j - 1
+            ENDIF
+            i := i - 1
+         ENDDO
+         SET COLOR TO
+         Pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            keyboard chr(lastkey())
+         ENDIF
+         RESTORE SCREEN FROM scr_
+         _disp := .F.
 
-******************** ENDCASE
-endcase
-enddo
-close_()
+      CASE kl == K_ALT_S
+         IF SalSprawdz()
+            IF TNEsc( , "Czy wysˆa† rejestry do SaldeoSMART? (Tak/Nie)" )
+               SalRejVatWyslij( ZBIOR )
+            ENDIF
+         ENDIF
+
+      ******************** ENDCASE
+      ENDCASE
+   ENDDO
+   close_()
+
+   RETURN
+
 *################################## FUNKCJE #################################
-function linia133
-return '      '+SYMB_REJ+'       '+[³]+OPIS + +[³ ]+PadR(iif(OPCJE=="P","Paliwo 100%", iif(OPCJE=="2", "Paliwo 20%", iif(OPCJE=="7", "Paliwo 70%", " "))), 16)
+FUNCTION linia133()
+
+   RETURN '      ' + SYMB_REJ + '       ' + '³' + OPIS + '³ ' + PadR( iif( OPCJE == "P", "Paliwo 100%", iif( OPCJE == "2", "Paliwo 20%", iif( OPCJE == "7", "Paliwo 70%", " " ) ) ), 16 )
+
 ***************************************************
-function v133_1
-nr_rec=recno()
-seek [+]+ident_fir+zSYMB_REJ
-fou=found()
-rec=recno()
-go nr_rec
-if fou.and.(ins.or.rec#nr_rec)
-   set cursor off
-   kom(3,[*u],'Taki rejestr ju&_z. istnieje')
-   set cursor on
-   return .f.
-endif
-return .t.
+FUNCTION v133_1()
+   nr_rec := RecNo()
+   SEEK '+' + ident_fir + zSYMB_REJ
+   fou := Found()
+   rec := RecNo()
+   GO nr_rec
+   IF fou .AND. ( ins .OR. rec # nr_rec )
+      SET CURSOR OFF
+      Kom( 3, '*u', 'Taki rejestr ju&_z. istnieje' )
+      SET CURSOR ON
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
 *############################################################################
 FUNCTION w133_opcje( zbior )
    IF ZBIOR == "KAT_ZAK"
       ColInf()
-      @ 24,0 say padc('Wpisz:  P - paliwo, cz©˜ci...(50% kwoty VAT) lub puste - brak opcji',80,' ')
+      @ 24, 0 SAY PadC( 'Wpisz:  P - paliwo, cz©˜ci...(50% kwoty VAT) lub puste - brak opcji', 80, ' ' )
       ColStd()
       RETURN .T.
    ENDIF
+
    RETURN .F.
 
 /*----------------------------------------------------------------------*/
@@ -278,8 +289,9 @@ FUNCTION v133_opcje()
    LOCAL lRes := zOPCJE$' 27P'
    IF lRes
       ColStd()
-      @ 24,0
+      @ 24, 0
    ENDIF
+
    RETURN lRes
 
 /*----------------------------------------------------------------------*/
