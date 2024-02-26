@@ -625,7 +625,7 @@ public aKARTSTdbf := {;
    { "OPIS", "C", 60, 0 },;                       //  7
    { "KRST", "C", 8, 0 },;                        //  8
    { "DATA_ZAK", "D", 8, 0 },;                    //  9
-   { "DOWOD_ZAK", "C", 10, 0 },;                  //  10
+   { "DOWOD_ZAK", "C", 40, 0 },;                  //  10
    { "ZRODLO", "C", 60, 0 },;                     //  11
    { "WARTOSC", "N", 12, 2 },;                    //  12
    { "NR_OT", "C", 10, 0 },;                      //  13

@@ -66,7 +66,7 @@ begin sequence
          k2=krst
          k3=nrewid
          K4=nazwa
-         K5=dowod_zak
+         K5=SubStr( dowod_zak, 1, 10 )
          K7=str(stawka,6,2)
          K8=iif(sposob='L','Liniowo ',iif(sposob='J','Jednoraz','Degresyw'))
          K9=str(wspdeg,4,2)

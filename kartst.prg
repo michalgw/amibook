@@ -168,7 +168,7 @@ FUNCTION KartST()
                zOPIS := Space( 60 )
                zKRST := Space( 8 )
                zDATA_ZAK := Date()
-               zDOWOD_ZAK := Space( 10 )
+               zDOWOD_ZAK := Space( 40 )
                zZRODLO := Space( 60 )
                zWARTOSC := 0
                zWART_ULG := 0
@@ -217,7 +217,7 @@ FUNCTION KartST()
             @ wiersz, 73 GET zSTAWKA PICTURE '999.99' WHEN ins VALID zSTAWKA >= 0.0
             @ 13, 19 GET zOPIS PICTURE '@S40 ' + repl( "!", 60 )
             @ 13, 69 GET zNR_OT PICTURE "!!!!!!!!!!"
-            @ 14, 19 GET zDOWOD_ZAK PICTURE "!!!!!!!!!!"
+            @ 14, 19 GET zDOWOD_ZAK PICTURE "@S10 " + repl( "!", 40 )
             @ 14, 40 GET zWARTOSC PICTURE "  9999999.99" WHEN ins VALID zWARTOSC > 0
             @ 14, 64 GET zWART_ULG PICTURE "  9999999.99" WHEN ins VALID zWARTOSC >= zWART_ULG
             @ 15, 19 GET zZRODLO PICTURE repl( '!', 60 )
@@ -565,7 +565,7 @@ PROCEDURE say31sst()
    SET COLOR TO +w
    @ 13, 19 SAY SubStr( OPIS, 1, 40 )
    @ 13, 69 SAY NR_OT
-   @ 14, 19 SAY DOWOD_ZAK
+   @ 14, 19 SAY SubStr( DOWOD_ZAK, 1, 10 )
    @ 14, 40 SAY WARTOSC PICTURE "@E 9 999 999.99"
    @ 14, 64 SAY WART_ULG PICTURE "@E 9 999 999.99"
    @ 15, 19 SAY ZRODLO
