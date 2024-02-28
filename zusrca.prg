@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE ZusRca( ubezp )
 
-   LOCAL nNumBlok := 1, nRodzaj
+   LOCAL nNumBlok := 1, nRodzaj, aDane := {=>}, cPozIdent
    PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
 
    @ 1, 47 SAY '          '
@@ -206,6 +206,43 @@ PROCEDURE ZusRca( ubezp )
 
             IF prac->( Found() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
 
+               cPozIdent := umowy->ident + umowy->kod_tytu
+
+               IF ! hb_HHasKey( aDane, cPozIdent )
+                  aDane[ cPozIdent ] := { ;
+                     'prac_nazwisko' => prac->nazwisko, ;
+                     'prac_imie1' => prac->imie1, ;
+                     'prac_rodzid' => iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;
+                     'prac_nrid' => iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), NormalizujNipPL( PRAC->NIP ), PRAC->DOWOD_OSOB ) ), ;
+                     'prac_kodtyt' => umowy->kod_tytu, ;
+                     'podst1' => 0, ;
+                     'podst2' => 0, ;
+                     'podst3' => 0, ;
+                     'war_pue' => 0, ;
+                     'war_pur' => 0, ;
+                     'war_puc' => 0, ;
+                     'war_puz' => 0, ;
+                     'war_fue' => 0, ;
+                     'war_fur' => 0, ;
+                     'war_fuw' => 0, ;
+                     'war_pf3' => 0, ;
+                     'war_psum' => 0 }
+               ENDIF
+
+               aDane[ cPozIdent ][ 'podst1' ] += iif( UMOWY->WAR_PUE == 0 .AND. UMOWY->WAR_PUR == 0 , 0, UMOWY->PENSJA )
+               aDane[ cPozIdent ][ 'podst2' ] += iif( UMOWY->WAR_PUC == 0, 0, UMOWY->PENSJA )
+               aDane[ cPozIdent ][ 'podst3' ] += UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM )
+               aDane[ cPozIdent ][ 'war_pue' ] += UMOWY->WAR_PUE
+               aDane[ cPozIdent ][ 'war_pur' ] += UMOWY->WAR_PUR
+               aDane[ cPozIdent ][ 'war_puc' ] += UMOWY->WAR_PUC
+               aDane[ cPozIdent ][ 'war_puz' ] += UMOWY->WAR_PUZ
+               aDane[ cPozIdent ][ 'war_fue' ] += UMOWY->WAR_FUE
+               aDane[ cPozIdent ][ 'war_fur' ] += UMOWY->WAR_FUR
+               aDane[ cPozIdent ][ 'war_fuw' ] += UMOWY->WAR_FUW
+               aDane[ cPozIdent ][ 'war_pf3' ] += UMOWY->WAR_PF3
+               aDane[ cPozIdent ][ 'war_psum' ] += UMOWY->WAR_PSUM + iif( paraz_wer == 2, 0, UMOWY->WAR_PUZ ) + UMOWY->WAR_FSUM - ( UMOWY->WAR_FFP + UMOWY->WAR_FFG )
+
+               /*
                ddorca( PRAC->NAZWISKO,;
                   PRAC->IMIE1,;
                   iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;
@@ -232,6 +269,7 @@ PROCEDURE ZusRca( ubezp )
                   nNumBlok )
 
                nNumBlok++
+               */
 
             ENDIF
 
@@ -240,6 +278,38 @@ PROCEDURE ZusRca( ubezp )
          SKIP
 
       ENDDO
+
+      hb_HEval( aDane, { | cKey, aPoz |
+
+         ddorca( aPoz[ 'prac_nazwisko' ], ;
+            aPoz[ 'prac_imie1' ], ;
+            aPoz[ 'prac_rodzid' ], ;
+            aPoz[ 'prac_nrid' ], ;
+            aPoz[ 'prac_kodtyt' ], ;
+            '', ;
+            aPoz[ 'podst1' ], ;
+            aPoz[ 'podst2' ], ;
+            aPoz[ 'podst3' ], ;
+            aPoz[ 'war_pue' ], ;
+            aPoz[ 'war_pur' ], ;
+            aPoz[ 'war_puc' ], ;
+            aPoz[ 'war_puz' ], ;
+            aPoz[ 'war_fue' ], ;
+            aPoz[ 'war_fur' ], ;
+            aPoz[ 'war_fuw' ], ;
+            aPoz[ 'war_pf3' ], ;
+            aPoz[ 'war_psum' ], ;
+            0, ;
+            0, ;
+            0, ;
+            0, ;
+            0, ;
+            nNumBlok )
+
+         nNumBlok++
+
+         RETURN NIL
+      } )
 
       SELECT spolka
       GO TOP
@@ -430,6 +500,43 @@ PROCEDURE ZusRca( ubezp )
 
             IF prac->( Found() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
 
+               cPozIdent := umowy->ident + umowy->kod_tytu
+
+               IF ! hb_HHasKey( aDane, cPozIdent )
+                  aDane[ cPozIdent ] := { ;
+                     'prac_nazwisko' => prac->nazwisko, ;
+                     'prac_imie1' => prac->imie1, ;
+                     'prac_rodzid' => iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;
+                     'prac_nrid' => iif( .NOT. Empty( PRAC->PESEL ), PRAC->PESEL, iif( .NOT. Empty( PRAC->NIP ), NormalizujNipPL( PRAC->NIP ), PRAC->DOWOD_OSOB ) ), ;
+                     'prac_kodtyt' => umowy->kod_tytu, ;
+                     'podst1' => 0, ;
+                     'podst2' => 0, ;
+                     'podst3' => 0, ;
+                     'war_pue' => 0, ;
+                     'war_pur' => 0, ;
+                     'war_puc' => 0, ;
+                     'war_puz' => 0, ;
+                     'war_fue' => 0, ;
+                     'war_fur' => 0, ;
+                     'war_fuw' => 0, ;
+                     'war_pf3' => 0, ;
+                     'war_psum' => 0 }
+               ENDIF
+
+               aDane[ cPozIdent ][ 'podst1' ] += iif( UMOWY->WAR_PUE == 0 .AND. UMOWY->WAR_PUR == 0 , 0, UMOWY->PENSJA )
+               aDane[ cPozIdent ][ 'podst2' ] += iif( UMOWY->WAR_PUC == 0, 0, UMOWY->PENSJA )
+               aDane[ cPozIdent ][ 'podst3' ] += UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM )
+               aDane[ cPozIdent ][ 'war_pue' ] += UMOWY->WAR_PUE
+               aDane[ cPozIdent ][ 'war_pur' ] += UMOWY->WAR_PUR
+               aDane[ cPozIdent ][ 'war_puc' ] += UMOWY->WAR_PUC
+               aDane[ cPozIdent ][ 'war_puz' ] += UMOWY->WAR_PUZ
+               aDane[ cPozIdent ][ 'war_fue' ] += UMOWY->WAR_FUE
+               aDane[ cPozIdent ][ 'war_fur' ] += UMOWY->WAR_FUR
+               aDane[ cPozIdent ][ 'war_fuw' ] += UMOWY->WAR_FUW
+               aDane[ cPozIdent ][ 'war_pf3' ] += UMOWY->WAR_PF3
+               aDane[ cPozIdent ][ 'war_psum' ] += UMOWY->WAR_PSUM + iif( paraz_wer == 2, 0, UMOWY->WAR_PUZ ) + UMOWY->WAR_FSUM - ( UMOWY->WAR_FFP + UMOWY->WAR_FFG )
+
+               /*
                brakpra := .F.
                ddorca( PRAC->NAZWISKO,;
                   PRAC->IMIE1,;
@@ -457,6 +564,7 @@ PROCEDURE ZusRca( ubezp )
                   nNumBlok )
 
                nNumBlok++
+               */
 
             ENDIF
 
@@ -465,6 +573,38 @@ PROCEDURE ZusRca( ubezp )
          SKIP
 
       ENDDO
+
+      hb_HEval( aDane, { | cKey, aPoz |
+
+         ddorca( aPoz[ 'prac_nazwisko' ], ;
+            aPoz[ 'prac_imie1' ], ;
+            aPoz[ 'prac_rodzid' ], ;
+            aPoz[ 'prac_nrid' ], ;
+            aPoz[ 'prac_kodtyt' ], ;
+            '', ;
+            aPoz[ 'podst1' ], ;
+            aPoz[ 'podst2' ], ;
+            aPoz[ 'podst3' ], ;
+            aPoz[ 'war_pue' ], ;
+            aPoz[ 'war_pur' ], ;
+            aPoz[ 'war_puc' ], ;
+            aPoz[ 'war_puz' ], ;
+            aPoz[ 'war_fue' ], ;
+            aPoz[ 'war_fur' ], ;
+            aPoz[ 'war_fuw' ], ;
+            aPoz[ 'war_pf3' ], ;
+            aPoz[ 'war_psum' ], ;
+            0, ;
+            0, ;
+            0, ;
+            0, ;
+            0, ;
+            nNumBlok )
+
+         nNumBlok++
+
+         RETURN NIL
+      } )
 
       oplr()
       ZUS_DataUtworzenia( 'IV', 'p1' )
