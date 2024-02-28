@@ -33,11 +33,17 @@ FUNCTION Main()
 
       ? 'Aktualizacja struktury danych...'
       dbfUtworzTabele( 'KARTST', 'kartst.tym' )
+      dbfUtworzTabele( 'KAT_SPR', 'kat_spr.tym' )
+      dbfUtworzTabele( 'KAT_ZAK', 'kat_zak.tym' )
+      dbfUtworzTabele( 'TRESC', 'tresc.tym' )
       dbfImportujDaneTym('', 'TYM')
       dbCloseAll()
 
       ? 'Indeksowanie...'
       dbfIdxKARTST()
+      dbfIdxKAT_SPR()
+      dbfIdxKAT_ZAK()
+      dbfIdxTRESC()
       dbCloseAll()
 
       wersja_db := 2400

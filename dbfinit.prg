@@ -668,9 +668,13 @@ public aKAT_SPRdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //   3
    { "SYMB_REJ", "C", 2, 0 },;                    //   4
    { "OPIS", "C", 40, 0 },;                       //   5
-   { "OPCJE", "C", 1, 0 },;                       //   6
-   { "SALPRGID", "C", 64, 0 },;                   //   7 Saldeo company_program_id
-   { "SALSALID", "C", 64, 0 } }                   //   8 Saldeo saldeo id
+   { "OPCJE", "C", 32, 0 },;                      //   6   Oznaczenia
+   { "KOLUMNA", "C", 2, 0 },;                     //   7   Kolumna ksiegi / ewidencji
+   { "PROCEDUR", "C", 32, 0 },;                   //   8   Procedure
+   { "RODZDOW", "C", 6, 0 },;                     //   9   Rodzaj dowodu
+   { "SEK_CV7", "C", 2, 0 },;                     //   10  Sekcja VAT 7
+   { "SALPRGID", "C", 64, 0 },;                   //   11  Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //   12  Saldeo saldeo id
 
 // Create: KAT_ZAK.DBF
 public aKAT_ZAKdbf := {;
@@ -679,9 +683,13 @@ public aKAT_ZAKdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //   3
    { "SYMB_REJ", "C", 2, 0 },;                    //   4
    { "OPIS", "C", 40, 0 },;                       //   5
-   { "OPCJE", "C", 1, 0 },;                       //   6
-   { "SALPRGID", "C", 64, 0 },;                   //   7 Saldeo company_program_id
-   { "SALSALID", "C", 64, 0 } }                   //   8 Saldeo saldeo id
+   { "OPCJE", "C", 32, 0 },;                      //   6   Oznaczenia
+   { "KOLUMNA", "C", 2, 0 },;                     //   7   Kolumna ksiegi / ewidencji
+   { "PROCEDUR", "C", 32, 0 },;                   //   8   Procedure
+   { "RODZDOW", "C", 6, 0 },;                     //   9   Rodzaj dowodu
+   { "SEK_CV7", "C", 2, 0 },;                     //   10  Sekcja VAT 7
+   { "SALPRGID", "C", 64, 0 },;                   //   11  Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //   12  Saldeo saldeo id
 
 // Create: KONTR.DBF
 public aKONTRdbf := {;
@@ -1606,10 +1614,13 @@ public aTRESCdbf := {;
    { "TRESC", "C", 512, 0 },;                     //   4
    { "STAN", "N", 12, 2 },;                       //   5
    { "RODZAJ", "C", 1, 0 },;                      //   6
-   { "OPCJE", "C", 1, 0 },;                       //   7
-   { "KOLUMNA", "C", 2, 0 },;                     //   8   Domyslna kolumna
-   { "SALPRGID", "C", 64, 0 },;                   //   9 Saldeo company_program_id
-   { "SALSALID", "C", 64, 0 } }                   //  10 Saldeo saldeo id
+   { "OPCJE", "C", 32, 0 },;                      //   7   Oznaczenia
+   { "PROCEDUR", "C", 32, 0 },;                   //   8   Procedure
+   { "RODZDOW", "C", 6, 0 },;                     //   9   Rodzaj dowodu
+   { "SEK_CV7", "C", 2, 0 },;                     //   10   Sekcja VAT 7
+   { "KOLUMNA", "C", 2, 0 },;                     //   11   Domyslna kolumna
+   { "SALPRGID", "C", 64, 0 },;                   //   12   Saldeo company_program_id
+   { "SALSALID", "C", 64, 0 } }                   //   13   Saldeo saldeo id
 
 
 // Create: TRESC.DBF

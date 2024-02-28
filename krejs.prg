@@ -36,6 +36,7 @@ PROCEDURE KRejS()
    PRIVATE zKraj, zSek_CV7, zRach, zDetal, zKorekta, zRozrZapS, zZap_Ter, zZap_Dat
    PRIVATE zZap_Wart, zTrojstr, zKOL36, zKOL37, zKOL38, zKOL39, zNETTO2, zKOLUMNA2
    PRIVATE zNETTOOrg, zOPCJE, zPROCEDUR, zRODZDOW, cScrRodzDow, zVATMARZA, fDETALISTA
+   PRIVATE oGetRodzDow, oGetOpcje, oGetProcedur, oGetSekCV7
 
    fDETALISTA := DETALISTA
 
@@ -460,12 +461,16 @@ PROCEDURE KRejS()
                @  9, 32 GET zDATATRAN PICTURE '@D' WHEN w1_7s()
                @  9, 53 GET zKOREKTA  PICTURE '!' WHEN KRejSWKorekta() VALID zKOREKTA $ 'TNZ' .AND. v1_8s()
                @  4, 69 GET zRODZDOW  PICTURE '!!!' WHEN KRejSWRodzDow() VALID KRejSVRodzDow()
+               oGetRodzDow := ATail( GetList )
                @  4, 77 GET zexport   PICTURE '!' WHEN wfEXIM( 4, 78 ) VALID vfEXIM( 4, 78 )
                @  5, 77 GET zUE       PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
                @  6, 77 GET zKRAJ     PICTURE '!!'
                @  7, 71 GET zOPCJE    PICTURE '@S8 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' WHEN KRejSWhOpcje() VALID KRejSVaOpcje()
+               oGetOpcje := ATail( GetList )
                @  8, 64 GET zPROCEDUR PICTURE '@S15 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' WHEN KRejSWhProcedur() VALID KRejSVaProcedur()
+               oGetProcedur := ATail( GetList )
                @  9, 77 GET zSEK_CV7  PICTURE '!!' WHEN wfsSEK_CV7( 9, 78 ) VALID vfsSEK_CV7( 9, 78 )
+               oGetSekCV7 := ATail( GetList )
                IF fDETALISTA <> 'T'
                   @ 12, 14 GET zWART22 PICTURE FPIC VALID SUMPODs()
                   @ 12, 31 GET zVAT22  PICTURE FPIC WHEN SUMPOws( 'zvat22' ) VALID SUMPODs()
@@ -1526,6 +1531,24 @@ FUNCTION V11_1s()
       RESTORE SCREEN FROM scr2
       IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          zSYMB_REJ := SYMB_REJ
+
+         IF ( Empty( zRODZDOW ) .OR. ins ) .AND. ! Empty( kat_spr->rodzdow )
+            zRODZDOW := kat_spr->rodzdow
+            oGetRodzDow:display()
+         ENDIF
+         IF ( Empty( zOPCJE ) .OR. ins ) .AND. ! Empty( kat_spr->opcje )
+            zOPCJE := kat_spr->opcje
+            oGetOpcje:display()
+         ENDIF
+         IF ( Empty( zPROCEDUR ) .OR. ins ) .AND. ! Empty( kat_spr->procedur )
+            zPROCEDUR := kat_spr->procedur
+            oGetProcedur:display()
+         ENDIF
+         IF ( Empty( zSEK_CV7 ) .OR. ins ) .AND. ! Empty( kat_spr->sek_cv7 )
+            zSEK_CV7 := kat_spr->sek_cv7
+            oGetSekCV7:display()
+         ENDIF
+
          SET COLOR TO i
          @ 3, 38 SAY zSYMB_REJ
          SET COLOR TO
@@ -1775,7 +1798,27 @@ FUNCTION v1_5s()
    ENDIF
 
    IF ( Empty( zKOLUMNA ) .OR. ins ) .AND. ! Empty( cKol )
-      zKOLUMNA := cKol
+      IF Val( zKOLUMNA ) == 7 .OR. Val( zKOLUMNA ) == 8
+         zKOLUMNA := cKol
+      ENDIF
+   ENDIF
+   IF tresc->rodzaj == "S"
+      IF ( Empty( zRODZDOW ) .OR. ins ) .AND. ! Empty( tresc->rodzdow )
+         zRODZDOW := tresc->rodzdow
+         oGetRodzDow:display()
+      ENDIF
+      IF ( Empty( zOPCJE ) .OR. ins ) .AND. ! Empty( tresc->opcje )
+         zOPCJE := tresc->opcje
+         oGetOpcje:display()
+      ENDIF
+      IF ( Empty( zPROCEDUR ) .OR. ins ) .AND. ! Empty( tresc->procedur )
+         zPROCEDUR := tresc->procedur
+         oGetProcedur:display()
+      ENDIF
+      IF ( Empty( zSEK_CV7 ) .OR. ins ) .AND. ! Empty( tresc->sek_cv7 )
+         zSEK_CV7 := tresc->sek_cv7
+         oGetSekCV7:display()
+      ENDIF
    ENDIF
 
    RETURN .T.

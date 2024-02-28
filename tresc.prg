@@ -32,6 +32,7 @@ FUNCTION Tresc()
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, ;
       _top, _bot, _stop, _sbot, _proc, _row, _proc_spe, _disp, _cls, kl, ins, ;
       nr_rec, wiersz, f10, rec, fou, _top_bot
+   PRIVATE cScrRodzDow, cScrSekCV7, lScrRodzDow := .F., lScrSekCV7 := .F.
 
    @ 1, 47 SAY '          '
    *################################# GRAFIKA ##################################
@@ -52,9 +53,9 @@ FUNCTION Tresc()
    @ 17, 0 SAY '³                             ³                ³          ³                 ³  ³'
    @ 18, 0 SAY '³                             ³                ³          ³                 ³  ³'
    @ 19, 0 SAY '³                             ³                ³          ³                 ³  ³'
-   @ 20, 0 SAY '³                             ³                ³          ³                 ³  ³'
-   @ 21, 0 SAY '³                             ³                ³          ³                 ³  ³'
-   @ 22, 0 SAY 'ְֱֱֱֱִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִÙ'
+   @ 20, 0 SAY 'ֱֱֱֱֳִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִ´'
+   @ 21, 0 SAY '³Procedura:                   Rodzaj dowodu:             Sekcja VAT:           ³'
+   @ 22, 0 SAY 'ְִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִÙ'
    *############################### OTWARCIE BAZ ###############################
    SELECT 1
    DO WHILE .NOT. Dostep( 'TRESC' )
@@ -65,7 +66,7 @@ FUNCTION Tresc()
    *----- parametry ------
    _row_g := 8
    _col_l := 1
-   _row_d := 21
+   _row_d := 19
    _col_p := 78
    _invers := 'i'
    _curs_l := 0
@@ -85,11 +86,11 @@ FUNCTION Tresc()
    kl := 0
    DO WHILE kl # 27
       ColSta()
-      @ 1,47 say '[F1]-pomoc'
-      set colo to
-      _row := wybor(_row)
+      @ 1, 47 say '[F1]-pomoc'
+      SET COLOR TO
+      _row := wybor( _row )
       ColStd()
-      kl := lastkey()
+      kl := LastKey()
       DO CASE
       *############################ INSERT/MODYFIKACJA ############################
       CASE kl == 22 .OR. kl == 48 .OR. _row == -1 .OR. kl == 77 .OR. kl == 109
@@ -117,25 +118,46 @@ FUNCTION Tresc()
                zTRESC := Space( 30 )
                zSTAN := 0
                zRODZAJ := "O"
-               zOPCJE := " "
+               zOPCJE := Space( 32 )
                zKOLUMNA := "  "
+               zPROCEDUR := Space( 32 )
+               zRODZDOW := Space( 6 )
+               zSEK_CV7 := "  "
             ELSE
                zTRESC := TRESC
                zSTAN := STAN
                zRODZAJ := RODZAJ
                zOPCJE := OPCJE
                zKOLUMNA := KOLUMNA
+               zPROCEDUR := PROCEDUR
+               zRODZDOW := RODZDOW
+               zSEK_CV7 := SEK_CV7
             ENDIF
             @ wiersz, 59 SAY "                 "
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
-            @ wiersz,  2 GET zTRESC PICTURE "@S27 " + Replicate( 'X', 512 ) valid v14_1()
+            @ wiersz,  2 GET zTRESC PICTURE "@S27 " + Replicate( 'X', 512 ) VALID v14_1()
             @ wiersz, 32 GET zSTAN PICTURE "   99999999.99"
-            @ wiersz, 48 GET zRODZAJ PICTURE "!" WHEN w14_2() valid v14_2()
-            @ wiersz, 59 GET zOPCJE PICTURE "!" WHEN w14_3() valid v14_3()
-            @ wiersz, 77 GET zKOLUMNA PICTURE "99" WHEN w14_4() valid v14_4()
+            @ wiersz, 48 GET zRODZAJ PICTURE "!" WHEN w14_2() VALID v14_2()
+            @ wiersz, 59 GET zOPCJE PICTURE "@S17 " + Replicate( '!', 32 ) WHEN w14_3() VALID v14_3()
+            @ wiersz, 77 GET zKOLUMNA PICTURE "99" WHEN w14_4() VALID v14_4()
+            @ 21, 11 GET zPROCEDUR PICTURE "@S16 " + Replicate( "!", 32 ) WHEN w14_Procedur( zRODZAJ )
+            @ 21, 44 GET zRODZDOW PICTURE "!!!!!!" WHEN w14_RodzDow( zRODZAJ ) VALID V14_RodzDow( zRODZAJ )
+            @ 21, 68 GET zSEK_CV7 PICTURE "!!" WHEN w14_SekCV7( zRODZAJ ) VALID v14_SekCV7( zRODZAJ )
             read_()
             @ 24, 0
             IF LastKey() == 27
+               IF lScrRodzDow
+                  RestScreen( 5, 40, 11, 79, cScrRodzDow )
+               ENDIF
+               IF lScrSekCV7
+                  DO CASE
+                  CASE zRODZAJ == "S"
+                     RestScreen( 1, 40, 8, 79, cScrSekCV7 )
+                  CASE zRODZAJ == "Z"
+                     RestScreen( 0, 16, 16, 55, cScrSekCV7 )
+                  ENDCASE
+               ENDIF
+               @ 24, 0
                EXIT
             ENDIF
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -149,6 +171,9 @@ FUNCTION Tresc()
             repl_( 'RODZAJ', zRODZAJ )
             repl_( 'OPCJE', zOPCJE )
             repl_( 'KOLUMNA', zKOLUMNA )
+            repl_( 'PROCEDUR', zPROCEDUR )
+            repl_( 'RODZDOW', zRODZDOW )
+            repl_( 'SEK_CV7', zSEK_CV7 )
             commit_()
             UNLOCK
             *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
@@ -260,12 +285,18 @@ FUNCTION linia14()
 
    cRodzaj := rodzaj2str(RODZAJ)
    cOpcje := "                 "
-   IF RODZAJ == "Z"
-      IF OPCJE $ "27P"
-         cOpcje := "Paliwo (" + iif( OPCJE == "P", "5", OPCJE ) + "0%)     "
+   DO CASE
+   CASE RODZAJ == "Z"
+      IF AllTrim( OPCJE ) $ "27P"
+         cOpcje := "Paliwo (" + iif( AllTrim( OPCJE ) == "P", "5", AllTrim( OPCJE ) ) + "0%)     "
       ENDIF
-   ELSE
-   ENDIF
+   CASE RODZAj == "S"
+      cOpcje := Left( OPCJE, 17 )
+   ENDCASE
+
+   @ 21, 11 SAY Left( PROCEDUR, 16 )
+   @ 21, 44 SAY RODZDOW
+   @ 21, 68 SAY SEK_CV7
 
    RETURN ' ' + Left( TRESC, 27 ) + ' ³ ' + kwota( STAN, 14, 2 ) + ' ³' + cRodzaj + '³' + cOpcje + '³' + KOLUMNA
 
@@ -295,12 +326,19 @@ FUNCTION v14_2()
    LOCAL lRes := zRODZAJ $ "OSZ"
 
    IF lRes
-      IF zRODZAJ <> "Z"
-         zOPCJE := " "
+      IF ! zRODZAJ $ "ZS"
+         zOPCJE := Space( 32 )
       ENDIF
       ColStd()
-      @ wiersz, 48 SAY rodzaj2str(zRODZAJ)
+      @ wiersz, 48 SAY rodzaj2str( zRODZAJ )
       @ 24, 0
+      IF ! ins .AND. zRODZAJ # RODZAJ
+         zOPCJE := Space( 32 )
+         zRODZDOW := Space( 6 )
+         zPROCEDUR := Space( 32 )
+         zKOLUMNA := "  "
+         zSEK_CV7 := "  "
+      ENDIF
    ENDIF
 
    RETURN lRes
@@ -310,7 +348,7 @@ FUNCTION v14_2()
 FUNCTION w14_2()
 
    ColInf()
-   @ 24,0 say padc('Wpisz: S - sprzeda¾ , Z - zakup lub O - oba (zakup / sprzeda¾)',80,' ')
+   @ 24, 0 SAY PadC( 'Wpisz: S - sprzeda¾ , Z - zakup lub O - oba (zakup / sprzeda¾)', 80, ' ' )
    ColStd()
 
    RETURN .T.
@@ -319,12 +357,14 @@ FUNCTION w14_2()
 
 FUNCTION v14_3()
 
-   LOCAL lRes := zOPCJE$" 27P"
+   LOCAL lRes := .T.
 
-   IF lRes
-      ColStd()
-      @ 24, 0
-      @ wiersz, 48 SAY rodzaj2str(zRODZAJ)
+   IF zRODZAj == "Z"
+      lRes := Empty( zOPCJE ) .OR. AllTrim( zOPCJE ) $ "27P"
+      IF lRes
+         ColStd()
+         @ 24, 0
+      ENDIF
    ENDIF
 
    RETURN lRes
@@ -333,13 +373,17 @@ FUNCTION v14_3()
 
 FUNCTION w14_3()
 
-   LOCAL lRes := zRODZAJ=="Z"
+   LOCAL lRes := .F.
 
-   IF lRes
+   DO CASE
+   CASE zRODZAJ == "Z"
       ColInf()
-      @ 24,0 say padc('Wpisz: P - paliwo 50%, 2 - paliwo 20%, 7 - paliwo 70%',80,' ')
+      @ 24, 0 SAY PadC( 'Wpisz: P - paliwo 50%, 2 - paliwo 20%, 7 - paliwo 70%', 80, ' ' )
       ColStd()
-   ENDIF
+      lRes := .T.
+   CASE zRODZAJ == "S"
+      lRes := KRejSWhOpcje()
+   ENDCASE
 
    RETURN lRes
 
@@ -406,7 +450,146 @@ FUNCTION w14_4()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION rodzaj2str(cRodzaj)
+FUNCTION w14_Procedur( cRodzaj )
+
+   LOCAL lRes := cRodzaj == 'S'
+
+   IF lRes
+      lRes := KRejSWhProcedur()
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION w14_RodzDow( cRodzaj )
+
+   LOCAL lRes := .F.
+
+   DO CASE
+   CASE cRodzaj == "S"
+      cScrRodzDow := SaveScreen( 5, 40, 11, 79 )
+      lScrRodzDow := .T.
+      ColInf()
+      @  5, 40 CLEAR TO 11, 79
+      @  5, 40 TO 11, 79
+      @  6, 41 SAY PadC( 'Podaj rodzaj dowodu sprzeda¾y:', 30 )
+      @  7, 41 SAY '    - spacje - ¾adne z poni¾szych     '
+      @  8, 41 SAY 'RO  - Dokument zbiorczy z kas rejestr.'
+      @  9, 41 SAY 'WEW - Dokument wewn©trzny             '
+      @ 10, 41 SAY 'FP  - Faktura,zg.z art.109 ust.3d ust.'
+      ColStd()
+      lRes := .T.
+   CASE cRodzaj == "Z"
+      cScrRodzDow := SaveScreen( 5, 40, 11, 79 )
+      lScrRodzDow := .T.
+      ColInf()
+      @  5, 40 CLEAR TO 11, 79
+      @  5, 40 TO 11, 79
+      @  6, 41 SAY PadC( 'Podaj rodzaj dowodu sprzeda¾y:', 30 )
+      @  7, 41 SAY '    - spacje - ¾adne z poni¾szych     '
+      @  8, 41 SAY 'MK  - Metoda kasowa rozliczeה art. 21 '
+      @  9, 41 SAY 'VAT_RR - Faktura VAT RR, art. 116     '
+      @ 10, 41 SAY 'WEW - Dokument wewn©trzny             '
+      ColStd()
+      lRes := .T.
+   ENDCASE
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION v14_RodzDow( cRodzaj )
+
+   LOCAL lRes := .F.
+
+   DO CASE
+   CASE cRodzaj == "S"
+      lRes := AScan( { "RO", "WEW", "FP", "" }, AllTrim( zRODZDOW ) ) > 0
+   CASE cRodzaj == "Z"
+      lRes := AScan( { "MK", "VAT_RR", "WEW", "" }, AllTrim( zRODZDOW ) ) > 0
+   ENDCASE
+
+   IF lRes
+      RestScreen( 5, 40, 11, 79, cScrRodzDow )
+      lScrRodzDow := .F.
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION w14_SekCV7( cRodzaj )
+
+   LOCAL lRes := .F.
+
+   DO CASE
+   CASE cRodzaj == "S"
+      cScrSekCV7 := SaveScreen( 1, 40, 8, 79 )
+      lScrSekCV7 := .T.
+      ColInf()
+      @ 1, 40 CLEAR TO 8, 79
+      @ 1, 40 TO 8, 79
+      @ 2, 41 SAY PadC( 'Podaj sekcje deklaracji VAT-7:', 30 )
+      @ 3, 41 SAY '   - dwie spacje - zadne z ponizszych '
+      @ 4, 41 SAY 'PN - podatnikiem nabywca (towar)      '
+      @ 5, 41 SAY 'PU - podatnikiem nabywca (usˆuga)     '
+      @ 6, 41 SAY 'SP - mechanizm podzielonej pˆatno˜ci  '
+      @ 7, 41 SAY 'DP - dodatowe pola (K_36, K_46)       '
+      ColStd()
+      lRes := .T.
+   CASE cRodzaj == "Z"
+      cScrSekCV7 := SaveScreen( 0, 16, 16, 55 )
+      lScrSekCV7 := .T.
+      ColInf()
+      @  0, 16 CLEAR TO 16, 55
+      @  0, 16 TO 16, 55
+      @  1, 17 SAY PadC( 'Podaj sekcje deklaracji VAT-7:', 30 )
+      @  2, 17 SAY '   - dwie spacje - zadne z ponizszych '
+      @  3, 17 SAY 'WT - wewnatrzwspolnotowe nabycie tow. '
+      @  4, 17 SAY 'WZ - WNT tylko podatek naliczony      '
+      @  5, 17 SAY 'WS - WNT tylko podatek nale¾ny        '
+      @  6, 17 SAY 'IT - import towarow (art.33a ustawy)  '
+      @  7, 17 SAY 'IZ - import tow.(tylko pod. naliczony)'
+      @  8, 17 SAY 'IS - import tow.(tylko pod. nale¾ny)  '
+      @  9, 17 SAY 'IU - import uslug                     '
+      @ 10, 17 SAY 'UZ - import usl.(tylko pod. naliczony)'
+      @ 11, 17 SAY 'US - import usl.(tylko pod. nale¾ny)  '
+      @ 12, 17 SAY 'PN - dostawa tow.(podatnikiem nabywca)'
+      @ 13, 17 SAY 'PZ - podat.nab. (tylko pod. naliczony)'
+      @ 14, 17 SAY 'PS - podat.nab. (tylko pod. nale¾ny)  '
+      @ 15, 17 SAY 'SP - mechanizm podzielonej pˆatno˜ci  '
+      ColStd()
+      lRes := .T.
+   ENDCASE
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION v14_SekCV7( cRodzaj )
+
+   LOCAL lRes := .F.
+
+   DO CASE
+   CASE cRodzaj == "S"
+      IF ( lRes := AScan( { '  ', 'PN', 'PU', 'DP', 'SP' }, zSEK_CV7 ) > 0 )
+         RestScreen( 1, 40, 8, 79, cScrSekCV7 )
+         lScrSekCV7 := .F.
+      ENDIF
+   CASE cRodzaj == "Z"
+      IF ( lRes := AScan( { '  ', 'WT', 'IT', 'IU', 'PN', 'WS', 'WZ', 'PZ', 'PS', ;
+         'SP', 'IZ', 'IS', 'UZ', 'US' }, zSEK_CV7 ) > 0 )
+         RestScreen( 0, 16, 16, 55, cScrSekCV7 )
+         lScrSekCV7 := .F.
+      ENDIF
+   ENDCASE
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION rodzaj2str( cRodzaj )
 
    LOCAL cRes := "          "
 

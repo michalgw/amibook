@@ -27,11 +27,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "inkey.ch"
 
-FUNCTION Kat_Rej( ZBIOR )
+FUNCTION Kat_Rej( cZBIOR )
 
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, ;
       _top, _bot, _stop, _sbot, _proc, _row, _proc_spe, _disp, _cls, kl, ins, ;
       nr_rec, wiersz, f10, rec, fou, _top_bot
+   PRIVATE ZBIOR := Upper( cZBIOR )
+   PRIVATE cScrRodzDow, cScrSekCV7, lScrRodzDow := .F., lScrSekCV7 := .F.
 
    @  1, 47 SAY "          "
    *################################# GRAFIKA ##################################
@@ -41,23 +43,23 @@ FUNCTION Kat_Rej( ZBIOR )
    ELSE
       @  4, 0 SAY PadC( 'K A T A L O G   R E J E S T R &__O. W   S P R Z E D A &__Z. Y', 80 )
    ENDIF
-   @  6, 2 SAY ' Symbol rejestru                    Opis                        Opcje       '
-   @  7, 2 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿'
-   @  8, 2 SAY '³               ³                                        ³                 ³'
-   @  9, 2 SAY '³               ³                                        ³                 ³'
-   @ 10, 2 SAY '³               ³                                        ³                 ³'
-   @ 11, 2 SAY '³               ³                                        ³                 ³'
-   @ 12, 2 SAY '³               ³                                        ³                 ³'
-   @ 13, 2 SAY '³               ³                                        ³                 ³'
-   @ 14, 2 SAY '³               ³                                        ³                 ³'
-   @ 15, 2 SAY '³               ³                                        ³                 ³'
-   @ 16, 2 SAY '³               ³                                        ³                 ³'
-   @ 17, 2 SAY '³               ³                                        ³                 ³'
-   @ 18, 2 SAY '³               ³                                        ³                 ³'
-   @ 19, 2 SAY '³               ³                                        ³                 ³'
-   @ 20, 2 SAY '³               ³                                        ³                 ³'
-   @ 21, 2 SAY '³               ³                                        ³                 ³'
-   @ 22, 2 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
+   @  6, 2 SAY ' Symb. rejes.                     Opis                 ' + iif( ZBIOR == 'KAT_ZAK', '      Opcje      ', ' Oznaczenia GTU  ' ) + 'Kol.'
+   @  7, 2 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄ¿'
+   @  8, 2 SAY '³            ³                                        ³                 ³  ³'
+   @  9, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 10, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 11, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 12, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 13, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 14, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 15, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 16, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 17, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 18, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 19, 2 SAY '³            ³                                        ³                 ³  ³'
+   @ 20, 2 SAY 'ÃÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄ´'
+   @ 21, 2 SAY '³Procedura:                   Rodzaj dowodu:           Sekcja VAT:         ³'
+   @ 22, 2 SAY 'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ'
    *############################### OTWARCIE BAZ ###############################
    SELECT 1
    IF Dostep( ZBIOR )
@@ -71,7 +73,7 @@ FUNCTION Kat_Rej( ZBIOR )
    *----- parametry ------
    _row_g := 8
    _col_l := 3
-   _row_d := 21
+   _row_d := 19
    _col_p := 76
    _invers := 'i'
    _curs_l := 0
@@ -122,18 +124,41 @@ FUNCTION Kat_Rej( ZBIOR )
             IF ins
                zSYMB_REJ := '  '
                zOPIS := Space( 40 )
-               zOPCJE := " "
+               zOPCJE := Space( 32 )
+               zKOLUMNA := "  "
+               zPROCEDUR := Space( 32 )
+               zRODZDOW := Space( 6 )
+               ZSEK_CV7 := "  "
             ELSE
                zSYMB_REJ := SYMB_REJ
                zOPIS := OPIS
                zOPCJE := OPCJE
+               zKOLUMNA := KOLUMNA
+               zPROCEDUR := PROCEDUR
+               zRODZDOW := RODZDOW
+               zSEK_CV7 := SEK_CV7
             ENDIF
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
-            @ wiersz,  9 GET zSYMB_REJ PICTURE "!!" valid v133_1()
-            @ wiersz, 19 GET zOPIS PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-            @ wiersz, 61 GET zOPCJE PICTURE "!" WHEN w133_opcje( ZBIOR ) VALID v133_opcje()
+            @ wiersz,  8 GET zSYMB_REJ PICTURE "!!" valid v133_1()
+            @ wiersz, 16 GET zOPIS PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            @ wiersz, 57 GET zOPCJE PICTURE "@S17 " + Replicate( "!", 32 ) WHEN w133_opcje( ZBIOR ) VALID v133_opcje()
+            @ wiersz, 75 GET zKOLUMNA PICTURE "!!" WHEN w133_Kolumna() VALID v133_Kolumna()
+            @ 21, 13 GET zPROCEDUR PICTURE "@S16 " + Replicate( "!", 32 ) WHEN w14_Procedur( iif( ZBIOR == "KAT_ZAK", "Z", "S" ) )
+            @ 21, 46 GET zRODZDOW PICTURE "!!!!!!" WHEN w14_RodzDow( iif( ZBIOR == "KAT_ZAK", "Z", "S" ) ) VALID V14_RodzDow( iif( ZBIOR == "KAT_ZAK", "Z", "S" ) )
+            @ 21, 68 GET zSEK_CV7 PICTURE "!!" WHEN w14_SekCV7( iif( ZBIOR == "KAT_ZAK", "Z", "S" ) ) VALID v14_SekCV7( iif( ZBIOR == "KAT_ZAK", "Z", "S" ) )
             read_()
             IF LASTKEY() == 27
+               IF lScrRodzDow
+                  RestScreen( 5, 40, 11, 79, cScrRodzDow )
+               ENDIF
+               IF lScrSekCV7
+                  IF ZRODLO == "KAT_ZAK"
+                     RestScreen( 0, 16, 16, 55, cScrSekCV7 )
+                  ELSE
+                     RestScreen( 1, 40, 8, 79, cScrSekCV7 )
+                  ENDIF
+               ENDIF
+               @ 24, 0
                EXIT
             ENDIF
             *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
@@ -145,6 +170,10 @@ FUNCTION Kat_Rej( ZBIOR )
             repl_( 'SYMB_REJ', zSYMB_REJ )
             repl_( 'OPIS', zOPIS )
             repl_( 'OPCJE', zOPCJE )
+            repl_( 'KOLUMNA', zKOLUMNA )
+            repl_( 'PROCEDUR', zPROCEDUR )
+            repl_( 'RODZDOW', zRODZDOW )
+            repl_( 'SEK_CV7', zSEK_CV7 )
             COMMIT
             UNLOCK
             commit_()
@@ -155,7 +184,7 @@ FUNCTION Kat_Rej( ZBIOR )
             ENDIF
             @ _row_d, _col_l SAY &_proc
             Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
-            @ _row_d, _col_l SAY '               ³                                        '
+            @ _row_d, _col_l SAY '            ³                                        ³                 ³  '
          ENDDO
          _disp := ins .OR. LastKey() # 27
          kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
@@ -254,7 +283,19 @@ FUNCTION Kat_Rej( ZBIOR )
 *################################## FUNKCJE #################################
 FUNCTION linia133()
 
-   RETURN '      ' + SYMB_REJ + '       ' + '³' + OPIS + '³ ' + PadR( iif( OPCJE == "P", "Paliwo 100%", iif( OPCJE == "2", "Paliwo 20%", iif( OPCJE == "7", "Paliwo 70%", " " ) ) ), 16 )
+   LOCAL cOpcje
+
+   IF Upper( ZBIOR ) = 'KAT_ZAK'
+      cOpcje := PadR( iif( AllTrim( OPCJE ) == "P", "Paliwo 100%", iif( AllTrim( OPCJE ) == "2", "Paliwo 20%", iif( AllTrim( OPCJE ) == "7", "Paliwo 70%", " " ) ) ), 17 )
+   ELSE
+      cOpcje := Left( OPCJE, 17 )
+   ENDIF
+
+   @ 21, 13 SAY Left( PROCEDUR, 16 )
+   @ 21, 46 SAY RODZDOW
+   @ 21, 68 SAY SEK_CV7
+
+   RETURN '     ' + SYMB_REJ + '     ' + '³' + OPIS + '³' + cOpcje + '³' + KOLUMNA
 
 ***************************************************
 FUNCTION v133_1()
@@ -274,11 +315,14 @@ FUNCTION v133_1()
 
 *############################################################################
 FUNCTION w133_opcje( zbior )
+
    IF ZBIOR == "KAT_ZAK"
       ColInf()
       @ 24, 0 SAY PadC( 'Wpisz:  P - paliwo, cz©˜ci...(50% kwoty VAT) lub puste - brak opcji', 80, ' ' )
       ColStd()
       RETURN .T.
+   ELSE
+      RETURN KRejSWhOpcje()
    ENDIF
 
    RETURN .F.
@@ -286,10 +330,44 @@ FUNCTION w133_opcje( zbior )
 /*----------------------------------------------------------------------*/
 
 FUNCTION v133_opcje()
-   LOCAL lRes := zOPCJE$' 27P'
+
+   LOCAL lRes := ZBIOR == "KAT_SPR" .OR. Empty( zOPCJE ) .OR. AllTrim( zOPCJE ) $ '27P'
+
    IF lRes
       ColStd()
       @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION v133_Kolumna()
+
+   LOCAL lRes := Empty( zKOLUMNA ) .OR. AScan( wv14_4_kol( iif( ZBIOR == "KAT_ZAK", "Z", "S" ) ), AllTrim( zKOLUMNA ) ) > 0
+
+   IF lRes
+      ColStd()
+      @ 24, 0
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION w133_Kolumna()
+
+   LOCAL aKol
+   LOCAL lRes := .NOT. ( ZBIOR == "KAT_ZAK" .AND. zRYCZALT == 'T' )
+   LOCAL cKol := ""
+
+   IF lRes
+      aKol := wv14_4_kol( iif( ZBIOR == "KAT_ZAK", "Z", "S" ) )
+      AEval( aKol, { | cItem | cKol := cKol + iif( cKol <> "", ', ', '' ) + cItem } )
+
+      ColInf()
+      @ 24, 0 say PadC( 'Wpisz: ' + cKol, 80, ' ' )
+      ColStd()
    ENDIF
 
    RETURN lRes

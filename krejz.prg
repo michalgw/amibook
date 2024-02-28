@@ -28,7 +28,7 @@ PROCEDURE KRejZ()
    LOCAL nImpMenu
 
    PRIVATE oGetWAR2, oGetVAT2, oGetWAR7, oGetVAT7, oGetWAR12, oGetVAT12, oGetWAR22, oGetVAT22, lBlokuj := .F.
-   PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE, fDETALISTA
+   PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE, fDETALISTA, oGetRodzDow, oGetSekCV7
    PRIVATE nOrgW2, nOrgW7, nOrgW12, nOrgW22, zRODZDOW, cScrRodzDow
    PRIVATE zK16OPIS, zKOL47, zKOL48, zKOL49, zKOL50, nWartoscNetto, zVATMARZA
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou
@@ -506,12 +506,14 @@ PROCEDURE KRejZ()
             @  9, 56 GET zDATATRAN PICTURE '@D' WHEN w1_7s()
             @ 10, 29 GET zKOREKTA PICTURE '!' VALID zKOREKTA $ 'TN' .AND. v1_8z()
             @  4, 73 GET zRODZDOW PICTURE '!!!!!!' WHEN KRejZWRodzDow() VALID KRejZVRodzDow()
+            oGetRodzDow := ATail( GetList )
             @  5, 77 GET zUE PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
             @  6, 77 GET zKRAJ PICTURE '!!'
             @  8, 77 GET zTROJSTR PICTURE "!" WHEN zUE == 'T' VALID Valid_RejZ_Trojstr()
             @  9, 77 GET zOPCJE PICTURE '!' WHEN w1_opcje() VALID v1_opcje()
             oGetOPCJE := ATail( GetList )
             @ 10, 77 GET zSEK_CV7 PICTURE '!!' WHEN wfSEK_CV7( 10, 78 ) VALID vfSEK_CV7( 10, 78 )
+            oGetSekCV7 := ATail( GetList )
             IF fDETALISTA <> 'T'
                @ 13,  8 GET zWART22 PICTURE FPIC WHEN w1_wartosc( nOrgW22, @zWART22 ) VALID SUMPODz( zWART22, @nOrgW22 )
                oGetWAR22 := ATail( GetList )
@@ -1134,12 +1136,20 @@ FUNCTION V11_1z()
       RESTORE SCREEN FROM scr2
       IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          zSYMB_REJ := SYMB_REJ
-         IF ins
-            zOPCJE := OPCJE
-            oGetOPCJE:setFocus()
-            oGetOPCJE:killFocus()
-            oGetSYMB_REJ:setFocus()
+
+         IF ( Empty( zRODZDOW ) .OR. ins ) .AND. ! Empty( kat_zak->rodzdow )
+            zRODZDOW := kat_zak->rodzdow
+            oGetRodzDow:display()
          ENDIF
+         IF ( Empty( zOPCJE ) .OR. ins ) .AND. ! Empty( kat_zak->opcje )
+            zOPCJE := Left( kat_zak->opcje, 1 )
+            oGetOpcje:display()
+         ENDIF
+         IF ( Empty( zSEK_CV7 ) .OR. ins ) .AND. ! Empty( kat_zak->sek_cv7 )
+            zSEK_CV7 := kat_zak->sek_cv7
+            oGetSekCV7:display()
+         ENDIF
+
          SET COLOR TO i
          @ 3, 38 SAY zSYMB_REJ
          SET COLOR TO
@@ -1373,12 +1383,6 @@ FUNCTION v1_5z()
          ENDIF
          ztresc := Left( tresc->tresc, 30 )
          cKol := tresc->kolumna
-         IF zOPCJE == " "
-            zOPCJE := tresc->opcje
-            oGetOPCJE:setFocus()
-            oGetOPCJE:killFocus()
-            oGetTRESC:setFocus()
-         ENDIF
          //@  9,77 say zOPCJE
          SET COLOR TO i
          @ 7, 29 SAY ztresc
@@ -1387,7 +1391,23 @@ FUNCTION v1_5z()
    ENDIF
 
    IF ( Empty( zKOLUMNA ) .OR. ins ) .AND. ! Empty( cKol )
-      zKOLUMNA := cKol
+      IF AScan( { "10", "11", "12", "13", "16" }, cKol ) > 0
+         zKOLUMNA := cKol
+      ENDIF
+   ENDIF
+   IF tresc->rodzaj == "Z"
+      IF ( Empty( zOPCJE ) .OR. ins ) .AND. ! Empty( tresc->opcje )
+         zOPCJE := Left( tresc->opcje, 1 )
+         oGetOPCJE:display()
+      ENDIF
+      IF ( Empty( zRODZDOW ) .OR. ins ) .AND. ! Empty( tresc->rodzdow )
+         zRODZDOW := tresc->rodzdow
+         oGetRodzDow:display()
+      ENDIF
+      IF ( Empty( zSEK_CV7 ) .OR. ins ) .AND. ! Empty( tresc->sek_cv7 )
+         zSEK_CV7 := tresc->sek_cv7
+         oGetSekCV7:display()
+      ENDIF
    ENDIF
 
    RETURN .T.
