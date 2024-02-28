@@ -1200,7 +1200,7 @@ PROCEDURE JPKImp_VatS_Podglad_VAT( aDane, aSumy )
       Transform( aSumy[ "K_37" ], RPICE ), Transform( aSumy[ "K_38" ], RPICE ), ;
       Transform( aSumy[ "K_39" ], RPICE ) }
    LOCAL aKlawisze := { { K_ENTER, { | nElem, ar, b |
-      IF ar[ nElem ][ 'Aktywny' ]
+      IF ar[ nElem ][ 'Aktywny' ] .OR. aDane[ 'ZezwolNaPuste' ] == 'T'
          ar[ nElem ][ 'Importuj' ] := ! ar[ nElem ][ 'Importuj' ]
       ELSE
          komun( "Nie mo¾na importowa† tej pozycji" )
@@ -1285,7 +1285,7 @@ PROCEDURE JPKImp_VatS_Podglad_V7( aDane, aSumy )
       Transform( aSumy[ "K_35" ], RPICE ), Transform( aSumy[ "K_36" ], RPICE ), ;
       Transform( aSumy[ "SprzedazVAT_Marza" ], RPICE ), "", "", "", "" }
    LOCAL aKlawisze := { { K_ENTER, { | nElem, ar, b |
-      IF ar[ nElem ][ 'Aktywny' ]
+      IF ar[ nElem ][ 'Aktywny' ] .OR. aDane[ 'ZezwolNaPuste' ] == 'T'
          ar[ nElem ][ 'Importuj' ] := ! ar[ nElem ][ 'Importuj' ]
       ELSE
          komun( "Nie mo¾na importowa† tej pozycji" )
@@ -1336,7 +1336,7 @@ PROCEDURE JPKImp_VatZ_Podglad_VAT( aDane, aSumy )
       Transform( aSumy[ "K_48" ], RPICE ), Transform( aSumy[ "K_49" ], RPICE ), ;
       Transform( aSumy[ "K_50" ], RPICE ) }
    LOCAL aKlawisze := { { K_ENTER, { | nElem, ar, b |
-      IF ar[ nElem ][ 'Aktywny' ]
+      IF ar[ nElem ][ 'Aktywny' ] .OR. aDane[ 'ZezwolNaPuste' ] == 'T'
          ar[ nElem ][ 'Importuj' ] := ! ar[ nElem ][ 'Importuj' ]
       ELSE
          komun( "Nie mo¾na importowa† tej pozycji" )
@@ -1391,7 +1391,7 @@ PROCEDURE JPKImp_VatZ_Podglad_V7( aDane, aSumy )
       Transform( aSumy[ "K_46" ], RPICE ), Transform( aSumy[ "K_47" ], RPICE ), ;
       Transform( aSumy[ "ZakupVAT_Marza" ], RPICE ), "", "" }
    LOCAL aKlawisze := { { K_ENTER, { | nElem, ar, b |
-      IF ar[ nElem ][ 'Aktywny' ]
+      IF ar[ nElem ][ 'Aktywny' ] .OR. aDane[ 'ZezwolNaPuste' ] == 'T'
          ar[ nElem ][ 'Importuj' ] := ! ar[ nElem ][ 'Importuj' ]
       ELSE
          komun( "Nie mo¾na importowa† tej pozycji" )
@@ -1494,7 +1494,7 @@ PROCEDURE JPKImp_VatS_Podglad_FA( aDane, aSumy )
       Transform( aSumy[ "P_15" ], RPICE ), "", "", "", "", "", "", "", "", "", "", ;
       "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" }
    LOCAL aKlawisze := { { K_ENTER, { | nElem, ar, b |
-      IF ar[ nElem ][ 'Aktywny' ]
+      IF ar[ nElem ][ 'Aktywny' ] .OR. aDane[ 'ZezwolNaPuste' ] == 'T'
          ar[ nElem ][ 'Importuj' ] := ! ar[ nElem ][ 'Importuj' ]
       ELSE
          komun( "Nie mo¾na importowa† tej pozycji" )
@@ -3064,12 +3064,13 @@ PROCEDURE JPKImp_VatS( nCelImportu )
       'OpisZd', Space( 30 ), 'KolRej', iif( zRYCZALT == 'T', ' 5', '7' ), ;
       'DataRej', 'W', 'Oznaczenie', Space( 16 ), 'Procedura', Space( 32 ), ;
       'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'RodzDow', Space( 6 ), ;
-      'Export', 'N' )
+      'Export', 'N', 'ZezwolNaPuste', 'N' )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
    LOCAL nMenu, cEkran2
    LOCAL aRaport, cRaport, cTN, cRej, lOk, cKolKs, cDataRej, cRegon, cExport
+   LOCAL cPuste
    LOCAL nSumaImp, nLiczbaLp := 0
    LOCAL bKolRyczW := { | |
       LOCAL cKolor := ColInf()
@@ -3266,8 +3267,9 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                cRegon := aDane[ 'SprawdzRegon' ]
                zRodzDow := aDane[ 'RodzDow' ]
                cExport := aDane[ 'Export' ]
-               @  6, 13 CLEAR TO 21, 67
-               @  7, 15 TO 20, 65
+               cPuste := aDane[ 'ZezwolNaPuste' ]
+               @  6, 13 CLEAR TO 22, 67
+               @  7, 15 TO 21, 65
                @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID ValidTakNie( cTN, 8, 63 )
                @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 9, 42 ), .T. }
                @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "S", "R" ) )
@@ -3282,10 +3284,12 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                @ 15, 17 SAY "Rodzaj dowodu sprzeda¾y" GET zRodzDow PICTURE '!!!' WHEN nCelImportu == 1 .AND. KRejSWRodzDow() VALID KRejSVRodzDow()
                @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID ValidTakNie( cRegon, 16, 57 )
                @ 17, 17 SAY "Oznacz kraje UE jako eksport" GET cExport PICTURE '!' VALID ValidTakNie( cExport, 17, 47 )
-               @ 19, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+               @ 18, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 18, 59 )
+               @ 20, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
                ValidTakNie( cTN, 8, 63 )
                ValidTakNie( cRegon, 16, 57 )
                ValidTakNie( cExport, 17, 47 )
+               ValidTakNie( cPuste, 18, 59 )
                READ
                IF LastKey() <> K_ESC
                   aDane[ 'ZezwolNaDuplikaty' ] := cTN
@@ -3298,6 +3302,7 @@ PROCEDURE JPKImp_VatS( nCelImportu )
                   aDane[ 'SprawdzRegon' ] := cRegon
                   aDane[ 'RodzDow' ] := zRodzDow
                   aDane[ 'Export' ] := cExport
+                  aDane[ 'ZezwolNaPuste' ] := cPuste
                ENDIF
                RestScreen( , , , , cEkran2 )
             CASE nMenu == 4
@@ -3362,12 +3367,12 @@ PROCEDURE JPKImp_VatZ()
 
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
       'OpisZd', Space( 30 ), 'DomVat', 1, 'DataRej', 'W', ;
-      'SprawdzRegon', iif( olparam_ra, 'T', 'N' ) )
+      'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'ZezwolNaPuste', 'N' )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
    LOCAL nMenu, cEkran2, nMenu2
-   LOCAL aRaport, cRaport, cTN, cRej, lOk, nDomVat, cDataRej, cRegon
+   LOCAL aRaport, cRaport, cTN, cRej, lOk, nDomVat, cDataRej, cRegon, cPuste
    LOCAL nSumaImp, nLiczbaLp := 0
 
    PRIVATE cOpisZd
@@ -3568,8 +3573,9 @@ PROCEDURE JPKImp_VatZ()
                nDomVat := aDane[ 'DomVat' ]
                cDataRej := aDane[ 'DataRej' ]
                cRegon := aDane[ 'SprawdzRegon' ]
-               @  9, 13 CLEAR TO 20, 66
-               @ 10, 15 TO 19, 64
+               cPuste := aDane[ 'ZezwolNaPuste' ]
+               @  9, 13 CLEAR TO 21, 66
+               @ 10, 15 TO 20, 64
                @ 11, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
                @ 12, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42, 'Z' ), .T. }
                @ 13, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "Z" )
@@ -3577,7 +3583,9 @@ PROCEDURE JPKImp_VatZ()
                @ 14, 37, 20, 41 GET nDomVat LISTBOX { { "23%", 1 }, { "8% ", 2 }, { "5% ", 3 }, { "0% ", 4 } } DROPDOWN
                @ 15, 17 SAY "Do rejestru na dzieä (Z-zakupu, W-wystaw.)" GET cDataRej VALID cDataRej $ "WZ"
                @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
-               @ 18, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+               @ 17, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 17, 59 )
+               @ 19, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+               ValidTakNie( cPuste, 17, 59 )
                READ
                IF LastKey() <> K_ESC
                   aDane[ 'ZezwolNaDuplikaty' ] := cTN
@@ -3586,6 +3594,7 @@ PROCEDURE JPKImp_VatZ()
                   aDane[ 'DomVat' ] := nDomVat
                   aDane[ 'DataRej' ] := cDataRej
                   aDane[ 'SprawdzRegon' ] := cRegon
+                  aDane[ 'ZezwolNaPuste' ] := cPuste
                ENDIF
                RestScreen( , , , , cEkran2 )
             CASE nMenu == 4
@@ -3638,12 +3647,12 @@ FUNCTION VATObliczStawkaRodzaj( nNetto, nVAT )
 
 PROCEDURE JPKImp_PKPIR()
 
-   LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'OpisZd', Space( 30 ) )
+   LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'OpisZd', Space( 30 ), 'ZezwolNaPuste', 'N' )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
    LOCAL nMenu, cEkran2
-   LOCAL aRaport, cRaport, cTN, lOk
+   LOCAL aRaport, cRaport, cTN, lOk, cPuste
    LOCAL nSumaImp, nLiczbaLp := 0
 
    PRIVATE cOpisZd
@@ -3753,15 +3762,19 @@ PROCEDURE JPKImp_PKPIR()
                cEkran2 := SaveScreen()
                cTN := aDane[ 'ZezwolNaDuplikaty' ]
                cOpisZd := aDane[ 'OpisZd' ]
-               @  6, 13 CLEAR TO 13, 66
-               @  7, 15 TO 12, 64
+               cPuste := aDane[ 'ZezwolNaPuste' ]
+               @  6, 13 CLEAR TO 14, 66
+               @  7, 15 TO 13, 64
                @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
                @  9, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "R" )
-               @ 11, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+               @ 10, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 12, 59 )
+               @ 12, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+               ValidTakNie( cPuste, 12, 59 )
                READ
                IF LastKey() <> K_ESC
                   aDane[ 'ZezwolNaDuplikaty' ] := cTN
                   aDane[ 'OpisZd' ] := cOpisZd
+                  aDane[ 'ZezwolNaPuste' ] := cPuste
                ENDIF
                RestScreen( , , , , cEkran2 )
             CASE nMenu == 4
