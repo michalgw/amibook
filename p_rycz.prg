@@ -466,17 +466,17 @@ PROCEDURE zestaw_R( Okres )
    ENDIF
    */
    *@ 15, 0 SAY ' -------------------------------------------------------------------------------'
-   @ 16, 0 SAY ' ' + iif( staw_k08w, '9', '8' ) + ' Razem podatek................................................                '
-   @ 17, 0 SAY iif( staw_k08w, '10', ' 9' ) + ' Ulgi podlegaj&_a.ce odliczeniu od podatku.......................                '
-   @ 18, 0 SAY iif( staw_k08w, '11', '10' ) + ' Na kas&_e. chorych..............................................                '
+   @ 16, 0 SAY '10 Razem.................³          ³          ³          ³          ³          '
+   @ 17, 0 SAY '11 Ulgi podlegaj&_a.ce odliczeniu od podatku.......................                '
+   @ 18, 0 SAY '12 Na kas&_e. chorych..............................................                '
    IF OKRES == 'N'
-      @ 19, 0 SAY iif( staw_k08w, '12', '11' ) + ' Podatek od pocz&_a.tku roku.....................................                '
-      @ 20, 0 SAY iif( staw_k08w, '13', '12' ) + ' Wp&_l.acono zaliczkami za miesi&_a.ce poprzednie...................                '
+      @ 19, 0 SAY '13 Podatek od pocz&_a.tku roku.....................................                '
+      @ 20, 0 SAY '14 Wp&_l.acono zaliczkami za miesi&_a.ce poprzednie...................                '
       @ 21, 0 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-      @ 22, 0 SAY iif( staw_k08w, '14', '13' ) + ' Podatek do zap&_l.aty...........................................                '
+      @ 22, 0 SAY '15 Podatek do zap&_l.aty...........................................                '
    ELSE
       @ 19, 0 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-      @ 20, 0 SAY iif( staw_k08w, '12', '11' ) + ' Podatek do zap&_l.aty...........................................                '
+      @ 20, 0 SAY '13 Podatek do zap&_l.aty...........................................                '
       @ 21, 0 SAY '                                                                                '
       @ 22, 0 SAY '                                                                                '
    ENDIF
@@ -590,7 +590,11 @@ PROCEDURE zestaw_R( Okres )
    ENDIF
    */
 
-   @ 16, 65 SAY k18 PICTURE ' 999 999 999.99'
+   @ 16, 26 SAY k1a + k1b + k1k9 + k1 + k1k10 + k2 + k3 + k1k7 + k1c PICTURE '9999999.99'
+   @ 16, 48 SAY k9a + k9b + k9k9 + k9 + k9k10 + k10 + k11 + k9k7 + k9c PICTURE '9999999.99'
+   @ 16, 59 SAY k12a + k12b + k12k9 + k12 + k12k10 + k13 + k14 + k12k7 + k12c PICTURE '9999999.99'
+   @ 16, 70 SAY k18 PICTURE '9999999.99'
+
    @ 17, 65 SAY k19 PICTURE ' 999 999 999.99'
    @ 18, 65 SAY zzdrowie PICTURE ' 999 999 999.99'
 
