@@ -129,13 +129,13 @@ PROCEDURE SpecPlac()
 
          aDane[ 'wiersze' ] := {}
 
-         STORE 0 TO swolu, swolc, swolz, swolo, swolb, swolm, swoln, swolw, swoli
+         STORE 0 TO swolu, swolc, swolz, swolo, swolb, swolm, swoln, swolw, swoli, swolp
 
          SELECT prac
          DO WHILE .NOT. &_koniec
 
             STORE 0 TO zdochod,zstaw_podat,zbrut_zasad,zbrut_premi,zdopl_opod,zdopl_bzus,zstaw_pue,zstaw_pur,zstaw_puc,zwar_psum,zwar_pue,zwar_pur,zwar_puc,zzasil_rodz,ziloso_rodz,zzasil_piel,ziloso_piel,zstaw_fue,zwar_fue,zstaw_fur, ;
-               zwar_fur,zstaw_fuw,zwar_fuw,zwolu,zwolc,zwolz,zwolo,zwolb,zwolm,zwolw,zwoln,zwoli,zwar_pf3,zstaw_ffp,zwar_ffp,zbrut_razem,zkoszt,zstaw_puz,zodlicz,zpodatek,znetto,zwar_puz,zwar_puzo,zdopl_nieop,zodl_nieop,zdo_wyplaty, ;
+               zwar_fur,zstaw_fuw,zwar_fuw,zwolu,zwolc,zwolz,zwolo,zwolb,zwolm,zwolw,zwoln,zwoli,zwolp,zwar_pf3,zstaw_ffp,zwar_ffp,zbrut_razem,zkoszt,zstaw_puz,zodlicz,zpodatek,znetto,zwar_puz,zwar_puzo,zdopl_nieop,zodl_nieop,zdo_wyplaty, ;
                zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat,zppkppm,zppkzs1,zppkzk1,zppkzs2,zppkzk2,zppkps1,zppkpk1,zppkps2,zppkpk2
 
             REC := rec_no
@@ -170,7 +170,7 @@ PROCEDURE SpecPlac()
                   SELECT etaty
                   SEEK '+' + ident_fir + Str( REC, 5 ) + xxes
                   IF Found()
-                     STORE 0 TO wolI,wolU,wolC,wolO,wolW,wolB,wolM,choC,wolZ,choZ,wolN
+                     STORE 0 TO wolI,wolU,wolC,wolO,wolW,wolB,wolM,choC,wolZ,choZ,wolN,wolP
                      _zident_ := str( prac->rec_no, 5 )
                      _bot_ := "del#'+'.or.firma#ident_fir.or.ident#_zident_.or.mc#etaty->mc"
                      _bot_1 := "del#'+'.or.firma#ident_fir.or.ident#_zident_.or.mc=etaty->mc"
@@ -197,6 +197,8 @@ PROCEDURE SpecPlac()
                               wolM := wolM + ( ( dddo - ddod ) + 1 )
                            CASE SubStr( PRZYCZYNA, 1, 1 ) = 'N'
                               wolN := wolN + ( ( dddo - ddod ) + 1 )
+                           CASE SubStr( PRZYCZYNA, 1, 1 ) = 'P'
+                              wolP := wolP + ( ( dddo - ddod ) + 1 )
                            ENDCASE
                            SKIP
                         ENDDO
@@ -215,6 +217,7 @@ PROCEDURE SpecPlac()
                      zwoln := zwoln + wolN
                      zwolw := zwolw + wolW
                      zwoli := zwoli + wolI
+                     zwolp := zwolp + wolP
                      zs7 := zs7+pensja + war_pf3
                      zwar_pf3 := zwar_pf3 + war_pf3
                      zs10 := zs10+dop_zascho + dop_zasc20 + dop_zas100
@@ -289,6 +292,7 @@ PROCEDURE SpecPlac()
                   aWiersz[ 'woln' ] := zwoln
                   aWiersz[ 'wolw' ] := zwolw
                   aWiersz[ 'woli' ] := zwoli
+                  aWiersz[ 'wolp' ] := zwolp
                   aWiersz[ 's7' ] := zs7
                   aWiersz[ 'war_pf3' ] := zwar_pf3
                   aWiersz[ 's10' ] := zs10
@@ -344,7 +348,8 @@ PROCEDURE SpecPlac()
                      iif( zwolM # 0, 'M=' + Alltrim( Str( zwolM, 3 ) ) + ' ', '' ) + ;
                      iif( zwolN # 0, 'N=' + Alltrim( Str( zwolN, 3 ) ) + ' ', '' ) + ;
                      iif( zwolW # 0, 'W=' + Alltrim( Str( zwolW, 3 ) ) + ' ', '' ) + ;
-                     iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' )
+                     iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolP # 0, 'P=' + Alltrim( Str( zwolP, 3 ) ) + ' ', '' )
 
                   aWiersz[ 'ppkppm' ] := zppkppm
                   aWiersz[ 'ppkzs1' ] := zppkzs1
@@ -370,6 +375,7 @@ PROCEDURE SpecPlac()
             swolW := swolW + zwolW
             swolI := swolI + zwolI
             swolN := swolN + zwolN
+            swolP := swolP + zwolP
 
             SELECT prac
             SKIP
@@ -384,6 +390,7 @@ PROCEDURE SpecPlac()
          aDane[ 'swoln' ] := swolN
          aDane[ 'swolw' ] := swolW
          aDane[ 'swoli' ] := swolI
+         aDane[ 'swolp' ] := swolp
 
          aDane[ 'szwolstr' ] := iif( zwolU # 0, 'U=' + AllTrim( Str( swolU, 3 ) ) + ' ', '' ) + ;
             iif( swolC # 0, 'C=' + AllTrim( Str( swolC, 3 ) ) + ' ', '' ) + ;
@@ -393,7 +400,8 @@ PROCEDURE SpecPlac()
             iif( swolM # 0, 'M=' + Alltrim( Str( swolM, 3 ) ) + ' ', '' ) + ;
             iif( swolN # 0, 'N=' + Alltrim( Str( swolN, 3 ) ) + ' ', '' ) + ;
             iif( swolW # 0, 'W=' + Alltrim( Str( swolW, 3 ) ) + ' ', '' ) + ;
-            iif( swolI # 0, 'I=' + Alltrim( Str( swolI, 3 ) ) + ' ', '' )
+            iif( swolI # 0, 'I=' + Alltrim( Str( swolI, 3 ) ) + ' ', '' ) + ;
+            iif( swolP # 0, 'P=' + Alltrim( Str( swolP, 3 ) ) + ' ', '' )
 
         FRDrukuj( 'frf\specplac.frf', aDane )
 
@@ -408,12 +416,12 @@ PROCEDURE SpecPlac()
          ELSE
             mon_drk( Space( 19 ) + 'ÄÄÄ' + PadC( ' ' + paras_nag + ' ', 80, 'Ä' ) + PadL( ' okres od ' + Str( mcod, 2 ) + ' do ' + Str( mcdo, 2 ) + '  ' + param_rok, 24, 'Ä' ) )
          ENDIF
-         STORE 0 TO s1,s2,s3,s3a,s4,s5a,s5b,s5c,s5d,s5e,s5f,s5g,s5h,s5i,s6,s7,s8,s9,s10,s11,s12,s13,s131,s132,s133,s134,s14,s141,s141a,s15,s16,s17,s17a,s17b,s17c,s17d,s18,s19,s20,s21,s22,s23,s23a,s23b,s24,zs7,zs10,zb4,s20a,sz1,sz2,sz3
+         STORE 0 TO s1,s2,s3,s3a,s4,s5a,s5b,s5c,s5d,s5e,s5f,s5g,s5h,s5i,s5p,s6,s7,s8,s9,s10,s11,s12,s13,s131,s132,s133,s134,s14,s141,s141a,s15,s16,s17,s17a,s17b,s17c,s17d,s18,s19,s20,s21,s22,s23,s23a,s23b,s24,zs7,zs10,zb4,s20a,sz1,sz2,sz3
          *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          SELECT prac
          DO WHILE .NOT. &_koniec
             STORE 0 TO zdochod,zstaw_podat,zbrut_zasad,zbrut_premi,zdopl_opod,zdopl_bzus,zstaw_pue,zstaw_pur,zstaw_puc,zwar_psum,zwar_pue,zwar_pur,zwar_puc,zzasil_rodz,ziloso_rodz,zzasil_piel,ziloso_piel,zstaw_fue,zwar_fue,zstaw_fur, ;
-               zwar_fur,zstaw_fuw,zwar_fuw,zwolu,zwolc,zwolz,zwolo,zwolb,zwolm,zwolw,zwoln,zwoli,zwar_pf3,zstaw_ffp,zwar_ffp,zbrut_razem,zkoszt,zstaw_puz,zodlicz,zpodatek,znetto,zwar_puz,zwar_puzo,zdopl_nieop,zodl_nieop,zdo_wyplaty, ;
+               zwar_fur,zstaw_fuw,zwar_fuw,zwolu,zwolc,zwolz,zwolo,zwolb,zwolm,zwolw,zwoln,zwoli,zwolp,zwar_pf3,zstaw_ffp,zwar_ffp,zbrut_razem,zkoszt,zstaw_puz,zodlicz,zpodatek,znetto,zwar_puz,zwar_puzo,zdopl_nieop,zodl_nieop,zdo_wyplaty, ;
                zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat,zulgaklsrk
             *REC=recno()
             REC := rec_no
@@ -444,7 +452,7 @@ PROCEDURE SpecPlac()
                   SELECT etaty
                   SEEK '+' + ident_fir + Str( REC, 5 ) + xxes
                   IF Found()
-                     STORE 0 TO wolI,wolU,wolC,wolO,wolW,wolB,wolM,choC,wolZ,choZ,wolN
+                     STORE 0 TO wolI,wolU,wolC,wolO,wolW,wolB,wolM,choC,wolZ,choZ,wolN,wolP
                      _zident_ := str( prac->rec_no, 5 )
                      _bot_ := "del#'+'.or.firma#ident_fir.or.ident#_zident_.or.mc#etaty->mc"
                      _bot_1 := "del#'+'.or.firma#ident_fir.or.ident#_zident_.or.mc=etaty->mc"
@@ -471,6 +479,8 @@ PROCEDURE SpecPlac()
                               wolM := wolM + ( ( dddo - ddod ) + 1 )
                            CASE SubStr( PRZYCZYNA, 1, 1 ) = 'N'
                               wolN := wolN + ( ( dddo - ddod ) + 1 )
+                           CASE SubStr( PRZYCZYNA, 1, 1 ) = 'P'
+                              wolP := wolP + ( ( dddo - ddod ) + 1 )
                            ENDCASE
                            SKIP
                         ENDDO
@@ -489,6 +499,7 @@ PROCEDURE SpecPlac()
                      zwoln := zwoln + wolN
                      zwolw := zwolw + wolW
                      zwoli := zwoli + wolI
+                     zwolp := zwolp + wolP
                      zs7 := zs7+pensja + war_pf3
                      zwar_pf3 := zwar_pf3 + war_pf3
                      zs10 := zs10+dop_zascho + dop_zasc20 + dop_zas100
@@ -558,7 +569,8 @@ PROCEDURE SpecPlac()
                      iif( zwolM # 0, 'M=' + Alltrim( Str( zwolM, 3 ) ) + ' ', '' ) + ;
                      iif( zwolN # 0, 'N=' + Alltrim( Str( zwolN, 3 ) ) + ' ', '' ) + ;
                      iif( zwolW # 0, 'W=' + Alltrim( Str( zwolW, 3 ) ) + ' ', '' ) + ;
-                     iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' ), 22 ) + ;
+                     iif( zwolI # 0, 'I=' + Alltrim( Str( zwolI, 3 ) ) + ' ', '' ) + ;
+                     iif( zwolP # 0, 'P=' + Alltrim( Str( zwolP, 3 ) ) + ' ', '' ), 22 ) + ;
                      '  **III filar(PPE)**:' + kwota( zWAR_PF3, 11, 2 ) + '  Dla osob..........:' + kwota( zILOSO_PIEL, 11 ) ;
                      + '  Fundusz Pracy' + iif( mm == 0, Str( zSTAW_ffp, 4, 2 ), Space( 4 ) ) + '%=' + Str( zwar_ffp, 11, 2 ) )
                   mon_drk( 'Za czas przepracow:' + kwota( zs7, 11, 2 ) + '  Oblicz.poda.' + iif( mm == 0, Str( zSTAW_PODAT, 5, 2 ), Space( 5 ) ) + '%=' + kwota( zb4, 11, 2 ) + '  Dop&_l.at.nieopodat..:' + kwota( zDOPL_NIEOP, 11, 2 );
@@ -586,6 +598,7 @@ PROCEDURE SpecPlac()
                   s5g := s5g + zwolW
                   s5h := s5h + zwolI
                   s5i := s5i + zwolN
+                  s5p := s5p + zwolP
                   s7 := s7 + zs7
                   s9 := s9 + zwar_pf3
                   s10 := s10 + zs10
@@ -663,7 +676,8 @@ PROCEDURE SpecPlac()
                iif( s5f # 0, 'M=' + AllTrim( Str( s5f, 3 ) ) + ' ', '' ) + ;
                iif( s5i # 0, 'N=' + AllTrim( Str( s5i, 3 ) ) + ' ', '' ) + ;
                iif( s5g # 0, 'W=' + AllTrim( Str( s5g, 3 ) ) + ' ', '' ) + ;
-               iif( s5h # 0, 'I=' + AllTrim( Str( s5h, 3 ) ) + ' ', '' ), 22 ) ;
+               iif( s5h # 0, 'I=' + AllTrim( Str( s5h, 3 ) ) + ' ', '' ) + ;
+               iif( s5p # 0, 'P=' + AllTrim( Str( s5p, 3 ) ) + ' ', '' ), 22 ) ;
             + '  **III filar(PPE)**:' + kwota( s9, 11, 2 ) ;
             + '  Dla osob..........:' + kwota( s17d, 11 ) ;
             + '  Fundusz Pracy.....:' + kwota( s23a, 11, 2 ) )

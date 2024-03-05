@@ -20,12 +20,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+PROCEDURE Nieobec()
+
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± ......   ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±Obsluga podstawowych operacji na bazie ......                             ±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *set cent off
+
 private _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou,_top_bot
+private cEkran
 @ 1,47 say [          ]
 *################################# GRAFIKA ##################################
 @  8,42 say 'ÚOdÂDoÂPrzyczyna nieob¿'
@@ -133,6 +137,8 @@ case zPRZYCZ='N'
      zPRZYCZYNA='NN'
 case zPRZYCZ='M'
      zPRZYCZYNA='Macierzynski ur'
+case zPRZYCZ='P'
+     zPRZYCZYNA='Plat.zas.chor.'
 ENDCASE
 *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
 if ins
@@ -222,22 +228,26 @@ return str(DDOD,2)+[³]+str(DDDO,2)+[³]+PRZYCZYNA
 *############################################################################
 func wPOKAPRZY
 *************************************
+cEkran := SaveScreen( 23, 0, 24, 79 )
 ColInf()
-@ 24,0 say padc('C-80%,Z-100%,O-opieka,N-NN,urlopy:U-wypocz,I-okolicz,W-wychow,B-bezpl,M-macierz',80,' ')
+@ 23,0 say padc('C-80%,Z-100%,O-opieka,N-NN,urlopy:U-wypocz,I-okolicz,W-wychow,B-bezpl,M-macierz',80,' ')
+@ 24,0 say pad('P-Zasiˆek chorobowy pˆatne ZUS',80,' ')
 ColStd()
 return .t.
 *******************************************************
 func vPOKAPRZY
 *******************************************************
 para VSP
-if .not.VSP$'IUCZOWBMN'
-   kom(1,[*u],padc([C-80%,Z-100%,O-opieka,N-NN,urlopy:U-wypocz,I-okolicz,W-wychow,B-bezpl,M-macierz],80))
+if .not.VSP$'IUCZOWBMNP'
+   //kom(1,[*u],padc([C-80%,Z-100%,O-opieka,N-NN,urlopy:U-wypocz,I-okolicz,W-wychow,B-bezpl,M-macierz],80))
    ColInf()
-   @ 24,0 say padc('C-80%,Z-100%,O-opieka,N-NN,urlopy:U-wypocz,I-okolicz,W-wychow,B-bezpl,M-macierz',80,' ')
+   @ 23,0 say padc('C-80%,Z-100%,O-opieka,N-NN,urlopy:U-wypocz,I-okolicz,W-wychow,B-bezpl,M-macierz',80,' ')
+   @ 24,0 say pad('P-Zasiˆek chorobowy pˆatne ZUS',80,' ')
    ColStd()
    zPRZYCZ=substr(zPRZYCZYNA,1,1)
    return .f.
 else
+   RestScreen( 23, 0, 24, 79, cEkran )
    @ 24,0
 endif
 return .t.

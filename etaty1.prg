@@ -616,7 +616,7 @@ return
 *±Wyswietla informacje o skladnikach placowych                              ±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 func _infoskl_
-     store 0 to wolI,wolU,wolC,wolO,wolW,wolB,wolM,choC,wolZ,choZ,wolN
+     store 0 to wolI,wolU,wolC,wolO,wolW,wolB,wolM,choC,wolZ,choZ,wolN,wolP
      _zident_=str(prac->rec_no,5)
      _bot_=[del#'+'.or.firma#ident_fir.or.ident#_zident_.or.mc#etaty->mc]
      _bot_1=[del#'+'.or.firma#ident_fir.or.ident#_zident_]
@@ -643,6 +643,8 @@ func _infoskl_
                 wolM=wolM+((dddo-ddod)+1)
            case substr(PRZYCZYNA,1,1)='N'
                 wolN=wolN+((dddo-ddod)+1)
+           case substr(PRZYCZYNA,1,1)='P'
+                wolP=wolP+((dddo-ddod)+1)
            endcase
            skip
         enddo
@@ -676,7 +678,8 @@ func _infoskl_
                       iif(wolM#0,'M='+alltrim(str(wolM,2))+' ','')+;
                       iif(wolW#0,'W='+alltrim(str(wolW,2))+' ','')+;
                       iif(wolN#0,'N='+alltrim(str(wolN,2))+' ','')+;
-                      iif(wolI#0,'I='+alltrim(str(wolI,2))+' ',''),37)
+                      iif(wolI#0,'I='+alltrim(str(wolI,2))+' ','')+;
+                      iif(wolP#0,'P='+alltrim(str(wolP,2))+' ',''),37)
      @ 10,43 say PENSJA+WAR_PF3 pict '99 999.99'
      @ 11,43 say DOP_ZASCHO+DOP_ZASC20+DOP_ZAS100 pict '99 999.99'
      @ 11,71 say BRUT_RAZEM pict '99 999.99'
@@ -718,7 +721,7 @@ return
 *± Obliczanie skladnikow placowych                                          ±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 function oblpl()
-     store 0 to wolI,wolU,wolC,wolO,wolW,wolB,wolM,choC,wolZ,choZ,wolN
+     store 0 to wolI,wolU,wolC,wolO,wolW,wolB,wolM,choC,wolZ,choZ,wolN,wolP,choP
      _zident_=str(prac->rec_no,5)
      _bot_=[del#'+'.or.firma#ident_fir.or.ident#_zident_.or.mc#etaty->mc]
      _bot_1=[del#'+'.or.firma#ident_fir.or.ident#_zident_.or.mc=etaty->mc]
@@ -745,6 +748,8 @@ function oblpl()
                 wolM=wolM+((dddo-ddod)+1)
            case substr(PRZYCZYNA,1,1)='N'
                 wolN=wolN+((dddo-ddod)+1)
+           case substr(PRZYCZYNA,1,1)='P'
+                wolP=wolP+((dddo-ddod)+1)
            endcase
            skip
         enddo
@@ -758,13 +763,16 @@ function oblpl()
            if substr(PRZYCZYNA,1,1)='Z'
               choZ=choZ+((dddo-ddod)+1)
            endif
+           if substr(PRZYCZYNA,1,1)='P'
+              choP=choP+((dddo-ddod)+1)
+           endif
            skip
         enddo
      endif
 *    zDNI_ZASCHO=min(wolC,max(0,33-(choC+choZ)))
-     zDNI_ZAS100=min(wolZ,max(0,parap_ldw-(choC+choZ)))
+     zDNI_ZAS100=min(wolZ,max(0,parap_ldw-(choC+choZ+choP)))
      sele etaty
-      zDNI_CHOROB=wolC+wolZ+wolO+wolW+wolM
+      zDNI_CHOROB=wolC+wolZ+wolO+wolW+wolM+wolP
       if zDNI_BEZPL#0
          zSTA_BEZPL=_round((zBRUT_ZASAD+zBRUT_PREMI+zDOPL_OPOD)/zIL_DNI_ROB,2)
          zODL_BEZPL=iif(zIL_DNI_ROB=zDNI_BEZPL,zBRUT_ZASAD+zBRUT_PREMI+zDOPL_OPOD,_round(zDNI_BEZPL*zSTA_BEZPL,2))
