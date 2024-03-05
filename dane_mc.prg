@@ -660,10 +660,10 @@ FUNCTION zrobcos()
       zwar5_wur := war5_wur
       zwar5_wuc := war5_wuc
       zwar5_wuw := war5_wuw
-      zmc_wue := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
-      zmc_wur := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
-      zmc_wuc := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
-      zmc_wuw := iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
+      zmc_wue := iif( mc_wue == 0, 0, iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 ) )
+      zmc_wur := iif( mc_wur == 0, 0, iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 ) )
+      zmc_wuc := iif( mc_wuc == 0, 0, iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 ) )
+      zmc_wuw := iif( mc_wuw == 0, 0, iif( Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ) < 13, Val( mc ) + iif( firma->zussklmie == 'B', 0, 1 ), 0 ) )
 *                przeskla()
 *                skip 1
 
@@ -684,7 +684,7 @@ FUNCTION zrobcos()
       IF zRYCZALT <> 'T' .AND. spolka->sposob <> 'L'
          zwar5_wuz := 0
       ENDIF
-      zmc_wuz := iif( mc_wuz + iif( firma->zussklmie == 'B', 0, 1 ) < 13, mc_wuz + iif( firma->zussklmie == 'B', 0, 1 ), 0 )
+      zmc_wuz := iif( mc_wuz == 0, 0, iif( mc_wuz + iif( firma->zussklmie == 'B', 0, 1 ) < 13, mc_wuz + iif( firma->zussklmie == 'B', 0, 1 ), 0 ) )
 *                przeskla()
       SKIP 1
       IF zRYCZALT == 'T'
