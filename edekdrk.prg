@@ -297,6 +297,11 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\viudo_w1.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'VIUDO-2'
+      hDane := DaneXML_VIUDOw1( oDoc, cNrRef )
+      cPlikRap := 'frf\viudo_w2.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'VAT27K-1'
    CASE 'VAT27-1'
       hDane := DaneXML_VAT27w1( oDoc, cNrRef )

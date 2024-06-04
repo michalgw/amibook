@@ -439,7 +439,7 @@ FUNCTION Ewid()
                   @ 12, 2 PROMPT verdekold
                   @ 13, 2 PROMPT ' U - VAT-UE   (5)                    '
                   @ 14, 2 PROMPT ' I - IFT-2/2R (10)                   '
-                  @ 15, 2 PROMPT ' V - VIU-DO   (1)                    '
+                  @ 15, 2 PROMPT ' V - VIU-DO   (2)                    '
                   @ 16, 2 TO 16, 38
                   @ 17, 2 PROMPT ' C - RCA raport imienny              '
                   @ 18, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '

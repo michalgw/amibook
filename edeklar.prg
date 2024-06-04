@@ -7485,6 +7485,196 @@ FUNCTION edek_viudo_1( aDane )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION edek_viudo_2( aDane )
+
+   LOCAL r, nl := hb_eol(), nSumT, nSumU, nSumC := 0, cRodzajL
+
+   r := '<?xml version="1.0" encoding="UTF-8"?>' + nl
+   r += '<Deklaracja xmlns="http://crd.gov.pl/wzor/2024/05/14/13428/" xmlns:dto="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2021/03/12/eD/DefinicjeTypyOss/">' + nl
+   r += '  <Naglowek>' + nl
+   r += '    <KodFormularza kodPodatku="VIU" kodSystemowy="VIU-DO (2)" rodzajZobowiazania="Z" wersjaSchemy="1-0E">VIU-DO</KodFormularza>' + nl
+   r += '    <WariantFormularza>2</WariantFormularza>' + nl
+   r += '    <DataWypelnienia>' + date2strxml( aDane[ 'data_wypelnienia' ] ) + '</DataWypelnienia>' + nl
+   r += '    <CelZlozenia>1</CelZlozenia>' + nl
+   r += '    <Rok>' + aDane[ 'rok' ] + '</Rok>' + nl
+   r += '    <Kwartal>' + TNaturalny( aDane[ 'kwartal' ] ) + '</Kwartal>' + nl
+   r += '    <KodUrzedu>' + aDane[ 'kod_urzedu' ] + '</KodUrzedu>' + nl
+   r += '  </Naglowek>' + nl
+
+   r += '  <Podmiot1 rola="Podatnik">' + nl
+   IF aDane[ 'firma' ][ 'Spolka' ]
+      r += '    <dto:OsobaNiefizyczna>' + nl
+      r += '      <dto:NIP>' + trimnip( AllTrim( aDane[ 'firma' ][ 'NIP' ] ) )+ '</dto:NIP>' + nl
+      r += '      <dto:PelnaNazwa>' + str2sxml( aDane[ 'firma' ][ 'PelnaNazwa' ] ) + '</dto:PelnaNazwa>' + nl
+      r += '    </dto:OsobaNiefizyczna>' + nl
+   ELSE
+      r += '    <dto:OsobaFizyczna>' + nl
+      r += '      <dto:NIP>' + trimnip( AllTrim( aDane[ 'firma' ][ 'NIP' ] ) ) + '</dto:NIP>' + nl
+      r += '      <dto:ImiePierwsze>' + str2sxml( aDane[ 'firma' ][ 'ImiePierwsze' ] ) + '</dto:ImiePierwsze>' + nl
+      r += '      <dto:Nazwisko>' + str2sxml( aDane[ 'firma' ][ 'Nazwisko' ] ) + '</dto:Nazwisko>' + nl
+      r += '    </dto:OsobaFizyczna>' + nl
+   ENDIF
+   r += '  </Podmiot1>' + nl
+
+   r += '  <PozycjeSzczegolowe>' + nl
+   IF Empty( aDane[ 'okres_od' ] ) .OR. Empty( aDane[ 'okres_do' ] )
+      r += '    <Period></Period>' + nl
+   ELSE
+      r += '    <Period>' + nl
+      r += '      <dto:StartDate>' + date2strxml( aDane[ 'okres_od' ] ) + '</dto:StartDate>' + nl
+      r += '      <dto:EndDate>' + date2strxml( aDane[ 'okres_do' ] ) + '</dto:EndDate>' + nl
+      r += '    </Period>' + nl
+   ENDIF
+
+   IF ! Empty( aDane[ 'sekcja_c2' ] ) .OR. ! Empty( aDane[ 'sekcja_c3' ] ) .OR. ! Empty( aDane[ 'sekcja_c5' ] )
+      r += '    <VATReturnMSCON>' + nl
+
+      IF ! Empty( aDane[ 'sekcja_c2' ] ) .OR. ! Empty( aDane[ 'sekcja_c3' ] )
+         r += '      <Supplies>' + nl
+
+         IF ! Empty( aDane[ 'sekcja_c2' ] )
+            nSumT := 0
+            nSumU := 0
+
+            hb_HEval( aDane[ 'sekcja_c2' ], { | cKraj, aRodzaje |
+               r += '        <MSIDSupplies>' + nl
+
+               r += '          <MSCONCountryCode>' + cKraj + '</MSCONCountryCode>' + nl
+               r += '          <MSIDSupply>' + nl
+
+               hb_HEval( aRodzaje, { | cRodzaj, aStawki |
+                  cRodzajL := cRodzaj
+                  hb_HEval( aStawki, { | nStawka, aWartosci |
+                     r += '            <dto:OSSVATReturnDetail>' + nl
+                     r += '              <dto:SupplyType>' + iif( cRodzajL == 'U', 'SERVICES', 'GOODS' ) + '</dto:SupplyType>' + nl
+                     r += '              <dto:VATRate type="' + iif( aWartosci[ 'stawkard' ] == 'O', 'REDUCED', 'STANDARD' ) + '">' + TKwota2( nStawka ) + '</dto:VATRate>' + nl
+                     r += '              <dto:TaxableAmount currency="EUR">' + TKwota2( aWartosci[ 'nettoeur' ] ) + '</dto:TaxableAmount>' + nl
+                     r += '              <dto:VATAmount currency="EUR">' + TKwota2( aWartosci[ 'vateur' ] ) + '</dto:VATAmount>' + nl
+                     r += '            </dto:OSSVATReturnDetail>' + nl
+
+                     IF cRodzajL == 'U'
+                        nSumU += aWartosci[ 'vateur' ]
+                     ELSE
+                        nSumT += aWartosci[ 'vateur' ]
+                     ENDIF
+
+                  } )
+               } )
+
+               r += '          </MSIDSupply>' + nl
+               r += '        </MSIDSupplies>' + nl
+            } )
+
+            IF nSumU <> 0
+               r += '        <GrandTotalMSIDServices currency="EUR">' + TKwota2( nSumU ) + '</GrandTotalMSIDServices>' + nl
+            ENDIF
+            IF nSumT <> 0
+               r += '        <GrandTotalMSIDGoods currency="EUR">' + TKwota2( nSumT ) + '</GrandTotalMSIDGoods>' + nl
+            ENDIF
+
+            nSumC += nSumT + nSumU
+
+         ENDIF
+
+         IF ! Empty( aDane[ 'sekcja_c3' ] )
+            nSumT := 0
+            nSumU := 0
+
+            hb_HEval( aDane[ 'sekcja_c3' ], { | cKraj, aPozycje |
+               r += '        <MSESTSupplies>' + nl
+               r += '          <MSCONCountryCode>' + cKraj + '</MSCONCountryCode>' + nl
+
+               AEval( aPozycje, { | aPoz |
+                  r += '          <MSESTSupply>' + nl
+                  r += '            <VATReturnDetails>' + nl
+                  r += '              <EUTraderID>' + nl
+                  IF ! Empty( aPoz[ 'nr_idvat' ] )
+                     r += '                <dto:VATIdentificationNumber issuedBy="' + aPoz[ 'krajdz' ] + '">' + str2sxml( aPoz[ 'nr_idvat' ] ) + '</dto:VATIdentificationNumber>' + nl
+                  ELSE
+                     r += '                <dto:TaxReferenceNumber issuedBy="' + aPoz[ 'krajdz' ] + '">' + str2sxml( aPoz[ 'nr_idpod' ] ) + '</dto:TaxReferenceNumber>' + nl
+                  ENDIF
+                  r += '              </EUTraderID>' + nl
+                  r += '              <OSSVATReturnDetail>' + nl
+                  r += '                <dto:SupplyType>' + iif( aPoz[ 'rodzdost' ] == 'U', 'SERVICES', 'GOODS' ) + '</dto:SupplyType>' + nl
+                  r += '                <dto:VATRate type="' + iif( aPoz[ 'stawkard' ] == 'O', 'REDUCED', 'STANDARD' ) + '">' + TKwota2( aPoz[ 'stawka' ] ) + '</dto:VATRate>' + nl
+                  r += '                <dto:TaxableAmount currency="EUR">' + TKwota2( aPoz[ 'nettoeur' ] ) + '</dto:TaxableAmount>' + nl
+                  r += '                <dto:VATAmount currency="EUR">' + TKwota2( aPoz[ 'vateur' ] ) + '</dto:VATAmount>' + nl
+                  r += '              </OSSVATReturnDetail>' + nl
+                  r += '            </VATReturnDetails>' + nl
+
+                  r += '          </MSESTSupply>' + nl
+
+                  IF aPoz[ 'rodzdost' ] == 'U'
+                     nSumU += aPoz[ 'vateur' ]
+                  ELSE
+                     nSumT += aPoz[ 'vateur' ]
+                  ENDIF
+
+               } )
+
+               r += '        </MSESTSupplies>' + nl
+            } )
+
+            IF nSumU <> 0
+               r += '        <GrandTotalMSESTServices currency="EUR">' + TKwota2( nSumU ) + '</GrandTotalMSESTServices>' + nl
+            ENDIF
+            IF nSumT <> 0
+               r += '        <GrandTotalMSESTGoods currency="EUR">' + TKwota2( nSumT ) + '</GrandTotalMSESTGoods>' + nl
+            ENDIF
+
+            nSumC += nSumT + nSumU
+
+         ENDIF
+
+         r += '        <GrandTotal currency="EUR">' + TKwota2( nSumC ) + '</GrandTotal>' + nl
+         r += '      </Supplies>' + nl
+      ENDIF
+
+      IF ! Empty( aDane[ 'sekcja_c5' ] )
+
+         hb_HEval( aDane[ 'sekcja_c5' ], { | cKraj, aPozycje |
+            r += '      <Corrections>' + nl
+            r += '        <MSCONCountryCode>' + cKraj + '</MSCONCountryCode>' + nl
+            r += '        <MSCONCorrections>' + nl
+
+            AEval( aPozycje, { | aPoz |
+               r += '          <dto:Correction>' + nl
+               r += '            <dto:Period>' + nl
+               r += '              <dto:Year>' + aPoz[ 'rok' ] + '</dto:Year>' + nl
+               r += '              <dto:Quarter>' + aPoz[ 'kwartal' ] + '</dto:Quarter>' + nl
+               r += '            </dto:Period>' + nl
+               r += '            <dto:TotalVATAmountCorrection currency="EUR">' + TKwota2( aPoz[ 'kwota' ] ) + '</dto:TotalVATAmountCorrection>' + nl
+               r += '          </dto:Correction>' + nl
+            } )
+
+            r += '        </MSCONCorrections>' + nl
+            r += '      </Corrections>' + nl
+         } )
+
+      ENDIF
+
+      r += '    </VATReturnMSCON>' + nl
+
+      IF ! Empty( aDane[ 'sekcja_c6' ] )
+         hb_HEval( aDane[ 'sekcja_c6' ], { | cKraj, nKwota |
+            r += '    <MSCONBalance>' + nl
+            r += '      <MSCONCountryCode>' + cKraj + '</MSCONCountryCode>' + nl
+            r += '      <BalanceOfVATDue currency="EUR">' + TKwota2( nKwota ) + '</BalanceOfVATDue>' + nl
+            r += '    </MSCONBalance>' + nl
+         } )
+      ENDIF
+
+   ENDIF
+   r += '    <TotalAmountOfVATDue currency="EUR">' + TKwota2( aDane[ 'suma_vat' ] ) + '</TotalAmountOfVATDue>' + nl
+   r += '  </PozycjeSzczegolowe>' + nl
+   r += '  <Pouczenie1>' + str2sxml( 'Za podanie nieprawdy lub zatajenie prawdy i przez to nara¾enie podatku na uszczuplenie grozi odpowiedzialno˜† przewidziana w Kodeksie karnym skarbowym.' ) + '</Pouczenie1>' + nl
+   r += '  <Pouczenie2>' + str2sxml( 'W przypadku niewpˆacenia w obowi¥zuj¥cym terminie kwoty podatku VAT nale¾nej Rzeczpospolitej Polskiej lub wpˆacenia jej w niepeˆnej wysoko˜ci, niniejsza deklaracja stanowi podstaw© do wystawienia tytuˆu wykonawczego zgodnie z przepisami ustawy z dnia 17 czerwca 1966 r. o post©powaniu egzekucyjnym w administracji (Dz. U. z 2022 r. poz. 479, z p¢«n. zm.).' ) + '</Pouczenie2>' + nl
+   r += '</Deklaracja>' + nl
+
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION edek_vat27_1(hDane)
    LOCAL r, nl
       nl = Chr(13) + Chr(10)
@@ -8227,15 +8417,15 @@ FUNCTION edek_ift2_10( aDane, lRocznie )
 
    r := '<?xml version="1.0" encoding="UTF-8"?>' + nl
    IF lRocznie
-      r += '<Deklaracja xmlns="http://crd.gov.pl/wzor/2022/06/24/11588/">' + nl
+      r += '<Deklaracja xmlns="http://crd.gov.pl/wzor/2024/04/17/13400/">' + nl
    ELSE
-      r += '<Deklaracja xmlns="http://crd.gov.pl/wzor/2022/06/24/11589/">' + nl
+      r += '<Deklaracja xmlns="http://crd.gov.pl/wzor/2024/04/16/13399/">' + nl
    ENDIF
    r += '  <Naglowek>' + nl
    IF lRocznie
-      r += '    <KodFormularza kodPodatku="CIT" kodSystemowy="IFT-2R (10)" rodzajZobowiazania="Z" wersjaSchemy="2-0E">IFT-2/IFT-2R</KodFormularza>' + nl
+      r += '    <KodFormularza kodPodatku="CIT" kodSystemowy="IFT-2R (10)" rodzajZobowiazania="Z" wersjaSchemy="3-0E">IFT-2/IFT-2R</KodFormularza>' + nl
    ELSE
-      r += '    <KodFormularza kodPodatku="CIT" kodSystemowy="IFT-2 (10)" rodzajZobowiazania="Z" wersjaSchemy="2-0E">IFT-2/IFT-2R</KodFormularza>' + nl
+      r += '    <KodFormularza kodPodatku="CIT" kodSystemowy="IFT-2 (10)" rodzajZobowiazania="Z" wersjaSchemy="3-0E">IFT-2/IFT-2R</KodFormularza>' + nl
    ENDIF
    r += '    <WariantFormularza>10</WariantFormularza>' + nl
    r += '    <CelZlozenia poz="P_7">' + aDane[ 'korekta' ] + '</CelZlozenia>' + nl

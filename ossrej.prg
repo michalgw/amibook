@@ -1042,11 +1042,11 @@ PROCEDURE OSSDeklaracjaVIU_DO()
 
          IF nMenu == 1
             SAVE SCREEN TO cEkran
-            cDeklaracja := edek_viudo_1( aDane )
-            edekZapiszXML( cDeklaracja, normalizujNazwe( 'VIUDO' + '_' + param_rok + '_' + Str( aDane[ 'kwartal' ], 1, 0 ) + 'KW' ), wys_edeklaracja, 'VIUDO-1', .F., aDane[ 'kwartal' ] )
+            cDeklaracja := edek_viudo_2( aDane )
+            edekZapiszXML( cDeklaracja, normalizujNazwe( 'VIUDO' + '_' + param_rok + '_' + Str( aDane[ 'kwartal' ], 1, 0 ) + 'KW' ), wys_edeklaracja, 'VIUDO-2', .F., aDane[ 'kwartal' ] )
             RESTORE SCREEN FROM cEkran
          ELSE
-            DeklarDrukuj( 'VIUDO-1', aDane )
+            DeklarDrukuj( 'VIUDO-2', aDane )
          ENDIF
 
       ENDIF

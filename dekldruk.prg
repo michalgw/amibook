@@ -206,6 +206,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_VIUDOw1( xDane )
       cPlikRap := 'frf\viudo_w1.frf'
       EXIT
+   CASE 'VIUDO-2'
+      hDane := DaneDek_VIUDOw1( xDane )
+      cPlikRap := 'frf\viudo_w2.frf'
+      EXIT
    CASE 'VAT27K-1'
    CASE 'VAT27-1'
       hDane := DaneDek_VAT27w1()
