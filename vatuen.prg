@@ -216,7 +216,7 @@ FUNCTION VatUE4KRob( nWersja )
 
    @ 24, 0
 
-   IF HB_ISHASH( aDane ) .AND. Len( aDane[ 'poz_c' ] ) + Len( aDane[ 'poz_d' ] ) + Len( aDane[ 'poz_e' ] ) > 0
+   //IF HB_ISHASH( aDane ) .AND. Len( aDane[ 'poz_c' ] ) + Len( aDane[ 'poz_d' ] ) + Len( aDane[ 'poz_e' ] ) > 0
 
       AEval( aDane[ 'poz_c' ], bEv )
       AEval( aDane[ 'poz_d' ], bEv )
@@ -263,9 +263,9 @@ FUNCTION VatUE4KRob( nWersja )
             ENDIF
          ENDCASE
       ENDIF
-   ELSE
-      komun( "Brak danych", 15 )
-   ENDIF
+   //ELSE
+   //   komun( "Brak danych", 15 )
+   //ENDIF
 
    RETURN NIL
 
