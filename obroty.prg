@@ -21,7 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
 // nRodzaj: 1 - NIP, 2 - Nazwa
-FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
+FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj, lExFiltr, aExFiltr )
 
    LOCAL aDane := { 'ok' => .F., 'pozycje' => {}, 'rodzaj' => nRodzaj, ;
       'filtr' => cDane, 'data_od' => dDataOd, 'data_do' => dDataDo, ;
@@ -30,6 +30,26 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
    LOCAL aFiltr := { ;
       { | cTablica | Empty( cDane ) .OR. ( NormalizujNipPL( ( cTablica )->nr_ident ) == NormalizujNipPL( cDane ) ) }, ;
       { | cTablica | Empty( cDane ) .OR. ( hb_AtI( cDane, ( cTablica )->nazwa ) > 0 ) } }
+   LOCAL bExFiltr := { | cTablica |
+      LOCAL lRes := .T., nWart
+      lRes := lRes .AND. ( Empty( aExFiltr[ 'NrDok' ] ) .OR. hb_AtI( AllTrim( aExFiltr[ 'NrDok' ] ), ( cTablica )->numer ) > 0 )
+      IF cTablica == 'rejs' .OR. cTablica == 'rejz'
+         lRes := lRes .AND. ( Empty( aExFiltr[ 'Rejestr' ] ) .OR. aExFiltr[ 'Rejestr' ] == '**' .OR. ( cTablica )->symb_rej == aExFiltr[ 'Rejestr' ] )
+      ENDIF
+      IF aExFiltr[ 'Wartosc' ] <> 0
+         IF cTablica == 'oper'
+            nWart := oper->wyr_tow + oper->uslugi + oper->zakup + oper->uboczne + oper->wynagr_g + oper->wydatki
+         ELSE
+            nWart := ( cTablica )->wartzw + ( cTablica )->wart00 + ( cTablica )->wart02 + ( cTablica )->wart07 ;
+               + ( cTablica )->wart22 + ( cTablica )->wart12 + ( cTablica )->vat02 + ( cTablica )->vat07 + ( cTablica )->vat22 ;
+               + ( cTablica )->vat12
+         ENDIF
+         lRes := lRes .AND. ( nWart >= aExFiltr[ 'Wartosc' ] - aExFiltr[ 'WartoscTol' ] .AND. nWart <= aExFiltr[ 'Wartosc' ] + aExFiltr[ 'WartoscTol' ] )
+      ENDIF
+      lRes := lRes .AND. ( Empty( aExFiltr[ 'Tresc' ] ) .OR. hb_AtI( AllTrim( aExFiltr[ 'Tresc' ] ), ( cTablica )->tresc ) > 0 )
+      lRes := lRes .AND. ( Empty( aExFiltr[ 'Uwagi' ] ) .OR. hb_AtI( AllTrim( aExFiltr[ 'Uwagi' ] ), ( cTablica )->uwagi ) > 0 )
+      RETURN lRes
+   }
 
    IF ! Dostep( 'FIRMA' )
       RETURN aDane
@@ -52,7 +72,7 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
          dDataDok := hb_Date( Val( param_rok ), Val( oper->mc ), Val( oper->dzien ) )
 
-         IF dDataDok >= dDataOd .AND. dDataDok <= dDataDo .AND. Eval( aFiltr[ nRodzaj ], 'oper' )
+         IF dDataDok >= dDataOd .AND. dDataDok <= dDataDo .AND. Eval( aFiltr[ nRodzaj ], 'oper' ) .AND. ( ! lExFiltr .OR. Eval( bExFiltr, 'oper' ) )
 
             cKlucz := iif( AllTrim( oper->nr_ident ) == "", AllTrim( oper->nazwa ), ;
                AllTrim( NormalizujNipPL( oper->nr_ident ) ) )
@@ -130,7 +150,7 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
          dDataDok := hb_Date( Val( param_rok ), Val( rejs->mc ), Val( rejs->dzien ) )
 
-         IF dDataDok >= dDataOd .AND. dDataDok <= dDataDo .AND. Eval( aFiltr[ nRodzaj ], 'rejs' )
+         IF dDataDok >= dDataOd .AND. dDataDok <= dDataDo .AND. Eval( aFiltr[ nRodzaj ], 'rejs' ) .AND. ( ! lExFiltr .OR. Eval( bExFiltr, 'rejs' ) )
 
             cKlucz := iif( AllTrim( rejs->nr_ident ) == "", AllTrim( rejs->nazwa ), ;
                AllTrim( NormalizujNipPL( rejs->nr_ident ) ) )
@@ -186,7 +206,7 @@ FUNCTION Obroty_Dane( nRodzaj, cDane, dDataOd, dDataDo, cGrupuj )
 
          dDataDok := hb_Date( Val( param_rok ), Val( rejz->mc ), Val( rejz->dzien ) )
 
-         IF dDataDok >= dDataOd .AND. dDataDok <= dDataDo .AND. Eval( aFiltr[ nRodzaj ], 'rejz' )
+         IF dDataDok >= dDataOd .AND. dDataDok <= dDataDo .AND. Eval( aFiltr[ nRodzaj ], 'rejz' ) .AND. ( ! lExFiltr .OR. Eval( bExFiltr, 'rejz' ) )
 
             cKlucz := iif( AllTrim( rejz->nr_ident ) == "", AllTrim( rejz->nazwa ), ;
                AllTrim( NormalizujNipPL( rejz->nr_ident ) ) )
@@ -270,6 +290,14 @@ PROCEDURE Obroty( nRodzaj, lTekstowy )
    LOCAL dDataOd, dDataDo
    LOCAL aDane
    LOCAL cEkran, cKolor, cGrupuj := 'R', cRodzaj := 'P'
+   LOCAL cExFiltr := 'N'
+   LOCAL aExFiltr := { ;
+      'NrDok' => Space( 64 ), ;
+      'Rejestr' => '**', ;
+      'Wartosc' => 0, ;
+      'WartoscTol' => 0, ;
+      'Tresc' => Space( 100 ), ;
+      'Uwagi' => Space( 100 ) }
    LOCAL bGrupujW := { | x |
       LOCAL cGrKolor := ColInf()
       @ 24, 0 SAY PadC( 'R - rodzaju rejestru      K - kontrahenta', 80 )
@@ -323,17 +351,35 @@ PROCEDURE Obroty( nRodzaj, lTekstowy )
       @ 22, 55 SAY 'Rodzaj wydruku' GET cRodzaj PICTURE '!' WHEN Eval( bRodzajW ) VALID Eval( bRodzajV )
       @ 22, 71 SAY 'odstawowy'
    ENDIF
+   @ 23, 2 SAY 'Dodatkowy filtr (Tak/Nie)' GET cExFiltr PICTURE '!' VALID ValidTakNie( cExFiltr, 23, 29 )
+   ValidTakNie( cExFiltr, 23, 29 )
    read_()
    IF LastKey() <> 27
 
-      aDane := Obroty_Dane( nRodzaj, AllTrim( cFiltr ), dDataOd, dDataDo, cGrupuj )
+      IF cExFiltr == 'T'
+         @ 10,  5 CLEAR TO 16, 75
+         @ 10,  5 TO 16, 75
+         @ 11,  7 SAY '  Numer dokumentu' GET aExFiltr[ 'NrDok' ] PICTURE '@S49 ' + Replicate( '!', 64 )
+         @ 12,  7 SAY 'Symbol rejestru (** - wszytskie)' GET aExFiltr[ 'Rejestr' ] PICTURE '!!'
+         @ 13,  7 SAY 'Warto˜† dokumentu' GET aExFiltr[ 'Wartosc' ] PICTURE FPIC
+         @ 13, 40 SAY 'z tolerancj¥ (+/-)' GET aExFiltr[ 'WartoscTol' ] PICTURE FPIC WHEN aExFiltr[ 'Wartosc' ] <> 0
+         @ 14,  7 SAY '   Opis zdarzenia' GET aExFiltr[ 'Tresc' ] PICTURE '@S49 ' + Replicate( '!', 100 )
+         @ 15,  7 SAY '            Uwagi' GET aExFiltr[ 'Uwagi' ] PICTURE '@S49 ' + Replicate( '!', 100 )
+         read_()
+      ENDIF
 
-      IF HB_ISHASH( aDane ) .AND. aDane[ 'ok' ]
+      IF LastKey() <> 27
 
-         IF lTekstowy
-            Obroty_Tekst( aDane )
-         ELSE
-            FRDrukuj( 'frf\' + iif( cGrupuj == 'K', 'obrotygk', 'obrotygr' ) + iif( cRodzaj == 'R', 'r', '' ) + '.frf', aDane )
+         aDane := Obroty_Dane( nRodzaj, AllTrim( cFiltr ), dDataOd, dDataDo, cGrupuj, cExFiltr == 'T', aExFiltr )
+
+         IF HB_ISHASH( aDane ) .AND. aDane[ 'ok' ]
+
+            IF lTekstowy
+               Obroty_Tekst( aDane )
+            ELSE
+               FRDrukuj( 'frf\' + iif( cGrupuj == 'K', 'obrotygk', 'obrotygr' ) + iif( cRodzaj == 'R', 'r', '' ) + '.frf', aDane )
+            ENDIF
+
          ENDIF
 
       ENDIF
