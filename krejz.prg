@@ -2162,23 +2162,25 @@ PROCEDURE KRejZ_Ksieguj()
       COMMIT
       UNLOCK
    ENDIF
-   SELECT suma_mc
-   *******************************
-   SEEK '+' + ident_fir + Str( Month( rejz->DATAKS ), 2 )
-   IF ! ins .AND. Left( rejz->numer, 1 ) # Chr( 1 ) .AND. Left( rejz->numer, 1 ) # Chr( 254 )
-      BlokadaR()
-      AktKol( -1, rejz->KOLUMNA, rejz->NETTO )
-      AktKol( -1, rejz->KOLUMNA2, rejz->NETTO2 )
+   IF zRYCZALT <> 'T'
+      SELECT suma_mc
+      *******************************
+      SEEK '+' + ident_fir + Str( Month( rejz->DATAKS ), 2 )
+      IF ! ins .AND. Left( rejz->numer, 1 ) # Chr( 1 ) .AND. Left( rejz->numer, 1 ) # Chr( 254 )
+         BlokadaR()
+         AktKol( -1, rejz->KOLUMNA, rejz->NETTO )
+         AktKol( -1, rejz->KOLUMNA2, rejz->NETTO2 )
+      ENDIF
+      SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
+      IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
+         BlokadaR()
+         AktKol( 1, zKOLUMNA, zNETTO )
+         AktKol( 1, zKOLUMNA2, zNETTO2 )
+      ENDIF
+      COMMIT
+      UNLOCK
+      SEEK '+' + ident_fir + miesiac
    ENDIF
-   SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
-   IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
-      BlokadaR()
-      AktKol( 1, zKOLUMNA, zNETTO )
-      AktKol( 1, zKOLUMNA2, zNETTO2 )
-   ENDIF
-   COMMIT
-   UNLOCK
-   SEEK '+' + ident_fir + miesiac
    SELECT rejz
    IfIns( 0 )
    BlokadaR()
