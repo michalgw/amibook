@@ -321,6 +321,7 @@ PROCEDURE KRejZ()
                *@ 13,57 clear to 19,79
 */
                zDZIEN := '  '
+               zSYMB_REJ := '  '
                znazwa := Space( 200 )
                zNR_IDENT := Space( 30 )
                zNUMER := Space( 97 )
