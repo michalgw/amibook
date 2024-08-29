@@ -327,10 +327,10 @@ PROCEDURE Pracow()
             ENDIF
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
             IF ins
-               SET ORDER TO 4
+               SET ORDER TO 6
                Blokada()
                GO BOTTOM
-               IDPR := rec_no + 1
+               IDPR := id + 1
                SET ORDER TO 1
                app()
                repl_( 'FIRMA', IDENT_FIR )
