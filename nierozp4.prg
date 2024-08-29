@@ -143,7 +143,8 @@ begin sequence
 
       do while  &_koniec=.f. .and. .not. eof()
          sele prac
-         seek val(etaty->ident)
+         //seek val(etaty->ident)
+         seek ident_fir + etaty->ident
          if found()
             znazimie=alltrim(nazwisko)+' '+alltrim(imie1)+' '+alltrim(imie2)
             zpesel=pesel

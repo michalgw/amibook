@@ -496,7 +496,8 @@ PROCEDURE ZusRca( ubezp )
 
          IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0 .OR. umowy->war_puz <> 0
 
-            prac->( dbSeek( Val( umowy->ident ) ) )
+            //prac->( dbSeek( Val( umowy->ident ) ) )
+            prac->( dbSeek( ident_fir + umowy->ident ) )
 
             IF prac->( Found() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
 
@@ -536,8 +537,8 @@ PROCEDURE ZusRca( ubezp )
                aDane[ cPozIdent ][ 'war_pf3' ] += UMOWY->WAR_PF3
                aDane[ cPozIdent ][ 'war_psum' ] += UMOWY->WAR_PSUM + iif( paraz_wer == 2, 0, UMOWY->WAR_PUZ ) + UMOWY->WAR_FSUM - ( UMOWY->WAR_FFP + UMOWY->WAR_FFG )
 
-               /*
                brakpra := .F.
+               /*
                ddorca( PRAC->NAZWISKO,;
                   PRAC->IMIE1,;
                   iif( .NOT. Empty( PRAC->PESEL ), 'P', iif( .NOT. Empty( PRAC->NIP ), 'N', PRAC->RODZ_DOK ) ), ;

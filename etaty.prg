@@ -446,7 +446,8 @@ FUNCTION Etaty( mieskart )
                      IF Found()
                         DO WHILE .NOT. Eof() .AND. del + firma + mc == kluc
                            SELECT prac
-                           SEEK Val( etaty->ident )
+                           //SEEK Val( etaty->ident )
+                           SEEK ident_fir + etaty->ident
                            IF Found() .AND. del == '+' .AND. firma == ident_fir .AND. rec_no = Val( etaty->ident ) .AND. status <= 'U'
                               SELECT etaty
                               BlokadaR()
@@ -706,7 +707,8 @@ FUNCTION Etaty( mieskart )
                      IF Found()
                         DO WHILE .NOT. Eof() .AND. del + firma + mc == kluc
                            SELECT prac
-                           SEEK Val( etaty->ident )
+                           //SEEK Val( etaty->ident )
+                           SEEK ident_fir + etaty->ident
                            IF Found() .AND. del == '+' .AND. firma == ident_fir .AND. rec_no = Val( etaty->ident ) .AND. status <= 'U'
                               SELECT etaty
                               BlokadaR()

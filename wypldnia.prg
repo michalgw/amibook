@@ -190,7 +190,8 @@ PROCEDURE WyplDnia()
       DO WHILE .NOT. Eof()
          SELECT prac
          lDodaj := .T.
-         SEEK Val( robwypza->ident )
+         //SEEK Val( robwypza->ident )
+         SEEK ident_fir + robwypza->ident
          IF Found()
             znazimie := AllTrim( nazwisko ) + ' ' + AllTrim( imie1 ) + ' ' + AllTrim( imie2 )
             zpesel := pesel

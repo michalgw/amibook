@@ -103,7 +103,8 @@ else
          zDO_WYPLATY=DO_WYPLATY
          zPRZEL_NAKO=PRZEL_NAKO
          select 2
-         seek val(numprac)
+         //seek val(numprac)
+         seek ident_fir + numprac
          zNAZWISKO=Nazwisko
          zIMIE1 =IMIE1
          zIMIE2 =IMIE2

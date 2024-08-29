@@ -213,7 +213,8 @@ PROCEDURE Pit_8AR( _G, _M, _STR, _OU )
          seek '+' + ident_fir
          DO WHILE .NOT. Eof() .AND. del = '+' .AND. firma = ident_fir
             SELECT prac
-            SEEK Val( etaty->ident )
+            //SEEK Val( etaty->ident )
+            SEEK ident_fir + etaty->ident
             SELECT etaty
             STORE .F. TO DOD
             STORE .T. TO DDO

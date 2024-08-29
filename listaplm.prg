@@ -80,7 +80,8 @@ do while .not.&_koniec
    W5=do_wyplaty
    sele prac
 *   go val(umowy->ident)
-   seek val(umowy->ident)
+   //seek val(umowy->ident)
+   seek ident_fir + umowy->ident
    k6=nazwisko
    k7=imie1
    k8=pesel

@@ -307,7 +307,8 @@ PROCEDURE Umowy()
                zKOD_TYTU := KOD_TYTU
                SELECT prac
                SET ORDER TO 4
-               SEEK Val( zident )
+               //SEEK Val( zident )
+               SEEK ident_fir + zident
                SET ORDER TO 3
                zNAZWISKO := NAZWISKO+','+IMIE1+','+IMIE2
                SELECT umowy
@@ -984,7 +985,8 @@ PROCEDURE say41s()
    SET COLOR TO +w
    SELECT prac
    SET ORDER TO 4
-   SEEK Val( umowy->ident )
+   //SEEK Val( umowy->ident )
+   SEEK ident_fir + umowy->ident
    SET ORDER TO 3
    znazwisko := nazwisko + ',' + imie1 + ',' + imie2
    SELECT umowy
