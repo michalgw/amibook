@@ -549,6 +549,18 @@ FUNCTION Main()
    // Tablica parametr¢w pˆacowych
    PUBLIC Param_PPla_Tab := NIL
 
+   // Kody ZUS swiadczen i przerw dla danych kodow nieobecnosci
+   PUBLIC parap_kni := '   '
+   PUBLIC parap_knu := '   '
+   PUBLIC parap_knc := '   '
+   PUBLIC parap_knz := '   '
+   PUBLIC parap_kno := '   '
+   PUBLIC parap_knw := '   '
+   PUBLIC parap_knb := '   '
+   PUBLIC parap_knn := '   '
+   PUBLIC parap_knm := '   '
+   PUBLIC parap_knp := '   '
+
    // ---
 
    // Parametry do obliczania korekt
@@ -2016,6 +2028,8 @@ FUNCTION _bh()
    o[ 1 ] := ' P - Og¢lne parametry ZUS       '
    o[ 2 ] := ' T - Tabela stawek podatku...   '
    o[ 3 ] := ' R - Stawki dla ryczaˆtowc¢w    '
+   o[ 4 ] := ' N - Rodzaje nieobecno˜ci / ZUS '
+   o[ 5 ] := ' K - Kody ˜wiadczeä i przerw    '
 
    RETURN '15,4'
 
@@ -2040,6 +2054,22 @@ FUNCTION _bhb()
 FUNCTION _bhc()
 
    Param_PRycz()
+
+   RETURN ''
+
+*******************************************
+// Rodzaje nieobecno˜ci / kod zus
+FUNCTION _bhd()
+
+   Param_PNieobKodZUS()
+
+   RETURN ''
+
+*******************************************
+// Kody swiadczenia lub przerwy
+FUNCTION _bhe()
+
+   Param_PZUSKodyNieob()
 
    RETURN ''
 

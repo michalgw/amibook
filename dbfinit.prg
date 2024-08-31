@@ -759,7 +759,9 @@ public aNIEOBECdbf := {;
    { "DDOD", "N", 2, 0 },;                        //   6
    { "DDDO", "N", 2, 0 },;                        //   7
    { "PRZYCZYNA", "C", 15, 0 },;                  //   8
-   { "PLATNE", "L", 1, 0 } }                      //   9
+   { "PLATNE", "L", 1, 0 },;                      //   9
+   { "KODZUS", "C", 3, 0 } }                      //   10
+
 
 // Create: NOTES.DBF
 public aNOTESdbf := {;
@@ -1622,7 +1624,6 @@ public aTRESCdbf := {;
    { "SALPRGID", "C", 64, 0 },;                   //   12   Saldeo company_program_id
    { "SALSALID", "C", 64, 0 } }                   //   13   Saldeo saldeo id
 
-
 // Create: TRESC.DBF
 public aTRESCKORdbf := {;
    { "ID", "+", 4, 0 },;                          //   1
@@ -1809,6 +1810,11 @@ public aZALICZKIdbf := {;
    { "KWOTA", "N", 8, 2 },;                       //   6
    { "DATA_WYP", "D", 8, 0 } }                    //   7
 
+public aZUSKODNIEdbf := {;
+   { "ID", "+", 4, 0 },;                          //   1
+   { "KOD", "C", 3, 0 },;                         //   2
+   { "NAZWA", "C", 74, 0 } }                      //   3
+
 public TabliceDbf := {;
    { "amort",    "amort.dbf",    aAMORTdbf,    .T. },;
    { "dane_mc",  "dane_mc.dbf",  aDANE_MCdbf,  .T. },;
@@ -1873,7 +1879,8 @@ public TabliceDbf := {;
    { "viudokor", "viudokor.dbf", aVIUDOKORdbf, .T. },;
    { "wyplaty",  "wyplaty.dbf",  aWYPLATYdbf,  .T. },;
    { "wyposaz",  "wyposaz.dbf",  aWYPOSAZdbf,  .T. },;
-   { "zaliczki", "zaliczki.dbf", aZALICZKIdbf, .T. } }
+   { "zaliczki", "zaliczki.dbf", aZALICZKIdbf, .T. },;
+   { "zuskodnie","zuskodnie.dbf",aZUSKODNIEdbf,.T. } }
 
    RETURN
 
@@ -2319,6 +2326,13 @@ FUNCTION dbfIdxVIUDOKOR()
    enddo
    pack
    index on firma + kwartal + kraj + rokkor + kwartkor to viudokor
+   RETURN
+****************************************
+FUNCTION dbfIdxZUSKODNIE()
+   do while.not.dostepex('ZUSKODNIE')
+   enddo
+   pack
+   index on kod TO zuskodnie
    RETURN
 
 /*----------------------------------------------------------------------*/

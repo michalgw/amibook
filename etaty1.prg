@@ -323,7 +323,7 @@ do while .t.
               rest scre from scr_sklad
          case skladn=2
               save scre to scr_sklad
-              do nieobec
+              Nieobec()
               sele etaty
               rest scre from scr_sklad
          case skladn=3

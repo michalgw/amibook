@@ -1,4 +1,4 @@
-/************************************************************************
+   /************************************************************************
 
 AMi-BOOK
 
@@ -19,6 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
+
+#include "Inkey.ch"
 
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±± PARAM    ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
@@ -679,3 +681,432 @@ FUNCTION Param_PPla_param( cParam, dDataNa )
    RETURN xWartosc
 
 /*----------------------------------------------------------------------*/
+
+PROCEDURE Param_PZUSKodyNieob( lWybor, cKod )
+
+   LOCAL cEkran, cKolor, nTmpWksp, lRes := .F., lZamknij := .F.
+
+   cEkran := SaveScreen()
+   cKolor := ColStd()
+
+   PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top
+   PRIVATE _bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec
+   PRIVATE wiersz,f10,rec,fou,_top_bot
+
+   hb_default( @lWybor, .F. )
+
+   @  1, 47 SAY '          '
+
+   *################################# GRAFIKA ##################################
+   @  3,  0 CLEAR TO 22, 79
+   @  3,  0 SAY 'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»'
+   @  4,  0 SAY 'ºKod³                                                                          º'
+   @  5,  0 SAY 'ºZUS³                 Opis rodzaju ˜wiadczenia lub przerwy                     º'
+   @  6,  0 SAY 'ºÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄº'
+   @  7,  0 SAY 'º   ³                                                                          º'
+   @  8,  0 SAY 'º   ³                                                                          º'
+   @  9,  0 SAY 'º   ³                                                                          º'
+   @ 10,  0 SAY 'º   ³                                                                          º'
+   @ 11,  0 SAY 'º   ³                                                                          º'
+   @ 12,  0 SAY 'º   ³                                                                          º'
+   @ 13,  0 SAY 'º   ³                                                                          º'
+   @ 14,  0 SAY 'º   ³                                                                          º'
+   @ 15,  0 SAY 'º   ³                                                                          º'
+   @ 16,  0 SAY 'º   ³                                                                          º'
+   @ 17,  0 SAY 'º   ³                                                                          º'
+   @ 18,  0 SAY 'º   ³                                                                          º'
+   @ 19,  0 SAY 'º   ³                                                                          º'
+   @ 20,  0 SAY 'º   ³                                                                          º'
+   @ 21,  0 SAY 'ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼'
+   IF lWybor
+      @ 22,  0 SAY '                   Enter - wybierz | Esc - anuluj wyb¢r                         '
+   ELSE
+      @ 22,  0 SAY '                   Ins - dodaj | Del - usuä | M - modyfikuj                     '
+   ENDIF
+
+   *############################### OTWARCIE BAZ ###############################
+   nTmpWksp := Select()
+
+   IF Select( 'ZUSKODNIE' ) == 0
+      DO WHILE.NOT.DostepPro( 'ZUSKODNIE', 'ZUSKODNIE' )
+      ENDDO
+      lZamknij := .T.
+   ELSE
+      dbSelectArea( 'ZUSKODNIE' )
+   ENDIF
+
+   IF HB_ISCHAR( cKod )
+      zuskodnie->( dbSeek( cKod ) )
+   ENDIF
+
+   *################################# OPERACJE #################################
+   *----- parametry ------
+   _row_g := 7
+   _col_l := 1
+   _row_d := 20
+   _col_p := 78
+   _invers := 'i'
+   _curs_l := 0
+   _curs_p := 0
+   IF lWybor
+      _esc := '27,28,13'
+   ELSE
+      _esc := '27,22,48,77,109,7,46,28'
+   ENDIF
+   _top := 'Bof()'
+   _bot := 'Eof()'
+   _stop := ''
+   _sbot := '-'
+   _proc := 'liniaPZUSKodyNieob()'
+   _row := Int( ( _row_g + _row_d ) / 2 )
+   _proc_spe := ''
+   _disp := .T.
+   _cls := ''
+   _top_bot := _top + '.or.' + _bot
+
+   *----------------------
+   kl := 0
+   DO WHILE kl # 27
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      SET COLOR TO
+      _row := wybor( _row )
+      ColStd()
+      kl := LastKey()
+      DO CASE
+      *############################ INSERT/MODYFIKACJA ############################
+      CASE kl == 22 .OR. kl == 48 .OR. _row == -1 .OR. kl == 77 .OR. kl == 109
+         @ 1, 47 SAY '          '
+         ins := ( kl # 77 .AND. kl # 109 ) .OR. &_top_bot
+         IF ins
+            ColStb()
+            center( 23, 'þ                     þ' )
+            ColSta()
+            center( 23, 'W P I S Y W A N I E' )
+            ColStd()
+            RestScreen( _row_g, _col_l, _row_d + 1, _col_p, _cls )
+            wiersz := _row_d
+         ELSE
+            ColStb()
+            center( 23, 'þ                       þ' )
+            ColSta()
+            center( 23, 'M O D Y F I K A C J A' )
+            ColStd()
+            wiersz := _row
+         ENDIF
+         DO WHILE .T.
+            *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
+            IF ins
+               zKOD := '   '
+               zNAZWA := Space( 74 )
+            ELSE
+               zKOD := KOD
+               zNAZWA := NAZWA
+            ENDIF
+
+            *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
+            @ wiersz, 1 GET zKOD  PICTURE "!!!"
+            @ wiersz, 5 GET zNAZWA PICTURE Replicate( 'X', 74 )
+            read_()
+            SET CURSOR OFF
+            IF LastKey() == 27
+               EXIT
+            ENDIF
+
+            *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
+            IF ins
+               DoPAp()
+            ENDIF
+            BlokadaR()
+            repl_( 'KOD', zKOD )
+            repl_( 'NAZWA', zNAZWA )
+            commit_()
+            UNLOCK
+
+            *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
+            _row := Int( ( _row_g + _row_d ) / 2 )
+            IF .NOT. ins
+               EXIT
+            ENDIF
+            @ _row_d, _col_l SAY &_proc
+            Scroll( _row_g, _col_l, _row_d, _col_p, 1 )
+            @ _row_d, _col_l SAY '   ³                                                                          '
+         ENDDO
+         _disp := ins .OR. LastKey() # 27
+         kl := iif( LastKey() == 27 .AND. _row == -1, 27, kl )
+         @ 23, 0
+
+      *################################ KASOWANIE #################################
+      CASE kl == 7 .OR. kl == 46
+         @ 1, 47 SAY '          '
+         ColStb()
+         center( 23, 'þ                   þ' )
+         ColSta()
+         center( 23, 'K A S O W A N I E' )
+         ColStd()
+         _disp := tnesc( '*i', '   Czy skasowa†? (T/N)   ' )
+         if _disp
+            BlokadaR()
+            DELETE
+            UNLOCK
+            SKIP
+            commit_()
+            IF &_bot
+               SKIP -1
+            ENDIF
+         ENDIF
+         @ 23, 0
+
+      *################################### POMOC ##################################
+      CASE kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY '          '
+         declare p[ 20 ]
+         *---------------------------------------
+         p[ 1 ] := '                                                        '
+         p[ 2 ] := '   [' + Chr( 24 ) + '/' + Chr( 25 ) + ']...................poprzednia/nast©pna pozycja  '
+         p[ 3 ] := '   [PgUp/PgDn].............poprzednia/nast©pna strona   '
+         p[ 4 ] := '   [Home/End]..............pierwsza/ostatnia pozycja    '
+         IF lWybor
+            p[ 5 ] := '   [Enter].................wyb¢r pozycji                '
+            p[ 6 ] := '   [Esc]...................wyj˜cie                      '
+            p[ 7 ] := '                                                        '
+         ELSE
+            p[ 5 ] := '   [Ins]...................wpisywanie                   '
+            p[ 6 ] := '   [M].....................modyfikacja pozycji          '
+            p[ 7 ] := '   [Del]...................kasowanie pozycji            '
+            p[ 8 ] := '   [Esc]...................wyj˜cie                      '
+            p[ 9 ] := '                                                        '
+         ENDIF
+         *---------------------------------------
+         SET COLOR TO i
+         i := 20
+         j := 24
+         DO WHILE i > 0
+            IF Type( 'p[i]' ) # 'U'
+               center( j, p[ i ] )
+               j := j - 1
+            ENDIF
+            i := i - 1
+         ENDDO
+         SET COLOR TO
+         pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            KEYBOARD Chr( LastKey() )
+         ENDIF
+         RESTORE SCREEN FROM scr_
+         _disp := .F.
+
+      CASE kl == 13 .AND. lWybor
+         lRes := .T.
+         cKod := KOD
+         kl := 27
+
+      ******************** ENDCASE
+      ENDCASE
+   ENDDO
+
+   IF lZamknij
+      zuskodnie->( dbCloseArea() )
+   ENDIF
+   Select( nTmpWksp )
+
+   RestScreen( , , , , cEkran )
+   SetColor( cKolor )
+
+   RETURN lRes
+
+*################################## FUNKCJE #################################
+FUNCTION liniaPZUSKodyNieob()
+
+   RETURN KOD + "³" + NAZWA
+
+***************************************************
+
+PROCEDURE Param_PNieobKodZUS()
+
+   LOCAL bNieobKodZUSPisz := { | |
+      SET COLOR TO w+
+      @  7, 72 SAY parap_kni PICTURE '!!!'
+      @  8, 72 SAY parap_knu PICTURE '!!!'
+      @  9, 72 SAY parap_knc PICTURE '!!!'
+      @ 10, 72 SAY parap_knz PICTURE '!!!'
+      @ 11, 72 SAY parap_kno PICTURE '!!!'
+      @ 12, 72 SAY parap_knw PICTURE '!!!'
+      @ 13, 72 SAY parap_knb PICTURE '!!!'
+      @ 14, 72 SAY parap_knn PICTURE '!!!'
+      @ 15, 72 SAY parap_knm PICTURE '!!!'
+      @ 16, 72 SAY parap_knp PICTURE '!!!'
+      SET COLOR TO
+   }
+   LOCAL Kl, lPBtn := .T.
+   LOCAL bNieobKodZUSWyb := { | cKod, nPole |
+      LOCAL cTmpKod := cKod
+      IF Param_PZUSKodyNieob( .T., @cTmpKod )
+         cKod := cTmpKod
+         GetList[ nPole ]:display()
+      ENDIF
+      KEYBOARD Chr( K_DOWN )
+      RETURN .T.
+   }
+
+   PRIVATE zparap_knu, zparap_knc, zparap_knz, zparap_kno, zparap_knw, zparap_knb, zparap_knn, zparap_knm, zparap_knp
+
+   DO WHILE.NOT.DostepPro( 'ZUSKODNIE', 'ZUSKODNIE' )
+   ENDDO
+
+   IF .NOT. File( 'param_p.mem' )
+      SAVE TO param_p ALL LIKE parap_*
+      RETURN NIL
+   ENDIF
+
+   *################################# GRAFIKA ##################################
+   @  3,42 CLEAR TO 22, 79
+   @  3,42 say 'Domy˜lne kody ˜wiadczenia lub przerwy '
+   @  4,42 say 'dla przyczyny nieobecno˜ci            '
+   @  5,42 say 'ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ'
+   @  6,42 say 'Przyczyna nieobecno˜ci      Kod ZUS   '
+   @  7,42 say ' I.  Inne url.(okol)..........        '
+   @  8,42 say ' U.  Urlop wypoczynk..........        '
+   @  9,42 say ' C.  Choroba (L-4)............        '
+   @ 10,42 say ' Z.  Zawod.chor,itp...........        '
+   @ 11,42 say ' O.  Opieka...................        '
+   @ 12,42 say ' W.  Wychowawczy url..........        '
+   @ 13,42 say ' B.  Bezplatny urlop..........        '
+   @ 14,42 say ' N.  NN.......................        '
+   @ 15,42 say ' M.  Macierzynski ur..........        '
+   @ 16,42 say ' P.  Plat.zas.chor............        '
+   /*
+   ColInf()
+   @  7,43 say 'I'
+   @  8,43 say 'U'
+   @  9,43 say 'C'
+   @ 10,43 say 'Z'
+   @ 11,43 say 'O'
+   @ 12,43 say 'W'
+   @ 13,43 say 'B'
+   @ 14,43 say 'N'
+   @ 15,43 say 'M'
+   @ 16,43 say 'P'
+   */
+   *################################# OPERACJE #################################
+
+   Eval( bNieobKodZUSPisz )
+
+   Kl := 0
+   DO WHILE kl # 27
+      ColSta()
+      @ 1, 47 SAY '[F1]-pomoc'
+      ColStd()
+      Kl := Inkey( 0 )
+      DO CASE
+      *############################### MODYFIKACJA ################################
+      CASE kl == 109 .OR. kl == 77
+         @ 1,47 say '          '
+         ColStb()
+         center( 23, 'þ                       þ' )
+         ColSta()
+         center( 23, 'M O D Y F I K A C J A' )
+         ColStd()
+         BEGIN SEQUENCE
+            *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
+            zparap_kni := parap_kni
+            zparap_knu := parap_knu
+            zparap_knc := parap_knc
+            zparap_knz := parap_knz
+            zparap_kno := parap_kno
+            zparap_knw := parap_knw
+            zparap_knb := parap_knb
+            zparap_knn := parap_knn
+            zparap_knm := parap_knm
+            zparap_knp := parap_knp
+
+            *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
+            @  7, 72 GET zparap_kni PICTURE '!!!'
+            @  7, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_kni, 1 ) } STYLE ""
+            @  8, 72 GET zparap_knu PICTURE '!!!'
+            @  8, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_knu, 3 ) } STYLE ""
+            @  9, 72 GET zparap_knc PICTURE '!!!'
+            @  9, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_knc, 5 ) } STYLE ""
+            @ 10, 72 GET zparap_knz PICTURE '!!!'
+            @ 10, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_knz, 7 ) } STYLE ""
+            @ 11, 72 GET zparap_kno PICTURE '!!!'
+            @ 11, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_kno, 9 ) } STYLE ""
+            @ 12, 72 GET zparap_knw PICTURE '!!!'
+            @ 12, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_knw, 11 ) } STYLE ""
+            @ 13, 72 GET zparap_knb PICTURE '!!!'
+            @ 13, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_knb, 13 ) } STYLE ""
+            @ 14, 72 GET zparap_knn PICTURE '!!!'
+            @ 14, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_knn, 15 ) } STYLE ""
+            @ 15, 72 GET zparap_knm PICTURE '!!!'
+            @ 15, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_knm, 17 ) } STYLE ""
+            @ 16, 72 GET zparap_knp PICTURE '!!!'
+            @ 16, 75 GET lPBtn PUSHBUTTON CAPTION Chr( 31 ) STATE { || Eval( bNieobKodZUSWyb, @zparap_knp, 19 ) } STYLE ""
+
+            @ 18, 58 GET lPBtn PUSHBUTTON CAPTION "Zapisz" STATE { || ReadKill( .T. ) }
+            @ 18, 68 GET lPBtn PUSHBUTTON CAPTION "Anuluj" STATE { || __Keyboard( Chr( K_ESC ) ) }
+
+            ****************************
+            CLEAR TYPEAHEAD
+            read_()
+            @ 7, 75 CLEAR TO 16, 76
+            @ 18, 58 CLEAR TO 18, 79
+            IF LastKey() == 27
+               BREAK
+            ENDIF
+
+            parap_kni := zparap_kni
+            parap_knu := zparap_knu
+            parap_knc := zparap_knc
+            parap_knz := zparap_knz
+            parap_kno := zparap_kno
+            parap_knw := zparap_knw
+            parap_knb := zparap_knb
+            parap_knn := zparap_knn
+            parap_knm := zparap_knm
+            parap_knp := zparap_knp
+
+            SAVE TO param_p ALL LIKE parap_*
+            *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
+         END
+         Eval( bNieobKodZUSPisz )
+         @ 23,0
+
+      *################################### POMOC ##################################
+      CASE Kl == 28
+         SAVE SCREEN TO scr_
+         @ 1, 47 SAY '          '
+         DECLARE p[ 20 ]
+         *---------------------------------------
+         p[ 1 ] := '                                                      '
+         p[ 2 ] := '     [M]...............modyfikacja                    '
+         p[ 3 ] := '     [Esc].............wyj˜cie                        '
+         p[ 4 ] := '                                                      '
+         *---------------------------------------
+         SET COLOR TO i
+         i := 20
+         j := 24
+         DO WHILE i > 0
+            IF Type( 'p[i]' ) # 'U'
+               center( j, p[ i ] )
+               j := j - 1
+            ENDIF
+            i := i - 1
+         ENDDO
+         ColStd()
+         pause( 0 )
+         IF LastKey() # 27 .AND. LastKey() # 28
+            KEYBOARD Chr( LastKey() )
+         ENDIF
+         RESTORE SCREEN FROM scr_
+
+      ******************** ENDCASE
+      ENDCASE
+   ENDDO
+
+   zuskodnie->( dbCloseArea() )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
