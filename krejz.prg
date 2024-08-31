@@ -28,10 +28,11 @@ PROCEDURE KRejZ()
    LOCAL nImpMenu
 
    PRIVATE oGetWAR2, oGetVAT2, oGetWAR7, oGetVAT7, oGetWAR12, oGetVAT12, oGetWAR22, oGetVAT22, lBlokuj := .F.
-   PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE, fDETALISTA, oGetRodzDow, oGetSekCV7
+   PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE, fDETALISTA, oGetRodzDow, oGetSekCV7, oGetKOLUMNA
    PRIVATE nOrgW2, nOrgW7, nOrgW12, nOrgW22, zRODZDOW, cScrRodzDow
    PRIVATE zK16OPIS, zKOL47, zKOL48, zKOL49, zKOL50, nWartoscNetto, zVATMARZA
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou
+   PRIVATE cOstSymbRej
 
    fDETALISTA := DETALISTA
 
@@ -493,7 +494,7 @@ PROCEDURE KRejZ()
             //@  4, 60 SAY 'Nr ident.'
             ColStd()
             @  3, 20 GET zDZIEN PICTURE "99" WHEN WERSJA4 == .T. .OR. ins VALID v1_1z()
-            @  3, 38 GET zSYMB_REJ PICTURE "!!" VALID v11_1z()
+            @  3, 38 GET zSYMB_REJ PICTURE "!!" WHEN w11_1z() VALID v11_1z()
             oGetSYMB_REJ := ATail( GetList )
             @  3, 59 GET zNUMER PICTURE "@S20 " + repl( '!', 100 ) VALID v1_2z()
             @  4, 29 SAY Space( 20 )
@@ -570,6 +571,7 @@ PROCEDURE KRejZ()
                @ 21, 14 GET zDATAKS PICTURE '@D' WHEN w1_6kz( zKOREKTA == 'T' ) VALID v1_6kz()
                @ 21, 29 GET zNETTO PICTURE  FPIC WHEN SUMNETz() VALID vSUMNETz()
                @ 21, 47 GET zKOLUMNA PICTURE '99' WHEN wKOLz() VALID vKOLz()
+               oGetKOLUMNA := ATail( GetList )
                @ 21, 55 GET zNETTO2 PICTURE  FPIC WHEN zNETTO <> 0 .AND. KRejZWNetto2() VALID vSUMNETz2()
                @ 21, 73 GET zKOLUMNA2 PICTURE '99' WHEN wKOLz2() VALID vKOLz2()
             endif
@@ -1121,8 +1123,30 @@ FUNCTION v1_1z()
    RETURN .T.
 
 ***************************************************
+
+FUNCTION w11_1z()
+
+   cOstSymbRej := zSYMB_REJ
+
+   RETURN .T.
+
+***************************************************
 FUNCTION V11_1z()
 ***************************************************
+
+   IF ins .AND. ( cOstSymbRej <> zSYMB_REJ )
+      zRODZDOW := Space( 6 )
+      oGetRodzDow:display()
+      zOPCJE := ' '
+      oGetOpcje:display()
+      zSEK_CV7 := '  '
+      oGetSekCV7:display()
+      IF zRYCZALT <> 'T'
+         zKOLUMNA := '  '
+         oGetKOLUMNA:display()
+      ENDIF
+   ENDIF
+
    SAVE SCREEN TO scr2
    SELECT 7
    DO WHILE ! Dostep( 'KAT_ZAK' )
@@ -1138,6 +1162,19 @@ FUNCTION V11_1z()
       IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
          zSYMB_REJ := SYMB_REJ
 
+         IF ins .AND. ( cOstSymbRej <> zSYMB_REJ )
+            zRODZDOW := Space( 6 )
+            oGetRodzDow:display()
+            zOPCJE := ' '
+            oGetOpcje:display()
+            zSEK_CV7 := '  '
+            oGetSekCV7:display()
+            IF zRYCZALT <> 'T'
+               zKOLUMNA := '  '
+               oGetKOLUMNA:display()
+            ENDIF
+         ENDIF
+
          IF ( Empty( zRODZDOW ) .OR. ins ) .AND. ! Empty( kat_zak->rodzdow )
             zRODZDOW := kat_zak->rodzdow
             oGetRodzDow:display()
@@ -1149,6 +1186,10 @@ FUNCTION V11_1z()
          IF ( Empty( zSEK_CV7 ) .OR. ins ) .AND. ! Empty( kat_zak->sek_cv7 )
             zSEK_CV7 := kat_zak->sek_cv7
             oGetSekCV7:display()
+         ENDIF
+         IF zRYCZALT <> 'T' .AND. ( Empty( zKOLUMNA ) .OR. ins ) .AND. ! Empty( kat_zak->kolumna )
+            zKOLUMNA := kat_zak->kolumna
+            oGetKOLUMNA:display()
          ENDIF
 
          SET COLOR TO i
