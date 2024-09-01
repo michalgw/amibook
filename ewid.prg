@@ -431,18 +431,19 @@ FUNCTION Ewid()
 
                   ENDCASE
 
-                  @  7, 1 TO 22, 39
-                  @  8, 2 PROMPT ' 4 - PIT-4R   (13)                   '
-                  @  9, 2 PROMPT ' 8 - PIT-8AR  (13)                   '
-                  @ 10, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
-                  @ 11, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
-                  @ 12, 2 PROMPT verdekold
-                  @ 13, 2 PROMPT ' U - VAT-UE   (5)                    '
-                  @ 14, 2 PROMPT ' I - IFT-2/2R (10)                   '
-                  @ 15, 2 PROMPT ' V - VIU-DO   (2)                    '
-                  @ 16, 2 TO 16, 38
-                  @ 17, 2 PROMPT ' C - RCA raport imienny              '
-                  @ 18, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '
+                  @  6, 1 TO 22, 39
+                  @  7, 2 PROMPT ' 4 - PIT-4R   (13)                   '
+                  @  8, 2 PROMPT ' 8 - PIT-8AR  (13)                   '
+                  @  9, 2 PROMPT ' 5 - raporty z obl.podatku dochodow. '
+                  @ 10, 2 PROMPT ' S - sumy do zeznania pod.dochodowego'
+                  @ 11, 2 PROMPT verdekold
+                  @ 12, 2 PROMPT ' U - VAT-UE   (5)                    '
+                  @ 13, 2 PROMPT ' I - IFT-2/2R (10)                   '
+                  @ 14, 2 PROMPT ' V - VIU-DO   (2)                    '
+                  @ 15, 2 TO 15, 38
+                  @ 16, 2 PROMPT ' C - RCA raport imienny              '
+                  @ 17, 2 PROMPT ' Z - RZA raport imienny (zdrowot.)   '
+                  @ 18, 2 PROMPT ' R - RSA raport imienny              '
                   @ 19, 2 PROMPT ' D - DRA deklaracja rozliczeniowa    '
                   @ 20, 2 TO 20, 38
                   @ 21, 2 PROMPT ' P - PPK deklaracja wpˆaty           '
@@ -577,6 +578,9 @@ FUNCTION Ewid()
                         RESTORE SCREEN FROM ROBSO11
 
                      CASE opcja1 == 11
+                        ZusRSA()
+
+                     CASE opcja1 == 12
                         opcja11 := 1
                         SAVE SCREEN TO ROBSO111
                         DO WHILE .T.
@@ -608,7 +612,7 @@ FUNCTION Ewid()
                         ENDDO
                         RESTORE SCREEN FROM ROBSO11
 
-                     CASE opcja1 == 12
+                     CASE opcja1 == 13
                         opcja11 := MenuEx( 19, 6, { "S - Deklaracja skˆadki", "K - Korekta skˆadki" } )
                         DO CASE
                         CASE opcja11 == 1

@@ -133,6 +133,8 @@ PROCEDURE KEDU_RAPO( plik_k )
       symfor := 'DRA'
    CASE SubStr( plik_k, 5, 1 ) = 'A'
       symfor := 'RZA'
+   CASE SubStr( plik_k, 5, 1 ) = 'B'
+      symfor := 'RSA'
    OTHERWISE
       symfor := ''
    ENDCASE
@@ -2716,7 +2718,35 @@ PROCEDURE ZUS_DataUtworzenia( cSekcja, cPole, dData )
 
 /*----------------------------------------------------------------------*/
 
+PROCEDURE DDORSA( cNazwisko, cImie, cTypID, cNrID, cKodTytuluUb, cKodNieob, dDataOd, dDataDo, nNumer )
 
+   LOCAL cTmp
+
+   IF paraz_wer == 2
+
+      ? '<III id_bloku="' + AllTrim( Str( nNumer ) ) + '">'
+      ? '  <A>'
+      ? '    <p1>' + str2sxml( cNazwisko ) + '</p1>'
+      ? '    <p2>' + str2sxml( cImie ) + '</p2>'
+      ? '    <p3>' + cTypID + '</p3>'
+      ? '    <p4>' + AllTrim( cNrID ) + '</p4>'
+      ? '  </A>'
+      ? '  <B>'
+      IF ( cTmp := ZUS_KodTytulu( cKodTytuluUb ) ) <> ""
+         ? '    <p1>' + cTmp + '</p1>'
+      ENDIF
+      ? '    <p1>' + ZUS_KodTytulu( cKodTytuluUb ) + '</p1>'
+      ? '    <p2>' + cKodNieob + '</p2>'
+      ? '    <p3>' + date2strxml( dDataOd ) + '</p3>'
+      ? '    <p4>' + date2strxml( dDataDo ) + '</p4>'
+      ? '  </B>'
+      ? '</III>'
+
+   ENDIF
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
 
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
 *±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±± K O N I E C ±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
