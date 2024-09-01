@@ -2735,7 +2735,6 @@ PROCEDURE DDORSA( cNazwisko, cImie, cTypID, cNrID, cKodTytuluUb, cKodNieob, dDat
       IF ( cTmp := ZUS_KodTytulu( cKodTytuluUb ) ) <> ""
          ? '    <p1>' + cTmp + '</p1>'
       ENDIF
-      ? '    <p1>' + ZUS_KodTytulu( cKodTytuluUb ) + '</p1>'
       ? '    <p2>' + cKodNieob + '</p2>'
       ? '    <p3>' + date2strxml( dDataOd ) + '</p3>'
       ? '    <p4>' + date2strxml( dDataDo ) + '</p4>'
