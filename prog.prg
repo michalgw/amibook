@@ -205,6 +205,7 @@ FUNCTION Main()
    param_ksnd := 'N'
    param_kskw := 'N'
    param_ksv7 := 'T'
+   param_kssr := 'T'
 
    //Bufor wydruku
    PUBLIC buforDruku := '', kodStartDruku := ''

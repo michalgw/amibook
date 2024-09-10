@@ -322,7 +322,9 @@ PROCEDURE KRejZ()
                *@ 13,57 clear to 19,79
 */
                zDZIEN := '  '
-               zSYMB_REJ := '  '
+               IF param_kssr == 'N'
+                  zSYMB_REJ := '  '
+               ENDIF
                znazwa := Space( 200 )
                zNR_IDENT := Space( 30 )
                zNUMER := Space( 97 )

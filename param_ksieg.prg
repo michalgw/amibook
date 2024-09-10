@@ -49,8 +49,8 @@ FUNCTION menuKonfigKsiega()
    @ 18,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
    @ 19,42 say ' Odliczanie kwoty wolnej po przekr.   '
    @ 20,42 say ' progu (Tak/Nie)                      '
-   @ 21,42 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-   @ 22,42 say ' Obsˆuga p¢l JPK_V7 (Tak/Nie)         '
+   @ 21,42 say ' Obsˆuga p¢l JPK_V7 (Tak/Nie)         '
+   @ 22,42 say ' Pami©taj ostani symb. rej.(T/N)      '
    menuKonfigKsiegaPokaz()
    kl=0
    DO WHILE kl#27
@@ -74,13 +74,15 @@ FUNCTION menuKonfigKsiega()
                  zparam_ksnd := param_ksnd
                  zparam_kskw := param_kskw
                  zparam_ksv7 := param_ksv7
+                 zparam_kssr := param_kssr
                  *ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ GET ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ
                  @  3, 76 get zparam_ks5v PICTURE '!' VALID menuKonfigKsiegaPolKS5V()
                  @  9, 76 get zparam_ks5d PICTURE '!' VALID menuKonfigKsiegaPolKS5D()
                  @ 14, 62 get zparam_kslp PICTURE '!' VALID menuKonfigKsiegaPolKSLP()
                  @ 17, 74 get zparam_ksnd PICTURE '!' VALID menuKonfigKsiegaPolKSND()
                  @ 20, 72 get zparam_kskw PICTURE '!' VALID menuKonfigKsiegaPolKSKW()
-                 @ 22, 72 get zparam_ksv7 PICTURE '!' VALID menuKonfigKsiegaPolKSV7()
+                 @ 21, 72 get zparam_ksv7 PICTURE '!' VALID menuKonfigKsiegaPolKSV7()
+                 @ 22, 75 get zparam_kssr PICTURE '!' VALID menuKonfigKsiegaPolKSSR()
                  ****************************
                  clear type
                  read_()
@@ -94,6 +96,7 @@ FUNCTION menuKonfigKsiega()
                  param_ksnd := zparam_ksnd
                  param_kskw := zparam_kskw
                  param_ksv7 := zparam_ksv7
+                 param_kssr := zparam_kssr
                  save TO parksg all like param_ks*
                  SWITCH param_kslp
                  CASE '1'
@@ -206,7 +209,8 @@ PROCEDURE menuKonfigKsiegaPokaz()
    @  9, 76 SAY param_ks5d
    @ 17, 74 SAY param_ksnd
    @ 20, 72 SAY iif(param_kskw == 'T', 'Tak', 'Nie')
-   @ 22, 72 SAY iif(param_ksv7 == 'T', 'Tak', 'Nie')
+   @ 21, 72 SAY iif(param_ksv7 == 'T', 'Tak', 'Nie')
+   @ 22, 75 SAY iif(param_kssr == 'T', 'Tak', 'Nie')
    SWITCH param_kslp
    CASE '1'
       @ 14, 62 SAY '1 - Nr dok./Dzieä'
@@ -256,7 +260,20 @@ FUNCTION menuKonfigKsiegaPolKSV7()
          zparam_ksv7 = param_ksv7
          RETURN .F.
       ENDIF
-   @ 22, 73 SAY iif(zparam_ksv7 == 'T', 'ak', 'ie')
+   @ 21, 73 SAY iif(zparam_ksv7 == 'T', 'ak', 'ie')
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION menuKonfigKsiegaPolKSSR()
+   IF LastKey()=5
+      RETURN .T.
+   ENDIF
+      IF !zparam_kssr$'TN'
+         zparam_kssr = param_kssr
+         RETURN .F.
+      ENDIF
+   @ 22, 76 SAY iif(zparam_kssr == 'T', 'ak', 'ie')
    RETURN .T.
 
 /*----------------------------------------------------------------------*/
