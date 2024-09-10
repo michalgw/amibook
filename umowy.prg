@@ -612,6 +612,9 @@ PROCEDURE Umowy()
                READ
                SET CURSOR OFF
                RESTORE SCREEN FROM scr_sklad
+               IF zWAR_PSUM <> 0 .AND. Empty( zKOD_TYTU )
+                  Alert( "Brak kodu tytuˆu ubezpieczenia.;Deklaracja nie zostanie zaimportowana do programu Pˆatnika", , CColInf )
+               ENDIF
             CASE skladn == 4
                SAVE SCREEN TO scr_sklad
                SET CURSOR ON

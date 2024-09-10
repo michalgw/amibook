@@ -202,9 +202,13 @@ PROCEDURE ZusRca( ubezp )
 
          IF umowy->war_psum <> 0 .OR. umowy->war_fsum <> 0 .OR. umowy->war_ffp <> 0 .OR. umowy->war_ffg <> 0 .OR. umowy->war_puz <> 0
 
-            prac->( dbSeek( Val( umowy->ident ) ) )
+            prac->( dbSeek( ident_fir + umowy->ident ) )
 
             IF prac->( Found() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
+
+               IF Empty( umowy->kod_tytu )
+                  Alert( "Umowa nr " + AllTrim( umowy->numer ) + " nie posiada kodu tytuˆu ubezpieczenia.;Deklaracja nie zostanie zaimportowana do programu Pˆatnika", , CColInf )
+               ENDIF
 
                cPozIdent := umowy->ident + umowy->kod_tytu
 
@@ -500,6 +504,10 @@ PROCEDURE ZusRca( ubezp )
             prac->( dbSeek( ident_fir + umowy->ident ) )
 
             IF prac->( Found() ) .AND. prac->del == '+' .AND. prac->firma == ident_fir
+
+               IF Empty( umowy->kod_tytu )
+                  Alert( "Umowa nr " + AllTrim( umowy->numer ) + " nie posiada kodu tytuˆu ubezpieczenia.;Deklaracja nie zostanie zaimportowana do programu Pˆatnika", , CColInf )
+               ENDIF
 
                cPozIdent := umowy->ident + umowy->kod_tytu
 
