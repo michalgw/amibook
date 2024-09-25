@@ -330,7 +330,7 @@ PROCEDURE Pracow()
                SET ORDER TO 6
                Blokada()
                GO BOTTOM
-               IDPR := id + 1
+               IDPR := rec_no + 1
                SET ORDER TO 1
                app()
                repl_( 'FIRMA', IDENT_FIR )
