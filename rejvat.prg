@@ -1575,8 +1575,8 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
          .OR. ( At( "MR_UZ", rejs->procedur ) > 0 .AND. ( rejs->wartzw < 0 .OR. ;
          rejs->wart08 < 0 ) .AND. rejs->korekta <> 'T' )
 
-         aRow[ 'netto_zw' ] := rejs->wartzw
-         aRow[ 'netto_np' ] := rejs->wart08
+         aRow[ 'netto_zw' ] := 0
+         aRow[ 'netto_np' ] := 0
       ELSE
          aRow[ 'netto_zw' ] := rejs->wartzw
          aRow[ 'netto_np' ] := rejs->wart08
