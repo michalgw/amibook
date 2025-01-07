@@ -1032,7 +1032,8 @@ public aPROFILdbf := { ;
    { "MARGINL", "N", 5, 0 }, ;                    //   5
    { "MARGINP", "N", 5, 0 }, ;                    //   6
    { "MARGING", "N", 5, 0 }, ;                    //   7
-   { "MARGIND", "N", 5, 0 } }                     //   8
+   { "MARGIND", "N", 5, 0 }, ;                    //   8
+   { "TYPRAP", "C", 1, 0 } }                      //   9
 
 // Create: PRZELEWY.DBF
 public aPRZELEWYdbf := {;
@@ -1638,7 +1639,7 @@ public aUMOWYdbf := {;
    { "DEL", "C", 1, 0 },;                         //  2
    { "FIRMA", "C", 3, 0 },;                       //  3
    { "IDENT", "C", 5, 0 },;                       //  4
-   { "NUMER", "C", 5, 0 },;                       //  5
+   { "NUMER", "C", 45, 0 },;                      //  5
    { "DATA_UMOWY", "D", 8, 0 },;                  //  6
    { "TEMAT1", "C", 70, 0 },;                     //  7
    { "TEMAT2", "C", 70, 0 },;                     //  8
