@@ -70,7 +70,7 @@ do while .not.&_koniec
    *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
 *  set century off
    k1=dtoc(data_wyp)
-   k2=numer
+   k2= SubStr( numer, 1, 5 )
    k3=dtoc(data_umowy)
 *  set century on
    W1=brut_razem

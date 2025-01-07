@@ -244,7 +244,7 @@ PROCEDURE Umowy()
                PodstawU()
             ELSEIF ins
                zIDENT := Space( 5 )
-               zNUMER := Space( 8 )
+               zNUMER := Space( 45 )
                zDATA_UMOWY := CToD( '    .  .  ' )
                zTEMAT1 := Space( 70 )
                zTEMAT2 := Space( 70 )
@@ -316,7 +316,7 @@ PROCEDURE Umowy()
 
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
             @ wiersz, 1  GET zDATA_UMOWY
-            @ wiersz, 12 GET zNUMER PICTURE "XXXXX"
+            @ wiersz, 12 GET zNUMER PICTURE "@S5 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
             @ wiersz, 18 GET zTERMIN
             @ wiersz, 29 GET zDATA_RACH
             @ wiersz, 40 GET zDATA_WYP
@@ -979,7 +979,7 @@ PROCEDURE TRANTEK()
 
 *################################## FUNKCJE #################################
 FUNCTION say41()
-   RETURN DToC( DATA_UMOWY ) + '³' + NUMER + '³' + DToC( TERMIN ) + '³' + DToC( DATA_RACH ) + '³' + DToC( DATA_WYP ) + '³' + SubStr( TEMAT1, 1, 28 )
+   RETURN DToC( DATA_UMOWY ) + '³' + SubStr( NUMER, 1, 5 ) + '³' + DToC( TERMIN ) + '³' + DToC( DATA_RACH ) + '³' + DToC( DATA_WYP ) + '³' + SubStr( TEMAT1, 1, 28 )
 
 *############################################################################
 PROCEDURE say41s()

@@ -323,7 +323,7 @@ PROCEDURE UmowySum()
                typ := UmowySumKodujTytul( tytul )
                //002a do tad
                k6 := Str( Month( &fdat1 ), 2 )
-               k7 := numer
+               k7 := SubStr( numer, 1, 5 )
                k8 := DToC( &fdat1 )
                k9 := DToC( &fdat2 )
                k10 := brut_razem
