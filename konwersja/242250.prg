@@ -29,7 +29,7 @@ FUNCTION Main()
 
    dbfInicjujDane()
 
-   IF wersja_db < 2500
+   IF wersja_db < 2430
 
       ? 'Aktualizacja struktury danych...'
       dbfUtworzTabele( 'UMOWY', 'umowy.tym' )
@@ -41,7 +41,7 @@ FUNCTION Main()
       dbfIdxUMOWY()
       dbCloseAll()
 
-      wersja_db := 2500
+      wersja_db := 2430
       SAVE ALL LIKE wersja_db TO wersjadb
 
    ENDIF
