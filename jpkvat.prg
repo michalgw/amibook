@@ -22,6 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "inkey.ch"
 #include "box.ch"
+#include "hbcompat.ch"
 
 PROCEDURE JPK_VAT_Rob()
    LOCAL nFirma, nMiesiacPocz, nMiesiacKon
@@ -1027,56 +1028,60 @@ FUNCTION VAT_InfoSum( nRaport, nFirma, nMiesiac )
          RETURN
       ENDIF
 
-      oRap := TFreeReport():New()
+      TRY
+         oRap := FRUtworzRaport()
 
-      SWITCH nRaport
-      CASE 1
-         oRap:LoadFromFile( 'frf\infovats.frf' )
-         EXIT
-      CASE 2
-         oRap:LoadFromFile( 'frf\infovat.frf' )
-         EXIT
-      ENDSWITCH
+         SWITCH nRaport
+         CASE 1
+            oRap:LoadFromFile( 'frf\infovats.frf' )
+            EXIT
+         CASE 2
+            oRap:LoadFromFile( 'frf\infovat.frf' )
+            EXIT
+         ENDSWITCH
 
-      IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-         oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-      ENDIF
-
-      FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-         hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
-
-      oRap:AddValue( 'uzytkownik', code() )
-      oRap:AddValue( 'miesiac', AllTrim( miesiac( nMiesiac ) ) )
-      oRap:AddValue( 'rok', param_rok )
-      oRap:AddValue( 'firma', AllTrim( aDane[ 'PelnaNazwa' ] ) + ' - ' + AllTrim( aDane[ 'NIP' ] ) )
-
-      hb_HEval( aDane, { | cKey, xValue |
-         IF ValType( cKey ) == 'C' .AND. ValType( xValue ) $ 'CNLDTM'
-            oRap:AddValue( cKey, xValue )
+         IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+            oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
          ENDIF
-      } )
 
-      oRap:AddDataset( 'sprzedaz' )
-      AEval(aDane[ 'sprzedaz' ], { | aPoz | oRap:AddRow( 'sprzedaz', aPoz ) } )
+         FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+            hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
 
-      oRap:AddDataset( 'zakup' )
-      AEval( aDane[ 'zakup' ], { | aPoz | oRap:AddRow( 'zakup', aPoz ) } )
+         oRap:AddValue( 'uzytkownik', code() )
+         oRap:AddValue( 'miesiac', AllTrim( miesiac( nMiesiac ) ) )
+         oRap:AddValue( 'rok', param_rok )
+         oRap:AddValue( 'firma', AllTrim( aDane[ 'PelnaNazwa' ] ) + ' - ' + AllTrim( aDane[ 'NIP' ] ) )
 
-      oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-      oRap:ModalPreview := .F.
+         hb_HEval( aDane, { | cKey, xValue |
+            IF ValType( cKey ) == 'C' .AND. ValType( xValue ) $ 'CNLDTM'
+               oRap:AddValue( cKey, xValue )
+            ENDIF
+         } )
 
-      SWITCH nMonDruk
-      CASE 1
-         oRap:ShowReport()
-         EXIT
-      CASE 2
-         oRap:PrepareReport()
-         oRap:PrintPreparedReport('', 1)
-         EXIT
-      CASE 3
-         oRap:DesignReport()
-         EXIT
-      ENDSWITCH
+         oRap:AddDataset( 'sprzedaz' )
+         AEval(aDane[ 'sprzedaz' ], { | aPoz | oRap:AddRow( 'sprzedaz', aPoz ) } )
+
+         oRap:AddDataset( 'zakup' )
+         AEval( aDane[ 'zakup' ], { | aPoz | oRap:AddRow( 'zakup', aPoz ) } )
+
+         oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+         oRap:ModalPreview := .F.
+
+         SWITCH nMonDruk
+         CASE 1
+            oRap:ShowReport()
+            EXIT
+         CASE 2
+            oRap:PrepareReport()
+            oRap:PrintPreparedReport('', 1)
+            EXIT
+         CASE 3
+            oRap:DesignReport()
+            EXIT
+         ENDSWITCH
+      CATCH oErr
+         Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+      END
 
       oRap := NIL
 

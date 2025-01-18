@@ -30,12 +30,15 @@
 #-lxhb
 -lhbfr
 -lhbfps
+-lhblr
 #-id:\hb32\contrib\xhb
 #-id:\hb32\contrib\hbwin
 -i${HBFRDIR}\src
 -L${HBFRDIR}\src
 -i${HBFPSDIR}\src
 -L${HBFPSDIR}\src
+-i${HBLRDIR}\src
+-L${HBLRDIR}\src
 #-a
 -b
 #-w3

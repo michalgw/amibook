@@ -22,8 +22,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION paramDrukGraf()
 
-   LOCAL zdrukarka, zmarginl, zmarginp, zmarging, zmargind
+   LOCAL zdrukarka, zmarginl, zmarginp, zmarging, zmargind, ztyprap
    LOCAL aListaDrukarek := win_printerList()
+   LOCAL bTypRapValid := { ||
+      LOCAL lValid := ztyprap # 'FL'
+      LOCAL cKolor
+      IF lValid
+         cKolor := SetColor()
+         SET COLOR TO W+
+         @ 10, 69 SAY iif( ztyprap == 'L', 'azReport ', 'astReport' )
+         SetColor( cKolor )
+      ENDIF
+   }
 
       ColSta()
       @  2,42 say 'ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ'
@@ -35,9 +45,9 @@ FUNCTION paramDrukGraf()
       @  7,42 say '  Lewy              Prawy             '
       @  8,42 say ' G¢rny              Dolny             '
       @  9,42 say 'ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ'
-      @ 10,42 say '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
-      @ 11,42 say '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
-      @ 12,42 say '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
+      @ 10,42 say ' Typ sterownika raport¢w:             '
+      @ 11,42 say ' (F - FastReport, L - LazReport)      '
+      @ 12,42 say 'ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ'
       @ 13,42 say '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
       @ 14,42 say '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
       @ 15,42 say '°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°'
@@ -70,12 +80,14 @@ FUNCTION paramDrukGraf()
                        zmarginp := hProfilUzytkownika[ 'marginp' ]
                        zmarging := hProfilUzytkownika[ 'marging' ]
                        zmargind := hProfilUzytkownika[ 'margind' ]
+                       ztyprap := iif( hProfilUzytkownika[ 'typrap' ] == ' ', 'F', hProfilUzytkownika[ 'typrap' ] )
                        *ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ GET ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ
                        @  4, 43, 14, 78 GET zdrukarka LISTBOX aListaDrukarek DROPDOWN SCROLLBAR
                        @  7, 49 GET zmarginl PICTURE '9999'
                        @  7, 68 GET zmarginp PICTURE '9999'
                        @  8, 49 GET zmarging PICTURE '9999'
                        @  8, 68 GET zmargind PICTURE '9999'
+                       @ 10, 68 GET ztyprap PICTURE '!' VALID ztyprap # 'FL'
                        ****************************
                        clear type
                        read_()
@@ -88,6 +100,7 @@ FUNCTION paramDrukGraf()
                        hProfilUzytkownika[ 'marginp' ] := zmarginp
                        hProfilUzytkownika[ 'marging' ] := zmarging
                        hProfilUzytkownika[ 'margind' ] := zmargind
+                       hProfilUzytkownika[ 'typrap' ] := ztyprap
 
                        ZapiszProfilUzytkownika()
                  end
@@ -139,6 +152,8 @@ FUNCTION paramDrukGrafPokaz()
       @  7, 68 SAY hProfilUzytkownika[ 'marginp' ] PICTURE '9999'
       @  8, 49 SAY hProfilUzytkownika[ 'marging' ] PICTURE '9999'
       @  8, 68 SAY hProfilUzytkownika[ 'margind' ] PICTURE '9999'
+      @ 10, 68 SAY iif( hProfilUzytkownika[ 'typrap' ] == 'L', 'LazReport ', 'FastReport' )
+
    RETURN
 
 /*----------------------------------------------------------------------*/

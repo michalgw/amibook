@@ -22,6 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #require "xhb"
 #include "hbxml.ch"
+#include "hbcompat.ch"
 
 #include "hbfr.ch"
 
@@ -439,56 +440,61 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       AAdd( aRaporty, { hDane[ 'VATZD' ], cPlikRap } )
    ENDIF
 
-   AEval( aRaporty, { | aPoz |
-      oRap := TFreeReport():New()
-      oRap:LoadFromFile( aPoz[ 2 ] )
+   TRY
+      AEval( aRaporty, { | aPoz |
+         oRap := FRUtworzRaport()
+         oRap:LoadFromFile( aPoz[ 2 ] )
+         IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+            oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+         ENDIF
+         RaportUstawDane( oRap, aPoz[ 1 ] )
+         AAdd( aFRObj, oRap )
+         } )
+
+      IF Len( aFRObj ) > 1
+         oRap := FRUtworzRaport( .T. )
+         AEval( aFRObj, { | oFRO | oRap:AddReport( oFRO ) } )
+         AAdd( aFRObj, oRap )
+         xRaport := aFRObj
+      ELSE
+         xRaport := oRap
+      ENDIF
+
       IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
          oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
       ENDIF
-      RaportUstawDane( oRap, aPoz[ 1 ] )
-      AAdd( aFRObj, oRap )
-      } )
 
-   IF Len( aFRObj ) > 1
-      oRap := TFreeReport():New( .T. )
-      AEval( aFRObj, { | oFRO | oRap:AddReport( oFRO ) } )
-      AAdd( aFRObj, oRap )
-      xRaport := aFRObj
-   ELSE
-      xRaport := oRap
-   ENDIF
+      oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim( Str( DodajRaportDoListy( xRaport ) ) ) + ')'
+      oRap:ModalPreview := .F.
+      oRap:DoublePass := .T.
+      cKolor := ColStd()
+      @ 24, 0
+      @ 24, 26 PROMPT '[ Monitor ]'
+      @ 24, 44 PROMPT '[ Drukarka ]'
+      IF trybSerwisowy
+         @ 24, 70 PROMPT '[ Edytor ]'
+      ENDIF
+      CLEAR TYPE
+      nMenu := Menu(1)
+      IF LastKey() != 27
+         SWITCH nMenu
+         CASE 1
+            oRap:ShowReport()
+            EXIT
+         CASE 2
+            IF oRap:PrepareReport()
+               oRap:PrintPreparedReport('', 1)
+            ENDIF
+            EXIT
+         CASE 3
+            oRap:DesignReport()
+            EXIT
+         ENDSWITCH
+      ENDIF
+   CATCH oErr
+      Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+   END
 
-   IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-      oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-   ENDIF
-
-   oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim( Str( DodajRaportDoListy( xRaport ) ) ) + ')'
-   oRap:ModalPreview := .F.
-   oRap:DoublePass := .T.
-   cKolor := ColStd()
-   @ 24, 0
-   @ 24, 26 PROMPT '[ Monitor ]'
-   @ 24, 44 PROMPT '[ Drukarka ]'
-   IF trybSerwisowy
-      @ 24, 70 PROMPT '[ Edytor ]'
-   ENDIF
-   CLEAR TYPE
-   nMenu := Menu(1)
-   IF LastKey() != 27
-      SWITCH nMenu
-      CASE 1
-         oRap:ShowReport()
-         EXIT
-      CASE 2
-         IF oRap:PrepareReport()
-            oRap:PrintPreparedReport('', 1)
-         ENDIF
-         EXIT
-      CASE 3
-         oRap:DesignReport()
-         EXIT
-      ENDSWITCH
-   ENDIF
    @ 24, 0
    SetColor(cKolor)
 

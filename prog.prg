@@ -184,16 +184,6 @@ FUNCTION Main()
 
    ENDIF
 
-   // tablica przechowujaca obiekty TFreeReport
-   PUBLIC aListaRaportow := {}
-
-   // Inicjowanie biblioteki hbfr.dll - freereport
-   IF !hbfr_LoadLibrary( HBFR_LIB_NAME, .T. )
-      Alert( 'Nie udaˆo si© zaˆadowa† biblioteki hbfr.dll. Sprawd« poprawno˜† instalacji.', { 'Zamknij' } )
-      amiDllZakoncz()
-      CANCEL
-   ENDIF
-
    IF ! WinPrintInit()
       Alert( 'Nie udaˆo si© zaˆadowa† biblioteki libwinprint.dll. Sprawd« poprawno˜† instalacji.;Sterownik wydruku WIN zostaˆ wyˆ¥czony.', { 'OK' } )
    ENDIF
@@ -393,6 +383,25 @@ FUNCTION Main()
    ENDIF
 
    // ---
+
+   // Wczytanie profilu drukarek i uzytkownika
+   WczytajProfileDrukarek()
+   hProfilUzytkownika := WczytajProfilUzytkownika()
+
+   IF hProfilUzytkownika[ 'mysz' ]
+      SET EVENTMASK TO 255
+      mSetCursor( .T. )
+   ENDIF
+
+   // tablica przechowujaca obiekty TFreeReport
+   PUBLIC aListaRaportow := {}
+
+   // Inicjowanie biblioteki hbfr.dll - freereport
+   IF ! FRInicjuj() // hbfr_LoadLibrary( HBFR_LIB_NAME, .T. )
+      Alert( 'Nie udaˆo si© zaˆadowa† biblioteki hb' + iif( hProfilUzytkownika[ 'typrap' ] == 'L', 'l', 'f' ) + 'r.dll. Sprawd« poprawno˜† instalacji.', { 'Zamknij' } )
+      amiDllZakoncz()
+      CANCEL
+   ENDIF
 
    // Ogolne parametry
 
@@ -1040,15 +1049,6 @@ FUNCTION Main()
          RAPTEMP := '_' + StrTran( Time(), ':', '' ) + '_'
          dbCreate( RAPTEMP, { { "LINIA_L", "C", 190, 0 }, { "LINIA_P", "C", 190, 0 } }, "ARRAYRDD" )
       ENDIF
-   ENDIF
-
-   // Wczytanie profilu drukarek i uzytkownika
-   WczytajProfileDrukarek()
-   hProfilUzytkownika := WczytajProfilUzytkownika()
-
-   IF hProfilUzytkownika[ 'mysz' ]
-      SET EVENTMASK TO 255
-      mSetCursor( .T. )
    ENDIF
 
    // Wybrany certyfikat do podpisu edeklaracji

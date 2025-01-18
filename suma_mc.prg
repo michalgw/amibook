@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
 #include "inkey.ch"
+#include "hbcompat.ch"
 
 FUNCTION Suma_MC( lGraficzny )
 
@@ -189,38 +190,43 @@ FUNCTION Suma_MC( lGraficzny )
       if lastkey() == K_ESC
          BREAK
       endif
-      oRap := TFreeReport():New()
-      oRap:LoadFromFile('frf\sumamc.frf')
 
-      IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-         oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-      ENDIF
+      TRY
+         oRap := FRUtworzRaport()
+         oRap:LoadFromFile('frf\sumamc.frf')
 
-      FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-         hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+         IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+            oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+         ENDIF
 
-      oRap:AddValue('uzytkownik', code())
-      oRap:AddValue('rok', param_rok)
-      oRap:AddValue('firma', scal( AllTrim( firma->nazwa ) + ' ' + firma->miejsc + ' ul.' + firma->ulica + ' ' + firma->nr_domu + iif( Empty( firma->nr_mieszk ), ' ', '/' ) + firma->nr_mieszk ) )
-      oRap:AddValue('rem', iif( xRem, 1, 0 ) )
-      oRap:AddDataset('pozycje')
-      AEval(aDane, { |aPoz| oRap:AddRow('pozycje', aPoz) })
+         FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+            hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
 
-      oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-      oRap:ModalPreview := .F.
+         oRap:AddValue('uzytkownik', code())
+         oRap:AddValue('rok', param_rok)
+         oRap:AddValue('firma', scal( AllTrim( firma->nazwa ) + ' ' + firma->miejsc + ' ul.' + firma->ulica + ' ' + firma->nr_domu + iif( Empty( firma->nr_mieszk ), ' ', '/' ) + firma->nr_mieszk ) )
+         oRap:AddValue('rem', iif( xRem, 1, 0 ) )
+         oRap:AddDataset('pozycje')
+         AEval(aDane, { |aPoz| oRap:AddRow('pozycje', aPoz) })
 
-      SWITCH nMonDruk
-      CASE 1
-         oRap:ShowReport()
-         EXIT
-      CASE 2
-         oRap:PrepareReport()
-         oRap:PrintPreparedReport('', 1)
-         EXIT
-      CASE 3
-         oRap:DesignReport()
-         EXIT
-      ENDSWITCH
+         oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+         oRap:ModalPreview := .F.
+
+         SWITCH nMonDruk
+         CASE 1
+            oRap:ShowReport()
+            EXIT
+         CASE 2
+            oRap:PrepareReport()
+            oRap:PrintPreparedReport('', 1)
+            EXIT
+         CASE 3
+            oRap:DesignReport()
+            EXIT
+         ENDSWITCH
+      CATCH oErr
+         Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+      END
 
       oRap := NIL
 

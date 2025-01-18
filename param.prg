@@ -354,12 +354,13 @@ FUNCTION WczytajProfilUzytkownika()
 
    LOCAL hRes := hb_Hash(), aStruct
 
-   hRes['mysz'] := .F.
+   hRes[ 'mysz' ] := .F.
    hRes[ 'drukarka' ] := ''
    hRes[ 'marginl' ] := 5
    hRes[ 'marginp' ] := 5
    hRes[ 'marging' ] := 5
    hRes[ 'margind' ] := 15
+   hRes[ 'typrap' ] := 'F'  // F - FastReport, L - LazReport
 
    SELECT 1
    IF !dostep( 'profil' )
@@ -376,6 +377,7 @@ FUNCTION WczytajProfilUzytkownika()
       profil->marginp := 5
       profil->marging := 5
       profil->margind := 15
+      profil->typrap := 'F'
       profil->( dbCommit() )
    ELSE
       hRes[ 'mysz' ] := profil->mysz
@@ -384,6 +386,7 @@ FUNCTION WczytajProfilUzytkownika()
       hRes[ 'marginp' ] := profil->marginp
       hRes[ 'marging' ] := profil->marging
       hRes[ 'margind' ] := profil->margind
+      hRes[ 'typrap' ] := iif( profil->typrap == ' ', 'F', profil->typrap )
    ENDIF
 
    dbCloseArea()
@@ -415,6 +418,7 @@ FUNCTION ZapiszProfilUzytkownika()
       profil->marginp := hProfilUzytkownika[ 'marginp' ]
       profil->marging := hProfilUzytkownika[ 'marging' ]
       profil->margind := hProfilUzytkownika[ 'margind' ]
+      profil->typrap := hProfilUzytkownika[ 'typrap' ]
 
       profil->( dbCommit() )
       unlock

@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
 #include "box.ch"
+#include "hbcompat.ch"
 
 FUNCTION ewid_dr16licz()
    LOCAL aRes := hb_Hash(), aRow, _czy_close := .T.
@@ -205,79 +206,83 @@ PROCEDURE ewid_dr16rob()
             RETURN
          endif
 
-         oRap := TFreeReport():New()
-         oRap:LoadFromFile( iif( nPoz == 2, 'frf\ewid.frf', 'frf\ewidp.frf' ) )
+         TRY
+            oRap := FRUtworzRaport()
+            oRap:LoadFromFile( iif( nPoz == 2, 'frf\ewid.frf', 'frf\ewidp.frf' ) )
 
-         IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-            oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-         ENDIF
+            IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+               oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+            ENDIF
 
-         FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-            hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+            FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+               hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
 
-         oRap:AddValue('uzytkownik', code())
-         oRap:AddValue('miesiac', aDane['miesiac'])
-         oRap:AddValue('rok', aDane['rok'])
-         oRap:AddValue('firma', aDane['firma'])
+            oRap:AddValue('uzytkownik', code())
+            oRap:AddValue('miesiac', aDane['miesiac'])
+            oRap:AddValue('rok', aDane['rok'])
+            oRap:AddValue('firma', aDane['firma'])
 
-         oRap:AddValue('k5st', aDane['staw_ry20'])
-         oRap:AddValue('k6st', aDane['staw_ry17'])
-         oRap:AddValue('k7st', aDane['staw_rk09'])
-         oRap:AddValue('k8st', aDane['staw_uslu'])
-         oRap:AddValue('k9st', aDane['staw_rk10'])
-         oRap:AddValue('k10st', aDane['staw_prod'])
-         oRap:AddValue('k11st', aDane['staw_hand'])
-         oRap:AddValue('k12st', aDane['staw_rk07'])
-         oRap:AddValue('k13st', aDane['staw_ry10'])
+            oRap:AddValue('k5st', aDane['staw_ry20'])
+            oRap:AddValue('k6st', aDane['staw_ry17'])
+            oRap:AddValue('k7st', aDane['staw_rk09'])
+            oRap:AddValue('k8st', aDane['staw_uslu'])
+            oRap:AddValue('k9st', aDane['staw_rk10'])
+            oRap:AddValue('k10st', aDane['staw_prod'])
+            oRap:AddValue('k11st', aDane['staw_hand'])
+            oRap:AddValue('k12st', aDane['staw_rk07'])
+            oRap:AddValue('k13st', aDane['staw_ry10'])
 
-         oRap:AddValue('k5op', aDane['staw_ory20'])
-         oRap:AddValue('k6op', aDane['staw_ory17'])
-         oRap:AddValue('k7op', aDane['staw_ork09'])
-         oRap:AddValue('k8op', aDane['staw_ouslu'])
-         oRap:AddValue('k9op', aDane['staw_ork10'])
-         oRap:AddValue('k10op', aDane['staw_oprod'])
-         oRap:AddValue('k11op', aDane['staw_ohand'])
-         oRap:AddValue('k12op', aDane['staw_ork07'])
-         oRap:AddValue('k13op', aDane['staw_ory10'])
+            oRap:AddValue('k5op', aDane['staw_ory20'])
+            oRap:AddValue('k6op', aDane['staw_ory17'])
+            oRap:AddValue('k7op', aDane['staw_ork09'])
+            oRap:AddValue('k8op', aDane['staw_ouslu'])
+            oRap:AddValue('k9op', aDane['staw_ork10'])
+            oRap:AddValue('k10op', aDane['staw_oprod'])
+            oRap:AddValue('k11op', aDane['staw_ohand'])
+            oRap:AddValue('k12op', aDane['staw_ork07'])
+            oRap:AddValue('k13op', aDane['staw_ory10'])
 
-         oRap:AddDataset('pozycje')
-         oRap:AddValue('FP7', 0.0, .T.)
-         oRap:AddValue('FP8', 0.0, .T.)
-         oRap:AddValue('FP9', 0.0, .T.)
-         oRap:AddValue('FP10', 0.0, .T.)
-         oRap:AddValue('FP11', 0.0, .T.)
-         oRap:AddValue('FP12', 0.0, .T.)
-         oRap:AddValue('FP13', 0.0, .T.)
-         oRap:AddValue('FP14', 0.0, .T.)
-         oRap:AddValue('FP15', 0.0, .T.)
-         oRap:AddValue('FP16', 0.0, .T.)
-         oRap:AddValue('FS7', 0.0, .T.)
-         oRap:AddValue('FS8', 0.0, .T.)
-         oRap:AddValue('FS9', 0.0, .T.)
-         oRap:AddValue('FS10', 0.0, .T.)
-         oRap:AddValue('FS11', 0.0, .T.)
-         oRap:AddValue('FS12', 0.0, .T.)
-         oRap:AddValue('FS13', 0.0, .T.)
-         oRap:AddValue('FS14', 0.0, .T.)
-         oRap:AddValue('FS15', 0.0, .T.)
-         oRap:AddValue('FS16', 0.0, .T.)
-         AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+            oRap:AddDataset('pozycje')
+            oRap:AddValue('FP7', 0.0, .T.)
+            oRap:AddValue('FP8', 0.0, .T.)
+            oRap:AddValue('FP9', 0.0, .T.)
+            oRap:AddValue('FP10', 0.0, .T.)
+            oRap:AddValue('FP11', 0.0, .T.)
+            oRap:AddValue('FP12', 0.0, .T.)
+            oRap:AddValue('FP13', 0.0, .T.)
+            oRap:AddValue('FP14', 0.0, .T.)
+            oRap:AddValue('FP15', 0.0, .T.)
+            oRap:AddValue('FP16', 0.0, .T.)
+            oRap:AddValue('FS7', 0.0, .T.)
+            oRap:AddValue('FS8', 0.0, .T.)
+            oRap:AddValue('FS9', 0.0, .T.)
+            oRap:AddValue('FS10', 0.0, .T.)
+            oRap:AddValue('FS11', 0.0, .T.)
+            oRap:AddValue('FS12', 0.0, .T.)
+            oRap:AddValue('FS13', 0.0, .T.)
+            oRap:AddValue('FS14', 0.0, .T.)
+            oRap:AddValue('FS15', 0.0, .T.)
+            oRap:AddValue('FS16', 0.0, .T.)
+            AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
 
-         oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-         oRap:ModalPreview := .F.
+            oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+            oRap:ModalPreview := .F.
 
-         SWITCH nMonDruk
-         CASE 1
-            oRap:ShowReport()
-            EXIT
-         CASE 2
-            oRap:PrepareReport()
-            oRap:PrintPreparedReport('', 1)
-            EXIT
-         CASE 3
-            oRap:DesignReport()
-            EXIT
-         ENDSWITCH
+            SWITCH nMonDruk
+            CASE 1
+               oRap:ShowReport()
+               EXIT
+            CASE 2
+               oRap:PrepareReport()
+               oRap:PrintPreparedReport('', 1)
+               EXIT
+            CASE 3
+               oRap:DesignReport()
+               EXIT
+            ENDSWITCH
+         CATCH oErr
+            Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+         END
 
          oRap := NIL
 

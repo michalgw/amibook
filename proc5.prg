@@ -28,6 +28,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "inkey.ch"
 #include "tbrowse.ch"
 #include "button.ch"
+#include "hbcompat.ch"
 
 STATIC cZablokowanyEkranEkran := ''
 STATIC cZablokowanyEkranKolor := ''
@@ -910,39 +911,43 @@ PROCEDURE WydrukProsty( cTresc, cTytul )
 
    hb_default( @cTytul, "" )
 
-   oRap := TFreeReport():New()
-   oRap:LoadFromFile( 'frf\drukprosty.frf' )
-   IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-      oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-   ENDIF
-   oRap:AddValue( 'Tytul', cTytul )
-   oRap:AddValue( 'Tresc', cTresc )
-   oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-   oRap:ModalPreview := .F.
-   cKolor := ColStd()
-   @ 24, 0
-   @ 24, 26 PROMPT '[ Monitor ]'
-   @ 24, 44 PROMPT '[ Drukarka ]'
-   IF trybSerwisowy
-      @ 24, 70 PROMPT '[ Edytor ]'
-   ENDIF
-   CLEAR TYPE
-   nMenu := Menu(1)
-   IF LastKey() != 27
-      SWITCH nMenu
-      CASE 1
-         oRap:ShowReport()
-         EXIT
-      CASE 2
-         IF oRap:PrepareReport()
-            oRap:PrintPreparedReport('', 1)
-         ENDIF
-         EXIT
-      CASE 3
-         oRap:DesignReport()
-         EXIT
-      ENDSWITCH
-   ENDIF
+   TRY
+      oRap := FRUtworzRaport()
+      oRap:LoadFromFile( 'frf\drukprosty.frf' )
+      IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+         oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+      ENDIF
+      oRap:AddValue( 'Tytul', cTytul )
+      oRap:AddValue( 'Tresc', cTresc )
+      oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+      oRap:ModalPreview := .F.
+      cKolor := ColStd()
+      @ 24, 0
+      @ 24, 26 PROMPT '[ Monitor ]'
+      @ 24, 44 PROMPT '[ Drukarka ]'
+      IF trybSerwisowy
+         @ 24, 70 PROMPT '[ Edytor ]'
+      ENDIF
+      CLEAR TYPE
+      nMenu := Menu(1)
+      IF LastKey() != 27
+         SWITCH nMenu
+         CASE 1
+            oRap:ShowReport()
+            EXIT
+         CASE 2
+            IF oRap:PrepareReport()
+               oRap:PrintPreparedReport('', 1)
+            ENDIF
+            EXIT
+         CASE 3
+            oRap:DesignReport()
+            EXIT
+         ENDSWITCH
+      ENDIF
+   CATCH oErr
+      Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+   END
    @ 24, 0
    SetColor(cKolor)
 

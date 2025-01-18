@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
 
 #include "inkey.ch"
+#include "hbcompat.ch"
 
 FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rzi, ewid_rzz, bFiltr, lWgVat, lTylkoUE, lTylkoKsiega )
 
@@ -577,56 +578,60 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                RETURN
             ENDIF
 
-            oRap := TFreeReport():New()
+            TRY
+               oRap := FRUtworzRaport()
 
-            SWITCH nRaport
-            CASE 1
-            CASE 2
-               oRap:LoadFromFile( 'frf\rejz.frf' )
-               EXIT
-            CASE 3
-               oRap:LoadFromFile( 'frf\rejzv.frf' )
-               EXIT
-            CASE 4
-               oRap:LoadFromFile( 'frf\rejzu.frf' )
-               EXIT
-            ENDSWITCH
+               SWITCH nRaport
+               CASE 1
+               CASE 2
+                  oRap:LoadFromFile( 'frf\rejz.frf' )
+                  EXIT
+               CASE 3
+                  oRap:LoadFromFile( 'frf\rejzv.frf' )
+                  EXIT
+               CASE 4
+                  oRap:LoadFromFile( 'frf\rejzu.frf' )
+                  EXIT
+               ENDSWITCH
 
-            IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-               oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-            ENDIF
+               IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+                  oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+               ENDIF
 
-            FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-               hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+               FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+                  hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
 
-            oRap:AddValue( 'uzytkownik', code() )
-            oRap:AddValue( 'miesiac', aDane[ 'miesiac' ] )
-            oRap:AddValue( 'rok', aDane[ 'rok' ] )
-            oRap:AddValue( 'firma', aDane[ 'firma' ] )
-            oRap:AddValue( 'rejestr', aDane[ 'rejestr' ] )
-            oRap:AddValue( 'jaki_rej', aDane[ 'jaki_rej' ] )
-            oRap:AddValue( 'opis_rej', aDane[ 'opis_rej' ] )
-            oRap:AddValue( 'strusprob', aDane[ 'strusprob' ] )
-            oRap:AddValue( 'kol_netto_brutto', ewid_rzs )
+               oRap:AddValue( 'uzytkownik', code() )
+               oRap:AddValue( 'miesiac', aDane[ 'miesiac' ] )
+               oRap:AddValue( 'rok', aDane[ 'rok' ] )
+               oRap:AddValue( 'firma', aDane[ 'firma' ] )
+               oRap:AddValue( 'rejestr', aDane[ 'rejestr' ] )
+               oRap:AddValue( 'jaki_rej', aDane[ 'jaki_rej' ] )
+               oRap:AddValue( 'opis_rej', aDane[ 'opis_rej' ] )
+               oRap:AddValue( 'strusprob', aDane[ 'strusprob' ] )
+               oRap:AddValue( 'kol_netto_brutto', ewid_rzs )
 
-            oRap:AddDataset('pozycje')
-            AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+               oRap:AddDataset('pozycje')
+               AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
 
-            oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-            oRap:ModalPreview := .F.
+               oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+               oRap:ModalPreview := .F.
 
-            SWITCH nMonDruk
-            CASE 1
-               oRap:ShowReport()
-               EXIT
-            CASE 2
-               oRap:PrepareReport()
-               oRap:PrintPreparedReport('', 1)
-               EXIT
-            CASE 3
-               oRap:DesignReport()
-               EXIT
-            ENDSWITCH
+               SWITCH nMonDruk
+               CASE 1
+                  oRap:ShowReport()
+                  EXIT
+               CASE 2
+                  oRap:PrepareReport()
+                  oRap:PrintPreparedReport('', 1)
+                  EXIT
+               CASE 3
+                  oRap:DesignReport()
+                  EXIT
+               ENDSWITCH
+            CATCH oErr
+               Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+            END
 
             oRap := NIL
 
@@ -1291,41 +1296,45 @@ PROCEDURE RejVAT_Zak_Marza( cFirma, cMiesiac )
             RETURN
          ENDIF
 
-         oRap := TFreeReport():New()
+         TRY
+            oRap := FRUtworzRaport()
 
-         oRap:LoadFromFile( 'frf\rejzm.frf' )
+            oRap:LoadFromFile( 'frf\rejzm.frf' )
 
-         IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-            oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-         ENDIF
+            IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+               oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+            ENDIF
 
-         FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-            hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+            FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+               hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
 
-         oRap:AddValue( 'uzytkownik', code() )
-         oRap:AddValue( 'miesiac', aDane[ 'miesiac' ] )
-         oRap:AddValue( 'rok', aDane[ 'rok' ] )
-         oRap:AddValue( 'firma', aDane[ 'firma' ] )
-         oRap:AddValue( 'strusprob', aDane[ 'strusprob' ] )
+            oRap:AddValue( 'uzytkownik', code() )
+            oRap:AddValue( 'miesiac', aDane[ 'miesiac' ] )
+            oRap:AddValue( 'rok', aDane[ 'rok' ] )
+            oRap:AddValue( 'firma', aDane[ 'firma' ] )
+            oRap:AddValue( 'strusprob', aDane[ 'strusprob' ] )
 
-         oRap:AddDataset('pozycje')
-         AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+            oRap:AddDataset('pozycje')
+            AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
 
-         oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-         oRap:ModalPreview := .F.
+            oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+            oRap:ModalPreview := .F.
 
-         SWITCH nMonDruk
-         CASE 1
-            oRap:ShowReport()
-            EXIT
-         CASE 2
-            oRap:PrepareReport()
-            oRap:PrintPreparedReport('', 1)
-            EXIT
-         CASE 3
-            oRap:DesignReport()
-            EXIT
-         ENDSWITCH
+            SWITCH nMonDruk
+            CASE 1
+               oRap:ShowReport()
+               EXIT
+            CASE 2
+               oRap:PrepareReport()
+               oRap:PrintPreparedReport('', 1)
+               EXIT
+            CASE 3
+               oRap:DesignReport()
+               EXIT
+            ENDSWITCH
+         CATCH oErr
+            Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+         END
 
          oRap := NIL
 
@@ -1765,61 +1774,65 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
                RETURN
             ENDIF
 
-            oRap := TFreeReport():New()
+            TRY
+               oRap := FRUtworzRaport()
 
-            SWITCH nRaport
-            CASE 1
-               oRap:LoadFromFile( 'frf\rejs.frf' )
-               EXIT
-            CASE 2
-               oRap:LoadFromFile( 'frf\rejsk.frf' )
-               EXIT
-            ENDSWITCH
+               SWITCH nRaport
+               CASE 1
+                  oRap:LoadFromFile( 'frf\rejs.frf' )
+                  EXIT
+               CASE 2
+                  oRap:LoadFromFile( 'frf\rejsk.frf' )
+                  EXIT
+               ENDSWITCH
 
-            IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-               oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-            ENDIF
-
-            FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-               hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
-
-            oRap:AddValue( 'uzytkownik', code() )
-            oRap:AddValue( 'miesiac', aDane[ 'miesiac' ] )
-            oRap:AddValue( 'rok', aDane[ 'rok' ] )
-            oRap:AddValue( 'firma', aDane[ 'firma' ] )
-            oRap:AddValue( 'jaki_rej', aDane[ 'jaki_rej' ] )
-            oRap:AddValue( 'opis_rej', aDane[ 'opis_rej' ] )
-            oRap:AddValue( 'kol_netto_brutto', ewid_rss )
-            oRap:AddValue( 'rodzdowodu', iif( aFiltr[ 'rodzaj' ] == "*", 'wszystkie', iif( aFiltr[ 'rodzaj' ] == "", "bez rodzaju", aFiltr[ 'rodzaj' ] ) ) )
-            PRIVATE cRes := ""
-            AEval( aFiltr[ 'opcje' ], { | cItem |
-               IF cRes <> ""
-                  cRes := cRes + ','
+               IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+                  oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
                ENDIF
-               cRes := cRes + cItem
-            } )
-            oRap:AddValue( 'oznaczenia', iif( Len( aFiltr[ 'opcje' ] ) == 0, "wszystkie", cRes ) )
-            oRap:AddValue( 'procedura', iif( Len( aFiltr[ 'procedura' ] ) == 0, "wszystkie", gm_AStrTok( aFiltr[ 'procedura' ] ) ) )
-            oRap:AddValue( 'sumuj', iif( aFiltr[ 'sumujFP' ], 'TAK', 'NIE' ) )
 
-            oRap:AddDataset('pozycje')
-            AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+               FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+                  hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
 
-            oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-            oRap:ModalPreview := .F.
+               oRap:AddValue( 'uzytkownik', code() )
+               oRap:AddValue( 'miesiac', aDane[ 'miesiac' ] )
+               oRap:AddValue( 'rok', aDane[ 'rok' ] )
+               oRap:AddValue( 'firma', aDane[ 'firma' ] )
+               oRap:AddValue( 'jaki_rej', aDane[ 'jaki_rej' ] )
+               oRap:AddValue( 'opis_rej', aDane[ 'opis_rej' ] )
+               oRap:AddValue( 'kol_netto_brutto', ewid_rss )
+               oRap:AddValue( 'rodzdowodu', iif( aFiltr[ 'rodzaj' ] == "*", 'wszystkie', iif( aFiltr[ 'rodzaj' ] == "", "bez rodzaju", aFiltr[ 'rodzaj' ] ) ) )
+               PRIVATE cRes := ""
+               AEval( aFiltr[ 'opcje' ], { | cItem |
+                  IF cRes <> ""
+                     cRes := cRes + ','
+                  ENDIF
+                  cRes := cRes + cItem
+               } )
+               oRap:AddValue( 'oznaczenia', iif( Len( aFiltr[ 'opcje' ] ) == 0, "wszystkie", cRes ) )
+               oRap:AddValue( 'procedura', iif( Len( aFiltr[ 'procedura' ] ) == 0, "wszystkie", gm_AStrTok( aFiltr[ 'procedura' ] ) ) )
+               oRap:AddValue( 'sumuj', iif( aFiltr[ 'sumujFP' ], 'TAK', 'NIE' ) )
 
-            SWITCH nMonDruk
-            CASE 1
-               oRap:ShowReport()
-               EXIT
-            CASE 2
-               oRap:PrepareReport()
-               oRap:PrintPreparedReport('', 1)
-               EXIT
-            CASE 3
-               oRap:DesignReport()
-               EXIT
-            ENDSWITCH
+               oRap:AddDataset('pozycje')
+               AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+
+               oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+               oRap:ModalPreview := .F.
+
+               SWITCH nMonDruk
+               CASE 1
+                  oRap:ShowReport()
+                  EXIT
+               CASE 2
+                  oRap:PrepareReport()
+                  oRap:PrintPreparedReport('', 1)
+                  EXIT
+               CASE 3
+                  oRap:DesignReport()
+                  EXIT
+               ENDSWITCH
+            CATCH oErr
+               Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+            END
 
             oRap := NIL
 

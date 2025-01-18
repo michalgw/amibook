@@ -20,6 +20,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+#include "hbfr.ch"
+#include "hblr.ch"
+#include "hbcompat.ch"
+
+
 FUNCTION DodajRaportDoListy(xRaport)
    AAdd(aListaRaportow, xRaport)
    RETURN Len(aListaRaportow)
@@ -93,41 +98,45 @@ PROCEDURE FRDrukuj( cPlikFrp, aDane )
       RETURN
    ENDIF
 
-   oRap := TFreeReport():New()
-   oRap:LoadFromFile( cPlikFrp )
+   TRY
+      oRap := FRUtworzRaport()
+      oRap:LoadFromFile( cPlikFrp )
 
-   IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-      oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-   ENDIF
-
-   FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-      hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
-
-   IF hb_HHasKey( aDane, 'FR_Dataset' )
-      IF HB_ISARRAY( aDane[ 'FR_Dataset' ] )
-         AEval( aDane[ 'FR_Dataset' ], { | cDataSet | oRap:AddDataset( cDataSet ) } )
-      ELSEIF HB_ISCHAR( aDane[ 'FR_Dataset' ] )
-         oRap:AddDataset( aDane[ 'FR_Dataset' ] )
+      IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+         oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
       ENDIF
-   ENDIF
 
-   RaportUstawDane( oRap, aDane )
+      FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+         hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
 
-   oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-   oRap:ModalPreview := .F.
+      IF hb_HHasKey( aDane, 'FR_Dataset' )
+         IF HB_ISARRAY( aDane[ 'FR_Dataset' ] )
+            AEval( aDane[ 'FR_Dataset' ], { | cDataSet | oRap:AddDataset( cDataSet ) } )
+         ELSEIF HB_ISCHAR( aDane[ 'FR_Dataset' ] )
+            oRap:AddDataset( aDane[ 'FR_Dataset' ] )
+         ENDIF
+      ENDIF
 
-   SWITCH nMonDruk
-   CASE 1
-      oRap:ShowReport()
-      EXIT
-   CASE 2
-      oRap:PrepareReport()
-      oRap:PrintPreparedReport('', 1)
-      EXIT
-   CASE 3
-      oRap:DesignReport()
-      EXIT
-   ENDSWITCH
+      RaportUstawDane( oRap, aDane )
+
+      oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+      oRap:ModalPreview := .F.
+
+      SWITCH nMonDruk
+      CASE 1
+         oRap:ShowReport()
+         EXIT
+      CASE 2
+         oRap:PrepareReport()
+         oRap:PrintPreparedReport('', 1)
+         EXIT
+      CASE 3
+         oRap:DesignReport()
+         EXIT
+      ENDSWITCH
+   CATCH oErr
+      Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+   END
 
    oRap := NIL
 
@@ -236,3 +245,32 @@ PROCEDURE GrafTekst_Zapisz( cFirma, cIdentyfikator, nWartosc )
    RETURN
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION FRInicjuj()
+
+   LOCAL lRes
+
+   IF hProfilUzytkownika[ 'typrap' ] == 'L'
+      lRes := hblr_LoadLibrary( HBLR_LIB_NAME, HBLR_CE_CP852 )
+   ELSE
+      lRes := hbfr_LoadLibrary( HBFR_LIB_NAME, .T. )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION FRUtworzRaport( lComposite )
+
+   LOCAL oRap
+
+   IF hProfilUzytkownika[ 'typrap' ] == 'L'
+      oRap := TLazReport():New( lComposite )
+   ELSE
+      oRap := TFreeReport():New( lComposite )
+   ENDIF
+
+   RETURN oRap
+
+/*----------------------------------------------------------------------*/
+

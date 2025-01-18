@@ -22,6 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "Box.ch"
 #include "hbwin.ch"
+#include "hbcompat.ch"
 
 FUNCTION ksiega16licz()
    LOCAL aRes := hb_Hash(), aRow
@@ -196,132 +197,10 @@ PROCEDURE ksiega16()
          if lastkey()=27
             RETURN
          endif
-         oRap := TFreeReport():New()
-         oRap:LoadFromFile('frf\ksiega16b.frf')
 
-         IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-            oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-         ENDIF
-
-         FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-            hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
-
-         oRap:AddValue('uzytkownik', code())
-         oRap:AddValue('miesiac', aDane['miesiac'])
-         oRap:AddValue('rok', aDane['rok'])
-         oRap:AddValue('firma', aDane['firma'])
-         oRap:AddValue('FP7', 0.0, .T.)
-         oRap:AddValue('FP8', 0.0, .T.)
-         oRap:AddValue('FP9', 0.0, .T.)
-         oRap:AddValue('FP10', 0.0, .T.)
-         oRap:AddValue('FP11', 0.0, .T.)
-         oRap:AddValue('FP12', 0.0, .T.)
-         oRap:AddValue('FP13', 0.0, .T.)
-         oRap:AddValue('FP14', 0.0, .T.)
-         oRap:AddValue('FP16', 0.0, .T.)
-         oRap:AddValue('FPPS', 0.0, .T.)
-         oRap:AddValue('FS7', 0.0, .T.)
-         oRap:AddValue('FS8', 0.0, .T.)
-         oRap:AddValue('FS9', 0.0, .T.)
-         oRap:AddValue('FS10', 0.0, .T.)
-         oRap:AddValue('FS11', 0.0, .T.)
-         oRap:AddValue('FS12', 0.0, .T.)
-         oRap:AddValue('FS13', 0.0, .T.)
-         oRap:AddValue('FS14', 0.0, .T.)
-         oRap:AddValue('FS16', 0.0, .T.)
-         oRap:AddValue('FSPS', 0.0, .T.)
-         oRap:AddDataset('pozycje')
-         AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
-
-         oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-         oRap:ModalPreview := .F.
-
-         SWITCH nMonDruk
-         CASE 1
-            oRap:ShowReport()
-            EXIT
-         CASE 2
-            oRap:PrepareReport()
-            oRap:PrintPreparedReport('', 1)
-            EXIT
-         CASE 3
-            oRap:DesignReport()
-            EXIT
-         ENDSWITCH
-
-         oRap := NIL
-         EXIT
-
-      CASE 3
-         @ 24,0
-         @ 24,15 prompt '[ Wszystke ]'
-         @ 24,30 prompt '[ Lewe ]'
-         @ 24,41 prompt '[ Prawe ]'
-         clear type
-         menu TO nLewaPrawa
-         if lastkey()=27
-            RETURN
-         endif
-
-         @ 24, 0
-         @ 24, 26 PROMPT '[ Monitor ]'
-         @ 24, 44 PROMPT '[ Drukarka ]'
-         IF trybSerwisowy
-            @ 24, 70 PROMPT '[ Edytor ]'
-         ENDIF
-         CLEAR TYPE
-         menu TO nMonDruk
-         if lastkey()=27
-            RETURN
-         endif
-
-         IF nLewaPrawa == 1 .OR. nLewaPrawa == 2
-            oRap := TFreeReport():New()
-            oRap:LoadFromFile('frf\ksiega16l.frf')
-
-            IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-               oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-            ENDIF
-
-            FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-               hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
-
-            oRap:AddValue('uzytkownik', code())
-            oRap:AddValue('miesiac', aDane['miesiac'])
-            oRap:AddValue('rok', aDane['rok'])
-            oRap:AddValue('firma', aDane['firma'])
-            oRap:AddDataset('pozycje')
-            AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
-
-            oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-            oRap:ModalPreview := .F.
-
-            SWITCH nMonDruk
-            CASE 1
-               oRap:ShowReport()
-               EXIT
-            CASE 2
-               oRap:PrepareReport()
-               oRap:PrintPreparedReport('', 1)
-               EXIT
-            CASE 3
-               oRap:DesignReport()
-               EXIT
-            ENDSWITCH
-
-            oRap := NIL
-         ENDIF
-
-         IF nLewaPrawa == 1 .OR. nLewaPrawa == 3
-            IF nLewaPrawa == 1 .AND. nMonDruk == 2
-               do while .not.entesc([*i]," Teraz b&_e.dzie drukowana prawa cz&_e.&_s.&_c. ksi&_e.gi - zmie&_n. papier i naci&_s.nij [Enter] ")
-                  if lastkey()=27
-                     exit
-                  endif
-               enddo
-            ENDIF
-            oRap := TFreeReport():New()
-            oRap:LoadFromFile('frf\ksiega16p.frf')
+         TRY
+            oRap := FRUtworzRaport()
+            oRap:LoadFromFile('frf\ksiega16b.frf')
 
             IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
                oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
@@ -372,6 +251,141 @@ PROCEDURE ksiega16()
                oRap:DesignReport()
                EXIT
             ENDSWITCH
+         CATCH oErr
+            Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+         END
+
+         oRap := NIL
+         EXIT
+
+      CASE 3
+         @ 24,0
+         @ 24,15 prompt '[ Wszystke ]'
+         @ 24,30 prompt '[ Lewe ]'
+         @ 24,41 prompt '[ Prawe ]'
+         clear type
+         menu TO nLewaPrawa
+         if lastkey()=27
+            RETURN
+         endif
+
+         @ 24, 0
+         @ 24, 26 PROMPT '[ Monitor ]'
+         @ 24, 44 PROMPT '[ Drukarka ]'
+         IF trybSerwisowy
+            @ 24, 70 PROMPT '[ Edytor ]'
+         ENDIF
+         CLEAR TYPE
+         menu TO nMonDruk
+         if lastkey()=27
+            RETURN
+         endif
+
+         IF nLewaPrawa == 1 .OR. nLewaPrawa == 2
+            TRY
+               oRap := FRUtworzRaport()
+               oRap:LoadFromFile('frf\ksiega16l.frf')
+
+               IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+                  oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+               ENDIF
+
+               FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+                  hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+
+               oRap:AddValue('uzytkownik', code())
+               oRap:AddValue('miesiac', aDane['miesiac'])
+               oRap:AddValue('rok', aDane['rok'])
+               oRap:AddValue('firma', aDane['firma'])
+               oRap:AddDataset('pozycje')
+               AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+
+               oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+               oRap:ModalPreview := .F.
+
+               SWITCH nMonDruk
+               CASE 1
+                  oRap:ShowReport()
+                  EXIT
+               CASE 2
+                  oRap:PrepareReport()
+                  oRap:PrintPreparedReport('', 1)
+                  EXIT
+               CASE 3
+                  oRap:DesignReport()
+                  EXIT
+               ENDSWITCH
+            CATCH oErr
+               Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+            END
+
+            oRap := NIL
+         ENDIF
+
+         IF nLewaPrawa == 1 .OR. nLewaPrawa == 3
+            IF nLewaPrawa == 1 .AND. nMonDruk == 2
+               do while .not.entesc([*i]," Teraz b&_e.dzie drukowana prawa cz&_e.&_s.&_c. ksi&_e.gi - zmie&_n. papier i naci&_s.nij [Enter] ")
+                  if lastkey()=27
+                     exit
+                  endif
+               enddo
+            ENDIF
+            TRY
+               oRap := FRUtworzRaport()
+               oRap:LoadFromFile('frf\ksiega16p.frf')
+
+               IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+                  oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+               ENDIF
+
+               FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+                  hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+
+               oRap:AddValue('uzytkownik', code())
+               oRap:AddValue('miesiac', aDane['miesiac'])
+               oRap:AddValue('rok', aDane['rok'])
+               oRap:AddValue('firma', aDane['firma'])
+               oRap:AddValue('FP7', 0.0, .T.)
+               oRap:AddValue('FP8', 0.0, .T.)
+               oRap:AddValue('FP9', 0.0, .T.)
+               oRap:AddValue('FP10', 0.0, .T.)
+               oRap:AddValue('FP11', 0.0, .T.)
+               oRap:AddValue('FP12', 0.0, .T.)
+               oRap:AddValue('FP13', 0.0, .T.)
+               oRap:AddValue('FP14', 0.0, .T.)
+               oRap:AddValue('FP16', 0.0, .T.)
+               oRap:AddValue('FPPS', 0.0, .T.)
+               oRap:AddValue('FS7', 0.0, .T.)
+               oRap:AddValue('FS8', 0.0, .T.)
+               oRap:AddValue('FS9', 0.0, .T.)
+               oRap:AddValue('FS10', 0.0, .T.)
+               oRap:AddValue('FS11', 0.0, .T.)
+               oRap:AddValue('FS12', 0.0, .T.)
+               oRap:AddValue('FS13', 0.0, .T.)
+               oRap:AddValue('FS14', 0.0, .T.)
+               oRap:AddValue('FS16', 0.0, .T.)
+               oRap:AddValue('FSPS', 0.0, .T.)
+               oRap:AddDataset('pozycje')
+               AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+
+               oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+               oRap:ModalPreview := .F.
+
+               SWITCH nMonDruk
+               CASE 1
+                  oRap:ShowReport()
+                  EXIT
+               CASE 2
+                  oRap:PrepareReport()
+                  oRap:PrintPreparedReport('', 1)
+                  EXIT
+               CASE 3
+                  oRap:DesignReport()
+                  EXIT
+               ENDSWITCH
+            CATCH oErr
+               Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+            END
 
             oRap := NIL
          ENDIF
@@ -388,58 +402,63 @@ PROCEDURE ksiega16()
          if lastkey()=27
             RETURN
          endif
-         oRap := TFreeReport():New()
-         oRap:LoadFromFile('frf\ksiega16.frf')
 
-         IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
-            oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
-         ENDIF
+         TRY
+            oRap := FRUtworzRaport()
+            oRap:LoadFromFile('frf\ksiega16.frf')
 
-         FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
-            hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
+            IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
+               oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
+            ENDIF
 
-         oRap:AddValue('uzytkownik', code())
-         oRap:AddValue('miesiac', aDane['miesiac'])
-         oRap:AddValue('rok', aDane['rok'])
-         oRap:AddValue('firma', aDane['firma'])
-         oRap:AddValue('FP7', 0.0, .T.)
-         oRap:AddValue('FP8', 0.0, .T.)
-         oRap:AddValue('FP9', 0.0, .T.)
-         oRap:AddValue('FP10', 0.0, .T.)
-         oRap:AddValue('FP11', 0.0, .T.)
-         oRap:AddValue('FP12', 0.0, .T.)
-         oRap:AddValue('FP13', 0.0, .T.)
-         oRap:AddValue('FP14', 0.0, .T.)
-         oRap:AddValue('FP16', 0.0, .T.)
-         oRap:AddValue('FPPS', 0.0, .T.)
-         oRap:AddValue('FS7', 0.0, .T.)
-         oRap:AddValue('FS8', 0.0, .T.)
-         oRap:AddValue('FS9', 0.0, .T.)
-         oRap:AddValue('FS10', 0.0, .T.)
-         oRap:AddValue('FS11', 0.0, .T.)
-         oRap:AddValue('FS12', 0.0, .T.)
-         oRap:AddValue('FS13', 0.0, .T.)
-         oRap:AddValue('FS14', 0.0, .T.)
-         oRap:AddValue('FS16', 0.0, .T.)
-         oRap:AddValue('FSPS', 0.0, .T.)
-         oRap:AddDataset('pozycje')
-         AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
+            FRUstawMarginesy( oRap, hProfilUzytkownika[ 'marginl' ], hProfilUzytkownika[ 'marginp' ], ;
+               hProfilUzytkownika[ 'marging' ], hProfilUzytkownika[ 'margind' ] )
 
-         oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
-         oRap:ModalPreview := .F.
+            oRap:AddValue('uzytkownik', code())
+            oRap:AddValue('miesiac', aDane['miesiac'])
+            oRap:AddValue('rok', aDane['rok'])
+            oRap:AddValue('firma', aDane['firma'])
+            oRap:AddValue('FP7', 0.0, .T.)
+            oRap:AddValue('FP8', 0.0, .T.)
+            oRap:AddValue('FP9', 0.0, .T.)
+            oRap:AddValue('FP10', 0.0, .T.)
+            oRap:AddValue('FP11', 0.0, .T.)
+            oRap:AddValue('FP12', 0.0, .T.)
+            oRap:AddValue('FP13', 0.0, .T.)
+            oRap:AddValue('FP14', 0.0, .T.)
+            oRap:AddValue('FP16', 0.0, .T.)
+            oRap:AddValue('FPPS', 0.0, .T.)
+            oRap:AddValue('FS7', 0.0, .T.)
+            oRap:AddValue('FS8', 0.0, .T.)
+            oRap:AddValue('FS9', 0.0, .T.)
+            oRap:AddValue('FS10', 0.0, .T.)
+            oRap:AddValue('FS11', 0.0, .T.)
+            oRap:AddValue('FS12', 0.0, .T.)
+            oRap:AddValue('FS13', 0.0, .T.)
+            oRap:AddValue('FS14', 0.0, .T.)
+            oRap:AddValue('FS16', 0.0, .T.)
+            oRap:AddValue('FSPS', 0.0, .T.)
+            oRap:AddDataset('pozycje')
+            AEval(aDane['pozycje'], { |aPoz| oRap:AddRow('pozycje', aPoz) })
 
-         SWITCH nMonDruk
-         CASE 1
-            oRap:ShowReport()
-            EXIT
-         CASE 2
-            oRap:PrepareReport()
-            oRap:PrintPreparedReport('', 1)
-            EXIT
-         CASE 3
-            oRap:DesignReport()
-            EXIT
-         ENDSWITCH
+            oRap:OnClosePreview := 'UsunRaportZListy(' + AllTrim(Str(DodajRaportDoListy(oRap))) + ')'
+            oRap:ModalPreview := .F.
+
+            SWITCH nMonDruk
+            CASE 1
+               oRap:ShowReport()
+               EXIT
+            CASE 2
+               oRap:PrepareReport()
+               oRap:PrintPreparedReport('', 1)
+               EXIT
+            CASE 3
+               oRap:DesignReport()
+               EXIT
+            ENDSWITCH
+         CATCH oErr
+            Alert( "Wyst¥piˆ bˆ¥d podczas generowania wydruku;" + oErr:description )
+         END
 
          oRap := NIL
          EXIT
