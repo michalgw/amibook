@@ -32,6 +32,7 @@ type
     Tryb: TTryb;
     Ekran: TEkran;
     NowyStart: Boolean;
+    OpenSSL: Boolean;
   end;
 
   { TWpisyMenu }
@@ -73,6 +74,7 @@ begin
       S := 'Glowny';
     Items[I].Tryb := TTryb(Ini.ReadInteger(S, 'Tryb', Integer(tGraficzny)));
     Items[I].Ekran := TEkran(Ini.ReadInteger(S, 'Ekran', 0));
+    Items[I].OpenSSL := Ini.ReadBool(S, 'OpenSSL', False);
   end;
   InstallWpis := Ini.ReadString('Install', 'Install', '(brak)');
   Ini.Free;
@@ -92,6 +94,7 @@ begin
       S := 'Glowny';
     Ini.WriteInteger(S, 'Tryb', Ord(Items[I].Tryb));
     Ini.WriteInteger(S, 'Ekran', Ord(Items[I].Ekran));
+    Ini.WriteBool(S, 'OpenSSL', Items[I].OpenSSL);
   end;
   Ini.WriteString('Install', 'Install', InstallWpis);
   Ini.Free;
@@ -211,6 +214,8 @@ begin
           AddArr('//gtwvt', SA);
         if Wpis.Ekran = ePelnyEkran then
           AddArr('//pelnyekran', SA);
+        if Wpis.OpenSSL then
+          AddArr('//openssl', SA);
         case Uruchom(Wpis.Katalog, S + 'prog.exe', SA, False) of
           0: Koniec := True;
           200: ;// Backup

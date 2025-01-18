@@ -14,6 +14,9 @@ type
 
   TFormMain = class(TForm)
     Label1: TLabel;
+    MenuItemWinHTTP: TMenuItem;
+    MenuItemOpenSSL: TMenuItem;
+    MenuItemS3: TMenuItem;
     MenuItemPomZdal: TMenuItem;
     MenuItemRestore: TMenuItem;
     MenuItemBackup: TMenuItem;
@@ -41,6 +44,7 @@ type
     procedure MenuItemBackupClick(Sender: TObject);
     procedure MenuItemEkranClick(Sender: TObject);
     procedure MenuItemTrybClick(Sender: TObject);
+    procedure MenuItemPolClick(Sender: TObject);
     procedure PopupMenuButtonPopup(Sender: TObject);
     procedure TrIconDblClick(Sender: TObject);
   private
@@ -174,6 +178,12 @@ begin
   end;
 end;
 
+procedure TFormMain.MenuItemPolClick(Sender: TObject);
+begin
+  if PopupMenuButton.PopupComponent is TButton then
+    Wpisy[PopupMenuButton.PopupComponent.Tag].OpenSSL := MenuItemOpenSSL.Checked;
+end;
+
 procedure TFormMain.PopupMenuButtonPopup(Sender: TObject);
 begin
   if PopupMenuButton.PopupComponent is TButton then
@@ -187,6 +197,10 @@ begin
       eMaksymalizuj: MenuItemEkranMax.Checked := True;
       ePelnyEkran: MenuItemEkranPelny.Checked := True;
     end;
+    if Wpisy[PopupMenuButton.PopupComponent.Tag].OpenSSL then
+      MenuItemOpenSSL.Checked := True
+    else
+      MenuItemWinHTTP.Checked := True;
   end;
 end;
 

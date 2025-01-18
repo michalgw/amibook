@@ -108,6 +108,24 @@ object FormMain: TFormMain
       Caption = 'Przywróć dane'
       OnClick = MenuItemRestoreClick
     end
+    object MenuItemS3: TMenuItem
+      Caption = '-'
+    end
+    object MenuItemWinHTTP: TMenuItem
+      AutoCheck = True
+      Caption = 'Połączenie WinHTTP'
+      Checked = True
+      GroupIndex = 3
+      RadioItem = True
+      OnClick = MenuItemPolClick
+    end
+    object MenuItemOpenSSL: TMenuItem
+      AutoCheck = True
+      Caption = 'Połączenie OpenSSL'
+      GroupIndex = 3
+      RadioItem = True
+      OnClick = MenuItemPolClick
+    end
   end
   object TrIcon: TTrayIcon
     PopUpMenu = PopupMenuTray
