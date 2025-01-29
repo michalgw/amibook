@@ -7651,7 +7651,7 @@ FUNCTION DaneDek_VIUDOw1( aDaneOSS )
    aDane[ 'SekcjaC3' ] := {}
    hb_HEval( aDaneOSS[ 'sekcja_c3' ], { | cKraj, aPozycje |
       cKrajL := cKraj
-      AEval( aPozycje, { | aPoz |
+      hb_HEval( aPozycje, { | cKlucz, aPoz |
          AAdd( aDane[ 'SekcjaC3' ], { ;
             'kraj' => KrajUENazwa( cKrajL ), ;
             'krajdz' => KrajUENazwa( aPoz[ 'krajdz' ] ), ;

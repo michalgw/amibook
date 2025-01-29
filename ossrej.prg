@@ -888,23 +888,31 @@ FUNCTION OSSKorektyVIU_DODane()
 
 FUNCTION OSSSekcjaC3Dane( aDaneOSS )
 
-   LOCAL aDane := {=>}
+   LOCAL aDane := { => }, cKlucz, aSubPoz
 
    AEval( aDaneOSS, { | aPoz |
       IF aPoz[ 'sekcjac' ] == '3'
          IF ! hb_HHasKey( aDane, aPoz[ 'kraj' ] )
-            aDane[ aPoz[ 'kraj' ] ] := {}
+            aDane[ aPoz[ 'kraj' ] ] := { => }
          ENDIF
-         AAdd( aDane[ aPoz[ 'kraj' ] ], { ;
-            'krajdz' => aPoz[ 'krajdz' ], ;
-            'nr_idvat' => aPoz[ 'nr_idvat' ], ;
-            'nr_idpod' => aPoz[ 'nr_idpod' ], ;
-            'rodzdost' => aPoz[ 'rodzdost' ], ;
-            'stawkard' => aPoz[ 'stawkard' ], ;
-            'stawka' => aPoz[ 'stawka' ], ;
-            'nettoeur' => aPoz[ 'nettoeur' ], ;
-            'vateur' => aPoz[ 'vateur' ] ;
-         } )
+         cKlucz := aPoz[ 'krajdz' ] + ';' + aPoz[ 'nr_idvat' ] + ';' + ;
+            aPoz[ 'nr_idpod' ] + ';' + aPoz[ 'rodzdost' ] + ';' + ;
+            aPoz[ 'stawkard' ] + ';' + TKwota2( aPoz[ 'stawka' ] )
+         IF hb_HHasKey( aDane[ aPoz[ 'kraj' ] ], cKlucz )
+            aSubPoz := aDane[ aPoz[ 'kraj' ] ][ cKlucz ]
+            aSubPoz[ 'nettoeur' ] += aPoz[ 'nettoeur' ]
+            aSubPoz[ 'vateur' ] += aPoz[ 'vateur' ]
+         ELSE
+            aDane[ aPoz[ 'kraj' ] ][ cKlucz ] := { ;
+               'krajdz' => aPoz[ 'krajdz' ], ;
+               'nr_idvat' => aPoz[ 'nr_idvat' ], ;
+               'nr_idpod' => aPoz[ 'nr_idpod' ], ;
+               'rodzdost' => aPoz[ 'rodzdost' ], ;
+               'stawkard' => aPoz[ 'stawkard' ], ;
+               'stawka' => aPoz[ 'stawka' ], ;
+               'nettoeur' => aPoz[ 'nettoeur' ], ;
+               'vateur' => aPoz[ 'vateur' ] }
+         ENDIF
       ENDIF
    } )
 

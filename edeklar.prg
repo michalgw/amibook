@@ -7584,7 +7584,7 @@ FUNCTION edek_viudo_2( aDane )
                r += '        <MSESTSupplies>' + nl
                r += '          <MSCONCountryCode>' + cKraj + '</MSCONCountryCode>' + nl
 
-               AEval( aPozycje, { | aPoz |
+               hb_HEval( aPozycje, { | cKlucz, aPoz |
                   r += '          <MSESTSupply>' + nl
                   r += '            <VATReturnDetails>' + nl
                   r += '              <EUTraderID>' + nl
