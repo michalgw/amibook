@@ -2255,7 +2255,7 @@ PROCEDURE setind( ZB )
          SET INDEX TO rejz3,rejz1,rejz2,rejz,rejz4
       ENDIF
    CASE ZB == 'PRAC'
-        SET INDEX TO prac,prac1,prac2,prac3,prac4,prac5
+        SET INDEX TO prac,prac1,prac2,prac3,prac4,prac5,prac6
    CASE ZB == 'PRAC_HZ'
         SET INDEX TO prac_hz
    CASE ZB == 'ETATY'

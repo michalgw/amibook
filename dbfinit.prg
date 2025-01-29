@@ -2153,6 +2153,7 @@ FUNCTION dbfIdxPRAC()
    index on firma + Str( rec_no, 5, 0 ) to prac3
    index on del+firma+pesel to prac4
    index on rec_no TO prac5
+   index on id TO prac6
    RETURN
 ****************************************
 FUNCTION dbfIdxPRAC_HZ()

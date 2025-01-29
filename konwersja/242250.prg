@@ -46,6 +46,17 @@ FUNCTION Main()
 
    ENDIF
 
+   IF wersja_db < 2431
+
+      ? 'Indeksowanie...'
+      dbfIdxPRAC()
+      dbCloseAll()
+
+      wersja_db := 2431
+      SAVE ALL LIKE wersja_db TO wersjadb
+
+   ENDIF
+
    RETURN
 
 /*----------------------------------------------------------------------*/
