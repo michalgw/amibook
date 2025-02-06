@@ -1671,6 +1671,8 @@ PROCEDURE P_Dochod_Licz( lDoZUS )
 
 PROCEDURE infodoch()
 
+   LOCAL aDaneDruk
+
    *################################# GRAFIKA ##################################
    @  3, 0 CLEAR TO 22, 79
    ColInf()
@@ -1835,9 +1837,53 @@ PROCEDURE infodoch()
    DO CASE
    CASE kkk == 68 .OR. kkk == 100
 
-      DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), iif( zPITOKRES == 'K', ;
-         PadC( 'Kwarta&_l. ' + param_rok + '.' + StrTran( Str( pitKW, 2 ), ' ', '0' ), 80 ), ;
-         PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) ) }, , 4, 22 )
+      SWITCH GraficznyCzyTekst( 'infodoch' )
+      CASE 1
+
+         aDaneDruk := { ;
+            'firma' => AllTrim( firma->nazwa ), ;
+            'nazwisko' => AllTrim( spolka->naz_imie ), ;
+            'miesiac' => Upper( AllTrim( miesiac( Val( miesiac ) ) ) ), ;
+            'rok' => param_rok, ;
+            'sposob' => iif( spolka->sposob == 'L', 1, 0 ), ;
+            'okres' => iif( zPITOKRES == 'K', 1, 0 ), ;
+            'rodzfir' => iif( spolka->sposob == 'L', 'liniowo', 'progresywnie' ) + ', ' + iif( zPITOKRES == 'K', 'kwartalnie', 'miesi©cznie' ), ;
+            'gosprzy' => a_gosprzy[ okrpod, Val( miesiac ) ], ;
+            'goskosz' => a_goskosz[ okrpod, Val( miesiac ) ], ;
+            'gosdoch' => a_gosdoch[ okrpod, Val( miesiac ) ], ;
+            'gosstra' => a_gosstra[ okrpod, Val( miesiac ) ], ;
+            'najprzy' => iif(spolka->sposob == 'L', 0, a_najprzy[ okrpod, Val( miesiac ) ] ), ;
+            'najkosz' => iif(spolka->sposob == 'L', 0, a_najkosz[ okrpod, Val( miesiac ) ] ), ;
+            'najdoch' => iif(spolka->sposob == 'L', 0, a_najdoch[ okrpod, Val( miesiac ) ] ), ;
+            'najstra' => iif(spolka->sposob == 'L', 0, a_najstra[ okrpod, Val( miesiac ) ] ), ;
+            'razemdoch' => a_pK5[ okrpod, Val( miesiac ) ], ;
+            'dochod1' => a_pKK7[ okrpod, Val( miesiac ) ], ;
+            'odlzus' => a_sumemer[ okrpod, Val( miesiac ) ] + a_sumzdro[ okrpod, Val( miesiac ) ], ;
+            'odlwydatki' => a_wydatkim[ okrpod, Val( miesiac ) ], ;
+            'dochod2' => a_pK6[ okrpod, Val( miesiac ) ], ;
+            'kwzmien' => a_pk75[ okrpod, Val( miesiac ) ], ;
+            'podstawa' => a_pK7[ okrpod, Val( miesiac ) ], ;
+            'podatpodst' => a_pK8[ okrpod, Val( miesiac ) ], ;
+            'odlpod' => a_pK9[ okrpod, Val( miesiac ) ], ;
+            'pododl' => a_sumzdro1[ okrpod, Val( miesiac ) ], ;
+            'zalpopuz' => a_zalipod[ okrpod, Val( miesiac ) ], ;
+            'zalpop' => a_pk12[ okrpod, Val( miesiac ) ], ;
+            'zalmie' => a_pK13[ okrpod, Val( miesiac ) ], ;
+            'ogrzal' => a_P888[ okrpod, Val( miesiac ) ], ;
+            'podrem' => a_preman[ okrpod, Val( miesiac ) ], ;
+            'odsetki' => a_odseodma[ okrpod, Val( miesiac ) ], ;
+            'podatek' => a_wartprze[ okrpod, Val( miesiac ) ] }
+         FRDrukuj( 'frf\infodoch.frf', aDaneDruk )
+         EXIT
+
+      CASE 2
+
+         DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), iif( zPITOKRES == 'K', ;
+            PadC( 'Kwarta&_l. ' + param_rok + '.' + StrTran( Str( pitKW, 2 ), ' ', '0' ), 80 ), ;
+            PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) ) }, , 4, 22 )
+         EXIT
+
+      END SWITCH
 
    CASE kkk == 87 .OR. kkk == 119 .OR. kkk == 66 .OR. kkk == 98
 
