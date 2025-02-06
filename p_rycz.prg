@@ -313,6 +313,8 @@ PROCEDURE P_RyczLicz( Okres, lPobierzPrzychody )
 
 PROCEDURE zestaw_R( Okres )
 
+   LOCAL aDaneDruk
+
    PRIVATE udz1, udz2, udz3, udz4, udz5, udz6, udz7, udz8, udz9, udz10, udz11, udz12
    PRIVATE przychodu, przychodp, przychodh, przychr20, przychr17, przychr10
    PRIVATE przychrk07, przychrk08, przychrk09, przychrk10
@@ -668,8 +670,103 @@ PROCEDURE zestaw_R( Okres )
    zPodatki := .T.
    DO CASE
    CASE kkk == Asc( 'D' ) .OR. kkk == Asc( 'd' )
-      DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), ;
-         PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) }, , 4, 22 )
+
+      SWITCH GraficznyCzyTekst( 'inforycz' )
+      CASE 1
+
+         aDaneDruk := { ;
+            'firma' => AllTrim( firma->nazwa ), ;
+            'nazwisko' => AllTrim( spolka->naz_imie ), ;
+            'staw_ory20' => AllTrim( staw_ory20 ), ;
+            'staw_ory17' => AllTrim( staw_ory17 ), ;
+            'staw_ork09' => AllTrim( staw_ork09 ), ;
+            'staw_ouslu' => AllTrim( staw_ouslu ), ;
+            'staw_ork10' => AllTrim( staw_ork10 ), ;
+            'staw_oprod' => AllTrim( staw_oprod ), ;
+            'staw_ohand' => AllTrim( staw_ohand ), ;
+            'staw_ork07' => AllTrim( staw_ork07 ), ;
+            'staw_ory10' => AllTrim( staw_ory10 ), ;
+            'staw_ry20' => staw_ry20 * 100, ;
+            'staw_ry17' => staw_ry17 * 100, ;
+            'staw_rk09' => staw_rk09 * 100, ;
+            'staw_uslu' => staw_uslu * 100, ;
+            'staw_rk10' => staw_rk10 * 100, ;
+            'staw_prod' => staw_prod * 100, ;
+            'staw_hand' => staw_hand * 100, ;
+            'staw_rk07' => staw_rk07 * 100, ;
+            'staw_ry10' => staw_ry10 * 100, ;
+            'okres' => iif( OKRES == 'M', 'Za miesi¥c ' + AllTrim( miesiac( Val( miesiac ) ) ), ;
+               iif( OKRES == 'K', 'Za ' + AllTrim( Str( ObliczKwartal( Val( miesiac ) )[ 'kwarta' ] ) ) + ' kwartaˆ', ;
+               iif( OKRES == 'N', 'Narastaj¥co', '?' ) ) ), ;
+            'rok' => param_rok, ;
+            'k55' => k55, ;
+            'k1a' => k1a, ;
+            'k1b' => k1b, ;
+            'k1k9' => k1k9, ;
+            'k1' => k1, ;
+            'k1k10' => k1k10, ;
+            'k2' => k2, ;
+            'k3' => k3, ;
+            'k1k7' => k1k7, ;
+            'k1c' => k1c, ;
+            'k6a' => k6a, ;
+            'k6b' => k6b, ;
+            'k6k9' => k6k9, ;
+            'k6' => k6, ;
+            'k6k10' => k6k10, ;
+            'k7' => k7, ;
+            'k8' => k8, ;
+            'k6k7' => k6k7, ;
+            'k6c' => k6c, ;
+            'k9a' => k9a, ;
+            'k9b' => k9b, ;
+            'k9k9' => k9k9, ;
+            'k9' => k9, ;
+            'k9k10' => k9k10, ;
+            'k10' => k10, ;
+            'k11' => k11, ;
+            'k9k7' => k9k7, ;
+            'k9c' => k9c, ;
+            'k12a' => k12a, ;
+            'k12b' => k12b, ;
+            'k12k9' => k12k9, ;
+            'k12' => k12, ;
+            'k12k10' => k12k10, ;
+            'k13' => k13, ;
+            'k14' => k14, ;
+            'k12k7' => k12k7, ;
+            'k12c' => k12c, ;
+            'k15a' => k15a, ;
+            'k15b' => k15b, ;
+            'k15k9' => k15k9, ;
+            'k15' => k15, ;
+            'k15k10' => k15k10, ;
+            'k16' => k16, ;
+            'k17' => k17, ;
+            'k15k7' => k15k7, ;
+            'k15c' => k15c, ;
+            'sum1' => k1a + k1b + k1k9 + k1 + k1k10 + k2 + k3 + k1k7 + k1c, ;
+            'sum2' => k9a + k9b + k9k9 + k9 + k9k10 + k10 + k11 + k9k7 + k9c, ;
+            'sum3' => k12a + k12b + k12k9 + k12 + k12k10 + k13 + k14 + k12k7 + k12c, ;
+            'k18' => k18, ;
+            'k19' => k19, ;
+            'zzdrowie' => zzdrowie, ;
+            'k21a' => iif( OKRES == 'N', k21a, 0 ), ;
+            'k22' => iif( OKRES == 'N', k22, 0 ), ;
+            'k23' => iif( OKRES == 'N', k23, 0 ), ;
+            'k21' => iif( OKRES == 'N', 0, k21 ), ;
+            'narast' => iif( OKRES == 'N', 1, 0 ) }
+
+         FRDrukuj( 'frf\inforycz.frf', aDaneDruk )
+         EXIT
+
+      CASE 2
+
+         DrukujEkran( { PadC( AllTrim( firma->nazwa ), 80 ), ;
+            PadC( 'Miesi&_a.c ' + param_rok + '.' + StrTran( PadL( miesiac, 2 ), ' ', '0' ), 80 ) }, , 4, 22 )
+         EXIT
+
+      END SWITCH
 
    CASE kkk == Asc( 'W' ) .OR. kkk == Asc( 'w' ) .OR. kkk == Asc( 'B' ) .OR. kkk == Asc( 'b' )
       zNAZWA_PLA := zNAZWA_PLA + Space( 30 )
