@@ -20,6 +20,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ************************************************************************/
 
+   LOCAL nGrafTekst, aDane
+
 private _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
 private _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15
 begin sequence
@@ -90,6 +92,67 @@ begin sequence
          kom(3,[*w],[b r a k   d a n y c h])
          break
       endif
+
+      nGrafTekst := GraficznyCzyTekst( 'roczne' )
+      DO CASE
+         CASE nGrafTekst == 1
+
+            *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
+            k1=param_rok
+            *-----remanenty-----
+            store 0 to rem_p,rem_k
+            select oper
+            seek [+]+ident_fir
+            mc_rozp=mc
+            seek [+]+ident_fir+mc_rozp+chr(1)
+            rem_p=iif(found(),ZAKUP+UBOCZNE+WYNAGR_G+WYDATKI,0)
+            seek [+]+ident_fir+[þ]
+            skip -1
+            miesiac=mc
+            seek [+]+ident_fir+miesiac+chr(254)
+            rem_k=iif(found(),ZAKUP+UBOCZNE+WYNAGR_G+WYDATKI,0)
+            *-------------------
+            k3=rem_p
+            k6=rem_k
+            select suma_mc
+            seek [+]+ident_fir
+            store 0 to k2,k4,k5,k7
+            do while del=[+].and.firma=ident_fir
+               k2=k2+wyr_tow+uslugi
+               k4=k4+zakup
+               k5=k5+uboczne
+               k7=k7+WYNAGR_G+WYDATKI
+               skip
+            enddo
+            k11=k3+k4+k5-k6+k7+k8-k9-k10
+            k12=k2
+            k13=k11
+            k14=k12-k13
+            go bottom
+            skip
+
+            aDane := { ;
+               'k1' => k1, ;
+               'k3' => k3, ;
+               'k6' => k6, ;
+               'k2' => k2, ;
+               'k4' => k4, ;
+               'k5' => k5, ;
+               'k7' => k7, ;
+               'k8' => k8, ;
+               'k9' => k9, ;
+               'k10' => k10, ;
+               'k11' => k11, ;
+               'k12' => k12, ;
+               'k13' => k13, ;
+               'k14' => k14, ;
+               'nazwa' => AllTrim( firma->nazwa ), ;
+               'nip' => AllTrim( firma->nip ) }
+
+            FRDrukuj( 'frf\roczne.frf', aDane )
+
+         CASE nGrafTekst == 2
+
       mon_drk([ö]+procname())
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -179,6 +242,8 @@ begin sequence
       *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       mon_drk([þ])
+
+      ENDCASE
 end
 if _czy_close
    close_()
