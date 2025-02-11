@@ -168,6 +168,7 @@ PROCEDURE ZusRca( ubezp )
                   ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
                   ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
                   ETATY->BRUT_RAZEM - ( ETATY->DOPL_BZUS + ETATY->ZASI_BZUS + ETATY->WAR_PF3 + ETATY->WAR_PSUM ), ;
+                  0, ; //iif( ETATY->WAR_FUW <> 0, ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, 0 );
                   ETATY->WAR_PUE, ;
                   ETATY->WAR_PUR, ;
                   ETATY->WAR_PUC, ;
@@ -222,6 +223,7 @@ PROCEDURE ZusRca( ubezp )
                      'podst1' => 0, ;
                      'podst2' => 0, ;
                      'podst3' => 0, ;
+                     'podst4' => 0, ;
                      'war_pue' => 0, ;
                      'war_pur' => 0, ;
                      'war_puc' => 0, ;
@@ -236,6 +238,7 @@ PROCEDURE ZusRca( ubezp )
                aDane[ cPozIdent ][ 'podst1' ] += iif( UMOWY->WAR_PUE == 0 .AND. UMOWY->WAR_PUR == 0 , 0, UMOWY->PENSJA )
                aDane[ cPozIdent ][ 'podst2' ] += iif( UMOWY->WAR_PUC == 0, 0, UMOWY->PENSJA )
                aDane[ cPozIdent ][ 'podst3' ] += UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM )
+               aDane[ cPozIdent ][ 'podst4' ] += iif( UMOWY->WAR_FUW == 0, 0, UMOWY->PENSJA )
                aDane[ cPozIdent ][ 'war_pue' ] += UMOWY->WAR_PUE
                aDane[ cPozIdent ][ 'war_pur' ] += UMOWY->WAR_PUR
                aDane[ cPozIdent ][ 'war_puc' ] += UMOWY->WAR_PUC
@@ -294,6 +297,7 @@ PROCEDURE ZusRca( ubezp )
             aPoz[ 'podst1' ], ;
             aPoz[ 'podst2' ], ;
             aPoz[ 'podst3' ], ;
+            aPoz[ 'podst4' ], ;
             aPoz[ 'war_pue' ], ;
             aPoz[ 'war_pur' ], ;
             aPoz[ 'war_puc' ], ;
@@ -338,6 +342,7 @@ PROCEDURE ZusRca( ubezp )
                D->PODSTAWA, ;
                D->PODSTAWA, ;
                D->PODSTZDR, ;
+               0, ;
                D->WAR_wUE, ;
                D->WAR_wUR, ;
                D->WAR_wUC, ;
@@ -460,6 +465,7 @@ PROCEDURE ZusRca( ubezp )
                      ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
                      ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
                      ETATY->BRUT_RAZEM - ( ETATY->DOPL_BZUS + ETATY->ZASI_BZUS + ETATY->WAR_PF3 + ETATY->WAR_PSUM ), ;
+                     0, ;
                      ETATY->WAR_PUE, ;
                      ETATY->WAR_PUR, ;
                      ETATY->WAR_PUC, ;
@@ -521,6 +527,7 @@ PROCEDURE ZusRca( ubezp )
                      'podst1' => 0, ;
                      'podst2' => 0, ;
                      'podst3' => 0, ;
+                     'podst4' => 0, ;
                      'war_pue' => 0, ;
                      'war_pur' => 0, ;
                      'war_puc' => 0, ;
@@ -535,6 +542,7 @@ PROCEDURE ZusRca( ubezp )
                aDane[ cPozIdent ][ 'podst1' ] += iif( UMOWY->WAR_PUE == 0 .AND. UMOWY->WAR_PUR == 0 , 0, UMOWY->PENSJA )
                aDane[ cPozIdent ][ 'podst2' ] += iif( UMOWY->WAR_PUC == 0, 0, UMOWY->PENSJA )
                aDane[ cPozIdent ][ 'podst3' ] += UMOWY->PENSJA - ( UMOWY->WAR_PF3 + UMOWY->WAR_PSUM )
+               aDane[ cPozIdent ][ 'podst4' ] += iif( UMOWY->WAR_FUW == 0, 0, UMOWY->PENSJA )
                aDane[ cPozIdent ][ 'war_pue' ] += UMOWY->WAR_PUE
                aDane[ cPozIdent ][ 'war_pur' ] += UMOWY->WAR_PUR
                aDane[ cPozIdent ][ 'war_puc' ] += UMOWY->WAR_PUC
@@ -594,6 +602,7 @@ PROCEDURE ZusRca( ubezp )
             aPoz[ 'podst1' ], ;
             aPoz[ 'podst2' ], ;
             aPoz[ 'podst3' ], ;
+            aPoz[ 'podst4' ], ;
             aPoz[ 'war_pue' ], ;
             aPoz[ 'war_pur' ], ;
             aPoz[ 'war_puc' ], ;
