@@ -789,13 +789,34 @@ PROCEDURE Umowy()
          _disp := .F.
       *############################## DRUK RACHUNKU ###############################
       CASE kl == 82 .OR. kl == 114
-         wybzbior( 'RACH*.TXT' )
+         SWITCH GraficznyCzyTekst( 'umrach' )
+         CASE 1
+            UmowaSzabGraf( 'R' )
+            EXIT
+         CASE 2
+            wybzbior( 'RACH*.TXT' )
+            EXIT
+         ENDSWITCH
       *############################## DRUK UMOWA ##################################
       CASE kl == 85 .OR. kl == 117
-         wybzbior( 'UMOW*.TXT' )
+         SWITCH GraficznyCzyTekst( 'umumow' )
+         CASE 1
+            UmowaSzabGraf( 'U' )
+            EXIT
+         CASE 2
+            wybzbior( 'UMOW*.TXT' )
+            EXIT
+         ENDSWITCH
       *############################## DRUK WYPLATY ################################
       CASE kl == 87 .OR. kl == 119
-         wybzbior( 'WYPL*.TXT' )
+         SWITCH GraficznyCzyTekst( 'umwypl' )
+         CASE 1
+            UmowaSzabGraf( 'W' )
+            EXIT
+         CASE 2
+            wybzbior( 'WYPL*.TXT' )
+            EXIT
+         ENDSWITCH
       ******************** ENDCASE
       ENDCASE
    ENDDO
@@ -968,6 +989,8 @@ PROCEDURE TRANTEK()
    TEKSTDR := StrTran( TEKSTDR, '#PPKPPM', AllTrim( kwota( PPKPPM, 11, 2 ) ) )
    TEKSTDR := StrTran( TEKSTDR, '@ZASI_BZUS', kwota( ZASI_BZUS, 11, 2 ) )
    TEKSTDR := StrTran( TEKSTDR, '#ZASI_BZUS', AllTrim( kwota( ZASI_BZUS, 11, 2 ) ) )
+   TEKSTDR := StrTran( TEKSTDR, '@PODZDRO', kwota( PENSJA - WAR_PSUM, 11, 2 ) )
+   TEKSTDR := StrTran( TEKSTDR, '#PODZDRO', AllTrim( kwota( PENSJA - WAR_PSUM, 11, 2 ) ) )
    //?tekstdr
    //ejec
    //set print off

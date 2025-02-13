@@ -881,6 +881,10 @@ FUNCTION Main()
 
    PUBLIC firma_rodzajdrfv := 'G'
 
+   PUBLIC oOOService := NIL
+   PUBLIC oOODesktop := NIL
+   PUBLIC oOOCoreReflection := NIL
+
    // Parametry on-line
    IF File( 'olparam.mem' )
       RESTORE FROM olparam ADDITIVE
@@ -1475,25 +1479,23 @@ FUNCTION _aedb()
 
 *******************************************
 // Umowy - wzorce
-// TODO: Polaczyc 3 ponizsze funkcje w jedna
 FUNCTION _aedc()
 
-   LOCAL _ilm
-   LOCAL a, ZZ
+   o[ 1 ] := ' G - Wzory graficzne '
+   o[ 2 ] := ' T - Wzory tekstowe  '
 
-   _ilm := ADir( 'umow*.txt' )
-   a := Array( _ilm )
-   ADir( 'umow*.txt', a )
-   ASort( a )
-   ZZ := 0
-   IF _ilm > 21
-      _ilm := 21
-   ENDIF
-   @ 21 - _ilm, 20 TO 22, 33
-   ZZ := AChoice( 21 - ( _ilm - 1 ), 21, 21, 32, a, .T., .T., ZZ )
-   IF ZZ <> 0
-      Umowa( AllTrim( a[ ZZ ] ) )
-   ENDIF
+   RETURN '19,8'
+
+FUNCTION _aedca()
+
+   UmowaEdytujGraf( 'U' )
+
+   RETURN ''
+
+*******************************************
+FUNCTION _aedcb()
+
+   UmowaEdytujTekst( 'umow*.txt' )
 
    RETURN ''
 
@@ -1501,22 +1503,22 @@ FUNCTION _aedc()
 // Rachunek - wzorce
 FUNCTION _aedd()
 
-   LOCAL _ilm
-   LOCAL a, ZZ
+   o[ 1 ] := ' G - Wzory graficzne '
+   o[ 2 ] := ' T - Wzory tekstowe  '
 
-   _ilm := ADir( 'rach*.txt' )
-   a := Array( _ilm )
-   ADir( 'rach*.txt', a )
-   ASort( a )
-   ZZ := 0
-   IF _ilm > 21
-      _ilm := 21
-   ENDIF
-   @ 21 - _ilm, 20 TO 22, 33
-   ZZ := AChoice( 21 - ( _ilm - 1 ), 21, 21, 32, a, .T., .T., ZZ )
-   IF ZZ <> 0
-      Umowa( AllTrim( a[ ZZ ] ) )
-   ENDIF
+   RETURN '19,8'
+
+*******************************************
+FUNCTION _aedda()
+
+   UmowaEdytujGraf( 'R' )
+
+   RETURN ''
+
+*******************************************
+FUNCTION _aeddb()
+
+   UmowaEdytujTekst( 'rach*.txt' )
 
    RETURN ''
 
@@ -1524,22 +1526,22 @@ FUNCTION _aedd()
 // Wyplata - wzorce
 FUNCTION _aede()
 
-   LOCAL _ilm
-   LOCAL a, ZZ
+   o[ 1 ] := ' G - Wzory graficzne '
+   o[ 2 ] := ' T - Wzory tekstowe  '
 
-   _ilm := ADir( 'wypl*.txt' )
-   a := Array( _ilm )
-   ADir( 'wypl*.txt', a )
-   ASort( a )
-   ZZ := 0
-   IF _ilm>21
-      _ilm=21
-   ENDIF
-   @ 21 - _ilm, 20 TO 22, 33
-   ZZ := AChoice( 21 - ( _ilm - 1 ), 21, 21, 32, a, .T., .T., ZZ )
-   IF ZZ <> 0
-      Umowa( AllTrim( a[ZZ] ) )
-   ENDIF
+   RETURN '19,8'
+
+*******************************************
+FUNCTION _aedea()
+
+   UmowaEdytujGraf( 'W' )
+
+   RETURN ''
+
+*******************************************
+FUNCTION _aedeb()
+
+   UmowaEdytujTekst( 'wypl*.txt' )
 
    RETURN ''
 
