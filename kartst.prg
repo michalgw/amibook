@@ -52,14 +52,14 @@ FUNCTION KartST()
    *################################# GRAFIKA ##################################
    @  3, 0 SAY '               K A R T O T E K A   &__S. R O D K &__O. W   T R W A &__L. Y C H              '
    @  4, 0 SAY '  DataPrzy   Nr Ewid            Nazwa &_s.rodka trwa&_l.ego            KST    StawAmor'
-   @  5, 0 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄ¿'
-   @  6, 0 SAY '³          ³          ³                                        ³        ³      ³'
-   @  7, 0 SAY '³          ³          ³                                        ³        ³      ³'
-   @  8, 0 SAY '³          ³          ³                                        ³        ³      ³'
-   @  9, 0 SAY '³          ³          ³                                        ³        ³      ³'
-   @ 10, 0 SAY '³          ³          ³                                        ³        ³      ³'
-   @ 11, 0 SAY '³          ³          ³                                        ³        ³      ³'
-   @ 12, 0 SAY 'ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄ´'
+   @  5, 0 SAY 'ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄ¿'
+   @  6, 0 SAY '³          ³          ³                                       ³        ³       ³'
+   @  7, 0 SAY '³          ³          ³                                       ³        ³       ³'
+   @  8, 0 SAY '³          ³          ³                                       ³        ³       ³'
+   @  9, 0 SAY '³          ³          ³                                       ³        ³       ³'
+   @ 10, 0 SAY '³          ³          ³                                       ³        ³       ³'
+   @ 11, 0 SAY '³          ³          ³                                       ³        ³       ³'
+   @ 12, 0 SAY 'ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄ´'
    @ 13, 0 SAY '³ Opis.............                                            Nr OT.          ³'
    @ 14, 0 SAY '³ Nr dowodu zakupu.            Wart.zak.               Wart.ulg.               ³'
    @ 15, 0 SAY '³ &__X.r&_o.d&_l.o zakupu....                                                            ³'
@@ -212,9 +212,9 @@ FUNCTION KartST()
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
             @ wiersz,  1 GET zDATA_ZAK WHEN ins
             @ wiersz, 12 GET zNREWID PICTURE "!!!!!!!!!!"
-            @ wiersz, 23 GET zNAZWA PICTURE repl( "!", 40 ) VALID v3_111st()
-            @ wiersz, 64 GET zKRST PICTURE "!!!!!!!!"
-            @ wiersz, 73 GET zSTAWKA PICTURE '999.99' WHEN ins VALID zSTAWKA >= 0.0
+            @ wiersz, 23 GET zNAZWA PICTURE "@S39 " + repl( "!", 40 ) VALID v3_111st()
+            @ wiersz, 63 GET zKRST PICTURE "!!!!!!!!"
+            @ wiersz, 72 GET zSTAWKA PICTURE '999.999' WHEN ins VALID zSTAWKA >= 0.0
             @ 13, 19 GET zOPIS PICTURE '@S40 ' + repl( "!", 60 )
             @ 13, 69 GET zNR_OT PICTURE "!!!!!!!!!!"
             @ 14, 19 GET zDOWOD_ZAK PICTURE "@S10 " + repl( "!", 40 )
@@ -556,7 +556,7 @@ FUNCTION KartST()
 *################################## FUNKCJE #################################
 PROCEDURE say31st()
 
-   RETURN DToC( DATA_ZAK ) + '³' + NREWID + '³' + NAZWA + '³' + KRST + '³' + Str( STAWKA, 6, 2 )
+   RETURN DToC( DATA_ZAK ) + '³' + NREWID + '³' + SubStr( NAZWA, 1, 39 ) + '³' + KRST + '³' + Str( STAWKA, 7, 3 )
 
 *############################################################################
 PROCEDURE say31sst()

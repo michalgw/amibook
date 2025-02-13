@@ -51,19 +51,19 @@ begin sequence
       mon_drk([Ж]+procname())
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
       mon_drk(padc([TABELA AMORTYZACJI &__S.RODKA TRWA&_L.EGO       FIRMA: ]+SYMBOL_FIR,128))
-      mon_drk([здддддддддбддддддддддбддддддддддддддддддддддддддддддддддддддддбддддддддддбддддддддбддддддбддддддддбддддбдддддддддддддбддддддддд©])
-      mon_drk([Ё   Data  Ё  Numer   Ё                  Nazwa                 Ё   Dow&_o.d  Ё        ЁStawkaЁ Spos&_o.b ЁMno&_z.Ё     Cena    Ё  Data   Ё])
-      mon_drk([Ёprzyj&_e.ciaЁewidencyj.Ё             &_s.rodka trwa&_l.ego            Ё  zakupu  Ё  KST   Ё  %%  Ёumorzen.ЁDEGRЁ    zakupu   Ё]+vZBYLIK+[Ё])
-      mon_drk([юдддддддддаддддддддддаддддддддддддддддддддддддддддддддддддддддаддддддддддаддддддддаддддддаддддддддаддддадддддддддддддаддддддддды])
+      mon_drk([здддддддддбддддддддддбдддддддддддддддддддддддддддддддддддддддбддддддддддбддддддддбдддддддбддддддддбддддбдддддддддддддбддддддддд©])
+      mon_drk([Ё   Data  Ё  Numer   Ё                  Nazwa                Ё   Dow&_o.d  Ё        ЁStawka Ё Spos&_o.b ЁMno&_z.Ё     Cena    Ё  Data   Ё])
+      mon_drk([Ёprzyj&_e.ciaЁewidencyj.Ё             &_s.rodka trwa&_l.ego           Ё  zakupu  Ё  KST   Ё  %%   Ёumorzen.ЁDEGRЁ    zakupu   Ё]+vZBYLIK+[Ё])
+      mon_drk([юдддддддддаддддддддддадддддддддддддддддддддддддддддддддддддддаддддддддддаддддддддадддддддаддддддддаддддадддддддддддддаддддддддды])
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       _grupa=.t.
       *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
       k1=dtoc(data_zak)
       k2=krst
       k3=nrewid
-      K4=nazwa
-      K5=dowod_zak
-      K7=str(stawka,6,2)
+      K4=SubStr( nazwa, 1, 39 )
+      K5=SubStr( dowod_zak, 1, 10 )
+      K7=str(stawka,7,3)
       K8=iif(sposob='L','Liniowo ',iif(sposob='J','Jednoraz','Degresyw'))
       K9=str(wspdeg,4,2)
       K10=transform(wartosc,'@E 999999999.99')

@@ -34,7 +34,7 @@ public  aAMORTdbf := {;
    { "WART_MOD", "N", 12, 2 },;                   //  8   Suma modyfikacji kwot z tablicy 'kartstmo'
    { "WART_AKT", "N", 12, 2 },;                   //  9
    { "UMORZ_AKT", "N", 12, 2 },;                  //  10
-   { "STAWKA", "N", 6, 2 },;                      //  11
+   { "STAWKA", "N", 7, 3 },;                      //  11
    { "WSPDEG", "N", 4, 2 },;                      //  12
    { "LINIOWO", "N", 12, 2 },;                    //  13
    { "DEGRES", "N", 12, 2 },;                     //  14
@@ -634,7 +634,7 @@ public aKARTSTdbf := {;
    { "WLASNOSC", "C", 1, 0 },;                    //  16
    { "PRZEZNACZ", "C", 1, 0 },;                   //  17
    { "SPOSOB", "C", 1, 0 },;                      //  18
-   { "STAWKA", "N", 6, 2 },;                      //  19
+   { "STAWKA", "N", 7, 3 },;                      //  19
    { "WSPDEG", "N", 4, 2 },;                      //  20
    { "WART_ULG", "N", 12, 2 },;                   //  21
    { "VATZAKUP", "N", 12, 2 },;                   //  22

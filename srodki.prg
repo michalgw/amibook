@@ -49,10 +49,10 @@ begin sequence
       mon_drk([Ж]+procname())
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
       mon_drk(padc([KARTOTEKA SRODK&__O.W TRWA&__L.YCH       FIRMA: ]+SYMBOL_FIR,128))
-      mon_drk([зддддддддддбддддддддддбддддддддддддддддддддддддддддддддддддддддбддддддддддбддддддддбддддддбддддддддбддддбддддддддддддбдддддддддд©])
-      mon_drk([Ё   Data   Ё  Numer   Ё                  Nazwa                 Ё   Dow&_o.d  Ё        ЁStawkaЁ Spos&_o.b ЁMno&_z.Ё    Cena    ЁLikwidacjaЁ])
-   mon_drk([Ёprzyj&_e.cia Ёewidencyj.Ё             &_s.rodka trwa&_l.ego            Ё  zakupu  Ё  KST   Ё  %%  Ёumorze&_n..ЁDEGRЁ   zakupu   Ё/ Zbycie  Ё])
-      mon_drk([юддддддддддаддддддддддаддддддддддддддддддддддддддддддддддддддддаддддддддддаддддддддаддддддаддддддддаддддаддддддддддддадддддддддды])
+      mon_drk([зддддддддддбддддддддддбдддддддддддддддддддддддддддддддддддддддбддддддддддбддддддддбдддддддбддддддддбддддбддддддддддддбдддддддддд©])
+      mon_drk([Ё   Data   Ё  Numer   Ё                  Nazwa                Ё   Dow&_o.d  Ё        ЁStawka Ё Spos&_o.b ЁMno&_z.Ё    Cena    ЁLikwidacjaЁ])
+   mon_drk([Ёprzyj&_e.cia Ёewidencyj.Ё             &_s.rodka trwa&_l.ego           Ё  zakupu  Ё  KST   Ё  %%   Ёumorze&_n..ЁDEGRЁ   zakupu   Ё/ Zbycie  Ё])
+      mon_drk([юддддддддддаддддддддддадддддддддддддддддддддддддддддддддддддддаддддддддддаддддддддадддддддаддддддддаддддаддддддддддддадддддддддды])
       SUMA_MOD=0
       SUMA_PRZED=0
       SUMA_PO=0
@@ -65,9 +65,9 @@ begin sequence
          k1=dtoc(data_zak)
          k2=krst
          k3=nrewid
-         K4=nazwa
+         K4=SubStr( nazwa, 1, 39 )
          K5=SubStr( dowod_zak, 1, 10 )
-         K7=str(stawka,6,2)
+         K7=str(stawka,7,3)
          K8=iif(sposob='L','Liniowo ',iif(sposob='J','Jednoraz','Degresyw'))
          K9=str(wspdeg,4,2)
          K10=transform(wartosc,'@E 9 999 999.99')

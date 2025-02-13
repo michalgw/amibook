@@ -57,6 +57,24 @@ FUNCTION Main()
 
    ENDIF
 
+   IF wersja_db < 2500
+
+      ? 'Aktualizacja struktury danych...'
+      dbfUtworzTabele( 'KARTST', 'kartst.tym' )
+      dbfUtworzTabele( 'AMORT', 'amort.tym' )
+      dbfImportujDaneTym('', 'TYM')
+      dbCloseAll()
+
+      ? 'Indeksowanie...'
+      dbfIdxKARTST()
+      dbfIdxAMORT()
+      dbCloseAll()
+
+      wersja_db := 2500
+      SAVE ALL LIKE wersja_db TO wersjadb
+
+   ENDIF
+
    RETURN
 
 /*----------------------------------------------------------------------*/

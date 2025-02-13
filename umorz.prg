@@ -51,10 +51,10 @@ begin sequence
       mon_drk([Ж]+procname())
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
       mon_drk(padc([UMORZENIE &__S.RODK&__O.W TRWA&__L.YCH W MIESI&__A.CU ]+mieum+'.'+param_rok+[        FIRMA: ]+SYMBOL_FIR,104))
-      mon_drk([здддддддддбддддддддддбддддддддддддддддддддддддддддддддддддддддбддддддддбддддддбддддддддбддддбдддддддддд©])
-      mon_drk([Ё  Data   Ё  Numer   Ё                  Nazwa                 Ё        ЁStawkaЁ Spos&_o.b ЁMno&_z.Ё  Warto&_s.&_c. Ё])
-   mon_drk([Ёprzyj&_e.c. Ёewidencyj.Ё             &_s.rodka trwa&_l.ego            Ё  KST   Ё  %%  Ёumorzen.ЁDEGRЁ umorzeniaЁ])
-      mon_drk([юдддддддддаддддддддддаддддддддддддддддддддддддддддддддддддддддаддддддддаддддддаддддддддаддддадддддддддды])
+      mon_drk([здддддддддбддддддддддбдддддддддддддддддддддддддддддддддддддддбддддддддбдддддддбддддддддбддддбдддддддддд©])
+      mon_drk([Ё  Data   Ё  Numer   Ё                  Nazwa                Ё        ЁStawka Ё Spos&_o.b ЁMno&_z.Ё  Warto&_s.&_c. Ё])
+   mon_drk([Ёprzyj&_e.c. Ёewidencyj.Ё             &_s.rodka trwa&_l.ego           Ё  KST   Ё  %%   Ёumorzen.ЁDEGRЁ umorzeniaЁ])
+      mon_drk([юдддддддддаддддддддддадддддддддддддддддддддддддддддддддддддддаддддддддадддддддаддддддддаддддадддддддддды])
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       _grupa=.t.
       sumum=0
@@ -62,8 +62,8 @@ begin sequence
          k1=dtoc(data_zak)
          k2=krst
          k3=nrewid
-         K4=nazwa
-         K7=str(stawka,6,2)
+         K4=SubStr( nazwa, 1, 39 )
+         K7=str(stawka,7,3)
          K8=iif(sposob='L','Liniowo ',iif(sposob='J','Jednoraz','Degresyw'))
          K9=str(wspdeg,4,2)
          recst=str(rec_no,5)
