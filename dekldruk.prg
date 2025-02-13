@@ -88,6 +88,10 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_PIT8ARw13()
       cPlikRap := 'frf\pit8ar_w13.frf'
       EXIT
+   CASE 'PIT8AR-14'
+      hDane := DaneDek_PIT8ARw13()
+      cPlikRap := 'frf\pit8ar_w14.frf'
+      EXIT
    CASE 'PIT11-22'
       hDane := DaneDek_PIT11w22()
       cPlikRap := 'frf\pit11_w22.frf'

@@ -142,6 +142,11 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\pit8ar_w13.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'PIT8AR-14'
+      hDane := DaneXML_PIT8ARw13( oDoc, cNrRef )
+      cPlikRap := 'frf\pit8ar_w14.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'PIT11-22'
       hDane := DaneXML_PIT11w22( oDoc, cNrRef )
       cPlikRap := 'frf\pit11_w22.frf'
