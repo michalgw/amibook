@@ -1177,19 +1177,19 @@ FUNCTION V11_1z()
             ENDIF
          ENDIF
 
-         IF ( Empty( zRODZDOW ) .OR. ins ) .AND. ! Empty( kat_zak->rodzdow )
+         IF ins .AND. Empty( zRODZDOW ) .AND. ! Empty( kat_zak->rodzdow ) .AND. kat_zak->firma == ident_fir
             zRODZDOW := kat_zak->rodzdow
             oGetRodzDow:display()
          ENDIF
-         IF ( Empty( zOPCJE ) .OR. ins ) .AND. ! Empty( kat_zak->opcje )
+         IF ins .AND. Empty( zOPCJE ) .AND. ! Empty( kat_zak->opcje ) .AND. kat_zak->firma == ident_fir
             zOPCJE := Left( kat_zak->opcje, 1 )
             oGetOpcje:display()
          ENDIF
-         IF ( Empty( zSEK_CV7 ) .OR. ins ) .AND. ! Empty( kat_zak->sek_cv7 )
+         IF ins .AND. Empty( zSEK_CV7 ) .AND. ! Empty( kat_zak->sek_cv7 ) .AND. kat_zak->firma == ident_fir
             zSEK_CV7 := kat_zak->sek_cv7
             oGetSekCV7:display()
          ENDIF
-         IF zRYCZALT <> 'T' .AND. ( Empty( zKOLUMNA ) .OR. ins ) .AND. ! Empty( kat_zak->kolumna )
+         IF zRYCZALT <> 'T' .AND. ins .AND. Empty( zKOLUMNA ) .AND. ! Empty( kat_zak->kolumna ) .AND. kat_zak->firma == ident_fir
             zKOLUMNA := kat_zak->kolumna
             oGetKOLUMNA:display()
          ENDIF
@@ -1427,6 +1427,20 @@ FUNCTION v1_5z()
          ENDIF
          ztresc := Left( tresc->tresc, 30 )
          cKol := tresc->kolumna
+         IF tresc->rodzaj == "Z"
+            IF ins .AND. Empty( zOPCJE ) .AND. ! Empty( tresc->opcje ) .AND. kat_zak->firma == ident_fir
+               zOPCJE := Left( tresc->opcje, 1 )
+               oGetOPCJE:display()
+            ENDIF
+            IF ins .AND. Empty( zRODZDOW ) .AND. ! Empty( tresc->rodzdow ) .AND. kat_zak->firma == ident_fir
+               zRODZDOW := tresc->rodzdow
+               oGetRodzDow:display()
+            ENDIF
+            IF ins .AND. Empty( zSEK_CV7 ) .AND. ! Empty( tresc->sek_cv7 ) .AND. kat_zak->firma == ident_fir
+               zSEK_CV7 := tresc->sek_cv7
+               oGetSekCV7:display()
+            ENDIF
+         ENDIF
          //@  9,77 say zOPCJE
          SET COLOR TO i
          @ 7, 29 SAY ztresc
@@ -1437,20 +1451,6 @@ FUNCTION v1_5z()
    IF ( Empty( zKOLUMNA ) .OR. ins ) .AND. ! Empty( cKol )
       IF AScan( { "10", "11", "12", "13", "16" }, cKol ) > 0
          zKOLUMNA := cKol
-      ENDIF
-   ENDIF
-   IF tresc->rodzaj == "Z"
-      IF ( Empty( zOPCJE ) .OR. ins ) .AND. ! Empty( tresc->opcje )
-         zOPCJE := Left( tresc->opcje, 1 )
-         oGetOPCJE:display()
-      ENDIF
-      IF ( Empty( zRODZDOW ) .OR. ins ) .AND. ! Empty( tresc->rodzdow )
-         zRODZDOW := tresc->rodzdow
-         oGetRodzDow:display()
-      ENDIF
-      IF ( Empty( zSEK_CV7 ) .OR. ins ) .AND. ! Empty( tresc->sek_cv7 )
-         zSEK_CV7 := tresc->sek_cv7
-         oGetSekCV7:display()
       ENDIF
    ENDIF
 
