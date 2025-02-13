@@ -339,6 +339,9 @@ PROCEDURE UmowaSzabGraf( cRodzaj )
                ENDIF
             } )
 
+            oOODocument:CurrentController:Frame:ContainerWindow:Visible := .T.
+         	oOODocument:CurrentController:Frame:ContainerWindow:toFront()
+
          ENDIF
 
       CATCH oErr
@@ -412,6 +415,10 @@ FUNCTION OOWczytajDok( cURL, lTemplate )
          oOOProp:Name := 'AsTemplate'
          oOOProp:Value := .T.
          aOOOpenParams := { oOOProp }
+         oOOCls:CreateObject( @oOOProp )
+         oOOProp:Name := 'Hidden'
+         oOOProp:Value := .T.
+         AAdd( aOOOpenParams, oOOProp )
       ELSE
          aOOOpenParams := {}
       ENDIF
