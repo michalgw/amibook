@@ -1153,16 +1153,20 @@ PROCEDURE Firma_Konwertuj()
 
    IF cRyczalt == "T"
       cKolSp := " 5"
+      cKolZk := "  "
    ELSE
       cKolSp := "7"
+      cKolZk := "10"
    ENDIF
 
-   @ 12, 10 CLEAR TO 16, 65
-   @ 12, 10 TO 16, 65
+   nI := iif( cRyczalt <> 'T', 1, 0)
+   @ 12, 10 CLEAR TO 16 + nI , 65
+   @ 12, 10 TO 16 + nI, 65
    @ 13, 11 SAY "Konwersja " + iif( firma->ryczalt == "T", "RYCZAùT", "ZASADY OG‡LNE" ) + " -> " + iif( firma->ryczalt == "T", "ZASADY OG‡LNE", "RYCZAùT" )
    @ 14, 11 SAY "Nowy symbol firmy:" GET cSymbol VALID Eval( bVSymbol )
    IF cRyczalt <> "T"
       @ 15, 11 SAY "Domyòlna kolumna ksi©gi dla sprzedaæy (7,8):" GET cKolSp VALID cKolSp $ '78'
+      @ 16, 11 SAY "Domyòlna kolumna ksi©gi dla zakup¢w (10,13):" GET cKolZk VALID ( cKolZk == "10" .OR. cKolZk == "13" )
    ELSE
       @ 15, 11 SAY "Domyòlna kolumna ewidencji dla sprzedaæy (5-13):" GET cKolSp PICTURE '@K 99' VALID Val( cKolSp ) >= 5 .AND. Val( cKolSp ) <= 13
    ENDIF
@@ -1491,7 +1495,7 @@ PROCEDURE Firma_Konwertuj()
       zDATAKS := rejz_exp->DATAKS
       zDATATRAN := rejz_exp->DATATRAN
       IF cRyczalt <> 'T'
-         zKOLUMNA := '10' // rejz_exp->KOLUMNA
+         zKOLUMNA := cKolZk // rejz_exp->KOLUMNA
       ELSE
          zKOLUMNA := '  '
       ENDIF
