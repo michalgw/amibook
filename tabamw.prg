@@ -115,7 +115,7 @@ begin sequence
                     seek '+'+zid+str(val(startrok)+(x*7)+y,4)
                     zm=str(y,1)
                     if found()
-                       k&zm=transform(PRZEL,'@E 999 999 999.99')
+                       k&zm=transform(PRZEL,'@E 99 999 999.999')
                     else
                        k&zm=space(14)
                     endif

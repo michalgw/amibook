@@ -30,7 +30,7 @@ public  aAMORTdbf := {;
    { "IDENT", "C", 5, 0 },;                       //  4   Identyfiktaor w tabeli 'katst' w poli 'rec_no'
    { "ROK", "C", 4, 0 },;                         //  5   Rok kalendarzowy
    { "WART_POCZ", "N", 12, 2 },;                  //  6   Wartosc poczatkowa w roku
-   { "PRZEL", "N", 6, 2 },;                       //  7   Przelicznik w roku
+   { "PRZEL", "N", 7, 3 },;                       //  7   Przelicznik w roku
    { "WART_MOD", "N", 12, 2 },;                   //  8   Suma modyfikacji kwot z tablicy 'kartstmo'
    { "WART_AKT", "N", 12, 2 },;                   //  9
    { "UMORZ_AKT", "N", 12, 2 },;                  //  10

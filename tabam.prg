@@ -143,7 +143,7 @@ FUNCTION TabAm( mieskart )
          wybrok := menu( wybrok )
          swybr := Str( wybrok, 1 )
          zidp := Str( rec_no, 5 )
-         ZPRZE := Space( 6 )
+         ZPRZE := Space( 7 )
          ZMC := Space( 10 )
          zSPOSOB := SPOSOB
          IF wybrok # 0
@@ -166,13 +166,13 @@ FUNCTION TabAm( mieskart )
                SEEK '+' + zidp + AllTrim( ROK&swybr )
                IF Found()
                   wybpol := 1
-                  ZPRZE := Transform( PRZEL, '999.99' )
+                  ZPRZE := Transform( PRZEL, '999.999' )
                   IF Val( ROK&swybr ) == Year( kartst->data_zak )
                      nMCRozp := Month( kartst->data_zak )
                   ELSE
                      nMCRozp := 1
                   ENDIF
-                  @ 6, 44 + ( ( wybrok - 1 ) * 10 ) PROMPT Zprze
+                  @ 6, 43 + ( ( wybrok - 1 ) * 10 ) PROMPT Zprze
                   FOR nI := nMCRozp TO 12
                      cMCRozp := StrTran( Str( nI, 2, 0 ), ' ', '0' )
                      NMC := MC&cMCRozp
@@ -188,7 +188,7 @@ FUNCTION TabAm( mieskart )
                   CASE wybpol = 1
                      zprze := Val( zprze )
                      SET CURSOR ON
-                     @ 6, 44 + ( ( wybrok - 1 ) * 10 ) GET Zprze PICTURE '999.99' VALID zprze # 0
+                     @ 6, 43 + ( ( wybrok - 1 ) * 10 ) GET Zprze PICTURE '999.999' VALID zprze # 0
                      READ
                      SET CURSOR OFF
                      IF LastKey() # 27
@@ -198,7 +198,7 @@ FUNCTION TabAm( mieskart )
                         COMMIT
                         UNLOCK
                      ENDIF
-                     ZPRZE := Transform( zPRZE, '999.99' )
+                     ZPRZE := Transform( zPRZE, '999.999' )
                   CASE wybpol > 1
                      cMCRozp := StrTran( Str( wybpol + nMCRozp - 2, 2, 0 ), ' ', '0' )
                      NMC := MC&cMCRozp
@@ -454,7 +454,7 @@ PROCEDURE say41esst()
    SET COLOR TO +w
    @ 4, 44 CLEAR TO  4, 79
    @ 5, 41 CLEAR TO  5, 79
-   @ 6, 44 CLEAR TO  6, 79
+   @ 6, 43 CLEAR TO  6, 79
    @ 7, 41 CLEAR TO 21, 79
    zidp := Str( rec_no, 5 )
    SELECT amort
@@ -467,7 +467,7 @@ PROCEDURE say41esst()
          ELSE
             @ 4, 44 + ( ofrok * 10 ) SAY ROK
             @ 5, 41 + ( ofrok * 10 ) SAY wart_pocz PICTURE '@E 999999.99'
-            @ 6, 44 + ( ofrok * 10 ) SAY przel     PICTURE '@E 999.99'
+            @ 6, 43 + ( ofrok * 10 ) SAY przel     PICTURE '@E 999.999'
             @ 7, 41 + ( ofrok * 10 ) SAY wart_akt  PICTURE '@E 999999.99'
             @ 8, 41 + ( ofrok * 10 ) SAY umorz_akt PICTURE '@E 999999.99'
             FOR x := 1 TO 12
