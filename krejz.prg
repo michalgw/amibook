@@ -1428,15 +1428,15 @@ FUNCTION v1_5z()
          ztresc := Left( tresc->tresc, 30 )
          cKol := tresc->kolumna
          IF tresc->rodzaj == "Z"
-            IF ins .AND. Empty( zOPCJE ) .AND. ! Empty( tresc->opcje ) .AND. kat_zak->firma == ident_fir
+            IF ins .AND. Empty( zOPCJE ) .AND. ! Empty( tresc->opcje ) .AND. tresc->firma == ident_fir
                zOPCJE := Left( tresc->opcje, 1 )
                oGetOPCJE:display()
             ENDIF
-            IF ins .AND. Empty( zRODZDOW ) .AND. ! Empty( tresc->rodzdow ) .AND. kat_zak->firma == ident_fir
+            IF ins .AND. Empty( zRODZDOW ) .AND. ! Empty( tresc->rodzdow ) .AND. tresc->firma == ident_fir
                zRODZDOW := tresc->rodzdow
                oGetRodzDow:display()
             ENDIF
-            IF ins .AND. Empty( zSEK_CV7 ) .AND. ! Empty( tresc->sek_cv7 ) .AND. kat_zak->firma == ident_fir
+            IF ins .AND. Empty( zSEK_CV7 ) .AND. ! Empty( tresc->sek_cv7 ) .AND. tresc->firma == ident_fir
                zSEK_CV7 := tresc->sek_cv7
                oGetSekCV7:display()
             ENDIF
