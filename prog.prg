@@ -409,7 +409,7 @@ FUNCTION Main()
    PUBLIC param_has := Space( 8 )
 
    // Aktualny rok kalendarzowy na podstawie wersji programu
-   PUBLIC param_rok := '20' + SubStr( PadL( AllTrim( Str( wersjaprogramu ) ), 6 ), 1, 2 )
+   PUBLIC param_rok := '    '
 
 
    // Sygnal o VAT - kwota
@@ -711,6 +711,10 @@ FUNCTION Main()
    //lub pokazujemy edycje parametrow jesli plik nie istnieje
    IF File( 'param.mem' )
       RESTORE FROM param ADDITIVE
+      IF Empty( param_rok )
+         param_rok := '20' + SubStr( PadL( AllTrim( Str( wersjaprogramu ) ), 6 ), 1, 2 )
+         SAVE TO param ALL LIKE param_*
+      ENDIF
    ELSE
       //DO PARAM
       Param()

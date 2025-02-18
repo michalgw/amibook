@@ -27,6 +27,137 @@ FUNCTION DomyslneParametry()
    IF ! HB_ISHASH( aDomyslneParametry )
       aDomyslneParametry := hb_Hash()
 
+      // Rok 2025
+      aPar := hb_Hash()
+
+      // Tabela podatku doch.
+      aPar[ 'tab_doch' ] := { ;
+         { 'podstawa' => 0.0,       'procent' => 17, 'dataod' => 0d20220101, 'datado' => 0d20220531 }, ;
+         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220101, 'datado' => 0d20220531 }, ;
+         { 'podstawa' => 0.0,       'procent' => 12, 'dataod' => 0d20220601, 'datado' => CToD( '' ) }, ;
+         { 'podstawa' => 120000.01, 'procent' => 32, 'dataod' => 0d20220601, 'datado' => CToD( '' ) } }
+
+      aPar[ 'tab_dochuks' ] := { ;
+         { 'podstod' => 5701.0,  'podstdo' => 8549.0,  'procent' => 0.17, 'mnoznik' => 6.68,  'kwota'=> -380.5, 'dataod' => 0d20220101 }, ;
+         { 'podstod' => 8549.01, 'podstdo' => 11141.0, 'procent' => 0.17, 'mnoznik' => -7.35, 'kwota'=> 819.08, 'dataod' => 0d20220101 } }
+
+      // Stawki rycz.
+      // Wolna zawody
+      aPar[ 'staw_ry20' ] := 0.17
+      // Inne uslugi
+      aPar[ 'staw_ry17' ] := 0.15
+      // Opieka zdr. archit.
+      aPar[ 'staw_rk09' ] := 0.14
+      // Uslugi
+      aPar[ 'staw_uslu' ] := 0.125
+      // Usl wyd. oprog., dor. komp.
+      aPar[ 'staw_rk10' ] := 0.12
+      // Produkcja
+      aPar[ 'staw_prod' ] := 0.1
+      // Handel
+      aPar[ 'staw_hand' ] := 0.085
+      // Wynajem pow. 100000
+      aPar[ 'staw_rk07' ] := 0.055
+      // Prawa maj.
+      aPar[ 'staw_ry10' ] := 0.03
+      // Art. 6 ust. 1d
+      aPar[ 'staw_rk08' ] := 0.02
+
+      aPar[ 'staw_ory20' ] := 'Wolne zawody            '
+      aPar[ 'staw_ory17' ] := 'Inne usˆugi             '
+      aPar[ 'staw_ork09' ] := 'Opieka zdr, archit.,proj'
+      aPar[ 'staw_ouslu' ] := 'Wynajem pow.100000zˆ    '
+      aPar[ 'staw_ork10' ] := 'Usˆ.wyd.oprogr.,ror.komp'
+      aPar[ 'staw_oprod' ] := 'Prawa maj¥tkowe         '
+      aPar[ 'staw_ohand' ] := 'Usˆugi                  '
+      aPar[ 'staw_ork07' ] := 'Produkcja               '
+      aPar[ 'staw_ory10' ] := 'Handel                  '
+      aPar[ 'staw_ork08' ] := 'Art. 6 ust. 1d          '
+
+      // Kwota wolna
+      aPar[ 'param_kw' ] := 5100
+      aPar[ 'param_kwd' ] := d"2022-06-01"
+      aPar[ 'param_kw2' ] := 3600
+
+      aPar[ 'tab_vatue' ] := { ;
+         { 'kraj' => 'AT', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 13, 'stawka_c' => 10, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'BE', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 12, 'stawka_c' => 6, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'BG', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 9, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'CY', 'oddnia' => d"2021-01-01", 'stawka_a' => 19, 'stawka_b' => 9, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'CZ', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 15, 'stawka_c' => 10, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'DE', 'oddnia' => d"2021-01-01", 'stawka_a' => 19, 'stawka_b' => 7, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'DK', 'oddnia' => d"2021-01-01", 'stawka_a' => 25, 'stawka_b' => 0, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'EE', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 9, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'EL', 'oddnia' => d"2021-01-01", 'stawka_a' => 24, 'stawka_b' => 13, 'stawka_c' => 6, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'ES', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 10, 'stawka_c' => 0, 'stawka_d' => 4 }, ;
+         { 'kraj' => 'FI', 'oddnia' => d"2021-01-01", 'stawka_a' => 24, 'stawka_b' => 14, 'stawka_c' => 10, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'FR', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 10, 'stawka_c' => 5.5, 'stawka_d' => 2.1 }, ;
+         { 'kraj' => 'HR', 'oddnia' => d"2021-01-01", 'stawka_a' => 25, 'stawka_b' => 13, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'HU', 'oddnia' => d"2021-01-01", 'stawka_a' => 27, 'stawka_b' => 18, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'IE', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 13.5, 'stawka_c' => 9, 'stawka_d' => 4.8 }, ;
+         { 'kraj' => 'IE', 'oddnia' => d"2021-03-01", 'stawka_a' => 23, 'stawka_b' => 13.5, 'stawka_c' => 9, 'stawka_d' => 4.8 }, ;
+         { 'kraj' => 'IT', 'oddnia' => d"2021-01-01", 'stawka_a' => 22, 'stawka_b' => 10, 'stawka_c' => 5, 'stawka_d' => 4.8 }, ;
+         { 'kraj' => 'LT', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 9, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'LU', 'oddnia' => d"2021-01-01", 'stawka_a' => 17, 'stawka_b' => 8, 'stawka_c' => 0, 'stawka_d' => 3 }, ;
+         { 'kraj' => 'LV', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 12, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'MT', 'oddnia' => d"2021-01-01", 'stawka_a' => 18, 'stawka_b' => 7, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'NL', 'oddnia' => d"2021-01-01", 'stawka_a' => 21, 'stawka_b' => 9, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'PT', 'oddnia' => d"2021-01-01", 'stawka_a' => 23, 'stawka_b' => 13, 'stawka_c' => 6, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'RO', 'oddnia' => d"2021-01-01", 'stawka_a' => 19, 'stawka_b' => 9, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'SE', 'oddnia' => d"2021-01-01", 'stawka_a' => 25, 'stawka_b' => 12, 'stawka_c' => 6, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'SI', 'oddnia' => d"2021-01-01", 'stawka_a' => 22, 'stawka_b' => 9.5, 'stawka_c' => 5, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'SK', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 10, 'stawka_c' => 0, 'stawka_d' => 0 }, ;
+         { 'kraj' => 'UK', 'oddnia' => d"2021-01-01", 'stawka_a' => 20, 'stawka_b' => 5, 'stawka_c' => 0, 'stawka_d' => 0 } }
+
+      // Parametry pˆacowe i zus
+      aPar[ 'parap_ldw' ] := 33
+      aPar[ 'parap_kos' ] := 250
+      aPar[ 'parap_odl' ] := 425
+      aPar[ 'parap_cho' ] := 80
+      aPar[ 'parap_pod' ] := 17.0
+      aPar[ 'parap_p51' ] := 4666
+      aPar[ 'parap_p52' ] := 4666
+      aPar[ 'parap_pue' ] := 9.76
+      aPar[ 'parap_pur' ] := 1.5
+      aPar[ 'parap_puz' ] := 9
+      aPar[ 'parap_puc' ] := 2.45
+      aPar[ 'parap_pf3' ] := 7
+      aPar[ 'parap_pfp' ] := 2.45
+      aPar[ 'parap_pfg' ] := 0.1
+      aPar[ 'parap_fue' ] := 9.76
+      aPar[ 'parap_fur' ] := 6.5
+      aPar[ 'parap_fuz' ] := 9
+      aPar[ 'parap_fzl' ] := 4.9
+      aPar[ 'parap_fuc' ] := 0
+      aPar[ 'parap_ff3' ] := 0
+      aPar[ 'parap_ffp' ] := 2.45
+      aPar[ 'parap_ffg' ] := 0.1
+      aPar[ 'parap_rkc' ] := '01R'
+      aPar[ 'parap_rpz' ] := 50
+      aPar[ 'parap_pli' ] := 12900
+
+      aPar[ 'parpk_sz' ] := 2
+      aPar[ 'parpk_sp' ] := 1.5
+
+      aPar[ 'parap_frp' ] := 8548.85
+      // Kwota od dla 1 progu
+      aPar[ 'parap_rk1' ] := 0
+      // Stawka dla 1 progu
+      aPar[ 'parap_rs1' ] := 60
+      // Kwota od dla 2 progu
+      aPar[ 'parap_rk2' ] := 60000
+      // Stawka dla 2 progu
+      aPar[ 'parap_rs2' ] := 100
+      // Kwota od dla 3 progu
+      aPar[ 'parap_rk3' ] := 300000
+      // Stawka dla 3 progu
+      aPar[ 'parap_rs3' ] := 180
+
+      aPar[ 'tab_pla' ] := { { 'dataod' => 0d20220101, 'odlicz' => 425.0, 'podatek' => 17.0, 'obnizzus' => .T., 'aktuks' => .T., 'aktpterm' => .T. }, ;
+                             { 'dataod' => 0d20220601, 'odlicz' => 300.0, 'podatek' => 12.0, 'obnizzus' => .F., 'aktuks' => .F., 'aktpterm' => .F. } }
+
+      aDomyslneParametry[ '2025' ] := aPar
+
       // Rok 2022
       aPar := hb_Hash()
 
