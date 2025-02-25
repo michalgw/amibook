@@ -168,7 +168,7 @@ PROCEDURE ZusRca( ubezp )
                   ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
                   ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
                   ETATY->BRUT_RAZEM - ( ETATY->DOPL_BZUS + ETATY->ZASI_BZUS + ETATY->WAR_PF3 + ETATY->WAR_PSUM ), ;
-                  0, ; //iif( ETATY->WAR_FUW <> 0, ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, 0 );
+                  iif( ETATY->WAR_FUW <> 0, ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, 0 ), ;
                   ETATY->WAR_PUE, ;
                   ETATY->WAR_PUR, ;
                   ETATY->WAR_PUC, ;
@@ -465,7 +465,7 @@ PROCEDURE ZusRca( ubezp )
                      ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
                      ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, ;
                      ETATY->BRUT_RAZEM - ( ETATY->DOPL_BZUS + ETATY->ZASI_BZUS + ETATY->WAR_PF3 + ETATY->WAR_PSUM ), ;
-                     0, ;
+                     iif( ETATY->WAR_FUW <> 0, ETATY->PENSJA - ETATY->DOPL_BZUS - ETATY->ZASI_BZUS, 0 ), ;
                      ETATY->WAR_PUE, ;
                      ETATY->WAR_PUR, ;
                      ETATY->WAR_PUC, ;
