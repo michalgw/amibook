@@ -424,7 +424,7 @@ begin sequence
                        endcase
                     endif
                     k99=k66v+k10+k12+kpojazdy+kpaliwa
-                    knetto=netto
+                    knetto=netto + netto2
 *                   k99=k10+k12+kpojazdy+kpaliwa
                endcase
                k88=k66n+k66v+k9+k10+k11+k12+kpojazdy+kpaliwa

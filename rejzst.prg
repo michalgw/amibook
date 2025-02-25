@@ -300,7 +300,7 @@ begin sequence
                  endcase
               endif
               k99=k66v+k10+k12+kpojazdy
-              knetto=netto
+              knetto=netto + netto2
          endcase
 
          k88=k66+k66v+k9+k10+k11+k12+kpojazdy
