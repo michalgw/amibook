@@ -853,9 +853,9 @@ function oblpl()
          B5 := 0.0
          zODLICZ := 0.0
          zWAR_PUZW := zWAR_PUZ
-         IF Param_PPla_param( 'obnizzus', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) .AND. zBRUT_RAZEM < 12800 /*.AND. zWNIOSTERM == 'T' */ .AND. zNETTO21 > zNETTO
+         IF Param_PPla_param( 'obnizzus', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) .AND. zBRUT_RAZEM < 12800 /*.AND. zWNIOSTERM == 'T' */ .AND. zWAR_PUZ > zWAR_PUZ21 // .AND. zNETTO21 > zNETTO
             *IF zODLICZ <> 0
-               zWAR_PUZ := zWAR_PUZO21
+               zWAR_PUZ := zWAR_PUZ21
                *zPODATEK=max(0,_round(B5-(zWAR_PUZ+zODLICZ),0))
             *ELSE
                *zPODATEK=max(0,_round(B5-(zWAR_PUZO21+zODLICZ),0))
@@ -886,7 +886,7 @@ function oblpl()
          zNETTO21=zBRUT_RAZEM-(zPODATEK21+zWAR_PSUM+zWAR_PUZ21+zWAR_PF3)
          zPODNIEP := 0
          zWAR_PUZW := zWAR_PUZ
-         IF Param_PPla_param( 'obnizzus', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) .AND. zBRUT_RAZEM < 12800 .AND. zNETTO21 > zNETTO
+         IF Param_PPla_param( 'obnizzus', hb_Date( Val( param_rok ), Val( miesiacpla ), 1 ) ) .AND. zBRUT_RAZEM < 12800 .AND. zWAR_PUZ > zWAR_PUZ21 // .AND. zNETTO21 > zNETTO
             zWAR_PUZ := zWAR_PUZ21
             IF zWNIOSTERM == 'T'
                zPODNIEP := zPODATEK - zPODATEK21
