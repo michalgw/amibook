@@ -27,8 +27,13 @@ PROCEDURE JpkPkpirRob()
    LOCAL aDane := {=>}, aRow, cJPK
 
    IF JpkPkpirParam( @aDane )
-      dbUseArea( .T., , 'URZEDY' )
-      dbUseArea( .T., , 'FIRMA' )
+      IF ! DostepPro( 'URZEDY' )
+         RETURN
+      ENDIF
+      IF ! DostepPro( 'FIRMA' )
+         urzedy->( dbCloseArea() )
+         RETURN
+      ENDIF
       firma->( dbGoto( Val( ident_fir ) ) )
       aDane['NIP'] := firma->nip
       IF firma->skarb > 0

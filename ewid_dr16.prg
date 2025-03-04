@@ -301,8 +301,13 @@ PROCEDURE ewid_dr16rob()
 
          aDane['CelZlozenia'] := iif( nKorekta == 2, '2', '1' )
 
-         dbUseArea( .T., , 'URZEDY' )
-         dbUseArea( .T., , 'FIRMA' )
+         IF ! DostepPro( 'URZEDY' )
+            RETURN .F.
+         ENDIF
+         IF ! DostepPro( .T., , 'FIRMA' )
+            urzedy->( dbCloseArea() )
+            RETURN .F.
+         ENDIF
          firma->( dbGoto( Val( ident_fir ) ) )
          aDane['NIP'] := firma->nip
          IF firma->skarb > 0

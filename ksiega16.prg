@@ -507,8 +507,13 @@ PROCEDURE ksiega16()
          aDane['DataDo'] := EoM(aDane['DataOd'])
          aDane['CelZlozenia'] := iif(cKorekta == 'K', '2', '1')
 
-         dbUseArea( .T., , 'URZEDY' )
-         dbUseArea( .T., , 'FIRMA' )
+         IF ! DostepPro( 'URZEDY' )
+            RETURN .F.
+         ENDIF
+         IF ! DostepPro( 'FIRMA' )
+            urzedy->( dbCloseArea() )
+            RETURN .F.
+         ENDIF
          firma->( dbGoto( Val( ident_fir ) ) )
          aDane['NIP'] := firma->nip
          IF firma->skarb > 0

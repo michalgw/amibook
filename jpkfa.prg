@@ -42,8 +42,15 @@ FUNCTION JPK_FA_Dane()
    aDane[ 'DataOd' ] := hb_Date( Val( param_rok ), Val( miesiac ), 1 )
    aDane[ 'DataDo' ] := EoM( aDane[ 'DataOd' ] )
 
-   dbUseArea( .T., , 'URZEDY', 'URZEDY', .T. )
-   dbUseArea( .T., , 'FIRMA', 'FIRMA', .T. )
+   IF ! DostepPro( 'URZEDY' )
+      Select( nWorkArea )
+      RETURN NIL
+   ENDIF
+   IF ! DostepPro( 'FIRMA' )
+      urzedy->( dbCloseArea() )
+      Select( nWorkArea )
+      RETURN NIL
+   ENDIF
    firma->( dbGoto( Val( ident_fir ) ) )
    aDane[ 'NIP' ] := firma->nip
    IF firma->skarb > 0
