@@ -81,6 +81,14 @@ PROCEDURE IFT2_Dane( cTablica, dDataOd, dDataDo )
                'D9E' => 0, ;
                'D9F' => 0, ;
                'D9G' => 0, ;
+               'D10D' => 0, ;
+               'D10E' => 0, ;
+               'D10F' => 0, ;
+               'D10G' => 0, ;
+               'D11D' => 0, ;
+               'D11E' => 0, ;
+               'D11F' => 0, ;
+               'D11G' => 0, ;
                'K01' => 0, ;
                'K02' => 0, ;
                'K03' => 0, ;
@@ -174,6 +182,13 @@ PROCEDURE IFT2_Dane( cTablica, dDataOd, dDataDo )
             EXIT
          CASE 9
             aPoz[ 'D9D' ] := aPoz[ 'D9D' ] + dane->ift2kwot
+            EXIT
+         CASE 10
+            aPoz[ 'D10D' ] := aPoz[ 'D10D' ] + dane->ift2kwot
+            EXIT
+         CASE 11
+            aPoz[ 'D11D' ] := aPoz[ 'D11D' ] + dane->ift2kwot
+            EXIT
          ENDSWITCH
 
       ENDIF
@@ -334,7 +349,7 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
             @ 13, 20 SAY "Kod pocztowy"
             @ 14, 20 SAY "Ulica"
             @ 15, 20 SAY "Nr domu              Nr lokalu"
-            @ 16, 20 SAY "Kraj"
+            @ 16, 20 SAY "Kraj          Podmiot powi¥zany (Tak/Nie)"
             SET COLOR TO W+
             @  6, 32 SAY SubStr( aDane[ 'nazwa' ], 1, 47 )
             @  7, 35 SAY SubStr( aDane[ 'nazwaskr' ], 1, 44 )
@@ -348,6 +363,7 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
             @ 15, 28 SAY aDane[ 'nrbud' ]
             @ 15, 51 SAY aDane[ 'nrlok' ]
             @ 16, 25 SAY aDane[ 'kraj' ]
+            @ 16, 62 SAY iif( aDane[ 'powiazany' ] == 'T', 'Tak', 'Nie' )
             DO CASE
             CASE aDane[ 'rodzajid' ] == '1'
                @ 9, 43 SAY "- podatkowej"
@@ -366,8 +382,10 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
             @ 11, 20 SAY "D.5 Opˆ.licency."
             @ 12, 20 SAY "D.6 Dz.widowisk."
             @ 13, 20 SAY "D.7 Doradztwo..."
-            @ 14, 20 SAY "D.8 Art.21 i 22."
-            @ 15, 20 SAY "D.9 Zyski kapit."
+            @ 14, 20 SAY "D.8 Art.21 odse."
+            @ 15, 20 SAY "D.9 Art.21 lice."
+            @ 16, 20 SAY "D.10 Art.22 dyw."
+            @ 17, 20 SAY "D.11 Zyski kapi."
             SET COLOR TO W+
             @  7, 37 SAY Transform( aDane[ 'D1D' ], RVPIC ) + "  " + Transform( aDane[ 'D1E' ], RVPIC ) + "    " + Transform( aDane[ 'D1F' ], cPodPic ) + "   " + Transform( aDane[ 'D1G' ], RVPIC )
             @  8, 37 SAY Transform( aDane[ 'D2D' ], RVPIC ) + "  " + Transform( aDane[ 'D2E' ], RVPIC ) + "    " + Transform( aDane[ 'D2F' ], cPodPic ) + "   " + Transform( aDane[ 'D2G' ], RVPIC )
@@ -378,6 +396,8 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
             @ 13, 37 SAY Transform( aDane[ 'D7D' ], RVPIC ) + "  " + Transform( aDane[ 'D7E' ], RVPIC ) + "    " + Transform( aDane[ 'D7F' ], cPodPic ) + "   " + Transform( aDane[ 'D7G' ], RVPIC )
             @ 14, 37 SAY Transform( aDane[ 'D8D' ], RVPIC ) + "  " + Transform( aDane[ 'D8E' ], RVPIC ) + "    " + Transform( aDane[ 'D8F' ], cPodPic ) + "   " + Transform( aDane[ 'D8G' ], RVPIC )
             @ 15, 37 SAY Transform( aDane[ 'D9D' ], RVPIC ) + "  " + Transform( aDane[ 'D9E' ], RVPIC ) + "    " + Transform( aDane[ 'D9F' ], cPodPic ) + "   " + Transform( aDane[ 'D9G' ], RVPIC )
+            @ 16, 37 SAY Transform( aDane[ 'D10D' ], RVPIC ) + "  " + Transform( aDane[ 'D10E' ], RVPIC ) + "    " + Transform( aDane[ 'D10F' ], cPodPic ) + "   " + Transform( aDane[ 'D10G' ], RVPIC )
+            @ 17, 37 SAY Transform( aDane[ 'D11D' ], RVPIC ) + "  " + Transform( aDane[ 'D11E' ], RVPIC ) + "    " + Transform( aDane[ 'D11F' ], cPodPic ) + "   " + Transform( aDane[ 'D11G' ], RVPIC )
          CASE nIndex == 3
             @  6, 20 CLEAR TO 20, 78
             @  6, 20 SAY "Miesi¥c      1            2            3            4"
@@ -465,6 +485,7 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
             @ 15, 28 GET aDane[ 'nrbud' ] PICTURE "!!!!!!!!!"
             @ 15, 51 GET aDane[ 'nrlok' ] PICTURE "!!!!!!!!!!"
             @ 16, 25 GET aDane[ 'kraj' ] PICTURE "!!"
+            @ 16, 62 GET aDane[ 'powiazany' ] PICTURE "!" VALID ValidTakNie( aDane[ 'powiazany' ], 16, 63 )
             READ
             KontrahentZapiszIFT2( aDane )
          CASE nWybor == 2
@@ -504,6 +525,14 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
             @ 15, 49 GET aDane[ 'D9E' ] PICTURE RVPIC
             @ 15, 61 GET aDane[ 'D9F' ] PICTURE cPodPic
             @ 15, 70 GET aDane[ 'D9G' ] PICTURE RVPIC WHEN Eval( { | | aDane[ 'D9G' ] := _round( aDane[ 'D9E' ] * ( aDane[ 'D9F' ] / 100 ), 0 ), .T. } )
+            @ 16, 37 GET aDane[ 'D10D' ] PICTURE RVPIC
+            @ 16, 49 GET aDane[ 'D10E' ] PICTURE RVPIC
+            @ 16, 61 GET aDane[ 'D10F' ] PICTURE cPodPic
+            @ 16, 70 GET aDane[ 'D10G' ] PICTURE RVPIC WHEN Eval( { | | aDane[ 'D10G' ] := _round( aDane[ 'D10E' ] * ( aDane[ 'D10F' ] / 100 ), 0 ), .T. } )
+            @ 17, 37 GET aDane[ 'D11D' ] PICTURE RVPIC
+            @ 17, 49 GET aDane[ 'D11E' ] PICTURE RVPIC
+            @ 17, 61 GET aDane[ 'D11F' ] PICTURE cPodPic
+            @ 17, 70 GET aDane[ 'D11G' ] PICTURE RVPIC WHEN Eval( { | | aDane[ 'D11G' ] := _round( aDane[ 'D11E' ] * ( aDane[ 'D11F' ] / 100 ), 0 ), .T. } )
             READ
          CASE nWybor == 3 .AND. lRocznie
             @  7, 28 GET aDane[ 'K01' ] PICTURE RVPIC
@@ -581,10 +610,10 @@ PROCEDURE IFT2_Edycja( aDane, dDataOd, dDataDo, lRocznie )
                   ENDIF
                   cEkran2 := SaveScreen()
                   IF nWybor == 5
-                     DeklarDrukuj( iif( lRocznie, 'IFT2R-10', 'IFT2-10' ), aDane )
+                     DeklarDrukuj( iif( lRocznie, 'IFT2R-11', 'IFT2-11' ), aDane )
                   ELSE
-                     cDeklaracja := edek_ift2_10( aDane, lRocznie )
-                     edekZapiszXML( cDeklaracja, normalizujNazwe( 'IFT2' + iif( lRocznie, 'R', '' ) + '_' + param_rok + '_' + DToS( dDataOd ) + DToS( dDataDo ) ), wys_edeklaracja, 'IFT2' + iif( lRocznie, 'R', '' ) + '-10', aDane[ 'korekta' ] == '2', Month( dDataOd ) )
+                     cDeklaracja := edek_ift2_11( aDane, lRocznie )
+                     edekZapiszXML( cDeklaracja, normalizujNazwe( 'IFT2' + iif( lRocznie, 'R', '' ) + '_' + param_rok + '_' + DToS( dDataOd ) + DToS( dDataDo ) ), wys_edeklaracja, 'IFT2' + iif( lRocznie, 'R', '' ) + '-11', aDane[ 'korekta' ] == '2', Month( dDataOd ) )
                   ENDIF
                   RestScreen( , , , , cEkran2 )
                ENDIF
@@ -607,11 +636,11 @@ FUNCTION IFT2_Sprawdz( aDane, lRocznie )
 
    nSumD := aDane[ 'D1D' ] + aDane[ 'D2D' ] + aDane[ 'D3D' ] + aDane[ 'D4D' ] + ;
       aDane[ 'D5D' ] + aDane[ 'D6D' ] + aDane[ 'D7D' ] + aDane[ 'D8D' ] + ;
-      aDane[ 'D9D' ]
+      aDane[ 'D9D' ] + aDane[ 'D10D' ] + aDane[ 'D11D' ]
 
    nSumE := aDane[ 'D1E' ] + aDane[ 'D2E' ] + aDane[ 'D3E' ] + aDane[ 'D4E' ] + ;
       aDane[ 'D5E' ] + aDane[ 'D6E' ] + aDane[ 'D7E' ] + aDane[ 'D8E' ] + ;
-      aDane[ 'D9E' ]
+      aDane[ 'D9E' ] + aDane[ 'D10E' ] + aDane[ 'D11E' ]
 
 //   nSumF := aDane[ 'D1F' ] + aDane[ 'D2F' ] + aDane[ 'D3F' ] + aDane[ 'D4F' ] + ;
 //      aDane[ 'D5F' ] + aDane[ 'D6F' ] + aDane[ 'D7F' ] + aDane[ 'D8F' ] + ;
@@ -619,7 +648,7 @@ FUNCTION IFT2_Sprawdz( aDane, lRocznie )
 
    nSumG := aDane[ 'D1G' ] + aDane[ 'D2G' ] + aDane[ 'D3G' ] + aDane[ 'D4G' ] + ;
       aDane[ 'D5G' ] + aDane[ 'D6G' ] + aDane[ 'D7G' ] + aDane[ 'D8G' ] + ;
-      aDane[ 'D9G' ]
+      aDane[ 'D9G' ] + aDane[ 'D10G' ] + aDane[ 'D11G' ]
 
    IF nSumD == 0 .AND. nSumE == 0 .AND. nSumG == 0
       Komun( "Sekcja D. deklaracji nie zawiera ¾adych kwot." )

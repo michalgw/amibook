@@ -8772,6 +8772,282 @@ FUNCTION edek_ift2_10( aDane, lRocznie )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION edek_ift2_11( aDane, lRocznie )
+
+   LOCAL r, nl := Chr( 13 ) + Chr( 10 )
+
+   r := '<?xml version="1.0" encoding="UTF-8"?>' + nl
+   IF lRocznie
+      r += '<Deklaracja xmlns="http://crd.gov.pl/wzor/2024/12/10/13616/">' + nl
+   ELSE
+      r += '<Deklaracja xmlns="http://crd.gov.pl/wzor/2024/12/10/13615/">' + nl
+   ENDIF
+   r += '  <Naglowek>' + nl
+   IF lRocznie
+      r += '    <KodFormularza kodPodatku="CIT" kodSystemowy="IFT-2R (11)" rodzajZobowiazania="Z" wersjaSchemy="1-0E">IFT-2/IFT-2R</KodFormularza>' + nl
+   ELSE
+      r += '    <KodFormularza kodPodatku="CIT" kodSystemowy="IFT-2 (11)" rodzajZobowiazania="Z" wersjaSchemy="1-0E">IFT-2/IFT-2R</KodFormularza>' + nl
+   ENDIF
+   r += '    <WariantFormularza>11</WariantFormularza>' + nl
+   r += '    <CelZlozenia poz="P_7">' + aDane[ 'korekta' ] + '</CelZlozenia>' + nl
+   r += '    <OkresOd poz="P_4">' + date2strxml( aDane[ 'data_od' ] ) + '</OkresOd>' + nl
+   r += '    <OkresDo poz="P_5">' + date2strxml( aDane[ 'data_do' ] ) + '</OkresDo>' + nl
+   r += '    <KodUrzedu>' + AllTrim( aDane[ 'Firma' ][ 'KodUrzedu' ] ) + '</KodUrzedu>' + nl
+   r += '  </Naglowek>' + nl
+   r += '  <Podmiot1 rola="' + str2sxml( 'Pˆatnik/Podmiot (Wypˆacaj¥cy Nale¾no˜†)' ) + '">' + nl
+   IF aDane[ 'Firma' ][ 'Spolka' ]
+      r += '    <OsobaNiefizyczna>' + nl
+      r += '      <NIP>' + trimnip( str2sxml( aDane[ 'Firma' ][ 'NIP' ] ) ) + '</NIP>' + nl
+      r += '      <PelnaNazwa>' + str2sxml( aDane[ 'Firma' ][ 'PelnaNazwa' ] ) + '</PelnaNazwa>' + nl
+      r += '    </OsobaNiefizyczna>' + nl
+   ELSE
+      r += '    <OsobaFizyczna>' + nl
+      r += '      <NIP>' + trimnip( str2sxml( aDane[ 'Firma' ][ 'NIP' ] ) ) + '</NIP>' + nl
+      r += '      <ImiePierwsze>' + str2sxml( aDane[ 'Firma' ][ 'ImiePierwsze' ] ) + '</ImiePierwsze>' + nl
+      r += '      <Nazwisko>' + str2sxml( aDane[ 'Firma' ][ 'Nazwisko' ] ) + '</Nazwisko>' + nl
+      r += '      <DataUrodzenia>' + date2strxml( aDane[ 'Firma' ][ 'DataUrodzenia' ] ) + '</DataUrodzenia>' + nl
+      r += '    </OsobaFizyczna>' + nl
+   ENDIF
+   r += '    <AdresZamieszkaniaSiedziby rodzajAdresu="RAD">' + nl
+   r += '      <AdresPol>' + nl
+   r += '        <KodKraju>PL</KodKraju>' + nl
+   r += '        <Wojewodztwo>' + str2sxml( aDane[ 'Firma' ][ 'Wojewodztwo' ] ) + '</Wojewodztwo>' + nl
+   r += '        <Powiat>' + str2sxml( aDane[ 'Firma' ][ 'Powiat' ] ) + '</Powiat>' + nl
+   r += '        <Gmina>' + str2sxml( aDane[ 'Firma' ][ 'Gmina' ] ) + '</Gmina>' + nl
+   r += '        <Ulica>' + str2sxml( aDane[ 'Firma' ][ 'Ulica' ] ) + '</Ulica>' + nl
+   r += '        <NrDomu>' + str2sxml( aDane[ 'Firma' ][ 'NrDomu' ] ) + '</NrDomu>' + nl
+   IF ! Empty( aDane[ 'Firma' ][ 'NrLokalu' ] )
+      r += '        <NrLokalu>' + str2sxml( aDane[ 'Firma' ][ 'NrLokalu' ] ) + '</NrLokalu>' + nl
+   ENDIF
+   r += '        <Miejscowosc>' + str2sxml( aDane[ 'Firma' ][ 'Miejscowosc' ] ) + '</Miejscowosc>' + nl
+   r += '        <KodPocztowy>' + str2sxml( aDane[ 'Firma' ][ 'KodPocztowy' ] ) + '</KodPocztowy>' + nl
+   //r := r + '        <etd:Poczta>' + str2sxml( aDane[ 'Dane' ][ 'FirmaPoczta' ] ) + '</etd:Poczta>' + nl
+   r += '      </AdresPol>' + nl
+   r += '    </AdresZamieszkaniaSiedziby>' + nl
+   r += '  </Podmiot1>' + nl
+   r += '  <Podmiot2 rola="' + str2sxml( 'Podatnik (Odbiorca Nale¾no˜ci)' ) + '">' + nl
+   r += '    <OsobaNieFizZagr>' + nl
+   r += '      <PelnaNazwa>' + str2sxml( aDane[ 'nazwa' ] ) + '</PelnaNazwa>' + nl
+   IF ! Empty( aDane[ 'nazwaskr' ] )
+      r += '      <SkroconaNazwa>' + str2sxml( aDane[ 'nazwaskr' ] ) + '</SkroconaNazwa>' + nl
+   ENDIF
+   IF ! Empty( aDane[ 'datarozp' ] )
+      r += '      <DataRozpoczeciaDzialalnosci poz="P_22">' + date2strxml( aDane[ 'datarozp' ] ) + '</DataRozpoczeciaDzialalnosci>' + nl
+   ENDIF
+   r += '      <RodzajIdentyfikacji poz="P_23">' + aDane[ 'rodzajid' ] + '</RodzajIdentyfikacji>' + nl
+   r += '      <NumerIdentyfikacyjnyPodatnika poz="P_24">' + str2sxml( aDane[ 'nridpod' ] ) + '</NumerIdentyfikacyjnyPodatnika>' + nl
+   r += '      <KodKrajuWydania poz="P_25">' + aDane[ 'krajwyd' ] + '</KodKrajuWydania>' + nl
+   r += '    </OsobaNieFizZagr>' + nl
+   r += '    <AdresSiedziby rodzajAdresu="RAD">' + nl
+   r += '      <KodKraju>' + aDane[ 'kraj' ] + '</KodKraju>' + nl
+   IF ! Empty( aDane[ 'kodpoczt' ] )
+      r += '      <KodPocztowy>' + str2sxml( aDane[ 'kodpoczt' ] ) + '</KodPocztowy>' + nl
+   ENDIF
+   r += '      <Miejscowosc>' + str2sxml( aDane[ 'miasto' ] ) + '</Miejscowosc>' + nl
+   IF ! Empty( aDane[ 'ulica' ] )
+      r += '      <Ulica>' + str2sxml( aDane[ 'ulica' ] ) + '</Ulica>' + nl
+   ENDIF
+   IF ! Empty( aDane[ 'nrbud' ] )
+      r += '      <NrDomu>' + str2sxml( aDane[ 'nrbud' ] ) + '</NrDomu>' + nl
+   ENDIF
+   IF ! Empty( aDane[ 'nrlok' ] )
+      r += '      <NrLokalu>' + str2sxml( aDane[ 'nrlok' ] ) + '</NrLokalu>' + nl
+   ENDIF
+   r += '    </AdresSiedziby>' + nl
+   r += '  </Podmiot2>' + nl
+   r += '  <PozycjeSzczegolowe>' + nl
+   r += '    <P_26>' + iif( aDane[ 'powiazany' ] == 'T', '1', '2' ) + '</P_26>' + nl
+   IF aDane[ 'D1D' ] <> 0 .OR. aDane[ 'D1E' ] <> 0 .OR. aDane[ 'D1G' ] <> 0
+      r += '    <P_33>' + TKwotaC( aDane[ 'D1D' ] ) + '</P_33>' + nl
+      r += '    <P_34>' + TKwotaC( aDane[ 'D1E' ] ) + '</P_34>' + nl
+      r += '    <P_35>' + TKwotaC( aDane[ 'D1G' ] ) + '</P_35>' + nl
+      r += '    <P_E typ="G">' + nl
+      r += '      <P_E1>' + TProcentowy( aDane[ 'D1F' ] ) + '</P_E1>' + nl
+      r += '      <P_E2>' + TKwotaC( aDane[ 'D1D' ] ) + '</P_E2>' + nl
+      r += '      <P_E3>' + TKwotaC( aDane[ 'D1E' ] ) + '</P_E3>' + nl
+      r += '      <P_E4>' + TKwotaC( aDane[ 'D1G' ] ) + '</P_E4>' + nl
+      r += '    </P_E>' + nl
+   ENDIF
+   IF aDane[ 'D2D' ] <> 0 .OR. aDane[ 'D2E' ] <> 0 .OR. aDane[ 'D2G' ] <> 0
+      r += '    <P_36>' + TKwotaC( aDane[ 'D2D' ] ) + '</P_36>' + nl
+      r += '    <P_37>' + TKwotaC( aDane[ 'D2E' ] ) + '</P_37>' + nl
+      r += '    <P_38>' + TKwotaC( aDane[ 'D2G' ] ) + '</P_38>' + nl
+      r += '    <P_F typ="G">' + nl
+      r += '      <P_F1>' + TProcentowy( aDane[ 'D2F' ] ) + '</P_F1>' + nl
+      r += '      <P_F2>' + TKwotaC( aDane[ 'D2D' ] ) + '</P_F2>' + nl
+      r += '      <P_F3>' + TKwotaC( aDane[ 'D2E' ] ) + '</P_F3>' + nl
+      r += '      <P_F4>' + TKwotaC( aDane[ 'D2G' ] ) + '</P_F4>' + nl
+      r += '    </P_F>' + nl
+   ENDIF
+   IF aDane[ 'D3D' ] <> 0 .OR. aDane[ 'D3E' ] <> 0 .OR. aDane[ 'D3G' ] <> 0
+      r += '    <P_39>' + TKwotaC( aDane[ 'D3D' ] ) + '</P_39>' + nl
+      r += '    <P_40>' + TKwotaC( aDane[ 'D3E' ] ) + '</P_40>' + nl
+      r += '    <P_41>' + TKwotaC( aDane[ 'D3G' ] ) + '</P_41>' + nl
+      r += '    <P_G typ="G">' + nl
+      r += '      <P_G1>' + TProcentowy( aDane[ 'D3F' ] ) + '</P_G1>' + nl
+      r += '      <P_G2>' + TKwotaC( aDane[ 'D3D' ] ) + '</P_G2>' + nl
+      r += '      <P_G3>' + TKwotaC( aDane[ 'D3E' ] ) + '</P_G3>' + nl
+      r += '      <P_G4>' + TKwotaC( aDane[ 'D3G' ] ) + '</P_G4>' + nl
+      r += '    </P_G>' + nl
+   ENDIF
+   IF aDane[ 'D4D' ] <> 0 .OR. aDane[ 'D4E' ] <> 0 .OR. aDane[ 'D4G' ] <> 0
+      r += '    <P_42>' + TKwotaC( aDane[ 'D4D' ] ) + '</P_42>' + nl
+      r += '    <P_43>' + TKwotaC( aDane[ 'D4E' ] ) + '</P_43>' + nl
+      r += '    <P_44>' + TKwotaC( aDane[ 'D4G' ] ) + '</P_44>' + nl
+      r += '    <P_H typ="G">' + nl
+      r += '      <P_H1>' + TProcentowy( aDane[ 'D4F' ] ) + '</P_H1>' + nl
+      r += '      <P_H2>' + TKwotaC( aDane[ 'D4D' ] ) + '</P_H2>' + nl
+      r += '      <P_H3>' + TKwotaC( aDane[ 'D4E' ] ) + '</P_H3>' + nl
+      r += '      <P_H4>' + TKwotaC( aDane[ 'D4G' ] ) + '</P_H4>' + nl
+      r += '    </P_H>' + nl
+   ENDIF
+   IF aDane[ 'D5D' ] <> 0 .OR. aDane[ 'D5E' ] <> 0 .OR. aDane[ 'D5G' ] <> 0
+      r += '    <P_45>' + TKwotaC( aDane[ 'D5D' ] ) + '</P_45>' + nl
+      r += '    <P_46>' + TKwotaC( aDane[ 'D5E' ] ) + '</P_46>' + nl
+      r += '    <P_47>' + TKwotaC( aDane[ 'D5G' ] ) + '</P_47>' + nl
+      r += '    <P_I typ="G">' + nl
+      r += '      <P_I1>' + TProcentowy( aDane[ 'D5F' ] ) + '</P_I1>' + nl
+      r += '      <P_I2>' + TKwotaC( aDane[ 'D5D' ] ) + '</P_I2>' + nl
+      r += '      <P_I3>' + TKwotaC( aDane[ 'D5E' ] ) + '</P_I3>' + nl
+      r += '      <P_I4>' + TKwotaC( aDane[ 'D5G' ] ) + '</P_I4>' + nl
+      r += '    </P_I>' + nl
+   ENDIF
+   IF aDane[ 'D6D' ] <> 0 .OR. aDane[ 'D6E' ] <> 0 .OR. aDane[ 'D6G' ] <> 0
+      r += '    <P_48>' + TKwotaC( aDane[ 'D6D' ] ) + '</P_48>' + nl
+      r += '    <P_49>' + TKwotaC( aDane[ 'D6E' ] ) + '</P_49>' + nl
+      r += '    <P_50>' + TKwotaC( aDane[ 'D6G' ] ) + '</P_50>' + nl
+      r += '    <P_J typ="G">' + nl
+      r += '      <P_J1>' + TProcentowy( aDane[ 'D6F' ] ) + '</P_J1>' + nl
+      r += '      <P_J2>' + TKwotaC( aDane[ 'D6D' ] ) + '</P_J2>' + nl
+      r += '      <P_J3>' + TKwotaC( aDane[ 'D6E' ] ) + '</P_J3>' + nl
+      r += '      <P_J4>' + TKwotaC( aDane[ 'D6G' ] ) + '</P_J4>' + nl
+      r += '    </P_J>' + nl
+   ENDIF
+   IF aDane[ 'D7D' ] <> 0 .OR. aDane[ 'D7E' ] <> 0 .OR. aDane[ 'D7G' ] <> 0
+      r += '    <P_51>' + TKwotaC( aDane[ 'D7D' ] ) + '</P_51>' + nl
+      r += '    <P_52>' + TKwotaC( aDane[ 'D7E' ] ) + '</P_52>' + nl
+      r += '    <P_53>' + TKwotaC( aDane[ 'D7G' ] ) + '</P_53>' + nl
+      r += '    <P_K typ="G">' + nl
+      r += '      <P_K1>' + TProcentowy( aDane[ 'D7F' ] ) + '</P_K1>' + nl
+      r += '      <P_K2>' + TKwotaC( aDane[ 'D7D' ] ) + '</P_K2>' + nl
+      r += '      <P_K3>' + TKwotaC( aDane[ 'D7E' ] ) + '</P_K3>' + nl
+      r += '      <P_K4>' + TKwotaC( aDane[ 'D7G' ] ) + '</P_K4>' + nl
+      r += '    </P_K>' + nl
+   ENDIF
+   IF aDane[ 'D8D' ] <> 0 .OR. aDane[ 'D8E' ] <> 0 .OR. aDane[ 'D8G' ] <> 0
+      r += '    <P_54>' + TKwotaC( aDane[ 'D8D' ] ) + '</P_54>' + nl
+      r += '    <P_55>' + TKwotaC( aDane[ 'D8E' ] ) + '</P_55>' + nl
+      r += '    <P_56>' + TKwotaC( aDane[ 'D8G' ] ) + '</P_56>' + nl
+      r += '    <P_57>0</P_57>' + nl
+      r += '    <P_L typ="G">' + nl
+      r += '      <P_L1>' + TProcentowy( aDane[ 'D8F' ] ) + '</P_L1>' + nl
+      r += '      <P_L2>' + TKwotaC( aDane[ 'D8D' ] ) + '</P_L2>' + nl
+      r += '      <P_L3>' + TKwotaC( aDane[ 'D8E' ] ) + '</P_L3>' + nl
+      r += '      <P_L4>' + TKwotaC( aDane[ 'D8G' ] ) + '</P_L4>' + nl
+      r += '      <P_L5>0</P_L5>' + nl
+      r += '    </P_L>' + nl
+   ENDIF
+   IF aDane[ 'D9D' ] <> 0 .OR. aDane[ 'D9E' ] <> 0 .OR. aDane[ 'D9G' ] <> 0
+      r += '    <P_58>' + TKwotaC( aDane[ 'D9D' ] ) + '</P_58>' + nl
+      r += '    <P_59>' + TKwotaC( aDane[ 'D9E' ] ) + '</P_69>' + nl
+      r += '    <P_60>' + TKwotaC( aDane[ 'D9G' ] ) + '</P_60>' + nl
+      r += '    <P_61>0</P_61>' + nl
+      r += '    <P_M typ="G">' + nl
+      r += '      <P_M1>' + TProcentowy( aDane[ 'D9F' ] ) + '</P_M1>' + nl
+      r += '      <P_M2>' + TKwotaC( aDane[ 'D9D' ] ) + '</P_M2>' + nl
+      r += '      <P_M3>' + TKwotaC( aDane[ 'D9E' ] ) + '</P_M3>' + nl
+      r += '      <P_M4>' + TKwotaC( aDane[ 'D9G' ] ) + '</P_M4>' + nl
+      r += '      <P_M5>0</P_M5>' + nl
+      r += '    </P_M>' + nl
+   ENDIF
+   IF aDane[ 'D10D' ] <> 0 .OR. aDane[ 'D10E' ] <> 0 .OR. aDane[ 'D10G' ] <> 0
+      r += '    <P_62>' + TKwotaC( aDane[ 'D10D' ] ) + '</P_62>' + nl
+      r += '    <P_63>' + TKwotaC( aDane[ 'D10E' ] ) + '</P_63>' + nl
+      r += '    <P_64>' + TKwotaC( aDane[ 'D10G' ] ) + '</P_64>' + nl
+      r += '    <P_65>0</P_65>' + nl
+      r += '    <P_N typ="G">' + nl
+      r += '      <P_N1>' + TProcentowy( aDane[ 'D10F' ] ) + '</P_N1>' + nl
+      r += '      <P_N2>' + TKwotaC( aDane[ 'D10D' ] ) + '</P_N2>' + nl
+      r += '      <P_N3>' + TKwotaC( aDane[ 'D10E' ] ) + '</P_N3>' + nl
+      r += '      <P_N4>' + TKwotaC( aDane[ 'D10G' ] ) + '</P_N4>' + nl
+      r += '      <P_N5>0</P_N5>' + nl
+      r += '    </P_N>' + nl
+   ENDIF
+   IF aDane[ 'D11D' ] <> 0 .OR. aDane[ 'D11E' ] <> 0 .OR. aDane[ 'D11G' ] <> 0
+      r += '    <P_66>' + TKwotaC( aDane[ 'D11D' ] ) + '</P_66>' + nl
+      r += '    <P_67>' + TKwotaC( aDane[ 'D11E' ] ) + '</P_67>' + nl
+      r += '    <P_68>' + TKwotaC( aDane[ 'D11G' ] ) + '</P_68>' + nl
+      r += '    <P_69>0</P_69>' + nl
+      r += '    <P_O typ="G">' + nl
+      r += '      <P_O1>' + TProcentowy( aDane[ 'D11F' ] ) + '</P_O1>' + nl
+      r += '      <P_O2>' + TKwotaC( aDane[ 'D11D' ] ) + '</P_O2>' + nl
+      r += '      <P_O3>' + TKwotaC( aDane[ 'D11E' ] ) + '</P_O3>' + nl
+      r += '      <P_O4>' + TKwotaC( aDane[ 'D11G' ] ) + '</P_O4>' + nl
+      r += '    </P_O>' + nl
+   ENDIF
+   IF lRocznie
+      r += xmlNiePusty( aDane[ 'K01' ], '    <P_69>' + TKwotaC( aDane[ 'K01' ] ) + '</P_69>' + nl )
+      r += xmlNiePusty( aDane[ 'K02' ], '    <P_70>' + TKwotaC( aDane[ 'K02' ] ) + '</P_70>' + nl )
+      r += xmlNiePusty( aDane[ 'K03' ], '    <P_71>' + TKwotaC( aDane[ 'K03' ] ) + '</P_71>' + nl )
+      r += xmlNiePusty( aDane[ 'K04' ], '    <P_72>' + TKwotaC( aDane[ 'K04' ] ) + '</P_72>' + nl )
+      r += xmlNiePusty( aDane[ 'K05' ], '    <P_73>' + TKwotaC( aDane[ 'K05' ] ) + '</P_73>' + nl )
+      r += xmlNiePusty( aDane[ 'K06' ], '    <P_74>' + TKwotaC( aDane[ 'K06' ] ) + '</P_74>' + nl )
+      r += xmlNiePusty( aDane[ 'P01' ], '    <P_75>' + TKwotaC( aDane[ 'P01' ] ) + '</P_75>' + nl )
+      r += xmlNiePusty( aDane[ 'P02' ], '    <P_76>' + TKwotaC( aDane[ 'P02' ] ) + '</P_76>' + nl )
+      r += xmlNiePusty( aDane[ 'P03' ], '    <P_77>' + TKwotaC( aDane[ 'P03' ] ) + '</P_77>' + nl )
+      r += xmlNiePusty( aDane[ 'P04' ], '    <P_78>' + TKwotaC( aDane[ 'P04' ] ) + '</P_78>' + nl )
+      r += xmlNiePusty( aDane[ 'P05' ], '    <P_79>' + TKwotaC( aDane[ 'P05' ] ) + '</P_79>' + nl )
+      r += xmlNiePusty( aDane[ 'P06' ], '    <P_80>' + TKwotaC( aDane[ 'P06' ] ) + '</P_80>' + nl )
+      r += xmlNiePusty( aDane[ 'K07' ], '    <P_81>' + TKwotaC( aDane[ 'K07' ] ) + '</P_81>' + nl )
+      r += xmlNiePusty( aDane[ 'K08' ], '    <P_82>' + TKwotaC( aDane[ 'K08' ] ) + '</P_82>' + nl )
+      r += xmlNiePusty( aDane[ 'K09' ], '    <P_83>' + TKwotaC( aDane[ 'K09' ] ) + '</P_83>' + nl )
+      r += xmlNiePusty( aDane[ 'K10' ], '    <P_84>' + TKwotaC( aDane[ 'K10' ] ) + '</P_84>' + nl )
+      r += xmlNiePusty( aDane[ 'K11' ], '    <P_85>' + TKwotaC( aDane[ 'K11' ] ) + '</P_85>' + nl )
+      r += xmlNiePusty( aDane[ 'K12' ], '    <P_86>' + TKwotaC( aDane[ 'K12' ] ) + '</P_86>' + nl )
+      r += xmlNiePusty( aDane[ 'P07' ], '    <P_87>' + TKwotaC( aDane[ 'P07' ] ) + '</P_87>' + nl )
+      r += xmlNiePusty( aDane[ 'P08' ], '    <P_88>' + TKwotaC( aDane[ 'P08' ] ) + '</P_88>' + nl )
+      r += xmlNiePusty( aDane[ 'P09' ], '    <P_89>' + TKwotaC( aDane[ 'P09' ] ) + '</P_89>' + nl )
+      r += xmlNiePusty( aDane[ 'P10' ], '    <P_90>' + TKwotaC( aDane[ 'P10' ] ) + '</P_90>' + nl )
+      r += xmlNiePusty( aDane[ 'P11' ], '    <P_91>' + TKwotaC( aDane[ 'P11' ] ) + '</P_91>' + nl )
+      r += xmlNiePusty( aDane[ 'P12' ], '    <P_92>' + TKwotaC( aDane[ 'P12' ] ) + '</P_92>' + nl )
+      r += xmlNiePusty( aDane[ 'K13' ], '    <P_93>' + TKwotaC( aDane[ 'K13' ] ) + '</P_93>' + nl )
+      r += xmlNiePusty( aDane[ 'K14' ], '    <P_94>' + TKwotaC( aDane[ 'K14' ] ) + '</P_94>' + nl )
+      r += xmlNiePusty( aDane[ 'K15' ], '    <P_95>' + TKwotaC( aDane[ 'K15' ] ) + '</P_95>' + nl )
+      r += xmlNiePusty( aDane[ 'K16' ], '    <P_96>' + TKwotaC( aDane[ 'K16' ] ) + '</P_96>' + nl )
+      r += xmlNiePusty( aDane[ 'K17' ], '    <P_97>' + TKwotaC( aDane[ 'K17' ] ) + '</P_97>' + nl )
+      r += xmlNiePusty( aDane[ 'K18' ], '    <P_98>' + TKwotaC( aDane[ 'K18' ] ) + '</P_98>' + nl )
+      r += xmlNiePusty( aDane[ 'P13' ], '    <P_99>' + TKwotaC( aDane[ 'P13' ] ) + '</P_99>' + nl )
+      r += xmlNiePusty( aDane[ 'P14' ], '    <P_100>' + TKwotaC( aDane[ 'P14' ] ) + '</P_100>' + nl )
+      r += xmlNiePusty( aDane[ 'P15' ], '    <P_101>' + TKwotaC( aDane[ 'P15' ] ) + '</P_101>' + nl )
+      r += xmlNiePusty( aDane[ 'P16' ], '    <P_102>' + TKwotaC( aDane[ 'P16' ] ) + '</P_102>' + nl )
+      r += xmlNiePusty( aDane[ 'P17' ], '    <P_103>' + TKwotaC( aDane[ 'P17' ] ) + '</P_103>' + nl )
+      r += xmlNiePusty( aDane[ 'P18' ], '    <P_104>' + TKwotaC( aDane[ 'P18' ] ) + '</P_104>' + nl )
+      r += xmlNiePusty( aDane[ 'K19' ], '    <P_105>' + TKwotaC( aDane[ 'K19' ] ) + '</P_105>' + nl )
+      r += xmlNiePusty( aDane[ 'K20' ], '    <P_106>' + TKwotaC( aDane[ 'K20' ] ) + '</P_106>' + nl )
+      r += xmlNiePusty( aDane[ 'K21' ], '    <P_107>' + TKwotaC( aDane[ 'K21' ] ) + '</P_107>' + nl )
+      r += xmlNiePusty( aDane[ 'K22' ], '    <P_108>' + TKwotaC( aDane[ 'K22' ] ) + '</P_108>' + nl )
+      r += xmlNiePusty( aDane[ 'K23' ], '    <P_109>' + TKwotaC( aDane[ 'K23' ] ) + '</P_109>' + nl )
+      r += xmlNiePusty( aDane[ 'P19' ], '    <P_111>' + TKwotaC( aDane[ 'P19' ] ) + '</P_111>' + nl )
+      r += xmlNiePusty( aDane[ 'P20' ], '    <P_112>' + TKwotaC( aDane[ 'P20' ] ) + '</P_112>' + nl )
+      r += xmlNiePusty( aDane[ 'P21' ], '    <P_113>' + TKwotaC( aDane[ 'P21' ] ) + '</P_113>' + nl )
+      r += xmlNiePusty( aDane[ 'P22' ], '    <P_114>' + TKwotaC( aDane[ 'P22' ] ) + '</P_114>' + nl )
+      r += xmlNiePusty( aDane[ 'P23' ], '    <P_115>' + TKwotaC( aDane[ 'P23' ] ) + '</P_115>' + nl )
+      r += '    <P_110>' + TKwotaC( aDane[ 'KR' ] ) + '</P_110>' + nl
+      r += '    <P_116>' + TKwotaC( aDane[ 'PR' ] ) + '</P_116>' + nl
+      r += '    <P_117>' + TNaturalny( aDane[ 'miesiace' ] ) + '</P_117>' + nl
+   ENDIF
+   IF ! lRocznie .AND. ! Empty( aDane[ 'data_zl' ] )
+      r += '    <P_118>' + date2strxml( aDane[ 'data_zl' ] ) + '</P_118>' + nl
+   ENDIF
+   r += '    <P_119>' + date2strxml( aDane[ 'data_prz' ] ) + '</P_119>' + nl
+   r += '  </PozycjeSzczegolowe>' + nl
+   r += '  <Pouczenie>1</Pouczenie>' + nl
+   r += '</Deklaracja>' + nl
+
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION edek_vat_zz5( aDane )
 
    LOCAL r, nl := Chr( 13 ) + Chr( 10 )

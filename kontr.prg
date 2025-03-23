@@ -866,6 +866,7 @@ FUNCTION KontrahZnajdzIFT2( cNip,  aDane )
       aDane[ 'nrbud' ]    := kontr->nrbud
       aDane[ 'nrlok' ]    := kontr->nrlok
       aDane[ 'recno' ]    := kontr->( RecNo() )
+      aDane[ 'powiazany' ] := 'N'
 
    ELSE
 
@@ -881,6 +882,7 @@ FUNCTION KontrahZnajdzIFT2( cNip,  aDane )
       aDane[ 'nrbud' ]    := Space( 9 )
       aDane[ 'nrlok' ]    := Space( 10 )
       aDane[ 'recno' ]    := 0
+      aDane[ 'powiazany' ] := 'N'
 
    ENDIF
 

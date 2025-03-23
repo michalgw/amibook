@@ -247,6 +247,11 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_IFT2w9( xDane )
       cPlikRap := 'frf\ift2_w10.frf'
       EXIT
+   CASE 'IFT2-11'
+   CASE 'IFT2R-11'
+      hDane := DaneDek_IFT2w11( xDane )
+      cPlikRap := 'frf\ift2_w11.frf'
+      EXIT
    CASE 'VATINFO'
       //hDane := DaneDek_VAT7w17()
       hDane := DaneDek_VATINFO( xDane )
@@ -8147,6 +8152,206 @@ FUNCTION DaneDek_IFT2w9( aDaneZrd )
    aDane[ 'P_116' ] := iif( aDaneZrd[ 'rocznie' ], aDaneZrd[ 'miesiace' ], '' )
    aDane[ 'P_117' ] := iif( ! aDaneZrd[ 'rocznie' ], aDaneZrd[ 'data_zl' ], '' )
    aDane[ 'P_118' ] := aDaneZrd[ 'data_prz' ]
+
+   aDane[ 'ROCZNY' ] := iif( aDaneZrd[ 'rocznie' ], '1', '0' )
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_IFT2w11( aDaneZrd )
+   LOCAL aDane := hb_Hash()
+
+   aDane[ 'P_1' ] := aDaneZrd[ 'Firma' ][ 'NIP' ]
+   aDane[ 'P_2' ] := ''
+   aDane[ 'P_4' ] := aDaneZrd[ 'data_od' ]
+   aDane[ 'P_5' ] := aDaneZrd[ 'data_do' ]
+   aDane[ 'P_6' ] := iif( AllTrim( aDaneZrd[ 'Firma' ][ 'KodUrzedu' ] ) != '', KodUS2Nazwa( AllTrim( aDaneZrd[ 'Firma' ][ 'KodUrzedu' ] ) ), '' )
+   aDane[ 'P_7_1' ] := iif( aDaneZrd[ 'korekta' ] == '1', '1', '0' )
+   aDane[ 'P_7_2' ] := iif( aDaneZrd[ 'korekta' ] == '2', '1', '0' )
+   aDane[ 'P_8_1' ] := iif( aDaneZrd[ 'Firma' ][ 'Spolka' ], '1', '0' )
+   aDane[ 'P_8_2' ] := iif( aDaneZrd[ 'Firma' ][ 'Spolka' ], '0', '1' )
+   IF aDaneZrd[ 'Firma' ][ 'Spolka' ]
+      aDane[ 'P_9' ] := aDaneZrd[ 'Firma' ][ 'PelnaNazwa' ]
+   ELSE
+      aDane[ 'P_9' ] := aDaneZrd[ 'Firma' ][ 'Nazwisko' ] + ', ' + aDaneZrd[ 'Firma' ][ 'ImiePierwsze' ] + ', ' + DToC( aDaneZrd[ 'Firma' ][ 'DataUrodzenia' ] )
+   ENDIF
+   aDane[ 'P_10' ] := 'POLSKA'
+   aDane[ 'P_11' ] := aDaneZrd[ 'Firma' ][ 'Wojewodztwo' ]
+   aDane[ 'P_12' ] := aDaneZrd[ 'Firma' ][ 'Powiat' ]
+   aDane[ 'P_13' ] := aDaneZrd[ 'Firma' ][ 'Gmina' ]
+   aDane[ 'P_14' ] := aDaneZrd[ 'Firma' ][ 'Ulica' ]
+   aDane[ 'P_15' ] := aDaneZrd[ 'Firma' ][ 'NrDomu' ]
+   aDane[ 'P_16' ] := aDaneZrd[ 'Firma' ][ 'NrLokalu' ]
+   aDane[ 'P_17' ] := aDaneZrd[ 'Firma' ][ 'Miejscowosc' ]
+   aDane[ 'P_18' ] := aDaneZrd[ 'Firma' ][ 'KodPocztowy' ]
+   //aDane[ 'P_19' ] := aDaneZrd[ 'Dane' ][ 'FirmaPoczta' ]
+
+   aDane[ 'P_19' ] := ''
+   aDane[ 'P_20' ] := aDaneZrd[ 'nazwa' ]
+   aDane[ 'P_21' ] := aDaneZrd[ 'nazwaskr' ]
+   aDane[ 'P_22' ] := iif( Empty( aDaneZrd[ 'datarozp' ] ), '', aDaneZrd[ 'datarozp' ] )
+   aDane[ 'P_23' ] := aDaneZrd[ 'rodzajid' ]
+   aDane[ 'P_23_1' ] := iif( aDaneZrd[ 'rodzajid' ] == '1', '1', '0' )
+   aDane[ 'P_23_2' ] := iif( aDaneZrd[ 'rodzajid' ] == '2', '1', '0' )
+   aDane[ 'P_24' ] := aDaneZrd[ 'nridpod' ]
+   aDane[ 'P_25' ] := aDaneZrd[ 'krajwyd' ]
+   aDane[ 'P_26' ] := iif( aDaneZrd[ 'powiazany' ] == 'T', '1', '2' )
+   aDane[ 'P_26_1' ] := iif( aDaneZrd[ 'powiazany' ] == 'T', '1', '0' )
+   aDane[ 'P_26_2' ] := iif( aDaneZrd[ 'powiazany' ] == 'T', '0', '1' )
+   aDane[ 'P_27' ] := aDaneZrd[ 'kraj' ]
+   aDane[ 'P_28' ] := aDaneZrd[ 'miasto' ]
+   aDane[ 'P_29' ] := aDaneZrd[ 'kodpoczt' ]
+   aDane[ 'P_30' ] := aDaneZrd[ 'ulica' ]
+   aDane[ 'P_31' ] := aDaneZrd[ 'nrbud' ]
+   aDane[ 'P_32' ] := aDaneZrd[ 'nrlok' ]
+
+   aDane[ 'P_33' ] := aDaneZrd[ 'D1D' ]
+   aDane[ 'P_34' ] := aDaneZrd[ 'D1E' ]
+   aDane[ 'P_35' ] := aDaneZrd[ 'D1G' ]
+   aDane[ 'P_E1' ] := aDaneZrd[ 'D1F' ]
+   aDane[ 'P_E2' ] := aDaneZrd[ 'D1D' ]
+   aDane[ 'P_E3' ] := aDaneZrd[ 'D1E' ]
+   aDane[ 'P_E4' ] := aDaneZrd[ 'D1G' ]
+
+   aDane[ 'P_36' ] := aDaneZrd[ 'D2D' ]
+   aDane[ 'P_37' ] := aDaneZrd[ 'D2E' ]
+   aDane[ 'P_38' ] := aDaneZrd[ 'D2G' ]
+   aDane[ 'P_F1' ] := aDaneZrd[ 'D2F' ]
+   aDane[ 'P_F2' ] := aDaneZrd[ 'D2D' ]
+   aDane[ 'P_F3' ] := aDaneZrd[ 'D2E' ]
+   aDane[ 'P_F4' ] := aDaneZrd[ 'D2G' ]
+
+   aDane[ 'P_39' ] := aDaneZrd[ 'D3D' ]
+   aDane[ 'P_40' ] := aDaneZrd[ 'D3E' ]
+   aDane[ 'P_41' ] := aDaneZrd[ 'D3G' ]
+   aDane[ 'P_G1' ] := aDaneZrd[ 'D3F' ]
+   aDane[ 'P_G2' ] := aDaneZrd[ 'D3D' ]
+   aDane[ 'P_G3' ] := aDaneZrd[ 'D3E' ]
+   aDane[ 'P_G4' ] := aDaneZrd[ 'D3G' ]
+
+   aDane[ 'P_42' ] := aDaneZrd[ 'D4D' ]
+   aDane[ 'P_43' ] := aDaneZrd[ 'D4E' ]
+   aDane[ 'P_44' ] := aDaneZrd[ 'D4G' ]
+   aDane[ 'P_H1' ] := aDaneZrd[ 'D4F' ]
+   aDane[ 'P_H2' ] := aDaneZrd[ 'D4D' ]
+   aDane[ 'P_H3' ] := aDaneZrd[ 'D4E' ]
+   aDane[ 'P_H4' ] := aDaneZrd[ 'D4G' ]
+
+   aDane[ 'P_45' ] := aDaneZrd[ 'D5D' ]
+   aDane[ 'P_46' ] := aDaneZrd[ 'D5E' ]
+   aDane[ 'P_47' ] := aDaneZrd[ 'D5G' ]
+   aDane[ 'P_I1' ] := aDaneZrd[ 'D5F' ]
+   aDane[ 'P_I2' ] := aDaneZrd[ 'D5D' ]
+   aDane[ 'P_I3' ] := aDaneZrd[ 'D5E' ]
+   aDane[ 'P_I4' ] := aDaneZrd[ 'D5G' ]
+
+   aDane[ 'P_48' ] := aDaneZrd[ 'D6D' ]
+   aDane[ 'P_49' ] := aDaneZrd[ 'D6E' ]
+   aDane[ 'P_50' ] := aDaneZrd[ 'D6G' ]
+   aDane[ 'P_J1' ] := aDaneZrd[ 'D6F' ]
+   aDane[ 'P_J2' ] := aDaneZrd[ 'D6D' ]
+   aDane[ 'P_J3' ] := aDaneZrd[ 'D6E' ]
+   aDane[ 'P_J4' ] := aDaneZrd[ 'D6G' ]
+
+   aDane[ 'P_51' ] := aDaneZrd[ 'D7D' ]
+   aDane[ 'P_52' ] := aDaneZrd[ 'D7E' ]
+   aDane[ 'P_53' ] := aDaneZrd[ 'D7G' ]
+   aDane[ 'P_K1' ] := aDaneZrd[ 'D8F' ]
+   aDane[ 'P_K2' ] := aDaneZrd[ 'D8D' ]
+   aDane[ 'P_K3' ] := aDaneZrd[ 'D8E' ]
+   aDane[ 'P_K4' ] := aDaneZrd[ 'D8G' ]
+
+   aDane[ 'P_54' ] := aDaneZrd[ 'D8D' ]
+   aDane[ 'P_55' ] := aDaneZrd[ 'D8E' ]
+   aDane[ 'P_56' ] := aDaneZrd[ 'D8G' ]
+   aDane[ 'P_57' ] := 0
+   aDane[ 'P_L1' ] := aDaneZrd[ 'D8F' ]
+   aDane[ 'P_L2' ] := aDaneZrd[ 'D8D' ]
+   aDane[ 'P_L3' ] := aDaneZrd[ 'D8E' ]
+   aDane[ 'P_L4' ] := aDaneZrd[ 'D8G' ]
+   aDane[ 'P_L5' ] := 0
+
+   aDane[ 'P_58' ] := aDaneZrd[ 'D9D' ]
+   aDane[ 'P_59' ] := aDaneZrd[ 'D9E' ]
+   aDane[ 'P_60' ] := aDaneZrd[ 'D9G' ]
+   aDane[ 'P_61' ] := 0
+   aDane[ 'P_M1' ] := aDaneZrd[ 'D9F' ]
+   aDane[ 'P_M2' ] := aDaneZrd[ 'D9D' ]
+   aDane[ 'P_M3' ] := aDaneZrd[ 'D9E' ]
+   aDane[ 'P_M4' ] := aDaneZrd[ 'D9G' ]
+   aDane[ 'P_M5' ] := 0
+
+   aDane[ 'P_62' ] := aDaneZrd[ 'D10D' ]
+   aDane[ 'P_63' ] := aDaneZrd[ 'D10E' ]
+   aDane[ 'P_64' ] := aDaneZrd[ 'D10G' ]
+   aDane[ 'P_65' ] := 0
+   aDane[ 'P_N1' ] := aDaneZrd[ 'D10F' ]
+   aDane[ 'P_N2' ] := aDaneZrd[ 'D10D' ]
+   aDane[ 'P_N3' ] := aDaneZrd[ 'D10E' ]
+   aDane[ 'P_N4' ] := aDaneZrd[ 'D10G' ]
+   aDane[ 'P_N5' ] := 0
+
+   aDane[ 'P_66' ] := aDaneZrd[ 'D11D' ]
+   aDane[ 'P_67' ] := aDaneZrd[ 'D11E' ]
+   aDane[ 'P_68' ] := aDaneZrd[ 'D11G' ]
+   aDane[ 'P_O1' ] := aDaneZrd[ 'D11F' ]
+   aDane[ 'P_O2' ] := aDaneZrd[ 'D11D' ]
+   aDane[ 'P_O3' ] := aDaneZrd[ 'D11E' ]
+   aDane[ 'P_O4' ] := aDaneZrd[ 'D11G' ]
+
+   aDane[ 'P_69' ] := aDaneZrd[ 'K01' ]
+   aDane[ 'P_70' ] := aDaneZrd[ 'K02' ]
+   aDane[ 'P_71' ] := aDaneZrd[ 'K03' ]
+   aDane[ 'P_72' ] := aDaneZrd[ 'K04' ]
+   aDane[ 'P_73' ] := aDaneZrd[ 'K05' ]
+   aDane[ 'P_74' ] := aDaneZrd[ 'K06' ]
+   aDane[ 'P_75' ] := aDaneZrd[ 'P01' ]
+   aDane[ 'P_76' ] := aDaneZrd[ 'P02' ]
+   aDane[ 'P_77' ] := aDaneZrd[ 'P03' ]
+   aDane[ 'P_78' ] := aDaneZrd[ 'P04' ]
+   aDane[ 'P_79' ] := aDaneZrd[ 'P05' ]
+   aDane[ 'P_80' ] := aDaneZrd[ 'P06' ]
+   aDane[ 'P_81' ] := aDaneZrd[ 'K07' ]
+   aDane[ 'P_82' ] := aDaneZrd[ 'K08' ]
+   aDane[ 'P_83' ] := aDaneZrd[ 'K09' ]
+   aDane[ 'P_84' ] := aDaneZrd[ 'K10' ]
+   aDane[ 'P_85' ] := aDaneZrd[ 'K11' ]
+   aDane[ 'P_86' ] := aDaneZrd[ 'K12' ]
+   aDane[ 'P_87' ] := aDaneZrd[ 'P07' ]
+   aDane[ 'P_88' ] := aDaneZrd[ 'P08' ]
+   aDane[ 'P_89' ] := aDaneZrd[ 'P09' ]
+   aDane[ 'P_90' ] := aDaneZrd[ 'P10' ]
+   aDane[ 'P_91' ] := aDaneZrd[ 'P11' ]
+   aDane[ 'P_92' ] := aDaneZrd[ 'P12' ]
+   aDane[ 'P_93' ] := aDaneZrd[ 'K13' ]
+   aDane[ 'P_94' ] := aDaneZrd[ 'K14' ]
+   aDane[ 'P_95' ] := aDaneZrd[ 'K15' ]
+   aDane[ 'P_96' ] := aDaneZrd[ 'K16' ]
+   aDane[ 'P_97' ] := aDaneZrd[ 'K17' ]
+   aDane[ 'P_98' ] := aDaneZrd[ 'K18' ]
+   aDane[ 'P_99' ] := aDaneZrd[ 'P13' ]
+   aDane[ 'P_100' ] := aDaneZrd[ 'P14' ]
+   aDane[ 'P_101' ] := aDaneZrd[ 'P15' ]
+   aDane[ 'P_102' ] := aDaneZrd[ 'P16' ]
+   aDane[ 'P_103' ] := aDaneZrd[ 'P17' ]
+   aDane[ 'P_104' ] := aDaneZrd[ 'P18' ]
+   aDane[ 'P_105' ] := aDaneZrd[ 'K19' ]
+   aDane[ 'P_106' ] := aDaneZrd[ 'K20' ]
+   aDane[ 'P_107' ] := aDaneZrd[ 'K21' ]
+   aDane[ 'P_108' ] := aDaneZrd[ 'K22' ]
+   aDane[ 'P_109' ] := aDaneZrd[ 'K23' ]
+   aDane[ 'P_110' ] := aDaneZrd[ 'KR' ]
+   aDane[ 'P_111' ] := aDaneZrd[ 'P19' ]
+   aDane[ 'P_112' ] := aDaneZrd[ 'P20' ]
+   aDane[ 'P_113' ] := aDaneZrd[ 'P21' ]
+   aDane[ 'P_114' ] := aDaneZrd[ 'P22' ]
+   aDane[ 'P_115' ] := aDaneZrd[ 'P23' ]
+   aDane[ 'P_116' ] := aDaneZrd[ 'PR' ]
+
+   aDane[ 'P_117' ] := iif( aDaneZrd[ 'rocznie' ], aDaneZrd[ 'miesiace' ], '' )
+   aDane[ 'P_118' ] := iif( ! aDaneZrd[ 'rocznie' ], aDaneZrd[ 'data_zl' ], '' )
+   aDane[ 'P_119' ] := aDaneZrd[ 'data_prz' ]
 
    aDane[ 'ROCZNY' ] := iif( aDaneZrd[ 'rocznie' ], '1', '0' )
 
