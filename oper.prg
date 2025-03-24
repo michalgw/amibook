@@ -1632,7 +1632,7 @@ PROCEDURE OperIFT2()
       @ 18, 1 SAY " 8 - Przych¢d okre˜lony zgodnie z art. 21 ustawy (odsetki)"
       @ 19, 1 SAY " 9 - Przych¢d okre˜lony zgodnie z art. 21 ustawy (nale¾no˜ci licencyjne)"
       @ 20, 1 SAY "10 - Przych¢d okre˜lony zgodnie z art. 22 ustawy (dywidendy)"
-      @ 22, 1 SAY "11 - Przych¢d z tytuˆu zysk¢w kapitaˆowych, o kt¢rych mowa w art7b ust.1pkt3-6"
+      @ 21, 1 SAY "11 - Przych¢d z tytuˆu zysk¢w kapitaˆowych, o kt¢rych mowa w art7b ust.1pkt3-6"
       RETURN .T.
    }
    LOCAL bRodzajV := { | |

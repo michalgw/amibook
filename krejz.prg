@@ -2689,24 +2689,26 @@ PROCEDURE KRejZIFT2()
       RETURN .F.
    }
    LOCAL bRodzajW := { | |
-      cEkran := SaveScreen( 11, 0, 21, 79 )
+      cEkran := SaveScreen( 10, 0, 22, 79 )
       ColInf()
-      @ 11, 0 CLEAR TO 21, 79
-      @ 11, 0 TO 21, 79
-      @ 12, 1 SAY "1 - Opˆaty za wyw¢z ˆadunk¢w i pasa¾er¢w przyj©tych do przewozu w portach pols"
-      @ 13, 1 SAY "2 - Przychody uzyskane na ter. RP przez zagr. przedsi©biorstwa ¾eglugi powiet."
-      @ 14, 1 SAY "3 - Dywidendy i inne przychody (dochody)z tytuˆu udziaˆu w zyskach os¢b prawny"
-      @ 15, 1 SAY "4 - Odsetki"
-      @ 16, 1 SAY "5 - Opˆaty licencyjne"
-      @ 17, 1 SAY "6 - Dziaˆalno˜† widowiskowa, rozrywkowa lub sportowa"
-      @ 18, 1 SAY "7 - Przychody z tytuˆu ˜wiadczeä: doradczych, ksi©gowych, badania rynku, us.pr"
-      @ 19, 1 SAY "8 - Przych¢d okre˜lony zgodnie z art. 21 i 22 ustawy"
-      @ 20, 1 SAY "9 - Przych¢d z tytuˆu zysk¢w kapitaˆowych, o kt¢rych mowa w art.7b ust.1pkt3-6"
+      @ 10, 0 CLEAR TO 22, 79
+      @ 10, 0 TO 22, 79
+      @ 11, 1 SAY " 1 - Opˆaty za wyw¢z ˆadunk¢w i pasa¾er¢w przyj©tych do przewozu w portach pol"
+      @ 12, 1 SAY " 2 - Przychody uzyskane na ter. RP przez zagr. przedsi©biorstwa ¾eglugi powie."
+      @ 13, 1 SAY " 3 - Dywidendy i inne przychody (dochody)z tytuˆu udziaˆu w zyskach os¢b prawn"
+      @ 14, 1 SAY " 4 - Odsetki"
+      @ 15, 1 SAY " 5 - Opˆaty licencyjne"
+      @ 16, 1 SAY " 6 - Dziaˆalno˜† widowiskowa, rozrywkowa lub sportowa"
+      @ 17, 1 SAY " 7 - Przychody z tytuˆu ˜wiadczeä: doradczych, ksi©gowych, badania rynku,us.pr"
+      @ 18, 1 SAY " 8 - Przych¢d okre˜lony zgodnie z art. 21 ustawy (odsetki)"
+      @ 19, 1 SAY " 9 - Przych¢d okre˜lony zgodnie z art. 21 ustawy (nale¾no˜ci licencyjne)"
+      @ 20, 1 SAY "10 - Przych¢d okre˜lony zgodnie z art. 22 ustawy (dywidendy)"
+      @ 21, 1 SAY "11 - Przych¢d z tytuˆu zysk¢w kapitaˆowych, o kt¢rych mowa w art7b ust.1pkt3-6"
       RETURN .T.
    }
    LOCAL bRodzajV := { | |
-      IF zIFT2SEK >= 1 .AND. zIFT2SEK <= 9
-         RestScreen( 11, 0, 21, 79, cEkran )
+      IF zIFT2SEK >= 1 .AND. zIFT2SEK <= 11
+         RestScreen( 10, 0, 22, 79, cEkran )
          RETURN .T.
       ELSE
          RETURN .F.
@@ -2718,7 +2720,7 @@ PROCEDURE KRejZIFT2()
    @  5, 24 SAY 'WYKAZYWANIE W DEKLARACJI IFT-2R'
    @  6, 19 TO 6, 60
    @  7, 20 SAY 'Wyka¾ w deklaracji IFT-2R (Tak/Nie)' GET zIFT2 PICTURE '!' VALID Eval( bWykazV )
-   @  8, 20 SAY 'Rodzaj przychodu (sekcja D, 1-9)' GET zIFT2SEK PICTURE '9' WHEN zIFT2 == 'T' .AND. Eval( bRodzajW ) VALID Eval( bRodzajV )
+   @  8, 20 SAY 'Rodzaj przychodu (sekcja D, 1-11)' GET zIFT2SEK PICTURE '99' WHEN zIFT2 == 'T' .AND. Eval( bRodzajW ) VALID Eval( bRodzajV )
    @  9, 20 SAY 'Wykazana kwota' GET zIFT2KWOT PICTURE '99999999999' WHEN zIFT2 == 'T' VALID zIFT2KWOT > 0
    Eval( bWykazV )
    READ
