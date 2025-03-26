@@ -10797,16 +10797,16 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_8_1'] := iif( !xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
    hDane['P_8_2'] := iif( xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
    IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
-      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
-      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' ) + ', ' + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' ) + ', ' + xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
+      hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'Nazwisko' ) + ', ' + xmlWartoscH( hPodmiot1, 'ImiePierwsze' ) + ', ' + xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
       hDane['P_8_N'] := ''
       hDane['P_8_R'] := ''
-      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' )
-      hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' )
-      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+      hDane['P_9_N'] := xmlWartoscH( hPodmiot1, 'Nazwisko' )
+      hDane['P_9_I'] := xmlWartoscH( hPodmiot1, 'ImiePierwsze' )
+      hDane['P_9_D'] := xmlWartoscH( hPodmiot1, 'DataUrodzenia' )
    ELSE
       hDane['P_1'] := xmlWartoscH( hPodmiot1, 'NIP' )
-      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' ) + ', ' + xmlWartoscH( hPodmiot1, 'REGON' )
+      hDane['P_9'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
       hDane['P_8_N'] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
       hDane['P_8_R'] := xmlWartoscH( hPodmiot1, 'REGON' )
       hDane['P_9_N'] := ''
@@ -10814,19 +10814,19 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
       hDane['P_9_D'] := ''
    ENDIF
    hDane['P_10'] := 'POLSKA'
-   hDane['P_11'] := xmlWartoscH( hPodmiot1, 'etd:Wojewodztwo', '' )
-   hDane['P_12'] := xmlWartoscH( hPodmiot1, 'etd:Powiat', '' )
-   hDane['P_13'] := xmlWartoscH( hPodmiot1, 'etd:Gmina', '' )
-   hDane['P_14'] := xmlWartoscH( hPodmiot1, 'etd:Ulica', '' )
-   hDane['P_15'] := xmlWartoscH( hPodmiot1, 'etd:NrDomu', '' )
-   hDane['P_16'] := xmlWartoscH( hPodmiot1, 'etd:NrLokalu', '' )
-   hDane['P_17'] := xmlWartoscH( hPodmiot1, 'etd:Miejscowosc', '' )
-   hDane['P_18'] := xmlWartoscH( hPodmiot1, 'etd:KodPocztowy', '' )
+   hDane['P_11'] := xmlWartoscH( hPodmiot1, 'Wojewodztwo', '' )
+   hDane['P_12'] := xmlWartoscH( hPodmiot1, 'Powiat', '' )
+   hDane['P_13'] := xmlWartoscH( hPodmiot1, 'Gmina', '' )
+   hDane['P_14'] := xmlWartoscH( hPodmiot1, 'Ulica', '' )
+   hDane['P_15'] := xmlWartoscH( hPodmiot1, 'NrDomu', '' )
+   hDane['P_16'] := xmlWartoscH( hPodmiot1, 'NrLokalu', '' )
+   hDane['P_17'] := xmlWartoscH( hPodmiot1, 'Miejscowosc', '' )
+   hDane['P_18'] := xmlWartoscH( hPodmiot1, 'KodPocztowy', '' )
    //hDane['P_19'] := xmlWartoscH( hPodmiot1, 'etd:Poczta', '' )
 
-   hDane['P_19'] := xmlWartoscH( hPodmiot2, 'etd:NIP' )
-   hDane['P_20'] := xmlWartoscH( hPodmiot2, 'etd:PelnaNazwa' )
-   hDane['P_21'] := xmlWartoscH( hPodmiot2, 'etd:SkroconaNazwa' )
+   hDane['P_19'] := xmlWartoscH( hPodmiot2, 'NIP' )
+   hDane['P_20'] := xmlWartoscH( hPodmiot2, 'PelnaNazwa' )
+   hDane['P_21'] := xmlWartoscH( hPodmiot2, 'SkroconaNazwa' )
    hDane['P_22'] := xmlWartoscH( hPodmiot2, 'DataRozpoczeciaDzialalnosci', '' )
    hDane['P_23'] := xmlWartoscH( hPodmiot2, 'RodzajIdentyfikacji' )
    hDane['P_23_1'] := iif( hDane['P_23' ] == '1', '1', '0' )
@@ -10851,6 +10851,11 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_E2'] := sxml2num( xmlWartoscH( hPozycje, 'P_E2' ) )
    hDane['P_E3'] := sxml2num( xmlWartoscH( hPozycje, 'P_E3' ) )
    hDane['P_E4'] := sxml2num( xmlWartoscH( hPozycje, 'P_E4' ) )
+   hDane[ 'PE' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_E1' ] ) .OR. ! Empty( hDane[ 'P_E2' ] ) .OR. ! Empty( hDane[ 'P_E3' ] ) .OR. ! Empty( hDane[ 'P_E4' ] ), 1, 0 ), ;
+      'P_E1' => hDane[ 'P_E1' ], ;
+      'P_E2' => hDane[ 'P_E2' ], ;
+      'P_E3' => hDane[ 'P_E3' ], ;
+      'P_E4' => hDane[ 'P_E4' ] } }
 
    hDane['P_36'] := sxml2num( xmlWartoscH( hPozycje, 'P_36' ) )
    hDane['P_37'] := sxml2num( xmlWartoscH( hPozycje, 'P_37' ) )
@@ -10859,6 +10864,11 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_F2'] := sxml2num( xmlWartoscH( hPozycje, 'P_F2' ) )
    hDane['P_F3'] := sxml2num( xmlWartoscH( hPozycje, 'P_F3' ) )
    hDane['P_F4'] := sxml2num( xmlWartoscH( hPozycje, 'P_F4' ) )
+   hDane[ 'PF' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_F1' ] ) .OR. ! Empty( hDane[ 'P_F2' ] ) .OR. ! Empty( hDane[ 'P_F3' ] ) .OR. ! Empty( hDane[ 'P_F4' ] ), 1, 0 ), ;
+      'P_F1' => hDane[ 'P_F1' ], ;
+      'P_F2' => hDane[ 'P_F2' ], ;
+      'P_F3' => hDane[ 'P_F3' ], ;
+      'P_F4' => hDane[ 'P_F4' ] } }
 
    hDane['P_39'] := sxml2num( xmlWartoscH( hPozycje, 'P_39' ) )
    hDane['P_40'] := sxml2num( xmlWartoscH( hPozycje, 'P_40' ) )
@@ -10867,6 +10877,11 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_G2'] := sxml2num( xmlWartoscH( hPozycje, 'P_G2' ) )
    hDane['P_G3'] := sxml2num( xmlWartoscH( hPozycje, 'P_G3' ) )
    hDane['P_G4'] := sxml2num( xmlWartoscH( hPozycje, 'P_G4' ) )
+   hDane[ 'PG' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_G1' ] ) .OR. ! Empty( hDane[ 'P_G2' ] ) .OR. ! Empty( hDane[ 'P_G3' ] ) .OR. ! Empty( hDane[ 'P_G4' ] ), 1, 0 ), ;
+      'P_G1' => hDane[ 'P_G1' ], ;
+      'P_G2' => hDane[ 'P_G2' ], ;
+      'P_G3' => hDane[ 'P_G3' ], ;
+      'P_G4' => hDane[ 'P_G4' ] } }
 
    hDane['P_42'] := sxml2num( xmlWartoscH( hPozycje, 'P_42' ) )
    hDane['P_43'] := sxml2num( xmlWartoscH( hPozycje, 'P_43' ) )
@@ -10875,6 +10890,11 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_H2'] := sxml2num( xmlWartoscH( hPozycje, 'P_H2' ) )
    hDane['P_H3'] := sxml2num( xmlWartoscH( hPozycje, 'P_H3' ) )
    hDane['P_H4'] := sxml2num( xmlWartoscH( hPozycje, 'P_H4' ) )
+   hDane[ 'PH' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_H1' ] ) .OR. ! Empty( hDane[ 'P_H2' ] ) .OR. ! Empty( hDane[ 'P_H3' ] ) .OR. ! Empty( hDane[ 'P_H4' ] ), 1, 0 ), ;
+      'P_H1' => hDane[ 'P_H1' ], ;
+      'P_H2' => hDane[ 'P_H2' ], ;
+      'P_H3' => hDane[ 'P_H3' ], ;
+      'P_H4' => hDane[ 'P_H4' ] } }
 
    hDane['P_45'] := sxml2num( xmlWartoscH( hPozycje, 'P_45' ) )
    hDane['P_46'] := sxml2num( xmlWartoscH( hPozycje, 'P_46' ) )
@@ -10883,6 +10903,11 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_I2'] := sxml2num( xmlWartoscH( hPozycje, 'P_I2' ) )
    hDane['P_I3'] := sxml2num( xmlWartoscH( hPozycje, 'P_I3' ) )
    hDane['P_I4'] := sxml2num( xmlWartoscH( hPozycje, 'P_I4' ) )
+   hDane[ 'PI' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_I1' ] ) .OR. ! Empty( hDane[ 'P_I2' ] ) .OR. ! Empty( hDane[ 'P_I3' ] ) .OR. ! Empty( hDane[ 'P_I4' ] ), 1, 0 ), ;
+      'P_I1' => hDane[ 'P_I1' ], ;
+      'P_I2' => hDane[ 'P_I2' ], ;
+      'P_I3' => hDane[ 'P_I3' ], ;
+      'P_I4' => hDane[ 'P_I4' ] } }
 
    hDane['P_48'] := sxml2num( xmlWartoscH( hPozycje, 'P_48' ) )
    hDane['P_49'] := sxml2num( xmlWartoscH( hPozycje, 'P_49' ) )
@@ -10891,6 +10916,11 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_J2'] := sxml2num( xmlWartoscH( hPozycje, 'P_J2' ) )
    hDane['P_J3'] := sxml2num( xmlWartoscH( hPozycje, 'P_J3' ) )
    hDane['P_J4'] := sxml2num( xmlWartoscH( hPozycje, 'P_J4' ) )
+   hDane[ 'PJ' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_J1' ] ) .OR. ! Empty( hDane[ 'P_J2' ] ) .OR. ! Empty( hDane[ 'P_J3' ] ) .OR. ! Empty( hDane[ 'P_J4' ] ), 1, 0 ), ;
+      'P_J1' => hDane[ 'P_J1' ], ;
+      'P_J2' => hDane[ 'P_J2' ], ;
+      'P_J3' => hDane[ 'P_J3' ], ;
+      'P_J4' => hDane[ 'P_J4' ] } }
 
    hDane['P_51'] := sxml2num( xmlWartoscH( hPozycje, 'P_51' ) )
    hDane['P_52'] := sxml2num( xmlWartoscH( hPozycje, 'P_52' ) )
@@ -10899,6 +10929,11 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_K2'] := sxml2num( xmlWartoscH( hPozycje, 'P_K2' ) )
    hDane['P_K3'] := sxml2num( xmlWartoscH( hPozycje, 'P_K3' ) )
    hDane['P_K4'] := sxml2num( xmlWartoscH( hPozycje, 'P_K4' ) )
+   hDane[ 'PK' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_K1' ] ) .OR. ! Empty( hDane[ 'P_K2' ] ) .OR. ! Empty( hDane[ 'P_K3' ] ) .OR. ! Empty( hDane[ 'P_K4' ] ), 1, 0 ), ;
+      'P_K1' => hDane[ 'P_K1' ], ;
+      'P_K2' => hDane[ 'P_K2' ], ;
+      'P_K3' => hDane[ 'P_K3' ], ;
+      'P_K4' => hDane[ 'P_K4' ] } }
 
    hDane['P_54'] := sxml2num( xmlWartoscH( hPozycje, 'P_54' ) )
    hDane['P_55'] := sxml2num( xmlWartoscH( hPozycje, 'P_55' ) )
@@ -10909,6 +10944,12 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_L3'] := sxml2num( xmlWartoscH( hPozycje, 'P_L3' ) )
    hDane['P_L4'] := sxml2num( xmlWartoscH( hPozycje, 'P_L4' ) )
    hDane['P_L5'] := sxml2num( xmlWartoscH( hPozycje, 'P_L5' ) )
+   hDane[ 'PL' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_L1' ] ) .OR. ! Empty( hDane[ 'P_L2' ] ) .OR. ! Empty( hDane[ 'P_L3' ] ) .OR. ! Empty( hDane[ 'P_L4' ] ), 1, 0 ), ;
+      'P_L1' => hDane[ 'P_L1' ], ;
+      'P_L2' => hDane[ 'P_L2' ], ;
+      'P_L3' => hDane[ 'P_L3' ], ;
+      'P_L4' => hDane[ 'P_L4' ], ;
+      'P_L5' => hDane[ 'P_L5' ] } }
 
    hDane['P_58'] := sxml2num( xmlWartoscH( hPozycje, 'P_58' ) )
    hDane['P_59'] := sxml2num( xmlWartoscH( hPozycje, 'P_59' ) )
@@ -10919,6 +10960,12 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_M3'] := sxml2num( xmlWartoscH( hPozycje, 'P_M3' ) )
    hDane['P_M4'] := sxml2num( xmlWartoscH( hPozycje, 'P_M4' ) )
    hDane['P_M5'] := sxml2num( xmlWartoscH( hPozycje, 'P_M5' ) )
+   hDane[ 'PM' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_M1' ] ) .OR. ! Empty( hDane[ 'P_M2' ] ) .OR. ! Empty( hDane[ 'P_M3' ] ) .OR. ! Empty( hDane[ 'P_M4' ] ), 1, 0 ), ;
+      'P_M1' => hDane[ 'P_M1' ], ;
+      'P_M2' => hDane[ 'P_M2' ], ;
+      'P_M3' => hDane[ 'P_M3' ], ;
+      'P_M4' => hDane[ 'P_M4' ], ;
+      'P_M5' => hDane[ 'P_M5' ] } }
 
    hDane['P_62'] := sxml2num( xmlWartoscH( hPozycje, 'P_62' ) )
    hDane['P_63'] := sxml2num( xmlWartoscH( hPozycje, 'P_63' ) )
@@ -10929,6 +10976,12 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_N3'] := sxml2num( xmlWartoscH( hPozycje, 'P_N3' ) )
    hDane['P_N4'] := sxml2num( xmlWartoscH( hPozycje, 'P_N4' ) )
    hDane['P_N5'] := sxml2num( xmlWartoscH( hPozycje, 'P_N5' ) )
+   hDane[ 'PN' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_N1' ] ) .OR. ! Empty( hDane[ 'P_N2' ] ) .OR. ! Empty( hDane[ 'P_N3' ] ) .OR. ! Empty( hDane[ 'P_N4' ] ), 1, 0 ), ;
+      'P_N1' => hDane[ 'P_N1' ], ;
+      'P_N2' => hDane[ 'P_N2' ], ;
+      'P_N3' => hDane[ 'P_N3' ], ;
+      'P_N4' => hDane[ 'P_N4' ], ;
+      'P_N5' => hDane[ 'P_N5' ] } }
 
    hDane['P_66'] := sxml2num( xmlWartoscH( hPozycje, 'P_66' ) )
    hDane['P_67'] := sxml2num( xmlWartoscH( hPozycje, 'P_67' ) )
@@ -10937,6 +10990,11 @@ FUNCTION DaneXML_IFT2w11(oDoc, cNrRef, hNaglowek)
    hDane['P_O2'] := sxml2num( xmlWartoscH( hPozycje, 'P_O2' ) )
    hDane['P_O3'] := sxml2num( xmlWartoscH( hPozycje, 'P_O3' ) )
    hDane['P_O4'] := sxml2num( xmlWartoscH( hPozycje, 'P_O4' ) )
+   hDane[ 'PO' ] := { { 'aktywny' => iif( ! Empty( hDane[ 'P_O1' ] ) .OR. ! Empty( hDane[ 'P_O2' ] ) .OR. ! Empty( hDane[ 'P_O3' ] ) .OR. ! Empty( hDane[ 'P_O4' ] ), 1, 0 ), ;
+      'P_O1' => hDane[ 'P_O1' ], ;
+      'P_O2' => hDane[ 'P_O2' ], ;
+      'P_O3' => hDane[ 'P_O3' ], ;
+      'P_O4' => hDane[ 'P_O4' ] } }
 
    hDane['P_69'] := sxml2num( xmlWartoscH( hPozycje, 'P_69' ) )
    hDane['P_70'] := sxml2num( xmlWartoscH( hPozycje, 'P_70' ) )
