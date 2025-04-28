@@ -184,9 +184,17 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_VAT8w11( xDane )
       cPlikRap := 'frf\vat8_w11.frf'
       EXIT
+   CASE 'VAT8-12'
+      hDane := DaneDek_VAT8w11( xDane )
+      cPlikRap := 'frf\vat8_w12.frf'
+      EXIT
    CASE 'VAT9M-10'
       hDane := DaneDek_VAT9Mw10( xDane )
       cPlikRap := 'frf\vat9m_w10.frf'
+      EXIT
+   CASE 'VAT9M-11'
+      hDane := DaneDek_VAT9Mw10( xDane )
+      cPlikRap := 'frf\vat9m_w11.frf'
       EXIT
    CASE 'VATUE-3'
       hDane := DaneDek_VATUEw3()

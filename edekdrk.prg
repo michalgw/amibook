@@ -267,9 +267,21 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cOrdzuFrf := 'frf\ordzu_w3.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'VAT8-12'
+      hDane := DaneXML_VAT8w11( oDoc, cNrRef )
+      cPlikRap := 'frf\vat8_w12.frf'
+      cOrdzuFrf := 'frf\ordzu_w3.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'VAT9M-10'
       hDane := DaneXML_VAT9Mw10( oDoc, cNrRef )
       cPlikRap := 'frf\vat9m_w10.frf'
+      cOrdzuFrf := 'frf\ordzu_w3.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
+   CASE 'VAT9M-11'
+      hDane := DaneXML_VAT9Mw10( oDoc, cNrRef )
+      cPlikRap := 'frf\vat9m_w11.frf'
       cOrdzuFrf := 'frf\ordzu_w3.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT

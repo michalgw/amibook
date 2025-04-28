@@ -1301,30 +1301,30 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             tresc_korekty_vat7 := aDane[ 'ORDZU' ][ 'P_13' ]
          ENDIF
          DeklPodp()
-         DeklarDrukuj( 'VAT8-11', VAT8_DaneDek() )
+         DeklarDrukuj( 'VAT8-12', VAT8_DaneDek() )
       CASE _OU == '8X'
          tresc_korekty_vat7 := ''
          IF kordek == 'K' .AND. aDane[ 'ORDZU' ][ 'rob' ]
             tresc_korekty_vat7 := aDane[ 'ORDZU' ][ 'P_13' ]
          ENDIF
          edeklaracja_plik := 'VAT_' + AllTrim( zVATFORDR ) + '_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( p5b ) + '_' + AllTrim( P5a )
-         resdekl := edek_vat8_11( VAT8_DaneDek() )
-         edekZapiszXml( resdekl, edeklaracja_plik, wys_edeklaracja, 'VAT8-11', kordek == 'K', Val( miesiac ) )
+         resdekl := edek_vat8_12( VAT8_DaneDek() )
+         edekZapiszXml( resdekl, edeklaracja_plik, wys_edeklaracja, 'VAT8-12', kordek == 'K', Val( miesiac ) )
       CASE _OU == '9D'
          tresc_korekty_vat7 := ''
          IF kordek == 'K' .AND. aDane[ 'ORDZU' ][ 'rob' ]
             tresc_korekty_vat7 := aDane[ 'ORDZU' ][ 'P_13' ]
          ENDIF
          DeklPodp()
-         DeklarDrukuj( 'VAT9M-10', VAT9M_DaneDek() )
+         DeklarDrukuj( 'VAT9M-11', VAT9M_DaneDek() )
       CASE _OU == '9X'
          tresc_korekty_vat7 := ''
          IF kordek == 'K' .AND. aDane[ 'ORDZU' ][ 'rob' ]
             tresc_korekty_vat7 := aDane[ 'ORDZU' ][ 'P_13' ]
          ENDIF
          edeklaracja_plik := 'VAT_' + AllTrim( zVATFORDR ) + '_' + normalizujNazwe( AllTrim( symbol_fir ) ) + '_' + AllTrim( p5b ) + '_' + AllTrim( P5a )
-         resdekl := edek_vat9m_10( VAT9M_DaneDek() )
-         edekZapiszXml( resdekl, edeklaracja_plik, wys_edeklaracja, 'VAT9M-10', kordek == 'K', Val( miesiac ) )
+         resdekl := edek_vat9m_11( VAT9M_DaneDek() )
+         edekZapiszXml( resdekl, edeklaracja_plik, wys_edeklaracja, 'VAT9M-11', kordek == 'K', Val( miesiac ) )
       ENDCASE
    END
 

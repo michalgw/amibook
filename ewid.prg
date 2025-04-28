@@ -424,10 +424,10 @@ FUNCTION Ewid()
                         verdekold := ' J - JPK_V7K  (2)                    '
 
                      CASE zVATFORDR == '8 '
-                        verdekold := ' J - VAT-8    (11)                   '
+                        verdekold := ' J - VAT-8    (12)                   '
 
                      CASE zVATFORDR == '9M'
-                        verdekold := ' J - VAT-9M   (10)                   '
+                        verdekold := ' J - VAT-9M   (11)                   '
 
                   ENDCASE
 
