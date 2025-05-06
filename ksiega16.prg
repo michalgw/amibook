@@ -23,13 +23,20 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "Box.ch"
 #include "hbwin.ch"
 #include "hbcompat.ch"
+#include "Inkey.ch"
 
-FUNCTION ksiega16licz()
-   LOCAL aRes := hb_Hash(), aRow
+FUNCTION ksiega16licz( dDataOd, dDataDo )
+   LOCAL aRes := hb_Hash(), aRow, cMOd, cDOd, cMDo, cDDo
 begin sequence
       *------------------------------
       aRes['pozycje'] := {}
-      _koniec="del#[+].or.firma#ident_fir.or.mc#miesiac"
+
+      IF dDataOd < hb_Date( Val( param_rok ), 1, 1 ) .OR. dDataDo > hb_Date( Val( param_rok ), 12, 31 )
+         BREAK
+      ENDIF
+
+      //_koniec="del#[+].or.firma#ident_fir.or.mc#miesiac"
+      _koniec := { || del # '+' .or. firma # ident_fir .or. hb_Date( Val( param_rok ), Val( mc ), Val( dzien ) ) < dDataOd .OR. hb_Date( Val( param_rok ), Val( mc ), Val( dzien ) ) > dDataDo }
       *@@@@@@@@@@@@@@@@@@@@@@@@@@ ZAKRES @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       *@@@@@@@@@@@@@@@@@@@@ OTWARCIE BAZ DANYCH @@@@@@@@@@@@@@@@@@@@@@
       select 3
@@ -61,22 +68,31 @@ begin sequence
          sele 1
          break
       endif
-      seek [+]+ident_fir+miesiac
+      cMOd := Str( Month( dDataOd ), 2 )
+      cDOd := Str( Day( dDataOd ), 2 )
+      cMDo := Str( Month( dDataDo ), 2 )
+      cDDo := Str( Day( dDataDo ), 2 )
+      //seek [+]+ident_fir+miesiac
+      seek '+' + ident_fir + cMOd + cDOd
       strona=0
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      if &_koniec
+      IF Eval( _koniec )
          break
       endif
      *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
      store 0 to s0_7,s0_8,s0_9,s0_10,s0_11,s0_13,s0_14,s0_15,s0_16
      store 0 to s1_7,s1_8,s1_9,s1_10,s1_11,s1_13,s1_14,s1_15,s1_16
      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-     aRes['miesiac'] := AllTrim(upper(miesiac(val(miesiac))))
+     IF Month( dDataOd ) == Val( miesiac ) .AND. Month( dDataDo ) == Val( miesiac )
+        aRes['miesiac'] := 'miesi¥c ' + AllTrim( Upper( miesiac( Val( miesiac ) ) ) ) + ' ' + param_rok
+     ELSE
+        aRes['miesiac'] := 'okres od ' + DToC( dDataOd ) + ' do ' + DToC( dDataDo )
+     ENDIF
      aRes['rok'] := param_rok
      select firma
      aRes['firma'] := alltrim(nazwa)+[ ]+miejsc+[ ul.]+ulica+[ ]+nr_domu+iif(empty(nr_mieszk),[ ],[/])+nr_mieszk
      select oper
-     do while .not.&_koniec
+     do while .NOT. Eval( _koniec )
              *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
              aRow := hb_Hash()
              liczba=liczba+1
@@ -103,6 +119,7 @@ begin sequence
              skip
              aRow['k1'] := k1
              aRow['k2'] := k2
+             aRow['k2m'] := AllTrim( mc )
              aRow['k3'] := k3
              aRow['k4'] := k4
              aRow['k5'] := k5
@@ -155,8 +172,16 @@ RETURN aRes
 PROCEDURE ksiega16()
    LOCAL aDane, oRap, nLewaPrawa := 1, nMonDruk, cScr, cKolor, nPoz := 1, cJPK, cPlik, nFile
    LOCAL nP_1 := 0, nP_2 := 0, nP_3 := 0, nP_4 := 0, dP_5A := CToD(''), nP_5B := 0, cP_5 := 'N'
-   LOCAL cKorekta := 'D', oWorkbook, oWorksheet, cPlikWyj, nWiersz
-   aDane := ksiega16licz()
+   LOCAL cKorekta := 'D', oWorkbook, oWorksheet, cPlikWyj, nWiersz, xEwidDrZakres
+
+   xEwidDrZakres := EwidDrMcLubZakres( 18, 7 )
+
+   IF Empty( xEwidDrZakres )
+      RETURN
+   ENDIF
+
+   aDane := ksiega16licz( xEwidDrZakres[ 1 ], xEwidDrZakres[ 2 ] )
+
    IF Len(aDane['pozycje']) > 0
 
       nPoz := GrafTekst_Wczytaj( ident_fir, "Ksiega16", nPoz )
@@ -664,6 +689,44 @@ PROCEDURE ksiega16()
    ENDIF
 
    RETURN
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION EwidDrMcLubZakres( nTop, nLeft )
+
+   LOCAL cEkran, cKolor, dDataOd, dDataDo, nWybor
+
+   dDataOd := hb_Date( Val( param_rok ), Val( miesiac ), 1 )
+   dDataDo := EoM( dDataOd )
+
+   cEkran := SaveScreen()
+   cKolor := ColPro()
+
+   nWybor := MenuEx( nTop, nLeft, { "A - Aktualny miesi¥†", "O - Zadany okres" }, 1, .F. )
+
+   IF nWybor == 0
+      RestScreen( , , , , cEkran )
+      SetColor( cKolor )
+      RETURN NIL
+   ENDIF
+
+   IF nWybor == 2
+      ColInf()
+      @ 24,  0
+      @ 24,  0 SAY "Data od " GET dDataOd PICTURE "@D"
+      @ 24, 25 SAY "Data do " GET dDataDo PICTURE "@D"
+      read_()
+      IF LastKey() == K_ESC
+         RestScreen( , , , , cEkran )
+         SetColor( cKolor )
+         RETURN NIL
+      ENDIF
+   ENDIF
+
+   RestScreen( , , , , cEkran )
+   SetColor( cKolor )
+
+   RETURN { dDataOd, dDataDo }
 
 /*----------------------------------------------------------------------*/
 

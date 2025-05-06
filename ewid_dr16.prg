@@ -23,12 +23,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "box.ch"
 #include "hbcompat.ch"
 
-FUNCTION ewid_dr16licz()
-   LOCAL aRes := hb_Hash(), aRow, _czy_close := .T.
+FUNCTION ewid_dr16licz( dDataOd, dDataDo )
+   LOCAL aRes := hb_Hash(), aRow, _czy_close := .T., cMOd, cDOd, cMDo, cDDo
 
    begin sequence
       aRes['pozycje'] := {}
-      _koniec="del#[+].or.firma#ident_fir.or.mc#miesiac"
+
+      IF dDataOd < hb_Date( Val( param_rok ), 1, 1 ) .OR. dDataDo > hb_Date( Val( param_rok ), 12, 31 )
+         BREAK
+      ENDIF
+
+      //_koniec="del#[+].or.firma#ident_fir.or.mc#miesiac"
+      _koniec := { || del # '+' .or. firma # ident_fir .or. hb_Date( Val( param_rok ), Val( mc ), Val( dzien ) ) < dDataOd .OR. hb_Date( Val( param_rok ), Val( mc ), Val( dzien ) ) > dDataDo }
 
       *@@@@@@@@@@@@@@@@@@@@ OTWARCIE BAZ DANYCH @@@@@@@@@@@@@@@@@@@@@@
       select 3
@@ -53,22 +59,32 @@ FUNCTION ewid_dr16licz()
          break
       endif
       select 1
+      cMOd := Str( Month( dDataOd ), 2 )
+      cDOd := Str( Day( dDataOd ), 2 )
+      cMDo := Str( Month( dDataDo ), 2 )
+      cDDo := Str( Day( dDataDo ), 2 )
       if dostep('EWID')
          do SETIND with 'EWID'
-         seek [+]+ident_fir+miesiac
+         //seek [+]+ident_fir+miesiac
+         seek '+' + ident_fir + cMOd + cDOd
       else
          break
       endif
 
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      if &_koniec
+      IF Eval( _koniec )
          break
       endif
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
       store 0 to s0_4,s0_4a,s0_4b,s0_4c,s0_5,s0_6,s0_7
       store 0 to s1_4,s1_4a,s1_4b,s1_4c,s1_5,s1_6,s1_7
       *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      aRes['miesiac'] := AllTrim(upper(miesiac(val(miesiac))))
+      //aRes['miesiac'] := AllTrim(upper(miesiac(val(miesiac))))
+      IF Month( dDataOd ) == Val( miesiac ) .AND. Month( dDataDo ) == Val( miesiac )
+         aRes['miesiac'] := 'miesi¥c ' + AllTrim( Upper( miesiac( Val( miesiac ) ) ) ) + ' ' + param_rok
+      ELSE
+         aRes['miesiac'] := 'okres od ' + DToC( dDataOd ) + ' do ' + DToC( dDataDo )
+      ENDIF
       aRes['rok'] := param_rok
       select firma
       aRes['firma'] := alltrim(nazwa)+[ ]+miejsc+[ ul.]+ulica+[ ]+nr_domu+iif(empty(nr_mieszk),[ ],[/])+nr_mieszk
@@ -93,7 +109,7 @@ FUNCTION ewid_dr16licz()
       aRes['staw_ork09'] := AllTrim( staw_ork09 )
       aRes['staw_ork10'] := AllTrim( staw_ork10 )
 
-      do while .not.&_koniec
+      do while .NOT. Eval( _koniec )
          *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
          aRow := hb_Hash()
          k1=lp
@@ -163,8 +179,16 @@ PROCEDURE ewid_dr16rob()
    LOCAL KolOrd := Array( 9 ), KolStaw := { 170, 150, 140, 125, 120, 100, 85, 55, 30 }
    LOCAL nKol, nI, KolNaz := { 'staw_ry20', 'staw_ry17', 'staw_rk09', 'staw_uslu', ;
       'staw_rk10', 'staw_prod', 'staw_hand', 'staw_rk07', 'staw_ry10' }
+   LOCAL xEwidDrZakres
 
-   aDane := ewid_dr16licz()
+   xEwidDrZakres := EwidDrMcLubZakres( 18, 7 )
+
+   IF Empty( xEwidDrZakres )
+      RETURN
+   ENDIF
+
+   aDane := ewid_dr16licz( xEwidDrZakres[ 1 ], xEwidDrZakres[ 2 ] )
+
    IF Len(aDane['pozycje']) > 0
 
       nPoz := GrafTekst_Wczytaj( ident_fir, "EwidDr16", nPoz )

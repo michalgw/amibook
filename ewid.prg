@@ -391,9 +391,9 @@ FUNCTION Ewid()
                   SAVE SCREEN TO ROBSO11
                   opcja1 := 1
                   ColPro()
-                  @ 16, 4 TO 19, 37
-                  @ 17, 5 PROMPT ' D - Wydruk ewidencji           '
-                  @ 18, 5 PROMPT ' J - JPK_PKPIR (2)              '
+                  @ 16, 5 TO 19, 38
+                  @ 17, 6 PROMPT ' D - Wydruk ewidencji           '
+                  @ 18, 6 PROMPT ' J - JPK_PKPIR (2)              '
                   opcja1 := menu( opcja1 )
                   ColStd()
                   IF LastKey() <> K_ESC
