@@ -697,7 +697,7 @@ PROCEDURE zestaw_R( Okres )
             'staw_ry10' => staw_ry10 * 100, ;
             'okres' => iif( OKRES == 'M', 'Za miesi¥c ' + AllTrim( miesiac( Val( miesiac ) ) ), ;
                iif( OKRES == 'K', 'Za ' + AllTrim( Str( ObliczKwartal( Val( miesiac ) )[ 'kwarta' ] ) ) + ' kwartaˆ', ;
-               iif( OKRES == 'N', 'Narastaj¥co', '?' ) ) ), ;
+               iif( OKRES == 'N', 'Narastaj¥co ' + AllTrim( miesiac( Val( miesiac ) ) ), '?' ) ) ), ;
             'rok' => param_rok, ;
             'k55' => k55, ;
             'k1a' => k1a, ;
