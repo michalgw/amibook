@@ -188,7 +188,7 @@ FUNCTION Main()
       Alert( 'Nie udaˆo si© zaˆadowa† biblioteki libwinprint.dll. Sprawd« poprawno˜† instalacji.;Sterownik wydruku WIN zostaˆ wyˆ¥czony.', { 'OK' } )
    ENDIF
 
-   PUBLIC param_ks5v, param_ks5d, param_kslp, param_ksnd, param_kskw, param_ksv7
+   PUBLIC param_ks5v, param_ks5d, param_kslp, param_ksnd, param_kskw, param_ksv7, param_kswv
    param_ks5v := '1'
    param_ks5d := '1'
    param_kslp := ''
@@ -196,6 +196,7 @@ FUNCTION Main()
    param_kskw := 'N'
    param_ksv7 := 'T'
    param_kssr := 'T'
+   param_kswv := 'N'
 
    //Bufor wydruku
    PUBLIC buforDruku := '', kodStartDruku := ''

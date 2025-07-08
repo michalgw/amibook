@@ -27,7 +27,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE KRejS()
 
-   LOCAL lRyczModSys := .F., nImpMenu, cKolor
+   LOCAL lRyczModSys := .F., nImpMenu, cKolor, aDaneVAT
 
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou
    PRIVATE zDzien, zNazwa, zNr_Ident, zNumer, zAdres, zTresc, zRokS, zMcS, zDzienS
@@ -534,6 +534,14 @@ PROCEDURE KRejS()
 *              if .not.zaplacono()
 *                 break
 *              endif
+
+            IF param_kswv == 'T' .AND. ! Empty( zNR_IDENT ) .AND. ( Empty( zKRAJ ) .OR. zKRAJ == 'PL' )
+               IF WLApiSzukajNip( zNR_IDENT, zDATAS, @aDaneVAT )
+                  IF Upper( xmlWartoscH( aDaneVAT, 'statusVat', '' ) ) <> 'CZYNNY'
+                     Komun( "Kontrahent nie jest czynnym pˆatnikiem VAT" )
+                  ENDIF
+               ENDIF
+            ENDIF
 
             KRejS_Ksieguj()
 

@@ -25,7 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE KRejZ()
 
-   LOCAL nImpMenu
+   LOCAL nImpMenu, aDaneVAT
 
    PRIVATE oGetWAR2, oGetVAT2, oGetWAR7, oGetVAT7, oGetWAR12, oGetVAT12, oGetWAR22, oGetVAT22, lBlokuj := .F.
    PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE, fDETALISTA, oGetRodzDow, oGetSekCV7, oGetKOLUMNA
@@ -603,6 +603,14 @@ PROCEDURE KRejZ()
 *              if .not.zaplacono()
 *                 break
 *              endif
+
+            IF param_kswv == 'T' .AND. ! Empty( zNR_IDENT ) .AND. ( Empty( zKRAJ ) .OR. zKRAJ == 'PL' )
+               IF WLApiSzukajNip( zNR_IDENT, zDATAS, @aDaneVAT )
+                  IF Upper( xmlWartoscH( aDaneVAT, 'statusVat', '' ) ) <> 'CZYNNY'
+                     Komun( "Kontrahent nie jest czynnym pˆatnikiem VAT" )
+                  ENDIF
+               ENDIF
+            ENDIF
 
             KRejZ_Ksieguj()
 
