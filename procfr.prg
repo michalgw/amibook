@@ -78,7 +78,7 @@ FUNCTION FRUstawMarginesy( oRap, nLewy, nPrawy, nGora, nDol )
 
 PROCEDURE FRDrukuj( cPlikFrp, aDane )
 
-   LOCAL oRap, nMonDruk
+   LOCAL oRap, nMonDruk, cLPath, cLName, cLExt
 
    IF ! File( cPlikFrp )
       Komun( 'Brak pliku wydruku: ' + cPlikFrp )
@@ -100,6 +100,12 @@ PROCEDURE FRDrukuj( cPlikFrp, aDane )
 
    TRY
       oRap := FRUtworzRaport()
+      IF hProfilUzytkownika[ 'typrap' ] == 'L'
+         hb_FNameSplit( cPlikFrp, @cLPath, @cLName, @cLExt )
+         IF File( hb_FNameMerge( cLPath, cLName, '.lrf' ) )
+            cPlikFrp := hb_FNameMerge( cLPath, cLName, '.lrf' )
+         ENDIF
+      ENDIF
       oRap:LoadFromFile( cPlikFrp )
 
       IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
