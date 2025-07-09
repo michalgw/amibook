@@ -474,7 +474,10 @@ public aFAKTURYdbf := {;
    { "KOREKTA", "C", 1, 0 },;                     //  43 Czy faktura koryguj¥ca - 'T' - tak, 'N' - nie
    { "DOKKORID", "N", 5, 0 },;                    //  44 Nr ID powi¥zanej faktury / faktury koryguj¥cej
    { "PRZYCZKOR", "C", 200, 0 },;                 //  45 Przyczyna korekty
-   { "RODZDOW", "C", 6, 0 } }                     //  46 Rodzaj dowodu - RO, WEW, FP
+   { "RODZDOW", "C", 6, 0 },;                     //  46 Rodzaj dowodu - RO, WEW, FP
+   { "ODBJEST", "C", 1, 0 },;                     //  47 Odbiorca - Czy jest odbiorca na faktirze (T)
+   { "ODNR_IDENT", "C", 30, 0 },;                 //  48 Odbiorca - NIP
+   { "ODBKRAJ", "C", 2, 0 } }                     //  49 Odbiorca - Kraj
 
 // Create: FAKTURYW.DBF
 public aFAKTURYWdbf := {;

@@ -249,6 +249,11 @@ PROCEDURE FakturyN()
                      zWARTRANSP := aBufDok[ 'WARTRANSP' ]
                      zRODZDOW := aBufDok[ 'RODZDOW' ]
                      oldzRODZDOW := ""
+                     zODBJEST := aBufDok[ 'ODBJEST' ]
+                     zODNR_IDENT := aBufDok[ 'ODNR_IDENT' ]
+                     zODBNAZWA := aBufDok[ 'ODBNAZWA' ]
+                     zODBADRES := aBufDok[ 'ODBADRES' ]
+                     zODBKRAJ := aBufDok[ 'ODBKRAJ' ]
                      IF lKorekta
                         FakturyN_KorInfo()
                      ENDIF
@@ -297,6 +302,11 @@ PROCEDURE FakturyN()
                   zWARTRANSP := 'T'
                   zRODZDOW := Space( 6 )
                   oldzRODZDOW := ""
+                  zODBJEST := "N"
+                  zODNR_IDENT := Space( 30 )
+                  zODBNAZWA := Space( 200 )
+                  zODBADRES := Space( 200 )
+                  zODBKRAJ := "  "
                ELSE
                   zRACH := RACH
                   zNUMER&zRACH := NUMER
@@ -348,6 +358,11 @@ PROCEDURE FakturyN()
                   zWARTRANSP := WARTRANSP
                   zRODZDOW := RODZDOW
                   oldzRODZDOW := RODZDOW
+                  zODBJEST := ODBJEST
+                  zODNR_IDENT := ODNR_IDENT
+                  zODBNAZWA := ODBNAZWA
+                  zODBADRES := ODBADRES
+                  zODBKRAJ := ODBKRAJ
     *             endif
                ENDIF
                *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
@@ -396,6 +411,7 @@ PROCEDURE FakturyN()
                      BREAK
                   ENDIF
                ENDIF
+
                *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
 
                KontrApp()
@@ -442,6 +458,11 @@ PROCEDURE FakturyN()
                repl_( 'PRZYCZKOR', zPRZYCZKOR )
                repl_( 'WARTRANSP', zWARTRANSP )
                repl_( 'RODZDOW', zRODZDOW )
+               repl_( 'ODBJEST', zODBJEST )
+               repl_( 'ODNR_IDENT', zODNR_IDENT )
+               repl_( 'ODBNAZWA', zODBNAZWA )
+               repl_( 'ODBADRES', zODBADRES )
+               repl_( 'ODBKRAJ', zODBKRAJ )
                IF ins
                   repl_( 'KOREKTA', zKOREKTA )
                   IF kl == K_F6 .AND. lKorekta
@@ -817,14 +838,20 @@ PROCEDURE FakturyN()
                   zpoddarow := poddarow
                   zpodcywil := podcywil
                ENDIF
-               zodbnazwa := iif( Empty( odbnazwa ), nazwa, odbnazwa )
-               zodbadres := iif( Empty( odbadres ), adres, odbadres )
-               zodbosoba := iif( Empty( odbosoba ), Space( 30 ), odbosoba )
+               zodbjest := iif( Empty( odbjest ), 'N', odbjest )
+               zodnr_ident := odnr_ident
+               zodbnazwa := odbnazwa
+               zodbadres := odbadres
+               zodbkraj := odbkraj
+               zodbosoba := odbosoba
                zduplikat := 'N'
                zduplikatd := Date()
                SET CURSOR ON
-               @ 19,  6 GET zodbnazwa PICTURE '@S30 ' + repl( '!', 200 )
-               @ 20,  6 GET zodbADRES PICTURE '@S30 ' + repl( '!', 200 )
+               @ 18,  9 GET zodbjest  PICTURE '!' VALID ValidTakNie( zodbjest, 18, 10 )
+               @ 18, 18 GET zodnr_ident PICTURE '@S14 ' + repl( '!', 30 ) WHEN zodbjest == 'T' VALID Faktury_OdbValidNIP()
+               @ 18, 39 GET zodbkraj PICTURE '!!' WHEN zodbjest == 'T'
+               @ 19,  6 GET zodbnazwa PICTURE '@S30 ' + repl( '!', 200 ) WHEN zodbjest == 'T' .AND. Faktury_OdbWhenNazwa()
+               @ 20,  6 GET zodbADRES PICTURE '@S30 ' + repl( '!', 200 ) WHEN zodbjest == 'T'
                @ 21,  0 SAY 'Duplikat (T/N) ?' GET zDUPLIKAT PICTURE '!' VALID zDUPLIKAT $ 'TN'
                @ 21, 20 SAY 'z dnia' GET zduplikatd PICTURE '@D' WHEN zduplikat == 'T'
     *           @ 21,6  get zodbosoba pict '!'+repl('X',29)
@@ -837,13 +864,17 @@ PROCEDURE FakturyN()
                SET CURSOR OFF
                IF LastKey() <> K_ESC
                   BlokadaR()
-                  REPLACE odbnazwa WITH zodbnazwa, odbadres WITH zodbadres, odbosoba WITH zodbosoba
+                  REPLACE odbnazwa WITH zodbnazwa, odbadres WITH zodbadres, odbosoba WITH zodbosoba, ;
+                     odnr_ident WITH zodnr_ident, odbkraj WITH zodbkraj, odbjest WITH zodbjest
                   if NR_UZYTK == 800
                      REPLACE oplskarb WITH zoplskarb, poddarow WITH zpoddarow, podcywil WITH zpodcywil
                   ENDIF
                   COMMIT
                   UNLOCK
                   SET COLOR TO w+
+                  @ 18, 9 SAY iif( ODBJEST == 'T', 'Tak', 'Nie' )
+                  @ 18, 18 SAY SubStr( ODNR_IDENT, 1, 14 )
+                  @ 18, 39 SAY ODBKRAJ
                   @ 19, 6 SAY SubStr( ODBNAZWA, 1, 30 )
                   @ 20, 6 SAY SubStr( ODBADRES, 1, 30 )
     *             @ 21, 6 SAY ODBOSOBA
@@ -886,7 +917,7 @@ PROCEDURE FakturyN()
             p[ 15 ] := '                                                        '
             *---------------------------------------
             SET COLOR TO i
-            i := 14
+            i := 16
             j := 24
             DO WHILE i > 0
                IF Type( 'p[i]' ) # 'U'
@@ -993,6 +1024,11 @@ PROCEDURE FakturyN()
                   zWARTRANSP := aBufDok[ 'WARTRANSP' ]
                   zRODZDOW := aBufDok[ 'RODZDOW' ]
                   oldzRODZDOW := ""
+                  zODBJEST := aBufDok[ 'ODBJEST' ]
+                  zODNR_IDENT := aBufDok[ 'ODNR_IDENT' ]
+                  zODBNAZWA := aBufDok[ 'ODBNAZWA' ]
+                  zODBADRES := aBufDok[ 'ODBADRES' ]
+                  zODBKRAJ := aBufDok[ 'ODBKRAJ' ]
 
                KontrApp()
                SELECT firma
@@ -1038,6 +1074,11 @@ PROCEDURE FakturyN()
                repl_( 'PRZYCZKOR', zPRZYCZKOR )
                repl_( 'WARTRANSP', zWARTRANSP )
                repl_( 'RODZDOW', zRODZDOW )
+               repl_( 'ODBJEST', zODBJEST )
+               repl_( 'ODNR_IDENT', zODNR_IDENT )
+               repl_( 'ODBNAZWA', zODBNAZWA )
+               repl_( 'ODBADRES', zODBADRES )
+               repl_( 'ODBKRAJ', zODBKRAJ )
                IF ins
                   repl_( 'KOREKTA', zKOREKTA )
                ENDIF
@@ -1246,6 +1287,7 @@ PROCEDURE FakturyN()
             ELSE
                Komun( "Brak dokument¢w w buforze" )
             ENDIF
+
          ******************** ENDCASE
       ENDCASE
    ENDDO
@@ -1302,6 +1344,9 @@ PROCEDURE say260vn()
    @ 15, 15 SAY SubStr( OPCJE, 1, 8 )
    @ 15, 30 SAY SubStr( PROCEDUR, 1, 14 )
    @ 17,  0 SAY SubStr( FAKTTYP, 1, 40 )
+   @ 18,  9 SAY iif( ODBJEST == 'T', 'Tak', 'Nie' )
+   @ 18, 18 SAY SubStr( ODNR_IDENT, 1, 14 )
+   @ 18, 39 SAY ODBKRAJ
    @ 19,  6 SAY SubStr( ODBNAZWA, 1, 30 )
    @ 20,  6 SAY SubStr( ODBADRES, 1, 30 )
    @ 21,  0 SAY Space( 39 )
@@ -1899,14 +1944,19 @@ PROCEDURE FakturyN_DrukGraf()
    aDane[ 'k_nazwa' ] := AllTrim( faktury->nazwa )
    aDane[ 'k_adres' ] := AllTrim( faktury->adres )
    aDane[ 'k_nip' ] := AllTrim( faktury->nr_ident )
-   IF ( ! Empty( faktury->odbnazwa ) .AND. ! Empty( faktury->odbadres ) ) .AND. ( AllTrim( faktury->nazwa ) <> AllTrim( faktury->odbnazwa ) .OR. AllTrim( faktury->adres ) <> AllTrim( faktury->odbadres ) )
+   //IF ( ! Empty( faktury->odbnazwa ) .AND. ! Empty( faktury->odbadres ) ) .AND. ( AllTrim( faktury->nazwa ) <> AllTrim( faktury->odbnazwa ) .OR. AllTrim( faktury->adres ) <> AllTrim( faktury->odbadres ) )
+   IF faktury->odbjest == 'T'
       aDane[ 'odbiorca' ] := 1
       aDane[ 'o_nazwa' ] := AllTrim( faktury->odbnazwa )
       aDane[ 'o_adres' ] := AllTrim( faktury->odbadres )
+      aDane[ 'o_nip' ] := AllTrim( faktury->odnr_ident )
+      aDane[ 'o_kraj' ] := AllTrim( faktury->odbkraj )
    ELSE
       aDane[ 'odbiorca' ] := 0
       aDane[ 'o_nazwa' ] := ""
       aDane[ 'o_adres' ] := ""
+      aDane[ 'o_nip' ] := ""
+      aDane[ 'o_kraj' ] := ""
    ENDIF
    aDane[ 'f_nazwa' ] := AllTrim( firma->nazwa )
    aDane[ 'f_kod_poczt' ] := AllTrim( firma->kod_p )
@@ -2047,7 +2097,7 @@ PROCEDURE FakturyN_DrukGraf()
       + 'NIP: ' + aDane[ 'k_nip' ] } )
    IF aDane[ 'odbiorca' ] <> 0
       AAdd( aDane[ 'naglowki' ], { 'nazwa' => 'Odbiorca', ;
-        'dane' => aDane[ 'o_nazwa' ] + hb_eol() + aDane[ 'o_adres' ] } )
+        'dane' => aDane[ 'o_nazwa' ] + hb_eol() + aDane[ 'o_adres' ] + hb_eol() + 'NIP: ' + aDane[ 'o_nip' ] } )
    ENDIF
    IF ! Empty( aDane[ 'zamowienie' ] )
       AAdd( aDane[ 'naglowki' ], { 'nazwa' => 'Zam¢wienie', 'dane' => aDane[ 'zamowienie' ] } )
@@ -2164,7 +2214,7 @@ PROCEDURE FakturyN_RysujTlo()
    @ 15, 0 SAY 'Ro.d.:    Ozn.:         Proc.:              ³          ³' + Str( vat_A, 2 ) + '³         ³          ³'
    @ 16, 0 SAY 'TYP FAKT.(opis typu/podstawy fakturowania): ³          ³' + Str( vat_B, 2 ) + '³         ³          ³'
    @ 17, 0 SAY '                                            ³          ³' + Str( vat_C, 2 ) + '³         ³          ³'
-   @ 18, 0 SAY 'ODBIORCA:                                   ³          ³' + Str( vat_D, 2 ) + '³         ³          ³'
+   @ 18, 0 SAY 'ODBIORCA:     NIP:                Kraj:     ³          ³' + Str( vat_D, 2 ) + '³         ³          ³'
    @ 19, 0 SAY 'Nazwa.                                      ³          ³ 0³         ³          ³'
    @ 20, 0 SAY 'Adres.                                      ³          ³ZW³         ³          ³'
    @ 21, 0 SAY '                                       RAZEM³          ³  ³         ³          ³'
@@ -2540,3 +2590,133 @@ FUNCTION FakturyN_Ksieguj()
 
 /*----------------------------------------------------------------------*/
 
+/*
+PROCEDURE Faktury_Odbiorca()
+
+   LOCAL cEkran, cKolor
+   PUBLIC zP3JEST, zP3NR_IDENT, zP3NAZWA, zP3ADRES, zP3KRAJ
+
+   zP3JEST := iif( ! P3JEST$'TN', 'N', P3JEST )
+   zP3NR_IDENT := P3NR_IDENT
+   zP3NAZWA := P3NAZWA
+   zP3ADRES := P3ADRES
+   zP3KRAJ := P3KRAJ
+
+   cEkran := SaveScreen()
+   cKolor := ColStd()
+
+   @  6, 3 CLEAR TO 12, 76
+   @  6, 3 TO 12, 76
+   @  6, 40 SAY " ODBIORCA "
+   @  7, 5 SAY "Odbiorca na fakturze: "
+   @  8, 5 SAY "  NIP: "
+   @  9, 5 SAY "Nazwa: "
+   @ 10, 5 SAY "Adres: "
+   @ 11, 5 SAY " Kraj: "
+
+   ValidTakNie( zP3JEST, 7, 28 )
+
+   @  7, 27 GET zP3JEST     PICTURE "!" VALID ValidTakNie( zP3JEST, 7, 28 )
+   @  8, 12 GET zP3NR_IDENT PICTURE repl( '!', 30 ) WHEN zP3JEST == 'T' VALID Faktury_OdbValidNIP()
+   @  9, 12 GET zP3NAZWA    PICTURE "@S63 " + repl( '!', 200 ) WHEN zP3JEST == 'T' .AND. Faktury_OdbWhenNazwa()
+   @ 10, 12 GET zP3ADRES    PICTURE "@S63 " + repl( '!', 200 ) WHEN zP3JEST == 'T'
+   @ 11, 12 GET zP3KRAJ     PICTURE "!!" WHEN zP3JEST == 'T'
+
+   read_()
+
+   IF LastKey() <> K_ESC
+      BlokadaR()
+      repl_( 'P3JEST', zP3JEST )
+      repl_( 'P3NR_IDENT', zP3NR_IDENT )
+      repl_( 'P3NAZWA', zP3NAZWA )
+      repl_( 'P3ADRES', zP3ADRES )
+      repl_( 'P3KRAJ', zP3KRAJ )
+
+      COMMIT
+      unlock
+   ENDIF
+
+   RestScreen( , , , , cEkran )
+   SetColor( cKolor )
+
+   DO &_proc
+
+   RETURN NIL
+*/
+/*----------------------------------------------------------------------*/
+
+FUNCTION Faktury_OdbValidNIP()
+
+   LOCAL aDane := hb_Hash()
+
+   IF LastKey() == K_UP
+      RETURN .T.
+   ENDIF
+
+   IF Len( AllTrim( zodnr_ident ) ) > 0 .OR. zodnr_ident # faktury->odnr_ident
+      IF  KontrahZnajdz( zodnr_ident, @aDane )
+         zodbnazwa := Pad( aDane[ 'nazwa' ], 200 )
+         zodbadres := Pad( aDane[ 'adres' ], 200 )
+         zodbkraj := aDane[ 'kraj' ]
+         KEYBOARD Chr( K_ENTER )
+      ELSE
+         zodbnazwa := Space( 200 )
+         zodbadres := Space( 200 )
+         ZODBKRAJ := 'PL'
+         SET COLOR TO i
+         @ 18, 18 SAY SubStr( zODNR_IDENT, 1, 14 )
+         @ 18, 39 SAY zODBKRAJ
+         @ 19,  6 SAY SubStr( zodbnazwa, 1, 30 )
+         @ 20,  6 SAY SubStr( zodbadres, 1, 30 )
+         SET COLOR TO
+      ENDIF
+   ENDIF
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Faktury_OdbWhenNazwa()
+
+   SAVE SCREEN TO scr2
+   IF Len( AllTrim( zodnr_ident ) ) # 0
+      SELECT kontr
+      SET ORDER TO 2
+      SEEK '+' + ident_fir + zodnr_ident
+      IF ! Found()
+         SET ORDER TO 1
+         SEEK '+' + ident_fir + SubStr( zodbnazwa, 1, 15 ) + SubStr( zodbadres, 1, 15 )
+         IF del # '+' .OR. firma # ident_fir
+            SKIP -1
+         ENDIF
+      ENDIF
+      SET ORDER TO 1
+   ELSE
+      SELECT kontr
+      SEEK '+' + ident_fir + SubStr( zodbnazwa, 1, 15 )
+      IF del # '+' .OR. firma # ident_fir
+         SKIP -1
+      ENDIF
+   ENDIF
+   IF del == '+' .AND. firma == ident_fir
+      Kontr_()
+      RESTORE SCREEN FROM scr2
+      IF LastKey() == K_ENTER .OR. LastKey() == K_LDBLCLK
+         KontrahAktualizuj()
+         zodbnazwa := nazwa
+         zodbadres := adres
+         zODNR_IDENT := NR_IDENT
+         ZODBKRAJ := KRAJ
+         SET COLOR TO i
+         @ 18, 18 SAY SubStr( zODNR_IDENT, 1, 14 )
+         @ 18, 39 SAY zODBKRAJ
+         @ 19,  6 SAY SubStr( zodbnazwa, 1, 30 )
+         @ 20,  6 SAY SubStr( zodbadres, 1, 30 )
+         SET COLOR TO
+         KEYBOARD Chr( K_ENTER )
+      ENDIF
+   ENDIF
+   SELECT faktury
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
