@@ -47,7 +47,7 @@ PROCEDURE FaPozN()
    @ 15,  0 SAY 'Ro.d.:    Ozn.:         Proc.:              ³          ³' + Str( vat_A, 2 ) + '³         ³          ³'
    @ 16,  0 SAY 'TYP FAKT.(opis typu/podstawy fakturowania): ³          ³' + Str( vat_B, 2 ) + '³         ³          ³'
    @ 17,  0 SAY '                                            ³          ³' + Str( vat_C, 2 ) + '³         ³          ³'
-   @ 18,  0 SAY 'ODBIORCA:                                   ³          ³' + Str( vat_D, 2 ) + '³         ³          ³'
+   @ 18,  0 SAY 'ODBIORCA:     NIP:                Kraj:     ³          ³' + Str( vat_D, 2 ) + '³         ³          ³'
    @ 19,  0 SAY 'Nazwa.                                      ³          ³ 0³         ³          ³'
    @ 20,  0 SAY 'Adres.                                      ³          ³ZW³         ³          ³'
    @ 21,  0 SAY '                                       RAZEM³          ³  ³         ³          ³'
@@ -57,6 +57,9 @@ PROCEDURE FaPozN()
    @ 15, 15 SAY SubStr( OPCJE, 1, 8 )
    @ 15, 30 SAY SubStr( PROCEDUR, 1, 14 )
    @ 17,  0 SAY SubStr( FAKTTYP, 1, 40 )
+   @ 18,  9 SAY iif( ODBJEST == 'T', 'Tak', 'Nie' )
+   @ 18, 18 SAY SubStr( ODNR_IDENT, 1, 14 )
+   @ 18, 39 SAY ODBKRAJ
    @ 19,  6 SAY SubStr( ODBNAZWA, 1, 30 )
    @ 20,  6 SAY SubStr( ODBADRES, 1, 30 )
    *@ 19,6 say ODBOSOBA
