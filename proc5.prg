@@ -526,16 +526,19 @@ PROCEDURE ADodajNieZero( aTablica, cPole, nElement, cPole2 )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION MenuEx( nTop, nLeft, aItems, nSelected, lSaveScr )
+FUNCTION MenuEx( nTop, nLeft, aItems, nSelected, lSaveScr, cTitle, cInfo )
    LOCAL cScr
    LOCAL nMaxWidth := 0
    LOCAL nI
    LOCAL nRes
-   LOCAL cKolor
+   LOCAL cKolor := SetColor()
 
    hb_default( @lSaveScr, .T. )
 
    AEval( aItems, { | cItem | nMaxWidth := Max( nMaxWidth, Len( cItem ) ) } )
+
+   hb_default( @nTop, Int( ( MaxRow() - 2 - Len( aItems ) ) / 2 ) )
+   hb_default( @nLeft, Int( ( MaxCol() - ( nMaxWidth + 4 ) ) / 2 ) )
 
    IF nTop + Len( aItems ) + 2 > MaxRow()
       nTop := MaxRow() - 2 - Len( aItems )
@@ -549,8 +552,16 @@ FUNCTION MenuEx( nTop, nLeft, aItems, nSelected, lSaveScr )
       SAVE SCREEN TO cScr
    ENDIF
 
-   cKolor := ColPro()
+   IF ! Empty( cInfo )
+      ColInf()
+      @ 24, 0 SAY PadC( cInfo, 80 )
+   ENDIF
+
+   ColPro()
    @ nTop, nLeft TO nTop + 1 + Len( aItems ), nLeft + 3 + nMaxWidth
+   IF ! Empty( cTitle )
+      @ nTop, nLeft + Int( ( nMaxWidth + 3 - Len( cTitle ) ) / 2 ) SAY cTitle
+   ENDIF
    FOR nI := 1 TO Len( aItems )
       @ nTop + nI, nLeft + 1 PROMPT ' ' + PadR( aItems[ nI ], nMaxWidth + 1 )
    NEXT
