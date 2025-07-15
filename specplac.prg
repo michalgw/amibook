@@ -24,7 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE SpecPlac()
 
-   LOCAL nMenu, aDane, aWiersz, nZakres, aRekordy := {}, lDrukPlac
+   LOCAL nMenu, aDane, aWiersz, nZakres, aRekordy := {}, lDrukPlac, nRodzSpec
 
    PRIVATE _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close
    PRIVATE _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15,koniep
@@ -136,7 +136,7 @@ PROCEDURE SpecPlac()
 
             STORE 0 TO zdochod,zstaw_podat,zbrut_zasad,zbrut_premi,zdopl_opod,zdopl_bzus,zstaw_pue,zstaw_pur,zstaw_puc,zwar_psum,zwar_pue,zwar_pur,zwar_puc,zzasil_rodz,ziloso_rodz,zzasil_piel,ziloso_piel,zstaw_fue,zwar_fue,zstaw_fur, ;
                zwar_fur,zstaw_fuw,zwar_fuw,zwolu,zwolc,zwolz,zwolo,zwolb,zwolm,zwolw,zwoln,zwoli,zwolp,zwar_pf3,zstaw_ffp,zwar_ffp,zbrut_razem,zkoszt,zstaw_puz,zodlicz,zpodatek,znetto,zwar_puz,zwar_puzo,zdopl_nieop,zodl_nieop,zdo_wyplaty, ;
-               zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat,zppkppm,zppkzs1,zppkzk1,zppkzs2,zppkzk2,zppkps1,zppkpk1,zppkps2,zppkpk2
+               zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat,zppkppm,zppkzs1,zppkzk1,zppkzs2,zppkzk2,zppkps1,zppkpk1,zppkps2,zppkpk2,zzasi_bzus,zrycz_sam,zdopl_bzus2
 
             REC := rec_no
 
@@ -207,7 +207,10 @@ PROCEDURE SpecPlac()
                      zbrut_zasad := zbrut_zasad + brut_zasad
                      zbrut_premi := zbrut_premi + brut_premi
                      zdopl_opod := zdopl_opod + dopl_opod
-                     zdopl_bzus := zdopl_bzus + dopl_bzus + zasi_bzus
+                     zdopl_bzus := zdopl_bzus + dopl_bzus + zasi_bzus + rycz_sam
+                     zzasi_bzus := zzasi_bzus + zasi_bzus
+                     zrycz_sam := zrycz_sam + rycz_sam
+                     zdopl_bzus2 := zdopl_bzus2 + dopl_bzus
                      zwolu := zwolu + wolU
                      zwolc := zwolc + wolC
                      zwolz := zwolz + wolZ
@@ -339,6 +342,9 @@ PROCEDURE SpecPlac()
                   aWiersz[ 'zus_rkch' ] := zzus_rkch
                   aWiersz[ 'zus_podat' ] := zzus_podat
                   aWiersz[ 'ulgaklsrk' ] := zulgaklsrk
+                  aWiersz[ 'zasi_bzus' ] := zzasi_bzus
+                  aWiersz[ 'rycz_sam' ] := zrycz_sam
+                  aWiersz[ 'dopl_bzus2' ] := zdopl_bzus2
 
                   aWiersz[ 'zwolstr' ] := iif( zwolU # 0, 'U=' + AllTrim( Str( zwolU, 3 ) ) + ' ', '' ) + ;
                      iif( zwolC # 0, 'C=' + AllTrim( Str( zwolC, 3 ) ) + ' ', '' ) + ;
@@ -403,7 +409,13 @@ PROCEDURE SpecPlac()
             iif( swolI # 0, 'I=' + Alltrim( Str( swolI, 3 ) ) + ' ', '' ) + ;
             iif( swolP # 0, 'P=' + Alltrim( Str( swolP, 3 ) ) + ' ', '' )
 
-        FRDrukuj( 'frf\specplac.frf', aDane )
+         nRodzSpec := MenuEx( 19, , { "Podstawowy", "Szczeg¢ˆowy" }, , , , "Rodzaj wydruku specyfikacji" )
+         DO CASE
+         CASE nRodzSpec == 1
+            FRDrukuj( 'frf\specplac.frf', aDane )
+         CASE nRodzSpec == 2
+            FRDrukuj( 'frf\specplac2.frf', aDane )
+         ENDCASE
 
       ELSE
 
@@ -422,7 +434,7 @@ PROCEDURE SpecPlac()
          DO WHILE .NOT. &_koniec
             STORE 0 TO zdochod,zstaw_podat,zbrut_zasad,zbrut_premi,zdopl_opod,zdopl_bzus,zstaw_pue,zstaw_pur,zstaw_puc,zwar_psum,zwar_pue,zwar_pur,zwar_puc,zzasil_rodz,ziloso_rodz,zzasil_piel,ziloso_piel,zstaw_fue,zwar_fue,zstaw_fur, ;
                zwar_fur,zstaw_fuw,zwar_fuw,zwolu,zwolc,zwolz,zwolo,zwolb,zwolm,zwolw,zwoln,zwoli,zwolp,zwar_pf3,zstaw_ffp,zwar_ffp,zbrut_razem,zkoszt,zstaw_puz,zodlicz,zpodatek,znetto,zwar_puz,zwar_puzo,zdopl_nieop,zodl_nieop,zdo_wyplaty, ;
-               zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat,zulgaklsrk
+               zstaw_ffg,zwar_ffg,zwar_fsum,zs7,zs10,zb4,zprzel_nako,zzus_zascho,zzus_rkch,zzus_podat,zulgaklsrk,zzasi_bzus,zrycz_sam
             *REC=recno()
             REC := rec_no
             k1 := PadR( AllTrim( nazwisko ) + ' ' + AllTrim( imie1 ) + ' ' + AllTrim( imie2 ), 40 )
@@ -489,7 +501,7 @@ PROCEDURE SpecPlac()
                      zbrut_zasad := zbrut_zasad + brut_zasad
                      zbrut_premi := zbrut_premi + brut_premi
                      zdopl_opod := zdopl_opod + dopl_opod
-                     zdopl_bzus := zdopl_bzus + dopl_bzus + zasi_bzus
+                     zdopl_bzus := zdopl_bzus + dopl_bzus + zasi_bzus + rycz_sam
                      zwolu := zwolu + wolU
                      zwolc := zwolc + wolC
                      zwolz := zwolz + wolZ
