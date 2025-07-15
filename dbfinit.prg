@@ -363,7 +363,8 @@ public aETATYdbf := {;
    { "ODLICZENIE", "C", 1, 0 },;                  // 128 Odliczenie kwoty wolnej
    { "WNIOSTERM", "C", 1, 0 },;                   // 129 Wniosek o nieprzedluzanie terminu
    { "PODNIEP", "N", 8, 2 },;                     // 130 Niepoprana zaliczka podatku w danym miesacu
-   { "WAR_PUZW", "N", 8, 2 } }                    // 131 Wyliczona skladka zdrowotna
+   { "WAR_PUZW", "N", 8, 2 },;                    // 131 Wyliczona skladka zdrowotna
+   { "RYCZ_SAM", "N", 8, 2 } }                    // 132 Ryczalt samochodowy
 
 // Create: EWID.DBF
 public aEWIDdbf := {;

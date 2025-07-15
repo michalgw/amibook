@@ -33,11 +33,13 @@ FUNCTION Main()
 
       ? 'Aktualizacja struktury danych...'
       dbfUtworzTabele( 'FAKTURY', 'faktury.tym' )
+      dbfUtworzTabele( 'ETATY', 'etaty.tym' )
       dbfImportujDaneTym('', 'TYM')
       dbCloseAll()
 
       ? 'Indeksowanie...'
       dbfIdxFAKTURY()
+      dbfIdxETATY()
       dbCloseAll()
 
       wersja_db := 2520
