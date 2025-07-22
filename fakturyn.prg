@@ -917,7 +917,7 @@ PROCEDURE FakturyN()
             p[ 15 ] := '                                                        '
             *---------------------------------------
             SET COLOR TO i
-            i := 16
+            i := 15
             j := 24
             DO WHILE i > 0
                IF Type( 'p[i]' ) # 'U'
