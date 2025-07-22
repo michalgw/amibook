@@ -328,7 +328,7 @@ PROCEDURE ewid_dr16rob()
          IF ! DostepPro( 'URZEDY' )
             RETURN .F.
          ENDIF
-         IF ! DostepPro( .T., , 'FIRMA' )
+         IF ! DostepPro( 'FIRMA', , .T., , 'FIRMA' )
             urzedy->( dbCloseArea() )
             RETURN .F.
          ENDIF
