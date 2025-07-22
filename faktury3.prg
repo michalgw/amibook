@@ -1163,7 +1163,7 @@ FUNCTION Faktury3_Ksieguj()
                repl_( 'dzien', zdzien )
                repl_( 'nazwa', znazwa )
                repl_( 'adres', zadres )
-               repl_( 'kraj', zkraj )
+               //repl_( 'kraj', zkraj )
                repl_( 'nr_ident', znr_ident )
                repl_( 'wyr_tow', razem )
                IF zsposob_p == 1 .OR. zsposob_p == 3
