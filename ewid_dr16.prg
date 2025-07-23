@@ -113,7 +113,7 @@ FUNCTION ewid_dr16licz( dDataOd, dDataDo )
          *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
          aRow := hb_Hash()
          k1=lp
-         k2=strtran(param_rok + '-' + miesiac + '-' + dzien,' ','0')
+         k2=strtran(param_rok + '-' + mc + '-' + dzien,' ','0')
          k2a=date2strxml(dataprzy)
          k3=iif(left(numer,1)=chr(1).or.left(numer,1)=chr(254),substr(numer,2)+[ ],numer)
          k4a=ry20
