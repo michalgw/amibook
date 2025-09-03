@@ -72,6 +72,22 @@ FUNCTION Param_PF()
       ENDIF
       RETURN lRes
    }
+   LOCAL bZusDekZMW := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 say PadC( "D - wd parametr¢w programu     B - bie¾¥cy miesi¥c      W - miesi¥c wypˆaty", 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bZusDekZMV := { | |
+      LOCAL lRes, cKolor
+      IF ( lRes := zzusdzm $ 'BDW' )
+         @ 24, 0
+         cKolor := SetColor( 'w+' )
+         @ 17, 72 SAY iif( zzusdzm == 'B', 'ie¾¥cy  ', iif( zzusdzm == 'W', 'ypˆaty  ', 'omy˜lnie' ) )
+      ENDIF
+      RETURN lRes
+   }
+
 
 *############################# PARAMETRY POCZATKOWE #########################
 if .not.file([param_p.mem])
@@ -89,7 +105,8 @@ endif
 @  3,42 clear to 22,79
 *################################# GRAFIKA ##################################
 @  3,42 say 'ÍÍ Podstawa do zdrowotnego ÍÍÍÍÍÍÍÍÍÍÍ'
-@ 10,42 say 'ÍÍStawki na ubezpieczenie wypadkoweÍÍÍ'
+@ 10,42 say 'ÍÍ Stawki na ubezpieczenie wypadkowe Í'
+@ 16,42 say 'ÍÍ Parametry deklaracji ZUS ÍÍÍÍÍÍÍÍÍÍ'
 @ 11,42 say '                    finansuje: P&_l.atnik'
 set colo to /w+
 @ 11,73 say 'P&_l.atnik'
@@ -101,6 +118,7 @@ set colo to
 @ 12,42 say ' Na ubezpieczenia wypadkowe:          '
 @ 13,42 say ' pracownik&_o.w                          '
 @ 14,42 say ' w&_l.a&_s.cicieli                          '
+@ 17,42 say ' Deklaracja za miesi¥c (B/W):         '
 *################################# OPERACJE #################################
 do say_pfirmy
 kl=0
@@ -126,6 +144,7 @@ zparap_fww=A->parap_fww
 zzuspodmie := iif( A->zuspodmie $ 'BP', A->zuspodmie, 'P' )
 zzuspodnar := iif( A->zuspodnar $ 'MN', A->zuspodnar, 'N' )
 zzussklmie := iif( A->zussklmie $ 'BN', A->zussklmie, 'N' )
+zzusdzm := iif( A->zusdzm $ 'BDW', A->zusdzm, 'D' )
 *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
 @  4,62 get zzuspodmie PICTURE '!' WHEN Eval( bZusPodMieW ) VALID Eval( bZusPodMieV )
 @  5,62 get zzuspodnar PICTURE '!' WHEN Eval( bZusPodNarW ) VALID Eval( bZusPodNarV )
@@ -133,6 +152,7 @@ zzussklmie := iif( A->zussklmie $ 'BN', A->zussklmie, 'N' )
 *@ 15,65 get zparap_puw picture "99.99"
 @ 13,75 get zparap_fuw picture "99.99"
 @ 14,75 get zparap_fww picture "99.99"
+@ 17,71 get zzusdzm PICTURE '!' WHEN Eval( bZusDekZMW ) VALID Eval( bZusDekZMV )
 ****************************
 clear type
 read_()
@@ -147,6 +167,7 @@ repl_([A->parap_fww],zparap_fww)
 repl_([A->zuspodmie],zzuspodmie)
 repl_([A->zuspodnar],zzuspodnar)
 repl_([A->zussklmie],zzussklmie)
+repl_([A->zusdzm],zzusdzm)
 
 commit_()
 unlock
@@ -155,6 +176,7 @@ m->parap_puw=zparap_puw
 m->parap_fuw=zparap_fuw
 m->parap_fww=zparap_fww
 //m->zuspodmie=zzuspodmie
+pzparap_dzm := iif( zzusdzm $ 'BW', zzusdzm, parap_dzm )
 ****************************
 save to param_p all like parap_*
 *ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð
@@ -203,5 +225,6 @@ set colo to w+
 *@ 15,65 say parap_puw picture "99.99"
 @ 13,75 say parap_fuw picture "99.99"
 @ 14,75 say parap_fww picture "99.99"
+@ 17,71 say iif( A->zusdzm == 'B', 'Bie¾¥cy  ', iif( A->zusdzm == 'W', 'Wypˆaty  ', 'Domy˜lnie' ) )
 ColStd()
 *############################################################################

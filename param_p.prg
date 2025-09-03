@@ -45,7 +45,7 @@ endif
 @  5,42 say '-staw.zas.chorobowego (do33dni)     % '
 //@  7,42 say '-stawka podatku dochodowego         % '
 @  6,42 say '-limit odlicz. zdrow. dl lin.         '
-@  7,42 say '                                      '
+@  7,42 say '-deklaracja za miesi¥c (B/W)          '
 @  8,42 say 'ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍUbezpieczonyÍP&_l.atnik'
 set colo to /w+
 @  8,60 say 'Ubezpieczony'
@@ -114,6 +114,7 @@ zparpk_sz := parpk_sz
 zparpk_sp := parpk_sp
 zparap_ldw := parap_ldw
 zparap_fzl := parap_fzl
+zparap_dzm := parap_dzm
 *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
 @  3,77 get zparap_ldw picture "999" range 0,999
 @  4,73 get zparap_kos picture "9999.99" range 0,9999
@@ -121,6 +122,7 @@ zparap_fzl := parap_fzl
 @  5,75 get zparap_cho picture '99'
 //@  7,72 get zparap_pod picture '99.99'
 @  6,72 get zparap_pli picture "99999.99" range 0,99999
+@  7,72 get zparap_dzm picture '!' when Param_PWDZM() valid Param_PVDZM()
 @  9,73 get zparap_p51 picture "9999.99" range 0,9999
 @ 10,73 get zparap_p52 picture "9999.99" range 0,9999
 @ 11,65 get zparap_pue picture "99.99"
@@ -189,6 +191,7 @@ parpk_sz := zparpk_sz
 parpk_sp := zparpk_sp
 parap_ldw := zparap_ldw
 parap_fzl := zparap_fzl
+parap_dzm := zparap_dzm
 ****************************
 save to param_p all like parap_*
 save to param_ppk all like parpk_*
@@ -246,6 +249,7 @@ set colo to w+
 @  5,75 say parap_cho pict [99]
 //@  7,72 say parap_pod pict '99.99'
 @  6,72 say parap_pli picture "99999.99"
+@  7,72 SAY parap_dzm + iif( parap_dzm == 'W', 'ypˆaty', 'ie¾¥cy' )
 @  9,73 say parap_p51 picture "9999.99"
 @ 10,73 say parap_p52 picture "9999.99"
 @ 11,65 say parap_pue picture "99.99"
@@ -1107,6 +1111,33 @@ PROCEDURE Param_PNieobKodZUS()
    zuskodnie->( dbCloseArea() )
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Param_PWDZM()
+
+   LOCAL cKolor
+
+   cKolor := ColInf()
+   @ 24, 0 SAY PadC( 'B - bie¾¥cy miesi¥c,     W - miesi¥c wypˆaty', 80 )
+   SetColor( cKolor )
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Param_PVDZM()
+
+   LOCAL cKolor, lRes := zparap_dzm $ 'BW'
+
+   IF lRes
+      cKolor := SetColor()
+      SET COLOR TO W+
+      @ 7, 73 SAY iif( zparap_dzm == 'W', 'ypˆaty', 'ie¾¥cy' )
+      SetColor( cKolor )
+   ENDIF
+
+   RETURN lRes
 
 /*----------------------------------------------------------------------*/
 

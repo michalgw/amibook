@@ -22,9 +22,25 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE ZusDra( ubezp )
 
+   LOCAL lZaMcWyp, cMiesiac, nMc
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, ;
       _top, _bot, _stop, _sbot, _proc, _row, _proc_spe, _disp, _cls, kl, ins, ;
       nr_rec, wiersz, f10, rec, fou
+
+   lZaMcWyp := pzparap_dzm == 'W'
+   IF lZaMcWyp
+      cMiesiac := param_rok + miesiac
+      IF miesiac == '12'
+         nMc := MenuEx( 19, 12, { "G - Wypˆata w grudniu", "P - Wypˆat w roku " + AllTrim( Str( Val( param_rok ) + 1 ) ) } )
+         IF nMc == 0
+            RETURN
+         ELSEIF nMc == 1
+
+         ELSEIF nMc == 2
+            cMiesiac := AllTrim( Str( Val( param_rok ) + 1 ) )
+         ENDIF
+      ENDIF
+   ENDIF
 
    @ 1, 47 SAY '          '
    *############################### OTWARCIE BAZ ###############################
@@ -160,7 +176,13 @@ PROCEDURE ZusDra( ubezp )
          ENDIF
          IF DOD .AND. DDO = .T.
             SELECT etaty
-            SEEK '+' + ident_fir + miesiac + Str( prac->rec_no, 5 )
+            IF lZaMcWyp
+               SET ORDER TO 3
+               SEEK '+' + ident_fir + Str( prac->rec_no, 5 ) + cMiesiac //param_rok + StrTran( miesiac, ' ', '0' )
+               SET ORDER TO 2
+            ELSE
+               SEEK '+' + ident_fir + miesiac + Str( prac->rec_no, 5 )
+            ENDIF
             IF Found()
                ilub := ilub + 1
                ilet := ilet + ( wymiarl / wymiarm )
@@ -547,7 +569,13 @@ PROCEDURE ZusDra( ubezp )
          ENDIF
          IF DOD.AND.DDO=.T.
             SELECT etaty
-            SEEK '+' + ident_fir + miesiac + Str( prac->rec_no, 5 )
+            IF lZaMcWyp
+               SET ORDER TO 3
+               SEEK '+' + ident_fir + Str( prac->rec_no, 5 ) + cMiesiac //param_rok + StrTran( miesiac, ' ', '0' )
+               SET ORDER TO 2
+            ELSE
+               SEEK '+' + ident_fir + miesiac + Str( prac->rec_no, 5 )
+            ENDIF
             IF Found()
                ilub := ilub + 1
                ilet := ilet + ( wymiarl / wymiarm )

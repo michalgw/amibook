@@ -2259,7 +2259,7 @@ PROCEDURE setind( ZB )
    CASE ZB == 'PRAC_HZ'
         SET INDEX TO prac_hz
    CASE ZB == 'ETATY'
-        SET INDEX TO etaty,etaty1
+        SET INDEX TO etaty,etaty1,etaty2
    CASE ZB == 'NIEOBEC'
         SET INDEX TO nieobec,nieobec1
    CASE ZB == 'WYPLATY'

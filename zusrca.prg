@@ -22,8 +22,23 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE ZusRca( ubezp )
 
-   LOCAL nNumBlok := 1, nRodzaj, aDane := {=>}, cPozIdent
+   LOCAL nNumBlok := 1, nRodzaj, aDane := {=>}, cPozIdent, lZaMcWyp, cMiesiac, nMc
    PRIVATE _row_g,_col_l,_row_d,_col_p,_invers,_curs_l,_curs_p,_esc,_top,_bot,_stop,_sbot,_proc,_row,_proc_spe,_disp,_cls,kl,ins,nr_rec,wiersz,f10,rec,fou
+
+   lZaMcWyp := pzparap_dzm == 'W'
+   IF lZaMcWyp
+      cMiesiac := param_rok + miesiac
+      IF miesiac == '12'
+         nMc := MenuEx( 19, 12, { "G - Wypˆata w grudniu", "P - wypˆat w roku " + AllTrim( Str( Val( param_rok ) + 1 ) ) } )
+         IF nMc == 0
+            RETURN
+         ELSEIF nMc == 1
+
+         ELSEIF nMc == 2
+            cMiesiac := AllTrim( Str( Val( param_rok ) + 1 ) )
+         ENDIF
+      ENDIF
+   ENDIF
 
    @ 1, 47 SAY '          '
 
@@ -157,7 +172,13 @@ PROCEDURE ZusRca( ubezp )
          ENDIF
          IF DOD .AND. DDO = .T.
             SELECT etaty
-            SEEK '+' + ident_fir + miesiac + Str( prac->rec_no, 5 )
+            IF lZaMcWyp
+               SET ORDER TO 3
+               SEEK '+' + ident_fir + Str( prac->rec_no, 5 ) + cMiesiac //param_rok + StrTran( miesiac, ' ', '0' )
+               SET ORDER TO 2
+            ELSE
+               SEEK '+' + ident_fir + miesiac + Str( prac->rec_no, 5 )
+            ENDIF
             IF Found()
                ddorca( PRAC->NAZWISKO,;
                   PRAC->IMIE1,;
@@ -454,7 +475,13 @@ PROCEDURE ZusRca( ubezp )
             SEEK '+' + ident_fir + miesiac + Str( prac->rec_no, 5 )
             IF DOD .AND. DDO = .T.
                SELECT etaty
-               SEEK '+' + ident_fir + miesiac + Str( prac->rec_no, 5 )
+               IF lZaMcWyp
+                  SET ORDER TO 3
+                  SEEK '+' + ident_fir + Str( prac->rec_no, 5 ) + cMiesiac //param_rok + StrTran( miesiac, ' ', '0' )
+                  SET ORDER TO 2
+               ELSE
+                  SEEK '+' + ident_fir + miesiac + Str( prac->rec_no, 5 )
+               ENDIF
                IF Found()
                   ddorca( PRAC->NAZWISKO, ;
                      PRAC->IMIE1, ;
@@ -633,7 +660,7 @@ PROCEDURE ZusRca( ubezp )
       SET CONSOLE ON
       SET PRINTER OFF
       SET DEVICE TO SCREEN
-      IF brakpra = .T.
+      IF ( lZaMcWyp .AND. nNumBlok == 0 ) .OR. ( ! lZaMcWyp .AND. brakpra == .T. )
          Komun( 'Brak p&_l.ac. Niemo&_z.liwe jest utworzenie prawid&_l.owego pliku dla P&_l.atnika' )
       ELSE
          kedu_rapo( plik_kdu )

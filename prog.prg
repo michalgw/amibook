@@ -557,6 +557,9 @@ FUNCTION Main()
    // Procent zapˆaconej skˆadki zdrowotnej o jaki b©d¥ pomniejszane przychody
    PUBLIC parap_rpz := 50
 
+   // Deklaracja ZUS pracownika za miesiac B - biezacy, W - wyplaty
+   PUBLIC parap_dzm := 'B'
+
    // Tablica parametr¢w pˆacowych
    PUBLIC Param_PPla_Tab := NIL
 
@@ -695,6 +698,8 @@ FUNCTION Main()
 
    // Podczas wystawiania FAKTUR
    PUBLIC pzROZRZAPF := 'N'
+
+   PUBLIC pzparap_dzm := 'B'
 
    PUBLIC param_kw := 5100
 

@@ -616,7 +616,8 @@ public aFIRMAdbf := {;
    { "ZUSSKLMIE", "C", 1, 0 },;                   //  83 Skˆadki spoˆeczne odliczaj w - 'B' - biezacy miesiac, 'N' - nast©pny miesiac
    { "SALPRGID", "C", 64, 0 },;                   //  84 Saldeo company_program_id
    { "SALSALID", "C", 64, 0 },;                   //  85 Saldeo saldeo id
-   { "SYGNALVAT", "C", 1, 0 } }                   //  86 Sygnaˆ o przekroczeniu VAT
+   { "SYGNALVAT", "C", 1, 0 },;                   //  86 Sygnaˆ o przekroczeniu VAT
+   { "ZUSDZM", "C", 1, 0 } }                      //  87 Deklaracja ZUS za miesiac B - biezacy, W - wyplaty
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;
@@ -2182,6 +2183,7 @@ FUNCTION dbfIdxETATY()
    pack
    index on del+firma+ident+mc to etaty
    index on del+firma+mc+ident to etaty1
+   index on del+firma+ident+do_pit4 to etaty2
    RETURN
 ****************************************
 FUNCTION dbfIdxNIEOBEC()

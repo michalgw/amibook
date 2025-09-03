@@ -430,7 +430,7 @@ PROCEDURE ZusZua( ubezp )
 *################################## FUNKCJE #################################
 FUNCTION linia12z()
 
-   RETURN ' ' + dos_c( naz_imie ) + ' '
+   RETURN ' ' + dos_c( SubStr( naz_imie, 1, 30 ) ) + ' '
 
 *################################## FUNKCJE #################################
 FUNCTION linia12zp()
