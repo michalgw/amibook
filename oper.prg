@@ -309,6 +309,19 @@ PROCEDURE Oper()
                   ENDIF
                   dbCloseArea()
                   SELECT oper
+               ELSEIF Left( numer, 3 ) == 'RS-' .AND. rejzid > 0
+                  SELECT 100
+                  DO WHILE ! Dostep( 'REJS' )
+                  ENDDO
+                  dbGoto( oper->rejzid )
+                  IF AllTrim( SubStr( oper->numer, 4 ) ) == AllTrim( numer ) .AND. del == '+'
+                     kom( 4, '*u', ' Na dokumenty o symbolu RS- mo&_z.na wp&_l.ywa&_c. tylko poprzez rejestr sprzeda¾y ' )
+                     dbCloseArea()
+                     SELECT oper
+                     BREAK
+                  ENDIF
+                  dbCloseArea()
+                  SELECT oper
                ELSE
                   kom( 4, '*u', ' Nie mo¾na usun¥† tego dokumentu ' )
                   BREAK

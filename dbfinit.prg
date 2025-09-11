@@ -478,7 +478,8 @@ public aFAKTURYdbf := {;
    { "RODZDOW", "C", 6, 0 },;                     //  46 Rodzaj dowodu - RO, WEW, FP
    { "ODBJEST", "C", 1, 0 },;                     //  47 Odbiorca - Czy jest odbiorca na faktirze (T)
    { "ODNR_IDENT", "C", 30, 0 },;                 //  48 Odbiorca - NIP
-   { "ODBKRAJ", "C", 2, 0 } }                     //  49 Odbiorca - Kraj
+   { "ODBKRAJ", "C", 2, 0 },;                     //  49 Odbiorca - Kraj
+   { "KSGZBIOR", "C", 1, 0 } }                    //  50 Zbiorczy wpis w ksiedze T/N
 
 // Create: FAKTURYW.DBF
 public aFAKTURYWdbf := {;
@@ -617,7 +618,8 @@ public aFIRMAdbf := {;
    { "SALPRGID", "C", 64, 0 },;                   //  84 Saldeo company_program_id
    { "SALSALID", "C", 64, 0 },;                   //  85 Saldeo saldeo id
    { "SYGNALVAT", "C", 1, 0 },;                   //  86 Sygnaˆ o przekroczeniu VAT
-   { "ZUSDZM", "C", 1, 0 } }                      //  87 Deklaracja ZUS za miesiac B - biezacy, W - wyplaty
+   { "ZUSDZM", "C", 1, 0 },;                      //  87 Deklaracja ZUS za miesiac B - biezacy, W - wyplaty
+   { "PAR_KSWS", "C", 1, 0 } }                    //  88 Wpis sprzeda¾y w ksi©dze T - zbiorczo, N - osobno
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;
@@ -1164,7 +1166,8 @@ public aREJSdbf := {;
    { "RODZDOW", "C", 6, 0 },;                     //  54
    { "VATMARZA", "N", 11, 2 },;                   //  55
    { "SALPRGID", "C", 64, 0 },;                   //  56 Saldeo company_program_id
-   { "SALSALID", "C", 64, 0 } }                   //  57 Saldeo saldeo id
+   { "SALSALID", "C", 64, 0 },;                   //  57 Saldeo saldeo id
+   { "KSGZBIOR", "C", 1, 0 } }                    //  58 Zbiorczy wpis w ksiedze T/N
 
 // Create: REJZ.DBF
 public aREJZdbf := {;
@@ -1908,7 +1911,7 @@ FUNCTION dbfIdxOPER()
    index on rec_no to oper1
    index on del+firma+mc+numer to oper2
    index on del+firma+mc+dzien to oper3
-   index on del+str(rejzid,5) to oper4
+   index on del+str(rejzid,5)+numer to oper4
    index on del+firma+mc+dzien+Str(lp,5) to oper5
    RETURN
 ****************************************

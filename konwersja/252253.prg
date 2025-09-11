@@ -33,12 +33,17 @@ FUNCTION Main()
 
       ? 'Aktualizacja struktury danych...'
       dbfUtworzTabele( 'FIRMA', 'firma.tym' )
+      dbfUtworzTabele( 'REJS', 'rejs.tym' )
+      dbfUtworzTabele( 'FAKTURY', 'faktury.tym' )
       dbfImportujDaneTym('', 'TYM')
       dbCloseAll()
 
       ? 'Indeksowanie...'
       dbfIdxFIRMA()
+      dbfIdxREJS()
       dbfIdxETATY()
+      dbfIdxFAKTURY()
+      dbfIdxOPER()
       dbCloseAll()
 
       wersja_db := 2530

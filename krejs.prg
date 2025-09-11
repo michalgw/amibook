@@ -700,136 +700,174 @@ PROCEDURE KRejS()
                   *******************************
                ENDIF
             ELSE
-               SET ORDER TO 3
-               IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' )
-                  GO TOP
-                  SEEK '+' + ident_fir + miesiac + 'RS-7'
-                  IF Found()
-                     SET ORDER TO 1
-                     BlokadaR()
-                     repl_( 'wyr_tow', wyr_tow - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) )
-                     COMMIT
-                     UNLOCK
-                  ELSE
-                     SET ORDER TO 1
-                     *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                     SELECT suma_mc
-                     BlokadaR()
-                     repl_( 'pozycje', pozycje + 1 )
-                     COMMIT
-                     UNLOCK
-                     SELECT &usebaz
-                     app()
-                     ADDDOC
-                     repl_( 'DZIEN', DAYM )
-                     repl_( 'NUMER', 'RS-7' )
-                     repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-                     repl_( 'WYR_TOW', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) ) )
-                     repl_( 'zaplata', '1' )
-*                      repl_([kwota],zkwota)
-                     COMMIT
-                     UNLOCK
-                     *********************** lp
-                     IF nr_uzytk >= 0
-                        IF param_lp == 'T'
-                           IF param_kslp == '3'
-                              SET ORDER TO 4
+               IF rejs->KSGZBIOR == 'N'
+                  IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' ) ;
+                     .OR. ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
+                     SET ORDER TO 5
+                     SEEK '+' + Str( REKZAK, 5 ) + 'RS-'
+                     IF Found()
+                        BlokadaR()
+                        DELETE
+                        COMMIT
+                        UNLOCK
+                        SET ORDER TO 1
+                        *********************** lp
+                        IF nr_uzytk >= 0
+                           IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                              IF param_kslp == '3'
+                                 SET ORDER TO 4
+                              ENDIF
+                              Blokada()
+                              Czekaj()
+                              rec := RecNo()
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                 repl_( 'lp', lp - 1 )
+                                 SKIP
+                              ENDDO
+                              GO rec
+                              COMMIT
+                              UNLOCK
+                              IF param_kslp == '3'
+                                 SET ORDER TO 1
+                              ENDIF
+                              @ 24, 0
                            ENDIF
-                           Blokada()
-                           Czekaj()
-                           rec := RecNo()
-
-                           SKIP -1
-                           IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                              zlp := liczba
-                           ELSE
-                              zlp := lp + 1
-                           ENDIF
-                           GO rec
-                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                              repl_( 'lp', zlp )
-                              zlp := zlp + 1
-                              SKIP
-                           ENDDO
-
-                           GO rec
-                           COMMIT
-                           UNLOCK
-                           IF param_kslp == '3'
-                              SET ORDER TO 1
-                           ENDIF
-                           @ 24, 0
                         ENDIF
+                        *******************************
                      ENDIF
-                     COMMIT
-                     UNLOCK
-                     ***********************
                   ENDIF
-               ENDIF
-               IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
+               ELSE
                   SET ORDER TO 3
-                  GO TOP
-                  SEEK '+' + ident_fir + miesiac + 'RS-8'
-                  IF Found()
-                     SET ORDER TO 1
-                     BlokadaR()
-                     repl_( 'uslugi', uslugi - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) )
-                     COMMIT
-                     UNLOCK
-                  ELSE
-                     SET ORDER TO 1
-                     *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                     SELECT suma_mc
-                     BlokadaR()
-                     repl_( 'pozycje', pozycje + 1 )
-                     COMMIT
-                     UNLOCK
-                     SELECT &usebaz
-                     app()
-                     ADDDOC
-                     repl_( 'DZIEN', DAYM )
-                     repl_( 'NUMER', 'RS-8' )
-                     repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-                     repl_( 'USLUGI', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) ) )
-                     repl_( 'zaplata', '1' )
-*                      repl_([kwota],zkwota)
-                     COMMIT
-                     UNLOCK
-                     *********************** lp
-                     IF nr_uzytk >= 0
-                        IF param_lp == 'T'
-                           IF param_kslp == '3'
-                              SET ORDER TO 4
-                           ENDIF
-                           Blokada()
-                           Czekaj()
-                           rec := RecNo()
+                  IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' )
+                     GO TOP
+                     SEEK '+' + ident_fir + miesiac + 'RS-7'
+                     IF Found()
+                        SET ORDER TO 1
+                        BlokadaR()
+                        repl_( 'wyr_tow', wyr_tow - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) )
+                        COMMIT
+                        UNLOCK
+                     ELSE
+                        SET ORDER TO 1
+                        *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                        SELECT suma_mc
+                        BlokadaR()
+                        repl_( 'pozycje', pozycje + 1 )
+                        COMMIT
+                        UNLOCK
+                        SELECT &usebaz
+                        app()
+                        ADDDOC
+                        repl_( 'DZIEN', DAYM )
+                        repl_( 'NUMER', 'RS-7' )
+                        repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+                        repl_( 'WYR_TOW', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) ) )
+                        repl_( 'zaplata', '1' )
+                        *repl_([kwota],zkwota)
+                        COMMIT
+                        UNLOCK
+                        *********************** lp
+                        IF nr_uzytk >= 0
+                           IF param_lp == 'T'
+                              IF param_kslp == '3'
+                                 SET ORDER TO 4
+                              ENDIF
+                              Blokada()
+                              Czekaj()
+                              rec := RecNo()
 
-                           SKIP -1
-                           IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                              zlp := liczba
-                           ELSE
-                              zlp :=lp + 1
-                           ENDIF
-                           GO rec
-                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                              repl_( 'lp', zlp )
-                              zlp := zlp + 1
-                              SKIP
-                           ENDDO
+                              SKIP -1
+                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                                 zlp := liczba
+                              ELSE
+                                 zlp := lp + 1
+                              ENDIF
+                              GO rec
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                 repl_( 'lp', zlp )
+                                 zlp := zlp + 1
+                                 SKIP
+                              ENDDO
 
-                           GO rec
-                           COMMIT
-                           UNLOCK
-                           IF param_kslp == '3'
-                              SET ORDER TO 1
+                              GO rec
+                              COMMIT
+                              UNLOCK
+                              IF param_kslp == '3'
+                                 SET ORDER TO 1
+                              ENDIF
+                              @ 24, 0
                            ENDIF
-                           @ 24, 0
                         ENDIF
+                        COMMIT
+                        UNLOCK
+                        ***********************
                      ENDIF
-                     COMMIT
-                     UNLOCK
-                     ***********************
+                  ENDIF
+                  IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
+                     SET ORDER TO 3
+                     GO TOP
+                     SEEK '+' + ident_fir + miesiac + 'RS-8'
+                     IF Found()
+                        SET ORDER TO 1
+                        BlokadaR()
+                        repl_( 'uslugi', uslugi - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) )
+                        COMMIT
+                        UNLOCK
+                     ELSE
+                        SET ORDER TO 1
+                        *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                        SELECT suma_mc
+                        BlokadaR()
+                        repl_( 'pozycje', pozycje + 1 )
+                        COMMIT
+                        UNLOCK
+                        SELECT &usebaz
+                        app()
+                        ADDDOC
+                        repl_( 'DZIEN', DAYM )
+                        repl_( 'NUMER', 'RS-8' )
+                        repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+                        repl_( 'USLUGI', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) ) )
+                        repl_( 'zaplata', '1' )
+   *                      repl_([kwota],zkwota)
+                        COMMIT
+                        UNLOCK
+                        *********************** lp
+                        IF nr_uzytk >= 0
+                           IF param_lp == 'T'
+                              IF param_kslp == '3'
+                                 SET ORDER TO 4
+                              ENDIF
+                              Blokada()
+                              Czekaj()
+                              rec := RecNo()
+
+                              SKIP -1
+                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                                 zlp := liczba
+                              ELSE
+                                 zlp :=lp + 1
+                              ENDIF
+                              GO rec
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                 repl_( 'lp', zlp )
+                                 zlp := zlp + 1
+                                 SKIP
+                              ENDDO
+
+                              GO rec
+                              COMMIT
+                              UNLOCK
+                              IF param_kslp == '3'
+                                 SET ORDER TO 1
+                              ENDIF
+                              @ 24, 0
+                           ENDIF
+                        ENDIF
+                        COMMIT
+                        UNLOCK
+                        ***********************
+                     ENDIF
                   ENDIF
                ENDIF
             ENDIF
@@ -1025,136 +1063,174 @@ PROCEDURE KRejS()
                      *******************************
                   ENDIF
                ELSE
-                  SET ORDER TO 3
-                  IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' )
-                     GO TOP
-                     SEEK '+' + ident_fir + miesiac + 'RS-7'
-                     IF Found()
-                        SET ORDER TO 1
-                        BlokadaR()
-                        repl_( 'wyr_tow', wyr_tow - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) )
-                        COMMIT
-                        UNLOCK
-                     ELSE
-                        SET ORDER TO 1
-                        *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                        SELECT suma_mc
-                        BlokadaR()
-                        repl_( 'pozycje', pozycje + 1 )
-                        COMMIT
-                        UNLOCK
-                        SELECT &usebaz
-                        app()
-                        ADDDOC
-                        repl_( 'DZIEN', DAYM )
-                        repl_( 'NUMER', 'RS-7' )
-                        repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-                        repl_( 'WYR_TOW', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) ) )
-                        repl_( 'zaplata', '1' )
-   *                      repl_([kwota],zkwota)
-                        COMMIT
-                        UNLOCK
-                        *********************** lp
-                        IF nr_uzytk >= 0
-                           IF param_lp == 'T'
-                              IF param_kslp == '3'
-                                 SET ORDER TO 4
+                  IF rejs->KSGZBIOR == 'N'
+                     IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' ) ;
+                        .OR. ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
+                        SET ORDER TO 5
+                        SEEK '+' + Str( REKZAK, 5 ) + 'RS-'
+                        IF Found()
+                           BlokadaR()
+                           DELETE
+                           COMMIT
+                           UNLOCK
+                           SET ORDER TO 1
+                           *********************** lp
+                           IF nr_uzytk >= 0
+                              IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 4
+                                 ENDIF
+                                 Blokada()
+                                 Czekaj()
+                                 rec := RecNo()
+                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                    repl_( 'lp', lp - 1 )
+                                    SKIP
+                                 ENDDO
+                                 GO rec
+                                 COMMIT
+                                 UNLOCK
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 1
+                                 ENDIF
+                                 @ 24, 0
                               ENDIF
-                              Blokada()
-                              Czekaj()
-                              rec := RecNo()
-
-                              SKIP -1
-                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                                 zlp := liczba
-                              ELSE
-                                 zlp := lp + 1
-                              ENDIF
-                              GO rec
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                                 repl_( 'lp', zlp )
-                                 zlp := zlp + 1
-                                 SKIP
-                              ENDDO
-
-                              GO rec
-                              COMMIT
-                              UNLOCK
-                              IF param_kslp == '3'
-                                 SET ORDER TO 1
-                              ENDIF
-                              @ 24, 0
                            ENDIF
+                           *******************************
                         ENDIF
-                        COMMIT
-                        UNLOCK
-                        ***********************
                      ENDIF
-                  ENDIF
-                  IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
+                  ELSE
                      SET ORDER TO 3
-                     GO TOP
-                     SEEK '+' + ident_fir + miesiac + 'RS-8'
-                     IF Found()
-                        SET ORDER TO 1
-                        BlokadaR()
-                        repl_( 'uslugi', uslugi - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) )
-                        COMMIT
-                        UNLOCK
-                     ELSE
-                        SET ORDER TO 1
-                        *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                        SELECT suma_mc
-                        BlokadaR()
-                        repl_( 'pozycje', pozycje + 1 )
-                        COMMIT
-                        UNLOCK
-                        SELECT &usebaz
-                        app()
-                        ADDDOC
-                        repl_( 'DZIEN', DAYM )
-                        repl_( 'NUMER', 'RS-8' )
-                        repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-                        repl_( 'USLUGI', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) ) )
-                        repl_( 'zaplata', '1' )
-   *                      repl_([kwota],zkwota)
-                        COMMIT
-                        UNLOCK
-                        *********************** lp
-                        IF nr_uzytk >= 0
-                           IF param_lp == 'T'
-                              IF param_kslp == '3'
-                                 SET ORDER TO 4
-                              ENDIF
-                              Blokada()
-                              Czekaj()
-                              rec := RecNo()
+                     IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' )
+                        GO TOP
+                        SEEK '+' + ident_fir + miesiac + 'RS-7'
+                        IF Found()
+                           SET ORDER TO 1
+                           BlokadaR()
+                           repl_( 'wyr_tow', wyr_tow - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) )
+                           COMMIT
+                           UNLOCK
+                        ELSE
+                           SET ORDER TO 1
+                           *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                           SELECT suma_mc
+                           BlokadaR()
+                           repl_( 'pozycje', pozycje + 1 )
+                           COMMIT
+                           UNLOCK
+                           SELECT &usebaz
+                           app()
+                           ADDDOC
+                           repl_( 'DZIEN', DAYM )
+                           repl_( 'NUMER', 'RS-7' )
+                           repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+                           repl_( 'WYR_TOW', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', rejs->netto, rejs->netto2 ) ) )
+                           repl_( 'zaplata', '1' )
+                           *repl_([kwota],zkwota)
+                           COMMIT
+                           UNLOCK
+                           *********************** lp
+                           IF nr_uzytk >= 0
+                              IF param_lp == 'T'
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 4
+                                 ENDIF
+                                 Blokada()
+                                 Czekaj()
+                                 rec := RecNo()
 
-                              SKIP -1
-                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                                 zlp := liczba
-                              ELSE
-                                 zlp :=lp + 1
-                              ENDIF
-                              GO rec
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                                 repl_( 'lp', zlp )
-                                 zlp := zlp + 1
-                                 SKIP
-                              ENDDO
+                                 SKIP -1
+                                 IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                                    zlp := liczba
+                                 ELSE
+                                    zlp := lp + 1
+                                 ENDIF
+                                 GO rec
+                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                    repl_( 'lp', zlp )
+                                    zlp := zlp + 1
+                                    SKIP
+                                 ENDDO
 
-                              GO rec
-                              COMMIT
-                              UNLOCK
-                              IF param_kslp == '3'
-                                 SET ORDER TO 1
+                                 GO rec
+                                 COMMIT
+                                 UNLOCK
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 1
+                                 ENDIF
+                                 @ 24, 0
                               ENDIF
-                              @ 24, 0
                            ENDIF
+                           COMMIT
+                           UNLOCK
+                           ***********************
                         ENDIF
-                        COMMIT
-                        UNLOCK
-                        ***********************
+                     ENDIF
+                     IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
+                        SET ORDER TO 3
+                        GO TOP
+                        SEEK '+' + ident_fir + miesiac + 'RS-8'
+                        IF Found()
+                           SET ORDER TO 1
+                           BlokadaR()
+                           repl_( 'uslugi', uslugi - iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) )
+                           COMMIT
+                           UNLOCK
+                        ELSE
+                           SET ORDER TO 1
+                           *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                           SELECT suma_mc
+                           BlokadaR()
+                           repl_( 'pozycje', pozycje + 1 )
+                           COMMIT
+                           UNLOCK
+                           SELECT &usebaz
+                           app()
+                           ADDDOC
+                           repl_( 'DZIEN', DAYM )
+                           repl_( 'NUMER', 'RS-8' )
+                           repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+                           repl_( 'USLUGI', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) ) )
+                           repl_( 'zaplata', '1' )
+      *                      repl_([kwota],zkwota)
+                           COMMIT
+                           UNLOCK
+                           *********************** lp
+                           IF nr_uzytk >= 0
+                              IF param_lp == 'T'
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 4
+                                 ENDIF
+                                 Blokada()
+                                 Czekaj()
+                                 rec := RecNo()
+
+                                 SKIP -1
+                                 IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                                    zlp := liczba
+                                 ELSE
+                                    zlp :=lp + 1
+                                 ENDIF
+                                 GO rec
+                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                    repl_( 'lp', zlp )
+                                    zlp := zlp + 1
+                                    SKIP
+                                 ENDDO
+
+                                 GO rec
+                                 COMMIT
+                                 UNLOCK
+                                 IF param_kslp == '3'
+                                    SET ORDER TO 1
+                                 ENDIF
+                                 @ 24, 0
+                              ENDIF
+                           ENDIF
+                           COMMIT
+                           UNLOCK
+                           ***********************
+                        ENDIF
                      ENDIF
                   ENDIF
                ENDIF
@@ -2754,6 +2830,9 @@ PROCEDURE KRejS_Ksieguj()
    ADDPOZ
    *WAIT zsek_cv7
    ADDREJS
+   IF ins
+      rejs->ksgzbior := pzparam_ksws
+   ENDIF
    COMMIT
    UNLOCK
    REKZAK := RecNo()
@@ -3005,136 +3084,263 @@ PROCEDURE KRejS_Ksieguj()
             ENDCASE
          ENDIF
       ELSE
-         IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' )
-            SET ORDER TO 3
-            GO TOP
-            SEEK '+' + ident_fir + miesiac + 'RS-7'
-            IF Found()
-               SET ORDER TO 1
-               BlokadaR()
-               AKTPOL- wyr_tow WITH  iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', netprzed, netprzed2 )
-               COMMIT
-               UNLOCK
-            ELSE
-               SET ORDER TO 1
-               *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-               SELECT suma_mc
-               BlokadaR()
-               repl_( 'pozycje', pozycje + 1 )
-               COMMIT
-               UNLOCK
-               SELECT &USEBAZ
-               app()
-               ADDDOC
-               repl_( 'DZIEN', DAYM )
-               repl_( 'NUMER', 'RS-7' )
-               repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-               repl_( 'WYR_TOW', -iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', netprzed, netprzed2 ) )
-               repl_( 'zaplata', '1' )
-               *repl_([kwota],zkwota)
-               COMMIT
-               UNLOCK
-               *********************** lp
-               IF nr_uzytk >= 0
-                  IF param_lp == 'T'
-                     IF param_kslp == '3'
-                        SET ORDER TO 4
-                     ENDIF
-                     Blokada()
-                     Czekaj()
-                     rec := RecNo()
-
-                     SKIP -1
-                     IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                        zlp := liczba
+         IF rejs->KSGZBIOR == 'N'
+            IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' ) ;
+               .OR. ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
+               DO CASE
+               CASE netprzed <> 0
+                  SET ORDER TO 5
+                  SEEK '+' + Str( REKZAK, 5 ) + 'RS-'
+                  IF Found()
+                     IF zNETTO == 0
+                        BlokadaR()
+                        DELETE
+                        COMMIT
+                        UNLOCK
+                        SELECT suma_mc
+                        BlokadaR()
+                        repl_( 'pozycje', pozycje - 1 )
+                        COMMIT
+                        UNLOCK
+                        SELECT &USEBAZ
+                        SET ORDER TO 1
+                        *********************** lp
+                        IF nr_uzytk >= 0
+                           IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                              IF param_kslp == '3'
+                                 SET ORDER TO 4
+                              ENDIF
+                              Blokada()
+                              Czekaj()
+                              rec := RecNo()
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                 repl_( 'lp', lp - 1 )
+                                 SKIP
+                              ENDDO
+                              GO rec
+                              COMMIT
+                              UNLOCK
+                              IF param_kslp == '3'
+                                 SET ORDER TO 1
+                              ENDIF
+                              @ 24, 0
+                           ENDIF
+                        ENDIF
+                        *******************************
                      ELSE
-                        zlp := lp + 1
+                        BlokadaR()
+                        repl_( 'DZIEN', zdzien )
+                        //repl_( 'DATAPRZY', zdatas )
+                        repl_( 'NUMER', 'RS-' + znumer )
+                        repl_( 'TRESC', zTRESC )
+                        repl_( 'UWAGI', zUWAGI )
+                        repl_( 'zaplata', '1' )
+                        repl_( 'nazwa', znazwa )
+                        repl_( 'ADRES', zADRES )
+                        repl_( 'NR_IDENT', zNR_IDENT )
+                        //repl_( 'kwota', 0 )
+                        repl_( 'WYR_TOW', iif( Val( rejs->KOLUMNA ) == 7, zNETTO, 0 ) + iif( Val( rejs->KOLUMNA2 ) == 7, zNETTO2, 0 ) )
+                        repl_( 'USLUGI', iif( Val( rejs->KOLUMNA ) == 8, zNETTO, 0 ) + iif( Val( rejs->KOLUMNA2 ) == 8, zNETTO2, 0 ) )
+                        repl_( 'rejzid', REKZAK )
+                        COMMIT
+                        UNLOCK
                      ENDIF
-                     GO rec
-                     DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                        repl_( 'lp', zlp )
-                        zlp := zlp + 1
-                        SKIP
-                     ENDDO
-
-                     GO rec
+                     commit_()
+                  ENDIF
+               CASE netprzed == 0
+                  *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                  IF zNETTO <> 0
+                     SELECT suma_mc
+                     BlokadaR()
+                     repl_( 'pozycje', pozycje + 1 )
                      COMMIT
                      UNLOCK
-                     IF param_kslp == '3'
-                        SET ORDER TO 1
+                     SELECT &USEBAZ
+                     SET ORDER TO 1
+                     app()
+                     ADDDOC
+                     repl_( 'DZIEN', zdzien )
+                     //repl_( 'DATAPRZY', zdatas )
+                     REPLACE NUMER WITH 'RS-' + zNUMER
+                     repl_( 'TRESC', zTRESC )
+                     repl_( 'UWAGI', zUWAGI )
+                     repl_( 'nazwa', znazwa )
+                     repl_( 'ADRES', zADRES )
+                     repl_( 'NR_IDENT', zNR_IDENT )
+                     repl_( 'zaplata', '1' )
+                     //repl_( 'kwota', 0 )
+                     repl_( 'WYR_TOW', iif( Val( zKOLUMNA ) == 7, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 7, zNETTO2, 0 ) )
+                     repl_( 'USLUGI', iif( Val( zKOLUMNA ) == 8, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 8, zNETTO2, 0 ) )
+                     repl_( 'rejzid', REKZAK )
+                     COMMIT
+                     UNLOCK
+                     *********************** lp
+                     IF nr_uzytk >= 0
+                        IF param_lp == 'T'
+                           IF param_kslp == '3'
+                              SET ORDER TO 4
+                           ENDIF
+                           Blokada()
+                           Czekaj()
+                           rec := RecNo()
+                           SKIP -1
+                           IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                              zlp := liczba
+                           ELSE
+                              zlp := lp + 1
+                           ENDIF
+                           GO rec
+                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                              repl_( 'lp', zlp )
+                              zlp := zlp + 1
+                              SKIP
+                           ENDDO
+                           GO rec
+                           COMMIT
+                           UNLOCK
+                           IF param_kslp == '3'
+                              SET ORDER TO 1
+                           ENDIF
+                           @ 24, 0
+                        ENDIF
                      ENDIF
-                     @ 24, 0
+                     COMMIT
+                     UNLOCK
                   ENDIF
-               ENDIF
-               COMMIT
-               UNLOCK
-               ***********************
+               ENDCASE
             ENDIF
-         ENDIF
-         IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
-            SET ORDER TO 3
-            GO TOP
-            SEEK '+' + ident_fir + miesiac + 'RS-8'
-            IF Found()
-               SET ORDER TO 1
-               BlokadaR()
-               AKTPOL- uslugi WITH iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', netprzed, netprzed2 )
-               COMMIT
-               UNLOCK
-            ELSE
-               SET ORDER TO 1
-               *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-               SELECT suma_mc
-               BlokadaR()
-               repl_( 'pozycje', pozycje + 1 )
-               COMMIT
-               UNLOCK
-               SELECT &USEBAZ
-               app()
-               ADDDOC
-               repl_( 'DZIEN', DAYM )
-               repl_( 'NUMER', 'RS-8' )
-               repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-               repl_( 'USLUGI', -iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', netprzed, netprzed2 ) )
-               repl_( 'zaplata', '1' )
-               * repl_([kwota],zkwota)
-               COMMIT
-               UNLOCK
-               *********************** lp
-               IF nr_uzytk >= 0
-                  IF param_lp == 'T'
-                     IF param_kslp == '3'
-                        SET ORDER TO 4
-                     ENDIF
-                     Blokada()
-                     Czekaj()
-                     rec := RecNo()
+         ELSE
+            IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' )
+               SET ORDER TO 3
+               GO TOP
+               SEEK '+' + ident_fir + miesiac + 'RS-7'
+               IF Found()
+                  SET ORDER TO 1
+                  BlokadaR()
+                  AKTPOL- wyr_tow WITH  iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', netprzed, netprzed2 )
+                  COMMIT
+                  UNLOCK
+               ELSE
+                  SET ORDER TO 1
+                  *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                  SELECT suma_mc
+                  BlokadaR()
+                  repl_( 'pozycje', pozycje + 1 )
+                  COMMIT
+                  UNLOCK
+                  SELECT &USEBAZ
+                  app()
+                  ADDDOC
+                  repl_( 'DZIEN', DAYM )
+                  repl_( 'NUMER', 'RS-7' )
+                  repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+                  repl_( 'WYR_TOW', -iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', netprzed, netprzed2 ) )
+                  repl_( 'zaplata', '1' )
+                  *repl_([kwota],zkwota)
+                  COMMIT
+                  UNLOCK
+                  *********************** lp
+                  IF nr_uzytk >= 0
+                     IF param_lp == 'T'
+                        IF param_kslp == '3'
+                           SET ORDER TO 4
+                        ENDIF
+                        Blokada()
+                        Czekaj()
+                        rec := RecNo()
 
-                     SKIP -1
-                     IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                        zlp := liczba
-                     ELSE
-                        zlp := lp + 1
-                     ENDIF
-                     GO rec
-                     DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                        repl_( 'lp', zlp )
-                        zlp := zlp + 1
-                        SKIP
-                     ENDDO
+                        SKIP -1
+                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                           zlp := liczba
+                        ELSE
+                           zlp := lp + 1
+                        ENDIF
+                        GO rec
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           repl_( 'lp', zlp )
+                           zlp := zlp + 1
+                           SKIP
+                        ENDDO
 
-                     GO rec
-                     COMMIT
-                     UNLOCK
-                     IF param_kslp == '3'
-                        SET ORDER TO 1
+                        GO rec
+                        COMMIT
+                        UNLOCK
+                        IF param_kslp == '3'
+                           SET ORDER TO 1
+                        ENDIF
+                        @ 24, 0
                      ENDIF
-                     @ 24, 0
                   ENDIF
+                  COMMIT
+                  UNLOCK
+                  ***********************
                ENDIF
-               COMMIT
-               UNLOCK
-            ***********************
+            ENDIF
+            IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
+               SET ORDER TO 3
+               GO TOP
+               SEEK '+' + ident_fir + miesiac + 'RS-8'
+               IF Found()
+                  SET ORDER TO 1
+                  BlokadaR()
+                  AKTPOL- uslugi WITH iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', netprzed, netprzed2 )
+                  COMMIT
+                  UNLOCK
+               ELSE
+                  SET ORDER TO 1
+                  *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                  SELECT suma_mc
+                  BlokadaR()
+                  repl_( 'pozycje', pozycje + 1 )
+                  COMMIT
+                  UNLOCK
+                  SELECT &USEBAZ
+                  app()
+                  ADDDOC
+                  repl_( 'DZIEN', DAYM )
+                  repl_( 'NUMER', 'RS-8' )
+                  repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+                  repl_( 'USLUGI', -iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', netprzed, netprzed2 ) )
+                  repl_( 'zaplata', '1' )
+                  * repl_([kwota],zkwota)
+                  COMMIT
+                  UNLOCK
+                  *********************** lp
+                  IF nr_uzytk >= 0
+                     IF param_lp == 'T'
+                        IF param_kslp == '3'
+                           SET ORDER TO 4
+                        ENDIF
+                        Blokada()
+                        Czekaj()
+                        rec := RecNo()
+
+                        SKIP -1
+                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                           zlp := liczba
+                        ELSE
+                           zlp := lp + 1
+                        ENDIF
+                        GO rec
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           repl_( 'lp', zlp )
+                           zlp := zlp + 1
+                           SKIP
+                        ENDDO
+
+                        GO rec
+                        COMMIT
+                        UNLOCK
+                        IF param_kslp == '3'
+                           SET ORDER TO 1
+                        ENDIF
+                        @ 24, 0
+                     ENDIF
+                  ENDIF
+                  COMMIT
+                  UNLOCK
+               ***********************
+               ENDIF
             ENDIF
          ENDIF
       ENDIF
@@ -3230,37 +3436,35 @@ PROCEDURE KRejS_Ksieguj()
       ENDIF
    ENDIF
    IF zRYCZALT # 'T'
-      IF ( Str( Val( zKOLUMNA ), 1 ) $ '78' ) .OR. ( Str( Val( zKOLUMNA2 ), 1 ) $ '78' )
-         SELECT oper
-         SET ORDER TO 3
-         IF ( Str( Val( zKOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( zKOLUMNA2 ), 1 ) == '7' )
-            GO TOP
-            SEEK '+' + ident_fir + miesiac + 'RS-7'
-            IF Found()
-               SET ORDER TO 1
-               BlokadaR()
-               repl_( 'wyr_tow', wyr_tow + iif( Str( Val( zKOLUMNA ), 1 ) == '7', znetto, znetto2 ) )
-               COMMIT
-               UNLOCK
-            ELSE
-               SET ORDER TO 1
-               *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+      IF pzparam_ksws == 'N'
+         IF ins .AND. AllTrim( zKOLUMNA ) $ '78' .OR. AllTrim( zKOLUMNA2 ) $ '78'
+            *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+            IF zNETTO + zNETTO2 <> 0
                SELECT suma_mc
                BlokadaR()
                repl_( 'pozycje', pozycje+1)
                COMMIT
                unlock
                select &USEBAZ
+               set orde to 1
                app()
                adddoc
-               repl_( 'DZIEN', DAYM)
-               repl_( 'NUMER', 'RS-7')
-               repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY')
-               repl_( 'WYR_TOW', iif( Str( Val( zKOLUMNA ), 1 ) == '7', znetto, znetto2 ) )
-               repl_( 'zaplata', '1')
-               * repl_([kwota],zkwota)
-               COMMIT
-               unlock
+
+               repl_( 'DZIEN', zdzien )
+               //repl_( 'DATAPRZY', zdatas )
+               repl_( 'NUMER', 'RS-' + ZNUMER)
+               repl_( 'TRESC', zTRESC )
+               repl_( 'UWAGI', zUWAGI )
+               repl_( 'zaplata', '1' )
+               repl_( 'nazwa', znazwa )
+               repl_( 'ADRES', zADRES )
+               repl_( 'NR_IDENT', zNR_IDENT )
+               //repl_( 'kwota', 0 )
+               repl_( 'WYR_TOW', iif( Val( zKOLUMNA ) == 7, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 7, zNETTO2, 0 ) )
+               repl_( 'USLUGI', iif( Val( zKOLUMNA ) == 8, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 8, zNETTO2, 0 ) )
+               repl_( 'rejzid', REKZAK )
+               commit_()
+               UNLOCK
                *********************** lp
                IF nr_uzytk >= 0
                   IF param_lp == 'T'
@@ -3270,7 +3474,6 @@ PROCEDURE KRejS_Ksieguj()
                      Blokada()
                      Czekaj()
                      rec := RecNo()
-
                      SKIP -1
                      IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
                         zlp := liczba
@@ -3283,7 +3486,6 @@ PROCEDURE KRejS_Ksieguj()
                         zlp := zlp + 1
                         SKIP
                      ENDDO
-
                      GO rec
                      COMMIT
                      UNLOCK
@@ -3295,73 +3497,142 @@ PROCEDURE KRejS_Ksieguj()
                ENDIF
                COMMIT
                UNLOCK
-               ***********************
             ENDIF
          ENDIF
-         IF ( Str( Val( zKOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( zKOLUMNA2 ), 1 ) == '8' )
+      ELSE
+         IF ( Str( Val( zKOLUMNA ), 1 ) $ '78' ) .OR. ( Str( Val( zKOLUMNA2 ), 1 ) $ '78' )
+            SELECT oper
             SET ORDER TO 3
-            GO TOP
-            SEEK '+' + ident_fir + miesiac + 'RS-8'
-            IF Found()
-               SET ORDER TO 1
-               BlokadaR()
-               repl_( 'uslugi', uslugi + iif( Str( Val( zKOLUMNA ), 1 ) == '8', znetto, znetto2 ) )
-               COMMIT
-               UNLOCK
-            ELSE
-               SET ORDER TO 1
-               *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-               SELECT suma_mc
-               BlokadaR()
-               repl_( 'pozycje', pozycje + 1 )
-               COMMIT
-               UNLOCK
-               SELECT &USEBAZ
-               app()
-               ADDDOC
-               repl_( 'DZIEN', DAYM )
-               repl_( 'NUMER', 'RS-8' )
-               repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
-               repl_( 'USLUGI', iif( Str( Val( zKOLUMNA ), 1 ) == '8', znetto, znetto2 ) )
-               repl_( 'zaplata', '1' )
-               * repl_([kwota],zkwota)
-               COMMIT
-               UNLOCK
-               *********************** lp
-               IF nr_uzytk >= 0
-                  IF param_lp == 'T'
-                     IF param_kslp == '3'
-                        SET ORDER TO 4
-                     ENDIF
-                     Blokada()
-                     Czekaj()
-                     rec := RecNo()
+            IF ( Str( Val( zKOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( zKOLUMNA2 ), 1 ) == '7' )
+               GO TOP
+               SEEK '+' + ident_fir + miesiac + 'RS-7'
+               IF Found()
+                  SET ORDER TO 1
+                  BlokadaR()
+                  repl_( 'wyr_tow', wyr_tow + iif( Str( Val( zKOLUMNA ), 1 ) == '7', znetto, znetto2 ) )
+                  COMMIT
+                  UNLOCK
+               ELSE
+                  SET ORDER TO 1
+                  *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                  SELECT suma_mc
+                  BlokadaR()
+                  repl_( 'pozycje', pozycje+1)
+                  COMMIT
+                  unlock
+                  select &USEBAZ
+                  app()
+                  adddoc
+                  repl_( 'DZIEN', DAYM)
+                  repl_( 'NUMER', 'RS-7')
+                  repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY')
+                  repl_( 'WYR_TOW', iif( Str( Val( zKOLUMNA ), 1 ) == '7', znetto, znetto2 ) )
+                  repl_( 'zaplata', '1')
+                  * repl_([kwota],zkwota)
+                  COMMIT
+                  unlock
+                  *********************** lp
+                  IF nr_uzytk >= 0
+                     IF param_lp == 'T'
+                        IF param_kslp == '3'
+                           SET ORDER TO 4
+                        ENDIF
+                        Blokada()
+                        Czekaj()
+                        rec := RecNo()
 
-                     SKIP -1
-                     IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
-                        zlp := liczba
-                     ELSE
-                        zlp := lp + 1
-                     ENDIF
-                     GO rec
-                     DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
-                        repl_( 'lp', zlp )
-                        zlp := zlp + 1
-                        SKIP
-                     ENDDO
+                        SKIP -1
+                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                           zlp := liczba
+                        ELSE
+                           zlp := lp + 1
+                        ENDIF
+                        GO rec
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           repl_( 'lp', zlp )
+                           zlp := zlp + 1
+                           SKIP
+                        ENDDO
 
-                     GO rec
-                     COMMIT
-                     UNLOCK
-                     IF param_kslp == '3'
-                        SET ORDER TO 1
+                        GO rec
+                        COMMIT
+                        UNLOCK
+                        IF param_kslp == '3'
+                           SET ORDER TO 1
+                        ENDIF
+                        @ 24, 0
                      ENDIF
-                     @ 24, 0
                   ENDIF
+                  COMMIT
+                  UNLOCK
+                  ***********************
                ENDIF
-               COMMIT
-               UNLOCK
-               ***********************
+            ENDIF
+            IF ( Str( Val( zKOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( zKOLUMNA2 ), 1 ) == '8' )
+               SET ORDER TO 3
+               GO TOP
+               SEEK '+' + ident_fir + miesiac + 'RS-8'
+               IF Found()
+                  SET ORDER TO 1
+                  BlokadaR()
+                  repl_( 'uslugi', uslugi + iif( Str( Val( zKOLUMNA ), 1 ) == '8', znetto, znetto2 ) )
+                  COMMIT
+                  UNLOCK
+               ELSE
+                  SET ORDER TO 1
+                  *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                  SELECT suma_mc
+                  BlokadaR()
+                  repl_( 'pozycje', pozycje + 1 )
+                  COMMIT
+                  UNLOCK
+                  SELECT &USEBAZ
+                  app()
+                  ADDDOC
+                  repl_( 'DZIEN', DAYM )
+                  repl_( 'NUMER', 'RS-8' )
+                  repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
+                  repl_( 'USLUGI', iif( Str( Val( zKOLUMNA ), 1 ) == '8', znetto, znetto2 ) )
+                  repl_( 'zaplata', '1' )
+                  * repl_([kwota],zkwota)
+                  COMMIT
+                  UNLOCK
+                  *********************** lp
+                  IF nr_uzytk >= 0
+                     IF param_lp == 'T'
+                        IF param_kslp == '3'
+                           SET ORDER TO 4
+                        ENDIF
+                        Blokada()
+                        Czekaj()
+                        rec := RecNo()
+
+                        SKIP -1
+                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                           zlp := liczba
+                        ELSE
+                           zlp := lp + 1
+                        ENDIF
+                        GO rec
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           repl_( 'lp', zlp )
+                           zlp := zlp + 1
+                           SKIP
+                        ENDDO
+
+                        GO rec
+                        COMMIT
+                        UNLOCK
+                        IF param_kslp == '3'
+                           SET ORDER TO 1
+                        ENDIF
+                        @ 24, 0
+                     ENDIF
+                  ENDIF
+                  COMMIT
+                  UNLOCK
+                  ***********************
+               ENDIF
             ENDIF
          ENDIF
       ENDIF

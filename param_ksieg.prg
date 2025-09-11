@@ -35,10 +35,10 @@ FUNCTION menuKonfigKsiega()
    @  3,0 say ' Nliczanie 50% VAT na poj. (1/2)      ³ Podczas wprowadzania dokumentu sprawd«, '
    @  4,0 say ' 1 - Ksi©ga: Netto + 50% VAT          ³ czy podmiot jest pˆatnikeim VAT         '
    @  5,0 say ' 2 - Ksi©ga: 50% Netto + 50% VAT      ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-   @  6,0 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³                                         '
-   @  7,0 say ' Obliczanie podstawy opodatkowania    ³                                         '
-   @  8,0 say ' deklaracji VAT-7 (pole 43.)          ³                                         '
-   @  9,0 say ' dla 50% VAT na pojazdy (1/2):        ³                                         '
+   @  6,0 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³ Zbiorczy wpis sprzeda¾y w ksi©dze       '
+   @  7,0 say ' Obliczanie podstawy opodatkowania    ³ Tak - sprzeda¾ zbiorczo w RS-7 i RS-8   '
+   @  8,0 say ' deklaracji VAT-7 (pole 43.)          ³ Nie - oddzielne wpisy dla ka¾dej sprzed.'
+   @  9,0 say ' dla 50% VAT na pojazdy (1/2):        ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
    @ 10,0 say ' 1 - 100%     2 - 50%                 ³                                         '
    @ 11,0 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³                                         '
    @ 12,0 say ' Sortowanie dokument¢w w ksi©dze      ³                                         '
@@ -77,6 +77,7 @@ FUNCTION menuKonfigKsiega()
                  zparam_ksv7 := param_ksv7
                  zparam_kssr := param_kssr
                  zparam_kswv := param_kswv
+                 zparam_ksws := param_ksws
                  *ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ GET ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ
                  @  3, 34 get zparam_ks5v PICTURE '!' VALID menuKonfigKsiegaPolKS5V()
                  @  9, 34 get zparam_ks5d PICTURE '!' VALID menuKonfigKsiegaPolKS5D()
@@ -86,6 +87,7 @@ FUNCTION menuKonfigKsiega()
                  @ 21, 30 get zparam_ksv7 PICTURE '!' VALID menuKonfigKsiegaPolKSV7()
                  @ 22, 33 get zparam_kssr PICTURE '!' VALID menuKonfigKsiegaPolKSSR()
                  @  4, 72 get zparam_kswv PICTURE '!' VALID menuKonfigKsiegaPolKSWV()
+                 @  6, 74 get zparam_ksws PICTURE '!' VALID menuKonfigKsiegaPolKSWS()
                  ****************************
                  clear type
                  read_()
@@ -101,6 +103,7 @@ FUNCTION menuKonfigKsiega()
                  param_ksv7 := zparam_ksv7
                  param_kssr := zparam_kssr
                  param_kswv := zparam_kswv
+                 param_ksws := zparam_ksws
                  save TO parksg all like param_ks*
                  SWITCH param_kslp
                  CASE '1'
@@ -216,6 +219,7 @@ PROCEDURE menuKonfigKsiegaPokaz()
    @ 21, 30 SAY iif(param_ksv7 == 'T', 'Tak', 'Nie')
    @ 22, 33 SAY iif(param_kssr == 'T', 'Tak', 'Nie')
    @  4, 72 SAY iif(param_kswv == 'T', 'Tak', 'Nie')
+   @  6, 74 SAY iif(param_kswv == 'T', 'Tak', 'Nie')
    SWITCH param_kslp
    CASE '1'
       @ 14, 20 SAY '1 - Nr dok./Dzieä'
@@ -292,6 +296,19 @@ FUNCTION menuKonfigKsiegaPolKSWV()
          RETURN .F.
       ENDIF
    @ 4, 72 SAY iif(zparam_kswv == 'T', 'ak', 'ie')
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION menuKonfigKsiegaPolKSWS()
+   IF LastKey()=5
+      RETURN .T.
+   ENDIF
+      IF !zparam_ksws$'TN'
+         zparam_ksws = param_ksws
+         RETURN .F.
+      ENDIF
+   @ 6, 74 SAY iif(zparam_ksws == 'T', 'ak', 'ie')
    RETURN .T.
 
 /*----------------------------------------------------------------------*/

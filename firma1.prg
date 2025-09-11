@@ -843,6 +843,7 @@ PROCEDURE Firma1()
             pzROZRZAPF=ROZRZAPF
             firma_rodzajdrfv := iif( rodzajdrfv $ 'GT', rodzajdrfv, 'T' )
             pzparap_dzm := iif( firma->zusdzm $ 'BW', firma->zusdzm, parap_dzm )
+            pzparam_ksws := iif( firma->par_ksws $ 'TN', firma->par_ksws, param_ksws )
             *m->parap_puw=parap_puw
             m->parap_fuw=parap_fuw
             m->parap_fww=parap_fww

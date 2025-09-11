@@ -27,6 +27,21 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION Param_FI()
 
+   LOCAL bParKsWSW := { | |
+      LOCAL cKolor := ColInf()
+      @ 24, 0 SAY PadC( "T - Tak, zbiorczy wpis RS-7/8   N - ka¾dy wpis osobno  D - domy˜nie wg. par.", 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bParKsWSV := { | |
+      LOCAL lRes := zzPAR_KSWS $ 'TND'
+      IF lRes
+         @ 10, 65 SAY iif( zzPAR_KSWS == 'T', 'ak      ', iif( zzPAR_KSWS == 'N', 'ie      ', 'omy˜lnie' ) )
+         @ 24, 0
+      ENDIF
+      RETURN lRes
+   }
+
    *############################# PARAMETRY POCZATKOWE #########################
    SELECT 1
    if Dostep( 'FIRMA' )
@@ -44,6 +59,9 @@ FUNCTION Param_FI()
    @  5, 42 SAY ' inn¥ ni¾ aktualny miesi¥c            '
    @  6, 42 SAY 'ÍÍ Inne parametry ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ'
    @  7, 42 SAY ' Sygnaˆ o VAT (Tak/Nie)               '
+   @  8, 42 SAY 'ÍÍ Parametry ksi©gowania ÍÍÍÍÍÍÍÍÍÍÍÍÍ'
+   @  9, 42 SAY ' Zbiorczy wpis sprzeda¾y w ksi©dze    '
+   @ 10, 42 SAY ' (Tak/Nie/Domy˜lnie)                  '
 
    *################################# OPERACJE #################################
    Param_FI_Say()
@@ -66,9 +84,11 @@ FUNCTION Param_FI()
             *ðððððððððððððððððððððððððððððð ZMIENNE ðððððððððððððððððððððððððððððððð
             zzVATOKRESDR := iif( firma->vatokresdr $ 'TN', firma->vatokresdr, 'N' )
             zsygnalvat := iif( firma->sygnalvat $ 'TN', firma->sygnalvat, 'T' )
+            zzPAR_KSWS := iif( firma->par_ksws $ 'TN', firma->par_ksws, 'D' )
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
             @  5, 70 GET zzVATOKRESDR PICTURE '!' VALID zzVATOKRESDR $ 'TN'
             @  7, 66 GET zsygnalvat PICTURE '!' VALID zsygnalvat $ 'TN'
+            @ 10, 64 GET zzPAR_KSWS PICTURE '!' WHEN Eval( bParKsWSV ) VALID Eval( bParKsWSV )
             ****************************
             CLEAR TYPE
             Read_()
@@ -81,6 +101,8 @@ FUNCTION Param_FI()
             zVATOKRESDR := zzVATOKRESDR
             firma->sygnalvat := zsygnalvat
             fsygnalvat := zsygnalvat
+            firma->par_ksws := zzPAR_KSWS
+            pzparam_ksws := iif( firma->par_ksws $ 'TN', firma->par_ksws, param_ksws )
             Commit_()
             UNLOCK
          END
@@ -124,8 +146,9 @@ PROCEDURE Param_FI_Say()
 
    CLEAR TYPE
    SET COLOR TO w+
-   @ 5, 70 say iif( firma->vatokresdr== 'T', 'Tak', 'Nie' )
-   @ 7, 66 say iif( firma->sygnalvat== 'N', 'Nie', 'Tak' )
+   @  5, 70 say iif( firma->vatokresdr== 'T', 'Tak', 'Nie' )
+   @  7, 66 say iif( firma->sygnalvat== 'N', 'Nie', 'Tak' )
+   @ 10, 64 SAY iif( firma->par_ksws == 'T', 'Tak      ', iif( firma->par_ksws == 'N', 'Nie      ', 'Domy˜lnie' ) )
    ColStd()
 
    RETURN NIL
