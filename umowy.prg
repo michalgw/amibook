@@ -1161,7 +1161,9 @@ FUNCTION _infoskl_u()
 FUNCTION oblplu()
 
    IF zODLICZENIE == 'T'
-      zODLICZ := Param_PPla_param( 'odlicz', iif( Empty( zDATA_RACH ), hb_Date( Val( param_rok ), Month( Date() ), 1 ), zDATA_RACH ) ) /*parap_odl*/
+      IF zODLICZ == 0
+         zODLICZ := Param_PPla_param( 'odlicz', iif( Empty( zDATA_RACH ), hb_Date( Val( param_rok ), Month( Date() ), 1 ), zDATA_RACH ) ) /*parap_odl*/
+      ENDIF
    ELSE
       zODLICZ := 0
    ENDIF
