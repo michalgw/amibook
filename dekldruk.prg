@@ -260,6 +260,11 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
       hDane := DaneDek_IFT2w11( xDane )
       cPlikRap := 'frf\ift2_w11.frf'
       EXIT
+   CASE 'IFT2-12'
+   CASE 'IFT2R-12'
+      hDane := DaneDek_IFT2w11( xDane )
+      cPlikRap := 'frf\ift2_w12.frf'
+      EXIT
    CASE 'VATINFO'
       //hDane := DaneDek_VAT7w17()
       hDane := DaneDek_VATINFO( xDane )
@@ -8418,6 +8423,277 @@ FUNCTION DaneDek_IFT2w11( aDaneZrd )
    aDane[ 'P_117' ] := iif( aDaneZrd[ 'rocznie' ], aDaneZrd[ 'miesiace' ], '' )
    aDane[ 'P_118' ] := iif( ! aDaneZrd[ 'rocznie' ], aDaneZrd[ 'data_zl' ], '' )
    aDane[ 'P_119' ] := aDaneZrd[ 'data_prz' ]
+
+   aDane[ 'ROCZNY' ] := iif( aDaneZrd[ 'rocznie' ], '1', '0' )
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_IFT2w12( aDaneZrd )
+   LOCAL aDane := hb_Hash(), bVal := { | nVal | iif( nVal == 0, '', nVal ) }
+
+   aDane[ 'P_1' ] := aDaneZrd[ 'Firma' ][ 'NIP' ]
+   aDane[ 'P_2' ] := ''
+   aDane[ 'P_4' ] := aDaneZrd[ 'data_od' ]
+   aDane[ 'P_5' ] := aDaneZrd[ 'data_do' ]
+   aDane[ 'P_6' ] := iif( AllTrim( aDaneZrd[ 'Firma' ][ 'KodUrzedu' ] ) != '', KodUS2Nazwa( AllTrim( aDaneZrd[ 'Firma' ][ 'KodUrzedu' ] ) ), '' )
+   aDane[ 'P_7_1' ] := iif( aDaneZrd[ 'korekta' ] == '1', '1', '0' )
+   aDane[ 'P_7_2' ] := iif( aDaneZrd[ 'korekta' ] == '2', '1', '0' )
+   aDane[ 'P_8_1' ] := iif( aDaneZrd[ 'Firma' ][ 'Spolka' ], '1', '0' )
+   aDane[ 'P_8_2' ] := iif( aDaneZrd[ 'Firma' ][ 'Spolka' ], '0', '1' )
+   IF aDaneZrd[ 'Firma' ][ 'Spolka' ]
+      aDane[ 'P_9' ] := aDaneZrd[ 'Firma' ][ 'PelnaNazwa' ]
+   ELSE
+      aDane[ 'P_9' ] := aDaneZrd[ 'Firma' ][ 'Nazwisko' ] + ', ' + aDaneZrd[ 'Firma' ][ 'ImiePierwsze' ] + ', ' + DToC( aDaneZrd[ 'Firma' ][ 'DataUrodzenia' ] )
+   ENDIF
+   aDane[ 'P_10' ] := 'POLSKA'
+   aDane[ 'P_11' ] := aDaneZrd[ 'Firma' ][ 'Wojewodztwo' ]
+   aDane[ 'P_12' ] := aDaneZrd[ 'Firma' ][ 'Powiat' ]
+   aDane[ 'P_13' ] := aDaneZrd[ 'Firma' ][ 'Gmina' ]
+   aDane[ 'P_14' ] := aDaneZrd[ 'Firma' ][ 'Ulica' ]
+   aDane[ 'P_15' ] := aDaneZrd[ 'Firma' ][ 'NrDomu' ]
+   aDane[ 'P_16' ] := aDaneZrd[ 'Firma' ][ 'NrLokalu' ]
+   aDane[ 'P_17' ] := aDaneZrd[ 'Firma' ][ 'Miejscowosc' ]
+   aDane[ 'P_18' ] := aDaneZrd[ 'Firma' ][ 'KodPocztowy' ]
+   //aDane[ 'P_19' ] := aDaneZrd[ 'Dane' ][ 'FirmaPoczta' ]
+
+   aDane[ 'P_19' ] := ''
+   aDane[ 'P_20' ] := aDaneZrd[ 'nazwa' ]
+   aDane[ 'P_21' ] := aDaneZrd[ 'nazwaskr' ]
+   aDane[ 'P_22' ] := iif( Empty( aDaneZrd[ 'datarozp' ] ), '', aDaneZrd[ 'datarozp' ] )
+   aDane[ 'P_23' ] := aDaneZrd[ 'rodzajid' ]
+   aDane[ 'P_23_1' ] := iif( aDaneZrd[ 'rodzajid' ] == '1', '1', '0' )
+   aDane[ 'P_23_2' ] := iif( aDaneZrd[ 'rodzajid' ] == '2', '1', '0' )
+   aDane[ 'P_24' ] := aDaneZrd[ 'nridpod' ]
+   aDane[ 'P_25' ] := aDaneZrd[ 'krajwyd' ]
+   aDane[ 'P_26' ] := iif( aDaneZrd[ 'powiazany' ] == 'T', '1', '2' )
+   aDane[ 'P_26_1' ] := iif( aDaneZrd[ 'powiazany' ] == 'T', '1', '0' )
+   aDane[ 'P_26_2' ] := iif( aDaneZrd[ 'powiazany' ] == 'T', '0', '1' )
+   aDane[ 'P_27' ] := aDaneZrd[ 'kraj' ]
+   aDane[ 'P_28' ] := aDaneZrd[ 'miasto' ]
+   aDane[ 'P_29' ] := aDaneZrd[ 'kodpoczt' ]
+   aDane[ 'P_30' ] := aDaneZrd[ 'ulica' ]
+   aDane[ 'P_31' ] := aDaneZrd[ 'nrbud' ]
+   aDane[ 'P_32' ] := aDaneZrd[ 'nrlok' ]
+
+   aDane[ 'P_33' ] := Eval( bVal, aDaneZrd[ 'D1D' ] )
+   aDane[ 'P_34' ] := Eval( bVal, aDaneZrd[ 'D1E' ] )
+   aDane[ 'P_35' ] := Eval( bVal, aDaneZrd[ 'D1G' ] )
+   aDane[ 'P_E1' ] := Eval( bVal, aDaneZrd[ 'D1F' ] )
+   aDane[ 'P_E2' ] := Eval( bVal, aDaneZrd[ 'D1D' ] )
+   aDane[ 'P_E3' ] := Eval( bVal, aDaneZrd[ 'D1E' ] )
+   aDane[ 'P_E4' ] := Eval( bVal, aDaneZrd[ 'D1G' ] )
+   aDane[ 'PE' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_E1' ] ) .OR. ! Empty( aDane[ 'P_E2' ] ) .OR. ! Empty( aDane[ 'P_E3' ] ) .OR. ! Empty( aDane[ 'P_E4' ] ), 1, 0 ), ;
+      'P_E1' => aDane[ 'P_E1' ], ;
+      'P_E2' => aDane[ 'P_E2' ], ;
+      'P_E3' => aDane[ 'P_E3' ], ;
+      'P_E4' => aDane[ 'P_E4' ] } }
+
+   aDane[ 'P_36' ] := Eval( bVal, aDaneZrd[ 'D2D' ] )
+   aDane[ 'P_37' ] := Eval( bVal, aDaneZrd[ 'D2E' ] )
+   aDane[ 'P_38' ] := Eval( bVal, aDaneZrd[ 'D2G' ] )
+   aDane[ 'P_F1' ] := Eval( bVal, aDaneZrd[ 'D2F' ] )
+   aDane[ 'P_F2' ] := Eval( bVal, aDaneZrd[ 'D2D' ] )
+   aDane[ 'P_F3' ] := Eval( bVal, aDaneZrd[ 'D2E' ] )
+   aDane[ 'P_F4' ] := Eval( bVal, aDaneZrd[ 'D2G' ] )
+   aDane[ 'PF' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_F1' ] ) .OR. ! Empty( aDane[ 'P_F2' ] ) .OR. ! Empty( aDane[ 'P_F3' ] ) .OR. ! Empty( aDane[ 'P_F4' ] ), 1, 0 ), ;
+      'P_F1' => aDane[ 'P_F1' ], ;
+      'P_F2' => aDane[ 'P_F2' ], ;
+      'P_F3' => aDane[ 'P_F3' ], ;
+      'P_F4' => aDane[ 'P_F4' ] } }
+
+   aDane[ 'P_39' ] := Eval( bVal, aDaneZrd[ 'D3D' ] )
+   aDane[ 'P_40' ] := Eval( bVal, aDaneZrd[ 'D3E' ] )
+   aDane[ 'P_41' ] := Eval( bVal, aDaneZrd[ 'D3G' ] )
+   aDane[ 'P_G1' ] := Eval( bVal, aDaneZrd[ 'D3F' ] )
+   aDane[ 'P_G2' ] := Eval( bVal, aDaneZrd[ 'D3D' ] )
+   aDane[ 'P_G3' ] := Eval( bVal, aDaneZrd[ 'D3E' ] )
+   aDane[ 'P_G4' ] := Eval( bVal, aDaneZrd[ 'D3G' ] )
+   aDane[ 'PG' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_G1' ] ) .OR. ! Empty( aDane[ 'P_G2' ] ) .OR. ! Empty( aDane[ 'P_G3' ] ) .OR. ! Empty( aDane[ 'P_G4' ] ), 1, 0 ), ;
+      'P_G1' => aDane[ 'P_G1' ], ;
+      'P_G2' => aDane[ 'P_G2' ], ;
+      'P_G3' => aDane[ 'P_G3' ], ;
+      'P_G4' => aDane[ 'P_G4' ] } }
+
+   aDane[ 'P_42' ] := Eval( bVal, aDaneZrd[ 'D4D' ] )
+   aDane[ 'P_43' ] := Eval( bVal, aDaneZrd[ 'D4E' ] )
+   aDane[ 'P_44' ] := Eval( bVal, aDaneZrd[ 'D4G' ] )
+   aDane[ 'P_H1' ] := Eval( bVal, aDaneZrd[ 'D4F' ] )
+   aDane[ 'P_H2' ] := Eval( bVal, aDaneZrd[ 'D4D' ] )
+   aDane[ 'P_H3' ] := Eval( bVal, aDaneZrd[ 'D4E' ] )
+   aDane[ 'P_H4' ] := Eval( bVal, aDaneZrd[ 'D4G' ] )
+   aDane[ 'PH' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_H1' ] ) .OR. ! Empty( aDane[ 'P_H2' ] ) .OR. ! Empty( aDane[ 'P_H3' ] ) .OR. ! Empty( aDane[ 'P_H4' ] ), 1, 0 ), ;
+      'P_H1' => aDane[ 'P_H1' ], ;
+      'P_H2' => aDane[ 'P_H2' ], ;
+      'P_H3' => aDane[ 'P_H3' ], ;
+      'P_H4' => aDane[ 'P_H4' ] } }
+
+   aDane[ 'P_45' ] := Eval( bVal, aDaneZrd[ 'D5D' ] )
+   aDane[ 'P_46' ] := Eval( bVal, aDaneZrd[ 'D5E' ] )
+   aDane[ 'P_47' ] := Eval( bVal, aDaneZrd[ 'D5G' ] )
+   aDane[ 'P_I1' ] := Eval( bVal, aDaneZrd[ 'D5F' ] )
+   aDane[ 'P_I2' ] := Eval( bVal, aDaneZrd[ 'D5D' ] )
+   aDane[ 'P_I3' ] := Eval( bVal, aDaneZrd[ 'D5E' ] )
+   aDane[ 'P_I4' ] := Eval( bVal, aDaneZrd[ 'D5G' ] )
+   aDane[ 'PI' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_I1' ] ) .OR. ! Empty( aDane[ 'P_I2' ] ) .OR. ! Empty( aDane[ 'P_I3' ] ) .OR. ! Empty( aDane[ 'P_I4' ] ), 1, 0 ), ;
+      'P_I1' => aDane[ 'P_I1' ], ;
+      'P_I2' => aDane[ 'P_I2' ], ;
+      'P_I3' => aDane[ 'P_I3' ], ;
+      'P_I4' => aDane[ 'P_I4' ] } }
+
+   aDane[ 'P_48' ] := Eval( bVal, aDaneZrd[ 'D6D' ] )
+   aDane[ 'P_49' ] := Eval( bVal, aDaneZrd[ 'D6E' ] )
+   aDane[ 'P_50' ] := Eval( bVal, aDaneZrd[ 'D6G' ] )
+   aDane[ 'P_J1' ] := Eval( bVal, aDaneZrd[ 'D6F' ] )
+   aDane[ 'P_J2' ] := Eval( bVal, aDaneZrd[ 'D6D' ] )
+   aDane[ 'P_J3' ] := Eval( bVal, aDaneZrd[ 'D6E' ] )
+   aDane[ 'P_J4' ] := Eval( bVal, aDaneZrd[ 'D6G' ] )
+   aDane[ 'PJ' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_J1' ] ) .OR. ! Empty( aDane[ 'P_J2' ] ) .OR. ! Empty( aDane[ 'P_J3' ] ) .OR. ! Empty( aDane[ 'P_J4' ] ), 1, 0 ), ;
+      'P_J1' => aDane[ 'P_J1' ], ;
+      'P_J2' => aDane[ 'P_J2' ], ;
+      'P_J3' => aDane[ 'P_J3' ], ;
+      'P_J4' => aDane[ 'P_J4' ] } }
+
+   aDane[ 'P_51' ] := Eval( bVal, aDaneZrd[ 'D7D' ] )
+   aDane[ 'P_52' ] := Eval( bVal, aDaneZrd[ 'D7E' ] )
+   aDane[ 'P_53' ] := Eval( bVal, aDaneZrd[ 'D7G' ] )
+   aDane[ 'P_K1' ] := Eval( bVal, aDaneZrd[ 'D7F' ] )
+   aDane[ 'P_K2' ] := Eval( bVal, aDaneZrd[ 'D7D' ] )
+   aDane[ 'P_K3' ] := Eval( bVal, aDaneZrd[ 'D7E' ] )
+   aDane[ 'P_K4' ] := Eval( bVal, aDaneZrd[ 'D7G' ] )
+   aDane[ 'PK' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_K1' ] ) .OR. ! Empty( aDane[ 'P_K2' ] ) .OR. ! Empty( aDane[ 'P_K3' ] ) .OR. ! Empty( aDane[ 'P_K4' ] ), 1, 0 ), ;
+      'P_K1' => aDane[ 'P_K1' ], ;
+      'P_K2' => aDane[ 'P_K2' ], ;
+      'P_K3' => aDane[ 'P_K3' ], ;
+      'P_K4' => aDane[ 'P_K4' ] } }
+
+   aDane[ 'P_54' ] := Eval( bVal, aDaneZrd[ 'D8D' ] )
+   aDane[ 'P_55' ] := Eval( bVal, aDaneZrd[ 'D8E' ] )
+   aDane[ 'P_56' ] := Eval( bVal, aDaneZrd[ 'D8G' ] )
+   aDane[ 'P_57' ] := Eval( bVal, 0 )
+   aDane[ 'P_L1' ] := Eval( bVal, aDaneZrd[ 'D8F' ] )
+   aDane[ 'P_L2' ] := Eval( bVal, aDaneZrd[ 'D8D' ] )
+   aDane[ 'P_L3' ] := Eval( bVal, aDaneZrd[ 'D8E' ] )
+   aDane[ 'P_L4' ] := Eval( bVal, aDaneZrd[ 'D8G' ] )
+   aDane[ 'P_L5' ] := Eval( bVal, 0 )
+   aDane[ 'PL' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_L1' ] ) .OR. ! Empty( aDane[ 'P_L2' ] ) .OR. ! Empty( aDane[ 'P_L3' ] ) .OR. ! Empty( aDane[ 'P_L4' ] ), 1, 0 ), ;
+      'P_L1' => aDane[ 'P_L1' ], ;
+      'P_L2' => aDane[ 'P_L2' ], ;
+      'P_L3' => aDane[ 'P_L3' ], ;
+      'P_L4' => aDane[ 'P_L4' ], ;
+      'P_L5' => aDane[ 'P_L5' ] } }
+
+   aDane[ 'P_58' ] := Eval( bVal, aDaneZrd[ 'D9D' ] )
+   aDane[ 'P_59' ] := Eval( bVal, aDaneZrd[ 'D9E' ] )
+   aDane[ 'P_60' ] := Eval( bVal, aDaneZrd[ 'D9G' ] )
+   aDane[ 'P_61' ] := Eval( bVal, 0 )
+   aDane[ 'P_M1' ] := Eval( bVal, aDaneZrd[ 'D9F' ] )
+   aDane[ 'P_M2' ] := Eval( bVal, aDaneZrd[ 'D9D' ] )
+   aDane[ 'P_M3' ] := Eval( bVal, aDaneZrd[ 'D9E' ] )
+   aDane[ 'P_M4' ] := Eval( bVal, aDaneZrd[ 'D9G' ] )
+   aDane[ 'P_M5' ] := Eval( bVal, 0 )
+   aDane[ 'PM' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_M1' ] ) .OR. ! Empty( aDane[ 'P_M2' ] ) .OR. ! Empty( aDane[ 'P_M3' ] ) .OR. ! Empty( aDane[ 'P_M4' ] ), 1, 0 ), ;
+      'P_M1' => aDane[ 'P_M1' ], ;
+      'P_M2' => aDane[ 'P_M2' ], ;
+      'P_M3' => aDane[ 'P_M3' ], ;
+      'P_M4' => aDane[ 'P_M4' ], ;
+      'P_M5' => aDane[ 'P_M5' ] } }
+
+   aDane[ 'P_62' ] := Eval( bVal, aDaneZrd[ 'D10D' ] )
+   aDane[ 'P_63' ] := Eval( bVal, aDaneZrd[ 'D10E' ] )
+   aDane[ 'P_64' ] := Eval( bVal, aDaneZrd[ 'D10G' ] )
+   aDane[ 'P_65' ] := Eval( bVal, 0 )
+   aDane[ 'P_N1' ] := Eval( bVal, aDaneZrd[ 'D10F' ] )
+   aDane[ 'P_N2' ] := Eval( bVal, aDaneZrd[ 'D10D' ] )
+   aDane[ 'P_N3' ] := Eval( bVal, aDaneZrd[ 'D10E' ] )
+   aDane[ 'P_N4' ] := Eval( bVal, aDaneZrd[ 'D10G' ] )
+   aDane[ 'P_N5' ] := Eval( bVal, 0 )
+   aDane[ 'PN' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_N1' ] ) .OR. ! Empty( aDane[ 'P_N2' ] ) .OR. ! Empty( aDane[ 'P_N3' ] ) .OR. ! Empty( aDane[ 'P_N4' ] ), 1, 0 ), ;
+      'P_N1' => aDane[ 'P_N1' ], ;
+      'P_N2' => aDane[ 'P_N2' ], ;
+      'P_N3' => aDane[ 'P_N3' ], ;
+      'P_N4' => aDane[ 'P_N4' ], ;
+      'P_N5' => aDane[ 'P_N5' ] } }
+
+   aDane[ 'P_66' ] := Eval( bVal, aDaneZrd[ 'D11D' ] )
+   aDane[ 'P_67' ] := Eval( bVal, aDaneZrd[ 'D11E' ] )
+   aDane[ 'P_68' ] := Eval( bVal, aDaneZrd[ 'D11G' ] )
+   aDane[ 'P_O1' ] := Eval( bVal, aDaneZrd[ 'D11F' ] )
+   aDane[ 'P_O2' ] := Eval( bVal, aDaneZrd[ 'D11D' ] )
+   aDane[ 'P_O3' ] := Eval( bVal, aDaneZrd[ 'D11E' ] )
+   aDane[ 'P_O4' ] := Eval( bVal, aDaneZrd[ 'D11G' ] )
+   aDane[ 'PO' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_O1' ] ) .OR. ! Empty( aDane[ 'P_O2' ] ) .OR. ! Empty( aDane[ 'P_O3' ] ) .OR. ! Empty( aDane[ 'P_O4' ] ), 1, 0 ), ;
+      'P_O1' => aDane[ 'P_O1' ], ;
+      'P_O2' => aDane[ 'P_O2' ], ;
+      'P_O3' => aDane[ 'P_O3' ], ;
+      'P_O4' => aDane[ 'P_O4' ] } }
+
+   aDane[ 'P_69' ] := Eval( bVal, aDaneZrd[ 'D12D' ] )
+   aDane[ 'P_70' ] := Eval( bVal, aDaneZrd[ 'D12E' ] )
+   aDane[ 'P_71' ] := Eval( bVal, aDaneZrd[ 'D12G' ] )
+   aDane[ 'P_P1' ] := Eval( bVal, aDaneZrd[ 'D12F' ] )
+   aDane[ 'P_P2' ] := Eval( bVal, aDaneZrd[ 'D12D' ] )
+   aDane[ 'P_P3' ] := Eval( bVal, aDaneZrd[ 'D12E' ] )
+   aDane[ 'P_P4' ] := Eval( bVal, aDaneZrd[ 'D12G' ] )
+   aDane[ 'PP' ] := { { 'aktywny' => iif( ! Empty( aDane[ 'P_P1' ] ) .OR. ! Empty( aDane[ 'P_P2' ] ) .OR. ! Empty( aDane[ 'P_P3' ] ) .OR. ! Empty( aDane[ 'P_P4' ] ), 1, 0 ), ;
+      'P_P1' => aDane[ 'P_P1' ], ;
+      'P_P2' => aDane[ 'P_P2' ], ;
+      'P_P3' => aDane[ 'P_P3' ], ;
+      'P_P4' => aDane[ 'P_P4' ] } }
+
+   aDane[ 'P_72' ] := aDaneZrd[ 'K01' ]
+   aDane[ 'P_73' ] := aDaneZrd[ 'K02' ]
+   aDane[ 'P_74' ] := aDaneZrd[ 'K03' ]
+   aDane[ 'P_75' ] := aDaneZrd[ 'K04' ]
+   aDane[ 'P_76' ] := aDaneZrd[ 'K05' ]
+   aDane[ 'P_77' ] := aDaneZrd[ 'K06' ]
+   aDane[ 'P_78' ] := aDaneZrd[ 'P01' ]
+   aDane[ 'P_79' ] := aDaneZrd[ 'P02' ]
+   aDane[ 'P_80' ] := aDaneZrd[ 'P03' ]
+   aDane[ 'P_81' ] := aDaneZrd[ 'P04' ]
+   aDane[ 'P_82' ] := aDaneZrd[ 'P05' ]
+   aDane[ 'P_83' ] := aDaneZrd[ 'P06' ]
+   aDane[ 'P_84' ] := aDaneZrd[ 'K07' ]
+   aDane[ 'P_85' ] := aDaneZrd[ 'K08' ]
+   aDane[ 'P_86' ] := aDaneZrd[ 'K09' ]
+   aDane[ 'P_87' ] := aDaneZrd[ 'K10' ]
+   aDane[ 'P_88' ] := aDaneZrd[ 'K11' ]
+   aDane[ 'P_89' ] := aDaneZrd[ 'K12' ]
+   aDane[ 'P_90' ] := aDaneZrd[ 'P07' ]
+   aDane[ 'P_91' ] := aDaneZrd[ 'P08' ]
+   aDane[ 'P_92' ] := aDaneZrd[ 'P09' ]
+   aDane[ 'P_93' ] := aDaneZrd[ 'P10' ]
+   aDane[ 'P_94' ] := aDaneZrd[ 'P11' ]
+   aDane[ 'P_95' ] := aDaneZrd[ 'P12' ]
+   aDane[ 'P_96' ] := aDaneZrd[ 'K13' ]
+   aDane[ 'P_97' ] := aDaneZrd[ 'K14' ]
+   aDane[ 'P_98' ] := aDaneZrd[ 'K15' ]
+   aDane[ 'P_99' ] := aDaneZrd[ 'K16' ]
+   aDane[ 'P_100' ] := aDaneZrd[ 'K17' ]
+   aDane[ 'P_101' ] := aDaneZrd[ 'K18' ]
+   aDane[ 'P_102' ] := aDaneZrd[ 'P13' ]
+   aDane[ 'P_103' ] := aDaneZrd[ 'P14' ]
+   aDane[ 'P_104' ] := aDaneZrd[ 'P15' ]
+   aDane[ 'P_105' ] := aDaneZrd[ 'P16' ]
+   aDane[ 'P_106' ] := aDaneZrd[ 'P17' ]
+   aDane[ 'P_107' ] := aDaneZrd[ 'P18' ]
+   aDane[ 'P_108' ] := aDaneZrd[ 'K19' ]
+   aDane[ 'P_109' ] := aDaneZrd[ 'K20' ]
+   aDane[ 'P_110' ] := aDaneZrd[ 'K21' ]
+   aDane[ 'P_111' ] := aDaneZrd[ 'K22' ]
+   aDane[ 'P_112' ] := aDaneZrd[ 'K23' ]
+   aDane[ 'P_113' ] := aDaneZrd[ 'KR' ]
+   aDane[ 'P_114' ] := aDaneZrd[ 'P19' ]
+   aDane[ 'P_115' ] := aDaneZrd[ 'P20' ]
+   aDane[ 'P_116' ] := aDaneZrd[ 'P21' ]
+   aDane[ 'P_117' ] := aDaneZrd[ 'P22' ]
+   aDane[ 'P_118' ] := aDaneZrd[ 'P23' ]
+   aDane[ 'P_119' ] := aDaneZrd[ 'PR' ]
+
+   aDane[ 'P_120' ] := iif( aDaneZrd[ 'rocznie' ], aDaneZrd[ 'miesiace' ], '' )
+   aDane[ 'P_121' ] := iif( ! aDaneZrd[ 'rocznie' ], aDaneZrd[ 'data_zl' ], '' )
+   aDane[ 'P_122' ] := aDaneZrd[ 'data_prz' ]
 
    aDane[ 'ROCZNY' ] := iif( aDaneZrd[ 'rocznie' ], '1', '0' )
 
