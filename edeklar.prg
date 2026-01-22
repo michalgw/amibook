@@ -4230,7 +4230,7 @@ FUNCTION edek_pit11_29()
 		r = r + '  <Pouczenie>1</Pouczenie>' + nl
       IF tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_pit11)) > 0
          r = r + '<Zalaczniki>' + nl
-         r = r + edek_ord_zu3v9(tresc_korekty_pit11) + nl
+         r = r + edek_ord_zu3v11(tresc_korekty_pit11) + nl
          r = r + '</Zalaczniki>' + nl
       ENDIF
 		r = r + '</Deklaracja>'
@@ -8215,6 +8215,22 @@ FUNCTION edek_ord_zu3v10(sUzasadnienieP13)
    r = '  <zzu:Zalacznik_ORD-ZU xmlns:zzu="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/09/13/eD/ORDZU/">' + nl
    r = r + '    <zzu:Naglowek>' + nl
    r = r + '      <zzu:KodFormularza kodSystemowy="ORD-ZU (3)" wersjaSchemy="10-0E">ORD-ZU</zzu:KodFormularza>' + nl
+   r = r + '      <zzu:WariantFormularza>3</zzu:WariantFormularza>' + nl
+   r = r + '    </zzu:Naglowek>' + nl
+   r = r + '    <zzu:PozycjeSzczegolowe>' + nl
+   r = r + '       <zzu:P_13>' + str2sxml( MemoTran( sUzasadnienieP13, ' ', ' ' ) ) + '</zzu:P_13>' + nl
+   r = r + '    </zzu:PozycjeSzczegolowe>' + nl
+   r = r + '  </zzu:Zalacznik_ORD-ZU>'
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION edek_ord_zu3v11(sUzasadnienieP13)
+   LOCAL r, nl
+   nl := Chr(13) + Chr(10)
+   r = '  <zzu:Zalacznik_ORD-ZU xmlns:zzu="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2024/07/08/eD/ORDZU/">' + nl
+   r = r + '    <zzu:Naglowek>' + nl
+   r = r + '      <zzu:KodFormularza kodSystemowy="ORD-ZU (3)" wersjaSchemy="11-0E">ORD-ZU</zzu:KodFormularza>' + nl
    r = r + '      <zzu:WariantFormularza>3</zzu:WariantFormularza>' + nl
    r = r + '    </zzu:Naglowek>' + nl
    r = r + '    <zzu:PozycjeSzczegolowe>' + nl
