@@ -136,6 +136,9 @@ begin sequence
              aRow['k17'] := k17
              aRow['k16w'] := k16w
              aRow['k16o'] := AllTrim( k16o )
+             aRow['nrksef'] := AllTrim( nrksef )
+             aRow['nr_ident'] := AllTrim( nr_ident )
+             aRow['kraj'] := AllTrim( kraj )
              IF left(znumer,1)#chr(1).and.left(znumer,1)#chr(254)
                 aRow['k7s'] := k7
                 aRow['k8s'] := k8
@@ -225,7 +228,7 @@ PROCEDURE ksiega16()
 
          TRY
             oRap := FRUtworzRaport()
-            oRap:LoadFromFile('frf\ksiega16b.frf')
+            oRap:LoadFromFile('frf\ksiega26b.frf')
 
             IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
                oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
@@ -309,7 +312,7 @@ PROCEDURE ksiega16()
          IF nLewaPrawa == 1 .OR. nLewaPrawa == 2
             TRY
                oRap := FRUtworzRaport()
-               oRap:LoadFromFile('frf\ksiega16l.frf')
+               oRap:LoadFromFile('frf\ksiega26l.frf')
 
                IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
                   oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
@@ -357,7 +360,7 @@ PROCEDURE ksiega16()
             ENDIF
             TRY
                oRap := FRUtworzRaport()
-               oRap:LoadFromFile('frf\ksiega16p.frf')
+               oRap:LoadFromFile('frf\ksiega26p.frf')
 
                IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
                   oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
@@ -430,7 +433,7 @@ PROCEDURE ksiega16()
 
          TRY
             oRap := FRUtworzRaport()
-            oRap:LoadFromFile('frf\ksiega16.frf')
+            oRap:LoadFromFile('frf\ksiega26.frf')
 
             IF Len( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) ) > 0
                oRap:SetPrinter( AllTrim( hProfilUzytkownika[ 'drukarka' ] ) )
