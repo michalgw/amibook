@@ -391,7 +391,11 @@ public aEWIDdbf := {;
    { "RYK07", "N", 11, 2 },;                      //  21  Wartosc sprzedazy op. st. 5,5% (kol 12)
    { "RYK08", "N", 11, 2 },;                      //  22  Wartosc sprzedazy op. st. 2% (kol dodatkowa)
    { "RYK09", "N", 11, 2 },;                      //  23  Wartosc sprzedazy op. st. 14% (kol 7)
-   { "RYK10", "N", 11, 2 } }                      //  24  Wartosc sprzedazy op. st. 12% (kol 9)
+   { "RYK10", "N", 11, 2 },;                      //  24  Wartosc sprzedazy op. st. 12% (kol 9)
+   { "NR_IDENT", "C", 30, 0 },;                   //  25  Nr identyfikacji podatkowej
+   { "KRAJ", "C", 2, 0 },;                        //  26  Kod kraju nadania identyfikatora
+   { "NRKSEF", "C", 35, 0 },;                     //  27  Nr KSeF dokumentu
+   { "KOSID", "N", 12, 0 } }                      //  28 Nr ID dokumentu w GM Kos
 
 // Create: EWIDPOJ.DBF
 public aEWIDPOJdbf := {;
@@ -784,7 +788,7 @@ public aOPERdbf := {;
    { "FIRMA", "C", 3, 0 },;                       //  3
    { "MC", "C", 2, 0 },;                          //  4
    { "DZIEN", "C", 2, 0 },;                       //  5
-   { "NUMER", "C", 100, 0 },;                      //  6
+   { "NUMER", "C", 100, 0 },;                     //  6
    { "NAZWA", "C", 200, 0 },;                     //  7
    { "ADRES", "C", 200, 0 },;                     //  8
    { "TRESC", "C", 30, 0 },;                      //  9
@@ -816,7 +820,10 @@ public aOPERdbf := {;
    { "IFT2KWOT", "N", 11, 0 },;                   //  35
    { "WARTZUS", "N", 11, 2 },;                    //  36 Wartosc przychodu do ZUS
    { "SALPRGID", "C", 64, 0 },;                   //  37 Saldeo company_program_id
-   { "SALSALID", "C", 64, 0 } }                   //  38 Saldeo saldeo id
+   { "SALSALID", "C", 64, 0 },;                   //  38 Saldeo saldeo id
+   { "KRAJ", "C", 2, 0 },;                        //  39 Kod kraju
+   { "NRKSEF", "C", 35, 0 },;                     //  40 Nr KSeF dokumentu
+   { "KOSID", "N", 12, 0 } }                      //  41 Nr ID dokumentu w GM Kos
 
 // Create: ORGANY.DBF
 public aORGANYdbf := {;
@@ -1167,7 +1174,11 @@ public aREJSdbf := {;
    { "VATMARZA", "N", 11, 2 },;                   //  55
    { "SALPRGID", "C", 64, 0 },;                   //  56 Saldeo company_program_id
    { "SALSALID", "C", 64, 0 },;                   //  57 Saldeo saldeo id
-   { "KSGZBIOR", "C", 1, 0 } }                    //  58 Zbiorczy wpis w ksiedze T/N
+   { "KSGZBIOR", "C", 1, 0 },;                    //  58 Zbiorczy wpis w ksiedze T/N
+   { "KOL360", "N", 11, 2 },;                     //  59 Wysoko˜† podatku od niezwr¢conej kaucji pobranej za produkty w opakowaniach na napoje obj©te systemem kaucyjnym, podlegaj¥ca wpˆacie przez podmiot reprezentuj¥cy, o kt¢rym mowa w art. 17b ustawy
+   { "KSEFSTAT", "C", 1, 0 },;                    //  60 Status KSeF (jesli brak nr ksef) O - Offline, B - faktura poza KSeF, D - inny dowod niz faktura
+   { "NRKSEF", "C", 35, 0 },;                     //  61 Nr KSeF dokumentu
+   { "KOSID", "N", 12, 0 } }                      //  62 Nr ID dokumentu w GM Kos
 
 // Create: REJZ.DBF
 public aREJZdbf := {;
@@ -1243,7 +1254,10 @@ public aREJZdbf := {;
    { "IFT2SEK", "C", 3, 0 },;                     //  70
    { "IFT2KWOT", "N", 11, 0 },;                   //  71
    { "SALPRGID", "C", 64, 0 },;                   //  72 Saldeo company_program_id
-   { "SALSALID", "C", 64, 0 } }                   //  73 Saldeo saldeo id
+   { "SALSALID", "C", 64, 0 },;                   //  73 Saldeo saldeo id
+   { "KSEFSTAT", "C", 1, 0 },;                    //  74 Status KSeF (jesli brak nr ksef) O - Offline, B - faktura poza KSeF, D - inny dowod niz faktura
+   { "NRKSEF", "C", 35, 0 },;                     //  75 Nr KSeF dokumentu
+   { "KOSID", "N", 12, 0 } }                      //  76 Nr ID dokumentu w GM Kos
 
 // Create: RELACJE.DBF
 public aRELACJEdbf := {;
