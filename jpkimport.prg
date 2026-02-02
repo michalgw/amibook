@@ -733,13 +733,27 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                   'K_10', 0, 'K_11', 0, 'K_12', 0, 'K_13', 0, 'K_14', 0, 'K_15', 0, 'K_16', 0, ;
                   'K_17', 0, 'K_18', 0, 'K_19', 0, 'K_20', 0, 'K_21', 0, 'K_22', 0, 'K_23', 0, ;
                   'K_24', 0, 'K_25', 0, 'K_26', 0, 'K_27', 0, 'K_28', 0, 'K_29', 0, 'K_30', 0, ;
-                  'K_31', 0, 'K_32', 0, 'K_33', 0, 'K_34', 0, 'K_35', 0, 'K_36', 0, 'SprzedazVAT_Marza', 0 )
+                  'K_31', 0, 'K_32', 0, 'K_33', 0, 'K_34', 0, 'K_35', 0, 'K_36', 0, 'SprzedazVAT_Marza', 0, ;
+                  'K_360', 0 )
 
                IF Len( aDaneJPK[ 'Sprzedaz' ] ) > 0
 
                   AEval( aDaneJPK[ 'Sprzedaz' ], { | aW |
                      aW[ 'Aktywny' ] := .F.
                      aW[ 'Importuj' ] := .F.
+
+                     IF ! hb_HHasKey( aW, 'NrKSeF' )
+                        aW[ 'NrKSeF' ] := ''
+                        aW[ 'KSeFStat' ] := 'B'
+                        IF hb_HHasKey( aW, 'OFF' )
+                           aW[ 'KSeFStat' ] := 'O'
+                        ELSEIF hb_HHasKey( aW, 'DI' )
+                           aW[ 'KSeFStat' ] := 'D'
+                        ENDIF
+                     ELSE
+                        aW[ 'KSeFStat' ] := ' '
+                     ENDIF
+
                      aW[ 'DataWystawienia' ] := sxml2date( aW[ 'DataWystawienia' ] )
                      IF ! hb_HHasKey( aW, 'NazwaKontrahenta' )
                         aW[ 'NazwaKontrahenta' ] := "BRAK"
@@ -991,6 +1005,10 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                         aW[ 'K_36' ] := sxml2num( aW[ 'K_36' ], 0 )
                         aDaneJPK[ 'SprzedazSum' ][ 'K_36' ] += aW[ 'K_36' ]
                      ENDIF
+                     IF hb_HHasKey( aW, 'K_360' ) .AND. HB_ISCHAR( aW[ 'K_360' ] )
+                        aW[ 'K_36' ] := sxml2num( aW[ 'K_360' ], 0 )
+                        aDaneJPK[ 'SprzedazSum' ][ 'K_360' ] += aW[ 'K_360' ]
+                     ENDIF
                      IF hb_HHasKey( aW, 'SprzedazVAT_Marza' ) .AND. HB_ISCHAR( aW[ 'SprzedazVAT_Marza' ] )
                         aW[ 'SprzedazVAT_Marza' ] := sxml2num( aW[ 'SprzedazVAT_Marza' ], 0 )
                         aDaneJPK[ 'SprzedazSum' ][ 'SprzedazVAT_Marza' ] += aW[ 'SprzedazVAT_Marza' ]
@@ -1034,6 +1052,19 @@ FUNCTION JPKImp_VatS_Wczytaj( cPlikJpk, lZakupy )
                      AEval( aDaneJPK[ 'Zakup' ], { | aW |
                         aW[ 'Aktywny' ] := .F.
                         aW[ 'Importuj' ] := .F.
+
+                        IF ! hb_HHasKey( aW, 'NrKSeF' )
+                           aW[ 'NrKSeF' ] := ''
+                           aW[ 'KSeFStat' ] := 'B'
+                           IF hb_HHasKey( aW, 'OFF' )
+                              aW[ 'KSeFStat' ] := 'O'
+                           ELSEIF hb_HHasKey( aW, 'DI' )
+                              aW[ 'KSeFStat' ] := 'D'
+                           ENDIF
+                        ELSE
+                           aW[ 'KSeFStat' ] := ' '
+                        ENDIF
+
                         aW[ 'DataZakupu' ] := sxml2date( aW[ 'DataZakupu' ] )
                         IF ! hb_HHasKey( aW, 'NazwaDostawcy' )
                            aW[ 'NazwaDostawcy' ] := "BRAK"
@@ -1221,7 +1252,8 @@ PROCEDURE JPKImp_VatS_Podglad_V7( aDane, aSumy )
    LOCAL aNaglowki := { "Import", "Lp", "NIP", "Nazwa", "Nr dow. sprzeda¾y", "Data wyst.", "Data sprz.", ;
       "K_10", "K_11", "K_12", "K_13", "K_14", "K_15", "K_16", "K_17", "K_18", "K_19", ;
       "K_20", "K_21", "K_22", "K_23", "K_24", "K_25", "K_26", "K_27", "K_28", "K_29", ;
-      "K_30", "K_31", "K_32", "K_33", "K_34", "K_35", "K_36", "Mar¾a", "Typ dok.", "Oznaczenie", "Procedura", "MPP" }
+      "K_30", "K_31", "K_32", "K_33", "K_34", "K_35", "K_36", "K_360", "Mar¾a", "Typ dok.", ;
+      "Oznaczenie", "Procedura", "MPP", "NrKSeF", "Status KSeF" }
    LOCAL aBlokiKolumn := { ;
       { || iif( aDane[ nElem ][ "Importuj" ], "Tak", "Nie" ) }, ;
       { || PadC( aDane[ nElem ][ "LpSprzedazy" ], 6 ) }, ;
@@ -1257,11 +1289,14 @@ PROCEDURE JPKImp_VatS_Podglad_V7( aDane, aSumy )
       { || iif( hb_HHasKey( aDane[ nElem ], "K_34" ), Transform( aDane[ nElem ][ "K_34" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
       { || iif( hb_HHasKey( aDane[ nElem ], "K_35" ), Transform( aDane[ nElem ][ "K_35" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
       { || iif( hb_HHasKey( aDane[ nElem ], "K_36" ), Transform( aDane[ nElem ][ "K_36" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
+      { || iif( hb_HHasKey( aDane[ nElem ], "K_360" ), Transform( aDane[ nElem ][ "K_360" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
       { || iif( hb_HHasKey( aDane[ nElem ], "SprzedazVAT_Marza" ), Transform( aDane[ nElem ][ "SprzedazVAT_Marza" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
       { || PadR( aDane[ nElem ][ "TypDokumentu" ], 3 ) }, ;
       { || PadR( aDane[ nElem ][ "Oznaczenie" ], 2 ) }, ;
       { || PadR( aDane[ nElem ][ "Procedura" ], 3 ) }, ;
-      { || iif( aDane[ nElem ][ 'MPP' ], "Tak", "Nie" ) } }
+      { || iif( aDane[ nElem ][ 'MPP' ], "Tak", "Nie" ) }, ;
+      { || PadR( aDane[ nElem ][ "NrKSeF" ], 35 ) }, ;
+      { || PadC( aDane[ nElem ][ "KSeFStat" ], 3 ) } }
    LOCAL bColorBlock := { | xVal |
       IF aDane[ nElem ][ "Importuj" ]
          RETURN { 1, 2 }
@@ -1283,7 +1318,8 @@ PROCEDURE JPKImp_VatS_Podglad_V7( aDane, aSumy )
       Transform( aSumy[ "K_31" ], RPICE ), Transform( aSumy[ "K_32" ], RPICE ), ;
       Transform( aSumy[ "K_33" ], RPICE ), Transform( aSumy[ "K_34" ], RPICE ), ;
       Transform( aSumy[ "K_35" ], RPICE ), Transform( aSumy[ "K_36" ], RPICE ), ;
-      Transform( aSumy[ "SprzedazVAT_Marza" ], RPICE ), "", "", "", "" }
+      Transform( aSumy[ "K_360" ], RPICE ), Transform( aSumy[ "SprzedazVAT_Marza" ], RPICE ), ;
+      "", "", "", "", "", "" }
    LOCAL aKlawisze := { { K_ENTER, { | nElem, ar, b |
       IF ar[ nElem ][ 'Aktywny' ] .OR. aDane[ 'ZezwolNaPuste' ] == 'T'
          ar[ nElem ][ 'Importuj' ] := ! ar[ nElem ][ 'Importuj' ]
@@ -1355,7 +1391,8 @@ PROCEDURE JPKImp_VatZ_Podglad_V7( aDane, aSumy )
 
    LOCAL nElem := 1
    LOCAL aNaglowki := { "Import", "Lp", "NIP", "Nazwa", "Nr dow. sprzeda¾y", "Data wyst.", "Data sprz.", ;
-      "Rodz.dok", "K_40", "K_41", "K_42", "K_43", "K_44", "K_45", "K_46", "K_47", "Mar¾a", "MPP", "IMP" }
+      "Rodz.dok", "K_40", "K_41", "K_42", "K_43", "K_44", "K_45", "K_46", "K_47", "Mar¾a", "MPP", "IMP", ;
+      "NrKSeF", "Status KSeF" }
 
    LOCAL aBlokiKolumn := { ;
       { || iif( aDane[ nElem ][ "Importuj" ], "Tak", "Nie" ) }, ;
@@ -1376,7 +1413,9 @@ PROCEDURE JPKImp_VatZ_Podglad_V7( aDane, aSumy )
       { || iif( hb_HHasKey( aDane[ nElem ], "K_47" ), Transform( aDane[ nElem ][ "K_47" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
       { || iif( hb_HHasKey( aDane[ nElem ], "ZakupVAT_Marza" ), Transform( aDane[ nElem ][ "ZakupVAT_Marza" ], RPICE ),  Transform( 0, RPICE ) ) }, ;
       { || iif( aDane[ nElem ][ 'MPP' ], "Tak", "Nie" ) }, ;
-      { || iif( aDane[ nElem ][ 'IMP' ], "Tak", "Nie" ) } }
+      { || iif( aDane[ nElem ][ 'IMP' ], "Tak", "Nie" ) }, ;
+      { || PadR( aDane[ nElem ][ "NrKSeF" ], 35 ) }, ;
+      { || PadC( aDane[ nElem ][ "KSeFStat" ], 3 ) } }
    LOCAL bColorBlock := { | xVal |
       IF aDane[ nElem ][ "Importuj" ]
          RETURN { 1, 2 }
@@ -1654,6 +1693,9 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
          aPozDek[ 'Procedura' ] := ''
          aPozDek[ 'Oznaczenie' ] := ''
 
+         aPozDek[ 'NrKSeF' ] := ''
+         aPozDek[ 'KSeFStat' ] := ''
+
          aPozDek[ 'FakturaPoz' ] := aPoz
 
          AAdd( aRes, aPozDek )
@@ -1823,6 +1865,9 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
          aPozDek[ 'VATMarza' ] := 0
          aPozDek[ 'RodzDow' ] := ''
 
+         aPozDek[ 'NrKSeF' ] := ''
+         aPozDek[ 'KSeFStat' ] := ''
+
          aPozDek[ 'SprzedazPoz' ] := aPoz
 
          AAdd( aRes, aPozDek )
@@ -1924,6 +1969,9 @@ PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
       aPozDek[ 'RodzDow' ] := ''
       aPozDek[ 'Procedura' ] := ''
       aPozDek[ 'Oznaczenie' ] := ''
+
+      aPozDek[ 'NrKSeF' ] := ''
+      aPozDek[ 'KSeFStat' ] := ''
 
       aPozDek[ 'SprzedazPoz' ] := aPoz
 
@@ -2051,6 +2099,9 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
       aPozDek[ 'VATMarza' ] := 0
       aPozDek[ 'RodzDow' ] := ''
 
+      aPozDek[ 'NrKSeF' ] := ''
+      aPozDek[ 'KSeFStat' ] := ''
+
       AAdd( aRes, aPozDek )
 
    } )
@@ -2161,6 +2212,9 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
 
       aPozDek[ 'VATMarza' ] := 0
       aPozDek[ 'RodzDow' ] := ''
+
+      aPozDek[ 'NrKSeF' ] := ''
+      aPozDek[ 'KSeFStat' ] := ''
 
       aPozDek[ 'SprzedazPoz' ] := aPoz
 
@@ -2274,6 +2328,9 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
       IF HGetDefault( aPoz, 'KorektaPodstawyOpodt', .F. )
          aPozDek[ 'zkorekta' ] := 'Z'
       ENDIF
+
+      aPozDek[ 'NrKSeF' ] := HGetDefault( aPoz, 'NrKSeF', '' )
+      aPozDek[ 'KSeFStat' ] := HGetDefault( aPoz, 'KSeFStat', '' )
 
       AAdd( aRes, aPozDek )
 
@@ -2397,6 +2454,9 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
       aPozDek[ 'VATMarza' ] := 0
       aPozDek[ 'RodzDow' ] := ''
 
+      aPozDek[ 'NrKSeF' ] := HGetDefault( aPoz, 'NrKSeF', '' )
+      aPozDek[ 'KSeFStat' ] := HGetDefault( aPoz, 'KSeFStat', '' )
+
       aPozDek[ 'SprzedazPoz' ] := aPoz
 
       AAdd( aRes, aPozDek )
@@ -2509,6 +2569,9 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
 
       aPozDek[ 'VATMarza' ] := HGetDefault( aPoz, 'ZakupVAT_Marza', 0 )
       aPozDek[ 'RodzDow' ] := aPoz[ 'DokumentZakupu' ]
+
+      aPozDek[ 'NrKSeF' ] := HGetDefault( aPoz, 'NrKSeF', '' )
+      aPozDek[ 'KSeFStat' ] := HGetDefault( aPoz, 'KSeFStat', '' )
 
       aPozDek[ 'SprzedazPoz' ] := aPoz
 
@@ -2638,6 +2701,19 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zKOLUMNA2 := '  '
          zDATA_ZAP := CToD('')
 
+         zKOL360 := 0
+         IF Empty( aPoz[ 'NrKSeF' ] )
+            zNRKSEF := Space( 35 )
+            IF ! Empty( aPoz[ 'KSeFStat' ] )
+               zKSEFSTAT := aPoz[ 'KSeFStat' ]
+            ELSE
+               zKSEFSTAT := 'B'
+            ENDIF
+         ELSE
+            zNRKSEF := aPoz[ 'NrKSeF' ]
+            zKSEFSTAT := ' '
+         ENDIF
+
          IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'REJS', ident_fir, miesiac, znumer, @aIstniejacyRec )
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
             AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje ju¾ dokument o tym numerze' ) )
@@ -2704,6 +2780,14 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
          zZAP_WART := 0
          zK16WART := 0
          zK16OPIS := Space( 30 )
+
+         zKRAJ := aPoz[ 'zkraj' ]
+
+         IF Empty( aPoz[ 'NrKSeF' ] )
+            zNRKSEF := Space( 35 )
+         ELSE
+            zNRKSEF := aPoz[ 'NrKSeF' ]
+         ENDIF
 
          zNETTO := _round( aPoz[ 'zwartzw' ] + aPoz[ 'zwart08' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ], 2 )
 
@@ -2840,6 +2924,18 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
 
          zNETTO2 := 0
          zKOLUMNA2 := '  '
+
+         IF Empty( aPoz[ 'NrKSeF' ] )
+            zNRKSEF := Space( 35 )
+            IF ! Empty( aPoz[ 'KSeFStat' ] )
+               zKSEFSTAT := aPoz[ 'KSeFStat' ]
+            ELSE
+               zKSEFSTAT := 'B'
+            ENDIF
+         ELSE
+            zNRKSEF := aPoz[ 'NrKSeF' ]
+            zKSEFSTAT := ' '
+         ENDIF
 
          zRODZDOW := HGetDefault( aPoz, 'RodzDow', '' )
          zVATMARZA := HGetDefault( aPoz, 'VATMarza', 0 )
