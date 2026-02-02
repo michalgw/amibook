@@ -219,7 +219,7 @@ PROCEDURE menuKonfigKsiegaPokaz()
    @ 21, 30 SAY iif(param_ksv7 == 'T', 'Tak', 'Nie')
    @ 22, 33 SAY iif(param_kssr == 'T', 'Tak', 'Nie')
    @  4, 72 SAY iif(param_kswv == 'T', 'Tak', 'Nie')
-   @  6, 74 SAY iif(param_kswv == 'T', 'Tak', 'Nie')
+   @  6, 74 SAY iif(param_ksws == 'T', 'Tak', 'Nie')
    SWITCH param_kslp
    CASE '1'
       @ 14, 20 SAY '1 - Nr dok./Dzieä'
