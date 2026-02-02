@@ -71,7 +71,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                           export with zexport,ue with zue,kraj with zkraj,detal with zdetal,;
                           symb_rej with zsymb_rej,ROZRZAPS with zROZRZAPS,ZAP_TER with zZAP_TER,ZAP_DAT  with zZAP_DAT,ZAP_WART with zZAP_WART,;
                           datatran WITH zDATATRAN, OPCJE WITH zOPCJE, PROCEDUR WITH zPROCEDUR, RODZDOW WITH zRODZDOW, VATMARZA WITH zVATMARZA, ;
-                          data_zap WITH zDATA_ZAP
+                          data_zap WITH zDATA_ZAP, NRKSEF WITH zNRKSEF, KSEFSTAT WITH zKSEFSTAT
 
 #command ADDREJZ  =>  repl roks with str(year(zdatas),4),mcs with str(month(zdatas),2),;
                           dziens with str(day(zdatas),2),uwagi with zuwagi,rach with zrach,;
@@ -82,4 +82,5 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
                           symb_rej with zsymb_rej,uslugaue with zuslugaue,wewdos with zwewdos,sek_cv7 with zsek_cv7,;
                           paliwa with zpaliwa,pojazdy with zpojazdy,dataks with zdataks,;
                           ROZRZAPZ with zROZRZAPZ,ZAP_TER with zZAP_TER,ZAP_DAT  with zZAP_DAT,ZAP_WART with zZAP_WART,;
-                          OPCJE with zOPCJE, datatran WITH zDATATRAN, RODZDOW WITH zRODZDOW, VATMARZA WITH zVATMARZA
+                          OPCJE with zOPCJE, datatran WITH zDATATRAN, RODZDOW WITH zRODZDOW, VATMARZA WITH zVATMARZA,;
+                          NRKSEF WITH zNRKSEF, KSEFSTAT WITH zKSEFSTAT

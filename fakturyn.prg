@@ -2460,6 +2460,8 @@ FUNCTION FakturyN_Ksieguj()
                   repl_( 'OPCJE', zOPCJE )
                   repl_( 'PROCEDUR', zPROCEDUR )
                   repl_( 'RODZDOW', zRODZDOW )
+                  repl_( 'KSEFSTAT', 'B' )
+
    *           if zsposob_p=1.or.zsposob_p=3
    *              if zsposob_p=3.and.nr_uzytk=6
    *                 repl_([zaplata],[1])

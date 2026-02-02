@@ -120,6 +120,8 @@ PROCEDURE Oper()
                   zZAP_WART := aBufDok[ 'ZAP_WART' ]
                   zK16WART :=  aBufDok[ 'K16WART' ]
                   zK16OPIS := aBufDok[ 'K16OPIS' ]
+                  zKRAJ := aBufDok[ 'KRAJ' ]
+                  zNRKSEF := aBufDok[ 'NRKSEF' ]
                ELSE
                   BREAK
                ENDIF
@@ -147,6 +149,8 @@ PROCEDURE Oper()
                zZAP_WART := ZAP_WART
                zK16WART :=  K16WART
                zK16OPIS := K16OPIS
+               zKRAJ := KRAJ
+               zNRKSEF := NRKSEF
             ELSEIF ins
                @ 2, 65 SAY 'ÄÄÄÄÄÄÄÄÄÄÄÄÄ'
                zDZIEN := '  '
@@ -167,6 +171,8 @@ PROCEDURE Oper()
                zZAP_WART := 0
                zK16WART := 0
                zK16OPIS := Space( 30 )
+               zKRAJ := "  "
+               zNRKSEF := Space( 35 )
    *                 zzaplata=[1]
    *                 zkwota=0
                @ 3, 71 SAY Space( 8 )
@@ -199,6 +205,8 @@ PROCEDURE Oper()
                zZAP_WART := ZAP_WART
                zK16WART :=  K16WART
                zK16OPIS := K16OPIS
+               zKRAJ := KRAJ
+               zNRKSEF := NRKSEF
     *                 zzaplata=zaplata
    *                 zkwota=kwota
             ENDIF
@@ -207,9 +215,11 @@ PROCEDURE Oper()
             @  3, 27 GET zDZIEN PICTURE "99" WHEN PolePaliwoStop() .AND. ( WERSJA4 == .T. .OR. ins ) VALID v1_1()
             @  4, 27 GET zNUMER PICTURE "@S40 " + repl( '!', 100 ) WHEN PolePaliwoStop() VALID v1_2()
             @  5, 27 GET zNR_IDENT PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" WHEN PolePaliwoStop() VALID OperNrIdentV()
-            @  6, 27 GET zNAZWA PICTURE "@S52 " + repl( '!', 200 ) WHEN PolePaliwoStop() VALID w1_3()
-            @  7, 27 GET zADRES PICTURE "@S52 " + repl( '!', 200 ) WHEN PolePaliwoStop()
+            @  6, 15 GET zNAZWA PICTURE "@S64 " + repl( '!', 200 ) WHEN PolePaliwoStop() VALID w1_3()
+            @  7, 15 GET zADRES PICTURE "@S52 " + repl( '!', 200 ) WHEN PolePaliwoStop()
+            @  7, 77 GET zKRAJ PICTURE "!!" WHEN PolePaliwoStop()
             @  8, 37 GET zTRESC WHEN PolePaliwoStop() VALID v1_5()
+            @  9, 15 GET zNRKSEF PICTURE Replicate( '!', 35 ) WHEN PolePaliwoStop() VALID KRejS_V_NrKSeF()
             @ 10, 67 GET zWYR_TOW  PICTURE FPIC WHEN PolePaliwoStop() VALID iif( zWYR_TOW # 0, vKONIEC(), .T. )
             @ 11, 67 GET zUSLUGI   PICTURE FPIC WHEN PolePaliwoStop() VALID iif( zUSLUGI # 0, vKONIEC(), .T. )
             @ 12, 67 GET zZAKUP    PICTURE FPIC WHEN PolePaliwoStart() VALID vSUMOP() .AND. iif( zZAKUP # 0, vKONIEC(), .T.) .AND. PolePaliwoStop()
@@ -754,9 +764,11 @@ PROCEDURE say1()
    *   endcase
    *endif
    @  5, 27 SAY NR_IDENT
-   @  6, 27 SAY SubStr( nazwa, 1, 52 )
-   @  7, 27 SAY SubStr( ADRES, 1, 52 )
+   @  6, 15 SAY SubStr( nazwa, 1, 64 )
+   @  7, 15 SAY SubStr( ADRES, 1, 52 )
+   @  7, 77 SAY KRAJ
    @  8, 37 SAY TRESC
+   @  9, 15 SAY NRKSEF
    @ 10, 67 SAY wyr_tow  PICTURE RPIC
    IF WARTZUS <> 0
       cKolor := ColStd()
@@ -1290,10 +1302,10 @@ PROCEDURE operRysujTlo()
    @  3, 0 say 'Ú (2) Dzie&_n. miesi&_a.ca.......                                                     '
    @  4, 0 say '³ (3) Nr dowodu ksi&_e.gowego.                                                     '
    @  5, 0 say '³     Kontrahent:   NIP....                                                     '
-   @  6, 0 say '³ (4)             nazwa....                                                     '
-   @  7, 0 say '³ (5)             adres....                                                     '
+   @  6, 0 say '³ (4) nazwa....                                                                 '
+   @  7, 0 say '³ (5) adres....                                                         Kraj:   '
    @  8, 0 say 'À (6) Opis zdarzenia gospodarczego....                                          '
-   @  9, 0 say 'Ú ----------------------------------PRZYCHODY---------------------------------- '
+   @  9, 0 say '      Nr KSeF..                                                                 '
    @ 10, 0 say 'P (7) Warto&_s.&_c. sprzedanych towar&_o.w i us&_l.ug..........................             '
    @ 11, 0 say 'À (8) Pozosta&_l.e przychody..........................................             '
    @ 12, 0 say 'Ú(10) Zakup towar&_o.w handlowych i materia&_l.&_o.w wg cen zakupu..........             '
@@ -1460,6 +1472,9 @@ PROCEDURE Oper_Ksieguj()
 
    REPLACE K16WART WITH zK16WART
    REPLACE K16OPIS WITH zK16OPIS
+
+   REPLACE KRAJ WITH zKRAJ
+   REPLACE NRKSEF WITH zNRKSEF
 
    COMMIT
    UNLOCK

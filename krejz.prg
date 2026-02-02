@@ -224,6 +224,9 @@ PROCEDURE KRejZ()
 
                   zRODZDOW := aBufDok[ 'RODZDOW' ]
                   zVATMARZA := aBufDok[ 'VATMARZA' ]
+
+                  zNRKSEF := aBufDok[ 'NRKSEF' ]
+                  zKSEFSTAT := aBufDok[ 'KSEFSTAT' ]
                ELSE
                   BREAK
                ENDIF
@@ -305,6 +308,9 @@ PROCEDURE KRejZ()
 
                zRODZDOW := RODZDOW
                zVATMARZA := VATMARZA
+
+               zNRKSEF := NRKSEF
+               zKSEFSTAT := KSEFSTAT
             ELSEIF ins
                @  2, 5 SAY 'ִִִִִִִִִִִִִ'
 /*
@@ -399,6 +405,9 @@ PROCEDURE KRejZ()
 
                zRODZDOW := Space( 6 )
                zVATMARZA := 0
+
+               zNRKSEF := Space( 35 )
+               zKSEFSTAT := 'B'
                ***********************
             ELSE
                IF DocSys()
@@ -478,6 +487,9 @@ PROCEDURE KRejZ()
 
                zRODZDOW := RODZDOW
                zVATMARZA := VATMARZA
+
+               zNRKSEF := NRKSEF
+               zKSEFSTAT := KSEFSTAT
             ENDIF
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 
@@ -492,6 +504,12 @@ PROCEDURE KRejZ()
             scr_kolumL := .F.
             scr_kolumC := .F.
             SET COLOR TO ,W+/W,,,N/W
+            IF zKSEFSTAT == ' ' .AND. Empty( zNRKSEF )
+               zKSEFSTAT := 'B'
+            ENDIF
+            IF ! Empty( zNRKSEF )
+               zKSEFSTAT := ' '
+            ENDIF
 *             @  3,2 say 'ֽֽ'+chr(16)
             //@  4, 60 SAY 'Nr ident.'
             ColStd()
@@ -518,6 +536,8 @@ PROCEDURE KRejZ()
             oGetOPCJE := ATail( GetList )
             @ 10, 77 GET zSEK_CV7 PICTURE '!!' WHEN wfSEK_CV7( 10, 78 ) VALID vfSEK_CV7( 10, 78 )
             oGetSekCV7 := ATail( GetList )
+            @ 11,  8 GET zNRKSEF   PICTURE Replicate( '!', 35 ) VALID KRejS_V_NrKSeF( 11 )
+            @ 11, 58 GET zKSEFSTAT PICTURE '!' WHEN KRejS_W_KSeFStat() VALID KRejS_V_KSeFStat( 11 )
             IF fDETALISTA <> 'T'
                @ 13,  8 GET zWART22 PICTURE FPIC WHEN w1_wartosc( nOrgW22, @zWART22 ) VALID SUMPODz( zWART22, @nOrgW22 )
                oGetWAR22 := ATail( GetList )
@@ -1000,6 +1020,9 @@ PROCEDURE say1z()
    @  8, 77 SAY iif( TROJSTR == 'T', 'Tak', 'Nie' )
    @  9, 77 SAY OPCJE
    @ 10, 77 SAY SEK_CV7
+
+   @ 11,  8 SAY NRKSEF
+   @ 11, 58 SAY iif( Empty( NRKSEF ), KSEFSTAT, ' ' ) + Pad( ' - ' + KSeF_Status_Str( iif( KSEFSTAT == ' ' .AND. Empty( NRKSEF ), 'B', iif( ! Empty( NRKSEF ), ' ', KSEFSTAT ) ) ), 19 )
 
    sprawdzVAT( 10, CToD( ROKS + '.' + MCS + '.' + DZIENS ) )
    @ 13,  2 SAY Str( vat_A, 2 )
@@ -2100,7 +2123,7 @@ FUNCTION krejzRysujTlo()
    @  8, 0 SAY 'Uwagi........................                         Transakcja tr¢jstronna:   '
    @  9, 0 SAY 'Data zakupu....(rrrr.mm.dd)..           Data wpˆywu.....               Opcje:   '
    @ 10, 0 SAY 'Korekta ?....................                            Pola sekcji C VAT-7:   '
-   @ 11, 0 SAY ' -------------------------------------------------------------------------------'
+   @ 11, 0 SAY 'Nr KSeF.                                      Status KSeF.                      '
    @ 12, 0 SAY '           N E T T O         V A T          B R U T T O  ZAK DO SPR VATwgStrSprz'
    @ 13, 0 SAY '  ' + Str( vat_A, 2 ) + '%                                                                           '
    @ 14, 0 SAY '  ' + Str( vat_B, 2 ) + '%                                                                           '
@@ -2263,6 +2286,8 @@ PROCEDURE KRejZ_Ksieguj()
    repl_( 'KOL50', zKOL50 )
    repl_( 'NETTO2', zNETTO2 )
    repl_( 'KOLUMNA2', zKOLUMNA2 )
+   repl_( 'NRKSEF', zNRKSEF )
+   repl_( 'KSEFSTAT', zKSEFSTAT )
 
    COMMIT
    UNLOCK
@@ -2423,6 +2448,9 @@ PROCEDURE KRejZ_Ksieguj()
                   repl_( 'PUSTA', iif( zKOLUMNA == '15', znetto, 0) )
                   repl_( 'K16WART', iif( zKOLUMNA == '16', znetto, 0) )
                   repl_( 'K16OPIS', iif( zKOLUMNA == '16', zK16OPIS, Space( 30 ) ) )
+                  repl_( 'NRKSEF', zNRKSEF )
+                  repl_( 'NR_IDENT', zNR_IDENT )
+                  repl_( 'KRAJ', zKRAJ )
                   IF zNETTO2 <> 0 .AND. Val( zKOLUMNA ) > 0
                      DO CASE
                      CASE zKOLUMNA2 == '10'
@@ -2500,6 +2528,9 @@ PROCEDURE KRejZ_Ksieguj()
                repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
                repl_( 'TRESC', zTRESC )
                repl_( 'UWAGI', zUWAGI )
+               repl_( 'NRKSEF', zNRKSEF )
+               repl_( 'NR_IDENT', zNR_IDENT )
+               repl_( 'KRAJ', zKRAJ )
                *repl_([zaplata],[1])
                *repl_([kwota],0)
                DO CASE
@@ -2594,6 +2625,9 @@ PROCEDURE KRejZ_Ksieguj()
             repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
             repl_( 'TRESC', zTRESC )
             repl_( 'UWAGI', zUWAGI )
+            repl_( 'NRKSEF', zNRKSEF )
+            repl_( 'NR_IDENT', zNR_IDENT )
+            repl_( 'KRAJ', zKRAJ )
             *repl_([zaplata],[1])
             *repl_([kwota],0)
             DO CASE

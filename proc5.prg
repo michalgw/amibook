@@ -1157,6 +1157,49 @@ FUNCTION ZaciemnijPESEL( cPESEL )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION ObliczCheckSum( cDane )
+
+   LOCAL i, j, nSum
+
+   nSum := 0
+   FOR i := 1 TO Len( cDane )
+      nSum := hb_bitXor( nSum, Asc( SubStr( cDane, i, 1 ) ) )
+      FOR j := 1 TO 8
+         IF hb_bitAnd( nSum, 0x80 ) <> 0
+            nSum := hb_bitXor( hb_bitAnd( hb_bitShift( nSum, 1 ), 0xFF ), 7 )
+         ELSE
+            nSum := hb_bitAnd( hb_bitShift( nSum, 1 ), 0xFF )
+         ENDIF
+      NEXT
+   NEXT
+
+   RETURN nSum
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Sprawdz_NrKSeF( cNrKSef, cKomunikat )
+
+   IF Empty( cNrKSef )
+      cKomunikat := "Numer KSeF jest pusty"
+      RETURN .F.
+   ENDIF
+
+   IF Len( cNrKSef ) <> 35
+      cKomunikat := "Numer KSeF ma nieprawidˆow¥ dˆugo˜†: " + AllTrim( Str( Len( cNrKSef ) ) ) + ". Oczekiwana dˆugo˜† to 35"
+      RETURN .F.
+   ENDIF
+
+   IF HexaToDec( SubStr( cNrKSef, 34, 2 ) ) <> ObliczCheckSum( SubStr( cNrKSef, 1, 32 ) )
+      cKomunikat := "Nieprawidˆowa suma kontrolna"
+      RETURN .F.
+   ENDIF
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+
+
 #pragma BEGINDUMP
 
 #include "hbapi.h"

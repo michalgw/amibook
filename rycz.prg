@@ -132,6 +132,9 @@ PROCEDURE Rycz()
                   zuwagi := aBufDok[ 'UWAGI' ]
                   zzaplata := aBufDok[ 'ZAPLATA' ]
                   zkwota := aBufDok[ 'KWOTA' ]
+                  zNR_IDENT := aBufDok[ 'NR_IDENT' ]
+                  zKRAJ := aBufDok[ 'KRAJ' ]
+                  zNRKSEF := aBufDok[ 'NRKSEF' ]
                ELSE
                   BREAK
                ENDIF
@@ -156,6 +159,9 @@ PROCEDURE Rycz()
                zuwagi := uwagi
                zzaplata := zaplata
                zkwota := kwota
+               zNR_IDENT := NR_IDENT
+               zKRAJ := KRAJ
+               zNRKSEF := NRKSEF
             ELSEIF ins
                zDZIEN := '  '
                zDATAPRZY := CToD( '    .  .  ' )
@@ -165,6 +171,9 @@ PROCEDURE Rycz()
                zuwagi := Space( 200 )
                zzaplata := '1'
                zkwota := 0
+               zNR_IDENT := Space( 30 )
+               zKRAJ := '  '
+               zNRKSEF := Space( 35 )
                @ 19, 40 SAY Space( 40 )
                @ 13, 67 SAY Space( 12 )
                *********************** lp
@@ -193,6 +202,9 @@ PROCEDURE Rycz()
                zuwagi := uwagi
                zzaplata := zaplata
                zkwota := kwota
+               zNR_IDENT := NR_IDENT
+               zKRAJ := KRAJ
+               zNRKSEF := NRKSEF
             ENDIF
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
             SET COLOR TO ,W+/W,,,N/W
@@ -200,6 +212,8 @@ PROCEDURE Rycz()
             @  3, 40 GET zDZIEN PICTURE "99" WHEN WERSJA4 == .T. .OR. ins VALID v1_1r()
             @  4, 40 GET zDATAPRZY PICTURE "@D" WHEN v1_6e()
             @  5, 40 GET zTRESC VALID v1_5r()
+            @  6, 40 GET zNR_IDENT PICTURE "@S20 " + Replicate( '!', 30 )
+            @  6, 77 GET zKRAJ PICTURE '!!'
             @  7, 67 GET zNUMER PICTURE "@S20 " + Replicate( '!', 100 ) VALID v1_2r()
             @  8, 67 GET zRY20      PICTURE FPICold VALID v1_6ar()
             @  9, 67 GET zRY17      PICTURE FPICold VALID v1_6br()
@@ -213,6 +227,7 @@ PROCEDURE Rycz()
             IF staw_k08w
                @ 15, 67 GET zRYK08     PICTURE FPICold
             ENDIF
+            @ 18, 43 GET zNRKSEF    PICTURE Replicate( '!', 35 )
             SET COLOR TO i
             @ 19, 40 SAY SubStr( zUWAGI, 1, 40 )
             SET COLOR TO
@@ -343,6 +358,9 @@ PROCEDURE Rycz()
             repl_( 'UWAGI', zUWAGI )
             repl_( 'zaplata', zzaplata )
             repl_( 'kwota', zkwota )
+            repl_( 'NR_IDENT', zNR_IDENT )
+            repl_( 'KRAJ', zKRAJ )
+            repl_( 'NRKSEF', zNRKSEF )
             COMMIT
             UNLOCK
             *********************** lp
@@ -793,6 +811,8 @@ PROCEDURE say1e()
    @  3, 40 SAY dos_l( DZIEN )
    @  4, 40 SAY DToC( DATAPRZY )
    @  5, 40 SAY TRESC
+   @  6, 40 SAY SubStr( NR_IDENT, 1, 20 )
+   @  6, 77 SAY KRAJ
    @  7, 67 SAY SubStr( iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2 ) + ' ', numer ), 1, 20 )
    @  8, 67 SAY RY20 PICTURE RPIC
    @  9, 67 SAY RY17 PICTURE RPIC
@@ -809,6 +829,7 @@ PROCEDURE say1e()
    ENDIF
 */
    @ 17, 67 SAY handel + produkcja + uslugi + RY20 + RY17 + RY10 + RYK07 + RYK08 + RYK09 + RYK10 PICTURE RPIC
+   @ 18, 43 SAY NRKSEF
    @ 19, 40 SAY SubStr( uwagi, 1, 40 )
    @ 21, 40 SAY Space( 40 )
    DO CASE
@@ -1074,7 +1095,7 @@ FUNCTION ryczRysujTlo()
    @  3, 0 SAY ' (2)  Data wpisu (dzie&_n.)................                                        '
    @  4, 0 SAY ' (3)  Data uzyskania przychodu..........                                        '
    @  5, 0 SAY '      Opis zdarzenia....................                                        '
-   @  6, 0 SAY ' ------------------------------PRZYCHODY--------------------------------------- '
+   @  6, 0 SAY '      Nr identyfikacji podatkowej.......                                Kraj:   '
    @  7, 0 SAY ' (4)  Nr fakt/rach lub dziennego zestawienia sprzeda&_z.y.............             '
    @  8, 0 SAY ' (5)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_ry20 * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_ory20 ) ) + ')', 25, '.' ) + '.             '
    @  9, 0 SAY ' (6)  Warto&_s.&_c. sprzedazy wg stawki ' + Str( staw_ry17 * 100, 5, 2 ) + '% (' + PadR( Lower( AllTrim( staw_ory17 ) ) + ')', 25, '.' ) + '.             '
@@ -1102,7 +1123,7 @@ FUNCTION ryczRysujTlo()
 */
 
    @ 17, 0 SAY ' (14) OGאEM PRZYCHאD (5+6+7+8+9+10+11+12+13)......................             '
-   @ 18, 0 SAY ' ------------------------------------------------------------------------------ '
+   @ 18, 0 SAY '      Nr KSeF......................................................             '
    @ 19, 0 SAY ' (15) Uwagi......................................................               '
 
    @ 20, 0 SAY ' ------------------------------------------------------------------------------ '

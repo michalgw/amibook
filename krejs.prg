@@ -36,7 +36,7 @@ PROCEDURE KRejS()
    PRIVATE zKraj, zSek_CV7, zRach, zDetal, zKorekta, zRozrZapS, zZap_Ter, zZap_Dat
    PRIVATE zZap_Wart, zTrojstr, zKOL36, zKOL37, zKOL38, zKOL39, zNETTO2, zKOLUMNA2
    PRIVATE zNETTOOrg, zOPCJE, zPROCEDUR, zRODZDOW, cScrRodzDow, zVATMARZA, fDETALISTA
-   PRIVATE oGetRodzDow, oGetOpcje, oGetProcedur, oGetSekCV7
+   PRIVATE oGetRodzDow, oGetOpcje, oGetProcedur, oGetSekCV7, zNRKSEF, zKSEFSTAT
 
    fDETALISTA := DETALISTA
 
@@ -216,6 +216,9 @@ PROCEDURE KRejS()
                   zRODZDOW := aBufDok[ 'RODZDOW' ]
                   zVATMARZA := aBufDok[ 'VATMARZA' ]
                   zDATA_ZAP := aBufDok[ 'DATA_ZAP' ]
+                  zNRKSEF := aBufDok[ 'NRKSEF' ]
+                  zKSEFSTAT := aBufDok[ 'KSEFSTAT' ]
+                  zKOL360 := aBufDok[ 'KOL360' ]
                ELSE
                   BREAK
                ENDIF
@@ -285,12 +288,16 @@ PROCEDURE KRejS()
                zRODZDOW := RODZDOW
                zVATMARZA := VATMARZA
                zDATA_ZAP := DATA_ZAP
+               zNRKSEF := NRKSEF
+               zKSEFSTAT := KSEFSTAT
+               zKOL360 := KOL360
             ELSEIF ins
                @  4, 78 CLEAR TO 5, 79
                @  4, 29 CLEAR TO 6, 49
                @  7, 29 CLEAR TO 7, 59
 *                 @  9,41 clear to 10,50
                @ 12, 14 CLEAR TO 19, 62
+               @ 10, 58 SAY Space( 20 )
                zDZIEN := '  '
                znazwa := Space( 200 )
                zNR_IDENT := Space( 30 )
@@ -353,6 +360,9 @@ PROCEDURE KRejS()
                zRODZDOW := Space( 6 )
                zVATMARZA := 0
                zDATA_ZAP := CToD( '' )
+               zNRKSEF := Space( 35 )
+               zKSEFSTAT := ' '
+               zKOL360 := 0
                ***********************
             ELSE
                lRyczModSys := .F.
@@ -431,11 +441,20 @@ PROCEDURE KRejS()
                zRODZDOW := RODZDOW
                zVATMARZA := VATMARZA
                zDATA_ZAP := DATA_ZAP
+               zNRKSEF := NRKSEF
+               zKSEFSTAT := KSEFSTAT
+               zKOL360 := KOL360
             ENDIF
             stan_ := -zNETTO - zNETTO2
             netprzed := zNETTO
             netprzed2 := zNETTO2
             zRACH := 'F'
+            IF zKSEFSTAT == ' ' .AND. Empty( zNRKSEF )
+               zKSEFSTAT := 'B'
+            ENDIF
+            IF ! Empty( zNRKSEF )
+               zKSEFSTAT := ' '
+            ENDIF
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
 
             sprawdzVAT( 10, CToD( param_rok + '.' + StrTran( miesiac, ' ', '0' ) + '.01' ) )
@@ -471,6 +490,8 @@ PROCEDURE KRejS()
                oGetProcedur := ATail( GetList )
                @  9, 77 GET zSEK_CV7  PICTURE '!!' WHEN wfsSEK_CV7( 9, 78 ) VALID vfsSEK_CV7( 9, 78 )
                oGetSekCV7 := ATail( GetList )
+               @ 10,  8 GET zNRKSEF   PICTURE Replicate( '!', 35 ) VALID KRejS_V_NrKSeF()
+               @ 10, 58 GET zKSEFSTAT PICTURE '!' WHEN KRejS_W_KSeFStat() VALID KRejS_V_KSeFStat()
                IF fDETALISTA <> 'T'
                   @ 12, 14 GET zWART22 PICTURE FPIC VALID SUMPODs()
                   @ 12, 31 GET zVAT22  PICTURE FPIC WHEN SUMPOws( 'zvat22' ) VALID SUMPODs()
@@ -1510,6 +1531,8 @@ PROCEDURE say1s()
    @  7, 71 SAY Pad( SubStr( OPCJE, 1, 8 ), 8 )
    @  8, 64 SAY Pad( AllTrim( PROCEDUR ), 15 )
    @  9, 77 SAY SEK_CV7
+   @ 10,  8 SAY NRKSEF
+   @ 10, 58 SAY iif( Empty( NRKSEF ), KSEFSTAT, ' ' ) + Pad( ' - ' + KSeF_Status_Str( iif( KSEFSTAT == ' ' .AND. Empty( NRKSEF ), 'B', iif( ! Empty( NRKSEF ), ' ', KSEFSTAT ) ) ), 19 )
 
    sprawdzVAT( 10, CToD( ROKS + '.' + MCS + '.' + DZIENS ) )
    @ 12,  8 SAY Str( vat_A, 2 )
@@ -2321,7 +2344,7 @@ FUNCTION krejsRysujTlo()
    @  7, 0 SAY 'Opis zdarzenia gospodarczego.                               Oznaczenie:         '
    @  8, 0 SAY 'Uwagi........................                         Procedura:                '
    @  9, 0 SAY 'Data sprze.           Data wyst.           Korekta ?.    Pola sekcji C VAT-7:   '
-   @ 10, 0 SAY ' ------------------------------------------------------------------------------ '
+   @ 10, 0 SAY 'Nr KSeF.                                      Status KSeF.                      '
    @ 11, 0 SAY '                 N E T T O         V A T          B R U T T O                   '
    @ 12, 0 SAY '        ' + Str( vat_A, 2 ) + '%                                                                     '
    @ 13, 0 SAY '        ' + Str( vat_B, 2 ) + '%                                                                     '
@@ -2359,13 +2382,14 @@ PROCEDURE RejS_PolaDod()
    LOCAL cKolor := ColStd()
 
    cEkran := SaveScreen()
-   @ 14, 40 CLEAR TO 20, 79
-   @ 14, 40 TO 20, 79
-   @ 15, 42 SAY "Pola dodatkowe"
-   @ 16, 42 SAY "K.33 - spis z natury   " GET zKOL36 PICTURE FPIC
-   @ 17, 42 SAY "K.34 - zakup kas       " GET zKOL37 PICTURE FPIC
-   @ 18, 42 SAY "K.35 - nab.sr.transp.  " GET zKOL38 PICTURE FPIC
-   @ 19, 42 SAY "K.36 - nab.paliw siln. " GET zKOL39 PICTURE FPIC
+   @ 13, 40 CLEAR TO 20, 79
+   @ 13, 40 TO 20, 79
+   @ 14, 42 SAY "Pola dodatkowe"
+   @ 15, 42 SAY "K.33 - spis z natury   " GET zKOL36 PICTURE FPIC
+   @ 16, 42 SAY "K.34 - zakup kas       " GET zKOL37 PICTURE FPIC
+   @ 17, 42 SAY "K.35 - nab.sr.transp.  " GET zKOL38 PICTURE FPIC
+   @ 18, 42 SAY "K.36 - nab.paliw siln. " GET zKOL39 PICTURE FPIC
+   @ 19, 42 SAY "K.360 - pod. od kaucji " GET zKOL360 PICTURE FPIC
    READ
 
    RestScreen( , , , , cEkran )
@@ -2798,6 +2822,8 @@ FUNCTION KRejSVRodzDow()
 
 PROCEDURE KRejS_Ksieguj()
 
+   LOCAL lDodajDokOper := .F.
+
    znumer := dos_l( znumer )
    zdzien := Str( Val( zDZIEN ), 2 )
    *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -2958,6 +2984,9 @@ PROCEDURE KRejS_Ksieguj()
                      repl_( 'UWAGI', zUWAGI )
                      repl_( 'zaplata', '1' )
                      repl_( 'kwota', 0 )
+                     repl_( 'NRKSEF', zNRKSEF )
+                     repl_( 'NR_IDENT', zNR_IDENT )
+                     repl_( 'KRAJ', zKRAJ )
                      REPLACE  ry20      WITH iif( AllTrim( zKOLUMNA ) == '5', znetto, 0 )
                      REPLACE  ry17      WITH iif( AllTrim( zKOLUMNA ) == '6', znetto, 0 )
                      REPLACE  ryk09     WITH iif( AllTrim( zKOLUMNA ) == '7', znetto, 0 )
@@ -3014,6 +3043,9 @@ PROCEDURE KRejS_Ksieguj()
                   repl_( 'UWAGI', zUWAGI )
                   repl_( 'zaplata', '1' )
                   repl_( 'kwota', 0 )
+                  repl_( 'NRKSEF', zNRKSEF )
+                  repl_( 'NR_IDENT', zNR_IDENT )
+                  repl_( 'KRAJ', zKRAJ )
                   REPLACE  ry20      WITH iif( AllTrim( zKOLUMNA ) == '5', znetto, 0 )
                   REPLACE  ry17      WITH iif( AllTrim( zKOLUMNA ) == '6', znetto, 0 )
                   REPLACE  ryk09     WITH iif( AllTrim( zKOLUMNA ) == '7', znetto, 0 )
@@ -3142,10 +3174,15 @@ PROCEDURE KRejS_Ksieguj()
                         repl_( 'WYR_TOW', iif( Val( rejs->KOLUMNA ) == 7, zNETTO, 0 ) + iif( Val( rejs->KOLUMNA2 ) == 7, zNETTO2, 0 ) )
                         repl_( 'USLUGI', iif( Val( rejs->KOLUMNA ) == 8, zNETTO, 0 ) + iif( Val( rejs->KOLUMNA2 ) == 8, zNETTO2, 0 ) )
                         repl_( 'rejzid', REKZAK )
+                        repl_( 'NRKSEF', zNRKSEF )
+                        repl_( 'NR_IDENT', zNR_IDENT )
+                        repl_( 'KRAJ', zKRAJ )
                         COMMIT
                         UNLOCK
                      ENDIF
                      commit_()
+                  ELSE
+                     lDodajDokOper := .T.
                   ENDIF
                CASE netprzed == 0
                   *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -3172,6 +3209,9 @@ PROCEDURE KRejS_Ksieguj()
                      repl_( 'WYR_TOW', iif( Val( zKOLUMNA ) == 7, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 7, zNETTO2, 0 ) )
                      repl_( 'USLUGI', iif( Val( zKOLUMNA ) == 8, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 8, zNETTO2, 0 ) )
                      repl_( 'rejzid', REKZAK )
+                     repl_( 'NRKSEF', zNRKSEF )
+                     repl_( 'NR_IDENT', zNR_IDENT )
+                     repl_( 'KRAJ', zKRAJ )
                      COMMIT
                      UNLOCK
                      *********************** lp
@@ -3365,6 +3405,9 @@ PROCEDURE KRejS_Ksieguj()
                repl_( 'UWAGI', zUWAGI )
                repl_( 'zaplata', '1' )
                repl_( 'kwota', 0 )
+               repl_( 'NRKSEF', zNRKSEF )
+               repl_( 'NR_IDENT', zNR_IDENT )
+               repl_( 'KRAJ', zKRAJ )
                REPLACE  ry20      WITH iif( AllTrim( zKOLUMNA ) == '5', znetto, 0 )
                REPLACE  ry17      WITH iif( AllTrim( zKOLUMNA ) == '6', znetto, 0 )
                REPLACE  ryk09     WITH iif( AllTrim( zKOLUMNA ) == '7', znetto, 0 )
@@ -3437,7 +3480,7 @@ PROCEDURE KRejS_Ksieguj()
    ENDIF
    IF zRYCZALT # 'T'
       IF pzparam_ksws == 'N'
-         IF ins .AND. AllTrim( zKOLUMNA ) $ '78' .OR. AllTrim( zKOLUMNA2 ) $ '78'
+         IF ( lDodajDokOper .OR. ins ) .AND. AllTrim( zKOLUMNA ) $ '78' .OR. AllTrim( zKOLUMNA2 ) $ '78'
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
             IF zNETTO + zNETTO2 <> 0
                SELECT suma_mc
@@ -3463,6 +3506,9 @@ PROCEDURE KRejS_Ksieguj()
                repl_( 'WYR_TOW', iif( Val( zKOLUMNA ) == 7, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 7, zNETTO2, 0 ) )
                repl_( 'USLUGI', iif( Val( zKOLUMNA ) == 8, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 8, zNETTO2, 0 ) )
                repl_( 'rejzid', REKZAK )
+               repl_( 'NRKSEF', zNRKSEF )
+               repl_( 'NR_IDENT', zNR_IDENT )
+               repl_( 'KRAJ', zKRAJ )
                commit_()
                UNLOCK
                *********************** lp
@@ -3649,6 +3695,7 @@ PROCEDURE KRejS_Ksieguj()
    repl_( 'KOL37', zKOL37 )
    repl_( 'KOL38', zKOL38 )
    repl_( 'KOL39', zKOL39 )
+   repl_( 'KOL360', zKOL360 )
    COMMIT
    UNLOCK
    *נננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננננ
@@ -3722,3 +3769,78 @@ FUNCTION RejS_PobierzDok()
    RETURN aBufRec
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION KRejS_V_NrKSeF( nWiersz )
+
+   LOCAL lRes := .T., cKomun := ""
+
+   hb_default( @nWiersz, 10 )
+
+   IF ! Empty( zNRKSEF )
+      IF ! Sprawdz_NrKSeF( AllTrim( zNRKSEF ), @cKomun )
+         Komun( cKomun )
+         lRes := .F.
+      ELSE
+         zKSEFSTAT := ' '
+         @ nWiersz, 59 SAY Pad( ' - ' + KSeF_Status_Str( zKSEFSTAT ), 19 )
+      ENDIF
+   ELSE
+      zKSEFSTAT := 'B'
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejS_W_KSeFStat()
+
+   LOCAL lRes := .T., cKolor
+
+   IF ! Empty( zNRKSEF )
+      lRes := .F.
+      zKSEFSTAT := ' '
+   ELSE
+      cKolor := ColInf()
+      @ 24, 0 SAY PadC( "'O' - faktura Offline, 'B' - faktura poza KSeF, 'D' - nie jest faktur¥", 80 )
+      SetColor( cKolor )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRejS_V_KSeFStat( nWiersz )
+
+   LOCAL lRes := .F.
+
+   hb_default( @nWiersz, 10 )
+
+   IF zKSEFSTAT $ 'BDO'
+      @ 24, 0
+      @ nWiersz, 59 SAY Pad( ' - ' + KSeF_Status_Str( zKSEFSTAT ), 19 )
+      lRes := .T.
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KSeF_Status_Str( cStatus )
+
+   LOCAL cRes := ""
+
+   DO CASE
+   CASE cStatus == ' '
+      cRes := "faktura w KSeF"
+   CASE cStatus == 'O'
+      cRes := "faktura Offline"
+   CASE cStatus == 'B'
+      cRes := "faktura poza KSeF"
+   CASE cStatus == 'D'
+      cRes := "nie jest faktur¥"
+   ENDCASE
+
+   RETURN cRes
+
+/*----------------------------------------------------------------------*/
+
