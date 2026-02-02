@@ -487,7 +487,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
       STORE 0 TO p45usue, p46usue, p47usue, p47ausue, p48usue, p49usue, p50usue, p51usue, p51ausue, p52usue
       STORE 0 TO p45we, p46we, p47we, p47awe, p48we, p49we, p50we, p51we, p51awe, p52we
       STORE 0 TO pp8, pp10, pp11, pp12, pp13, kkasa_odl, kkasa_zwr, znowytran, zkorekst, zkorekpoz, zzwr180dni
-      STORE 0 TO art129, zzwr60dni, zzwr25dni, zVATZALMIE, zVATNADKWA, p98doprze, zKOL39
+      STORE 0 TO art129, zzwr60dni, zzwr25dni, zVATZALMIE, zVATNADKWA, p98doprze, zKOL39, zKOL360
       STORE 'N' TO p98taknie
       SELECT suma_mc
       SEEK '+' + IDENT_FIR + Str( kwapocz, 2, 0 )
@@ -560,6 +560,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             pp12 := pp12 + KOL36
             znowytran := znowytran + KOL38
             zKOL39 := zKOL39 + KOL39
+            zKOL360 := zKOL360 + KOL360
          ENDCASE
          IF KOREKTA == 'Z'
             K_68 := K_68 + iif( WART02 < 0, WART02, 0 ) + iif( WART12 < 0, WART12, 0 ) ;
@@ -1120,7 +1121,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
 
 
       p75 := p61 + p61a + p64 + p64exp + p69 + p71 + p67 + p65 + p65ue + p65dekue + p65dekit + p65dekus + p65dekwe + SEK_CV7net + p65dekusu
-      p76 := ( p62 + p62a + p70 + p72 + p65vdekue + p65vdekit + p65vdekus + p65vdekwe + pp12 + p65vdekusu + art111u6 + SEK_CV7vat ) - znowytran - zKOL39
+      p76 := ( p62 + p62a + p70 + p72 + p65vdekue + p65vdekit + p65vdekus + p65vdekwe + pp12 + p65vdekusu + art111u6 + SEK_CV7vat ) - znowytran - zKOL39 - zKOL360
 
       p79 := pp8 + pp11 + p46dek + p50dek + zkorekst + zkorekpoz + art89b1 + art89b4
 
@@ -1387,7 +1388,6 @@ FUNCTION Vat720WRodzZwrot()
    @ 10, 23 SAY ' 2 - Zwrot na rachunek VAT w terminie 25 dni'
    @ 11, 23 SAY ' 3 - Zwrot na rachunek rozliczeniowy w terminie 25 dni'
    @ 12, 23 SAY ' 4 - Zwrot na rachunek rozliczeniowy w terminie 40 dni'
-   @ 13, 23 SAY ' 5 - Zwrot na rachunek rozliczeniowy w terminie 60 dni'
    @ 14, 23 SAY ' 6 - Zwrot na rachunek rozliczeniowy w terminie 180 dni'
    @ 15, 23 SAY '   - ½adne z powy¾szych'
 
@@ -1399,7 +1399,7 @@ FUNCTION Vat720WRodzZwrot()
 
 FUNCTION Vat720VRodzZwrot()
 
-   LOCAL lRes := AScan( { '1', '2', '3', '4', '5', '6', ' ' }, cJPKRodzZwrot ) > 0
+   LOCAL lRes := AScan( { '1', '2', '3', '4', '6', ' ' }, cJPKRodzZwrot ) > 0
 
    IF lRes
       RestScreen( , , , , cEkran )
@@ -1534,6 +1534,7 @@ FUNCTION JPK_V7_DaneDek( aDane )
    hDane['P_34'] := _round( art111u6, 0 )
    hDane['P_35'] := _round( znowytran, 0 )
    hDane['P_36'] := _round( zKOL39, 0 )
+   hDane['P_360'] := _round( zKOL360, 0 )
    hDane['P_37'] := _round( P75, 0 )
    hDane['P_38'] := _round( P76, 0 )
    hDane['P_39'] := _round( Pp8, 0 )
@@ -1556,7 +1557,7 @@ FUNCTION JPK_V7_DaneDek( aDane )
    hDane['P_55'] := cJPKRodzZwrot == '2'
    hDane['P_56'] := cJPKRodzZwrot == '3'
    hDane['P_560'] := cJPKRodzZwrot == '4'
-   hDane['P_57'] := cJPKRodzZwrot == '5'
+   //hDane['P_57'] := cJPKRodzZwrot == '5'
    hDane['P_58'] := cJPKRodzZwrot == '6'
    hDane['P_59'] := cJPKZwrotPod == 'T'
    hDane['P_60'] := nJPKZwrotKwota

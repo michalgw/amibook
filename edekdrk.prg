@@ -450,6 +450,22 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
          AAdd( aRaporty, { hDane, cPlikRap } )
       ENDIF
       EXIT
+   CASE 'JPKV7M-3'
+   CASE 'JPKV7K-3'
+      hDane := DaneXML_JPKV7w3( oDoc, cNrRef )
+      IF ! hDane[ 'JestDeklaracja' ]
+         cPlikRap := 'frf\jpkv7n_w3.frf'
+         AAdd( aRaporty, { hDane, cPlikRap } )
+      ENDIF
+      IF hDane[ 'JestDeklaracja' ]
+         cPlikRap := 'frf\jpkv7d_w3.frf'
+         AAdd( aRaporty, { hDane, cPlikRap } )
+      ENDIF
+      IF hDane[ 'JestSprzedaz' ] .OR. hDane[ 'JestZakup' ]
+         cPlikRap := 'frf\jpkv7j_w3.frf'
+         AAdd( aRaporty, { hDane, cPlikRap } )
+      ENDIF
+      EXIT
    OTHERWISE
       Komunikat('Brak szablonu wydruku dla tej deklaracji - ' + cTypDeklaracji )
       RETURN
@@ -12631,6 +12647,334 @@ FUNCTION DaneXML_JPKV7w2( oDoc, cNrRef, hNaglowek )
    IF Len( hDane[ 'Zakup' ] ) > 0
       hDane[ 'JestZakup' ] := .T.
       AEval( hDane[ 'Zakup' ], { | aPoz |
+         aPoz[ 'KodKrajuNadaniaTIN' ] := xmlWartoscH( aPoz, 'KodKrajuNadaniaTIN' )
+         aPoz[ 'DokumentZakupu' ] := xmlWartoscH( aPoz, 'DokumentZakupu' )
+         //aPoz[ 'MPP' ] := iif( xmlWartoscH( aPoz, 'MPP' ) == '1', '1', '0' )
+         aPoz[ 'IMP' ] := iif( xmlWartoscH( aPoz, 'IMP' ) == '1', '1', '0' )
+         aPoz[ 'K_40' ] := sxml2num( xmlWartoscH( aPoz, 'K_40' ), 0 )
+         aPoz[ 'K_41' ] := sxml2num( xmlWartoscH( aPoz, 'K_41' ), 0 )
+         aPoz[ 'K_42' ] := sxml2num( xmlWartoscH( aPoz, 'K_42' ), 0 )
+         aPoz[ 'K_43' ] := sxml2num( xmlWartoscH( aPoz, 'K_43' ), 0 )
+         aPoz[ 'K_44' ] := sxml2num( xmlWartoscH( aPoz, 'K_44' ), 0 )
+         aPoz[ 'K_45' ] := sxml2num( xmlWartoscH( aPoz, 'K_45' ), 0 )
+         aPoz[ 'K_46' ] := sxml2num( xmlWartoscH( aPoz, 'K_46' ), 0 )
+         aPoz[ 'K_47' ] := sxml2num( xmlWartoscH( aPoz, 'K_47' ), 0 )
+         aPoz[ 'ZakupVAT_Marza' ] := sxml2num( xmlWartoscH( aPoz, 'ZakupVAT_Marza' ), 0 )
+         IF ! hb_HHasKey( aPoz, 'DataWplywu' )
+            aPoz[ 'DataWplywu' ] := ""
+         ENDIF
+      } )
+   ELSE
+      hDane[ 'JestZakup' ] := .F.
+   ENDIF
+
+   hDane[ 'SprzedazCtrl' ] := edekXmlGrupa( oDoc, 'SprzedazCtrl' )
+   hDane[ 'SprzedazCtrl' ][ 'LiczbaWierszySprzedazy' ] := sxml2num( xmlWartoscH( hDane[ 'SprzedazCtrl' ], 'LiczbaWierszySprzedazy' ) )
+   hDane[ 'SprzedazCtrl' ][ 'PodatekNalezny' ] := sxml2num( xmlWartoscH( hDane[ 'SprzedazCtrl' ], 'PodatekNalezny' ) )
+
+   hDane[ 'ZakupCtrl' ] := edekXmlGrupa( oDoc, 'ZakupCtrl' )
+   hDane[ 'ZakupCtrl' ][ 'LiczbaWierszyZakupow' ] := sxml2num( xmlWartoscH( hDane[ 'ZakupCtrl' ], 'LiczbaWierszyZakupow' ) )
+   hDane[ 'ZakupCtrl' ][ 'PodatekNaliczony' ] := sxml2num( xmlWartoscH( hDane[ 'ZakupCtrl' ], 'PodatekNaliczony' ) )
+
+   RETURN hDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneXML_JPKV7w3( oDoc, cNrRef, hNaglowek )
+
+   LOCAL hPodmiot1, cTmp, aTemp, hPozycje
+   LOCAL hDane := hb_Hash()
+
+   IF !HB_ISHASH( hNaglowek )
+      hNaglowek := edekXmlNaglowek( oDoc )
+   ENDIF
+
+   hPodmiot1 := edekXmlPodmiot1( oDoc )
+
+   aTemp := edekXmlGrupa( oDoc, 'Naglowek' )
+   hDane[ 'KodFormularza' ] := xmlWartoscH( aTemp, 'KodFormularza' )
+   hDane[ 'WariantFormularza' ] := xmlWartoscH( aTemp, 'WariantFormularza' )
+   hDane[ 'KodFormularzaDekl' ] := xmlWartoscH( aTemp, 'KodFormularzaDekl' )
+   hDane[ 'WariantFormularzaDekl' ] := xmlWartoscH( aTemp, 'WariantFormularzaDekl' )
+   hDane[ 'CelZlozenia' ] := xmlWartoscH( aTemp, 'CelZlozenia' )
+   hDane[ 'DataWytworzeniaJPK' ] := xmlWartoscH( aTemp, 'DataWytworzeniaJPK' )
+   hDane[ 'NazwaSystemu' ] :=  xmlWartoscH( aTemp, 'NazwaSystemu' )
+   hDane[ 'KodUrzedu' ] := xmlWartoscH( aTemp, 'KodUrzedu' )
+   hDane[ 'Rok' ] := sxml2num( xmlWartoscH( aTemp, 'Rok' ) )
+   hDane[ 'Miesiac' ] := sxml2num( xmlWartoscH( aTemp, 'Miesiac' ), 0 )
+   hDane[ 'Kwartal' ] := sxml2num( xmlWartoscH( aTemp, 'Kwartal' ), 0 )
+   cTmp := xmlWartoscH( aTemp, 'KodUrzedu' )
+   hDane[ 'UrzadSkarbowy' ] := iif( cTmp != '', KodUS2Nazwa( cTmp ), '' )
+   hDane[ 'NrRef' ] := iif( HB_ISSTRING( cNrRef ), cNrRef, '' )
+
+   hDane[ 'CelZlozenia1' ] := iif( xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '1', '1', '0' )
+   hDane[ 'CelZlozenia2' ] := iif( xmlWartoscH( hNaglowek, 'CelZlozenia' ) == '2', '1', '0' )
+   hDane[ 'PodmiotSpolka' ] := iif( !xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   hDane[ 'PodmiotOsoba' ] := iif( xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. ), '1', '0' )
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane[ 'PodmiotNazwa' ] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' ) + ', ' ;
+        + xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' ) + ', ' + xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+      hDane[ 'Email' ] := xmlWartoscH( hPodmiot1, 'tns:Email' )
+      hDane[ 'Telefon' ] := xmlWartoscH( hPodmiot1, 'tns:Telefon' )
+      hDane[ 'NIP' ] := xmlWartoscH( hPodmiot1, 'etd:NIP' )
+   ELSE
+      hDane[ 'PodmiotNazwa' ] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
+      hDane[ 'Email' ] := xmlWartoscH( hPodmiot1, 'Email' )
+      hDane[ 'Telefon' ] := xmlWartoscH( hPodmiot1, 'Telefon' )
+      hDane[ 'NIP' ] := xmlWartoscH( hPodmiot1, 'NIP' )
+   ENDIF
+
+   IF xmlWartoscH( hPodmiot1, 'lOsobaFizyczna', .T. )
+      hDane[ 'P_8_N' ] := ''
+      hDane[ 'P_8_R' ] := ''
+      hDane[ 'P_9_N' ] := xmlWartoscH( hPodmiot1, 'etd:Nazwisko' )
+      hDane[ 'P_9_I' ] := xmlWartoscH( hPodmiot1, 'etd:ImiePierwsze' )
+      hDane[ 'P_9_D' ] := xmlWartoscH( hPodmiot1, 'etd:DataUrodzenia' )
+      hDane[ 'P_9_E' ] := xmlWartoscH( hPodmiot1, 'tns:Email' )
+      hDane[ 'P_9_T' ] := xmlWartoscH( hPodmiot1, 'tns:Telefon' )
+   ELSE
+      hDane[ 'P_8_N' ] := xmlWartoscH( hPodmiot1, 'PelnaNazwa' )
+      hDane[ 'P_8_R' ] := xmlWartoscH( hPodmiot1, 'NIP' )
+      hDane[ 'P_9_N' ] := ''
+      hDane[ 'P_9_I' ] := ''
+      hDane[ 'P_9_D' ] := ''
+      hDane[ 'P_9_E' ] := xmlWartoscH( hPodmiot1, 'Email' )
+      hDane[ 'P_9_T' ] := xmlWartoscH( hPodmiot1, 'Telefon' )
+   ENDIF
+
+   hPozycje := edekXmlGrupa( oDoc, 'PozycjeSzczegolowe' )
+
+   IF Len( hPozycje ) > 0
+      hDane[ 'JestDeklaracja' ] := .T.
+      hDane[ 'P_10' ] := sxml2num( xmlWartoscH( hPozycje, 'P_10' ) )
+      hDane[ 'P_11' ] := sxml2num( xmlWartoscH( hPozycje, 'P_11' ) )
+      hDane[ 'P_12' ] := sxml2num( xmlWartoscH( hPozycje, 'P_12' ) )
+      hDane[ 'P_13' ] := sxml2num( xmlWartoscH( hPozycje, 'P_13' ) )
+      hDane[ 'P_14' ] := sxml2num( xmlWartoscH( hPozycje, 'P_14' ) )
+      hDane[ 'P_15' ] := sxml2num( xmlWartoscH( hPozycje, 'P_15' ) )
+      hDane[ 'P_16' ] := sxml2num( xmlWartoscH( hPozycje, 'P_16' ) )
+      hDane[ 'P_17' ] := sxml2num( xmlWartoscH( hPozycje, 'P_17' ) )
+      hDane[ 'P_18' ] := sxml2num( xmlWartoscH( hPozycje, 'P_18' ) )
+      hDane[ 'P_19' ] := sxml2num( xmlWartoscH( hPozycje, 'P_19' ) )
+      hDane[ 'P_20' ] := sxml2num( xmlWartoscH( hPozycje, 'P_20' ) )
+      hDane[ 'P_21' ] := sxml2num( xmlWartoscH( hPozycje, 'P_21' ) )
+      hDane[ 'P_22' ] := sxml2num( xmlWartoscH( hPozycje, 'P_22' ) )
+      hDane[ 'P_23' ] := sxml2num( xmlWartoscH( hPozycje, 'P_23' ) )
+      hDane[ 'P_24' ] := sxml2num( xmlWartoscH( hPozycje, 'P_24' ) )
+      hDane[ 'P_25' ] := sxml2num( xmlWartoscH( hPozycje, 'P_25' ) )
+      hDane[ 'P_26' ] := sxml2num( xmlWartoscH( hPozycje, 'P_26' ) )
+      hDane[ 'P_27' ] := sxml2num( xmlWartoscH( hPozycje, 'P_27' ) )
+      hDane[ 'P_28' ] := sxml2num( xmlWartoscH( hPozycje, 'P_28' ) )
+      hDane[ 'P_29' ] := sxml2num( xmlWartoscH( hPozycje, 'P_29' ) )
+      hDane[ 'P_30' ] := sxml2num( xmlWartoscH( hPozycje, 'P_30' ) )
+      hDane[ 'P_31' ] := sxml2num( xmlWartoscH( hPozycje, 'P_31' ) )
+      hDane[ 'P_32' ] := sxml2num( xmlWartoscH( hPozycje, 'P_32' ) )
+      hDane[ 'P_33' ] := sxml2num( xmlWartoscH( hPozycje, 'P_33' ) )
+      hDane[ 'P_34' ] := sxml2num( xmlWartoscH( hPozycje, 'P_34' ) )
+      hDane[ 'P_35' ] := sxml2num( xmlWartoscH( hPozycje, 'P_35' ) )
+      hDane[ 'P_36' ] := sxml2num( xmlWartoscH( hPozycje, 'P_36' ) )
+      hDane[ 'P_360' ] := sxml2num( xmlWartoscH( hPozycje, 'P_360' ) )
+      hDane[ 'P_37' ] := sxml2num( xmlWartoscH( hPozycje, 'P_37' ) )
+      hDane[ 'P_38' ] := sxml2num( xmlWartoscH( hPozycje, 'P_38' ) )
+      hDane[ 'P_39' ] := sxml2num( xmlWartoscH( hPozycje, 'P_39' ) )
+      hDane[ 'P_40' ] := sxml2num( xmlWartoscH( hPozycje, 'P_40' ) )
+      hDane[ 'P_41' ] := sxml2num( xmlWartoscH( hPozycje, 'P_41' ) )
+      hDane[ 'P_42' ] := sxml2num( xmlWartoscH( hPozycje, 'P_42' ) )
+      hDane[ 'P_43' ] := sxml2num( xmlWartoscH( hPozycje, 'P_43' ) )
+      hDane[ 'P_44' ] := sxml2num( xmlWartoscH( hPozycje, 'P_44' ) )
+      hDane[ 'P_45' ] := sxml2num( xmlWartoscH( hPozycje, 'P_45' ) )
+      hDane[ 'P_46' ] := sxml2num( xmlWartoscH( hPozycje, 'P_46' ) )
+      hDane[ 'P_47' ] := sxml2num( xmlWartoscH( hPozycje, 'P_47' ) )
+      hDane[ 'P_48' ] := sxml2num( xmlWartoscH( hPozycje, 'P_48' ) )
+      hDane[ 'P_49' ] := sxml2num( xmlWartoscH( hPozycje, 'P_49' ) )
+      hDane[ 'P_50' ] := sxml2num( xmlWartoscH( hPozycje, 'P_50' ) )
+      hDane[ 'P_51' ] := sxml2num( xmlWartoscH( hPozycje, 'P_51' ) )
+      hDane[ 'P_52' ] := sxml2num( xmlWartoscH( hPozycje, 'P_52' ) )
+      hDane[ 'P_53' ] := sxml2num( xmlWartoscH( hPozycje, 'P_53' ) )
+      hDane[ 'P_54' ] := sxml2num( xmlWartoscH( hPozycje, 'P_54' ) )
+      hDane[ 'P_540' ] := iif( xmlWartoscH( hPozycje, 'P_540' ) == '1', '1', '0' )
+      hDane[ 'P_55' ] := iif( xmlWartoscH( hPozycje, 'P_55' ) == '1', '1', '0' )
+      hDane[ 'P_56' ] := iif( xmlWartoscH( hPozycje, 'P_56' ) == '1', '1', '0' )
+      hDane[ 'P_560' ] := iif( xmlWartoscH( hPozycje, 'P_560' ) == '1', '1', '0' )
+      //hDane[ 'P_57' ] := iif( xmlWartoscH( hPozycje, 'P_57' ) == '1', '1', '0' )
+      hDane[ 'P_58' ] := iif( xmlWartoscH( hPozycje, 'P_58' ) == '1', '1', '0' )
+      hDane[ 'P_59' ] := iif( xmlWartoscH( hPozycje, 'P_59' ) == '1', '1', '0' )
+      hDane[ 'P_60' ] := sxml2num( xmlWartoscH( hPozycje, 'P_60' ) )
+      hDane[ 'P_61' ] := xmlWartoscH( hPozycje, 'P_61' )
+      hDane[ 'P_62' ] := sxml2num( xmlWartoscH( hPozycje, 'P_62' ) )
+      hDane[ 'P_63' ] := iif( xmlWartoscH( hPozycje, 'P_63' ) == '1', '1', '0' )
+      hDane[ 'P_64' ] := iif( xmlWartoscH( hPozycje, 'P_64' ) == '1', '1', '0' )
+      hDane[ 'P_65' ] := iif( xmlWartoscH( hPozycje, 'P_65' ) == '1', '1', '0' )
+      hDane[ 'P_66' ] := iif( xmlWartoscH( hPozycje, 'P_66' ) == '1', '1', '0' )
+      hDane[ 'P_660' ] := iif( xmlWartoscH( hPozycje, 'P_660' ) == '1', '1', '0' )
+      hDane[ 'P_67' ] := iif( xmlWartoscH( hPozycje, 'P_67' ) == '1', '1', '0' )
+      hDane[ 'P_68' ] := sxml2num( xmlWartoscH( hPozycje, 'P_68' ) )
+      hDane[ 'P_69' ] := sxml2num( xmlWartoscH( hPozycje, 'P_69' ) )
+      hDane[ 'P_ORDZU' ] := xmlWartoscH( hPozycje, 'P_ORDZU' )
+   ELSE
+      hDane[ 'JestDeklaracja' ] := .F.
+   ENDIF
+
+   hDane[ 'Sprzedaz' ] := edekXmlGrupaTab( oDoc, 'JPK', 'SprzedazWiersz' )
+
+   IF Len( hDane[ 'Sprzedaz' ] ) > 0
+      hDane[ 'JestSprzedaz' ] := .T.
+      AEval( hDane[ 'Sprzedaz' ], { | aPoz |
+         aPoz[ 'KodKrajuNadaniaTIN' ] := xmlWartoscH( aPoz, 'KodKrajuNadaniaTIN' )
+         aPoz[ 'TypDokumentu' ] := xmlWartoscH( aPoz, 'TypDokumentu' )
+         aPoz[ 'NrKSeF' ] := xmlWartoscH( aPoz, 'NrKSeF' )
+         IF Empty( aPoz[ 'NrKSeF' ] )
+            IF xmlWartoscH( aPoz, 'OFF' ) == '1'
+               aPoz[ 'NrKSeF' ] := 'OFF'
+            ELSEIF xmlWartoscH( aPoz, 'BFK' ) == '1'
+               aPoz[ 'NrKSeF' ] := 'BFK'
+            ELSEIF xmlWartoscH( aPoz, 'DI' ) == '1'
+               aPoz[ 'NrKSeF' ] := 'DI'
+            ELSE
+               aPoz[ 'NrKSeF' ] := ''
+            ENDIF
+         ENDIF
+         aPoz[ 'GTU' ] := ''
+         IF ( aPoz[ 'GTU_01' ] := iif( xmlWartoscH( aPoz, 'GTU_01' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_01 '
+         ENDIF
+         IF ( aPoz[ 'GTU_02' ] := iif( xmlWartoscH( aPoz, 'GTU_02' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_02 '
+         ENDIF
+         IF ( aPoz[ 'GTU_03' ] := iif( xmlWartoscH( aPoz, 'GTU_03' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_03 '
+         ENDIF
+         IF ( aPoz[ 'GTU_04' ] := iif( xmlWartoscH( aPoz, 'GTU_04' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_04 '
+         ENDIF
+         IF ( aPoz[ 'GTU_05' ] := iif( xmlWartoscH( aPoz, 'GTU_05' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_05 '
+         ENDIF
+         IF ( aPoz[ 'GTU_06' ] := iif( xmlWartoscH( aPoz, 'GTU_06' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_06 '
+         ENDIF
+         IF ( aPoz[ 'GTU_07' ] := iif( xmlWartoscH( aPoz, 'GTU_07' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_07 '
+         ENDIF
+         IF ( aPoz[ 'GTU_08' ] := iif( xmlWartoscH( aPoz, 'GTU_08' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_08 '
+         ENDIF
+         IF ( aPoz[ 'GTU_09' ] := iif( xmlWartoscH( aPoz, 'GTU_09' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_09 '
+         ENDIF
+         IF ( aPoz[ 'GTU_10' ] := iif( xmlWartoscH( aPoz, 'GTU_10' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_10 '
+         ENDIF
+         IF ( aPoz[ 'GTU_11' ] := iif( xmlWartoscH( aPoz, 'GTU_11' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_11 '
+         ENDIF
+         IF ( aPoz[ 'GTU_12' ] := iif( xmlWartoscH( aPoz, 'GTU_12' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_12 '
+         ENDIF
+         IF ( aPoz[ 'GTU_13' ] := iif( xmlWartoscH( aPoz, 'GTU_13' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'GTU' ] := aPoz[ 'GTU' ] + 'GTU_13 '
+         ENDIF
+         aPoz[ 'Procedura' ] := ''
+         IF ( aPoz[ 'WSTO_EE' ] := iif( xmlWartoscH( aPoz, 'WSTO_EE' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'WSTO_EE '
+         ENDIF
+         IF ( aPoz[ 'IED' ] := iif( xmlWartoscH( aPoz, 'IED' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'IED '
+         ENDIF
+         IF ( aPoz[ 'TP' ] := iif( xmlWartoscH( aPoz, 'TP' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'TP '
+         ENDIF
+         IF ( aPoz[ 'TT_WNT' ] := iif( xmlWartoscH( aPoz, 'TT_WNT' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'TT_WNT '
+         ENDIF
+         IF ( aPoz[ 'TT_D' ] := iif( xmlWartoscH( aPoz, 'TT_D' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'TT_D '
+         ENDIF
+         IF ( aPoz[ 'MR_T' ] := iif( xmlWartoscH( aPoz, 'MR_T' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'MR_T '
+         ENDIF
+         IF ( aPoz[ 'MR_UZ' ] := iif( xmlWartoscH( aPoz, 'MR_UZ' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'MR_UZ '
+         ENDIF
+         IF ( aPoz[ 'I_42' ] := iif( xmlWartoscH( aPoz, 'I_42' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'I_42 '
+         ENDIF
+         IF ( aPoz[ 'I_63' ] := iif( xmlWartoscH( aPoz, 'I_63' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'I_63 '
+         ENDIF
+         IF ( aPoz[ 'B_SPV' ] := iif( xmlWartoscH( aPoz, 'B_SPV' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'B_SPV '
+         ENDIF
+         IF ( aPoz[ 'B_SPV_DOSTAWA' ] := iif( xmlWartoscH( aPoz, 'B_SPV_DOSTAWA' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'B_SPV_DOSTAWA '
+         ENDIF
+         IF ( aPoz[ 'B_MPV_PROWIZJA' ] := iif( xmlWartoscH( aPoz, 'B_MPV_PROWIZJA' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'B_MPV_PROWIZJA '
+         ENDIF
+         IF ( aPoz[ 'MPP' ] := iif( xmlWartoscH( aPoz, 'MPP' ) == '1', '1', '0' ) ) == '1'
+            aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + 'MPP '
+         ENDIF
+         aPoz[ 'KorektaPodstawyOpodt' ] := iif( xmlWartoscH( aPoz, 'KorektaPodstawyOpodt' ) == '1', '1', '0' )
+         aPoz[ 'TerminPlatnosci' ] := xmlWartoscH( aPoz, 'TerminPlatnosci', '' )
+         aPoz[ 'DataZaplaty' ] := xmlWartoscH( aPoz, 'DataZaplaty', '' )
+         aPoz[ 'K_10' ] := sxml2num( xmlWartoscH( aPoz, 'K_10' ), 0 )
+         aPoz[ 'K_11' ] := sxml2num( xmlWartoscH( aPoz, 'K_11' ), 0 )
+         aPoz[ 'K_12' ] := sxml2num( xmlWartoscH( aPoz, 'K_12' ), 0 )
+         aPoz[ 'K_13' ] := sxml2num( xmlWartoscH( aPoz, 'K_13' ), 0 )
+         aPoz[ 'K_14' ] := sxml2num( xmlWartoscH( aPoz, 'K_14' ), 0 )
+         aPoz[ 'K_15' ] := sxml2num( xmlWartoscH( aPoz, 'K_15' ), 0 )
+         aPoz[ 'K_16' ] := sxml2num( xmlWartoscH( aPoz, 'K_16' ), 0 )
+         aPoz[ 'K_17' ] := sxml2num( xmlWartoscH( aPoz, 'K_17' ), 0 )
+         aPoz[ 'K_18' ] := sxml2num( xmlWartoscH( aPoz, 'K_18' ), 0 )
+         aPoz[ 'K_19' ] := sxml2num( xmlWartoscH( aPoz, 'K_19' ), 0 )
+         aPoz[ 'K_20' ] := sxml2num( xmlWartoscH( aPoz, 'K_20' ), 0 )
+         aPoz[ 'K_21' ] := sxml2num( xmlWartoscH( aPoz, 'K_21' ), 0 )
+         aPoz[ 'K_22' ] := sxml2num( xmlWartoscH( aPoz, 'K_22' ), 0 )
+         aPoz[ 'K_23' ] := sxml2num( xmlWartoscH( aPoz, 'K_23' ), 0 )
+         aPoz[ 'K_24' ] := sxml2num( xmlWartoscH( aPoz, 'K_24' ), 0 )
+         aPoz[ 'K_25' ] := sxml2num( xmlWartoscH( aPoz, 'K_25' ), 0 )
+         aPoz[ 'K_26' ] := sxml2num( xmlWartoscH( aPoz, 'K_26' ), 0 )
+         aPoz[ 'K_27' ] := sxml2num( xmlWartoscH( aPoz, 'K_27' ), 0 )
+         aPoz[ 'K_28' ] := sxml2num( xmlWartoscH( aPoz, 'K_28' ), 0 )
+         aPoz[ 'K_29' ] := sxml2num( xmlWartoscH( aPoz, 'K_29' ), 0 )
+         aPoz[ 'K_30' ] := sxml2num( xmlWartoscH( aPoz, 'K_30' ), 0 )
+         aPoz[ 'K_31' ] := sxml2num( xmlWartoscH( aPoz, 'K_31' ), 0 )
+         aPoz[ 'K_32' ] := sxml2num( xmlWartoscH( aPoz, 'K_32' ), 0 )
+         aPoz[ 'K_33' ] := sxml2num( xmlWartoscH( aPoz, 'K_33' ), 0 )
+         aPoz[ 'K_34' ] := sxml2num( xmlWartoscH( aPoz, 'K_34' ), 0 )
+         aPoz[ 'K_35' ] := sxml2num( xmlWartoscH( aPoz, 'K_35' ), 0 )
+         aPoz[ 'K_36' ] := sxml2num( xmlWartoscH( aPoz, 'K_36' ), 0 )
+         aPoz[ 'K_360' ] := sxml2num( xmlWartoscH( aPoz, 'K_360' ), 0 )
+         aPoz[ 'SprzedazVAT_Marza' ] := sxml2num( xmlWartoscH( aPoz, 'SprzedazVAT_Marza' ), 0 )
+         IF ! hb_HHasKey( aPoz, 'DataSprzedazy' )
+            aPoz[ 'DataSprzedazy' ] := ""
+         ENDIF
+         aPoz[ 'Sumuj' ] := iif( AllTrim( aPoz[ 'TypDokumentu' ] ) == "FP" .OR. ;
+            ( At( "MR_UZ", aPoz[ 'Procedura' ] ) > 0 .AND. ( aPoz[ 'K_10' ] < 0 .OR. ;
+            aPoz[ 'K_11' ] < 0 .OR. aPoz[ 'K_12' ] < 0 .OR. aPoz[ 'K_13' ] < 0 .OR. ;
+            aPoz[ 'K_14' ] < 0 .OR. aPoz[ 'K_15' ] < 0 .OR. aPoz[ 'K_17' ] < 0 .OR. ;
+            aPoz[ 'K_19' ] < 0 .OR. aPoz[ 'K_21' ] < 0 .OR. aPoz[ 'K_22' ] < 0 ) ), 0, 1 )
+      } )
+   ELSE
+      hDane[ 'JestSprzedaz' ] := .F.
+   ENDIF
+
+   hDane[ 'Zakup' ] := edekXmlGrupaTab( oDoc, 'JPK', 'ZakupWiersz' )
+   IF Len( hDane[ 'Zakup' ] ) > 0
+      hDane[ 'JestZakup' ] := .T.
+      AEval( hDane[ 'Zakup' ], { | aPoz |
+         aPoz[ 'NrKSeF' ] := xmlWartoscH( aPoz, 'NrKSeF' )
+         IF Empty( aPoz[ 'NrKSeF' ] )
+            IF xmlWartoscH( aPoz, 'OFF' ) == '1'
+               aPoz[ 'NrKSeF' ] := 'OFF'
+            ELSEIF xmlWartoscH( aPoz, 'BFK' ) == '1'
+               aPoz[ 'NrKSeF' ] := 'BFK'
+            ELSEIF xmlWartoscH( aPoz, 'DI' ) == '1'
+               aPoz[ 'NrKSeF' ] := 'DI'
+            ELSE
+               aPoz[ 'NrKSeF' ] := ''
+            ENDIF
+         ENDIF
          aPoz[ 'KodKrajuNadaniaTIN' ] := xmlWartoscH( aPoz, 'KodKrajuNadaniaTIN' )
          aPoz[ 'DokumentZakupu' ] := xmlWartoscH( aPoz, 'DokumentZakupu' )
          //aPoz[ 'MPP' ] := iif( xmlWartoscH( aPoz, 'MPP' ) == '1', '1', '0' )

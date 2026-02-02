@@ -228,6 +228,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
             ADodajNieZero( @aPoz, 'K_37', rejs->kol37 )
             ADodajNieZero( @aPoz, 'K_38', rejs->kol38 )
             ADodajNieZero( @aPoz, 'K_39', rejs->kol39 )
+            ADodajNieZero( @aPoz, 'K_360', rejs->kol360 )
       ENDCASE
 
       aPoz[ 'DowodSprzedazy' ] := NrDokUsunHasz( rejs->numer )
@@ -296,6 +297,8 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
 
       aPoz[ 'GTU' ] := AllTrim( rejs->opcje )
 
+      aPoz[ 'NrKSeF' ] := AllTrim( rejs->nrksef )
+      aPoz[ 'KSeFStat' ] := rejs->ksefstat
 
       aPoz[ 'Procedura' ] := AllTrim( rejs->procedur )
       IF Len( AllTrim( rejs->procedur ) ) > 0
@@ -319,7 +322,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
          hb_HHasKey( aPoz, 'K_26' ) .OR. hb_HHasKey( aPoz, 'K_27' ) .OR. hb_HHasKey( aPoz, 'K_28' ) .OR. hb_HHasKey( aPoz, 'K_29' ) .OR. ;
          hb_HHasKey( aPoz, 'K_30' ) .OR. hb_HHasKey( aPoz, 'K_31' ) .OR. hb_HHasKey( aPoz, 'K_32' ) .OR. hb_HHasKey( aPoz, 'K_33' ) .OR. ;
          hb_HHasKey( aPoz, 'K_34' ) .OR. hb_HHasKey( aPoz, 'K_35' ) .OR. hb_HHasKey( aPoz, 'K_36' ) .OR. hb_HHasKey( aPoz, 'K_37' ) .OR. ;
-         hb_HHasKey( aPoz, 'K_38' ) .OR. hb_HHasKey( aPoz, 'K_39' ) .OR. hb_HHasKey( aPoz, 'SprzedazVAT_Marza' )
+         hb_HHasKey( aPoz, 'K_38' ) .OR. hb_HHasKey( aPoz, 'K_39' ) .OR. hb_HHasKey( aPoz, 'K_360' ) .OR. hb_HHasKey( aPoz, 'SprzedazVAT_Marza' )
 
          AAdd( aRes[ 'sprzedaz' ], aPoz )
       ENDIF
@@ -696,6 +699,9 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
          aPoz[ 'MPP' ] := SEK_CV7 == 'PN' .OR. SEK_CV7 == 'PU' .OR. SEK_CV7 == 'PS' .OR. SEK_CV7 == 'SP'
          aPoz[ 'IMP' ] := SEK_CV7 == 'IT' .OR. SEK_CV7 == 'IZ' .OR. SEK_CV7 == 'IS' .OR. ( rejz->kraj <> "" .AND. rejz->kraj <> "PL" .AND. ! KrajUE( rejz->kraj ) .AND. SEK_CV7 <> 'IU' .AND. SEK_CV7 <> 'UZ' .AND. SEK_CV7 <> 'US' )
 
+         aPoz[ 'NrKSeF' ] := AllTrim( rejz->nrksef )
+         aPoz[ 'KSeFStat' ] := rejz->ksefstat
+
          IF lSprzedaz
             IF hb_HHasKey( aPoz, 'K_10' ) .OR. hb_HHasKey( aPoz, 'K_11' ) .OR. hb_HHasKey( aPoz, 'K_12' ) .OR. hb_HHasKey( aPoz, 'K_13' ) .OR. ;
                hb_HHasKey( aPoz, 'K_14' ) .OR. hb_HHasKey( aPoz, 'K_15' ) .OR. hb_HHasKey( aPoz, 'K_16' ) .OR. hb_HHasKey( aPoz, 'K_17' ) .OR. ;
@@ -704,7 +710,7 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
                hb_HHasKey( aPoz, 'K_26' ) .OR. hb_HHasKey( aPoz, 'K_27' ) .OR. hb_HHasKey( aPoz, 'K_28' ) .OR. hb_HHasKey( aPoz, 'K_29' ) .OR. ;
                hb_HHasKey( aPoz, 'K_30' ) .OR. hb_HHasKey( aPoz, 'K_31' ) .OR. hb_HHasKey( aPoz, 'K_32' ) .OR. hb_HHasKey( aPoz, 'K_33' ) .OR. ;
                hb_HHasKey( aPoz, 'K_34' ) .OR. hb_HHasKey( aPoz, 'K_35' ) .OR. hb_HHasKey( aPoz, 'K_36' ) .OR. hb_HHasKey( aPoz, 'K_37' ) .OR. ;
-               hb_HHasKey( aPoz, 'K_38' ) .OR. hb_HHasKey( aPoz, 'K_39' )
+               hb_HHasKey( aPoz, 'K_38' ) .OR. hb_HHasKey( aPoz, 'K_39' ) .OR. hb_HHasKey( aPoz, 'K_360' )
 
                AAdd( aRes[ 'sprzedaz' ], aPoz )
             ENDIF
@@ -741,7 +747,8 @@ FUNCTION JPK_VAT_Dane( nFirma, nMiesiacPocz, nMiesiacKon, lV7 )
          iif( hb_HHasKey( aRow, 'K_36' ), aRow[ 'K_36' ], 0 ) + ;
          iif( hb_HHasKey( aRow, 'K_37' ), aRow[ 'K_37' ], 0 ) - ;
          iif( hb_HHasKey( aRow, 'K_38' ), aRow[ 'K_38' ], 0 ) - ;
-         iif( hb_HHasKey( aRow, 'K_39' ), aRow[ 'K_39' ], 0 )
+         iif( hb_HHasKey( aRow, 'K_39' ), aRow[ 'K_39' ], 0 ) - ;
+         iif( hb_HHasKey( aRow, 'K_360' ), aRow[ 'K_360' ], 0 )
       ENDIF
    } )
 
@@ -815,6 +822,8 @@ FUNCTION VAT_InfoSum( nRaport, nFirma, nMiesiac )
       aDane[ 'SP_48' ] := 0
       aDane[ 'SP_49' ] := 0
       aDane[ 'SP_50' ] := 0
+
+      aDane[ 'SP_360' ] := 0
 
       AEval( aDane[ 'sprzedaz' ], { | aPoz |
 
@@ -969,6 +978,11 @@ FUNCTION VAT_InfoSum( nRaport, nFirma, nMiesiac )
             aPoz[ 'K_39' ] := 0
          ELSE
             aDane[ 'SP_39' ] := aDane[ 'SP_39' ] + aPoz[ 'K_39' ]
+         ENDIF
+         IF ! hb_HHasKey( aPoz, 'K_360' )
+            aPoz[ 'K_360' ] := 0
+         ELSE
+            aDane[ 'SP_360' ] := aDane[ 'SP_360' ] + aPoz[ 'K_360' ]
          ENDIF
       } )
 
@@ -1251,12 +1265,12 @@ PROCEDURE JPK_V7_Rob( nR, nC )
          aDane[ 'Tel' ] := AllTrim( cTel )
          aDane[ 'EMail' ] := AllTrim( cAdresEmail )
          IF aDane[ 'Kwartalnie' ]
-            cDaneXml := jpk_v7k_2( aDane )
+            cDaneXml := jpk_v7k_3( aDane )
          ELSE
-            cDaneXml := jpk_v7m_2( aDane )
+            cDaneXml := jpk_v7m_3( aDane )
          ENDIF
          cMK := iif( aDane[ 'Kwartalnie' ], 'K', 'M' )
-         edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_V7' + cMK + '_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( hb_Date( Val( param_rok ), aDane[ 'Miesiac' ], 1 ) ), wys_edeklaracja, 'JPKV7' + cMK + '-2', aDane[ 'Korekta' ], nMiesiacPocz )
+         edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_V7' + cMK + '_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( hb_Date( Val( param_rok ), aDane[ 'Miesiac' ], 1 ) ), wys_edeklaracja, 'JPKV7' + cMK + '-3', aDane[ 'Korekta' ], nMiesiacPocz )
       ENDIF
    ENDIF
 

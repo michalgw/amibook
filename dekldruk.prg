@@ -302,6 +302,22 @@ PROCEDURE DeklarDrukuj( cSymbolDek, xDane )
          AAdd( aRaporty, { hDane, cPlikRap } )
       ENDIF
       EXIT
+   CASE 'JPKV7M-3'
+   CASE 'JPKV7K-3'
+      hDane := DaneDek_JPKV7w3( xDane )
+      IF ! hDane[ 'JestDeklaracja' ]
+         cPlikRap := 'frf\jpkv7n_w3.frf'
+         AAdd( aRaporty, { hDane, cPlikRap } )
+      ENDIF
+      IF hDane[ 'JestDeklaracja' ]
+         cPlikRap := 'frf\jpkv7d_w3.frf'
+         AAdd( aRaporty, { hDane, cPlikRap } )
+      ENDIF
+      IF hDane[ 'JestSprzedaz' ] .OR. hDane[ 'JestZakup' ]
+         cPlikRap := 'frf\jpkv7j_w3.frf'
+         AAdd( aRaporty, { hDane, cPlikRap } )
+      ENDIF
+      EXIT
    OTHERWISE
       Komunikat( 'Brak szablonu wydruku dla tej deklaracji - ' + cSymbolDek )
       RETURN
@@ -9140,6 +9156,276 @@ FUNCTION DaneDek_JPKV7w2( aDaneZrd )
          AEval( aDaneZrd[ 'zakup' ], { | aPoz |
             aPoz[ 'LpZakupu' ] := nI
             nI++
+            aPoz[ 'DataZakupu' ] := date2strxml( aPoz[ 'DataZakupu' ] )
+            aPoz[ 'DokumentZakupu' ] := HGetDefault( aPoz, 'DokumentZakupu', '' )
+            //aPoz[ 'MPP' ] := iif( aPoz[ 'MPP' ], '1', '0' )
+            aPoz[ 'IMP' ] := iif( aPoz[ 'IMP' ], '1', '0' )
+            aPoz[ 'K_40' ] := HGetDefault( aPoz, 'K_43', 0 )
+            aPoz[ 'K_41' ] := HGetDefault( aPoz, 'K_44', 0 )
+            aPoz[ 'K_42' ] := HGetDefault( aPoz, 'K_45', 0 )
+            aPoz[ 'K_43' ] := HGetDefault( aPoz, 'K_46', 0 )
+            aPoz[ 'K_44' ] := HGetDefault( aPoz, 'K_47', 0 )
+            aPoz[ 'K_45' ] := HGetDefault( aPoz, 'K_48', 0 )
+            aPoz[ 'K_46' ] := HGetDefault( aPoz, 'K_49', 0 )
+            aPoz[ 'K_47' ] := HGetDefault( aPoz, 'K_50', 0 )
+            aPoz[ 'ZakupVAT_Marza' ] := HGetDefault( aPoz, 'ZakupVAT_Marza', 0 )
+            IF hb_HHasKey( aPoz, 'DataWplywu' )
+               aPoz[ 'DataWplywu' ] := date2strxml( aPoz[ 'DataWplywu' ] )
+            ELSE
+               aPoz[ 'DataWplywu' ] := ""
+            ENDIF
+            AAdd( aDane[ 'Zakup' ], aPoz )
+         } )
+      ELSE
+         aDane[ 'JestZakup' ] := .F.
+      ENDIF
+   ELSE
+      aDane[ 'JestSprzedaz' ] := .F.
+      aDane[ 'JestZakup' ] := .F.
+   ENDIF
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneDek_JPKV7w3( aDaneZrd )
+
+   LOCAL aDane := hb_Hash(), nI, cTmp
+
+   aDane[ 'KodFormularza' ] := 'JPK_V7' + iif( aDaneZrd[ 'Kwartalnie' ], 'K', 'M' )
+   aDane[ 'WariantFormularza' ] := '1'
+   aDane[ 'KodFormularzaDekl' ] := 'VAT-7' + iif( aDaneZrd[ 'Kwartalnie' ], 'K', 'M' )
+   aDane[ 'WariantFormularzaDekl' ] := iif( aDaneZrd[ 'Kwartalnie' ], '15', '21' )
+   aDane[ 'DataWytworzeniaJPK' ] := aDaneZrd[ 'DataWytworzeniaJPK' ]
+   aDane[ 'NazwaSystemu' ] :=  'AMi-BOOK'
+   aDane[ 'KodUrzedu' ] := aDaneZrd[ 'KodUrzedu' ]
+   aDane[ 'Rok' ] := aDaneZrd[ 'Rok' ]
+   IF aDaneZrd[ 'Kwartalnie' ]
+      aDane[ 'Kwartal' ] := aDaneZrd[ 'Kwartal' ]
+   ELSE
+      aDane[ 'Kwartal' ] := 0
+   ENDIF
+   aDane[ 'Miesiac' ] := aDaneZrd[ 'Miesiac' ]
+   cTmp := aDaneZrd[ 'KodUrzedu' ]
+   aDane[ 'UrzadSkarbowy' ] := iif( cTmp != '', KodUS2Nazwa( cTmp ), '' )
+   aDane[ 'NrRef' ] := ''
+
+   aDane[ 'NIP' ] := aDaneZrd[ 'NIP' ]
+
+   aDane[ 'CelZlozenia1' ] := iif( ! aDaneZrd[ 'Korekta' ], '1', '0' )
+   aDane[ 'CelZlozenia2' ] := iif( aDaneZrd[ 'Korekta' ], '1', '0' )
+   aDane[ 'PodmiotSpolka' ] := iif( aDaneZrd[ 'Spolka' ], '1', '0' )
+   aDane[ 'PodmiotOsoba' ] := iif( ! aDaneZrd[ 'Spolka' ], '1', '0' )
+   IF ! aDaneZrd[ 'Spolka' ]
+      aDane[ 'PodmiotNazwa' ] := aDaneZrd[ 'Nazwisko' ] + ', ' ;
+        + aDaneZrd[ 'ImiePierwsze' ]
+   ELSE
+      aDane[ 'PodmiotNazwa' ] := aDaneZrd[ 'PelnaNazwa' ]
+   ENDIF
+
+   aDane[ 'Email' ] := ''
+   aDane[ 'Telefon' ] := ''
+
+   IF ! aDaneZrd[ 'Spolka' ]
+      aDane[ 'P_8_N' ] := ''
+      aDane[ 'P_8_R' ] := ''
+      aDane[ 'P_9_N' ] := aDaneZrd[ 'Nazwisko' ]
+      aDane[ 'P_9_I' ] := aDaneZrd[ 'ImiePierwsze' ]
+      aDane[ 'P_9_D' ] := date2strxml( aDaneZrd[ 'DataUrodzenia' ] )
+      aDane[ 'P_9_E' ] := ''
+      aDane[ 'P_9_T' ] := ''
+   ELSE
+      aDane[ 'P_8_N' ] := aDaneZrd[ 'PelnaNazwa' ]
+      aDane[ 'P_8_R' ] := aDaneZrd[ 'NIP' ]
+      aDane[ 'P_9_N' ] := ''
+      aDane[ 'P_9_I' ] := ''
+      aDane[ 'P_9_D' ] := ''
+      aDane[ 'P_9_E' ] := ''
+      aDane[ 'P_9_T' ] := ''
+   ENDIF
+
+   IF aDaneZrd[ 'Deklaracja' ]
+      aDane[ 'JestDeklaracja' ] := .T.
+      aDane[ 'P_10' ] := aDaneZrd[ 'DekV7' ][ 'P_10' ]
+      aDane[ 'P_11' ] := aDaneZrd[ 'DekV7' ][ 'P_11' ]
+      aDane[ 'P_12' ] := aDaneZrd[ 'DekV7' ][ 'P_12' ]
+      aDane[ 'P_13' ] := aDaneZrd[ 'DekV7' ][ 'P_13' ]
+      aDane[ 'P_14' ] := aDaneZrd[ 'DekV7' ][ 'P_14' ]
+      aDane[ 'P_15' ] := aDaneZrd[ 'DekV7' ][ 'P_15' ]
+      aDane[ 'P_16' ] := aDaneZrd[ 'DekV7' ][ 'P_16' ]
+      aDane[ 'P_17' ] := aDaneZrd[ 'DekV7' ][ 'P_17' ]
+      aDane[ 'P_18' ] := aDaneZrd[ 'DekV7' ][ 'P_18' ]
+      aDane[ 'P_19' ] := aDaneZrd[ 'DekV7' ][ 'P_19' ]
+      aDane[ 'P_20' ] := aDaneZrd[ 'DekV7' ][ 'P_20' ]
+      aDane[ 'P_21' ] := aDaneZrd[ 'DekV7' ][ 'P_21' ]
+      aDane[ 'P_22' ] := aDaneZrd[ 'DekV7' ][ 'P_22' ]
+      aDane[ 'P_23' ] := aDaneZrd[ 'DekV7' ][ 'P_23' ]
+      aDane[ 'P_24' ] := aDaneZrd[ 'DekV7' ][ 'P_24' ]
+      aDane[ 'P_25' ] := aDaneZrd[ 'DekV7' ][ 'P_25' ]
+      aDane[ 'P_26' ] := aDaneZrd[ 'DekV7' ][ 'P_26' ]
+      aDane[ 'P_27' ] := aDaneZrd[ 'DekV7' ][ 'P_27' ]
+      aDane[ 'P_28' ] := aDaneZrd[ 'DekV7' ][ 'P_28' ]
+      aDane[ 'P_29' ] := aDaneZrd[ 'DekV7' ][ 'P_29' ]
+      aDane[ 'P_30' ] := aDaneZrd[ 'DekV7' ][ 'P_30' ]
+      aDane[ 'P_31' ] := aDaneZrd[ 'DekV7' ][ 'P_31' ]
+      aDane[ 'P_32' ] := aDaneZrd[ 'DekV7' ][ 'P_32' ]
+      aDane[ 'P_33' ] := aDaneZrd[ 'DekV7' ][ 'P_33' ]
+      aDane[ 'P_34' ] := aDaneZrd[ 'DekV7' ][ 'P_34' ]
+      aDane[ 'P_35' ] := aDaneZrd[ 'DekV7' ][ 'P_35' ]
+      aDane[ 'P_36' ] := aDaneZrd[ 'DekV7' ][ 'P_36' ]
+      aDane[ 'P_360' ] := aDaneZrd[ 'DekV7' ][ 'P_360' ]
+      aDane[ 'P_37' ] := aDaneZrd[ 'DekV7' ][ 'P_37' ]
+      aDane[ 'P_38' ] := aDaneZrd[ 'DekV7' ][ 'P_38' ]
+      aDane[ 'P_39' ] := aDaneZrd[ 'DekV7' ][ 'P_39' ]
+      aDane[ 'P_40' ] := aDaneZrd[ 'DekV7' ][ 'P_40' ]
+      aDane[ 'P_41' ] := aDaneZrd[ 'DekV7' ][ 'P_41' ]
+      aDane[ 'P_42' ] := aDaneZrd[ 'DekV7' ][ 'P_42' ]
+      aDane[ 'P_43' ] := aDaneZrd[ 'DekV7' ][ 'P_43' ]
+      aDane[ 'P_44' ] := aDaneZrd[ 'DekV7' ][ 'P_44' ]
+      aDane[ 'P_45' ] := aDaneZrd[ 'DekV7' ][ 'P_45' ]
+      aDane[ 'P_46' ] := aDaneZrd[ 'DekV7' ][ 'P_46' ]
+      aDane[ 'P_47' ] := aDaneZrd[ 'DekV7' ][ 'P_47' ]
+      aDane[ 'P_48' ] := aDaneZrd[ 'DekV7' ][ 'P_48' ]
+      aDane[ 'P_49' ] := aDaneZrd[ 'DekV7' ][ 'P_49' ]
+      aDane[ 'P_50' ] := aDaneZrd[ 'DekV7' ][ 'P_50' ]
+      aDane[ 'P_51' ] := aDaneZrd[ 'DekV7' ][ 'P_51' ]
+      aDane[ 'P_52' ] := aDaneZrd[ 'DekV7' ][ 'P_52' ]
+      aDane[ 'P_53' ] := aDaneZrd[ 'DekV7' ][ 'P_53' ]
+      aDane[ 'P_54' ] := aDaneZrd[ 'DekV7' ][ 'P_54' ]
+      aDane[ 'P_540' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_540' ], '1', '0' )
+      aDane[ 'P_55' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_55' ], '1', '0' )
+      aDane[ 'P_56' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_56' ], '1', '0' )
+      aDane[ 'P_560' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_560' ], '1', '0' )
+      //aDane[ 'P_57' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_57' ], '1', '0' )
+      aDane[ 'P_58' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_58' ], '1', '0' )
+      aDane[ 'P_59' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_59' ], '1', '0' )
+      aDane[ 'P_60' ] := aDaneZrd[ 'DekV7' ][ 'P_60' ]
+      aDane[ 'P_61' ] := aDaneZrd[ 'DekV7' ][ 'P_61' ]
+      aDane[ 'P_62' ] := aDaneZrd[ 'DekV7' ][ 'P_62' ]
+      aDane[ 'P_63' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_63' ], '1', '0' )
+      aDane[ 'P_64' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_64' ], '1', '0' )
+      aDane[ 'P_65' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_65' ], '1', '0' )
+      aDane[ 'P_66' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_66' ], '1', '0' )
+      aDane[ 'P_660' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_660' ], '1', '0' )
+      aDane[ 'P_67' ] := iif( aDaneZrd[ 'DekV7' ][ 'P_67' ], '1', '0' )
+      aDane[ 'P_68' ] := aDaneZrd[ 'DekV7' ][ 'P_68' ]
+      aDane[ 'P_69' ] := aDaneZrd[ 'DekV7' ][ 'P_69' ]
+      IF aDaneZrd[ 'DekV7' ][ 'Korekta' ] .AND. Len( AllTrim( aDaneZrd[ 'DekV7' ][ 'ORDZU' ] ) ) > 0
+         aDane[ 'P_ORDZU' ] := AllTrim( aDaneZrd[ 'DekV7' ][ 'ORDZU' ] )
+      ELSE
+         aDane[ 'P_ORDZU' ] := ''
+      ENDIF
+   ELSE
+      aDane[ 'JestDeklaracja' ] := .F.
+   ENDIF
+
+   IF aDaneZrd[ 'Rejestry' ]
+
+      aDane[ 'Sprzedaz' ] := {}
+      IF Len( aDaneZrd[ 'sprzedaz' ] ) > 0
+         aDane[ 'JestSprzedaz' ] := .T.
+         nI := 1
+         AEval( aDaneZrd[ 'sprzedaz' ], { | aPoz |
+            aPoz[ 'LpSprzedazy' ] := nI
+            nI++
+            IF hb_HHasKey( aPoz, 'MPP' ) .AND. aPoz[ 'MPP' ]
+               aPoz[ 'Procedura' ] := aPoz[ 'Procedura' ] + ' MPP'
+            ENDIF
+            IF ! hb_HHasKey( aPoz, 'KorektaPodstawyOpodt' )
+               aPoz[ 'KorektaPodstawyOpodt' ] := '0'
+            ELSE
+               aPoz[ 'KorektaPodstawyOpodt' ] := iif( aPoz[ 'KorektaPodstawyOpodt' ], '1', '0' )
+            ENDIF
+
+            cTmp := HGetDefault( aPoz, 'NrKSeF', "" )
+            IF ! Empty( cTmp )
+               aPoz[ 'NrKSeF' ] := cTmp
+            ELSE
+               cTmp := HGetDefault( aPoz, 'KSeFStat', "B" )
+               DO CASE
+               CASE cTmp == "B"
+                  aPoz[ 'NrKSeF' ] := 'BFK'
+               CASE cTmp == "O"
+                  aPoz[ 'NrKSeF' ] := 'OFF'
+               CASE cTmp == "D"
+                  aPoz[ 'NrKSeF' ] := 'DI'
+               ENDCASE
+            ENDIF
+
+            aPoz[ 'TerminPlatnosci' ] := date2strxml( xmlWartoscH( aPoz, 'TerminPlatnosci', '' ) )
+            aPoz[ 'DataZaplaty' ] := date2strxml( xmlWartoscH( aPoz, 'DataZaplaty', '' ) )
+            aPoz[ 'DataWystawienia' ] := date2strxml( aPoz[ 'DataWystawienia' ] )
+            aPoz[ 'K_10' ] := HGetDefault( aPoz, 'K_10', 0 )
+            aPoz[ 'K_11' ] := HGetDefault( aPoz, 'K_11', 0 )
+            aPoz[ 'K_12' ] := HGetDefault( aPoz, 'K_12', 0 )
+            aPoz[ 'K_13' ] := HGetDefault( aPoz, 'K_13', 0 )
+            aPoz[ 'K_14' ] := HGetDefault( aPoz, 'K_14', 0 )
+            aPoz[ 'K_15' ] := HGetDefault( aPoz, 'K_15', 0 )
+            aPoz[ 'K_16' ] := HGetDefault( aPoz, 'K_16', 0 )
+            aPoz[ 'K_17' ] := HGetDefault( aPoz, 'K_17', 0 )
+            aPoz[ 'K_18' ] := HGetDefault( aPoz, 'K_18', 0 )
+            aPoz[ 'K_19' ] := HGetDefault( aPoz, 'K_19', 0 )
+            aPoz[ 'K_20' ] := HGetDefault( aPoz, 'K_20', 0 )
+            aPoz[ 'K_21' ] := HGetDefault( aPoz, 'K_21', 0 )
+            aPoz[ 'K_22' ] := HGetDefault( aPoz, 'K_22', 0 )
+            aPoz[ 'K_23' ] := HGetDefault( aPoz, 'K_23', 0 )
+            aPoz[ 'K_24' ] := HGetDefault( aPoz, 'K_24', 0 )
+            aPoz[ 'K_25' ] := HGetDefault( aPoz, 'K_25', 0 )
+            aPoz[ 'K_26' ] := HGetDefault( aPoz, 'K_26', 0 )
+            aPoz[ 'K_27' ] := HGetDefault( aPoz, 'K_27', 0 )
+            aPoz[ 'K_28' ] := HGetDefault( aPoz, 'K_28', 0 )
+            aPoz[ 'K_29' ] := HGetDefault( aPoz, 'K_29', 0 )
+            aPoz[ 'K_30' ] := HGetDefault( aPoz, 'K_30', 0 )
+            aPoz[ 'K_31' ] := HGetDefault( aPoz, 'K_31', 0 )
+            aPoz[ 'K_32' ] := HGetDefault( aPoz, 'K_32V', 0 )
+            aPoz[ 'K_33' ] := HGetDefault( aPoz, 'K_36', 0 )
+            aPoz[ 'K_34' ] := HGetDefault( aPoz, 'K_37', 0 )
+            aPoz[ 'K_35' ] := HGetDefault( aPoz, 'K_38', 0 )
+            aPoz[ 'K_36' ] := HGetDefault( aPoz, 'K_39', 0 )
+            aPoz[ 'K_360' ] := HGetDefault( aPoz, 'K_360', 0 )
+            aPoz[ 'SprzedazVAT_Marza' ] := HGetDefault( aPoz, 'SprzedazVAT_Marza', 0 )
+            IF hb_HHasKey( aPoz, 'DataSprzedazy' )
+               aPoz[ 'DataSprzedazy' ] := date2strxml( aPoz[ 'DataSprzedazy' ] )
+            ELSE
+               aPoz[ 'DataSprzedazy' ] := ""
+            ENDIF
+            IF ( hb_HHasKey( aPoz, 'TypDokumentu' ) .AND. AllTrim( aPoz[ 'TypDokumentu' ] ) == "FP" ) ;
+               .OR. ( At( "MR_UZ", aPoz[ 'Procedura' ] ) > 0 .AND. ( aPoz[ 'K_10' ] < 0 .OR. ;
+               aPoz[ 'K_11' ] < 0 .OR. aPoz[ 'K_12' ] < 0 .OR. aPoz[ 'K_13' ] < 0 .OR. ;
+               aPoz[ 'K_14' ] < 0 .OR. aPoz[ 'K_15' ] < 0 .OR. aPoz[ 'K_17' ] < 0 .OR. ;
+               aPoz[ 'K_19' ] < 0 .OR. aPoz[ 'K_21' ] < 0 .OR. aPoz[ 'K_22' ] < 0 ) )
+
+               aPoz[ 'Sumuj' ] := 0
+            ELSE
+               aPoz[ 'Sumuj' ] := 1
+            ENDIF
+            AAdd( aDane[ 'Sprzedaz' ], aPoz )
+         } )
+      ELSE
+         aDane[ 'JestSprzedaz' ] := .F.
+      ENDIF
+
+      aDane[ 'Zakup' ] := {}
+      IF Len( aDaneZrd[ 'zakup' ] ) > 0
+         aDane[ 'JestZakup' ] := .T.
+         nI := 1
+         AEval( aDaneZrd[ 'zakup' ], { | aPoz |
+            aPoz[ 'LpZakupu' ] := nI
+            nI++
+            cTmp := HGetDefault( aPoz, 'NrKSeF', "" )
+            IF ! Empty( cTmp )
+               aPoz[ 'NrKSeF' ] := cTmp
+            ELSE
+               cTmp := HGetDefault( aPoz, 'KSeFStat', "B" )
+               DO CASE
+               CASE cTmp == "B"
+                  aPoz[ 'NrKSeF' ] := 'BFK'
+               CASE cTmp == "O"
+                  aPoz[ 'NrKSeF' ] := 'OFF'
+               CASE cTmp == "D"
+                  aPoz[ 'NrKSeF' ] := 'DI'
+               ENDCASE
+            ENDIF
             aPoz[ 'DataZakupu' ] := date2strxml( aPoz[ 'DataZakupu' ] )
             aPoz[ 'DokumentZakupu' ] := HGetDefault( aPoz, 'DokumentZakupu', '' )
             //aPoz[ 'MPP' ] := iif( aPoz[ 'MPP' ], '1', '0' )
