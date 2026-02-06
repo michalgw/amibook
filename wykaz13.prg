@@ -26,7 +26,7 @@ FUNCTION Wykaz13()
 
    LOCAL lRobS := .T., lRobI := .T., lRobZ := .T., lRobU := .T., lRobW := .T., lRobK := .T., lRob
    LOCAL cRobS := 'T', cRobI := 'T', cRobZ := 'T', cRobU := 'T', cRobW := 'T', cRobK := 'T'
-   LOCAL nMenu, cScr
+   LOCAL nMenu, cScr, nGrafText, aDane := {=>}, aPoz, aSumP, aSumR, aWiersze, i, oRap
 
    PRIVATE _grupa1,_grupa2,_grupa3,_grupa4,_grupa5,_grupa,_koniec,_szerokosc,_numer,_lewa,_prawa,_strona,_czy_mon,_czy_close := .F.
    PRIVATE _t1,_t2,_t3,_t4,_t5,_t6,_t7,_t8,_t9,_t10,_t11,_t12,_t13,_t14,_t15
@@ -120,150 +120,274 @@ FUNCTION Wykaz13()
          BREAK
       ENDIF
 
-      mon_drk( 'ö' + ProcName() )
+      nGrafText := GraficznyCzyTekst( 'wykaz13' )
 
-      *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      k1 := dos_p( Upper( miesiac( Val( miesiac ) ) ) )
-      k2 := param_rok
-      mon_drk( ' Zestawienie pomocnicze za ' + k1 + '.' + k2 + ' Sporz&_a.dz.dnia-' + DToC( Date() ) + ' godz-' + SubStr( Time(), 1, 5 ) )
-      mon_drk( ' FIRMA: ' + symbol_fir )
-      mon_drk( 'ÚÄÄÄÄÄÂÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿' )
-      mon_drk( '³     ³ Nr ³    Nr    ³                          ³              ³              ³' )
-      mon_drk( '³ Lp  ³dnia³  dowodu  ³          Kontrahent      ³    Przych&_o.d  ³    Rozch&_o.d   ³' )
-      mon_drk( 'ÀÄÄÄÄÄÁÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ' )
+      IF nGrafText == 0
+         BREAK
+      ENDIF
 
-      STORE 0 TO s0_5,s0_6,SS,SI,SZ,SU,SR,SW,SK,SZr,SUr,SRr,SWr,SKr
-      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      aDane[ 'miesiac' ] := AllTrim( Upper( miesiac( Val( miesiac ) ) ) )
+      aDane[ 'rok' ] := param_rok
+      aDane[ 'firma' ] := AllTrim( symbol_fir )
+      aDane[ 's7' ] := 0
+      aDane[ 's8' ] := 0
+      aDane[ 's10' ] := 0
+      aDane[ 's10r' ] := 0
+      aDane[ 's11' ] := 0
+      aDane[ 's11r' ] := 0
+      aDane[ 's12' ] := 0
+      aDane[ 's12r' ] := 0
+      aDane[ 's13' ] := 0
+      aDane[ 's13r' ] := 0
+      aDane[ 'sp' ] := 0
+      aDane[ 'sr' ] := 0
+      aDane[ 'uzytkownik' ] := AllTrim( code() )
 
-      _grupa := .T.
+      aWiersze := {}
+
       DO WHILE ! &_koniec
-
-         *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
-
          lRob := .F.
+         aPoz := {=>}
          liczba := liczba + 1
-         k1 := dos_c( Str( liczba, 5 ) )
-         k2 := dzien
-         k3 := SubStr( iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2 ) + ' ', numer ), 1, 10 )
-         k4 := nazwa
-         K5 := iif( lRobS, wyr_tow, 0 ) + iif( lRobI, uslugi, 0 )
-         K6 := iif( lRobZ, zakup, 0 ) + iif( lRobU, uboczne, 0 ) + iif( lRobW, wynagr_g, 0 ) + iif( lRobK, wydatki, 0 )
-         P=' '
-         R=' '
+         aPoz[ 'lp' ] := liczba
+         aPoz[ 'k1' ] := dos_c( Str( liczba, 5 ) )
+         aPoz[ 'dzien' ] := dzien
+         aPoz[ 'k2' ] := dzien
+         aPoz[ 'numer' ] := iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2 ) + ' ', numer )
+         aPoz[ 'k3' ] := SubStr( iif( Left( numer, 1 ) == Chr( 1 ) .OR. Left( numer, 1 ) == Chr( 254 ), SubStr( numer, 2 ) + ' ', numer ), 1, 10 )
+         aPoz[ 'nazwa' ] := AllTrim( nazwa )
+         aPoz[ 'k4' ] := nazwa
+         aPoz[ 'przychod' ] := iif( lRobS, wyr_tow, 0 ) + iif( lRobI, uslugi, 0 )
+         aPoz[ 'k5' ] := iif( lRobS, wyr_tow, 0 ) + iif( lRobI, uslugi, 0 )
+         aPoz[ 'rozchod' ] := iif( lRobZ, zakup, 0 ) + iif( lRobU, uboczne, 0 ) + iif( lRobW, wynagr_g, 0 ) + iif( lRobK, wydatki, 0 )
+         aPoz[ 'k6' ] := iif( lRobZ, zakup, 0 ) + iif( lRobU, uboczne, 0 ) + iif( lRobW, wynagr_g, 0 ) + iif( lRobK, wydatki, 0 )
+         aPoz[ 'P' ] := ' '
+         aPoz[ 'R' ] := ' '
          IF wyr_tow <> 0 .AND. lRobS
-            P := 's'
-            ss := ss + wyr_tow
+            aPoz[ 'P' ] := 's'
+            aDane[ 's7' ] := aDane[ 's7' ] + wyr_tow
             lRob := .T.
          ENDIF
          IF uslugi <> 0 .AND. lRobI
-            P := 'i'
-            si := si + uslugi
+            aPoz[ 'P' ] := 'i'
+            aDane[ 's8' ] := aDane[ 's8' ] + uslugi
             lRob := .T.
          ENDIF
          IF zakup <> 0 .AND. lRobZ
-            R := 'z'
+            aPoz[ 'R' ] := 'z'
             IF Left( numer, 3 ) == 'RZ-'
-               szr := szr + zakup
+               aDane[ 's10r' ] := aDane[ 's10r' ] + zakup
             ELSE
-               sz := sz + zakup
+               aDane[ 's10' ] := aDane[ 's10' ] + zakup
             ENDIF
             lRob := .T.
          ENDIF
          IF uboczne <> 0 .AND. lRobU
-            R := 'u'
+            aPoz [ 'R' ] := 'u'
             IF Left( numer, 3 ) == 'RZ-'
-               sur := sur + uboczne
+               aDane[ 's11r' ] := aDane[ 's11r' ] + uboczne
             ELSE
-               su := su + uboczne
+               aDane[ 's11' ] := aDane[ 's11' ] + uboczne
             ENDIF
             lRob := .T.
          ENDIF
          IF wynagr_g <> 0 .AND. lRobW
-            R := 'w'
+            aPoz [ 'R' ] := 'w'
             IF Left( numer, 3 ) == 'RZ-'
-               swr := swr + wynagr_g
+               aDane[ 's12r' ] := aDane[ 's12r' ] + wynagr_g
             ELSE
-               sw := sw + wynagr_g
+               aDane[ 's12' ] := aDane[ 's12' ] + wynagr_g
             ENDIF
             lRob := .T.
          ENDIF
          IF wydatki <> 0 .AND. lRobK
-            R := 'k'
+            aPoz[ 'R' ] := 'k'
             IF Left( numer, 3 ) == 'RZ-'
-               skr := skr + wydatki
+               aDane[ 's13r' ] := aDane[ 's13r' ] + wydatki
             ELSE
-               sk := sk + wydatki
+               aDane[ 's13' ] := aDane[ 's13' ] + wydatki
             ENDIF
             lRob := .T.
          ENDIF
-         znumer := numer
-         SKIP
+         aPoz[ 'nr' ] := AllTrim( numer )
+         aPoz[ 'znumer' ] := numer
 
          *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-         IF Left( znumer, 1 )#Chr( 1 ) .AND. Left( znumer, 1 )#Chr( 254 )
-            s0_5 := s0_5 + k5
-            s0_6 := s0_6 + k6
-         ENDIF
-         k4 := SubStr( k4, 1, 26 )
-         IF k5 == 0
-            k5 := Space( 14 )
-         ELSE
-            k5 := kwota( k5, 14, 2 )
-         ENDIF
-         IF k6 == 0
-            k6 := Space( 14 )
-         ELSE
-            k6 := kwota( k6, 14, 2 )
+         IF Left( numer, 1 )#Chr( 1 ) .AND. Left( numer, 1 )#Chr( 254 )
+            aDane[ 'sp' ] := aDane[ 'sp' ] + aPoz[ 'przychod' ]
+            aDane[ 'sr' ] := aDane[ 'sr' ] + aPoz[ 'rozchod' ]
          ENDIF
 
          IF lRob
-            mon_drk( ' ' + k1 + '  ' + k2 + '  ' + k3 + ' ' + k4 + ' ' + k5 + P + k6 + R )
+            AAdd( aWiersze, aPoz )
          ENDIF
 
-         *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-         _numer := 0
-         _grupa := .F.
+         SKIP
+
       ENDDO
 
-      *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
-      mon_drk( 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ' )
-      mon_drk( '                     R A Z E M                    ' + kwota( s0_5, 14, 2 ) + ' ' + kwota( s0_6, 14, 2 ) )
-      mon_drk( '' )
-      IF lRobS
-         mon_drk( '        s - sprzeda&_z. towar&_o.w i us&_l.ug (kol. 7)     ' + kwota( SS, 14, 2 ) )
-      ENDIF
-      IF lRobI
-         mon_drk( '        i - inne przychody           (kol. 8)     ' + kwota( SI, 14, 2 ) )
-      ENDIF
-      IF lRobS .OR. lRobI
-         mon_drk( '                                                  --------------' )
-         mon_drk( '                                      PRZYCHODY   ' + kwota( SS + SI, 14, 2 ) )
+      DO CASE
+      CASE nGrafText == 1
+
+         aSumP := {}
+         aSumR := {}
+         IF lRobS
+            aPoz := {=>}
+            aPoz[ 'nazwa' ] := 's - sprzeda¾ towar¢w i usˆug'
+            aPoz[ 'kol' ] := 7
+            aPoz[ 'wartosc' ] := aDane[ 's7' ]
+            AAdd( aSumP, aPoz )
+         ENDIF
+         IF lRobI
+            aPoz := {=>}
+            aPoz[ 'nazwa' ] := 'i - inne przychody'
+            aPoz[ 'kol' ] := 8
+            aPoz[ 'wartosc' ] := aDane[ 's8' ]
+            AAdd( aSumP, aPoz )
+         ENDIF
+         IF lRobZ
+            aPoz := {=>}
+            aPoz[ 'nazwa' ] := 'z - zakup towar¢w i materiaˆ¢w'
+            aPoz[ 'kol' ] := 10
+            aPoz[ 'wartosc_k' ] := aDane[ 's10' ]
+            aPoz[ 'wartosc_r' ] := aDane[ 's10r' ]
+            AAdd( aSumR, aPoz )
+         ENDIF
+         IF lRobU
+            aPoz := {=>}
+            aPoz[ 'nazwa' ] := 'u - uboczne koszty zakupu'
+            aPoz[ 'kol' ] := 11
+            aPoz[ 'wartosc_k' ] := aDane[ 's11' ]
+            aPoz[ 'wartosc_r' ] := aDane[ 's11r' ]
+            AAdd( aSumR, aPoz )
+         ENDIF
+         IF lRobW
+            aPoz := {=>}
+            aPoz[ 'nazwa' ] := 'w - wynagrodzenia'
+            aPoz[ 'kol' ] := 12
+            aPoz[ 'wartosc_k' ] := aDane[ 's12' ]
+            aPoz[ 'wartosc_r' ] := aDane[ 's12r' ]
+            AAdd( aSumR, aPoz )
+         ENDIF
+         IF lRobK
+            aPoz := {=>}
+            aPoz[ 'nazwa' ] := 'k - koszty pozostaˆe'
+            aPoz[ 'kol' ] := 13
+            aPoz[ 'wartosc_k' ] := aDane[ 's13' ]
+            aPoz[ 'wartosc_r' ] := aDane[ 's13r' ]
+            AAdd( aSumR, aPoz )
+         ENDIF
+         aDane[ 'wiersze' ] := aWiersze
+         aDane[ 'sump' ] := aSumP
+         aDane[ 'sumr' ] := aSumR
+         FRDrukuj( 'frf\wykaz13.frf' , aDane )
+
+      CASE nGrafText == 2
+
+         mon_drk( 'ö' + ProcName() )
+
+         *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         k1 := dos_p( Upper( miesiac( Val( miesiac ) ) ) )
+         k2 := param_rok
+         mon_drk( ' Zestawienie pomocnicze za ' + k1 + '.' + k2 + ' Sporz&_a.dz.dnia-' + DToC( Date() ) + ' godz-' + SubStr( Time(), 1, 5 ) )
+         mon_drk( ' FIRMA: ' + symbol_fir )
+         mon_drk( 'ÚÄÄÄÄÄÂÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿' )
+         mon_drk( '³     ³ Nr ³    Nr    ³                          ³              ³              ³' )
+         mon_drk( '³ Lp  ³dnia³  dowodu  ³          Kontrahent      ³    Przych&_o.d  ³    Rozch&_o.d   ³' )
+         mon_drk( 'ÀÄÄÄÄÄÁÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ' )
+
+         STORE 0 TO s0_5,s0_6,SS,SI,SZ,SU,SR,SW,SK,SZr,SUr,SRr,SWr,SKr
+         *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+         _grupa := .T.
+         FOR i := 1 TO Len( aWiersze )
+
+            *@@@@@@@@@@@@@@@@@@@@@@ MODUL OBLICZEN @@@@@@@@@@@@@@@@@@@@@@@@@
+
+            k1 := aWiersze[ i ][ 'k1' ]
+            k2 := aWiersze[ i ][ 'k2' ]
+            k3 := aWiersze[ i ][ 'k3' ]
+            k4 := aWiersze[ i ][ 'k4' ]
+            K5 := aWiersze[ i ][ 'k5' ]
+            K6 := aWiersze[ i ][ 'k6' ]
+            P := aWiersze[ i ][ 'P' ]
+            R := aWiersze[ i ][ 'R' ]
+            znumer := aWiersze[ i ][ 'znumer' ]
+
+            *@@@@@@@@@@@@@@@@@@@@@@@@@@ REKORD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            k4 := SubStr( k4, 1, 26 )
+            IF k5 == 0
+               k5 := Space( 14 )
+            ELSE
+               k5 := kwota( k5, 14, 2 )
+            ENDIF
+            IF k6 == 0
+               k6 := Space( 14 )
+            ELSE
+               k6 := kwota( k6, 14, 2 )
+            ENDIF
+
+            mon_drk( ' ' + k1 + '  ' + k2 + '  ' + k3 + ' ' + k4 + ' ' + k5 + P + k6 + R )
+
+            *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            _numer := 0
+            _grupa := .F.
+         NEXT
+
+         s0_5 := aDane[ 'sp' ]
+         s0_6 := aDane[ 'sr' ]
+         SS := aDane[ 's7' ]
+         SI := aDane[ 's8' ]
+         SZ := aDane[ 's10' ]
+         SZr := aDane[ 's10r' ]
+         SU := aDane[ 's11' ]
+         SUr := aDane[ 's11r' ]
+         SW := aDane[ 's12' ]
+         SWr := aDane[ 's12r' ]
+         SK := aDane[ 's13' ]
+         SKr := aDane[ 's13r' ]
+
+         *@@@@@@@@@@@@@@@@@@@@@@@ ZAKONCZENIE @@@@@@@@@@@@@@@@@@@@@@@@@@@
+         mon_drk( 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ' )
+         mon_drk( '                     R A Z E M                    ' + kwota( s0_5, 14, 2 ) + ' ' + kwota( s0_6, 14, 2 ) )
          mon_drk( '' )
-      ENDIF
-      IF lRobZ .OR. lRobU .OR. lRobW .OR. lRobK
-         mon_drk( '                                                 KSI&__E.GA     REJESTR    RAZEM   ' )
-      ENDIF
-      IF lRobZ
-         mon_drk( '        z - zakup towar&_o.w i materia&_l..(kol.10)  ' + kwota( SZ, 10, 2 ) + ' ' + kwota( SZr, 10, 2 ) + ' ' + kwota( sz + SZr, 10, 2 ) )
-      ENDIF
-      IF lRobU
-         mon_drk( '        u - uboczne koszty zakupu    (kol.11)  ' + kwota( SU, 10, 2 ) + ' ' + kwota( SUr, 10, 2 ) + ' ' + kwota( su + SUr, 10, 2 ) )
-      ENDIF
-      IF lRobW
-         mon_drk( '        w - wynagrodzenia            (kol.12)  ' + kwota( SW, 10, 2 ) + ' ' + kwota( SWr, 10, 2 ) + ' ' + kwota( sw + SWr, 10, 2 ) )
-      ENDIF
-      IF lRobK
-         mon_drk( '        k - koszty pozosta&_l.e         (kol.13)  ' + kwota( SK, 10, 2 ) + ' ' + kwota( SKr, 10, 2 ) + ' ' + kwota( sk + SKr, 10, 2 ) )
-      ENDIF
-      IF lRobZ .OR. lRobU .OR. lRobW .OR. lRobK
-         mon_drk( '                                               ---------- ---------- ----------' )
-         mon_drk( '                                      ROZCHODY ' + kwota( SZ + SU + SW + SK, 10, 2 ) + ' ' + kwota( SZr + SUr + SWr + SKr, 10, 2 ) + ' ' + kwota( SZ + SU + SW + SK + SZr + SUr + SWr + SKr, 10, 2 ) )
-      ENDIF
-      mon_drk( '' )
-      mon_drk( '                     U&_z.ytkownik programu komputerowego' )
-      mon_drk( '             ' + dos_c( code() ) )
-      *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      mon_drk( 'þ' )
+         IF lRobS
+            mon_drk( '        s - sprzeda&_z. towar&_o.w i us&_l.ug (kol. 7)     ' + kwota( SS, 14, 2 ) )
+         ENDIF
+         IF lRobI
+            mon_drk( '        i - inne przychody           (kol. 8)     ' + kwota( SI, 14, 2 ) )
+         ENDIF
+         IF lRobS .OR. lRobI
+            mon_drk( '                                                  --------------' )
+            mon_drk( '                                      PRZYCHODY   ' + kwota( SS + SI, 14, 2 ) )
+            mon_drk( '' )
+         ENDIF
+         IF lRobZ .OR. lRobU .OR. lRobW .OR. lRobK
+            mon_drk( '                                                 KSI&__E.GA     REJESTR    RAZEM   ' )
+         ENDIF
+         IF lRobZ
+            mon_drk( '        z - zakup towar&_o.w i materia&_l..(kol.10)  ' + kwota( SZ, 10, 2 ) + ' ' + kwota( SZr, 10, 2 ) + ' ' + kwota( sz + SZr, 10, 2 ) )
+         ENDIF
+         IF lRobU
+            mon_drk( '        u - uboczne koszty zakupu    (kol.11)  ' + kwota( SU, 10, 2 ) + ' ' + kwota( SUr, 10, 2 ) + ' ' + kwota( su + SUr, 10, 2 ) )
+         ENDIF
+         IF lRobW
+            mon_drk( '        w - wynagrodzenia            (kol.12)  ' + kwota( SW, 10, 2 ) + ' ' + kwota( SWr, 10, 2 ) + ' ' + kwota( sw + SWr, 10, 2 ) )
+         ENDIF
+         IF lRobK
+            mon_drk( '        k - koszty pozosta&_l.e         (kol.13)  ' + kwota( SK, 10, 2 ) + ' ' + kwota( SKr, 10, 2 ) + ' ' + kwota( sk + SKr, 10, 2 ) )
+         ENDIF
+         IF lRobZ .OR. lRobU .OR. lRobW .OR. lRobK
+            mon_drk( '                                               ---------- ---------- ----------' )
+            mon_drk( '                                      ROZCHODY ' + kwota( SZ + SU + SW + SK, 10, 2 ) + ' ' + kwota( SZr + SUr + SWr + SKr, 10, 2 ) + ' ' + kwota( SZ + SU + SW + SK + SZr + SUr + SWr + SKr, 10, 2 ) )
+         ENDIF
+         mon_drk( '' )
+         mon_drk( '                     U&_z.ytkownik programu komputerowego' )
+         mon_drk( '             ' + dos_c( code() ) )
+         *@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         mon_drk( 'þ' )
+      ENDCASE
+
    END
 
    IF _czy_close
