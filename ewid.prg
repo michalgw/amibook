@@ -418,10 +418,10 @@ FUNCTION Ewid()
 
                   DO CASE
                      CASE zVATFORDR == '7 '
-                        verdekold := ' J - JPK_V7M  (3)                    '
+                        verdekold := ' J - JPK_V7M  (2,3)                  '
 
                      CASE zVATFORDR == '7K'
-                        verdekold := ' J - JPK_V7K  (3)                    '
+                        verdekold := ' J - JPK_V7K  (2,3)                  '
 
                      CASE zVATFORDR == '8 '
                         verdekold := ' J - VAT-8    (12)                   '
@@ -492,7 +492,7 @@ FUNCTION Ewid()
 
                      CASE opcja1 == 5
                         IF zVATFORDR == '8 ' .OR. zVATFORDR == '9M'
-                           papier := menuDeklaracjaDruk( 14, .F. )
+                           papier := menuDeklaracjaDruk( 12, .F. )
                            SET CURSOR OFF
                            DO CASE
                            CASE papier == 'K'
@@ -501,7 +501,7 @@ FUNCTION Ewid()
                               vat_720( 0, 0, 1, iif( zVATFORDR == '8 ', '8X', '9X' ) )
                            ENDCASE
                         ELSE
-                           JPK_V7_Rob( 15, 4 )
+                           JPK_V7_Rob( 12, 4 )
                         ENDIF
 
                      CASE opcja1 == 6

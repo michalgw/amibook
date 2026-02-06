@@ -1557,7 +1557,7 @@ FUNCTION JPK_V7_DaneDek( aDane )
    hDane['P_55'] := cJPKRodzZwrot == '2'
    hDane['P_56'] := cJPKRodzZwrot == '3'
    hDane['P_560'] := cJPKRodzZwrot == '4'
-   //hDane['P_57'] := cJPKRodzZwrot == '5'
+   hDane['P_57'] := cJPKRodzZwrot == '5'
    hDane['P_58'] := cJPKRodzZwrot == '6'
    hDane['P_59'] := cJPKZwrotPod == 'T'
    hDane['P_60'] := nJPKZwrotKwota

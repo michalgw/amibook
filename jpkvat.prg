@@ -1184,7 +1184,7 @@ PROCEDURE JPK_V7_Rob( nR, nC )
    LOCAL cAdresEmail, cTel
    LOCAL cDaneXml, cMK
    LOCAL nMenu := 1, cKolor, cEkran := SaveScreen(), nMenuDekDruk := 1
-   LOCAL lKorekta := NIL
+   LOCAL lKorekta := NIL, nMenuDekWer := 1
 
    hb_default( @nR, 15 )
    hb_default( @nC, 4 )
@@ -1206,6 +1206,14 @@ PROCEDURE JPK_V7_Rob( nR, nC )
    aDane[ 'Rok' ] := Val( param_rok )
    aDane[ 'Korekta' ] := .F.
    aDane[ 'DataWytworzeniaJPK' ] := datetime2strxml( hb_DateTime() )
+
+   nMenuDekWer := MenuEx( nR, nC, { ' 3 - JPK_V' + Pad( AllTrim( zVATFORDR ), 2 ) + ' (3)   ', ;
+      ' 2 - JPK_V' + Pad( AllTrim( zVATFORDR ), 2 ) + ' (2)   ' }, nMenuDekWer, .T. )
+
+   IF nMenuDekWer == 0
+      RestScreen( , , , , cEkran )
+      RETURN NIL
+   ENDIF
 
    nMenuDekDruk := MenuEx( nR, nC, { ' D - Wydruk      ', ' E - eDeklaracja ' }, ;
       nMenuDekDruk, .T. )
@@ -1255,7 +1263,7 @@ PROCEDURE JPK_V7_Rob( nR, nC )
    ENDIF
 
    IF nMenuDekDruk == 1
-      DeklarDrukuj( 'JPKV7' + iif( aDane[ 'Kwartalnie' ], 'K', 'M' ) + '-3', aDane )
+      DeklarDrukuj( 'JPKV7' + iif( aDane[ 'Kwartalnie' ], 'K', 'M' ) + '-' + iif( nMenuDekWer == 1, '3', '2' ) , aDane )
    ELSE
       IF JPK_V7_PobierzDaneAut( 17, 2, @cAdresEmail, @cTel, @lKorekta )
          IF HB_ISLOGICAL( lKorekta )
@@ -1265,12 +1273,12 @@ PROCEDURE JPK_V7_Rob( nR, nC )
          aDane[ 'Tel' ] := AllTrim( cTel )
          aDane[ 'EMail' ] := AllTrim( cAdresEmail )
          IF aDane[ 'Kwartalnie' ]
-            cDaneXml := jpk_v7k_3( aDane )
+            cDaneXml := iif( nMenuDekWer == 1, jpk_v7k_3( aDane ), jpk_v7k_2( aDane ) )
          ELSE
-            cDaneXml := jpk_v7m_3( aDane )
+            cDaneXml := iif( nMenuDekWer == 1, jpk_v7m_3( aDane ), jpk_v7m_2( aDane ) )
          ENDIF
          cMK := iif( aDane[ 'Kwartalnie' ], 'K', 'M' )
-         edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_V7' + cMK + '_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( hb_Date( Val( param_rok ), aDane[ 'Miesiac' ], 1 ) ), wys_edeklaracja, 'JPKV7' + cMK + '-3', aDane[ 'Korekta' ], nMiesiacPocz )
+         edekZapiszXML( cDaneXML, normalizujNazwe( 'JPK_V7' + cMK + '_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( hb_Date( Val( param_rok ), aDane[ 'Miesiac' ], 1 ) ), wys_edeklaracja, 'JPKV7' + cMK + '-' + iif( nMenuDekWer == 1, '3', '2' ), aDane[ 'Korekta' ], nMiesiacPocz )
       ENDIF
    ENDIF
 
