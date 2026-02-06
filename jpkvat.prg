@@ -1255,7 +1255,7 @@ PROCEDURE JPK_V7_Rob( nR, nC )
    ENDIF
 
    IF nMenuDekDruk == 1
-      DeklarDrukuj( 'JPKV7' + iif( aDane[ 'Kwartalnie' ], 'K', 'M' ) + '-2', aDane )
+      DeklarDrukuj( 'JPKV7' + iif( aDane[ 'Kwartalnie' ], 'K', 'M' ) + '-3', aDane )
    ELSE
       IF JPK_V7_PobierzDaneAut( 17, 2, @cAdresEmail, @cTel, @lKorekta )
          IF HB_ISLOGICAL( lKorekta )
