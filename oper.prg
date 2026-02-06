@@ -989,23 +989,23 @@ FUNCTION v1_5()
       ENDIF
    ENDIF
    IF AllTrim( znumer ) == 'REM-P' .OR. AllTrim( znumer ) == 'REM-K'
-      KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER )
+      KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
    ENDIF
    nKol := Val( zKOLUMNA )
    IF nKol > 7
       DO CASE
       CASE nKol == 8
-         KEYBOARD Chr( K_ENTER )
-      CASE nKol == 10
          KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER )
-      CASE nKol == 11
+      CASE nKol == 10
          KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
-      CASE nKol == 12
+      CASE nKol == 11
          KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
-      CASE nKol == 13
+      CASE nKol == 12
          KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
+      CASE nKol == 13
+         KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
       CASE nKol == 16
-         KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
+         KEYBOARD Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER ) + Chr( K_ENTER )
       ENDCASE
    ENDIF
    RETURN .T.
