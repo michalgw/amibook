@@ -116,6 +116,9 @@ begin sequence
              k16w := K16WART
              k16o := K16OPIS
              znumer=numer
+             aRow['nrksef'] := AllTrim( nrksef )
+             aRow['nr_ident'] := AllTrim( nr_ident )
+             aRow['kraj'] := AllTrim( kraj )
              skip
              aRow['k1'] := k1
              aRow['k2'] := k2
@@ -136,9 +139,6 @@ begin sequence
              aRow['k17'] := k17
              aRow['k16w'] := k16w
              aRow['k16o'] := AllTrim( k16o )
-             aRow['nrksef'] := AllTrim( nrksef )
-             aRow['nr_ident'] := AllTrim( nr_ident )
-             aRow['kraj'] := AllTrim( kraj )
              IF left(znumer,1)#chr(1).and.left(znumer,1)#chr(254)
                 aRow['k7s'] := k7
                 aRow['k8s'] := k8
