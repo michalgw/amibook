@@ -709,6 +709,10 @@ FUNCTION Main()
 
    // --
 
+   PUBLIC oKosApp := NIL
+   PUBLIC oKosFirma := NIL
+   PUBLIC oKosUser := NIL
+
    // Bufor dokumentow
    PUBLIC bufor_dok := NIL
 
@@ -842,6 +846,11 @@ FUNCTION Main()
    PUBLIC DETALISTA
 
    PUBLIC Firma_RodzNrKs := 'R'
+
+   PUBLIC Firma_NIP := ''
+
+   PUBLIC Firma_Nazwa := ''
+
    // ---
 
    // System wydruku tekstowego
@@ -1176,6 +1185,8 @@ FUNCTION _()
 FUNCTION _a()
 
    MEMVAR aDomProfilDrukarki
+
+   Firma_NIP := ''
 
    // Kody sterujace drukarki
    IF aDomProfilDrukarki[ 'sterownik' ] == 'IBM'

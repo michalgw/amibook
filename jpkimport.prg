@@ -2590,7 +2590,7 @@ FUNCTION JPKImp_VatS_CzyImport( aDane, aPoz )
    DO CASE
    CASE AScan( { "JPK_VAT", "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
       lImport := aPoz[ 'SprzedazPoz' ][ 'Importuj' ]
-   CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'JPK_FA'
+   CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'JPK_FA' .OR. aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'FA'
       lImport := aPoz[ 'FakturaPoz' ][ 'Importuj' ]
    ENDCASE
 
@@ -2602,7 +2602,12 @@ FUNCTION JPKImp_VatZ_CzyImport( aDane, aPoz )
 
    LOCAL lImport := .F.
 
-   lImport := aPoz[ 'SprzedazPoz' ][ 'Importuj' ]
+   DO CASE
+   CASE AScan( { "JPK_VAT", "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
+      lImport := aPoz[ 'SprzedazPoz' ][ 'Importuj' ]
+   CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'JPK_FA' .OR. aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'FA'
+      lImport := aPoz[ 'FakturaPoz' ][ 'Importuj' ]
+   ENDCASE
 
    RETURN lImport
 
@@ -2980,7 +2985,7 @@ FUNCTION JPKImp_VatS_Ilosc( aDane )
          ENDIF
       } )
 
-   CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'JPK_FA'
+   CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'JPK_FA' .OR. aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'FA'
       AEval( aDane[ 'Dekret' ], { | aPoz |
          IF aPoz[ 'FakturaPoz' ][ 'Importuj' ]
             nI++
@@ -2997,11 +3002,22 @@ FUNCTION JPKImp_VatZ_Ilosc( aDane )
 
    LOCAL nI := 0
 
-   AEval( aDane[ 'Dekret' ], { | aPoz |
-      IF aPoz[ 'SprzedazPoz' ][ 'Importuj' ]
-         nI++
-      ENDIF
-   } )
+   DO CASE
+   CASE AScan( { 'JPK_VAT', 'JPK_V7M', 'JPK_V7K' }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
+      AEval( aDane[ 'Dekret' ], { | aPoz |
+         IF aPoz[ 'SprzedazPoz' ][ 'Importuj' ]
+            nI++
+         ENDIF
+      } )
+
+   CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'JPK_FA' .OR. aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'FA'
+      AEval( aDane[ 'Dekret' ], { | aPoz |
+         IF aPoz[ 'FakturaPoz' ][ 'Importuj' ]
+            nI++
+         ENDIF
+      } )
+
+   ENDCASE
 
    RETURN nI
 
@@ -3026,7 +3042,7 @@ PROCEDURE JPKImp_VatS_Kontrah( aDane )
    DO CASE
    CASE AScan( { 'JPK_VAT', 'JPK_V7M', 'JPK_V7K' }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
       cKlucz := 'SprzedazPoz'
-   CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'JPK_FA'
+   CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'JPK_FA' .OR. aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'FA'
       cKlucz := 'FakturaPoz'
    ENDCASE
 
@@ -3154,7 +3170,7 @@ PROCEDURE JPKImp_VatZ_Kontrah( aDane )
 
 // nCelImportu - 1 - rej VAT, 2 - ksi©ga, 3 - ewidencja
 
-PROCEDURE JPKImp_VatS( nCelImportu )
+PROCEDURE JPKImp_VatS( nCelImportu, lZKos )
 
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
       'OpisZd', Space( 30 ), 'KolRej', iif( zRYCZALT == 'T', ' 5', '7' ), ;
@@ -3185,229 +3201,242 @@ PROCEDURE JPKImp_VatS( nCelImportu )
    PRIVATE cOpisZd, zOpcje, zProcedur, zRodzDow
 
    hb_default( @nCelImportu, 1 )
+   hb_default( @lZKos, .F. )
 
-   cKolor := ColInf()
-   @ 24, 0 SAY PadC( "Wybierz plik do importu", 80 )
-   SetColor( cKolor )
+   IF lZKos
 
-   IF ( cPlik := win_GetOpenFileName( , , , 'xml', { {'Pliki XML', '*.xml'}, {'Wszystkie pliki', '*.*'} } ) ) <> ''
+      aDane[ 'JPK' ] := KosImp_Wczytaj( 0 )
 
-      IF TNEsc( , "Czy weryfikowa† plik przed importem? (T/N)" )
-         ColInf()
-         @ 24, 0 SAY PadC( "...weryfikacja dokumentu...", 80 )
-         nMenu := edekWeryfikuj( cPlik, , .T., "Ignoruj i importuj (niezalecane)", .F. )
-         IF nMenu <> 0 .AND. nMenu <> 4
-            RestScreen( , , , , cEkran )
-            SetColor( cKolor )
-            RETURN
-         ENDIF
-      ENDIF
+   ELSE
 
-      ColInf()
-      @ 24, 0 SAY PadC( "Wczytywanie danych... Prosz© czeka†...", 80 )
+      cKolor := ColInf()
+      @ 24, 0 SAY PadC( "Wybierz plik do importu", 80 )
       SetColor( cKolor )
 
-      aDane[ 'JPK' ] := JPKImp_VatS_Wczytaj( cPlik )
+      IF ( cPlik := win_GetOpenFileName( , , , 'xml', { {'Pliki XML', '*.xml'}, {'Wszystkie pliki', '*.*'} } ) ) <> ''
 
-      IF HB_ISHASH( aDane[ 'JPK' ] )
-
-         DO CASE
-         CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
-
-            aDane[ 'Dekret' ] := JPKImp_VatS_Dekretuj_VAT( aDane )
-            nSumaImp := aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_16' ] + ;
-               aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_18' ] + ;
-               aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_20' ]
-            nLiczbaLp := Len( aDane[ 'JPK' ][ 'Sprzedaz' ] )
-
-         CASE AScan( { "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
-
-            aDane[ 'Dekret' ] := JPKImp_VatS_Dekretuj_V7( aDane )
-            nSumaImp := aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_16' ] + ;
-               aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_18' ] + ;
-               aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_20' ]
-            nLiczbaLp := Len( aDane[ 'JPK' ][ 'Sprzedaz' ] )
-
-         CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
-            aDane[ 'Dekret' ] := JPKImp_VatS_Dekretuj_FA( aDane )
-            nSumaImp := aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_1' ] + ;
-               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_2' ] + ;
-               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_3' ] + ;
-               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_4' ] + ;
-               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_5' ]
-            nLiczbaLp := Len( aDane[ 'JPK' ][ 'Faktura' ] )
-
-         ENDCASE
-
-         ColStd()
-         @ 24,  0
-         @  2,  0 CLEAR TO 22, 79
-         @  2,  2 TO 19, 77 DOUBLE
-         @  4,  3 TO  4, 76
-         @ 10,  3 TO 10, 76
-         @ 13,  3 TO 13, 76
-         @ 17,  3 TO 17, 76
-
-         @  3,  3 SAY PadC( "IMPORT SPRZEDA½Y Z PLIKU JPK", 72 )
-         PrintTextEx(  5, 4, "Rodzaj pliku JPK: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] + " (" + aDane[ 'JPK' ][ 'Naglowek' ][ 'WariantFormularza' ] + ")" )
-         PrintTextEx(  6, 4, "Data wytworzenia: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DataWytworzeniaJPK' ] )
-         PrintTextEx(  7, 4, "         Data od: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataOd' ] ) )
-         PrintTextEx(  8, 4, "         Data do: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataDo' ] ) )
-         IF hb_HHasKey( aDane[ 'JPK' ][ 'Naglowek' ], 'DomyslnyKodWaluty' )
-            PrintTextEx(  9, 4, "      Kod waluty: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DomyslnyKodWaluty' ] )
+         IF TNEsc( , "Czy weryfikowa† plik przed importem? (T/N)" )
+            ColInf()
+            @ 24, 0 SAY PadC( "...weryfikacja dokumentu...", 80 )
+            nMenu := edekWeryfikuj( cPlik, , .T., "Ignoruj i importuj (niezalecane)", .F. )
+            IF nMenu <> 0 .AND. nMenu <> 4
+               RestScreen( , , , , cEkran )
+               SetColor( cKolor )
+               RETURN
+            ENDIF
          ENDIF
-         PrintTextEx( 11, 4, "Nazwa firmy: {w+}" + SubStr( sxmlTrim( aDane[ 'JPK' ][ 'Podmiot' ][ 'PelnaNazwa' ] ), 1, 59 ) )
-         PrintTextEx( 12, 4, "  NIP firmy: {w+}" + aDane[ 'JPK' ][ 'Podmiot' ][ 'NIP' ] )
-         PrintTextEx( 14, 4, "Liczba pozycji sprzeda¾y w pliku JPK: {w+}" + AllTrim( Str( nLiczbaLp ) ) )
-         PrintTextEx( 15, 4, "  Suma podatku nale¾nego w pliku JPK: {w+}" + Transform( nSumaImp , RPICE ) )
-         PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
 
-         nMenu := 1
-         DO WHILE nMenu != 0
-            @ 18,  4 PROMPT "[ Wykonaj import ]"
-            @ 18, 26 PROMPT "[ Podgl¥d zawarto˜ci ]"
-            @ 18, 52 PROMPT "[ Opcje ]"
-            @ 18, 65 PROMPT "[ Anuluj ]"
-            MENU TO nMenu
+         ColInf()
+         @ 24, 0 SAY PadC( "Wczytywanie danych... Prosz© czeka†...", 80 )
+         SetColor( cKolor )
 
-            DO CASE
-            CASE nMenu == 1
-               IF TNEsc( , "Czy wykona† import danych sprzeda¾y? ( T / N )" )
-
-                  IF aDane[ 'SprawdzRegon' ] == 'T'
-                     JPKImp_VatS_Kontrah( @aDane )
-                  ENDIF
-
-                  DO CASE
-                  CASE nCelImportu == 1
-                     aRaport := JPKImp_VatS_Importuj( aDane )
-                  CASE nCelImportu == 2
-                     aRaport := JPKImp_OperS_Importuj( aDane )
-                  CASE nCelImportu == 3
-                     //
-                  ENDCASE
-
-                  cRaport := "IMPORT ZAKOãCZONY" + hb_eol()
-                  cRaport += "-----------------" + hb_eol()
-                  cRaport += hb_eol()
-                  cRaport += "Liczba zaimportowanych pozycji: " + AllTrim( Str( aRaport[ 'Zaimportowano' ] ) ) + hb_eol()
-                  cRaport += "Liczba pomini©tych dokument¢w: " + AllTrim( Str( aRaport[ 'Pominieto' ] ) ) + hb_eol()
-                  cRaport += "Liczba dokument¢w w obej walucie: " + AllTrim( Str( aRaport[ 'Waluta' ] ) ) + hb_eol()
-                  IF aRaport[ 'Pominieto' ] > 0
-                     cRaport += hb_eol()
-                     cRaport += "POMINI¨TE DOKUMENTY" + hb_eol()
-                     cRaport += "-------------------" + hb_eol()
-                     AEval( aRaport[ 'ListaPom' ], { | aPoz |
-                        cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
-                        cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
-                        cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
-                        cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
-                        cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
-                        cRaport += "--------------------------" + hb_eol()
-                     } )
-                  ENDIF
-                  IF aRaport[ 'Waluta' ] > 0
-                     cRaport += hb_eol()
-                     cRaport += "DOKUMENTY W OBCEJ WALUCIE" + hb_eol()
-                     cRaport += "-------------------" + hb_eol()
-                     AEval( aRaport[ 'ListaWal' ], { | aPoz |
-                        cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
-                        cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
-                        cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
-                        cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
-                        cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
-                        cRaport += "--------------------------" + hb_eol()
-                     } )
-                  ENDIF
-
-                  WyswietlTekst( cRaport )
-
-                  nMenu := 0
-               ENDIF
-            CASE nMenu == 2
-               DO CASE
-               CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
-                  IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
-                     JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
-                  ELSE
-                     Komun( "Brak danych", 15 )
-                  ENDIF
-                  PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
-
-               CASE AScan( { "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
-                  IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
-                     JPKImp_VatS_Podglad_V7( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
-                  ELSE
-                     Komun( "Brak danych", 15 )
-                  ENDIF
-                  PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
-
-               CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
-                  IF Len( aDane[ 'JPK' ][ 'Faktura' ] ) > 0
-                     JPKImp_VatS_Podglad_FA( aDane[ 'JPK' ][ 'Faktura' ], aDane[ 'JPK' ][ 'FakturaSum' ] )
-                  ELSE
-                     Komun( "Brak danych", 15 )
-                  ENDIF
-                  PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
-
-               ENDCASE
-            CASE nMenu == 3
-               cEkran2 := SaveScreen()
-               cTN := aDane[ 'ZezwolNaDuplikaty' ]
-               cRej := aDane[ 'Rejestr' ]
-               cOpisZd := aDane[ 'OpisZd' ]
-               cKolRej := aDane[ 'KolRej' ]
-               cDataRej := aDane[ 'DataRej' ]
-               zOpcje := aDane[ 'Oznaczenie' ]
-               zProcedur := aDane[ 'Procedura' ]
-               cRegon := aDane[ 'SprawdzRegon' ]
-               zRodzDow := aDane[ 'RodzDow' ]
-               cExport := aDane[ 'Export' ]
-               cPuste := aDane[ 'ZezwolNaPuste' ]
-               @  6, 13 CLEAR TO 22, 67
-               @  7, 15 TO 21, 65
-               @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID ValidTakNie( cTN, 8, 63 )
-               @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 9, 42 ), .T. }
-               @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "S", "R" ) )
-               IF zRYCZALT == 'T'
-                  @ 11, 17 SAY "Domy˜lna kol. ewid. (5,6,7,8,9,10,11,12,13)" GET cKolRej PICTURE '@K 99' WHEN Eval( bKolRyczW ) VALID ( AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11' .OR. cKolRej == '12' .OR. cKolRej == '13' ) .AND. Eval( bKolRyczV )
-               ELSE
-                  @ 11, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
-               ENDIF
-               @ 12, 17 SAY "Do rejestru na dzieä (S-sprzed., W-wystaw.)" GET cDataRej PICTURE "!" VALID cDataRej $ 'SW'
-               @ 13, 17 SAY "Oznaczenie dot. dostawy i ˜wiadczenia usˆug" GET zOpcje PICTURE '!!' WHEN nCelImportu == 1 .AND. KRejSWhOpcje() VALID KRejSVaOpcje()
-               @ 14, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN nCelImportu == 1 .AND. KRejSWhProcedur() VALID KRejSVaProcedur()
-               @ 15, 17 SAY "Rodzaj dowodu sprzeda¾y" GET zRodzDow PICTURE '!!!' WHEN nCelImportu == 1 .AND. KRejSWRodzDow() VALID KRejSVRodzDow()
-               @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID ValidTakNie( cRegon, 16, 57 )
-               @ 17, 17 SAY "Oznacz kraje UE jako eksport" GET cExport PICTURE '!' VALID ValidTakNie( cExport, 17, 47 )
-               @ 18, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 18, 59 )
-               @ 20, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
-               ValidTakNie( cTN, 8, 63 )
-               ValidTakNie( cRegon, 16, 57 )
-               ValidTakNie( cExport, 17, 47 )
-               ValidTakNie( cPuste, 18, 59 )
-               READ
-               IF LastKey() <> K_ESC
-                  aDane[ 'ZezwolNaDuplikaty' ] := cTN
-                  aDane[ 'Rejestr' ] := cRej
-                  aDane[ 'OpisZd' ] := cOpisZd
-                  aDane[ 'KolRej' ] := cKolRej
-                  aDane[ 'DataRej' ] := cDataRej
-                  aDane[ 'Oznaczenie' ] := zOpcje
-                  aDane[ 'Procedura' ] := zProcedur
-                  aDane[ 'SprawdzRegon' ] := cRegon
-                  aDane[ 'RodzDow' ] := zRodzDow
-                  aDane[ 'Export' ] := cExport
-                  aDane[ 'ZezwolNaPuste' ] := cPuste
-               ENDIF
-               RestScreen( , , , , cEkran2 )
-            CASE nMenu == 4
-               nMenu := 0
-            ENDCASE
-
-         ENDDO
+         aDane[ 'JPK' ] := JPKImp_VatS_Wczytaj( cPlik )
 
       ENDIF
+   ENDIF
+
+   IF HB_ISHASH( aDane ) .AND. hb_HHasKey( aDane, 'JPK' ) .AND. HB_ISHASH( aDane[ 'JPK' ] )
+
+      DO CASE
+      CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
+
+         aDane[ 'Dekret' ] := JPKImp_VatS_Dekretuj_VAT( aDane )
+         nSumaImp := aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_16' ] + ;
+            aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_18' ] + ;
+            aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_20' ]
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Sprzedaz' ] )
+
+      CASE AScan( { "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
+
+         aDane[ 'Dekret' ] := JPKImp_VatS_Dekretuj_V7( aDane )
+         nSumaImp := aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_16' ] + ;
+            aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_18' ] + ;
+            aDane[ 'JPK' ][ 'SprzedazSum' ][ 'K_20' ]
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Sprzedaz' ] )
+
+      CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
+         aDane[ 'Dekret' ] := JPKImp_VatS_Dekretuj_FA( aDane )
+         nSumaImp := aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_1' ] + ;
+            aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_2' ] + ;
+            aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_3' ] + ;
+            aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_4' ] + ;
+            aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_5' ]
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Faktura' ] )
+
+      CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "FA"
+         aDane[ 'Dekret' ] := KosImp_VatS_Dekretuj( aDane )
+         nSumaImp := aDane[ 'JPK' ][ 'Sumy' ][ 'P_15' ]
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Pozycje' ] )
+
+      ENDCASE
+
+      ColStd()
+      @ 24,  0
+      @  2,  0 CLEAR TO 22, 79
+      @  2,  2 TO 19, 77 DOUBLE
+      @  4,  3 TO  4, 76
+      @ 10,  3 TO 10, 76
+      @ 13,  3 TO 13, 76
+      @ 17,  3 TO 17, 76
+
+      @  3,  3 SAY PadC( "IMPORT SPRZEDA½Y Z PLIKU JPK", 72 )
+      PrintTextEx(  5, 4, "Rodzaj pliku JPK: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] + " (" + aDane[ 'JPK' ][ 'Naglowek' ][ 'WariantFormularza' ] + ")" )
+      PrintTextEx(  6, 4, "Data wytworzenia: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DataWytworzeniaJPK' ] )
+      PrintTextEx(  7, 4, "         Data od: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataOd' ] ) )
+      PrintTextEx(  8, 4, "         Data do: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataDo' ] ) )
+      IF hb_HHasKey( aDane[ 'JPK' ][ 'Naglowek' ], 'DomyslnyKodWaluty' )
+         PrintTextEx(  9, 4, "      Kod waluty: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DomyslnyKodWaluty' ] )
+      ENDIF
+      PrintTextEx( 11, 4, "Nazwa firmy: {w+}" + SubStr( sxmlTrim( aDane[ 'JPK' ][ 'Podmiot' ][ 'PelnaNazwa' ] ), 1, 59 ) )
+      PrintTextEx( 12, 4, "  NIP firmy: {w+}" + aDane[ 'JPK' ][ 'Podmiot' ][ 'NIP' ] )
+      PrintTextEx( 14, 4, "Liczba pozycji sprzeda¾y w pliku JPK: {w+}" + AllTrim( Str( nLiczbaLp ) ) )
+      PrintTextEx( 15, 4, "  Suma podatku nale¾nego w pliku JPK: {w+}" + Transform( nSumaImp , RPICE ) )
+      PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+
+      nMenu := 1
+      DO WHILE nMenu != 0
+         @ 18,  4 PROMPT "[ Wykonaj import ]"
+         @ 18, 26 PROMPT "[ Podgl¥d zawarto˜ci ]"
+         @ 18, 52 PROMPT "[ Opcje ]"
+         @ 18, 65 PROMPT "[ Anuluj ]"
+         MENU TO nMenu
+
+         DO CASE
+         CASE nMenu == 1
+            IF TNEsc( , "Czy wykona† import danych sprzeda¾y? ( T / N )" )
+
+               IF aDane[ 'SprawdzRegon' ] == 'T'
+                  JPKImp_VatS_Kontrah( @aDane )
+               ENDIF
+
+               DO CASE
+               CASE nCelImportu == 1
+                  aRaport := JPKImp_VatS_Importuj( aDane )
+               CASE nCelImportu == 2
+                  aRaport := JPKImp_OperS_Importuj( aDane )
+               CASE nCelImportu == 3
+                  //
+               ENDCASE
+
+               cRaport := "IMPORT ZAKOãCZONY" + hb_eol()
+               cRaport += "-----------------" + hb_eol()
+               cRaport += hb_eol()
+               cRaport += "Liczba zaimportowanych pozycji: " + AllTrim( Str( aRaport[ 'Zaimportowano' ] ) ) + hb_eol()
+               cRaport += "Liczba pomini©tych dokument¢w: " + AllTrim( Str( aRaport[ 'Pominieto' ] ) ) + hb_eol()
+               cRaport += "Liczba dokument¢w w obej walucie: " + AllTrim( Str( aRaport[ 'Waluta' ] ) ) + hb_eol()
+               IF aRaport[ 'Pominieto' ] > 0
+                  cRaport += hb_eol()
+                  cRaport += "POMINI¨TE DOKUMENTY" + hb_eol()
+                  cRaport += "-------------------" + hb_eol()
+                  AEval( aRaport[ 'ListaPom' ], { | aPoz |
+                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
+                     cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
+                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
+                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
+                     cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                     cRaport += "--------------------------" + hb_eol()
+                  } )
+               ENDIF
+               IF aRaport[ 'Waluta' ] > 0
+                  cRaport += hb_eol()
+                  cRaport += "DOKUMENTY W OBCEJ WALUCIE" + hb_eol()
+                  cRaport += "-------------------" + hb_eol()
+                  AEval( aRaport[ 'ListaWal' ], { | aPoz |
+                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
+                     cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
+                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
+                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
+                     cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                     cRaport += "--------------------------" + hb_eol()
+                  } )
+               ENDIF
+
+               WyswietlTekst( cRaport )
+
+               nMenu := 0
+            ENDIF
+         CASE nMenu == 2
+            DO CASE
+            CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
+               IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
+                  JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+               ELSE
+                  Komun( "Brak danych", 15 )
+               ENDIF
+               PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+
+            CASE AScan( { "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
+               IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
+                  JPKImp_VatS_Podglad_V7( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+               ELSE
+                  Komun( "Brak danych", 15 )
+               ENDIF
+               PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+
+            CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
+               IF Len( aDane[ 'JPK' ][ 'Faktura' ] ) > 0
+                  JPKImp_VatS_Podglad_FA( aDane[ 'JPK' ][ 'Faktura' ], aDane[ 'JPK' ][ 'FakturaSum' ] )
+               ELSE
+                  Komun( "Brak danych", 15 )
+               ENDIF
+               PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+
+            ENDCASE
+         CASE nMenu == 3
+            cEkran2 := SaveScreen()
+            cTN := aDane[ 'ZezwolNaDuplikaty' ]
+            cRej := aDane[ 'Rejestr' ]
+            cOpisZd := aDane[ 'OpisZd' ]
+            cKolRej := aDane[ 'KolRej' ]
+            cDataRej := aDane[ 'DataRej' ]
+            zOpcje := aDane[ 'Oznaczenie' ]
+            zProcedur := aDane[ 'Procedura' ]
+            cRegon := aDane[ 'SprawdzRegon' ]
+            zRodzDow := aDane[ 'RodzDow' ]
+            cExport := aDane[ 'Export' ]
+            cPuste := aDane[ 'ZezwolNaPuste' ]
+            @  6, 13 CLEAR TO 22, 67
+            @  7, 15 TO 21, 65
+            @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID ValidTakNie( cTN, 8, 63 )
+            @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 9, 42 ), .T. }
+            @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "S", "R" ) )
+            IF zRYCZALT == 'T'
+               @ 11, 17 SAY "Domy˜lna kol. ewid. (5,6,7,8,9,10,11,12,13)" GET cKolRej PICTURE '@K 99' WHEN Eval( bKolRyczW ) VALID ( AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11' .OR. cKolRej == '12' .OR. cKolRej == '13' ) .AND. Eval( bKolRyczV )
+            ELSE
+               @ 11, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
+            ENDIF
+            @ 12, 17 SAY "Do rejestru na dzieä (S-sprzed., W-wystaw.)" GET cDataRej PICTURE "!" VALID cDataRej $ 'SW'
+            @ 13, 17 SAY "Oznaczenie dot. dostawy i ˜wiadczenia usˆug" GET zOpcje PICTURE '!!' WHEN nCelImportu == 1 .AND. KRejSWhOpcje() VALID KRejSVaOpcje()
+            @ 14, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN nCelImportu == 1 .AND. KRejSWhProcedur() VALID KRejSVaProcedur()
+            @ 15, 17 SAY "Rodzaj dowodu sprzeda¾y" GET zRodzDow PICTURE '!!!' WHEN nCelImportu == 1 .AND. KRejSWRodzDow() VALID KRejSVRodzDow()
+            @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID ValidTakNie( cRegon, 16, 57 )
+            @ 17, 17 SAY "Oznacz kraje UE jako eksport" GET cExport PICTURE '!' VALID ValidTakNie( cExport, 17, 47 )
+            @ 18, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 18, 59 )
+            @ 20, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+            ValidTakNie( cTN, 8, 63 )
+            ValidTakNie( cRegon, 16, 57 )
+            ValidTakNie( cExport, 17, 47 )
+            ValidTakNie( cPuste, 18, 59 )
+            READ
+            IF LastKey() <> K_ESC
+               aDane[ 'ZezwolNaDuplikaty' ] := cTN
+               aDane[ 'Rejestr' ] := cRej
+               aDane[ 'OpisZd' ] := cOpisZd
+               aDane[ 'KolRej' ] := cKolRej
+               aDane[ 'DataRej' ] := cDataRej
+               aDane[ 'Oznaczenie' ] := zOpcje
+               aDane[ 'Procedura' ] := zProcedur
+               aDane[ 'SprawdzRegon' ] := cRegon
+               aDane[ 'RodzDow' ] := zRodzDow
+               aDane[ 'Export' ] := cExport
+               aDane[ 'ZezwolNaPuste' ] := cPuste
+            ENDIF
+            RestScreen( , , , , cEkran2 )
+         CASE nMenu == 4
+            nMenu := 0
+         ENDCASE
+
+      ENDDO
 
    ENDIF
 
@@ -3459,7 +3488,7 @@ FUNCTION JPKImp_VatS_Tresc_V( cKatalog )
 
 /*----------------------------------------------------------------------*/
 
-PROCEDURE JPKImp_VatZ()
+PROCEDURE JPKImp_VatZ( lZKos )
 
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
       'OpisZd', Space( 30 ), 'DomVat', 1, 'DataRej', 'W', ;
@@ -3473,233 +3502,247 @@ PROCEDURE JPKImp_VatZ()
 
    PRIVATE cOpisZd
 
-   cKolor := ColInf()
-   @ 24, 0 SAY PadC( "Wybierz plik do importu", 80 )
-   SetColor( cKolor )
+   hb_default( @lZKos, .F. )
 
-   IF ( cPlik := win_GetOpenFileName( , , , 'xml', { {'Pliki XML', '*.xml'}, {'Wszystkie pliki', '*.*'} } ) ) <> ''
+   IF lZKos
 
-      IF TNEsc( , "Czy weryfikowa† plik przed importem? (T/N)" )
-         ColInf()
-         @ 24, 0 SAY PadC( "...weryfikacja dokumentu...", 80 )
-         nMenu := edekWeryfikuj( cPlik, , .T., "Ignoruj i importuj (niezalecane)", .F. )
-         IF nMenu <> 0 .AND. nMenu <> 4
-            RestScreen( , , , , cEkran )
-            SetColor( cKolor )
-            RETURN
-         END
-      ENDIF
+      aDane[ 'JPK' ] := KosImp_Wczytaj( 1 )
 
-      ColInf()
-      @ 24, 0 SAY PadC( "Wczytywanie danych... Prosz© czeka†...", 80 )
+   ELSE
+
+      cKolor := ColInf()
+      @ 24, 0 SAY PadC( "Wybierz plik do importu", 80 )
       SetColor( cKolor )
 
-      aDane[ 'JPK' ] := JPKImp_VatS_Wczytaj( cPlik, .T. )
+      IF ( cPlik := win_GetOpenFileName( , , , 'xml', { {'Pliki XML', '*.xml'}, {'Wszystkie pliki', '*.*'} } ) ) <> ''
 
-      IF HB_ISHASH( aDane[ 'JPK' ] )
+         IF TNEsc( , "Czy weryfikowa† plik przed importem? (T/N)" )
+            ColInf()
+            @ 24, 0 SAY PadC( "...weryfikacja dokumentu...", 80 )
+            nMenu := edekWeryfikuj( cPlik, , .T., "Ignoruj i importuj (niezalecane)", .F. )
+            IF nMenu <> 0 .AND. nMenu <> 4
+               RestScreen( , , , , cEkran )
+               SetColor( cKolor )
+               RETURN
+            END
+         ENDIF
+
+         ColInf()
+         @ 24, 0 SAY PadC( "Wczytywanie danych... Prosz© czeka†...", 80 )
+         SetColor( cKolor )
+
+         aDane[ 'JPK' ] := JPKImp_VatS_Wczytaj( cPlik, .T. )
+      ENDIF
+   ENDIF
+
+
+   IF HB_ISHASH( aDane ) .AND. hb_HHasKey( aDane, 'JPK' ) .AND. HB_ISHASH( aDane[ 'JPK' ] )
+
+      DO CASE
+      CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
+
+         aDane[ 'Dekret' ] := JPKImp_VatZ_Dekretuj_VAT( aDane )
+         nSumaImp := aDane[ 'JPK' ][ 'ZakupSum' ][ 'K_44' ] + ;
+            aDane[ 'JPK' ][ 'ZakupSum' ][ 'K_46' ]
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) + Len( aDane[ 'JPK' ][ 'Zakup' ] )
+
+      CASE AScan( { "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
+
+         aDane[ 'Dekret' ] := JPKImp_VatZ_Dekretuj_V7( aDane )
+         nSumaImp := aDane[ 'JPK' ][ 'ZakupSum' ][ 'K_41' ] + ;
+            aDane[ 'JPK' ][ 'ZakupSum' ][ 'K_43' ]
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) + Len( aDane[ 'JPK' ][ 'Zakup' ] )
+
+      CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
+
+         aDane[ 'Dekret' ] := JPKImp_VatZ_Dekretuj_FA( aDane )
+         nSumaImp := aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_1' ] + ;
+            aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_2' ] + ;
+            aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_3' ] + ;
+            aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_4' ] + ;
+            aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_5' ]
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Faktura' ] )
+      CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
+
+         aDane[ 'Dekret' ] := KosImp_VatZ_Dekretuj( aDane )
+         nSumaImp := aDane[ 'JPK' ][ 'Sumy' ][ 'P_15' ]
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Faktura' ] )
+      ENDCASE
+
+      ColStd()
+      @ 24,  0
+      @  2,  0 CLEAR TO 22, 79
+      @  2,  2 TO 19, 77 DOUBLE
+      @  4,  3 TO  4, 76
+      @ 10,  3 TO 10, 76
+      @ 13,  3 TO 13, 76
+      @ 17,  3 TO 17, 76
+
+      @  3,  3 SAY PadC( "IMPORT ZAKUPàW Z PLIKU JPK", 72 )
+      PrintTextEx(  5, 4, "Rodzaj pliku JPK: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] + " (" + aDane[ 'JPK' ][ 'Naglowek' ][ 'WariantFormularza' ] + ")" )
+      PrintTextEx(  6, 4, "Data wytworzenia: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DataWytworzeniaJPK' ] )
+      PrintTextEx(  7, 4, "         Data od: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataOd' ] ) )
+      PrintTextEx(  8, 4, "         Data do: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataDo' ] ) )
+      IF hb_HHasKey( aDane[ 'JPK' ][ 'Naglowek' ], 'DomyslnyKodWaluty' )
+         PrintTextEx(  9, 4, "      Kod waluty: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DomyslnyKodWaluty' ] )
+      ENDIF
+      PrintTextEx( 11, 4, "Nazwa firmy: {w+}" + SubStr( sxmlTrim( aDane[ 'JPK' ][ 'Podmiot' ][ 'PelnaNazwa' ] ), 1, 59 ) )
+      PrintTextEx( 12, 4, "  NIP firmy: {w+}" + aDane[ 'JPK' ][ 'Podmiot' ][ 'NIP' ] )
+      PrintTextEx( 14, 4, "  Liczba pozycji zakup¢w w pliku JPK: {w+}" + AllTrim( Str( nLiczbaLp ) ) )
+      PrintTextEx( 15, 4, "Suma podatku naliczonego w pliku JPK: {w+}" + Transform( nSumaImp , RPICE ) )
+      PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatZ_Ilosc( aDane ) ) ), 72 ) )
+
+      nMenu := 1
+      DO WHILE nMenu != 0
+         @ 18,  4 PROMPT "[ Wykonaj import ]"
+         @ 18, 26 PROMPT "[ Podgl¥d zawarto˜ci ]"
+         @ 18, 52 PROMPT "[ Opcje ]"
+         @ 18, 65 PROMPT "[ Anuluj ]"
+         MENU TO nMenu
 
          DO CASE
-         CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
+         CASE nMenu == 1
+            IF TNEsc( , "Czy wykona† import danych zakup¢w? ( T / N )" )
 
-            aDane[ 'Dekret' ] := JPKImp_VatZ_Dekretuj_VAT( aDane )
-            nSumaImp := aDane[ 'JPK' ][ 'ZakupSum' ][ 'K_44' ] + ;
-               aDane[ 'JPK' ][ 'ZakupSum' ][ 'K_46' ]
-            nLiczbaLp := Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) + Len( aDane[ 'JPK' ][ 'Zakup' ] )
-
-         CASE AScan( { "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
-
-            aDane[ 'Dekret' ] := JPKImp_VatZ_Dekretuj_V7( aDane )
-            nSumaImp := aDane[ 'JPK' ][ 'ZakupSum' ][ 'K_41' ] + ;
-               aDane[ 'JPK' ][ 'ZakupSum' ][ 'K_43' ]
-            nLiczbaLp := Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) + Len( aDane[ 'JPK' ][ 'Zakup' ] )
-
-         CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
-
-            aDane[ 'Dekret' ] := JPKImp_VatZ_Dekretuj_FA( aDane )
-            nSumaImp := aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_1' ] + ;
-               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_2' ] + ;
-               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_3' ] + ;
-               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_4' ] + ;
-               aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_5' ]
-            nLiczbaLp := Len( aDane[ 'JPK' ][ 'Faktura' ] )
-         ENDCASE
-
-         ColStd()
-         @ 24,  0
-         @  2,  0 CLEAR TO 22, 79
-         @  2,  2 TO 19, 77 DOUBLE
-         @  4,  3 TO  4, 76
-         @ 10,  3 TO 10, 76
-         @ 13,  3 TO 13, 76
-         @ 17,  3 TO 17, 76
-
-         @  3,  3 SAY PadC( "IMPORT ZAKUPàW Z PLIKU JPK", 72 )
-         PrintTextEx(  5, 4, "Rodzaj pliku JPK: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] + " (" + aDane[ 'JPK' ][ 'Naglowek' ][ 'WariantFormularza' ] + ")" )
-         PrintTextEx(  6, 4, "Data wytworzenia: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DataWytworzeniaJPK' ] )
-         PrintTextEx(  7, 4, "         Data od: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataOd' ] ) )
-         PrintTextEx(  8, 4, "         Data do: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataDo' ] ) )
-         IF hb_HHasKey( aDane[ 'JPK' ][ 'Naglowek' ], 'DomyslnyKodWaluty' )
-            PrintTextEx(  9, 4, "      Kod waluty: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DomyslnyKodWaluty' ] )
-         ENDIF
-         PrintTextEx( 11, 4, "Nazwa firmy: {w+}" + SubStr( sxmlTrim( aDane[ 'JPK' ][ 'Podmiot' ][ 'PelnaNazwa' ] ), 1, 59 ) )
-         PrintTextEx( 12, 4, "  NIP firmy: {w+}" + aDane[ 'JPK' ][ 'Podmiot' ][ 'NIP' ] )
-         PrintTextEx( 14, 4, "  Liczba pozycji zakup¢w w pliku JPK: {w+}" + AllTrim( Str( nLiczbaLp ) ) )
-         PrintTextEx( 15, 4, "Suma podatku naliczonego w pliku JPK: {w+}" + Transform( nSumaImp , RPICE ) )
-         PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatZ_Ilosc( aDane ) ) ), 72 ) )
-
-         nMenu := 1
-         DO WHILE nMenu != 0
-            @ 18,  4 PROMPT "[ Wykonaj import ]"
-            @ 18, 26 PROMPT "[ Podgl¥d zawarto˜ci ]"
-            @ 18, 52 PROMPT "[ Opcje ]"
-            @ 18, 65 PROMPT "[ Anuluj ]"
-            MENU TO nMenu
-
-            DO CASE
-            CASE nMenu == 1
-               IF TNEsc( , "Czy wykona† import danych zakup¢w? ( T / N )" )
-
-                  IF aDane[ 'SprawdzRegon' ] == 'T'
-                     JPKImp_VatZ_Kontrah( @aDane )
-                  ENDIF
-
-                  aRaport := JPKImp_VatZ_Importuj( aDane )
-
-                  cRaport := "IMPORT ZAKOãCZONY" + hb_eol()
-                  cRaport += "-----------------" + hb_eol()
-                  cRaport += hb_eol()
-                  cRaport += "Liczba zaimportowanych pozycji: " + AllTrim( Str( aRaport[ 'Zaimportowano' ] ) ) + hb_eol()
-                  cRaport += "Liczba pomini©tych dokument¢w: " + AllTrim( Str( aRaport[ 'Pominieto' ] ) ) + hb_eol()
-                  cRaport += "Liczba dokument¢w w obej walucie: " + AllTrim( Str( aRaport[ 'Waluta' ] ) ) + hb_eol()
-                  cRaport += "Liczba uwag: " + AllTrim( Str( aRaport[ 'Uwagi' ] ) ) + hb_eol()
-                  IF aRaport[ 'Uwagi' ] > 0
-                     cRaport += hb_eol()
-                     cRaport += "DOKUMENTY Z NIEROZPOZNAN¤ STAWK¤ VAT" + hb_eol()
-                     cRaport += "-------------------" + hb_eol()
-                     AEval( aRaport[ 'ListaUwag' ], { | aPoz |
-                        cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Numer' ] ) + hb_eol()
-                        cRaport += "Data wystawienia: " + DToC( aPoz[ 'Data' ] ) + hb_eol()
-                        cRaport += "--------------------------" + hb_eol()
-                     } )
-                  ENDIF
-                  IF aRaport[ 'Pominieto' ] > 0
-                     cRaport += hb_eol()
-                     cRaport += "POMINI¨TE DOKUMENTY" + hb_eol()
-                     cRaport += "-------------------" + hb_eol()
-                     AEval( aRaport[ 'ListaPom' ], { | aPoz |
-                        cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
-                        cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
-                        cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
-                        cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
-                        cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
-                        cRaport += "--------------------------" + hb_eol()
-                     } )
-                  ENDIF
-                  IF aRaport[ 'Waluta' ] > 0
-                     cRaport += hb_eol()
-                     cRaport += "DOKUMENTY W OBCEJ WALUCIE" + hb_eol()
-                     cRaport += "-------------------" + hb_eol()
-                     AEval( aRaport[ 'ListaWal' ], { | aPoz |
-                        cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
-                        cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
-                        cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
-                        cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
-                        cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
-                        cRaport += "--------------------------" + hb_eol()
-                     } )
-                  ENDIF
-
-                  WyswietlTekst( cRaport )
-
-                  nMenu := 0
+               IF aDane[ 'SprawdzRegon' ] == 'T'
+                  JPKImp_VatZ_Kontrah( @aDane )
                ENDIF
-            CASE nMenu == 2
-               DO CASE
-               CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
-                  nMenu2 := MenuEx( 18, 26, { "SprzedazPoz (podatek nale¾ny)", "ZakupPoz (podatek naliczony)" } )
-                  SWITCH nMenu2
-                  CASE 1
-                     IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
-                        JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
-                     ELSE
-                        Komun( "Brak danych", 15 )
-                     ENDIF
-                     EXIT
-                  CASE 2
-                     IF Len( aDane[ 'JPK' ][ 'Zakup' ] ) > 0
-                        JPKImp_VatZ_Podglad_VAT( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
-                     ELSE
-                        Komun( "Brak danych", 15 )
-                     ENDIF
-                     EXIT
-                  ENDSWITCH
-                  PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
-               CASE AScan( { "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
-                  nMenu2 := MenuEx( 18, 26, { "SprzedazPoz (podatek nale¾ny)", "ZakupPoz (podatek naliczony)" } )
-                  SWITCH nMenu2
-                  CASE 1
-                     IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
-                        JPKImp_VatS_Podglad_V7( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
-                     ELSE
-                        Komun( "Brak danych", 15 )
-                     ENDIF
-                     EXIT
-                  CASE 2
-                     IF Len( aDane[ 'JPK' ][ 'Zakup' ] ) > 0
-                        JPKImp_VatZ_Podglad_V7( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
-                     ELSE
-                        Komun( "Brak danych", 15 )
-                     ENDIF
-                     EXIT
-                  ENDSWITCH
-                  PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
-               CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
-                  IF Len( aDane[ 'JPK' ][ 'Faktura' ] ) > 0
-                     JPKImp_VatS_Podglad_FA( aDane[ 'JPK' ][ 'Faktura' ], aDane[ 'JPK' ][ 'FakturaSum' ] )
+
+               aRaport := JPKImp_VatZ_Importuj( aDane )
+
+               cRaport := "IMPORT ZAKOãCZONY" + hb_eol()
+               cRaport += "-----------------" + hb_eol()
+               cRaport += hb_eol()
+               cRaport += "Liczba zaimportowanych pozycji: " + AllTrim( Str( aRaport[ 'Zaimportowano' ] ) ) + hb_eol()
+               cRaport += "Liczba pomini©tych dokument¢w: " + AllTrim( Str( aRaport[ 'Pominieto' ] ) ) + hb_eol()
+               cRaport += "Liczba dokument¢w w obej walucie: " + AllTrim( Str( aRaport[ 'Waluta' ] ) ) + hb_eol()
+               cRaport += "Liczba uwag: " + AllTrim( Str( aRaport[ 'Uwagi' ] ) ) + hb_eol()
+               IF aRaport[ 'Uwagi' ] > 0
+                  cRaport += hb_eol()
+                  cRaport += "DOKUMENTY Z NIEROZPOZNAN¤ STAWK¤ VAT" + hb_eol()
+                  cRaport += "-------------------" + hb_eol()
+                  AEval( aRaport[ 'ListaUwag' ], { | aPoz |
+                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Numer' ] ) + hb_eol()
+                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Data' ] ) + hb_eol()
+                     cRaport += "--------------------------" + hb_eol()
+                  } )
+               ENDIF
+               IF aRaport[ 'Pominieto' ] > 0
+                  cRaport += hb_eol()
+                  cRaport += "POMINI¨TE DOKUMENTY" + hb_eol()
+                  cRaport += "-------------------" + hb_eol()
+                  AEval( aRaport[ 'ListaPom' ], { | aPoz |
+                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
+                     cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
+                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
+                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
+                     cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                     cRaport += "--------------------------" + hb_eol()
+                  } )
+               ENDIF
+               IF aRaport[ 'Waluta' ] > 0
+                  cRaport += hb_eol()
+                  cRaport += "DOKUMENTY W OBCEJ WALUCIE" + hb_eol()
+                  cRaport += "-------------------" + hb_eol()
+                  AEval( aRaport[ 'ListaWal' ], { | aPoz |
+                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
+                     cRaport += "Nr ident.: " + AllTrim( aPoz[ 'Importowany' ][ 'znr_ident' ] ) + hb_eol()
+                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
+                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'zdatas' ] ) + hb_eol()
+                     cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                     cRaport += "--------------------------" + hb_eol()
+                  } )
+               ENDIF
+
+               WyswietlTekst( cRaport )
+
+               nMenu := 0
+            ENDIF
+         CASE nMenu == 2
+            DO CASE
+            CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_VAT"
+               nMenu2 := MenuEx( 18, 26, { "SprzedazPoz (podatek nale¾ny)", "ZakupPoz (podatek naliczony)" } )
+               SWITCH nMenu2
+               CASE 1
+                  IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
+                     JPKImp_VatS_Podglad_VAT( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
                   ELSE
                      Komun( "Brak danych", 15 )
                   ENDIF
-                  PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
-               ENDCASE
-            CASE nMenu == 3
-               cEkran2 := SaveScreen()
-               cTN := aDane[ 'ZezwolNaDuplikaty' ]
-               cRej := aDane[ 'Rejestr' ]
-               cOpisZd := aDane[ 'OpisZd' ]
-               nDomVat := aDane[ 'DomVat' ]
-               cDataRej := aDane[ 'DataRej' ]
-               cRegon := aDane[ 'SprawdzRegon' ]
-               cPuste := aDane[ 'ZezwolNaPuste' ]
-               @  9, 13 CLEAR TO 21, 66
-               @ 10, 15 TO 20, 64
-               @ 11, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
-               @ 12, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42, 'Z' ), .T. }
-               @ 13, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "Z" )
-               @ 14, 17 SAY "Domy˜lna stawka VAT"
-               @ 14, 37, 20, 41 GET nDomVat LISTBOX { { "23%", 1 }, { "8% ", 2 }, { "5% ", 3 }, { "0% ", 4 } } DROPDOWN
-               @ 15, 17 SAY "Do rejestru na dzieä (Z-zakupu, W-wystaw.)" GET cDataRej VALID cDataRej $ "WZ"
-               @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
-               @ 17, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 17, 59 )
-               @ 19, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
-               ValidTakNie( cPuste, 17, 59 )
-               READ
-               IF LastKey() <> K_ESC
-                  aDane[ 'ZezwolNaDuplikaty' ] := cTN
-                  aDane[ 'Rejestr' ] := cRej
-                  aDane[ 'OpisZd' ] := cOpisZd
-                  aDane[ 'DomVat' ] := nDomVat
-                  aDane[ 'DataRej' ] := cDataRej
-                  aDane[ 'SprawdzRegon' ] := cRegon
-                  aDane[ 'ZezwolNaPuste' ] := cPuste
+                  EXIT
+               CASE 2
+                  IF Len( aDane[ 'JPK' ][ 'Zakup' ] ) > 0
+                     JPKImp_VatZ_Podglad_VAT( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
+                  ELSE
+                     Komun( "Brak danych", 15 )
+                  ENDIF
+                  EXIT
+               ENDSWITCH
+               PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+            CASE AScan( { "JPK_V7M", "JPK_V7K" }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
+               nMenu2 := MenuEx( 18, 26, { "SprzedazPoz (podatek nale¾ny)", "ZakupPoz (podatek naliczony)" } )
+               SWITCH nMenu2
+               CASE 1
+                  IF Len( aDane[ 'JPK' ][ 'Sprzedaz' ] ) > 0
+                     JPKImp_VatS_Podglad_V7( aDane[ 'JPK' ][ 'Sprzedaz' ], aDane[ 'JPK' ][ 'SprzedazSum' ] )
+                  ELSE
+                     Komun( "Brak danych", 15 )
+                  ENDIF
+                  EXIT
+               CASE 2
+                  IF Len( aDane[ 'JPK' ][ 'Zakup' ] ) > 0
+                     JPKImp_VatZ_Podglad_V7( aDane[ 'JPK' ][ 'Zakup' ], aDane[ 'JPK' ][ 'ZakupSum' ] )
+                  ELSE
+                     Komun( "Brak danych", 15 )
+                  ENDIF
+                  EXIT
+               ENDSWITCH
+               PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
+            CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
+               IF Len( aDane[ 'JPK' ][ 'Faktura' ] ) > 0
+                  JPKImp_VatS_Podglad_FA( aDane[ 'JPK' ][ 'Faktura' ], aDane[ 'JPK' ][ 'FakturaSum' ] )
+               ELSE
+                  Komun( "Brak danych", 15 )
                ENDIF
-               RestScreen( , , , , cEkran2 )
-            CASE nMenu == 4
-               nMenu := 0
+               PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( JPKImp_VatS_Ilosc( aDane ) ) ), 72 ) )
             ENDCASE
+         CASE nMenu == 3
+            cEkran2 := SaveScreen()
+            cTN := aDane[ 'ZezwolNaDuplikaty' ]
+            cRej := aDane[ 'Rejestr' ]
+            cOpisZd := aDane[ 'OpisZd' ]
+            nDomVat := aDane[ 'DomVat' ]
+            cDataRej := aDane[ 'DataRej' ]
+            cRegon := aDane[ 'SprawdzRegon' ]
+            cPuste := aDane[ 'ZezwolNaPuste' ]
+            @  9, 13 CLEAR TO 21, 66
+            @ 10, 15 TO 20, 64
+            @ 11, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
+            @ 12, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42, 'Z' ), .T. }
+            @ 13, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "Z" )
+            @ 14, 17 SAY "Domy˜lna stawka VAT"
+            @ 14, 37, 20, 41 GET nDomVat LISTBOX { { "23%", 1 }, { "8% ", 2 }, { "5% ", 3 }, { "0% ", 4 } } DROPDOWN
+            @ 15, 17 SAY "Do rejestru na dzieä (Z-zakupu, W-wystaw.)" GET cDataRej VALID cDataRej $ "WZ"
+            @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
+            @ 17, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 17, 59 )
+            @ 19, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+            ValidTakNie( cPuste, 17, 59 )
+            READ
+            IF LastKey() <> K_ESC
+               aDane[ 'ZezwolNaDuplikaty' ] := cTN
+               aDane[ 'Rejestr' ] := cRej
+               aDane[ 'OpisZd' ] := cOpisZd
+               aDane[ 'DomVat' ] := nDomVat
+               aDane[ 'DataRej' ] := cDataRej
+               aDane[ 'SprawdzRegon' ] := cRegon
+               aDane[ 'ZezwolNaPuste' ] := cPuste
+            ENDIF
+            RestScreen( , , , , cEkran2 )
+         CASE nMenu == 4
+            nMenu := 0
+         ENDCASE
 
-         ENDDO
-
-      ENDIF
+      ENDDO
 
    ENDIF
 

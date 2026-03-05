@@ -1238,7 +1238,7 @@ PROCEDURE JPK_V7_Rob( nR, nC )
    ENDIF
 
    IF nMenu == 1 .OR. nMenu == 2
-      aDaneVat := Vat_720( 0, 0, 1, 'J' )
+      aDaneVat := Vat_720( 0, 0, 1, 'J', nMenuDekWer )
       IF HB_ISNIL( aDaneVat ) .OR. ! HB_ISHASH( aDaneVat )
          RestScreen( , , , , cEkran )
          RETURN NIL

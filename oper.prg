@@ -70,11 +70,13 @@ PROCEDURE Oper()
          Notes()
       CASE kl == Asc( 'I' ) .OR. kl == Asc( 'i' )
          // Import z JPK
-         nMenu := MenuEx( 18, 25, { "Import z pliku JPK_FA, JPK_V7", "Import z pliku JPK_PKPIR" }, 1 )
+         nMenu := MenuEx( 18, 25, { "K - Importuj z programu GM Kos", "F - Import z pliku JPK_FA, JPK_V7", "P - Import z pliku JPK_PKPIR" }, 1 )
          DO CASE
          CASE nMenu == 1
-            JPKImp_VatS( 2 )
+            JPKImp_VatS( 2, .T. )
          CASE nMenu == 2
+            JPKImp_VatS( 2, .F. )
+         CASE nMenu == 3
             JPKImp_PKPIR()
          ENDCASE
          IF &_bot

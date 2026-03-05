@@ -28,13 +28,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 *北北北 CZEKAJ   北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北
 *北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北北
 // Wyswietla komunikat "Porsze czekac"
-PROCEDURE Czekaj()
+PROCEDURE Czekaj( cKomunikat )
 
    LOCAL CURR
 
+   hb_default( @cKomunikat, 'Prosz&_e. czeka&_c....' )
+
    CURR := ColInb()
    @ 24, 0 CLEAR
-   center( 24, 'Prosz&_e. czeka&_c....' )
+   center( 24, cKomunikat )
    SetColor( CURR )
 
    RETURN

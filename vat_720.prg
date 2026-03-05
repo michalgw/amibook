@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "Inkey.ch"
 
-PROCEDURE Vat_720( _G, _M, _STR, _OU )
+PROCEDURE Vat_720( _G, _M, _STR, _OU, nWersjaJV7 )
 
    LOCAL nNumerRec, aDane := hb_Hash()
    RAPORT := RAPTEMP
@@ -286,7 +286,7 @@ PROCEDURE Vat_720( _G, _M, _STR, _OU )
             @ 15, 71 GET kkasa_zwr PICTURE FVPIC
             @ 16, 71 GET pp10 PICTURE FVPIC
             IF _OU == 'J'
-               @ 17, 76 GET cJPKRodzZwrot PICTURE '!' WHEN Vat720WRodzZwrot() VALID Vat720VRodzZwrot()
+               @ 17, 76 GET cJPKRodzZwrot PICTURE '!' WHEN Vat720WRodzZwrot( nWersjaJV7 ) VALID Vat720VRodzZwrot( nWersjaJV7 )
                @ 18, 76 GET cJPKZwrotPod PICTURE '!' WHEN Vat720WZwrotPod() VALID Vat720VZwrotPod()
                @ 19, 71 GET nJPKZwrotKwota PICTURE FVPIC WHEN Vat720WZwrotKwota() VALID Vat720VZwrotKwota()
                @ 20, 71 GET cJPKZwrotRodzZob PICTURE '@S9 ' + Replicate( '!', 120 ) WHEN Vat720WZwrotRodzZob() VALID Vat720VZwrotRodzZob()
@@ -1376,7 +1376,7 @@ FUNCTION wstruspr20( x, y )
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION Vat720WRodzZwrot()
+FUNCTION Vat720WRodzZwrot( nWersjaJV7 )
 
    LOCAL cKolor := ColInf()
 
@@ -1388,6 +1388,9 @@ FUNCTION Vat720WRodzZwrot()
    @ 10, 23 SAY ' 2 - Zwrot na rachunek VAT w terminie 25 dni'
    @ 11, 23 SAY ' 3 - Zwrot na rachunek rozliczeniowy w terminie 25 dni'
    @ 12, 23 SAY ' 4 - Zwrot na rachunek rozliczeniowy w terminie 40 dni'
+   IF nWersjaJV7 == 2
+      @ 13, 23 SAY ' 5 - Zwrot na rachunek rozliczeniowy w terminie 60 dni'
+   ENDIF
    @ 14, 23 SAY ' 6 - Zwrot na rachunek rozliczeniowy w terminie 180 dni'
    @ 15, 23 SAY '   - ½adne z powy¾szych'
 
@@ -1397,9 +1400,18 @@ FUNCTION Vat720WRodzZwrot()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION Vat720VRodzZwrot()
+FUNCTION Vat720VRodzZwrot( nWersjaJV7 )
 
-   LOCAL lRes := AScan( { '1', '2', '3', '4', '6', ' ' }, cJPKRodzZwrot ) > 0
+   LOCAL aTab
+   LOCAL lRes
+
+   IF nWersjaJV7 == 2
+      aTab := { '1', '2', '3', '4', '5', '6', ' ' }
+   ELSE
+      aTab := { '1', '2', '3', '4', '6', ' ' }
+   ENDIF
+
+   lRes := AScan( aTab, cJPKRodzZwrot ) > 0
 
    IF lRes
       RestScreen( , , , , cEkran )

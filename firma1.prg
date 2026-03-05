@@ -807,6 +807,8 @@ PROCEDURE Firma1()
          endif
          if haslo==zhaslo
             symbol_fir=symbol
+            Firma_NIP := AllTrim( firma->nip )
+            Firma_Nazwa := AllTrim( firma->nazwa )
             ident_fir=str(recno(),3)
             Firma_RodzNrKs := firma->rodznrks
             SalCompanyProgramId := AllTrim( firma->salprgid )

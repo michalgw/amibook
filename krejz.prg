@@ -25,7 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 PROCEDURE KRejZ()
 
-   LOCAL nImpMenu, aDaneVAT
+   LOCAL nImpMenu, aDaneVAT, aMenuEls
 
    PRIVATE oGetWAR2, oGetVAT2, oGetWAR7, oGetVAT7, oGetWAR12, oGetVAT12, oGetWAR22, oGetVAT22, lBlokuj := .F.
    PRIVATE oGetSYMB_REJ, oGetTRESC, oGetOPCJE, fDETALISTA, oGetRodzDow, oGetSekCV7, oGetKOLUMNA
@@ -107,22 +107,26 @@ PROCEDURE KRejZ()
          // Import z JPK
 
          nImpMenu := 1
+         aMenuEls := { ;
+            "J - Importuj z pliku JPK", ;
+            "K - Importuj z programu GM Kos" }
          IF SalSprawdz( .F. )
-            cKolor := ColInf()
-            @ 24, 0 SAY PadC( "Wybierz «r¢dˆo importu", 80 )
-            SetColor( cKolor )
-            nImpMenu := MenuEx( 10, 10, { ;
-               "J - Importuj z pliku JPK", ;
-               "S - importuj z SaldeoSMART (wysˆane)", ;
-               "D - importuj z SaldeoSMART (ostatnie 10 dni)", ;
-               "O - importuj z SaldeoSMART (odczytane ost. 10 dni)" }, nImpMenu )
-            @ 24, 0
+            AAdd( aMenuEls, "S - importuj z SaldeoSMART (wysˆane)" )
+            AAdd( aMenuEls, "D - importuj z SaldeoSMART (ostatnie 10 dni)" )
+            AAdd( aMenuEls, "O - importuj z SaldeoSMART (odczytane ost. 10 dni)" )
          ENDIF
+         cKolor := ColInf()
+         @ 24, 0 SAY PadC( "Wybierz «r¢dˆo importu", 80 )
+         SetColor( cKolor )
+         nImpMenu := MenuEx( 10, 10, aMenuEls, nImpMenu )
+         @ 24, 0
          DO CASE
          CASE nImpMenu == 1
-            JPKImp_VatZ()
-         CASE nImpMenu >= 2 .AND. nImpMenu <= 4
-            SalImp_VatZ( nImpMenu - 1 )
+            JPKImp_VatZ( .F. )
+         CASE nImpMenu == 2
+            JPKImp_VatZ( .T. )
+         CASE nImpMenu >= 3 .AND. nImpMenu <= 5
+            SalImp_VatZ( nImpMenu - 2 )
          ENDCASE
          IF &_bot
             SEEK '+' + ident_fir + miesiac
