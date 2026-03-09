@@ -3107,15 +3107,22 @@ PROCEDURE JPKImp_VatZ_Kontrah( aDane )
    LOCAL aDaneRegon
    LOCAL cEkran
    LOCAL cKolor := ColInf()
-   LOCAL aRekord
+   LOCAL aRekord, cKlucz
 
    SAVE SCREEN TO cEkran
    @ 18, 10 CLEAR TO 20, 69
    @ 18, 10 TO 20, 69
    @ 19, 12 SAY '          ...Pobieranie danych z bazy REGON...'
 
+   DO CASE
+   CASE AScan( { 'JPK_VAT', 'JPK_V7M', 'JPK_V7K' }, aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] ) > 0
+      cKlucz := 'SprzedazPoz'
+   CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'JPK_FA' .OR. aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == 'FA'
+      cKlucz := 'FakturaPoz'
+   ENDCASE
+
    AEval( aDane[ 'Dekret' ], { | aPoz |
-      IF aPoz[ 'SprzedazPoz' ][ 'Importuj' ] .AND. Upper( aPoz[ 'zkraj' ] ) == "PL" .AND. ;
+      IF aPoz[ cKlucz ][ 'Importuj' ] .AND. Upper( aPoz[ 'zkraj' ] ) == "PL" .AND. ;
          SprawdzNIPSuma( NormalizujNipPL( aPoz[ 'znr_ident' ] ) )
          cNip := NormalizujNipPL( aPoz[ 'znr_ident' ] )
          IF AScan( aNipy, cNip ) == 0
@@ -3562,11 +3569,11 @@ PROCEDURE JPKImp_VatZ( lZKos )
             aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_4' ] + ;
             aDane[ 'JPK' ][ 'FakturaSum' ][ 'P_14_5' ]
          nLiczbaLp := Len( aDane[ 'JPK' ][ 'Faktura' ] )
-      CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "JPK_FA"
+      CASE aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] == "FA"
 
          aDane[ 'Dekret' ] := KosImp_VatZ_Dekretuj( aDane )
          nSumaImp := aDane[ 'JPK' ][ 'Sumy' ][ 'P_15' ]
-         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Faktura' ] )
+         nLiczbaLp := Len( aDane[ 'JPK' ][ 'Pozycje' ] )
       ENDCASE
 
       ColStd()

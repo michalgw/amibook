@@ -321,15 +321,15 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
 FUNCTION KosImp_VatZ_Dekretuj( aDane )
 
    LOCAL aRes := {}, cAdr
-   LOCAL cNipFir := TrimNip( aDane[ 'JPK' ][ 'Firma' ][ 'firma' ][ 'nip' ] )
+   //LOCAL cNipFir := TrimNip( aDane[ 'JPK' ][ 'Firma' ][ 'firma' ][ 'nip' ] )
 
-   AEval( aDane[ 'JPK' ][ 'Faktura' ], { | aPoz |
+   AEval( aDane[ 'JPK' ][ 'Pozycje' ], { | aPoz |
       LOCAL aPozDek
-      LOCAL cNip := HGetDefault( aPoz, 'P_5B', '' )
+     // LOCAL cNip := HGetDefault( aPoz, 'P_5B', '' )
       LOCAL cKraj := "PL"
       aPoz[ 'Aktywny' ] := .T.
       aPoz[ 'Importuj' ] := .T.
-      aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
+      aPoz[ 'DataDok' ] := aPoz[ 'P_1' ]
       aPozDek := hb_Hash()
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zkolumna' ] := '10'
@@ -394,7 +394,7 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
       aPozDek[ 'NrKSeF' ] := aPoz[ 'NrKSeF' ]
       aPozDek[ 'KSeFStat' ] := ' '
 
-      aPozDek[ 'SprzedazPoz' ] := aPoz
+      aPozDek[ 'FakturaPoz' ] := aPoz
 
       AAdd( aRes, aPozDek )
 
