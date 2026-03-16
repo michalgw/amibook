@@ -2827,6 +2827,95 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION JPKImp_OperZ_Importuj( aDane )
+
+   LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
+   //LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {} )
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Uwagi', 0, 'ListaUwag', {}, 'Waluta', 0, 'ListaWal', {} )
+
+   @ 11, 15 CLEAR TO 15, 64
+   @ 11, 15 TO 15, 64 DOUBLE
+   @ 12, 16 SAY PadC( "Import sprzedaæy", 48 )
+
+   AEval( aDane[ 'Dekret' ], { | aPoz |
+
+      LOCAL aIstniejacyRec
+      LOCAL lImportuj := JPKImp_VatS_CzyImport( aDane, aPoz )
+
+      IF lImportuj
+
+         @ 13, 16 SAY PadC( AllTrim( Str( nI ) ) + " / " + AllTrim( Str( nIlosc ) ), 48 )
+         @ 14, 17 SAY ProgressBar( nI, nIlosc, 46 )
+         ins := .T.
+
+         IF aDane[ 'DataRej' ] == 'W'
+            zDZIEN := aPoz[ 'zdzien' ]
+         ELSE
+            zDZIEN := Str( Day( aPoz[ 'zdatas' ] ), 2 )
+         ENDIF
+         znazwa := iif( Upper( AllTrim( aPoz[ 'znazwa' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'znazwa' ], 100 ) )
+         zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
+         zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 100 ) )
+         zADRES := iif( Upper( AllTrim( aPoz[ 'zadres' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'zadres' ], 100 ) )
+         zTRESC := aDane[ 'OpisZd' ]
+
+         zWYR_TOW := 0
+         zUSLUGI := 0
+         STORE 0 TO zZAKUP, zUBOCZNE, zWYNAGR_G, zWYDATKI, zPUSTA
+         zident := 0
+         zuwagi := Space( 14 )
+         zROZRZAPK := 'N'
+         zZAP_TER := 0
+         zZAP_DAT := Date()
+         zZAP_WART := 0
+         zK16WART := 0
+         zK16OPIS := Space( 30 )
+
+         zKRAJ := aPoz[ 'zkraj' ]
+
+         IF Empty( aPoz[ 'NrKSeF' ] )
+            zNRKSEF := Space( 35 )
+         ELSE
+            zNRKSEF := aPoz[ 'NrKSeF' ]
+         ENDIF
+
+         zNETTO := _round( aPoz[ 'zwartzw' ] + aPoz[ 'zwart08' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ], 2 )
+
+         DO CASE
+         CASE Empty( aDane[ 'Kolumna' ] ) .OR. Val( aDane[ 'Kolumna' ] ) == 10
+            zZAKUP := zNETTO
+         CASE Val( aDane[ 'Kolumna' ] ) == 11
+            zUBOCZNE := zNETTO
+         CASE Val( aDane[ 'Kolumna' ] ) == 12
+            zWYNAGR_G := zNETTO
+         CASE Val( aDane[ 'Kolumna' ] ) == 13
+            zWYDATKI := zNETTO
+         ENDCASE
+
+         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'OPER', ident_fir, miesiac, znumer, @aIstniejacyRec )
+            aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
+            AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje juæ dokument o tym numerze' ) )
+         ELSE
+            Oper_Ksieguj()
+            IF HGetDefault( aPoz, 'KodWaluty', 'PLN' ) <> 'PLN'
+               aRaport[ 'Waluta' ] := aRaport[ 'Waluta' ] + 1
+               AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
+            ENDIF
+            aRaport[ 'Zaimportowano' ] := aRaport[ 'Zaimportowano' ] + 1
+         ENDIF
+
+         nI++
+      ELSE
+         aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
+         AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Dokument nie zostaà zaznaczony do importu' ) )
+      ENDIF
+
+   } )
+
+   RETURN aRaport
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION JPKImp_VatZ_Importuj( aDane )
 
    LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
@@ -2863,7 +2952,7 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zDATAS := aPoz[ 'zdatas' ]
          zDATAKS := zDATAS
          zDATATRAN := aPoz[ 'zdatatran' ]
-         zKOLUMNA := '10'
+         zKOLUMNA := aDane[ 'Kolumna' ]
          zuwagi := Space( 20 )
          zWARTZW := aPoz[ 'zwartzw' ]
          zWART00 := aPoz[ 'zwart00' ]
@@ -3495,17 +3584,19 @@ FUNCTION JPKImp_VatS_Tresc_V( cKatalog )
 
 /*----------------------------------------------------------------------*/
 
-PROCEDURE JPKImp_VatZ( lZKos )
+PROCEDURE JPKImp_VatZ( nCelImportu, lZKos )
 
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
       'OpisZd', Space( 30 ), 'DomVat', 1, 'DataRej', 'W', ;
-      'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'ZezwolNaPuste', 'N' )
+      'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'ZezwolNaPuste', 'N', ;
+      'Kolumna', '10' )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
    LOCAL nMenu, cEkran2, nMenu2
    LOCAL aRaport, cRaport, cTN, cRej, lOk, nDomVat, cDataRej, cRegon, cPuste
-   LOCAL nSumaImp, nLiczbaLp := 0
+   LOCAL nSumaImp, nLiczbaLp := 0, cKolumna
+   LOCAL bKolValid := { | | AScan( { "10", "11", "12", "13" }, cKolumna ) > 0 }
 
    PRIVATE cOpisZd
 
@@ -3615,7 +3706,12 @@ PROCEDURE JPKImp_VatZ( lZKos )
                   JPKImp_VatZ_Kontrah( @aDane )
                ENDIF
 
-               aRaport := JPKImp_VatZ_Importuj( aDane )
+               DO CASE
+               CASE nCelImportu == 1
+                  aRaport := JPKImp_VatZ_Importuj( aDane )
+               CASE nCelImportu == 2
+                  aRaport := JPKImp_OperZ_Importuj( aDane )
+               ENDCASE
 
                cRaport := "IMPORT ZAKO„CZONY" + hb_eol()
                cRaport += "-----------------" + hb_eol()
@@ -3722,18 +3818,22 @@ PROCEDURE JPKImp_VatZ( lZKos )
             cDataRej := aDane[ 'DataRej' ]
             cRegon := aDane[ 'SprawdzRegon' ]
             cPuste := aDane[ 'ZezwolNaPuste' ]
-            @  9, 13 CLEAR TO 21, 66
-            @ 10, 15 TO 20, 64
-            @ 11, 17 SAY "Zezw¢l na import dokument¢w z istniej•cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
-            @ 12, 17 SAY "Domyòlny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 12, 42, 'Z' ), .T. }
-            @ 13, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "Z" )
-            @ 14, 17 SAY "Domyòlna stawka VAT"
-            @ 14, 37, 20, 41 GET nDomVat LISTBOX { { "23%", 1 }, { "8% ", 2 }, { "5% ", 3 }, { "0% ", 4 } } DROPDOWN
-            @ 15, 17 SAY "Do rejestru na dzie‰ (Z-zakupu, W-wystaw.)" GET cDataRej VALID cDataRej $ "WZ"
-            @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
-            @ 17, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 17, 59 )
+            cKolumna := aDane[ 'Kolumna' ]
+            @  8, 13 CLEAR TO 21, 66
+            @  9, 15 TO 20, 64
+            @ 10, 17 SAY "Zezw¢l na import dokument¢w z istniej•cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
+            @ 11, 17 SAY "Domyòlny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 11, 42, 'Z' ), .T. }
+            @ 12, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "Z", "R" ) )
+            @ 13, 17 SAY "Domyòlna stawka VAT"
+            @ 13, 37, 20, 41 GET nDomVat LISTBOX { { "23%", 1 }, { "8% ", 2 }, { "5% ", 3 }, { "0% ", 4 } } DROPDOWN
+            @ 14, 17 SAY "Do rejestru na dzie‰ (Z-zakupu, W-wystaw.)" GET cDataRej VALID cDataRej $ "WZ"
+            @ 15, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
+            @ 16, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 16, 59 )
+            IF zRYCZALT <> 'T'
+               @ 17, 17 SAY "Domyòlna kolumna ksi©gi" GET cKolumna PICTURE "99" VALID Eval( bKolValid )
+            ENDIF
             @ 19, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
-            ValidTakNie( cPuste, 17, 59 )
+            ValidTakNie( cPuste, 16, 59 )
             READ
             IF LastKey() <> K_ESC
                aDane[ 'ZezwolNaDuplikaty' ] := cTN
@@ -3743,6 +3843,7 @@ PROCEDURE JPKImp_VatZ( lZKos )
                aDane[ 'DataRej' ] := cDataRej
                aDane[ 'SprawdzRegon' ] := cRegon
                aDane[ 'ZezwolNaPuste' ] := cPuste
+               aDane[ 'Kolumna' ] := cKolumna
             ENDIF
             RestScreen( , , , , cEkran2 )
          CASE nMenu == 4

@@ -24,7 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 FUNCTION KosAppZaloguj()
 
-   LOCAL oErr, lRes := .F., nUId
+   LOCAL oErr, lRes := .F., nUId, cPrzyczyna
 
    TRY
 
@@ -35,18 +35,26 @@ FUNCTION KosAppZaloguj()
 
       ENDIF
 
-      IF Empty( oKosUser )
+      IF ! Empty( oKosApp )
 
-         nUId := oKosApp:Zaloguj( "", "" )
-         IF nUId > 0
+         IF Empty( oKosUser )
 
-            oKosUser := oKosApp:Uzytkownik
+            nUId := oKosApp:Zaloguj( "", "" )
+            IF nUId > 0
+
+               oKosUser := oKosApp:Uzytkownik
+
+            ENDIF
 
          ENDIF
 
-      ENDIF
+         lRes := ! Empty( oKosUser )
 
-      lRes := ! Empty( oKosUser )
+      ELSE
+
+         lRes := .F.
+
+      ENDIF
 
    CATCH oErr
 
@@ -262,7 +270,7 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
          cAdr := cAdr + ', ' + aPoz[ 'P2AdresL2' ]
       ENDIF
       aPozDek[ 'zadres' ] := cAdr
-      aPozDek[ 'zdatas' ] := aPoz[ 'P_6' ]
+      aPozDek[ 'zdatas' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
 
       aPozDek[ 'zwartzw' ] := HGetDefault( aPoz, 'P_13_7', 0 )
 
@@ -342,12 +350,12 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
       aPozDek[ 'zue' ] := iif( KrajUE( aPozDek[ 'zkraj' ] ), 'T', 'N' )
       aPozDek[ 'znr_ident' ] := HGetDefault( aPoz, 'P1Identyfikator', '' )
       aPozDek[ 'znazwa' ] := HGetDefault( aPoz, 'P1Nazwa', '' )
-      cAdr := aPoz[ 'P2AdresL1' ]
-      IF Len( cAdr ) > 0 .AND. Len( aPoz[ 'P2AdresL2' ] ) > 0
-         cAdr := cAdr + ', ' + aPoz[ 'P2AdresL2' ]
+      cAdr := aPoz[ 'P1AdresL1' ]
+      IF Len( cAdr ) > 0 .AND. Len( aPoz[ 'P1AdresL2' ] ) > 0
+         cAdr := cAdr + ', ' + aPoz[ 'P1AdresL2' ]
       ENDIF
       aPozDek[ 'zadres' ] := cAdr
-      aPozDek[ 'zdatas' ] := HGetDefault( aPoz, 'P_6', aPoz[ 'P_1' ] )
+      aPozDek[ 'zdatas' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
 
       aPozDek[ 'zexport' ] := 'N'
       IF aPozDek[ 'zue' ] == 'N' .AND. aPozDek[ 'zkraj' ] <> 'PL'
@@ -366,6 +374,8 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
       aPozDek[ 'zvat22' ] := HGetDefault( aPoz, 'P_14_1', 0 )
       aPozDek[ 'zwart12' ] := 0
       aPozDek[ 'zvat12' ] := 0
+      aPozDek[ 'zwart08' ] := 0
+      aPozDek[ 'zvat108' ] := 0
       aPozDek[ 'zbrut02' ] := 0
       aPozDek[ 'zbrut07' ] := 0
       aPozDek[ 'zbrut22' ] := 0
@@ -401,6 +411,12 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
    } )
 
    RETURN aRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KosEmptyDate( dDate )
+
+   RETURN ! HB_ISDATE( dDate ) .OR. dDate < 0d19900101
 
 /*----------------------------------------------------------------------*/
 

@@ -122,9 +122,9 @@ PROCEDURE KRejZ()
          @ 24, 0
          DO CASE
          CASE nImpMenu == 1
-            JPKImp_VatZ( .F. )
+            JPKImp_VatZ( 1, .F. )
          CASE nImpMenu == 2
-            JPKImp_VatZ( .T. )
+            JPKImp_VatZ( 1, .T. )
          CASE nImpMenu >= 3 .AND. nImpMenu <= 5
             SalImp_VatZ( nImpMenu - 2 )
          ENDCASE
