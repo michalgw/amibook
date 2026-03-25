@@ -483,7 +483,14 @@ public aFAKTURYdbf := {;
    { "ODBJEST", "C", 1, 0 },;                     //  47 Odbiorca - Czy jest odbiorca na faktirze (T)
    { "ODNR_IDENT", "C", 30, 0 },;                 //  48 Odbiorca - NIP
    { "ODBKRAJ", "C", 2, 0 },;                     //  49 Odbiorca - Kraj
-   { "KSGZBIOR", "C", 1, 0 } }                    //  50 Zbiorczy wpis w ksiedze T/N
+   { "KSGZBIOR", "C", 1, 0 },;                    //  50 Zbiorczy wpis w ksiedze T/N
+   { "KSEFNRSES", "C", 40, 0 },;                  //  51 Nr ref. sesji KSeF
+   { "KSEFNRELE", "C", 40, 0 },;                  //  52 Nr ref. wyslanej faktury
+   { "KSEFNRKSEF", "C", 35, 0 },;                 //  53 Nr KSeF
+   { "KSEFSTATUS", "N", 4, 0 },;                  //  54 Status faktury
+   { "KSEFSTOPIS", "C", 200, 0 },;                //  55 Opis statusu
+   { "KSEFSTSZCZ", "C", 200, 0 },;                //  56 Szczegoly statusu
+   { "KSEFOFFLIN", "L", 1, 0 } }                  //  57 Tryb offline
 
 // Create: FAKTURYW.DBF
 public aFAKTURYWdbf := {;
@@ -1927,6 +1934,7 @@ FUNCTION dbfIdxOPER()
    index on del+firma+mc+dzien to oper3
    index on del+str(rejzid,5)+numer to oper4
    index on del+firma+mc+dzien+Str(lp,5) to oper5
+   index on del+firma+nrksef TO oper6
    RETURN
 ****************************************
 FUNCTION dbfIdxEWID()
@@ -2146,6 +2154,7 @@ FUNCTION dbfIdxREJS()
    index on del+firma+mc+numer to rejs2
    index on del+firma+mc+dzien to rejs3
    index on del+firma+mc+kolumna+dzien+numer to rejs4
+   index on del+firma+nrksef TO rejs5
    RETURN
 ****************************************
 FUNCTION dbfIdxREJZ()
@@ -2156,6 +2165,7 @@ FUNCTION dbfIdxREJZ()
    index on del+firma+mc+numer to rejz2
    index on del+firma+mc+dzien to rejz3
    index on del+firma+mc+kolumna+dzien+numer to rejz4
+   index on del+firma+nrksef TO rejz5
    RETURN
 ****************************************
 FUNCTION dbfIdxWYPOSAZ()
