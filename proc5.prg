@@ -437,6 +437,45 @@ FUNCTION EwidSprawdzNrDokRec( cTablica, cKontrahent, cMiesiac, cNumer, aRec )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION EwidSprawdzNrKSeFRec( cTablica, cKontrahent, cNumer, aRec )
+
+   LOCAL lRes := .F.
+   LOCAL nPopArea
+
+   nPopArea := Select()
+
+   SWITCH Upper( cTablica )
+   CASE 'REJS'
+      dbUseArea(.T., , 'REJS', 'TMPESND', .T., .T.)
+      dbSetIndex('rejs5')
+      EXIT
+   CASE 'REJZ'
+      dbUseArea(.T., , 'REJZ', 'TMPESND', .T., .T.)
+      dbSetIndex('rejz5')
+      EXIT
+   CASE 'OPER'
+      dbUseArea(.T., , 'OPER', 'TMPESND', .T., .T.)
+      dbSetIndex('oper6')
+      EXIT
+   /*
+   CASE 'EWID'
+      dbUseArea(.T., , 'EWID', 'TMPESND', .T., .T.)
+      dbSetIndex('ewid2')
+      EXIT
+   */
+   ENDSWITCH
+
+   IF ( lRes := dbSeek( '+' + cKontrahent + cNumer ) )
+      aRec := WczytajRekordDoHash()
+   ENDIF
+
+   dbCloseArea()
+   Select( nPopArea )
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
 PROCEDURE EwidSprawdzNrDok(cTablica, cKontrahent, cMiesiac, cNumer, nRecNo)
 
    LOCAL nWS, nPopArea, nM, nMS, aLista := {}, cKom

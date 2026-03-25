@@ -2215,16 +2215,16 @@ PROCEDURE setind( ZB )
    CASE ZB == 'OPER'
       SWITCH param_kslp
       CASE '1'
-         SET INDEX TO oper,oper1,oper2,oper3,oper4,oper5
+         SET INDEX TO oper,oper1,oper2,oper3,oper4,oper5,oper6
          EXIT
       CASE '2'
-         SET INDEX TO oper3,oper1,oper2,oper,oper4,oper5
+         SET INDEX TO oper3,oper1,oper2,oper,oper4,oper5,oper6
          EXIT
       CASE '3'
-         SET INDEX TO oper5,oper1,oper2,oper,oper4,oper3
+         SET INDEX TO oper5,oper1,oper2,oper,oper4,oper3,oper6
          EXIT
       OTHERWISE
-         SET INDEX TO oper,oper1,oper2,oper3,oper4,oper5
+         SET INDEX TO oper,oper1,oper2,oper3,oper4,oper5,oper6
       ENDSWITCH
    CASE ZB == 'EWID'
       SWITCH param_kslp
@@ -2246,15 +2246,15 @@ PROCEDURE setind( ZB )
       SET INDEX TO dowew,dowew1
    CASE ZB == 'REJS'
       IF WERSJA4 == .T.
-         SET INDEX TO rejs,rejs1,rejs2,rejs3,rejs4
+         SET INDEX TO rejs,rejs1,rejs2,rejs3,rejs4,rejs5
       ELSE
-         SET INDEX TO rejs3,rejs1,rejs2,rejs,rejs4
+         SET INDEX TO rejs3,rejs1,rejs2,rejs,rejs4,rejs5
       ENDIF
    CASE ZB == 'REJZ'
       IF WERSJA4=.t.
-         SET INDEX TO rejz,rejz1,rejz2,rejz3,rejz4
+         SET INDEX TO rejz,rejz1,rejz2,rejz3,rejz4,rejz5
       ELSE
-         SET INDEX TO rejz3,rejz1,rejz2,rejz,rejz4
+         SET INDEX TO rejz3,rejz1,rejz2,rejz,rejz4,rejz5
       ENDIF
    CASE ZB == 'PRAC'
         SET INDEX TO prac,prac1,prac2,prac3,prac4,prac5,prac6
