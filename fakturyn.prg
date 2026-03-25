@@ -199,6 +199,10 @@ PROCEDURE FakturyN()
                   kom( 3, '*u', '  Nie mo¾na modyfikowa†. Ta faktura posiada korekt©.  ' )
                   BREAK
                ENDIF
+               IF ! ins .AND. ! Empty( faktury->ksefnrksef ) .OR. ( ! Empty( faktury->ksefnrses ) .AND. faktury->ksefstatus < 400 )
+                  Komun( 'Nie mo¾na modyfikowa†. Faktura zostaˆa wysˆana do KSeF.' )
+                  BREAK
+               ENDIF
                *-------------------
                IF ins .AND. Month( Date() ) # Val( miesiac ) .AND. del == '+' .AND. firma == ident_fir .AND. mc == miesiac
                   IF ! tnesc( '*u', ' Jest ' + Upper( RTrim( miesiac( Month( Date( ) ) ) ) ) + ' - jeste&_s. pewny? (T/N) ' )
@@ -733,6 +737,10 @@ PROCEDURE FakturyN()
                   kom( 3, '*u', ' Nie mo¾na usun¥†. Ta faktura posiada korekt©. ' )
                   BREAK
                ENDIF
+               IF ! Empty( faktury->ksefnrksef ) .OR. ( ! Empty( faktury->ksefnrses ) .AND. faktury->ksefstatus < 400 )
+                  Komun( 'Nie mo¾na modyfikowa†. Faktura zostaˆa wysˆana do KSeF.' )
+                  BREAK
+               ENDIF
                *-------------------
                IF ! tnesc( '*i', '   Czy skasowa&_c.? (T/N)   ' )
                   BREAK
@@ -832,9 +840,19 @@ PROCEDURE FakturyN()
             @ 24, 0
 
          *############################### WYDRUK FAKTURY #############################
-         CASE kl == K_ENTER
+         CASE kl == K_ENTER .OR. kl == Asc( 'W' ) .OR. kl == Asc( 'w' )
             @ 1, 47 SAY '          '
             BEGIN SEQUENCE
+               IF kl == Asc( 'W' ) .OR. kl == Asc( 'w' )
+                  IF ! Empty( faktury->ksefnrksef ) .OR. ( ! Empty( faktury->ksefnrses ) .AND. faktury->ksefstatus < 400 )
+                     Komun( 'Faktura zostaˆa wysˆana do KSeF.' )
+                     BREAK
+                  ENDIF
+                  IF ! TNEsc( , "Czy wysˆa† faktur© do KSeF?" )
+                     BREAK
+                  ENDIF
+               ENDIF
+
                IF NR_UZYTK == 800
                   zoplskarb := oplskarb
                   zpoddarow := poddarow
@@ -886,10 +904,16 @@ PROCEDURE FakturyN()
                      @ 21, 33 SAY zpodcywil PICTURE '999999.99'
                   ENDIF
                   SAVE SCREEN TO fff
-                  IF firma_rodzajdrfv == 'G'
-                     FakturyN_DrukGraf()
+                  IF kl == K_ENTER
+                     IF firma_rodzajdrfv == 'G'
+                        FakturyN_DrukGraf()
+                     ELSE
+                        Fakt2New()
+                     ENDIF
                   ELSE
-                     Fakt2New()
+                     IF FakturyN_TworzFA3()
+
+                     ENDIF
                   ENDIF
                   RESTORE SCREEN FROM fff
                ENDIF
@@ -900,23 +924,25 @@ PROCEDURE FakturyN()
          CASE kl == K_F1
             @ 1, 47 SAY '          '
             save screen to scr_
-            DECLARE p[ 15 ]
+            DECLARE p[ 17 ]
             *---------------------------------------
-            p[  1 ] := '                                                        '
-            p[  2 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna faktura  '
-            p[  3 ] := '   [Home/End]..............pierwsza/ostatnia faktura    '
-            p[  4 ] := '   [Ins]...................wystawienie nowej faktury    '
-            p[  5 ] := '   [M].....................modyfikacja faktury          '
-            p[  6 ] := '   [Del]...................kasowanie faktury            '
-            p[  7 ] := '   [F5 ]..................kopiowanie dokumentu do bufora'
-            p[  8 ] := '   [Shift+F5]........kopiowanie wsystkich dok. do bufora'
-            p[  9 ] := '   [F6]....................wstawianie z bufora / korekta'
-            p[ 10 ] := '   [F7]....................wstawianie wszystkih z bufora'
-            p[ 11 ] := '   [F9]....................szukanie faktury/rachunku    '
-            p[ 12 ] := '   [F10]...................szukanie dnia                '
-            p[ 13 ] := '   [Enter].................wydruk faktury               '
-            p[ 14 ] := '   [Esc]...................wyj&_s.cie                      '
-            p[ 15 ] := '                                                        '
+            p[  1 ] := '                                                           '
+            p[  2 ] := '   [PgUp/PgDn].............poprzednia/nast©pna faktura     '
+            p[  3 ] := '   [Home/End]..............pierwsza/ostatnia faktura       '
+            p[  4 ] := '   [Ins]...................wystawienie nowej faktury       '
+            p[  5 ] := '   [M].....................modyfikacja faktury             '
+            p[  6 ] := '   [Del]...................kasowanie faktury               '
+            p[  7 ] := '   [F5 ]..................kopiowanie dokumentu do bufora   '
+            p[  8 ] := '   [Shift+F5]........kopiowanie wsystkich dok. do bufora   '
+            p[  9 ] := '   [F6]....................wstawianie z bufora / korekta   '
+            p[ 10 ] := '   [F7]....................wstawianie wszystkih z bufora   '
+            p[ 11 ] := '   [W].....................wy˜lij faktur© do KSeF          '
+            p[ 12 ] := '   [S].....................sprawd« status faktury w KSeF   '
+            p[ 13 ] := '   [F9]....................szukanie faktury/rachunku       '
+            p[ 14 ] := '   [F10]...................szukanie dnia                   '
+            p[ 15 ] := '   [Enter].................wydruk faktury                  '
+            p[ 16 ] := '   [Esc]...................wyj˜cie                         '
+            p[ 17 ] := '                                                           '
             *---------------------------------------
             SET COLOR TO i
             i := 15
@@ -1965,6 +1991,16 @@ PROCEDURE Faktury_UsunKsieg( cMiesiac )
 
 PROCEDURE FakturyN_DrukGraf()
 
+   LOCAL aDane := FakturyN_Dane()
+
+   FRDrukuj( iif( ! aDane[ 'korekta' ], 'frf\fv.frf', 'frf\kfv.frf' ), aDane )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION FakturyN_Dane()
+
    LOCAL aDane := {=>}, aPoz, aSuma, nIdx, nWartosc := 0, nWartoscPrzed := 0
    LOCAL cFakturyId := Str( faktury->rec_no, 8 )
 
@@ -1990,6 +2026,9 @@ PROCEDURE FakturyN_DrukGraf()
    aDane[ 'k_nazwa' ] := AllTrim( faktury->nazwa )
    aDane[ 'k_adres' ] := AllTrim( faktury->adres )
    aDane[ 'k_nip' ] := AllTrim( faktury->nr_ident )
+   aDane[ 'k_kraj' ] := AllTrim( faktury->kraj )
+   aDane[ 'k_ue' ] := faktury->ue == 'T'
+   aDane[ 'k_export' ] := faktury->export == 'T'
    //IF ( ! Empty( faktury->odbnazwa ) .AND. ! Empty( faktury->odbadres ) ) .AND. ( AllTrim( faktury->nazwa ) <> AllTrim( faktury->odbnazwa ) .OR. AllTrim( faktury->adres ) <> AllTrim( faktury->odbadres ) )
    IF faktury->odbjest == 'T'
       aDane[ 'odbiorca' ] := 1
@@ -2024,6 +2063,7 @@ PROCEDURE FakturyN_DrukGraf()
    aDane[ 'typ_faktury' ] := AllTrim( faktury->fakttyp )
    aDane[ 'duplikat' ] := iif( zduplikat == 'T', 1, 0 )
    aDane[ 'duplikat_data' ] := iif( zduplikat == 'T', zduplikatd, Date() )
+   aDane[ 'korekta' ] := faktury->korekta == 'T'
 
    aDane[ 'pozycje' ] := {}
    aDane[ 'sumy' ] := {}
@@ -2154,8 +2194,10 @@ PROCEDURE FakturyN_DrukGraf()
 
    IF faktury->splitpay == 'T'
       aDane[ 'dopisek' ] := 'Mechanizm podzielonej pˆatno˜ci'
+      aDane[ 'plitpayt' ] := .T.
    ELSE
       aDane[ 'dopisek' ] := ''
+      aDane[ 'plitpay' ] := .F.
    ENDIF
 
    aDane[ 'wartosc' ] := nWartosc - nWartoscPrzed
@@ -2172,9 +2214,9 @@ PROCEDURE FakturyN_DrukGraf()
 
    aDane[ 'wystawil' ] := AllTrim( ewid_wyst )
 
-   FRDrukuj( iif( faktury->korekta <> 'T', 'frf\fv.frf', 'frf\kfv.frf' ), aDane )
+   //FRDrukuj( iif( faktury->korekta <> 'T', 'frf\fv.frf', 'frf\kfv.frf' ), aDane )
 
-   RETURN NIL
+   RETURN aDane
 
 /*----------------------------------------------------------------------*/
 
@@ -2873,3 +2915,183 @@ FUNCTION Faktury_OdbWhenNazwa()
    RETURN .T.
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION FakturyN_TworzFA3()
+
+   LOCAL aDane := FakturyN_Dane()
+   LOCAL nl := hb_eol(), f
+   LOCAL cFaktura, cS, i, lRes := .F., aSumy := {=>}
+
+   AEval( aDane[ 'sumy' ], { | aPoz |
+      aSumy[ aPoz[ 'vat' ] ] := { 'w_netto' => aPoz[ 'w_netto' ], 'w_vat' => aPoz[ 'w_vat' ] }
+   } )
+
+   cFaktura := '<?xml version="1.0" encoding="UTF-8"?>' + nl
+   cFaktura += '<Faktura xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">' + nl
+   cFaktura += '  <Naglowek>' + nl
+   cFaktura += '    <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>' + nl
+   cFaktura += '    <WariantFormularza>3</WariantFormularza>' + nl
+   cFaktura += '    <DataWytworzeniaFa>' + datetime2strxml(hb_DateTime()) + '</DataWytworzeniaFa>' + nl
+   cFaktura += '    <SystemInfo>AMi-BOOK</SystemInfo>' + nl
+   cFaktura += '  </Naglowek>' + nl
+   cFaktura += '  <Podmiot1>' + nl
+   cFaktura += '    <DaneIdentyfikacyjne>' + nl
+   cFaktura += '      <NIP>' + TrimNIP( aDane[ 'f_nip' ] ) + '</NIP>' + nl
+   cFaktura += '      <Nazwa>' + str2sxml( aDane[ 'f_nazwa' ] ) + '</Nazwa>' + nl
+   cFaktura += '    </DaneIdentyfikacyjne>' + nl
+   cFaktura += '    <Adres>' + nl
+   cFaktura += '      <KodKraju>PL</KodKraju>' + nl
+   cS := aDane[ 'f_ulica' ] + ' ' + aDane[ 'f_nr_domu' ]
+   IF ! Empty( aDane[ 'f_nr_lokalu' ] )
+      cS += '/' + aDane[ 'f_nr_lokalu' ]
+   ENDIF
+   cFaktura += '      <AdresL1>' + str2sxml( cS ) + '</AdresL1>' + nl
+   cFaktura += '      <AdresL2>' + str2sxml( aDane[ 'f_kod_poczt' ] + ' ' + aDane[ 'f_miejscowosc' ] ) + '</AdresL2>' + nl
+   cFaktura += '    </Adres>' + nl
+   IF ! Empty( aDane[ 'f_tel' ] )
+      cFaktura += '    <DaneKontaktowe>' + nl
+      //cFaktura += '      <Email>abc@abc.pl</Email>' + nl
+      cFaktura += '      <Telefon>' + str2sxml( aDane[ 'f_tel' ] ) + '</Telefon>' + nl
+      cFaktura += '    </DaneKontaktowe>' + nl
+   ENDIF
+   cFaktura += '  </Podmiot1>' + nl
+   cFaktura += '  <Podmiot2>' + nl
+   cFaktura += '    <DaneIdentyfikacyjne>' + nl
+   IF Empty( aDane[ 'k_nip' ] )
+      cFaktura += '      <BrakID>1</BrakID>' + nl
+   ELSEIF Empty( aDane[ 'k_kraj' ] ) .OR. aDane[ 'k_kraj' ] == 'PL'
+      cFaktura += '      <NIP>' + TrimNIP( aDane[ 'k_nip' ] ) + '</NIP>' + nl
+   ELSEIF KrajUE( aDane[ 'k_kraj' ] )
+      cFaktura += '      <KodUE>' + aDane[ 'k_kraj' ] + '</KodUE>' + nl
+      cFaktura += '      <NrVatUE>' + str2sxml( aDane[ 'k_nip' ] ) + '</NrVatUE>' + nl
+   ELSE
+      cFaktura += '      <KodKraju>' + aDane[ 'k_kraj' ] + '</KodKraju>' + nl
+      cFaktura += '      <NrID>' + str2sxml( aDane[ 'k_nip' ] ) + '</NrID>' + nl
+   ENDIF
+   cFaktura += '      <Nazwa>' + str2sxml( aDane[ 'k_nazwa' ] ) + '</Nazwa>' + nl
+   cFaktura += '    </DaneIdentyfikacyjne>' + nl
+   cFaktura += '    <Adres>' + nl
+   cFaktura += '      <KodKraju>' + aDane[ 'k_kraj' ] + '</KodKraju>' + nl
+   cFaktura += '      <AdresL1>' + str2sxml( aDane[ 'k_adres' ] ) + '</AdresL1>' + nl
+   cFaktura += '    </Adres>' + nl
+   cFaktura += '    <JST>2</JST>' + nl
+   cFaktura += '    <GV>2</GV>' + nl
+   cFaktura += '  </Podmiot2>' + nl
+   cFaktura += '  <Fa>' + nl
+   cFaktura += '    <KodWaluty>PLN</KodWaluty>' + nl
+   cFaktura += '    <P_1>' + date2strxml( aDane[ 'data_dok' ] ) + '</P_1>' + nl
+   cFaktura += '    <P_1M>' + str2sxml( aDane[ 'f_miejscowosc' ] ) + '</P_1M>' + nl
+   cFaktura += '    <P_2>' + str2sxml( aDane[ 'nr_dok' ] ) + '</P_2>' + nl
+   IF aDane[ 'data_dok' ] <> aDane[ 'data_trans' ]
+      cFaktura += '    <P_6>' + date2strxml( aDane[ 'data_trans' ] ) + '</P_6>' + nl
+   ENDIF
+   IF hb_HHasKey( aSumy, '23' )
+      cFaktura += '    <P_13_1>' + TKwota2( aSumy[ '23' ][ 'w_netto' ] ) + '</P_13_1>' + nl
+      cFaktura += '    <P_14_1>' + TKwota2( aSumy[ '23' ][ 'w_vat' ] ) + '</P_14_1>' + nl
+   ENDIF
+   IF hb_HHasKey( aSumy, '8' )
+      cFaktura += '    <P_13_2>' + TKwota2( aSumy[ '8' ][ 'w_netto' ] ) + '</P_13_2>' + nl
+      cFaktura += '    <P_14_2>' + TKwota2( aSumy[ '8' ][ 'w_vat' ] ) + '</P_14_2>' + nl
+   ENDIF
+   IF hb_HHasKey( aSumy, '5' )
+      cFaktura += '    <P_13_3>' + TKwota2( aSumy[ '5' ][ 'w_netto' ] ) + '</P_13_3>' + nl
+      cFaktura += '    <P_14_3>' + TKwota2( aSumy[ '5' ][ 'w_vat' ] ) + '</P_14_3>' + nl
+   ENDIF
+   IF hb_HHasKey( aSumy, '0' )
+      cFaktura += '    <P_13_6_1>' + TKwota2( aSumy[ '0' ][ 'w_netto' ] ) + '</P_13_6_1>' + nl
+   ENDIF
+   IF hb_HHasKey( aSumy, 'ZW' )
+      cFaktura += '    <P_13_7>' + TKwota2( aSumy[ 'ZW' ][ 'w_netto' ] ) + '</P_13_7>' + nl
+   ENDIF
+   cFaktura += '    <P_15>' + TKwota2( aDane[ 'do_zaplaty' ] ) + '</P_15>' + nl
+   cFaktura += '    <Adnotacje>' + nl
+   cFaktura += '      <P_16>2</P_16>' + nl
+   cFaktura += '      <P_17>2</P_17>' + nl
+   cFaktura += '      <P_18>2</P_18>' + nl
+   cFaktura += '      <P_18A>2</P_18A>' + nl
+   cFaktura += '      <Zwolnienie>' + nl
+   cFaktura += '        <P_19N>1</P_19N>' + nl
+   cFaktura += '      </Zwolnienie>' + nl
+   cFaktura += '      <NoweSrodkiTransportu>' + nl
+   cFaktura += '        <P_22N>1</P_22N>' + nl
+   cFaktura += '      </NoweSrodkiTransportu>' + nl
+   cFaktura += '      <P_23>2</P_23>' + nl
+   cFaktura += '      <PMarzy>' + nl
+   cFaktura += '        <P_PMarzyN>1</P_PMarzyN>' + nl
+   cFaktura += '      </PMarzy>' + nl
+   cFaktura += '    </Adnotacje>' + nl
+   cFaktura += '    <RodzajFaktury>' + iif( aDane[ 'korekta' ], 'KOR', 'VAT' ) + '</RodzajFaktury>' + nl
+   //cFaktura += '    <FP>1</FP>' + nl
+   IF ! Empty( aDane[ 'uwagi' ] )
+      cFaktura += '    <DodatkowyOpis>' + nl
+      cFaktura += '      <Klucz>Uwagi</Klucz>' + nl
+      cFaktura += '      <Wartosc>' + str2sxml( aDane[ 'uwagi' ] ) + '</Wartosc>' + nl
+      cFaktura += '    </DodatkowyOpis>' + nl
+   ENDIF
+   FOR i := 1 TO Len( aDane[ 'pozycje' ] )
+      cFaktura += '    <FaWiersz>' + nl
+      cFaktura += '      <NrWierszaFa>' + TNaturalny( i ) + '</NrWierszaFa>' + nl
+      cFaktura += '      <P_7>' + str2sxml( aDane[ 'pozycje' ][ i ][ 'towar' ] ) + '</P_7>' + nl
+      cFaktura += '      <P_8A>' + str2sxml( aDane[ 'pozycje' ][ i ][ 'jm' ] ) + '</P_8A>' + nl
+      cFaktura += '      <P_8B>' + TIlosciJPK( aDane[ 'pozycje' ][ i ][ 'ilosc' ] ) + '</P_8B>' + nl
+      cFaktura += '      <P_9A>' + TKwota2( aDane[ 'pozycje' ][ i ][ 'cena' ] ) + '</P_9A>' + nl
+      cFaktura += '      <P_11>' + TKwota2( aDane[ 'pozycje' ][ i ][ 'wartosc_brutto' ] - aDane[ 'pozycje' ][ i ][ 'wartosc_vat' ] ) + '</P_11>' + nl
+      cFaktura += '      <P_12>' + aDane[ 'pozycje' ][ i ][ 'vat' ] + '</P_12>' + nl
+      cFaktura += '    </FaWiersz>' + nl
+   NEXT
+   cFaktura += '    <Platnosc>' + nl
+   IF aDane[ 'termin' ] > 0
+      cFaktura += '      <TerminPlatnosci>' + nl
+      cFaktura += '        <Termin>' + date2strxml( aDane[ 'termin_data' ] ) + '</Termin>' + nl
+      cFaktura += '      </TerminPlatnosci>' + nl
+   ELSE
+      cFaktura += '      <Zaplacono>1</Zaplacono>' + nl
+      cFaktura += '      <DataZaplaty>' + date2strxml( aDane[ 'termin_data' ] ) + '</DataZaplaty>' + nl
+   ENDIF
+   cFaktura += '      <FormaPlatnosci>6</FormaPlatnosci>' + nl
+   cFaktura += '    </Platnosc>' + nl
+   /*
+   cFaktura += '    <WarunkiTransakcji>' + nl
+   cFaktura += '      <Zamowienia>' + nl
+   cFaktura += '        <DataZamowienia>2025-10-10</DataZamowienia>' + nl
+   cFaktura += '        <NrZamowienia>4354343</NrZamowienia>' + nl
+   cFaktura += '      </Zamowienia>' + nl
+   cFaktura += '    </WarunkiTransakcji>' + nl
+   */
+   cFaktura += '  </Fa>' + nl
+   /*
+   cFaktura += '  <Stopka>' + nl
+   cFaktura += '    <Informacje>' + nl
+   cFaktura += '      <StopkaFaktury>Kapia‘? zak‘?adowy 5 000 000</StopkaFaktury>' + nl
+   cFaktura += '    </Informacje>' + nl
+   cFaktura += '    <Rejestry>' + nl
+   cFaktura += '      <KRS>0000099999</KRS>' + nl
+   cFaktura += '      <REGON>999999999</REGON>' + nl
+   cFaktura += '      <BDO>000099999</BDO>' + nl
+   cFaktura += '    </Rejestry>' + nl
+   cFaktura += '  </Stopka>' + nl
+   */
+   cFaktura += '</Faktura>'
+
+   IF edekWeryfikuj( cFaktura, NIL, .F., '', .F. ) == 0
+      IF ! IsDir( 'FAXML' )
+         MakeDir( 'FAXML' )
+      ENDIF
+      f := FCreate( FakturyN_PobierzNazweFA() )
+      IF f != -1
+         FWrite( f, cFaktura )
+         FClose( f )
+         lRes := .T.
+      ENDIF
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION FakturyN_PobierzNazweFA()
+
+   RETURN 'FAXML\' + StrTran( Str( faktury->id , 6, 0 ), ' ', '0' )
+
+/*----------------------------------------------------------------------*/
+
