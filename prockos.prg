@@ -72,7 +72,7 @@ FUNCTION KosAppZaloguj()
 
 FUNCTION KosImp_Wczytaj( nRodzaj )
 
-   LOCAL oDaneKos, nKosFirmaID, dKosOd, dKosDo, oFirmaPoz
+   LOCAL oDaneKos, oKosFirma, nKosFirmaID, dKosOd, dKosDo, oFirmaPoz
    LOCAL i, oDokFa
    LOCAL aDane := NIL, oErr
    LOCAL aPozycje := {}, aPoz, aSum := {=>}
@@ -256,7 +256,7 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
       aPozDek := hb_Hash()
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
-      aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
+      aPozDek[ 'zdatatran' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
       aPozDek[ 'znumer' ] := aPoz[ 'P_2' ]
 
       //cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'P2Identyfikator' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
@@ -270,7 +270,7 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
          cAdr := cAdr + ', ' + aPoz[ 'P2AdresL2' ]
       ENDIF
       aPozDek[ 'zadres' ] := cAdr
-      aPozDek[ 'zdatas' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      aPozDek[ 'zdatas' ] := aPoz[ 'P_1' ]
 
       aPozDek[ 'zwartzw' ] := HGetDefault( aPoz, 'P_13_7', 0 )
 
@@ -342,7 +342,7 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zkolumna' ] := '10'
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
-      aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
+      aPozDek[ 'zdatatran' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
       aPozDek[ 'znumer' ] := HGetDefault( aPoz, 'P_2', '' )
 
       //cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
@@ -355,7 +355,8 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
          cAdr := cAdr + ', ' + aPoz[ 'P1AdresL2' ]
       ENDIF
       aPozDek[ 'zadres' ] := cAdr
-      aPozDek[ 'zdatas' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      //aPozDek[ 'zdatas' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      aPozDek[ 'zdatas' ] := aPoz[ 'P_1' ]
 
       aPozDek[ 'zexport' ] := 'N'
       IF aPozDek[ 'zue' ] == 'N' .AND. aPozDek[ 'zkraj' ] <> 'PL'
@@ -420,5 +421,68 @@ FUNCTION KosEmptyDate( dDate )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION KosUstawStatus( aDane, nRodzaj, nStatus )
 
+   LOCAL oKolekcja, nKosFirmaID, oKosFirma
 
+   IF ! KosAppZaloguj()
+      Komun( "Nie udaˆo si© uruchomi† GM Kos" )
+      RETURN NIL
+   ENDIF
+   TRY
+      oKosFirma := oKosApp:Firma()
+      nKosFirmaID := oKosFirma:Znajdz( Firma_NIP )
+      IF nKosFirmaID > 0
+         oKolekcja := oKosApp:UtworzKolekcje()
+         AEval( aDane, { | cNr | oKolekcja:Add( cNr ) } )
+         oKosFirma:UstawStatus( nKosFirmaID, oKolekcja, nRodzaj, nStatus )
+      ELSE
+         Komun( "Brak firmy w programie GM Kos" )
+      END
+
+   CATCH oErr
+
+      CLEAR TYPEAHEAD
+      Alert( "Wyst¥piˆ bˆ¥d podczas pr¢by otwarcia programu GM Kos:;" + oErr:description )
+
+   END
+
+   CLEAR TYPEAHEAD
+   @ 24, 0
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE KosPokazWizualizacje( cNrKSeF )
+
+   LOCAL nKosFirmaID, oKosFirma
+
+   IF ! KosAppZaloguj()
+      Komun( "Nie udaˆo si© uruchomi† GM Kos" )
+      RETURN NIL
+   ENDIF
+   TRY
+      oKosFirma := oKosApp:Firma()
+      nKosFirmaID := oKosFirma:Znajdz( Firma_NIP )
+      IF nKosFirmaID > 0
+         IF oKosFirma:PokazWizualizacje( nKosFirmaID, cNrKSeF ) <> 0
+            Komun( "Brak dokumentu w KSeF" )
+         ENDIF
+      ELSE
+         Komun( "Brak firmy w programie GM Kos" )
+      END
+
+   CATCH oErr
+
+      CLEAR TYPEAHEAD
+      Alert( "Wyst¥piˆ bˆ¥d podczas pr¢by otwarcia programu GM Kos:;" + oErr:description )
+
+   END
+
+   CLEAR TYPEAHEAD
+   @ 24, 0
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/

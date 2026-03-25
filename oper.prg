@@ -578,19 +578,20 @@ PROCEDURE Oper()
          pppp[  7 ] := '   [K].....................kopiowanie dokumentu         '
          pppp[  8 ] := '   [F].....................wykazywanie w dek. IFT-2R    '
          pppp[  9 ] := '   [S].....................przych¢d do ZUS zdrowotne    '
-         pppp[ 10 ] := '   [Del]...................kasowanie dokumentu          '
-         pppp[ 11 ] := '   [F5 ]...................kopiowanie do bufora         '
-         pppp[ 12 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
-         pppp[ 13 ] := '   [F6 ]...................wstawianie z bufora          '
-         pppp[ 14 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 15 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 16 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 17 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
-         pppp[ 18 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
-         pppp[ 19 ] := '                                                        '
+         pppp[ 10 ] := '   [P].....................poka¾ wizualizacj© w GM Kos  '
+         pppp[ 11 ] := '   [Del]...................kasowanie dokumentu          '
+         pppp[ 12 ] := '   [F5 ]...................kopiowanie do bufora         '
+         pppp[ 13 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
+         pppp[ 14 ] := '   [F6 ]...................wstawianie z bufora          '
+         pppp[ 15 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 16 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 17 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 18 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
+         pppp[ 19 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
+         pppp[ 20 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
-         i := 19
+         i := 20
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -703,6 +704,13 @@ PROCEDURE Oper()
             ENDDO
             dbGoto( nAktRec )
             Komun( "Skopiowano " + AllTrim( Str( nLicznik ) ) + " dokument¢w" )
+         ENDIF
+
+      CASE kl == Asc( 'P' ) .OR. kl == Asc( 'p' )
+         IF ! Empty( NRKSEF )
+            KosPokazWizualizacje( NRKSEF )
+         ELSE
+            Komun( "Brak numeru KSeF" )
          ENDIF
 
       ******************** ENDCASE

@@ -712,6 +712,7 @@ FUNCTION Main()
    PUBLIC oKosApp := NIL
    PUBLIC oKosFirma := NIL
    PUBLIC oKosUser := NIL
+   PUBLIC nKosFirmaID := 0
 
    // Bufor dokumentow
    PUBLIC bufor_dok := NIL

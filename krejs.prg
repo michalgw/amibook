@@ -1410,7 +1410,7 @@ PROCEDURE KRejS()
       case kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 17 ]
+         DECLARE pppp[ 18 ]
          *---------------------------------------
          pppp[  1 ] := '                                                        '
          pppp[  2 ] := '   [PgUp/PgDn]...poprzednia/nast©pna strona             '
@@ -1421,17 +1421,18 @@ PROCEDURE KRejS()
          pppp[  7 ] := '   [K]...........kopiuj dokument                        '
          pppp[  8 ] := '   [W]...........grupowa weryf. stat. VAT               '
          pppp[  9 ] := '   [B]...........przeˆ¥cz wprowadzanie nettem/bruttem   '
-         pppp[ 10 ] := '   [Del].........kasowanie pozycji                      '
-         pppp[ 11 ] := '   [F5 ].........kopiowanie dokumentu do bufora         '
-         pppp[ 12 ] := '   [Shift+F5]....kopiowanie wsystkich dok. do bufora    '
-         pppp[ 13 ] := '   [F6 ].........wstawianie dokumentu z bufora          '
-         pppp[ 14 ] := '   [F9 ].........szukanie zˆo¾one                       '
-         pppp[ 15 ] := '   [F10].........szukanie dnia                          '
-         pppp[ 16 ] := '   [Esc].........wyj˜cie                                '
-         pppp[ 17 ] := '                                                        '
+         pppp[ 10 ] := '   [P]...........poka¾ wizualizacj© faktury w GM Kos    '
+         pppp[ 11 ] := '   [Del].........kasowanie pozycji                      '
+         pppp[ 12 ] := '   [F5 ].........kopiowanie dokumentu do bufora         '
+         pppp[ 13 ] := '   [Shift+F5]....kopiowanie wsystkich dok. do bufora    '
+         pppp[ 14 ] := '   [F6 ].........wstawianie dokumentu z bufora          '
+         pppp[ 15 ] := '   [F9 ].........szukanie zˆo¾one                       '
+         pppp[ 16 ] := '   [F10].........szukanie dnia                          '
+         pppp[ 17 ] := '   [Esc].........wyj˜cie                                '
+         pppp[ 18 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO I
-         i := 17
+         i := 18
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -1486,6 +1487,13 @@ PROCEDURE KRejS()
             ENDDO
             dbGoto( nAktRec )
             Komun( "Skopiowano " + AllTrim( Str( nLicznik ) ) + " dokument¢w" )
+         ENDIF
+
+      CASE kl == Asc( 'P' ) .OR. kl == Asc( 'p' )
+         IF ! Empty( NRKSEF )
+            KosPokazWizualizacje( NRKSEF )
+         ELSE
+            Komun( "Brak numeru KSeF" )
          ENDIF
 
       ******************** ENDCASE

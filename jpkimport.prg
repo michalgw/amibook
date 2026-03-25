@@ -2616,7 +2616,7 @@ FUNCTION JPKImp_VatZ_CzyImport( aDane, aPoz )
 FUNCTION JPKImp_VatS_Importuj( aDane )
 
    LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
-   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {} )
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {}, 'NrKSeF', {} )
 
    @ 11, 15 CLEAR TO 15, 64
    @ 11, 15 TO 15, 64 DOUBLE
@@ -2624,7 +2624,7 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
 
    AEval( aDane[ 'Dekret' ], { | aPoz |
 
-      LOCAL aIstniejacyRec
+      LOCAL aIstniejacyRec, lIstnieje
       LOCAL lImportuj := JPKImp_VatS_CzyImport( aDane, aPoz )
 
       IF lImportuj
@@ -2719,7 +2719,13 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
             zKSEFSTAT := ' '
          ENDIF
 
-         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'REJS', ident_fir, miesiac, znumer, @aIstniejacyRec )
+         IF ! Empty( zNRKSEF )
+            lIstnieje := EwidSprawdzNrKSeFRec( 'REJS', ident_fir, zNRKSEF, @aIstniejacyRec )
+         ELSE
+            lIstnieje := EwidSprawdzNrDokRec( 'REJS', ident_fir, miesiac, znumer, @aIstniejacyRec )
+         ENDIF
+
+         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. lIstnieje
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
             AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje juæ dokument o tym numerze' ) )
          ELSE
@@ -2729,6 +2735,9 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
                AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
             ENDIF
             aRaport[ 'Zaimportowano' ] := aRaport[ 'Zaimportowano' ] + 1
+            IF ! Empty( aPoz[ 'NrKSeF' ] )
+               AAdd( aRaport[ 'NrKSeF' ], aPoz[ 'NrKSeF' ] )
+            ENDIF
          ENDIF
 
          nI++
@@ -2746,7 +2755,7 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
 FUNCTION JPKImp_OperS_Importuj( aDane )
 
    LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
-   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {} )
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {}, 'NrKSeF', {} )
 
    @ 11, 15 CLEAR TO 15, 64
    @ 11, 15 TO 15, 64 DOUBLE
@@ -2754,7 +2763,7 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
 
    AEval( aDane[ 'Dekret' ], { | aPoz |
 
-      LOCAL aIstniejacyRec
+      LOCAL aIstniejacyRec, lIstnieje
       LOCAL lImportuj := JPKImp_VatS_CzyImport( aDane, aPoz )
 
       IF lImportuj
@@ -2803,7 +2812,13 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
             zUSLUGI := zNETTO
          ENDCASE
 
-         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'OPER', ident_fir, miesiac, znumer, @aIstniejacyRec )
+         IF ! Empty( zNRKSEF )
+            lIstnieje := EwidSprawdzNrKSeFRec( 'OPER', ident_fir, zNRKSEF, @aIstniejacyRec )
+         ELSE
+            lIstnieje := EwidSprawdzNrDokRec( 'OPER', ident_fir, miesiac, znumer, @aIstniejacyRec )
+         ENDIF
+
+         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. lIstnieje
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
             AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje juæ dokument o tym numerze' ) )
          ELSE
@@ -2813,6 +2828,9 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
                AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
             ENDIF
             aRaport[ 'Zaimportowano' ] := aRaport[ 'Zaimportowano' ] + 1
+            IF ! Empty( aPoz[ 'NrKSeF' ] )
+               AAdd( aRaport[ 'NrKSeF' ], aPoz[ 'NrKSeF' ] )
+            ENDIF
          ENDIF
 
          nI++
@@ -2831,7 +2849,7 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
 
    LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
    //LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {} )
-   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Uwagi', 0, 'ListaUwag', {}, 'Waluta', 0, 'ListaWal', {} )
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Uwagi', 0, 'ListaUwag', {}, 'Waluta', 0, 'ListaWal', {}, 'NrKSeF', {} )
 
    @ 11, 15 CLEAR TO 15, 64
    @ 11, 15 TO 15, 64 DOUBLE
@@ -2839,7 +2857,7 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
 
    AEval( aDane[ 'Dekret' ], { | aPoz |
 
-      LOCAL aIstniejacyRec
+      LOCAL aIstniejacyRec, lIstnieje
       LOCAL lImportuj := JPKImp_VatS_CzyImport( aDane, aPoz )
 
       IF lImportuj
@@ -2879,7 +2897,8 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
             zNRKSEF := aPoz[ 'NrKSeF' ]
          ENDIF
 
-         zNETTO := _round( aPoz[ 'zwartzw' ] + aPoz[ 'zwart08' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ], 2 )
+         zNETTO := _round( aPoz[ 'zwartzw' ] + aPoz[ 'zwart08' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ] ;
+            + aPoz[ 'zvat02' ] + aPoz[ 'zvat07' ] + aPoz[ 'zvat22' ], 2 )
 
          DO CASE
          CASE Empty( aDane[ 'Kolumna' ] ) .OR. Val( aDane[ 'Kolumna' ] ) == 10
@@ -2892,7 +2911,13 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
             zWYDATKI := zNETTO
          ENDCASE
 
-         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'OPER', ident_fir, miesiac, znumer, @aIstniejacyRec )
+         IF ! Empty( zNRKSEF )
+            lIstnieje := EwidSprawdzNrKSeFRec( 'OPER', ident_fir, zNRKSEF, @aIstniejacyRec )
+         ELSE
+            lIstnieje := EwidSprawdzNrDokRec( 'OPER', ident_fir, miesiac, znumer, @aIstniejacyRec )
+         ENDIF
+
+         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. lIstnieje
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
             AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje juæ dokument o tym numerze' ) )
          ELSE
@@ -2902,6 +2927,9 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
                AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
             ENDIF
             aRaport[ 'Zaimportowano' ] := aRaport[ 'Zaimportowano' ] + 1
+            IF ! Empty( aPoz[ 'NrKSeF' ] )
+               AAdd( aRaport[ 'NrKSeF' ], aPoz[ 'NrKSeF' ] )
+            ENDIF
          ENDIF
 
          nI++
@@ -2919,7 +2947,7 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
 FUNCTION JPKImp_VatZ_Importuj( aDane )
 
    LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
-   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Uwagi', 0, 'ListaUwag', {}, 'Waluta', 0, 'ListaWal', {} )
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Uwagi', 0, 'ListaUwag', {}, 'Waluta', 0, 'ListaWal', {}, 'NrKSeF', {} )
 
    @ 11, 15 CLEAR TO 15, 64
    @ 11, 15 TO 15, 64 DOUBLE
@@ -2927,7 +2955,7 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
 
    AEval( aDane[ 'Dekret' ], { | aPoz |
 
-      LOCAL aIstniejacyRec
+      LOCAL aIstniejacyRec, lIstnieje
       LOCAL lImportuj := JPKImp_VatZ_CzyImport( aDane, aPoz )
 
       IF lImportuj
@@ -3034,7 +3062,13 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zRODZDOW := HGetDefault( aPoz, 'RodzDow', '' )
          zVATMARZA := HGetDefault( aPoz, 'VATMarza', 0 )
 
-         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'REJZ', ident_fir, miesiac, znumer, @aIstniejacyRec )
+         IF ! Empty( zNRKSEF )
+            lIstnieje := EwidSprawdzNrKSeFRec( 'REJZ', ident_fir, zNRKSEF, @aIstniejacyRec )
+         ELSE
+            lIstnieje := EwidSprawdzNrDokRec( 'REJZ', ident_fir, miesiac, znumer, @aIstniejacyRec )
+         ENDIF
+
+         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. lIstnieje
             aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
             AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje juæ dokument o tym numerze' ) )
          ELSE
@@ -3047,6 +3081,9 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
             IF HGetDefault( aPoz, 'KodWaluty', 'PLN' ) <> 'PLN'
                aRaport[ 'Waluta' ] := aRaport[ 'Waluta' ] + 1
                AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
+            ENDIF
+            IF ! Empty( aPoz[ 'NrKSeF' ] )
+               AAdd( aRaport[ 'NrKSeF' ], aPoz[ 'NrKSeF' ] )
             ENDIF
          ENDIF
 
@@ -3414,6 +3451,10 @@ PROCEDURE JPKImp_VatS( nCelImportu, lZKos )
                   //
                ENDCASE
 
+               IF lZKos
+                  KosUstawStatus( aRaport[ 'NrKSeF' ], 0, 20 )
+               ENDIF
+
                cRaport := "IMPORT ZAKO„CZONY" + hb_eol()
                cRaport += "-----------------" + hb_eol()
                cRaport += hb_eol()
@@ -3712,6 +3753,10 @@ PROCEDURE JPKImp_VatZ( nCelImportu, lZKos )
                CASE nCelImportu == 2
                   aRaport := JPKImp_OperZ_Importuj( aDane )
                ENDCASE
+
+               IF lZKos
+                  KosUstawStatus( aRaport[ 'NrKSeF' ], 1, 20 )
+               ENDIF
 
                cRaport := "IMPORT ZAKO„CZONY" + hb_eol()
                cRaport += "-----------------" + hb_eol()
