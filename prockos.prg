@@ -486,3 +486,73 @@ PROCEDURE KosPokazWizualizacje( cNrKSeF )
    RETURN NIL
 
 /*----------------------------------------------------------------------*/
+
+FUNCTION KosWyslijFA( cPlikFA )
+
+   LOCAL nKosFirmaID, oKosFirma, oStatus
+
+   IF ! KosAppZaloguj()
+      Komun( "Nie udaˆo si© uruchomi† GM Kos" )
+      RETURN NIL
+   ENDIF
+   TRY
+      oKosFirma := oKosApp:Firma()
+      nKosFirmaID := oKosFirma:Znajdz( Firma_NIP )
+      IF nKosFirmaID > 0
+         oStatus := oKosFirma:WyslijFA( nKosFirmaID, cPlikFA )
+         IF Empty( oStatus )
+            Komun( "Nie udaˆo si© wysˆa† faktury do KSeF" )
+         ENDIF
+      ELSE
+         Komun( "Brak firmy w programie GM Kos" )
+      END
+
+   CATCH oErr
+
+      CLEAR TYPEAHEAD
+      Alert( "Wyst¥piˆ bˆ¥d podczas pr¢by otwarcia programu GM Kos:;" + oErr:description )
+
+   END
+
+   CLEAR TYPEAHEAD
+   @ 24, 0
+
+   RETURN oStatus
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KosSprawdzStatusFA( cNrRefSesji, cNrRefFA )
+
+   LOCAL nKosFirmaID, oKosFirma, oStatus
+
+   IF ! KosAppZaloguj()
+      Komun( "Nie udaˆo si© uruchomi† GM Kos" )
+      RETURN NIL
+   ENDIF
+   TRY
+      oKosFirma := oKosApp:Firma()
+      nKosFirmaID := oKosFirma:Znajdz( Firma_NIP )
+      IF nKosFirmaID > 0
+         oStatus := oKosFirma:SprawdzStatusFA( nKosFirmaID, cNrRefSesji, cNrRefFA )
+         IF Empty( oStatus )
+            Komun( "Nie udaˆo si© pobra† statusu faktury z KSeF" )
+         ENDIF
+      ELSE
+         Komun( "Brak firmy w programie GM Kos" )
+      END
+
+   CATCH oErr
+
+      CLEAR TYPEAHEAD
+      Alert( "Wyst¥piˆ bˆ¥d podczas pr¢by otwarcia programu GM Kos:;" + oErr:description )
+
+   END
+
+   CLEAR TYPEAHEAD
+   @ 24, 0
+
+   RETURN oStatus
+
+/*----------------------------------------------------------------------*/
+
+

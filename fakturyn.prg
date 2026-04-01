@@ -40,7 +40,7 @@ PROCEDURE FakturyN()
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, _top, _bot, _stop, _sbot
    PRIVATE _proc, _row, _proc_spe, _disp, _cls, kl, ins, nr_rec, wiersz, f10, rec, fou, _top_bot
 
-   PRIVATE nPopKsgData, dPopDataTrans, aBufDok, lKorekta, cScrRodzDow
+   PRIVATE nPopKsgData, dPopDataTrans, aBufDok, lKorekta, cScrRodzDow, oStatus
 
    *********************** lp
    m->liczba := 1
@@ -115,7 +115,7 @@ PROCEDURE FakturyN()
 
    SELECT 3
    IF Dostep( 'REJS' )
-      SET INDEX TO rejs2, rejs, rejs1, rejs3, rejs4
+      SET INDEX TO rejs2, rejs, rejs1, rejs3, rejs4, rejs5
    ELSE
       SELECT 2
       close_()
@@ -199,7 +199,7 @@ PROCEDURE FakturyN()
                   kom( 3, '*u', '  Nie mo¾na modyfikowa†. Ta faktura posiada korekt©.  ' )
                   BREAK
                ENDIF
-               IF ! ins .AND. ! Empty( faktury->ksefnrksef ) .OR. ( ! Empty( faktury->ksefnrses ) .AND. faktury->ksefstatus < 400 )
+               IF ! ins .AND. ( ! Empty( faktury->ksefnrksef ) .OR. ( ! Empty( faktury->ksefnrses ) .AND. faktury->ksefstatus < 400 ) )
                   Komun( 'Nie mo¾na modyfikowa†. Faktura zostaˆa wysˆana do KSeF.' )
                   BREAK
                ENDIF
@@ -912,13 +912,56 @@ PROCEDURE FakturyN()
                      ENDIF
                   ELSE
                      IF FakturyN_TworzFA3()
-
+                        oStatus := KosWyslijFA( IncludeTrailingPathDelimiter( HB_DirBase() ) + FakturyN_PobierzNazweFA() + '.xml' )
+                        IF ! Empty( oStatus )
+                           BlokadaR()
+                           faktury->ksefnrses := oStatus:SessionReferenceNumber
+                           faktury->ksefnrele := oStatus:ReferenceNumber
+                           COMMIT
+                           UNLOCK
+                           Komun( "Faktura zostaˆa wysˆana do KSeF" )
+                        ELSE
+                           Komun( "Nie udaˆo si© wysˆa† faktury do KSeF" )
+                        ENDIF
                      ENDIF
                   ENDIF
                   RESTORE SCREEN FROM fff
+                  FakturyN_ZnacznikKSeF()
                ENDIF
                SELECT faktury
             END
+
+         CASE kl == Asc( 'S' ) .OR. kl == Asc( 's' )
+
+            IF ! Empty( faktury->ksefnrses ) .AND. ! Empty( faktury->ksefnrele )
+               IF Empty( faktury->ksefnrksef )
+                  IF faktury->ksefstatus < 200
+                     oStatus := KosSprawdzStatusFA( AllTrim( faktury->ksefnrses ), AllTrim( faktury->ksefnrele ) )
+                     IF ! Empty( oStatus )
+                        BlokadaR()
+                        faktury->ksefstatus := oStatus:StatusCode
+                        faktury->ksefstopis := oStatus:StatusDescription
+                        faktury->ksefstszcz := oStatus:StatusDetails
+                        IF ! Empty( oStatus:KsefNumber )
+                           faktury->ksefnrksef := oStatus:KsefNumber
+                        ENDIF
+                        COMMIT
+                        UNLOCK
+                        IF ! Empty( oStatus:KsefNumber )
+                           FakturyN_AktualizujNrKSeF()
+                        ENDIF
+                        FakturyN_ZnacznikKSeF()
+                        FakturyN_StatusKSeF()
+                     ELSE
+                        Komun( "Nie udaˆo si© pobra† statusu KSeF" )
+                     ENDIF
+                  ENDIF
+               ELSE
+                  FakturyN_StatusKSeF()
+               ENDIF
+            ELSE
+               Komun( "Faktura nie zostaˆa wysˆana do KSeF" )
+            ENDIF
 
          *################################### POMOC ##################################
          CASE kl == K_F1
@@ -945,7 +988,7 @@ PROCEDURE FakturyN()
             p[ 17 ] := '                                                           '
             *---------------------------------------
             SET COLOR TO i
-            i := 15
+            i := 17
             j := 24
             DO WHILE i > 0
                IF Type( 'p[i]' ) # 'U'
@@ -1547,6 +1590,7 @@ PROCEDURE say260vn()
       @ 22, 69 SAY zWARTZW + zWART08 + zWART00 + zBRUT07 + zBRUT22 + zBRUT02 + zBRUT12 - aBufDok[ 'suma_brutto' ] PICTURE "999 999.99"
    ENDIF
    SELECT faktury
+   FakturyN_ZnacznikKSeF()
    SET COLOR TO
    *  set cent on
    RETURN
@@ -1999,14 +2043,32 @@ PROCEDURE FakturyN_DrukGraf()
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION date2strksef( ddate )
+   IF Empty( ddate )
+      RETURN ''
+   ELSE
+   RETURN PadL(AllTrim(Str(Day(ddate))),2,'0') + '-' + PadL(AllTrim(Str(Month(ddate))),2,'0') + '-' + AllTrim(Str(Year(ddate)))
+   ENDIF
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION FakturyN_Dane()
 
    LOCAL aDane := {=>}, aPoz, aSuma, nIdx, nWartosc := 0, nWartoscPrzed := 0
-   LOCAL cFakturyId := Str( faktury->rec_no, 8 )
+   LOCAL cFakturyId := Str( faktury->rec_no, 8 ), i
 
    aDane[ 'nr_dok' ] := faktury->rach + '-' + StrTran( Str( faktury->numer, 5 ), ' ', '0' ) + '/' + param_rok
    aDane[ 'data_dok' ] := hb_Date( Val( param_rok ), Val( faktury->mc ), Val( faktury->dzien ) )
    aDane[ 'data_trans' ] := faktury->datas
+   aDane[ 'nr_ksef' ] := AllTrim( faktury->ksefnrksef )
+   IF ( aDane[ 'ksef_aktywny' ] := ! Empty( faktury->ksefnrksef ) .AND. File( FakturyN_PobierzNazweFA() + '.xml' ) )
+      i := amiObliczSHA256( FakturyN_PobierzNazweFA() + '.xml', .T. )
+      aDane[ 'link_wer' ] := 'https://qr.ksef.mf.gov.pl/invoice/' + TrimNIP( firma->nip ) + '/' + date2strksef( aDane[ 'data_dok' ] ) + '/' + amiRestResponse()
+   ELSE
+      aDane[ 'link_wer' ] := ''
+   ENDIF
+   aDane[ 'opcje' ] := AllTrim( faktury->opcje )
+   aDane[ 'procedur' ] := AllTrim( faktury->procedur )
    IF ! Empty( faktury->datas )
       DO CASE
       CASE faktury->data2typ == 'D'
@@ -2412,7 +2474,7 @@ FUNCTION FakturyN_Ksieguj()
                   SET INDEX TO
                   GO BOTTOM
                   ILREK := RecNo()
-                  SET INDEX TO rejs2, rejs, rejs1, rejs3, rejs4
+                  SET INDEX TO rejs2, rejs, rejs1, rejs3, rejs4, rejs5
                   GO REC
                   IF ins
                      app()
@@ -2920,11 +2982,21 @@ FUNCTION FakturyN_TworzFA3()
 
    LOCAL aDane := FakturyN_Dane()
    LOCAL nl := hb_eol(), f
-   LOCAL cFaktura, cS, i, lRes := .F., aSumy := {=>}
+   LOCAL cFaktura, cS, i, lRes := .F., aSumy := {=>}, cGTU
+   LOCAL aGTU := { "GTU_01", "GTU_02", "GTU_03", "GTU_04", "GTU_05", "GTU_06", ;
+      "GTU_07", "GTU_08", "GTU_09", "GTU_10", "GTU_11", "GTU_12", "GTU_13" }
 
    AEval( aDane[ 'sumy' ], { | aPoz |
       aSumy[ aPoz[ 'vat' ] ] := { 'w_netto' => aPoz[ 'w_netto' ], 'w_vat' => aPoz[ 'w_vat' ] }
    } )
+
+   cGTU := ""
+   IF ! Empty( aDane[ 'opcje' ] )
+      i := Val( aDane[ 'opcje' ] )
+      IF i > 0
+         cGTU := aGTU[ i ]
+      ENDIF
+   ENDIF
 
    cFaktura := '<?xml version="1.0" encoding="UTF-8"?>' + nl
    cFaktura += '<Faktura xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">' + nl
@@ -3037,6 +3109,12 @@ FUNCTION FakturyN_TworzFA3()
       cFaktura += '      <P_9A>' + TKwota2( aDane[ 'pozycje' ][ i ][ 'cena' ] ) + '</P_9A>' + nl
       cFaktura += '      <P_11>' + TKwota2( aDane[ 'pozycje' ][ i ][ 'wartosc_brutto' ] - aDane[ 'pozycje' ][ i ][ 'wartosc_vat' ] ) + '</P_11>' + nl
       cFaktura += '      <P_12>' + aDane[ 'pozycje' ][ i ][ 'vat' ] + '</P_12>' + nl
+      IF ! Empty( cGTU )
+         cFaktura += '      <GTU>' + cGTU + '</GTU>' + nl
+      ENDIF
+      IF ! Empty( aDane[ 'procedur' ] )
+         cFaktura += '      <Procedura>' + aDane[ 'procedur' ] + '</Procedura>' + nl
+      ENDIF
       cFaktura += '    </FaWiersz>' + nl
    NEXT
    cFaktura += '    <Platnosc>' + nl
@@ -3077,7 +3155,7 @@ FUNCTION FakturyN_TworzFA3()
       IF ! IsDir( 'FAXML' )
          MakeDir( 'FAXML' )
       ENDIF
-      f := FCreate( FakturyN_PobierzNazweFA() )
+      f := FCreate( FakturyN_PobierzNazweFA() + '.xml' )
       IF f != -1
          FWrite( f, cFaktura )
          FClose( f )
@@ -3092,6 +3170,92 @@ FUNCTION FakturyN_TworzFA3()
 FUNCTION FakturyN_PobierzNazweFA()
 
    RETURN 'FAXML\' + StrTran( Str( faktury->id , 6, 0 ), ' ', '0' )
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE FakturyN_StatusKSeF()
+
+   LOCAL cScr, cKolor
+
+   IF ! Empty( faktury->ksefnrses ) .AND. ! Empty( faktury->ksefnrele )
+      cScr := SaveScreen()
+      cKolor := ColStd()
+
+      @ 10, 0 CLEAR TO 15, 79
+      @ 10, 0 TO 15, 79
+      @ 11, 2 SAY "Status: " + AllTrim( Str( faktury->ksefstatus ) )
+      @ 12, 2 SAY "Opis: " + AllTrim( SubStr( faktury->ksefstopis, 1, 70 ) )
+      @ 13, 2 SAY "Szczeg¢ˆy: " + AllTrim( SubStr( faktury->ksefstszcz, 1, 70 ) )
+      @ 14, 2 SAY "Nr KSeF: " + AllTrim( faktury->ksefnrksef )
+      Pause( 0 )
+
+      SetColor( cKolor )
+      RestScreen( , , , , cScr )
+   ELSE
+      Komun( "Faktura nie zostaˆa wysˆana do KSeF" )
+   ENDIF
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE FakturyN_AktualizujNrKSeF()
+
+   LOCAL nRec
+   PRIVATE zNumer, zRach, zWal
+
+   IF Empty( faktury->ksefnrksef )
+      RETURN
+   ENDIF
+
+   zNumer := faktury->numer
+   //zRach := faktury->rach
+   //zWal := zNumer&zRach
+   nRec := rejs->( RecNo() )
+   IF rejs->( dbSeek( '+' + ident_fir + Faktury_McKsieg( faktury->ksgdata, miesiac ) + faktury->rach + '-' + StrTran( Str( zNumer, 5 ), ' ', '0' ) ) )
+      rejs->( dbRLock() )
+      rejs->nrksef := faktury->ksefnrksef
+      rejs->ksefstat := ' '
+      rejs->( dbRUnlock() )
+   ENDIF
+   rejs->( dbGoto( nRec ) )
+
+   IF zRYCZALT <> 'T'
+      nRec := oper->( RecNo() )
+      oper->( ordSetFocus( 5 ) )
+      IF oper->( dbSeek( '+' + Str( faktury->rec_no, 5 ) + 'F-' ) )
+         oper->( dbRLock() )
+         oper->nrksef := faktury->ksefnrksef
+         oper->( dbRUnlock() )
+      ENDIF
+      oper->( dbGoto( nRec ) )
+   ENDIF
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE FakturyN_ZnacznikKSeF()
+
+   LOCAL cKolor := SetColor()
+
+   IF ! Empty( faktury->ksefnrksef )
+      SetColor( "W/G" )
+      @ 8, 2 SAY "KSeF"
+   ELSEIF ! Empty( faktury->ksefnrses )
+      SetColor( "N/GR" )
+      @ 8, 2 SAY "KSeF"
+   ELSEIF faktury->ksefstatus >= 400
+      SetColor( "N/R" )
+      @ 8, 2 SAY "KSeF"
+   ELSE
+      ColStd()
+      @ 8, 2 SAY "ÄÄÄÄ"
+   ENDIF
+
+   SetColor( cKolor )
+
+   RETURN NIL
 
 /*----------------------------------------------------------------------*/
 

@@ -688,3 +688,15 @@ FUNCTION amiSalPobProgID()
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION amiObliczSHA256( cNazwaPliku, lURL )
+
+   IF Empty( amiDllH )
+      RETURN NIL
+   ENDIF
+
+   RETURN hb_DynCall( { 'amiObliczSHA256', amiDllH, ;
+      hb_bitOr( HB_DYN_CTYPE_INT, HB_DYN_CALLCONV_STDCALL ), ;
+      hb_bitOr( HB_DYN_CTYPE_CHAR_PTR, HB_DYN_ENC_UTF8 ), HB_DYN_CTYPE_INT }, cNazwaPliku, iif( lURL, 1, 0 ) )
+
+/*----------------------------------------------------------------------*/
+

@@ -1237,6 +1237,11 @@ FUNCTION Sprawdz_NrKSeF( cNrKSef, cKomunikat )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION IncludeTrailingPathDelimiter( cPath )
+
+   RETURN cPath + iif( SubStr( cPath, Len( cPath ), 1 ) != '\', '\', '' )
+
+/*----------------------------------------------------------------------*/
 
 
 #pragma BEGINDUMP
