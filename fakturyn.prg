@@ -738,7 +738,7 @@ PROCEDURE FakturyN()
                   BREAK
                ENDIF
                IF ! Empty( faktury->ksefnrksef ) .OR. ( ! Empty( faktury->ksefnrses ) .AND. faktury->ksefstatus < 400 )
-                  Komun( 'Nie mo¾na modyfikowa†. Faktura zostaˆa wysˆana do KSeF.' )
+                  Komun( 'Nie mo¾na usun¥†. Faktura zostaˆa wysˆana do KSeF.' )
                   BREAK
                ENDIF
                *-------------------
@@ -3049,6 +3049,29 @@ FUNCTION FakturyN_TworzFA3()
    cFaktura += '    <JST>2</JST>' + nl
    cFaktura += '    <GV>2</GV>' + nl
    cFaktura += '  </Podmiot2>' + nl
+   IF ! Empty( aDane[ 'odbiorca' ] )
+      cFaktura += '  <Podmiot3>' + nl
+      cFaktura += '    <DaneIdentyfikacyjne>' + nl
+      IF Empty( aDane[ 'o_nip' ] )
+         cFaktura += '      <BrakID>1</BrakID>' + nl
+      ELSEIF Empty( aDane[ 'o_kraj' ] ) .OR. aDane[ 'o_kraj' ] == 'PL'
+         cFaktura += '      <NIP>' + TrimNIP( aDane[ 'o_nip' ] ) + '</NIP>' + nl
+      ELSEIF KrajUE( aDane[ 'o_kraj' ] )
+         cFaktura += '      <KodUE>' + aDane[ 'o_kraj' ] + '</KodUE>' + nl
+         cFaktura += '      <NrVatUE>' + str2sxml( aDane[ 'o_nip' ] ) + '</NrVatUE>' + nl
+      ELSE
+         cFaktura += '      <KodKraju>' + aDane[ 'o_kraj' ] + '</KodKraju>' + nl
+         cFaktura += '      <NrID>' + str2sxml( aDane[ 'o_nip' ] ) + '</NrID>' + nl
+      ENDIF
+      cFaktura += '      <Nazwa>' + str2sxml( aDane[ 'o_nazwa' ] ) + '</Nazwa>' + nl
+      cFaktura += '    </DaneIdentyfikacyjne>' + nl
+      cFaktura += '    <Adres>' + nl
+      cFaktura += '      <KodKraju>' + aDane[ 'o_kraj' ] + '</KodKraju>' + nl
+      cFaktura += '      <AdresL1>' + str2sxml( aDane[ 'o_adres' ] ) + '</AdresL1>' + nl
+      cFaktura += '    </Adres>' + nl
+      cFaktura += '    <Rola>8</Rola>' + nl
+      cFaktura += '  </Podmiot3>' + nl
+   ENDIF
    cFaktura += '  <Fa>' + nl
    cFaktura += '    <KodWaluty>PLN</KodWaluty>' + nl
    cFaktura += '    <P_1>' + date2strxml( aDane[ 'data_dok' ] ) + '</P_1>' + nl
@@ -3127,6 +3150,14 @@ FUNCTION FakturyN_TworzFA3()
       cFaktura += '      <DataZaplaty>' + date2strxml( aDane[ 'termin_data' ] ) + '</DataZaplaty>' + nl
    ENDIF
    cFaktura += '      <FormaPlatnosci>6</FormaPlatnosci>' + nl
+   IF ! Empty( aDane[ 'f_nr_konta' ] )
+      cFaktura += '      <RachunekBankowy>' + nl
+      cFaktura += '        <NrRB>' + str2sxml( aDane[ 'f_nr_konta' ] ) + '</NrRB>' + nl
+      IF ! Empty( aDane[ 'f_bank' ] )
+         cFaktura += '        <NazwaBanku>' + str2sxml( aDane[ 'f_bank' ] ) + '</NazwaBanku>' + nl
+      ENDIF
+      cFaktura += '      </RachunekBankowy>' + nl
+   ENDIF
    cFaktura += '    </Platnosc>' + nl
    /*
    cFaktura += '    <WarunkiTransakcji>' + nl
@@ -3237,20 +3268,28 @@ PROCEDURE FakturyN_AktualizujNrKSeF()
 
 PROCEDURE FakturyN_ZnacznikKSeF()
 
+   Faktury_ZnacznikKSeF( 8, 2, 'ÄÄÄÄ' )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE Faktury_ZnacznikKSeF( nRow, nCol, cPusty )
+
    LOCAL cKolor := SetColor()
 
    IF ! Empty( faktury->ksefnrksef )
       SetColor( "W/G" )
-      @ 8, 2 SAY "KSeF"
+      @ nRow, nCol SAY "KSeF"
    ELSEIF ! Empty( faktury->ksefnrses )
       SetColor( "N/GR" )
-      @ 8, 2 SAY "KSeF"
+      @ nRow, nCol SAY "KSeF"
    ELSEIF faktury->ksefstatus >= 400
       SetColor( "N/R" )
-      @ 8, 2 SAY "KSeF"
+      @ nRow, nCol SAY "KSeF"
    ELSE
       ColStd()
-      @ 8, 2 SAY "ÄÄÄÄ"
+      @ nRow, nCol SAY cPusty
    ENDIF
 
    SetColor( cKolor )
