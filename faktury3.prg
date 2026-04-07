@@ -1762,7 +1762,7 @@ PROCEDURE Faktury3_AktualizujNrKSeF()
 
 FUNCTION Faktury3_Zwolnienie( aDane )
 
-   LOCAL lRes := .F., cEkran, cKolor, cRodzaj := '1', cOpis := Space( 255 )
+   LOCAL lRes := .F., cEkran, cKolor, cRodzaj, cOpis
    LOCAL cEkrInfo
    LOCAL bRW := { | |
       cEkrInfo := SaveScreen( 17, 0, 23, 79 )
@@ -1777,7 +1777,7 @@ FUNCTION Faktury3_Zwolnienie( aDane )
       RETURN .T.
    }
    LOCAL bRV := { | |
-      LOCAL lRes := cRodzaj >= '1' .OR. cRodzaj <= '3'
+      LOCAL lRes := cRodzaj >= '1' .AND. cRodzaj <= '3'
       IF lRes
          RestScreen( 17, 0, 23, 79, cEkrInfo )
       ENDIF
@@ -1786,6 +1786,9 @@ FUNCTION Faktury3_Zwolnienie( aDane )
 
    cEkran := SaveScreen()
    cKolor := ColStd()
+
+   cRodzaj := iif( Empty( firma->rodzzwol ), '1', firma->rodzzwol )
+   cOpis := firma->opiszwol
 
    @ 13, 0 CLEAR TO 16, 79
    @ 13, 0 TO 16, 79

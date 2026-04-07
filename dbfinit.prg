@@ -630,7 +630,9 @@ public aFIRMAdbf := {;
    { "SALSALID", "C", 64, 0 },;                   //  85 Saldeo saldeo id
    { "SYGNALVAT", "C", 1, 0 },;                   //  86 Sygnaˆ o przekroczeniu VAT
    { "ZUSDZM", "C", 1, 0 },;                      //  87 Deklaracja ZUS za miesiac B - biezacy, W - wyplaty
-   { "PAR_KSWS", "C", 1, 0 } }                    //  88 Wpis sprzeda¾y w ksi©dze T - zbiorczo, N - osobno
+   { "PAR_KSWS", "C", 1, 0 },;                    //  88 Wpis sprzeda¾y w ksi©dze T - zbiorczo, N - osobno
+   { "RODZZWOL", "C", 1, 0 },;                    //  89 Rodzaj zwolnienia dla FA nie-vat
+   { "OPISZWOL", "C", 255, 0 } }                  //  90 Przepis na podstawie kt¢rego zwolniono od pod. dla FA nie-vat
 
 // Create: KARTST.DBF
 public aKARTSTdbf := {;

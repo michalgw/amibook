@@ -41,6 +41,26 @@ FUNCTION Param_FI()
       ENDIF
       RETURN lRes
    }
+   LOCAL cEkrInfo, cRodzajZwol, cOpisZwol
+   LOCAL bRW := { | |
+      cEkrInfo := SaveScreen( 17, 0, 23, 79 )
+      ColInf()
+      @ 17, 0 SAY Pad( '1 - Przepis ustawy albo aktu wydanego na podstawie ustawy, na podstawie kt¢rego', 80 )
+      @ 18, 0 SAY Pad( '    podatnik stosuje zwolnienie od podatku.', 80 )
+      @ 19, 0 SAY Pad( '2 - Przepis dyrektywy 2006/112/WE, kt¢ry zwalnia od podatku tak¥ dostaw©', 80 )
+      @ 20, 0 SAY Pad( '    towar¢w lub takie ˜wiadczenie usˆug.', 80 )
+      @ 21, 0 SAY Pad( '3 - Inna podstawa prawna wskazuj¥c¥ na to, ¾e dostawa towar¢w lub ˜wiadczenie', 80 )
+      @ 22, 0 SAY Pad( '    usˆug korzysta ze zwolnienia od podatku.', 80 )
+      ColStd()
+      RETURN .T.
+   }
+   LOCAL bRV := { | |
+      LOCAL lRes := ( cRodzajZwol >= '1' .AND. cRodzajZwol <= '3' ) .OR. cRodzajZwol == ' '
+      IF lRes
+         RestScreen( 17, 0, 23, 79, cEkrInfo )
+      ENDIF
+      RETURN lRes
+   }
 
    *############################# PARAMETRY POCZATKOWE #########################
    SELECT 1
@@ -62,6 +82,11 @@ FUNCTION Param_FI()
    @  8, 42 SAY 'ÍÍ Parametry ksi©gowania ÍÍÍÍÍÍÍÍÍÍÍÍÍ'
    @  9, 42 SAY ' Zbiorczy wpis sprzeda¾y w ksi©dze    '
    @ 10, 42 SAY ' (Tak/Nie/Domy˜lnie)                  '
+   IF firma->vat <> 'T'
+      @ 11, 42 SAY 'ÍÍ Podstawa prawna zwolnienia ÍÍÍÍÍÍÍÍ'
+      @ 12, 42 SAY ' Podstawa zwolnienia (1-3)            '
+      @ 13, 42 SAY ' Przepis ust.                         '
+   ENDIF
 
    *################################# OPERACJE #################################
    Param_FI_Say()
@@ -85,10 +110,16 @@ FUNCTION Param_FI()
             zzVATOKRESDR := iif( firma->vatokresdr $ 'TN', firma->vatokresdr, 'N' )
             zsygnalvat := iif( firma->sygnalvat $ 'TN', firma->sygnalvat, 'T' )
             zzPAR_KSWS := iif( firma->par_ksws $ 'TN', firma->par_ksws, 'D' )
+            cRodzajZwol := firma->rodzzwol
+            cOpisZwol := firma->opiszwol
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
             @  5, 70 GET zzVATOKRESDR PICTURE '!' VALID zzVATOKRESDR $ 'TN'
             @  7, 66 GET zsygnalvat PICTURE '!' VALID zsygnalvat $ 'TN'
             @ 10, 64 GET zzPAR_KSWS PICTURE '!' WHEN Eval( bParKsWSV ) VALID Eval( bParKsWSV )
+            IF firma->vat <> 'T'
+               @ 12, 70 GET cRodzajZwol PICTURE '9' WHEN Eval( bRW ) VALID Eval( bRV )
+               @ 13, 56 GET cOpisZwol PICTURE '@S24 ' + Replicate( 'X', 255 )
+            ENDIF
             ****************************
             CLEAR TYPE
             Read_()
@@ -102,6 +133,8 @@ FUNCTION Param_FI()
             firma->sygnalvat := zsygnalvat
             fsygnalvat := zsygnalvat
             firma->par_ksws := zzPAR_KSWS
+            firma->rodzzwol := cRodzajZwol
+            firma->opiszwol := cOpisZwol
             pzparam_ksws := iif( firma->par_ksws $ 'TN', firma->par_ksws, param_ksws )
             Commit_()
             UNLOCK
@@ -149,6 +182,8 @@ PROCEDURE Param_FI_Say()
    @  5, 70 say iif( firma->vatokresdr== 'T', 'Tak', 'Nie' )
    @  7, 66 say iif( firma->sygnalvat== 'N', 'Nie', 'Tak' )
    @ 10, 64 SAY iif( firma->par_ksws == 'T', 'Tak      ', iif( firma->par_ksws == 'N', 'Nie      ', 'Domy˜lnie' ) )
+   @ 12, 70 SAY firma->rodzzwol
+   @ 13, 56 SAY SubStr( firma->opiszwol, 1, 24 )
    ColStd()
 
    RETURN NIL
