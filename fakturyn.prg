@@ -2112,6 +2112,7 @@ FUNCTION FakturyN_Dane()
    aDane[ 'f_nr_domu' ] := AllTrim( firma->nr_domu )
    aDane[ 'f_nr_lokalu' ] := AllTrim( firma->nr_mieszk )
    aDane[ 'f_nip' ] := AllTrim( iif( faktury->ue == 'T', firma->nipue, firma->nip ) )
+   aDane[ 'f_nips' ] := AllTrim( firma->nip )
    aDane[ 'f_tel' ] := AllTrim( firma->tel )
    aDane[ 'f_fax' ] := AllTrim( firma->fax )
    aDane[ 'f_regon' ] := AllTrim( SubStr( firma->nr_regon, 1, 11 ) )
@@ -2168,6 +2169,7 @@ FUNCTION FakturyN_Dane()
       aDane[ 'nr_dok_kor' ] := aBufDok[ 'RACH' ] + '-' + StrTran( Str( aBufDok[ 'NUMER' ], 5 ), ' ', '0' ) + '/' + param_rok
       aDane[ 'data_dok_kor' ] := hb_Date( Val( param_rok ), Val( aBufDok[ 'MC' ] ), Val( aBufDok[ 'DZIEN' ] ) )
       aDane[ 'przyczyna_korekty' ] := AllTrim( faktury->przyczkor )
+      aDane[ 'nr_ksef_kor' ] := AllTrim( aBufDok[ 'KSEFNRKSEF' ] )
       aDane[ 'pozycjeprzed' ] := {}
       aDane[ 'sumyprzed' ] := {}
       AEval( aBufDok[ 'pozycje' ], { | aPozKor |
@@ -2985,10 +2987,31 @@ FUNCTION FakturyN_TworzFA3()
    LOCAL cFaktura, cS, i, lRes := .F., aSumy := {=>}, cGTU
    LOCAL aGTU := { "GTU_01", "GTU_02", "GTU_03", "GTU_04", "GTU_05", "GTU_06", ;
       "GTU_07", "GTU_08", "GTU_09", "GTU_10", "GTU_11", "GTU_12", "GTU_13" }
+   LOCAL bDekodujVAT := { | cVat |
+      LOCAL cWartosc
+      IF AllTrim( cVat ) == '0'
+         IF ! Empty( aDane[ 'k_kraj' ] ) .AND. aDane[ 'k_kraj' ] <> 'PL' .AND. ! aDane[ 'k_ue' ]
+            cWartosc := '0 EX'
+         ELSEIF aDane[ 'k_ue' ]
+            cWartosc := '0 WDT'
+         ELSE
+            cWartosc := '0 KR'
+         ENDIF
+      ELSE
+         cWartosc := Lower( cVat )
+      ENDIF
+      RETURN cWartosc
+   }
 
-   AEval( aDane[ 'sumy' ], { | aPoz |
-      aSumy[ aPoz[ 'vat' ] ] := { 'w_netto' => aPoz[ 'w_netto' ], 'w_vat' => aPoz[ 'w_vat' ] }
-   } )
+   IF aDane[ 'korekta' ]
+      AEval( aDane[ 'roznice' ], { | aPoz |
+         aSumy[ aPoz[ 'vat' ] ] := { 'w_netto' => aPoz[ 'w_netto' ], 'w_vat' => aPoz[ 'w_vat' ] }
+      } )
+   ELSE
+      AEval( aDane[ 'sumy' ], { | aPoz |
+         aSumy[ aPoz[ 'vat' ] ] := { 'w_netto' => aPoz[ 'w_netto' ], 'w_vat' => aPoz[ 'w_vat' ] }
+      } )
+   ENDIF
 
    cGTU := ""
    IF ! Empty( aDane[ 'opcje' ] )
@@ -3007,8 +3030,11 @@ FUNCTION FakturyN_TworzFA3()
    cFaktura += '    <SystemInfo>AMi-BOOK</SystemInfo>' + nl
    cFaktura += '  </Naglowek>' + nl
    cFaktura += '  <Podmiot1>' + nl
+   IF aDane[ 'k_ue' ]
+      cFaktura += '    <PrefiksPodatnika>PL</PrefiksPodatnika>' + nl
+   ENDIF
    cFaktura += '    <DaneIdentyfikacyjne>' + nl
-   cFaktura += '      <NIP>' + TrimNIP( aDane[ 'f_nip' ] ) + '</NIP>' + nl
+   cFaktura += '      <NIP>' + TrimNIP( aDane[ 'f_nips' ] ) + '</NIP>' + nl
    cFaktura += '      <Nazwa>' + str2sxml( aDane[ 'f_nazwa' ] ) + '</Nazwa>' + nl
    cFaktura += '    </DaneIdentyfikacyjne>' + nl
    cFaktura += '    <Adres>' + nl
@@ -3035,10 +3061,10 @@ FUNCTION FakturyN_TworzFA3()
       cFaktura += '      <NIP>' + TrimNIP( aDane[ 'k_nip' ] ) + '</NIP>' + nl
    ELSEIF KrajUE( aDane[ 'k_kraj' ] )
       cFaktura += '      <KodUE>' + aDane[ 'k_kraj' ] + '</KodUE>' + nl
-      cFaktura += '      <NrVatUE>' + str2sxml( aDane[ 'k_nip' ] ) + '</NrVatUE>' + nl
+      cFaktura += '      <NrVatUE>' + PodzielNIP( TrimNIP( aDane[ 'k_nip' ] ) ) + '</NrVatUE>' + nl
    ELSE
       cFaktura += '      <KodKraju>' + aDane[ 'k_kraj' ] + '</KodKraju>' + nl
-      cFaktura += '      <NrID>' + str2sxml( aDane[ 'k_nip' ] ) + '</NrID>' + nl
+      cFaktura += '      <NrID>' + PodzielNIP( TrimNIP( aDane[ 'k_nip' ] ) ) + '</NrID>' + nl
    ENDIF
    cFaktura += '      <Nazwa>' + str2sxml( aDane[ 'k_nazwa' ] ) + '</Nazwa>' + nl
    cFaktura += '    </DaneIdentyfikacyjne>' + nl
@@ -3058,10 +3084,10 @@ FUNCTION FakturyN_TworzFA3()
          cFaktura += '      <NIP>' + TrimNIP( aDane[ 'o_nip' ] ) + '</NIP>' + nl
       ELSEIF KrajUE( aDane[ 'o_kraj' ] )
          cFaktura += '      <KodUE>' + aDane[ 'o_kraj' ] + '</KodUE>' + nl
-         cFaktura += '      <NrVatUE>' + str2sxml( aDane[ 'o_nip' ] ) + '</NrVatUE>' + nl
+         cFaktura += '      <NrVatUE>' + PodzielNIP( TrimNIP( aDane[ 'o_nip' ] ) ) + '</NrVatUE>' + nl
       ELSE
          cFaktura += '      <KodKraju>' + aDane[ 'o_kraj' ] + '</KodKraju>' + nl
-         cFaktura += '      <NrID>' + str2sxml( aDane[ 'o_nip' ] ) + '</NrID>' + nl
+         cFaktura += '      <NrID>' + PodzielNIP( TrimNIP( aDane[ 'o_nip' ] ) ) + '</NrID>' + nl
       ENDIF
       cFaktura += '      <Nazwa>' + str2sxml( aDane[ 'o_nazwa' ] ) + '</Nazwa>' + nl
       cFaktura += '    </DaneIdentyfikacyjne>' + nl
@@ -3093,12 +3119,19 @@ FUNCTION FakturyN_TworzFA3()
       cFaktura += '    <P_14_3>' + TKwota2( aSumy[ '5' ][ 'w_vat' ] ) + '</P_14_3>' + nl
    ENDIF
    IF hb_HHasKey( aSumy, '0' )
-      cFaktura += '    <P_13_6_1>' + TKwota2( aSumy[ '0' ][ 'w_netto' ] ) + '</P_13_6_1>' + nl
+      IF ! Empty( aDane[ 'k_kraj' ] ) .AND. aDane[ 'k_kraj' ] <> 'PL' .AND. ! aDane[ 'k_ue' ]
+         cFaktura += '    <P_13_6_3>' + TKwota2( aSumy[ '0' ][ 'w_netto' ] ) + '</P_13_6_3>' + nl
+      ELSEIF aDane[ 'k_ue' ]
+         cFaktura += '    <P_13_6_2>' + TKwota2( aSumy[ '0' ][ 'w_netto' ] ) + '</P_13_6_2>' + nl
+      ELSE
+         cFaktura += '    <P_13_6_1>' + TKwota2( aSumy[ '0' ][ 'w_netto' ] ) + '</P_13_6_1>' + nl
+      ENDIF
    ENDIF
    IF hb_HHasKey( aSumy, 'ZW' )
       cFaktura += '    <P_13_7>' + TKwota2( aSumy[ 'ZW' ][ 'w_netto' ] ) + '</P_13_7>' + nl
    ENDIF
-   cFaktura += '    <P_15>' + TKwota2( aDane[ 'do_zaplaty' ] ) + '</P_15>' + nl
+   //cFaktura += '    <P_15>' + TKwota2( aDane[ 'do_zaplaty' ] ) + '</P_15>' + nl
+   cFaktura += '    <P_15>' + TKwota2( aDane[ 'wartosc' ] ) + '</P_15>' + nl
    cFaktura += '    <Adnotacje>' + nl
    cFaktura += '      <P_16>2</P_16>' + nl
    cFaktura += '      <P_17>2</P_17>' + nl
@@ -3117,11 +3150,46 @@ FUNCTION FakturyN_TworzFA3()
    cFaktura += '    </Adnotacje>' + nl
    cFaktura += '    <RodzajFaktury>' + iif( aDane[ 'korekta' ], 'KOR', 'VAT' ) + '</RodzajFaktury>' + nl
    //cFaktura += '    <FP>1</FP>' + nl
+   IF aDane[ 'korekta' ]
+      IF ! Empty( aDane[ 'przyczyna_korekty' ] )
+         cFaktura += '    <PrzyczynaKorekty>' + str2sxml( aDane[ 'przyczyna_korekty' ] ) + '</PrzyczynaKorekty>' + nl
+      ENDIF
+      cFaktura += '    <DaneFaKorygowanej>' + nl
+      cFaktura += '      <DataWystFaKorygowanej>' + date2strxml( aDane[ 'data_dok_kor' ] ) + '</DataWystFaKorygowanej>' + nl
+      cFaktura += '      <NrFaKorygowanej>' + str2sxml( aDane[ 'nr_dok_kor' ] ) + '</NrFaKorygowanej>' + nl
+      IF ! Empty( aDane[ 'nr_ksef_kor' ] )
+         cFaktura += '      <NrKSeF>1</NrKSeF>' + nl
+         cFaktura += '      <NrKSeFFaKorygowanej>' + str2sxml( aDane[ 'nr_ksef_kor' ] ) + '</NrKSeFFaKorygowanej>' + nl
+      ELSE
+         cFaktura += '      <NrKSeFN>1</NrKSeFN>' + nl
+      ENDIF
+      cFaktura += '    </DaneFaKorygowanej>' + nl
+   ENDIF
    IF ! Empty( aDane[ 'uwagi' ] )
       cFaktura += '    <DodatkowyOpis>' + nl
       cFaktura += '      <Klucz>Uwagi</Klucz>' + nl
       cFaktura += '      <Wartosc>' + str2sxml( aDane[ 'uwagi' ] ) + '</Wartosc>' + nl
       cFaktura += '    </DodatkowyOpis>' + nl
+   ENDIF
+   IF aDane[ 'korekta' ]
+      FOR i := 1 TO Len( aDane[ 'pozycjeprzed' ] )
+         cFaktura += '    <FaWiersz>' + nl
+         cFaktura += '      <NrWierszaFa>' + TNaturalny( i ) + '</NrWierszaFa>' + nl
+         cFaktura += '      <P_7>' + str2sxml( aDane[ 'pozycjeprzed' ][ i ][ 'towar' ] ) + '</P_7>' + nl
+         cFaktura += '      <P_8A>' + str2sxml( aDane[ 'pozycjeprzed' ][ i ][ 'jm' ] ) + '</P_8A>' + nl
+         cFaktura += '      <P_8B>' + TIlosciJPK( aDane[ 'pozycjeprzed' ][ i ][ 'ilosc' ] ) + '</P_8B>' + nl
+         cFaktura += '      <P_9A>' + TKwota2( aDane[ 'pozycjeprzed' ][ i ][ 'cena' ] ) + '</P_9A>' + nl
+         cFaktura += '      <P_11>' + TKwota2( aDane[ 'pozycjeprzed' ][ i ][ 'wartosc_brutto' ] - aDane[ 'pozycjeprzed' ][ i ][ 'wartosc_vat' ] ) + '</P_11>' + nl
+         cFaktura += '      <P_12>' + Eval( bDekodujVAT, aDane[ 'pozycjeprzed' ][ i ][ 'vat' ] ) + '</P_12>' + nl
+         IF ! Empty( cGTU )
+            cFaktura += '      <GTU>' + cGTU + '</GTU>' + nl
+         ENDIF
+         IF ! Empty( aDane[ 'procedur' ] )
+            cFaktura += '      <Procedura>' + aDane[ 'procedur' ] + '</Procedura>' + nl
+         ENDIF
+         cFaktura += '      <StanPrzed>1</StanPrzed>' + nl
+         cFaktura += '    </FaWiersz>' + nl
+      NEXT
    ENDIF
    FOR i := 1 TO Len( aDane[ 'pozycje' ] )
       cFaktura += '    <FaWiersz>' + nl
@@ -3131,7 +3199,7 @@ FUNCTION FakturyN_TworzFA3()
       cFaktura += '      <P_8B>' + TIlosciJPK( aDane[ 'pozycje' ][ i ][ 'ilosc' ] ) + '</P_8B>' + nl
       cFaktura += '      <P_9A>' + TKwota2( aDane[ 'pozycje' ][ i ][ 'cena' ] ) + '</P_9A>' + nl
       cFaktura += '      <P_11>' + TKwota2( aDane[ 'pozycje' ][ i ][ 'wartosc_brutto' ] - aDane[ 'pozycje' ][ i ][ 'wartosc_vat' ] ) + '</P_11>' + nl
-      cFaktura += '      <P_12>' + aDane[ 'pozycje' ][ i ][ 'vat' ] + '</P_12>' + nl
+      cFaktura += '      <P_12>' + Eval( bDekodujVAT, aDane[ 'pozycje' ][ i ][ 'vat' ] ) + '</P_12>' + nl
       IF ! Empty( cGTU )
          cFaktura += '      <GTU>' + cGTU + '</GTU>' + nl
       ENDIF
