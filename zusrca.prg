@@ -27,7 +27,7 @@ PROCEDURE ZusRca( ubezp )
 
    lZaMcWyp := pzparap_dzm == 'W'
    IF lZaMcWyp
-      cMiesiac := param_rok + miesiac
+      cMiesiac := param_rok + StrTran( miesiac, ' ', '0' ) //miesiac
       IF miesiac == '12'
          nMc := MenuEx( 19, 12, { "G - Wypˆata w grudniu", "P - wypˆat w roku " + AllTrim( Str( Val( param_rok ) + 1 ) ) } )
          IF nMc == 0
