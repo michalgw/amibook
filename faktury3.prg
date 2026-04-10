@@ -539,7 +539,7 @@ PROCEDURE Faktury3()
                   Komun( 'Faktura zostaˆa wysˆana do KSeF.' )
                   BREAK
                ENDIF
-               IF ! TNEsc( , "Czy wysˆa† faktur© do KSeF?" )
+               IF ! TNEsc( , "Czy wysˆa† faktur© do KSeF? (Tak/Nie)" )
                   BREAK
                ENDIF
             ENDIF

@@ -82,11 +82,9 @@ FUNCTION Param_FI()
    @  8, 42 SAY 'ÍÍ Parametry ksi©gowania ÍÍÍÍÍÍÍÍÍÍÍÍÍ'
    @  9, 42 SAY ' Zbiorczy wpis sprzeda¾y w ksi©dze    '
    @ 10, 42 SAY ' (Tak/Nie/Domy˜lnie)                  '
-   IF firma->vat <> 'T'
-      @ 11, 42 SAY 'ÍÍ Podstawa prawna zwolnienia ÍÍÍÍÍÍÍÍ'
-      @ 12, 42 SAY ' Podstawa zwolnienia (1-3)            '
-      @ 13, 42 SAY ' Przepis ust.                         '
-   ENDIF
+   @ 11, 42 SAY 'ÍÍ Podstawa prawna zwolnienia ÍÍÍÍÍÍÍÍ'
+   @ 12, 42 SAY ' Podstawa zwolnienia (1-3)            '
+   @ 13, 42 SAY ' Przepis ust.                         '
 
    *################################# OPERACJE #################################
    Param_FI_Say()
@@ -116,10 +114,8 @@ FUNCTION Param_FI()
             @  5, 70 GET zzVATOKRESDR PICTURE '!' VALID zzVATOKRESDR $ 'TN'
             @  7, 66 GET zsygnalvat PICTURE '!' VALID zsygnalvat $ 'TN'
             @ 10, 64 GET zzPAR_KSWS PICTURE '!' WHEN Eval( bParKsWSV ) VALID Eval( bParKsWSV )
-            IF firma->vat <> 'T'
-               @ 12, 70 GET cRodzajZwol PICTURE '9' WHEN Eval( bRW ) VALID Eval( bRV )
-               @ 13, 56 GET cOpisZwol PICTURE '@S24 ' + Replicate( 'X', 255 )
-            ENDIF
+            @ 12, 70 GET cRodzajZwol PICTURE '9' WHEN Eval( bRW ) VALID Eval( bRV )
+            @ 13, 56 GET cOpisZwol PICTURE '@S24 ' + Replicate( 'X', 255 )
             ****************************
             CLEAR TYPE
             Read_()

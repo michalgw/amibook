@@ -848,7 +848,7 @@ PROCEDURE FakturyN()
                      Komun( 'Faktura zostaˆa wysˆana do KSeF.' )
                      BREAK
                   ENDIF
-                  IF ! TNEsc( , "Czy wysˆa† faktur© do KSeF?" )
+                  IF ! TNEsc( , "Czy wysˆa† faktur© do KSeF? (Tak/Nie)" )
                      BREAK
                   ENDIF
                ENDIF
@@ -2128,6 +2128,7 @@ FUNCTION FakturyN_Dane()
    aDane[ 'duplikat_data' ] := iif( zduplikat == 'T', zduplikatd, Date() )
    aDane[ 'korekta' ] := faktury->korekta == 'T'
 
+   aDane[ 'jest_zwolnienie' ] := .F.
    aDane[ 'pozycje' ] := {}
    aDane[ 'sumy' ] := {}
    pozycje->( dbSeek( '+' + cFakturyId ) )
@@ -2144,6 +2145,9 @@ FUNCTION FakturyN_Dane()
          aPoz[ 'cena' ] := pozycje->cena
          //aPoz[ 'sww' ] := AllTrim( pozycje->sww )
          aPoz[ 'vat' ] := AllTrim( pozycje->vat )
+         IF aPoz[ 'vat' ] == 'ZW'
+            aDane[ 'jest_zwolnienie' ] := .T.
+         ENDIF
          IF faktury->WARTRANSP == 'T'
             aPoz[ 'wartosc_vat' ] := pozycje->vatwart
            aPoz[ 'wartosc_brutto' ] := pozycje->brutto
@@ -2277,6 +2281,9 @@ FUNCTION FakturyN_Dane()
    aDane[ 'termin_data' ] := faktury->zap_dat
 
    aDane[ 'wystawil' ] := AllTrim( ewid_wyst )
+
+   aDane[ 'zwolnienie' ] := '1'
+   aDane[ 'podstzwol' ] := ''
 
    //FRDrukuj( iif( faktury->korekta <> 'T', 'frf\fv.frf', 'frf\kfv.frf' ), aDane )
 
@@ -3003,6 +3010,12 @@ FUNCTION FakturyN_TworzFA3()
       RETURN cWartosc
    }
 
+   IF aDane[ 'jest_zwolnienie' ]
+      IF ! Faktury3_Zwolnienie( @aDane )
+         RETURN lRes
+      ENDIF
+   ENDIF
+
    IF aDane[ 'korekta' ]
       AEval( aDane[ 'roznice' ], { | aPoz |
          aSumy[ aPoz[ 'vat' ] ] := { 'w_netto' => aPoz[ 'w_netto' ], 'w_vat' => aPoz[ 'w_vat' ] }
@@ -3138,7 +3151,19 @@ FUNCTION FakturyN_TworzFA3()
    cFaktura += '      <P_18>2</P_18>' + nl
    cFaktura += '      <P_18A>2</P_18A>' + nl
    cFaktura += '      <Zwolnienie>' + nl
-   cFaktura += '        <P_19N>1</P_19N>' + nl
+   IF aDane[ 'jest_zwolnienie' ]
+      cFaktura += '        <P_19>1</P_19>' + nl
+      DO CASE
+      CASE aDane[ 'zwolnienie' ] == '1'
+         cFaktura += '        <P_19A>' + str2sxml( aDane[ 'podstzwol' ] ) + '</P_19A>' + nl
+      CASE aDane[ 'zwolnienie' ] == '2'
+         cFaktura += '        <P_19B>' + str2sxml( aDane[ 'podstzwol' ] ) + '</P_19B>' + nl
+      CASE aDane[ 'zwolnienie' ] == '3'
+         cFaktura += '        <P_19C>' + str2sxml( aDane[ 'podstzwol' ] ) + '</P_19C>' + nl
+      ENDCASE
+   ELSE
+      cFaktura += '        <P_19N>1</P_19N>' + nl
+   ENDIF
    cFaktura += '      </Zwolnienie>' + nl
    cFaktura += '      <NoweSrodkiTransportu>' + nl
    cFaktura += '        <P_22N>1</P_22N>' + nl
