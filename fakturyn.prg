@@ -2499,6 +2499,7 @@ FUNCTION FakturyN_Ksieguj()
                      ENDIF
                      repl_( 'KOREKTA', zKOREKTA )
                      repl_( 'UWAGI', Space( 20 ) )
+                     repl_( 'DATAKS', hb_Date( Val( param_rok ), Val( Faktury_McKsieg( zKSGDATA, miesiac ) ), Val( iif( zKSGDATA == 2, Str( Day( zDATAS ), 2 ), zdzien ) ) ) )
                      COMMIT
                      UNLOCK
                      razem_ := 0
@@ -2520,6 +2521,7 @@ FUNCTION FakturyN_Ksieguj()
                         ENDIF
                         repl_( 'KOREKTA', zKOREKTA )
                         repl_( 'UWAGI', Space( 20 ) )
+                        repl_( 'DATAKS', hb_Date( Val( param_rok ), Val( Faktury_McKsieg( zKSGDATA, miesiac ) ), Val( iif( zKSGDATA == 2, Str( Day( zDATAS ), 2 ), zdzien ) ) ) )
                         COMMIT
                         UNLOCK
                         razem_ := 0
