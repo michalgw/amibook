@@ -1521,7 +1521,7 @@ FUNCTION Faktury3_OdbWhenNazwa()
 FUNCTION Faktury3_TworzFA3()
 
    LOCAL aDane := Faktury3_Dane()
-   LOCAL nl := hb_eol(), f
+   LOCAL nl := hb_eol(), f, cSposobPlat
    LOCAL cFaktura, cS, i, lRes := .F.
    //, aSumy := {=>}, cGTU
    //LOCAL aGTU := { "GTU_01", "GTU_02", "GTU_03", "GTU_04", "GTU_05", "GTU_06", ;
@@ -1688,7 +1688,16 @@ FUNCTION Faktury3_TworzFA3()
       cFaktura += '      <Zaplacono>1</Zaplacono>' + nl
       cFaktura += '      <DataZaplaty>' + date2strxml( aDane[ 'data_dok' ] + aDane[ 'termin_z' ] ) + '</DataZaplaty>' + nl
    ENDIF
-   cFaktura += '      <FormaPlatnosci>6</FormaPlatnosci>' + nl
+   cSposobPlat := '1'
+   DO CASE
+   CASE aDane[ 'sposob_p' ] == 1
+      cSposobPlat := '6'
+   CASE aDane[ 'sposob_p' ] == 2
+      cSposobPlat := '1'
+   CASE aDane[ 'sposob_p' ] == 3
+      cSposobPlat := '4'
+   ENDCASE
+   cFaktura += '      <FormaPlatnosci>' + cSposobPlat + '</FormaPlatnosci>' + nl
    IF ! Empty( aDane[ 'f_nr_konta' ] )
       cFaktura += '      <RachunekBankowy>' + nl
       cFaktura += '        <NrRB>' + str2sxml( aDane[ 'f_nr_konta' ] ) + '</NrRB>' + nl
