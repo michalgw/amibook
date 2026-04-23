@@ -1642,6 +1642,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
          aPozDek := hb_Hash()
          aPozDek[ 'zsek_cv7' ] := '  '
          aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
+         aPozDek[ 'zmc' ] := ''
          aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
          aPozDek[ 'znumer' ] := HGetDefault( aPoz, 'P_2A', '' )
 
@@ -1683,6 +1684,11 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
          IF hb_HHasKey( aPoz, 'P_18A' ) .AND. aPoz[ 'P_18A' ]
             aPozDek[ 'zsek_cv7' ] := 'SP'
          ENDIF
+
+         aPozDek[ 'zkolumna' ] := '  '
+         aPozDek[ 'zdataks' ] := hb_Date( Val( param_rok ), Val( miesiac ), Val( aPozDek[ 'zdzien' ] ) )
+         aPozDek[ 'ztresc' ] := ''
+         aPozDek[ 'zsymb_rej' ] := ''
 
          aPozDek[ 'zkorekta' ] := iif( aPoz[ 'RodzajFaktury' ] == "KOREKTA" , 'T', 'N' )
 
@@ -1810,7 +1816,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
          aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
          aPozDek := hb_Hash()
          aPozDek[ 'zsek_cv7' ] := '  '
-         aPozDek[ 'zkolumna' ] := '10'
+         aPozDek[ 'zkolumna' ] := '  '
          aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
          aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
          aPozDek[ 'znumer' ] := HGetDefault( aPoz, 'P_2A', '' )
@@ -1856,6 +1862,10 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
          IF hb_HHasKey( aPoz, 'P_18A' ) .AND. aPoz[ 'P_18A' ]
             aPozDek[ 'zsek_cv7' ] := 'SP'
          ENDIF
+
+         aPozDek[ 'ztresc' ] := ''
+         aPozDek[ 'zsymb_rej' ] := '  '
+         aPozDek[ 'zopcje' ] := ' '
 
          aPozDek[ 'SierTrwaly' ] := .F.
          aPozDek[ 'UwagaVat' ] := .F.
@@ -1915,6 +1925,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
       aPozDek := hb_Hash()
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
+      aPozDek[ 'zmc' ] := ''
       aPozDek[ 'zdatatran' ] := aPoz[ 'DataWystawienia' ]
       aPozDek[ 'znumer' ] := aPoz[ 'DowodSprzedazy' ]
 
@@ -1965,6 +1976,11 @@ PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
          aPozDek[ 'zwart08' ] := aPoz[ 'K_31' ]
       ENDIF
 
+      aPozDek[ 'zkolumna' ] := '  '
+      aPozDek[ 'zdataks' ] := hb_Date( Val( param_rok ), Val( miesiac ), Val( aPozDek[ 'zdzien' ] ) )
+      aPozDek[ 'ztresc' ] := ''
+      aPozDek[ 'zsymb_rej' ] := ''
+
       aPozDek[ 'VATMarza' ] := 0
       aPozDek[ 'RodzDow' ] := ''
       aPozDek[ 'Procedura' ] := ''
@@ -2008,7 +2024,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
       aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
       aPozDek := hb_Hash()
       aPozDek[ 'zsek_cv7' ] := '  '
-      aPozDek[ 'zkolumna' ] := '10'
+      aPozDek[ 'zkolumna' ] := '  '
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
       aPozDek[ 'zdatatran' ] := aPoz[ 'DataWystawienia' ]
       aPozDek[ 'znumer' ] := aPoz[ 'DowodSprzedazy' ]
@@ -2093,6 +2109,10 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
       aPozDek[ 'znetto' ] := nWNetto
       aPozDek[ 'SierTrwaly' ] := .F.
       aPozDek[ 'UwagaVat' ] := nRodzajVat == 0
+
+      aPozDek[ 'ztresc' ] := ''
+      aPozDek[ 'zsymb_rej' ] := '  '
+      aPozDek[ 'zopcje' ] := ' '
 
       aPozDek[ 'SprzedazPoz' ] := aPoz
 
@@ -2264,6 +2284,7 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
       aPozDek := hb_Hash()
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
+      aPozDek[ 'zmc' ] := ''
       aPozDek[ 'zdatatran' ] := aPoz[ 'DataWystawienia' ]
       aPozDek[ 'znumer' ] := aPoz[ 'DowodSprzedazy' ]
 
@@ -2318,6 +2339,12 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
          aPozDek[ 'zsek_cv7' ] := 'SP'
       ENDIF
 
+      aPozDek[ 'zkolumna' ] := '  '
+      aPozDek[ 'zdataks' ] := hb_Date( Val( param_rok ), Val( miesiac ), Val( aPozDek[ 'zdzien' ] ) )
+      aPozDek[ 'ztresc' ] := ''
+      aPozDek[ 'zsymb_rej' ] := ''
+
+
       aPozDek[ 'SprzedazPoz' ] := aPoz
 
       aPozDek[ 'VATMarza' ] := HGetDefault( aPoz, 'SprzedazVAT_Marza', 0 )
@@ -2366,7 +2393,7 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
       aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
       aPozDek := hb_Hash()
       aPozDek[ 'zsek_cv7' ] := '  '
-      aPozDek[ 'zkolumna' ] := '10'
+      aPozDek[ 'zkolumna' ] := '  '
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
       aPozDek[ 'zdatatran' ] := aPoz[ 'DataWystawienia' ]
       aPozDek[ 'znumer' ] := aPoz[ 'DowodSprzedazy' ]
@@ -2450,6 +2477,10 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
       aPozDek[ 'znetto' ] := nWNetto
       aPozDek[ 'SierTrwaly' ] := .F.
       aPozDek[ 'UwagaVat' ] := nRodzajVat == 0
+
+      aPozDek[ 'ztresc' ] := ''
+      aPozDek[ 'zsymb_rej' ] := '  '
+      aPozDek[ 'zopcje' ] := ' '
 
       aPozDek[ 'VATMarza' ] := 0
       aPozDek[ 'RodzDow' ] := ''
@@ -2638,17 +2669,19 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          ELSE
             zDZIEN := Str( Day( aPoz[ 'zdatas' ] ), 2 )
          ENDIF
+         zMC := aPoz[ 'zmc' ]
          znazwa := iif( Upper( AllTrim( aPoz[ 'znazwa' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'znazwa' ], 100 ) )
          zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
          zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 100 ) )
          zADRES := iif( Upper( AllTrim( aPoz[ 'zadres' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'zadres' ], 100 ) )
-         zTRESC := Space( 30 )
+         //zTRESC := Space( 30 )
          zROKS := Str( Year( aPoz[ 'zdatas' ] ), 4 )
          zMCS := Str( Month( aPoz[ 'zdatas' ] ), 2 )
          zDZIENS := Str( Day( aPoz[ 'zdatas' ] ), 2 )
          zDATAS := aPoz[ 'zdatas' ]
          zDATATRAN := aPoz[ 'zdatatran' ]
-         zKOLUMNA := aDane[ 'KolRej' ]
+         zKOLUMNA := iif( Empty( aPoz[ 'zkolumna' ] ), aDane[ 'KolRej' ], aPoz[ 'zkolumna' ] )
+         zDATAKS := aPoz[ 'zdataks' ]
          zuwagi := Space( 20 )
          zWARTZW := aPoz[ 'zwartzw' ]
          zWART08 := aPoz[ 'zwart08' ]
@@ -2694,8 +2727,8 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zZAP_DAT := date()
          zZAP_WART := 0
          zTROJSTR := 'N'
-         zSYMB_REJ := aDane[ 'Rejestr' ]
-         zTRESC := aDane[ 'OpisZd' ]
+         zSYMB_REJ := iif( Empty( aPoz[ 'zsymb_rej' ] ), aDane[ 'Rejestr' ], aPoz[ 'zsymb_rej' ] )
+         zTRESC := iif( Empty( aPoz[ 'ztresc' ] ), aDane[ 'OpisZd' ], aPoz[ 'ztresc' ] )
          zOPCJE := iif( AllTrim( aPoz[ 'Oznaczenie' ] ) <> "", aPoz[ 'Oznaczenie' ], aDane[ 'Oznaczenie' ] )
          zPROCEDUR := iif( AllTrim( aPoz[ 'Procedura' ] ) <> "", aPoz[ 'Procedura' ], aDane[ 'Procedura' ] )
          zKOL36 := 0
@@ -2763,7 +2796,7 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
 
    AEval( aDane[ 'Dekret' ], { | aPoz |
 
-      LOCAL aIstniejacyRec, lIstnieje
+      LOCAL aIstniejacyRec, lIstnieje, cKol
       LOCAL lImportuj := JPKImp_VatS_CzyImport( aDane, aPoz )
 
       IF lImportuj
@@ -2774,14 +2807,16 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
 
          IF aDane[ 'DataRej' ] == 'W'
             zDZIEN := aPoz[ 'zdzien' ]
+            zMC := aPoz[ 'zmc' ]
          ELSE
             zDZIEN := Str( Day( aPoz[ 'zdatas' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'zdatas' ] ), 2 )
          ENDIF
          znazwa := iif( Upper( AllTrim( aPoz[ 'znazwa' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'znazwa' ], 100 ) )
          zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
          zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 100 ) )
          zADRES := iif( Upper( AllTrim( aPoz[ 'zadres' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'zadres' ], 100 ) )
-         zTRESC := aDane[ 'OpisZd' ]
+         zTRESC := iif( Empty( aPoz[ 'ztresc' ] ), aDane[ 'OpisZd' ], aPoz[ 'ztresc' ] )
 
          zWYR_TOW := 0
          zUSLUGI := 0
@@ -2805,17 +2840,18 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
 
          zNETTO := _round( aPoz[ 'zwartzw' ] + aPoz[ 'zwart08' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ], 2 )
 
+         cKol := iif( Empty( aPoz[ 'zkolumna' ] ), aDane[ 'KolRej' ], aPoz[ 'zkolumna' ] )
          DO CASE
-         CASE Empty( aDane[ 'KolRej' ] ) .OR. Val( aDane[ 'KolRej' ] ) == 7
+         CASE Empty( cKol ) .OR. Val( cKol ) == 7
             zWYR_TOW := zNETTO
-         CASE Val( aDane[ 'KolRej' ] ) == 8
+         CASE Val( cKol ) == 8
             zUSLUGI := zNETTO
          ENDCASE
 
          IF ! Empty( zNRKSEF )
             lIstnieje := EwidSprawdzNrKSeFRec( 'OPER', ident_fir, zNRKSEF, @aIstniejacyRec )
          ELSE
-            lIstnieje := EwidSprawdzNrDokRec( 'OPER', ident_fir, miesiac, znumer, @aIstniejacyRec )
+            lIstnieje := EwidSprawdzNrDokRec( 'OPER', ident_fir, zMC, znumer, @aIstniejacyRec )
          ENDIF
 
          IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. lIstnieje
@@ -2847,7 +2883,7 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
 
 FUNCTION JPKImp_OperZ_Importuj( aDane )
 
-   LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane )
+   LOCAL nI := 1, nIlosc := JPKImp_VatS_Ilosc( aDane ), cKol
    //LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {} )
    LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Uwagi', 0, 'ListaUwag', {}, 'Waluta', 0, 'ListaWal', {}, 'NrKSeF', {} )
 
@@ -2875,7 +2911,7 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
          zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
          zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 100 ) )
          zADRES := iif( Upper( AllTrim( aPoz[ 'zadres' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'zadres' ], 100 ) )
-         zTRESC := aDane[ 'OpisZd' ]
+         zTRESC := iif( Empty( aPoz[ 'ztresc' ] ), aDane[ 'OpisZd' ], aPoz[ 'ztresc' ] )
 
          zWYR_TOW := 0
          zUSLUGI := 0
@@ -2900,14 +2936,16 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
          zNETTO := _round( aPoz[ 'zwartzw' ] + aPoz[ 'zwart08' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ] ;
             + aPoz[ 'zvat02' ] + aPoz[ 'zvat07' ] + aPoz[ 'zvat22' ], 2 )
 
+         cKol := iif( Empty( aPoz[ 'zkolumna' ] ), aDane[ 'Kolumna' ], aPoz[ 'zkolumna' ] )
+
          DO CASE
-         CASE Empty( aDane[ 'Kolumna' ] ) .OR. Val( aDane[ 'Kolumna' ] ) == 10
+         CASE Empty( cKol ) .OR. Val( cKol ) == 10
             zZAKUP := zNETTO
-         CASE Val( aDane[ 'Kolumna' ] ) == 11
+         CASE Val( cKol ) == 11
             zUBOCZNE := zNETTO
-         CASE Val( aDane[ 'Kolumna' ] ) == 12
+         CASE Val( cKol ) == 12
             zWYNAGR_G := zNETTO
-         CASE Val( aDane[ 'Kolumna' ] ) == 13
+         CASE Val( cKol ) == 13
             zWYDATKI := zNETTO
          ENDCASE
 
@@ -2980,7 +3018,10 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zDATAS := aPoz[ 'zdatas' ]
          zDATAKS := zDATAS
          zDATATRAN := aPoz[ 'zdatatran' ]
-         zKOLUMNA := aDane[ 'Kolumna' ]
+         zKOLUMNA := iif( Empty( aPoz[ 'zkolumna' ] ), aDane[ 'Kolumna' ], aPoz[ 'zkolumna' ] )
+         IF Empty( zKOLUMNA )
+            zKOLUMNA := '10'
+         ENDIF
          zuwagi := Space( 20 )
          zWARTZW := aPoz[ 'zwartzw' ]
          zWART00 := aPoz[ 'zwart00' ]
@@ -3011,8 +3052,8 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zZAP_DAT := date()
          zZAP_WART := 0
          zTROJSTR := 'N'
-         zSYMB_REJ := aDane[ 'Rejestr' ]
-         zTRESC := aDane[ 'OpisZd' ]
+         zSYMB_REJ := iif( Empty( aPoz[ 'zsymb_rej' ] ), aDane[ 'Rejestr' ], aPoz[ 'zsymb_rej' ] )
+         zTRESC := iif( Empty( aPoz[ 'ztresc' ] ), aDane[ 'OpisZd' ], aPoz[ 'ztresc' ] )
          zUSLUGAUE := 'N'
          zWEWDOS := 'N'
          zPALIWA := 0
@@ -3037,7 +3078,7 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zZOM12 := 'O'
          zZOM07 := 'O'
          zZOM02 := 'O'
-         zOPCJE := " "
+         zOPCJE := iif( Empty( aPoz[ 'zopcje' ] ), " ", aPoz[ 'zopcje' ] )
 
          zKOL47 := 0
          zKOL48 := 0

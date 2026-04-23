@@ -73,9 +73,10 @@ FUNCTION KosAppZaloguj()
 FUNCTION KosImp_Wczytaj( nRodzaj )
 
    LOCAL oDaneKos, oKosFirma, nKosFirmaID, dKosOd, dKosDo, oFirmaPoz
-   LOCAL i, oDokFa
+   LOCAL i, oDokFa, nArea
    LOCAL aDane := NIL, oErr
    LOCAL aPozycje := {}, aPoz, aSum := {=>}
+   LOCAL oKol, oKolumny, oTresc, oTresci, oRej, oRejestry
 
    IF ! KosAppZaloguj()
       Komun( "Nie udaˆo si© uruchomi† GM Kos" )
@@ -92,8 +93,132 @@ FUNCTION KosImp_Wczytaj( nRodzaj )
          dKosOd := hb_Date( Val( param_rok ), Val( miesiac ), 1 )
          dKosDo := EoM( dKosOd )
          KosCzekaj()
-         oDaneKos := oKosApp:Firma():WybierzDok( nKosFirmaID, dKosOd, dKosDo, nRodzaj )
+         oKolumny := oKosApp:Fabryka():Utworz_Kolekcja()
+         oTresci := oKosApp:Fabryka():Utworz_Kolekcja()
+         oRejestry := oKosApp:Fabryka():Utworz_Kolekcja()
+         DO CASE
+         CASE nRodzaj == 0 .AND. zRYCZALT == 'T'
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 5
+            oKol:Nazwa := "5 - " + NumToStr( staw_ry20 * 100 ) + "%"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 6
+            oKol:Nazwa := "6 - " + NumToStr( staw_ry17 * 100 ) + "%"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 7
+            oKol:Nazwa := "7 - " + NumToStr( staw_rk09 * 100 ) + "%"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 8
+            oKol:Nazwa := "8 - " + NumToStr( staw_uslu * 100 ) + "%"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 9
+            oKol:Nazwa := "9 - " + NumToStr( staw_rk10 * 100 ) + "%"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 10
+            oKol:Nazwa := "10 - " + NumToStr( staw_prod * 100 ) + "%"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 11
+            oKol:Nazwa := "11 - " + NumToStr( staw_hand * 100 ) + "%"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 12
+            oKol:Nazwa := "12 - " + NumToStr( staw_rk07 * 100 ) + "%"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 13
+            oKol:Nazwa := "13 - " + NumToStr( staw_ry10 * 100 ) + "%"
+            oKolumny:Add( oKol )
+         CASE nRodzaj == 0 .AND. zRYCZALT <> 'T'
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 7
+            oKol:Nazwa := "7 - Sprzeda¾ towar¢w i usˆug"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 8
+            oKol:Nazwa := "8 - Pozostaˆe przychody"
+            oKolumny:Add( oKol )
+         CASE nRodzaj == 1 .AND. zRYCZALT == 'T'
+
+         CASE nRodzaj == 1 .AND. zRYCZALT <> 'T'
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 10
+            oKol:Nazwa := "10 - zakup towarow i materialow"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 11
+            oKol:Nazwa := "11 - koszty uboczne zakupu"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 12
+            oKol:Nazwa := "12 - wynagrodzenia w gotowce i naturze"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 13
+            oKol:Nazwa := "13 - pozostale koszty"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 15
+            oKol:Nazwa := "15 - (kolumna wolna)"
+            oKolumny:Add( oKol )
+            oKol := oKosApp:Fabryka():Utworz_AmiTresc()
+            oKol:AmiID := 16
+            oKol:Nazwa := "16 - koszty dziaˆalno˜ci badawczej"
+            oKolumny:Add( oKol )
+         ENDCASE
+
+         nArea := Select()
+         IF tresc->( dbSeek( "+" + ident_fir ) )
+            DO WHILE tresc->del == "+" .AND. tresc->firma == ident_fir
+               IF ( nRodzaj == 0 .AND. tresc->rodzaj $ ' OS' ) .OR. ( nRodzaj == 1 .AND. tresc->rodzaj $ ' OZ' )
+                  oTresc := oKosApp:Fabryka():Utworz_AmiTresc()
+                  oTresc:AmiID := tresc->id
+                  oTresc:Nazwa := AllTrim( SubStr( tresc->tresc, 1, 30 ) )
+                  oTresci:Add( oTresc )
+               ENDIF
+               tresc->( dbSkip() )
+            ENDDO
+         ENDIF
+
+         IF nRodzaj == 0
+            DO WHILE ! DostepPro( 'KAT_SPR', 'KAT_SPR', )
+            ENDDO
+            IF kat_spr->( dbSeek( "+" + ident_fir ) )
+               DO WHILE kat_spr->del == "+" .AND. kat_spr->firma == ident_fir
+                  oRej := oKosApp:Fabryka():Utworz_AmiRejVat()
+                  oRej:AmiID := kat_spr->id
+                  oRej:Symbol := AllTrim( kat_spr->symb_rej )
+                  oRej:Nazwa := kat_spr->symb_rej + ' - ' + AllTrim( kat_spr->opis )
+                  oRejestry:Add( oRej )
+                  kat_spr->( dbSkip() )
+               ENDDO
+            ENDIF
+            kat_spr->( dbCloseArea() )
+         ELSE
+            DO WHILE ! DostepPro( 'KAT_ZAK', 'KAT_ZAK', )
+            ENDDO
+            IF kat_zak->( dbSeek( "+" + ident_fir ) )
+               DO WHILE kat_zak->del == "+" .AND. kat_zak->firma == ident_fir
+                  oRej := oKosApp:Fabryka():Utworz_AmiRejVat()
+                  oRej:AmiID := kat_zak->id
+                  oRej:Symbol := AllTrim( kat_zak->symb_rej )
+                  oRej:Nazwa := kat_zak->symb_rej + ' - ' + AllTrim( kat_zak->opis )
+                  oRejestry:Add( oRej )
+                  kat_zak->( dbSkip() )
+               ENDDO
+            ENDIF
+            kat_zak->( dbCloseArea() )
+         ENDIF
+         Select( nArea )
+
+         oDaneKos := oKosApp:Firma():WybierzDok( nKosFirmaID, dKosOd, dKosDo, nRodzaj, .T., oKolumny, oTresci, oRejestry )
          CLEAR TYPEAHEAD
+
          IF ! Empty( oDaneKos )
             aSum[ 'P_13_1' ] := 0
             aSum[ 'P_14_1' ] := 0
@@ -204,6 +329,17 @@ FUNCTION KosImp_Wczytaj( nRodzaj )
                aPoz[ 'TP' ] := oDokFa:TP
                aPoz[ 'KosGTU' ] := oDokFa:KosGTU
                aPoz[ 'KosProcedura' ] := oDokFa:KosProcedura
+               aPoz[ 'AmiP1KsgKol' ] := oDokFa:AmiP1KsgKol
+               aPoz[ 'AmiP1KsgData' ] := oDokFa:AmiP1KsgData
+               aPoz[ 'AmiP1Tresc' ] := oDokFa:AmiP1Tresc
+               aPoz[ 'AmiP1RejData' ] := oDokFa:AmiP1RejData
+               aPoz[ 'AmiP1RejSymbol' ] := oDokFa:AmiP1RejSymbol
+               aPoz[ 'AmiP2KsgData' ] := oDokFa:AmiP2KsgData
+               aPoz[ 'AmiP2KsgKol' ] := oDokFa:AmiP2KsgKol
+               aPoz[ 'AmiP2Tresc' ] := oDokFa:AmiP2Tresc
+               aPoz[ 'AmiP2RejData' ] := oDokFa:AmiP2RejData
+               aPoz[ 'AmiP2RejSymbol' ] := oDokFa:AmiP2RejSymbol
+               aPoz[ 'AmiP2RejOpcje' ] := oDokFa:AmiP2RejOpcje
                AAdd( aPozycje, aPoz )
             NEXT
 
@@ -248,15 +384,19 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
    LOCAL aRes := {}, cStr
 
    AEval( aDane[ 'JPK' ][ 'Pozycje' ], { | aPoz |
-      LOCAL aPozDek
+      LOCAL aPozDek, dDataS
       LOCAL cNip, cKraj := "PL"
       LOCAL cAdr
       aPoz[ 'Importuj' ] := .T.
 
+      dDataS := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+
       aPozDek := hb_Hash()
       aPozDek[ 'zsek_cv7' ] := '  '
-      aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
-      aPozDek[ 'zdatatran' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      aPozDek[ 'zdzien' ] := Str( Day( dDataS ), 2 )
+      aPozDek[ 'zmc' ] := Str( Month( dDataS ), 2 )
+      //aPozDek[ 'zdatatran' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
       aPozDek[ 'znumer' ] := aPoz[ 'P_2' ]
 
       //cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'P2Identyfikator' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
@@ -270,7 +410,7 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
          cAdr := cAdr + ', ' + aPoz[ 'P2AdresL2' ]
       ENDIF
       aPozDek[ 'zadres' ] := cAdr
-      aPozDek[ 'zdatas' ] := aPoz[ 'P_1' ]
+      aPozDek[ 'zdatas' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
 
       aPozDek[ 'zwartzw' ] := HGetDefault( aPoz, 'P_13_7', 0 )
 
@@ -306,6 +446,11 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
 
       aPozDek[ 'zkorekta' ] := iif( AScan( { "KOR", "KOR_ZAL", "KOR_ROZ" }, aPoz[ 'RodzajFaktury' ] ) > 0, 'T', 'N' )
 
+      aPozDek[ 'zkolumna' ] := iif( aPoz[ 'AmiP1KsgKol' ] > 0, Str( aPoz[ 'AmiP1KsgKol' ], 2 ), '  ' )
+      aPozDek[ 'zdataks' ] := dDataS
+      aPozDek[ 'ztresc' ] := aPoz[ 'AmiP1Tresc' ]
+      aPozDek[ 'zsymb_rej' ] := aPoz[ 'AmiP1RejSymbol' ]
+
       aPozDek[ 'KodWaluty' ] := HGetDefault( aPoz, 'KodWaluty', 'PLN' )
 
       aPozDek[ 'VATMarza' ] := 0
@@ -340,9 +485,10 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
       aPoz[ 'DataDok' ] := aPoz[ 'P_1' ]
       aPozDek := hb_Hash()
       aPozDek[ 'zsek_cv7' ] := '  '
-      aPozDek[ 'zkolumna' ] := '10'
+      aPozDek[ 'zkolumna' ] := iif( aPoz[ 'AmiP2KsgKol' ] > 0, Str( aPoz[ 'AmiP2KsgKol' ], 2 ), '10' )
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
-      aPozDek[ 'zdatatran' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      //aPozDek[ 'zdatatran' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
       aPozDek[ 'znumer' ] := HGetDefault( aPoz, 'P_2', '' )
 
       //cNip := PodzielNIP( iif( Upper( AllTrim( aPoz[ 'NrKontrahenta' ] ) ) == "BRAK", "", aPoz[ 'NrKontrahenta' ] ), @cKraj )
@@ -356,7 +502,7 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
       ENDIF
       aPozDek[ 'zadres' ] := cAdr
       //aPozDek[ 'zdatas' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
-      aPozDek[ 'zdatas' ] := aPoz[ 'P_1' ]
+      aPozDek[ 'zdatas' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
 
       aPozDek[ 'zexport' ] := 'N'
       IF aPozDek[ 'zue' ] == 'N' .AND. aPozDek[ 'zkraj' ] <> 'PL'
@@ -393,6 +539,20 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
       IF hb_HHasKey( aPoz, 'P_18A' ) .AND. aPoz[ 'P_18A' ]
          aPozDek[ 'zsek_cv7' ] := 'SP'
       ENDIF
+
+      aPozDek[ 'ztresc' ] := aPoz[ 'AmiP2Tresc' ]
+      aPozDek[ 'zsymb_rej' ] := aPoz[ 'AmiP2RejSymbol' ]
+      aPozDek[ 'zopcje' ] := ' '
+      DO CASE
+      CASE aPoz[ 'AmiP2RejOpcje' ] == 1
+         aPozDek[ 'zopcje' ] := 'P'
+      CASE aPoz[ 'AmiP2RejOpcje' ] == 2
+         aPozDek[ 'zopcje' ] := '7'
+      CASE aPoz[ 'AmiP2RejOpcje' ] == 3
+         aPozDek[ 'zopcje' ] := '5'
+      CASE aPoz[ 'AmiP2RejOpcje' ] == 4
+         aPozDek[ 'zopcje' ] := '2'
+      ENDCASE
 
       aPozDek[ 'SierTrwaly' ] := .F.
       aPozDek[ 'UwagaVat' ] := .F.
