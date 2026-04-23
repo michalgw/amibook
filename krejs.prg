@@ -36,7 +36,7 @@ PROCEDURE KRejS()
    PRIVATE zKraj, zSek_CV7, zRach, zDetal, zKorekta, zRozrZapS, zZap_Ter, zZap_Dat
    PRIVATE zZap_Wart, zTrojstr, zKOL36, zKOL37, zKOL38, zKOL39, zNETTO2, zKOLUMNA2
    PRIVATE zNETTOOrg, zOPCJE, zPROCEDUR, zRODZDOW, cScrRodzDow, zVATMARZA, fDETALISTA
-   PRIVATE oGetRodzDow, oGetOpcje, oGetProcedur, oGetSekCV7, zNRKSEF, zKSEFSTAT
+   PRIVATE oGetRodzDow, oGetOpcje, oGetProcedur, oGetSekCV7, zNRKSEF, zKSEFSTAT, zMC
 
    fDETALISTA := DETALISTA
 
@@ -47,6 +47,15 @@ PROCEDURE KRejS()
    LpStart()
 
    sprawdzVAT( 10, CToD( param_rok + '.' + StrTran( miesiac, ' ', '0' ) + '.01' ) )
+
+   SELECT 3
+   IF Dostep( 'FIRMA' )
+      GO Val( ident_fir )
+      spolka_ := spolka
+   ELSE
+      RETURN
+   ENDIF
+   paraDATAKS := DATAKS
 
    *################################# GRAFIKA ##################################
    krejsRysujTlo()
@@ -223,6 +232,7 @@ PROCEDURE KRejS()
                   zNRKSEF := aBufDok[ 'NRKSEF' ]
                   zKSEFSTAT := aBufDok[ 'KSEFSTAT' ]
                   zKOL360 := aBufDok[ 'KOL360' ]
+                  zDATAKS := aBufDok[ 'DATAKS' ]
                ELSE
                   BREAK
                ENDIF
@@ -295,6 +305,7 @@ PROCEDURE KRejS()
                zNRKSEF := NRKSEF
                zKSEFSTAT := KSEFSTAT
                zKOL360 := KOL360
+               zDATAKS := DATAKS
             ELSEIF ins
                @  4, 78 CLEAR TO 5, 79
                @  4, 29 CLEAR TO 6, 49
@@ -367,6 +378,7 @@ PROCEDURE KRejS()
                zNRKSEF := Space( 35 )
                zKSEFSTAT := ' '
                zKOL360 := 0
+               zDATAKS := zDATATRAN
                ***********************
             ELSE
                lRyczModSys := .F.
@@ -448,11 +460,13 @@ PROCEDURE KRejS()
                zNRKSEF := NRKSEF
                zKSEFSTAT := KSEFSTAT
                zKOL360 := KOL360
+               zDATAKS := DATAKS
             ENDIF
             stan_ := -zNETTO - zNETTO2
             netprzed := zNETTO
             netprzed2 := zNETTO2
             zRACH := 'F'
+            zMC := ''
             IF zKSEFSTAT == ' ' .AND. Empty( zNRKSEF )
                zKSEFSTAT := 'B'
             ENDIF
@@ -523,6 +537,23 @@ PROCEDURE KRejS()
                ENDIF
             @ 20, 48 GET zVATMARZA PICTURE FPIC WHEN param_ksv7 == 'T'
             ENDIF
+
+            @ 21, 14 GET zDATAKS PICTURE '@D' WHEN w1_6kz() VALID v1_6kz()
+            @ 21, 29 GET zNETTO PICTURE FPIC WHEN SUMNETs( lRyczModSys ) VALID vSUMNETs()
+            IF zRYCZALT == 'T'
+               @ 21, 47 GET zKOLUMNA PICTURE '@K 99' WHEN KRejSWZKolumna( .T. ) VALID KRejSVZKolumna( .T. )
+            ELSE
+               @ 21, 47 SAY ' '
+               @ 21, 48 GET zKOLUMNA PICTURE '9' WHEN KRejSWZKolumna( .F. ) VALID KRejSVZKolumna( .T. )
+            ENDIF
+            @ 21, 55 GET zNETTO2 PICTURE FPIC WHEN KRejSWZNetto2()
+            IF zRYCZALT == 'T'
+               @ 21, 73 GET zKOLUMNA2 PICTURE '@K 99' WHEN KRejSWZKolumna2( .T. ) VALID KRejSVZKolumna2( .T. )
+            ELSE
+               @ 21, 73 SAY ' '
+               @ 21, 74 GET zKOLUMNA2 PICTURE '9' WHEN KRejSWZKolumna2( .F. ) VALID  KRejSVZKolumna2( .F. )
+            ENDIF
+            /*
             @ 21, 14 GET zNETTO PICTURE FPIC WHEN SUMNETs( lRyczModSys ) VALID vSUMNETs()
             IF zRYCZALT == 'T'
                @ 21, 41 GET zKOLUMNA PICTURE '@K 99' WHEN KRejSWZKolumna( .T. ) VALID KRejSVZKolumna( .T. )
@@ -537,6 +568,7 @@ PROCEDURE KRejS()
                @ 21, 77 SAY ' '
                @ 21, 78 GET zKOLUMNA2 PICTURE '9' WHEN KRejSWZKolumna2( .F. ) VALID  KRejSVZKolumna2( .F. )
             ENDIF
+            */
 //            IF ! lRyczModSys
                @ 22, 16 GET zROZRZAPS PICTURE '!' WHEN wROZRget() VALID vROZRget( 'zROZRZAPS', 22, 16 )
                @ 22, 36 GET zZAP_TER PICTURE '999' WHEN zROZRZAPS == 'T'
@@ -616,70 +648,74 @@ PROCEDURE KRejS()
                COMMIT
                UNLOCK
             ENDIF
-            SELECT suma_mc
-            BlokadaR()
-            IF Left( rejs->numer, 1 ) # Chr( 1 ) .AND. Left( rejs->numer, 1 ) # Chr( 254 )
-               IF zRYCZALT == 'T'
-                  DO CASE
-                  CASE AllTrim( rejs->KOLUMNA ) == '5'
-                     repl_( 'ry20', ry20 - rejs->netto )
-                  CASE AllTrim( rejs->KOLUMNA ) == '6'
-                     repl_( 'ry17', ry17 - rejs->netto )
-                  CASE AllTrim( rejs->KOLUMNA ) == '7'
-                     repl_( 'ryk09', ryk09 - rejs->netto )
-                  CASE AllTrim( rejs->KOLUMNA ) == '8'
-                     repl_( 'uslugi', uslugi - rejs->netto )
-                  CASE AllTrim( rejs->KOLUMNA ) == '9'
-                     repl_( 'ryk10', ryk10 - rejs->netto )
-                  CASE AllTrim( rejs->KOLUMNA ) == '10'
-                     repl_( 'wyr_tow', wyr_tow - rejs->netto )
-                  CASE AllTrim( rejs->KOLUMNA ) == '11'
-                     repl_( 'handel', handel - rejs->netto )
-                  CASE AllTrim( rejs->KOLUMNA ) == '12'
-                     repl_( 'ryk07', ryk07 - rejs->netto )
-                  CASE AllTrim( rejs->KOLUMNA ) == '13'
-                     repl_( 'ry10', ry10 - rejs->netto )
-                  ENDCASE
-                  DO CASE
-                  CASE AllTrim( rejs->KOLUMNA2 ) == '5'
-                     repl_( 'ry20', ry20 - rejs->netto2 )
-                  CASE AllTrim( rejs->KOLUMNA2 ) == '6'
-                     repl_( 'ry17', ry17 - rejs->netto2 )
-                  CASE AllTrim( rejs->KOLUMNA2 ) == '7'
-                     repl_( 'ryk09', ryk09 - rejs->netto2 )
-                  CASE AllTrim( rejs->KOLUMNA2 ) == '8'
-                     repl_( 'uslugi', uslugi - rejs->netto2 )
-                  CASE AllTrim( rejs->KOLUMNA2 ) == '9'
-                     repl_( 'ryk10', ryk10 - rejs->netto2 )
-                  CASE AllTrim( rejs->KOLUMNA2 ) == '10'
-                     repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
-                  CASE AllTrim( rejs->KOLUMNA2 ) == '11'
-                     repl_( 'handel', handel - rejs->netto2 )
-                  CASE AllTrim( rejs->KOLUMNA2 ) == '12'
-                     repl_( 'ryk07', ryk07 - rejs->netto2 )
-                  CASE AllTrim( rejs->KOLUMNA2 ) == '13'
-                     repl_( 'ry10', ry10 - rejs->netto2 )
-                  ENDCASE
-                  IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '11' .OR. AllTrim( rejs->KOLUMNA ) == '12' .OR. AllTrim( rejs->KOLUMNA ) == '13' )
-                     repl_( 'pozycje', pozycje - 1 )
+            IF ! Empty( rejs->DATAKS ) .AND. Year( rejs->DATAKS ) == Val( param_rok )
+               SELECT suma_mc
+               SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 )
+               BlokadaR()
+               IF Left( rejs->numer, 1 ) # Chr( 1 ) .AND. Left( rejs->numer, 1 ) # Chr( 254 )
+                  IF zRYCZALT == 'T'
+                     DO CASE
+                     CASE AllTrim( rejs->KOLUMNA ) == '5'
+                        repl_( 'ry20', ry20 - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '6'
+                        repl_( 'ry17', ry17 - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '7'
+                        repl_( 'ryk09', ryk09 - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '8'
+                        repl_( 'uslugi', uslugi - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '9'
+                        repl_( 'ryk10', ryk10 - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '10'
+                        repl_( 'wyr_tow', wyr_tow - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '11'
+                        repl_( 'handel', handel - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '12'
+                        repl_( 'ryk07', ryk07 - rejs->netto )
+                     CASE AllTrim( rejs->KOLUMNA ) == '13'
+                        repl_( 'ry10', ry10 - rejs->netto )
+                     ENDCASE
+                     DO CASE
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '5'
+                        repl_( 'ry20', ry20 - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '6'
+                        repl_( 'ry17', ry17 - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '7'
+                        repl_( 'ryk09', ryk09 - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '8'
+                        repl_( 'uslugi', uslugi - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '9'
+                        repl_( 'ryk10', ryk10 - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '10'
+                        repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '11'
+                        repl_( 'handel', handel - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '12'
+                        repl_( 'ryk07', ryk07 - rejs->netto2 )
+                     CASE AllTrim( rejs->KOLUMNA2 ) == '13'
+                        repl_( 'ry10', ry10 - rejs->netto2 )
+                     ENDCASE
+                     IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '11' .OR. AllTrim( rejs->KOLUMNA ) == '12' .OR. AllTrim( rejs->KOLUMNA ) == '13' )
+                        repl_( 'pozycje', pozycje - 1 )
+                     ENDIF
+                  ELSE
+                     DO CASE
+                     CASE Str( Val( rejs->KOLUMNA ), 1 ) $ '7'
+                        repl_( 'wyr_tow', wyr_tow - rejs->netto )
+                     CASE Str( val( rejs-> KOLUMNA ), 1 ) $ '8'
+                        repl_( 'uslugi', uslugi - rejs->netto )
+                     ENDCASE
+                     DO CASE
+                     CASE Str( Val( rejs->KOLUMNA2 ), 1 ) $ '7'
+                        repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
+                     CASE Str( val( rejs-> KOLUMNA2 ), 1 ) $ '8'
+                        repl_( 'uslugi', uslugi - rejs->netto2 )
+                     ENDCASE
                   ENDIF
-               ELSE
-                  DO CASE
-                  CASE Str( Val( rejs->KOLUMNA ), 1 ) $ '7'
-                     repl_( 'wyr_tow', wyr_tow - rejs->netto )
-                  CASE Str( val( rejs-> KOLUMNA ), 1 ) $ '8'
-                     repl_( 'uslugi', uslugi - rejs->netto )
-                  ENDCASE
-                  DO CASE
-                  CASE Str( Val( rejs->KOLUMNA2 ), 1 ) $ '7'
-                     repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
-                  CASE Str( val( rejs-> KOLUMNA2 ), 1 ) $ '8'
-                     repl_( 'uslugi', uslugi - rejs->netto2 )
-                  ENDCASE
                ENDIF
+               COMMIT
+               UNLOCK
+               SEEK '+' + ident_fir + miesiac
             ENDIF
-            COMMIT
-            UNLOCK
 
             ************* ZAPIS REJESTRU DO KSIEGI *******************
             SELECT 5
@@ -854,7 +890,7 @@ PROCEDURE KRejS()
                         repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
                         repl_( 'USLUGI', -( iif( Str( Val( rejs->KOLUMNA ), 1 ) == '8', rejs->netto, rejs->netto2 ) ) )
                         repl_( 'zaplata', '1' )
-   *                      repl_([kwota],zkwota)
+                        *repl_([kwota],zkwota)
                         COMMIT
                         UNLOCK
                         *********************** lp
@@ -979,71 +1015,73 @@ PROCEDURE KRejS()
                   COMMIT
                   UNLOCK
                ENDIF
-               SELECT suma_mc
-               BlokadaR()
-               IF Left( rejs->numer, 1 ) # Chr( 1 ) .AND. Left( rejs->numer, 1 ) # Chr( 254 )
-                  IF zRYCZALT == 'T'
-                     DO CASE
-                     CASE AllTrim( rejs->KOLUMNA ) == '5'
-                        repl_( 'ry20', ry20 - rejs->netto )
-                     CASE AllTrim( rejs->KOLUMNA ) == '6'
-                        repl_( 'ry17', ry17 - rejs->netto )
-                     CASE AllTrim( rejs->KOLUMNA ) == '7'
-                        repl_( 'ryk09', ryk09 - rejs->netto )
-                     CASE AllTrim( rejs->KOLUMNA ) == '8'
-                        repl_( 'uslugi', uslugi - rejs->netto )
-                     CASE AllTrim( rejs->KOLUMNA ) == '9'
-                        repl_( 'ryk10', ryk10 - rejs->netto )
-                     CASE AllTrim( rejs->KOLUMNA ) == '10'
-                        repl_( 'wyr_tow', wyr_tow - rejs->netto )
-                     CASE AllTrim( rejs->KOLUMNA ) == '11'
-                        repl_( 'handel', handel - rejs->netto )
-                     CASE AllTrim( rejs->KOLUMNA ) == '12'
-                        repl_( 'ryk07', ryk07 - rejs->netto )
-                     CASE AllTrim( rejs->KOLUMNA ) == '13'
-                        repl_( 'ry10', ry10 - rejs->netto )
-                     ENDCASE
-                     DO CASE
-                     CASE AllTrim( rejs->KOLUMNA2 ) == '5'
-                        repl_( 'ry20', ry20 - rejs->netto2 )
-                     CASE AllTrim( rejs->KOLUMNA2 ) == '6'
-                        repl_( 'ry17', ry17 - rejs->netto2 )
-                     CASE AllTrim( rejs->KOLUMNA2 ) == '7'
-                        repl_( 'ryk09', ryk09 - rejs->netto2 )
-                     CASE AllTrim( rejs->KOLUMNA2 ) == '8'
-                        repl_( 'uslugi', uslugi - rejs->netto2 )
-                     CASE AllTrim( rejs->KOLUMNA2 ) == '9'
-                        repl_( 'ryk10', ryk10 - rejs->netto2 )
-                     CASE AllTrim( rejs->KOLUMNA2 ) == '10'
-                        repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
-                     CASE AllTrim( rejs->KOLUMNA2 ) == '11'
-                        repl_( 'handel', handel - rejs->netto2 )
-                     CASE AllTrim( rejs->KOLUMNA2 ) == '12'
-                        repl_( 'ryk07', ryk07 - rejs->netto2 )
-                     CASE AllTrim( rejs->KOLUMNA2 ) == '13'
-                        repl_( 'ry10', ry10 - rejs->netto2 )
-                     ENDCASE
-                     IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '11' .OR. AllTrim( rejs->KOLUMNA ) == '12' .OR. AllTrim( rejs->KOLUMNA ) == '13' )
-                        repl_( 'pozycje', pozycje - 1 )
+               IF ! Empty( rejs->DATAKS ) .AND. Year( rejs->DATAKS ) == Val( param_rok )
+                  SELECT suma_mc
+                  BlokadaR()
+                  IF Left( rejs->numer, 1 ) # Chr( 1 ) .AND. Left( rejs->numer, 1 ) # Chr( 254 )
+                     IF zRYCZALT == 'T'
+                        DO CASE
+                        CASE AllTrim( rejs->KOLUMNA ) == '5'
+                           repl_( 'ry20', ry20 - rejs->netto )
+                        CASE AllTrim( rejs->KOLUMNA ) == '6'
+                           repl_( 'ry17', ry17 - rejs->netto )
+                        CASE AllTrim( rejs->KOLUMNA ) == '7'
+                           repl_( 'ryk09', ryk09 - rejs->netto )
+                        CASE AllTrim( rejs->KOLUMNA ) == '8'
+                           repl_( 'uslugi', uslugi - rejs->netto )
+                        CASE AllTrim( rejs->KOLUMNA ) == '9'
+                           repl_( 'ryk10', ryk10 - rejs->netto )
+                        CASE AllTrim( rejs->KOLUMNA ) == '10'
+                           repl_( 'wyr_tow', wyr_tow - rejs->netto )
+                        CASE AllTrim( rejs->KOLUMNA ) == '11'
+                           repl_( 'handel', handel - rejs->netto )
+                        CASE AllTrim( rejs->KOLUMNA ) == '12'
+                           repl_( 'ryk07', ryk07 - rejs->netto )
+                        CASE AllTrim( rejs->KOLUMNA ) == '13'
+                           repl_( 'ry10', ry10 - rejs->netto )
+                        ENDCASE
+                        DO CASE
+                        CASE AllTrim( rejs->KOLUMNA2 ) == '5'
+                           repl_( 'ry20', ry20 - rejs->netto2 )
+                        CASE AllTrim( rejs->KOLUMNA2 ) == '6'
+                           repl_( 'ry17', ry17 - rejs->netto2 )
+                        CASE AllTrim( rejs->KOLUMNA2 ) == '7'
+                           repl_( 'ryk09', ryk09 - rejs->netto2 )
+                        CASE AllTrim( rejs->KOLUMNA2 ) == '8'
+                           repl_( 'uslugi', uslugi - rejs->netto2 )
+                        CASE AllTrim( rejs->KOLUMNA2 ) == '9'
+                           repl_( 'ryk10', ryk10 - rejs->netto2 )
+                        CASE AllTrim( rejs->KOLUMNA2 ) == '10'
+                           repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
+                        CASE AllTrim( rejs->KOLUMNA2 ) == '11'
+                           repl_( 'handel', handel - rejs->netto2 )
+                        CASE AllTrim( rejs->KOLUMNA2 ) == '12'
+                           repl_( 'ryk07', ryk07 - rejs->netto2 )
+                        CASE AllTrim( rejs->KOLUMNA2 ) == '13'
+                           repl_( 'ry10', ry10 - rejs->netto2 )
+                        ENDCASE
+                        IF stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '11' .OR. AllTrim( rejs->KOLUMNA ) == '12' .OR. AllTrim( rejs->KOLUMNA ) == '13' )
+                           repl_( 'pozycje', pozycje - 1 )
+                        ENDIF
+                     ELSE
+                        DO CASE
+                        CASE Str( Val( rejs->KOLUMNA ), 1 ) $ '7'
+                           repl_( 'wyr_tow', wyr_tow - rejs->netto )
+                        CASE Str( val( rejs-> KOLUMNA ), 1 ) $ '8'
+                           repl_( 'uslugi', uslugi - rejs->netto )
+                        ENDCASE
+                        DO CASE
+                        CASE Str( Val( rejs->KOLUMNA2 ), 1 ) $ '7'
+                           repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
+                        CASE Str( val( rejs-> KOLUMNA2 ), 1 ) $ '8'
+                           repl_( 'uslugi', uslugi - rejs->netto2 )
+                        ENDCASE
                      ENDIF
-                  ELSE
-                     DO CASE
-                     CASE Str( Val( rejs->KOLUMNA ), 1 ) $ '7'
-                        repl_( 'wyr_tow', wyr_tow - rejs->netto )
-                     CASE Str( val( rejs-> KOLUMNA ), 1 ) $ '8'
-                        repl_( 'uslugi', uslugi - rejs->netto )
-                     ENDCASE
-                     DO CASE
-                     CASE Str( Val( rejs->KOLUMNA2 ), 1 ) $ '7'
-                        repl_( 'wyr_tow', wyr_tow - rejs->netto2 )
-                     CASE Str( val( rejs-> KOLUMNA2 ), 1 ) $ '8'
-                        repl_( 'uslugi', uslugi - rejs->netto2 )
-                     ENDCASE
                   ENDIF
+                  COMMIT
+                  UNLOCK
+                  SEEK '+' + ident_fir + miesiac
                ENDIF
-               COMMIT
-               UNLOCK
-
                ************* ZAPIS REJESTRU DO KSIEGI *******************
                SELECT 5
                IF zRYCZALT == 'T'
@@ -1573,10 +1611,11 @@ PROCEDURE say1s()
    @ 19, 31 SAY VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
    @ 19, 48 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW + WART08 + VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
    @ 20, 48 SAY VATMARZA PICTURE RPIC
-   @ 21, 14 SAY NETTO PICTURE RPIC
-   @ 21, 41 SAY KOLUMNA PICTURE '99'
-   @ 21, 51 SAY NETTO2 PICTURE RPIC
-   @ 21, 77 SAY KOLUMNA2 PICTURE '99'
+   @ 21, 14 SAY DATAKS PICTURE '@D'
+   @ 21, 29 SAY NETTO PICTURE RPIC
+   @ 21, 47 SAY KOLUMNA PICTURE '99'
+   @ 21, 55 SAY NETTO2 PICTURE RPIC
+   @ 21, 73 SAY KOLUMNA2 PICTURE '99'
 
    *@ 22, 0 say 'Kontrola zaplat....  .................. (..........) ..............             '
    @ 22, 16 SAY ROZRZAPS + iif( ROZRZAPS == 'T', 'ak', 'ie' )
@@ -1953,6 +1992,16 @@ FUNCTION V1_21s() // ta funkcja nic nie robi
 ***************************************************
 FUNCTION v1_6s()
 ***************************************************
+
+   IF ins
+      IF paraDATAKS == 'W'
+         zDATAKS := CToD( param_rok + '.' + miesiac + '.' + zDZIEN )
+      ELSE
+         zDATAKS := zDATAS
+      ENDIF
+      @ 21, 14 SAY zDATAKS PICTURE '@D'
+   ENDIF
+
    sprawdzVAT( 10, zDATAS )
    @ 12, 8 SAY Str( vat_A, 2 )
    @ 13, 8 SAY Str( vat_B, 2 )
@@ -2367,7 +2416,8 @@ FUNCTION krejsRysujTlo()
    @ 18, 0 SAY '        NP                                                                      '
    @ 19, 0 SAY '      RAZEM                                                                     '
    @ 20, 0 SAY '              **************     Sprzeda¾ mar¾a                                 '
-   @ 21, 0 SAY 'Zaksi©gowa†                  zˆ. do kol.     |                   zˆ. do kol.    '
+   //@ 21, 0 SAY 'Zaksi©gowa†                  zˆ. do kol.     |                   zˆ. do kol.    '
+   @ 21, 0 SAY 'Do ks.: dzien             kw.              Kol.   | kw.              Kol.       '
    @ 22, 0 SAY 'Kontrola zaplat....  Termin zaplaty.... (..........) Juz zaplacono.             '
    @ 23, 0 SAY '                                                                                '
    RETURN NIL
@@ -2849,28 +2899,43 @@ PROCEDURE KRejS_Ksieguj()
       COMMIT
       UNLOCK
    ENDIF
+   IF ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
+   ENDIF
    SELECT suma_mc
-   IF ! ins .AND. Left( rejs->numer, 1 ) # Chr( 1 ) .AND. Left( rejs->numer, 1 ) # Chr( 254 )
+   IF ! ins .AND. ! Empty( rejs->DATAKS ) .AND. Year( rejs->DATAKS ) == Val( param_rok ) .AND. Left( rejs->numer, 1 ) # Chr( 1 ) .AND. Left( rejs->numer, 1 ) # Chr( 254 )
+      SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 )
       BlokadaR()
       AktKol( -1, rejs->KOLUMNA, netprzed )
       AktKol( -1, rejs->KOLUMNA2, netprzed2 )
    ENDIF
-   IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
+   IF ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok ) .AND. RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
+      SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
       BlokadaR()
       AktKol( 1, zKOLUMNA, zNETTO )
       AktKol( 1, zKOLUMNA2, zNETTO2 )
    ENDIF
    COMMIT
    UNLOCK
+   SEEK '+' + ident_fir + miesiac
    SELECT rejs
+   IF ! ins
+      zDATAKS_OLD := DATAKS
+   ELSE
+      zDATAKS_OLD := zDATAKS
+   ENDIF
+   IF Empty( zMC )
+      zMC := miesiac
+   ENDIF
    IfIns( 0 )
    BlokadaR()
    ADDPOZ
    *WAIT zsek_cv7
    ADDREJS
+   rejs->mc := zMC
    IF ins
       rejs->ksgzbior := pzparam_ksws
    ENDIF
+
    COMMIT
    UNLOCK
    REKZAK := RecNo()
@@ -2957,11 +3022,14 @@ PROCEDURE KRejS_Ksieguj()
                      DELETE
                      COMMIT
                      UNLOCK
-                     SELECT suma_mc
-                     BlokadaR()
-                     repl_( 'pozycje', pozycje - 1 )
-                     COMMIT
-                     UNLOCK
+                     IF ! Empty( zDATAKS_OLD ) .AND. Year( zDATAKS_OLD ) == Val( param_rok )
+                        SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 )
+                        SELECT suma_mc
+                        BlokadaR()
+                        repl_( 'pozycje', pozycje - 1 )
+                        COMMIT
+                        UNLOCK
+                     ENDIF
                      SELECT &USEBAZ
                      SET ORDER TO 1
                      *********************** lp
@@ -2989,7 +3057,9 @@ PROCEDURE KRejS_Ksieguj()
                      *******************************
                   ELSE
                      BlokadaR()
-                     repl_( 'DZIEN', zdzien )
+                     //repl_( 'DZIEN', zdzien )
+                     repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
+                     repl_( 'MC', Str( Month( zDATAKS ), 2 ) )
                      repl_( 'DATAPRZY', zdatas )
                      repl_( 'NUMER', 'RS-' + znumer )
                      repl_( 'TRESC', zTRESC )
@@ -3038,8 +3108,9 @@ PROCEDURE KRejS_Ksieguj()
                ENDIF
             CASE netprzed == 0
                *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-               IF zNETTO <> 0
+               IF zNETTO <> 0 .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
                   SELECT suma_mc
+                  SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                   BlokadaR()
                   repl_( 'pozycje', pozycje + 1 )
                   COMMIT
@@ -3048,7 +3119,9 @@ PROCEDURE KRejS_Ksieguj()
                   SET ORDER TO 1
                   app()
                   ADDDOC
-                  repl_( 'DZIEN', zdzien )
+                  //repl_( 'DZIEN', zdzien )
+                  repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
+                  repl_( 'MC', Str( Month( zDATAKS ), 2 ) )
                   repl_( 'DATAPRZY', zdatas )
                   REPLACE NUMER WITH 'RS-' + zNUMER
                   repl_( 'TRESC', zTRESC )
@@ -3102,13 +3175,14 @@ PROCEDURE KRejS_Ksieguj()
                         Czekaj()
                         rec := RecNo()
                         SKIP -1
-                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                        //IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( zDATAKS ), 2 ), .F. )
                            zlp := liczba
                         ELSE
                            zlp := lp + 1
                         ENDIF
                         GO rec
-                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
                            repl_( 'lp', zlp )
                            zlp := zlp + 1
                            SKIP
@@ -3142,6 +3216,7 @@ PROCEDURE KRejS_Ksieguj()
                         COMMIT
                         UNLOCK
                         SELECT suma_mc
+                        SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                         BlokadaR()
                         repl_( 'pozycje', pozycje - 1 )
                         COMMIT
@@ -3150,14 +3225,14 @@ PROCEDURE KRejS_Ksieguj()
                         SET ORDER TO 1
                         *********************** lp
                         IF nr_uzytk >= 0
-                           IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
                               IF param_kslp == '3'
                                  SET ORDER TO 4
                               ENDIF
                               Blokada()
                               Czekaj()
                               rec := RecNo()
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
                                  repl_( 'lp', lp - 1 )
                                  SKIP
                               ENDDO
@@ -3173,7 +3248,9 @@ PROCEDURE KRejS_Ksieguj()
                         *******************************
                      ELSE
                         BlokadaR()
-                        repl_( 'DZIEN', zdzien )
+                        //repl_( 'DZIEN', zdzien )
+                        repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
+                        repl_( 'MC', Str( Month( zDATAKS ), 2 ) )
                         //repl_( 'DATAPRZY', zdatas )
                         repl_( 'NUMER', 'RS-' + znumer )
                         repl_( 'TRESC', zTRESC )
@@ -3198,8 +3275,9 @@ PROCEDURE KRejS_Ksieguj()
                   ENDIF
                CASE netprzed == 0
                   *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                  IF zNETTO <> 0
+                  IF zNETTO <> 0 .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
                      SELECT suma_mc
+                     SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                      BlokadaR()
                      repl_( 'pozycje', pozycje + 1 )
                      COMMIT
@@ -3208,7 +3286,9 @@ PROCEDURE KRejS_Ksieguj()
                      SET ORDER TO 1
                      app()
                      ADDDOC
-                     repl_( 'DZIEN', zdzien )
+                     //repl_( 'DZIEN', zdzien )
+                     repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
+                     repl_( 'MC', Str( Month( zDATAKS ), 2 ) )
                      //repl_( 'DATAPRZY', zdatas )
                      REPLACE NUMER WITH 'RS-' + zNUMER
                      repl_( 'TRESC', zTRESC )
@@ -3236,13 +3316,13 @@ PROCEDURE KRejS_Ksieguj()
                            Czekaj()
                            rec := RecNo()
                            SKIP -1
-                           IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                           IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( zDATAKS ), 2 ), .F. )
                               zlp := liczba
                            ELSE
                               zlp := lp + 1
                            ENDIF
                            GO rec
-                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
                               repl_( 'lp', zlp )
                               zlp := zlp + 1
                               SKIP
@@ -3400,8 +3480,9 @@ PROCEDURE KRejS_Ksieguj()
       IF zRYCZALT == 'T'
          IF ( AllTrim( zKOLUMNA ) $ '56789' .OR. AllTrim( zKOLUMNA ) == '10' .OR. AllTrim( zKOLUMNA ) == '11' .OR. AllTrim( zKOLUMNA ) == '12' .OR. AllTrim( zKOLUMNA ) == '13' ) .OR. ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. AllTrim( zKOLUMNA2 ) == '10' .OR. AllTrim( zKOLUMNA2 ) == '11' .OR. AllTrim( zKOLUMNA2 ) == '12' .OR. AllTrim( zKOLUMNA2 ) == '13' )
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-            IF zNETTO <> 0
+            IF zNETTO <> 0 .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
                SELECT suma_mc
+               SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                BlokadaR()
                repl_( 'pozycje', pozycje+1)
                COMMIT
@@ -3410,7 +3491,9 @@ PROCEDURE KRejS_Ksieguj()
                set orde to 1
                app()
                adddoc
-               repl_( 'DZIEN', zdzien )
+               //repl_( 'DZIEN', zdzien )
+               repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
+               repl_( 'MC', Str( Month( zDATAKS ), 2 ) )
                repl_( 'DATAPRZY', zdatas )
                repl_( 'NUMER', 'RS-' + ZNUMER)
                repl_( 'TRESC', zTRESC )
@@ -3464,13 +3547,13 @@ PROCEDURE KRejS_Ksieguj()
                      Czekaj()
                      rec := RecNo()
                      SKIP -1
-                     IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                     IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( zDATAKS ), 2 ), .F. )
                         zlp := liczba
                      ELSE
                         zlp := lp + 1
                      ENDIF
                      GO rec
-                     DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                     DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
                         repl_( 'lp', zlp )
                         zlp := zlp + 1
                         SKIP
@@ -3494,8 +3577,9 @@ PROCEDURE KRejS_Ksieguj()
       IF pzparam_ksws == 'N'
          IF ( lDodajDokOper .OR. ins ) .AND. AllTrim( zKOLUMNA ) $ '78' .OR. AllTrim( zKOLUMNA2 ) $ '78'
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-            IF zNETTO + zNETTO2 <> 0
+            IF zNETTO + zNETTO2 <> 0 .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
                SELECT suma_mc
+               SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                BlokadaR()
                repl_( 'pozycje', pozycje+1)
                COMMIT
@@ -3504,8 +3588,9 @@ PROCEDURE KRejS_Ksieguj()
                set orde to 1
                app()
                adddoc
-
-               repl_( 'DZIEN', zdzien )
+               //repl_( 'DZIEN', zdzien )
+               repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
+               repl_( 'MC', Str( Month( zDATAKS ), 2 ) )
                //repl_( 'DATAPRZY', zdatas )
                repl_( 'NUMER', 'RS-' + ZNUMER)
                repl_( 'TRESC', zTRESC )
@@ -3533,13 +3618,13 @@ PROCEDURE KRejS_Ksieguj()
                      Czekaj()
                      rec := RecNo()
                      SKIP -1
-                     IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                     IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( zDATAKS ), 2 ), .F. )
                         zlp := liczba
                      ELSE
                         zlp := lp + 1
                      ENDIF
                      GO rec
-                     DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                     DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
                         repl_( 'lp', zlp )
                         zlp := zlp + 1
                         SKIP
@@ -3776,7 +3861,11 @@ FUNCTION RejS_PobierzDok()
       'PROCEDUR' => PROCEDUR, ;
       'RODZDOW' => RODZDOW, ;
       'VATMARZA' => VATMARZA, ;
-      'DATA_ZAP' => DATA_ZAP }
+      'DATA_ZAP' => DATA_ZAP, ;
+      'KSEFSTAT' => KSEFSTAT, ;
+      'NRKSEF' => NRKSEF, ;
+      'KOSID' => KOSID, ;
+      'DATAKS' => DATAKS }
 
    RETURN aBufRec
 

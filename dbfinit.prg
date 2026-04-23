@@ -1187,7 +1187,8 @@ public aREJSdbf := {;
    { "KOL360", "N", 11, 2 },;                     //  59 Wysoko˜† podatku od niezwr¢conej kaucji pobranej za produkty w opakowaniach na napoje obj©te systemem kaucyjnym, podlegaj¥ca wpˆacie przez podmiot reprezentuj¥cy, o kt¢rym mowa w art. 17b ustawy
    { "KSEFSTAT", "C", 1, 0 },;                    //  60 Status KSeF (jesli brak nr ksef) O - Offline, B - faktura poza KSeF, D - inny dowod niz faktura
    { "NRKSEF", "C", 35, 0 },;                     //  61 Nr KSeF dokumentu
-   { "KOSID", "N", 12, 0 } }                      //  62 Nr ID dokumentu w GM Kos
+   { "KOSID", "N", 12, 0 },;                      //  62 Nr ID dokumentu w GM Kos
+   { "DATAKS", "D", 8, 0 } }                      //  63 Data do ksiegi
 
 // Create: REJZ.DBF
 public aREJZdbf := {;

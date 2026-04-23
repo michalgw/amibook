@@ -27,6 +27,7 @@ PROCEDURE Oper()
 
    LOCAL nLP1, nLP2, nPozDzien, nPozMiesiac, nMenu
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou, POZOBR
+   PRIVATE zMC
 
    POZOBR := .F.
    zexport := 'N'
@@ -214,6 +215,7 @@ PROCEDURE Oper()
     *                 zzaplata=zaplata
    *                 zkwota=kwota
             ENDIF
+            zMC := ''
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
             ColStd()
             @  3, 27 GET zDZIEN PICTURE "99" WHEN PolePaliwoStop() .AND. ( WERSJA4 == .T. .OR. ins ) VALID v1_1()
@@ -1414,6 +1416,9 @@ FUNCTION PolePaliwoLicz( nWartosc, nNetto, cVat, cRodzaj )
 
 PROCEDURE Oper_Ksieguj()
 
+   IF Empty( zMC )
+      zMC := miesiac
+   ENDIF
    znumer := dos_l( znumer )
    zdzien := Str( Val( zDZIEN ), 2 )
    *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
@@ -1434,6 +1439,10 @@ PROCEDURE Oper_Ksieguj()
    IF ! ins .AND. Left( oper->numer, 1 ) # Chr( 1 ) .AND. Left( oper->numer, 1 ) # Chr( 254 )
       SUMY-
    ENDIF
+   COMMIT
+   UNLOCK
+   SEEK '+' + ident_fir + zMC
+   BlokadaR()
    IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
       SUMY+
    ENDIF
@@ -1445,6 +1454,7 @@ PROCEDURE Oper_Ksieguj()
       COMMIT
       UNLOCK
    ENDIF
+   SEEK '+' + ident_fir + miesiac
 
    SELECT oper
 
@@ -1467,6 +1477,9 @@ PROCEDURE Oper_Ksieguj()
    ENDCASE
    BlokadaR()
    ADDPOZ
+   IF ins
+      oper->mc := zMC
+   ENDIF
    REPLACE WYR_TOW  WITH zWYR_TOW
    REPLACE USLUGI   WITH zUSLUGI
    REPLACE ZAKUP    WITH zZAKUP
@@ -1503,13 +1516,13 @@ PROCEDURE Oper_Ksieguj()
       ENDIF
       IF ins
          SKIP -1
-         IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+         IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # zMC, .F. )
             zlp := liczba
          ELSE
             zlp := lp+1
          ENDIF
          GO rec
-         DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+         DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == zMC, .T. )
             REPLACE lp WITH zlp
             zlp := zlp + 1
             SKIP
