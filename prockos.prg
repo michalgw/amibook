@@ -384,7 +384,7 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
    LOCAL aRes := {}, cStr
 
    AEval( aDane[ 'JPK' ][ 'Pozycje' ], { | aPoz |
-      LOCAL aPozDek, dDataS
+      LOCAL aPozDek, dDataS, dDataK, dDataR
       LOCAL cNip, cKraj := "PL"
       LOCAL cAdr
       aPoz[ 'Importuj' ] := .T.
@@ -392,9 +392,14 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
       dDataS := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
 
       aPozDek := hb_Hash()
+      dDataR := iif( KosEmptyDate( aPoz[ 'AmiP1RejData' ] ), dDataS, aPoz[ 'AmiP1RejData' ] )
+      dDataK := iif( KosEmptyDate( aPoz[ 'AmiP1KsgData' ] ), dDataS, aPoz[ 'AmiP1KsgData' ] )
+      aPozDek[ 'DataRej' ] := dDataR
+      aPozDek[ 'DataKsg' ] := dDataK
+
       aPozDek[ 'zsek_cv7' ] := '  '
-      aPozDek[ 'zdzien' ] := Str( Day( dDataS ), 2 )
-      aPozDek[ 'zmc' ] := Str( Month( dDataS ), 2 )
+      aPozDek[ 'zdzien' ] := Str( Day( dDataR ), 2 )
+      aPozDek[ 'zmc' ] := Str( Month( dDataR ), 2 )
       //aPozDek[ 'zdatatran' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
       aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
       aPozDek[ 'znumer' ] := aPoz[ 'P_2' ]
@@ -447,7 +452,7 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
       aPozDek[ 'zkorekta' ] := iif( AScan( { "KOR", "KOR_ZAL", "KOR_ROZ" }, aPoz[ 'RodzajFaktury' ] ) > 0, 'T', 'N' )
 
       aPozDek[ 'zkolumna' ] := iif( aPoz[ 'AmiP1KsgKol' ] > 0, Str( aPoz[ 'AmiP1KsgKol' ], 2 ), '  ' )
-      aPozDek[ 'zdataks' ] := dDataS
+      aPozDek[ 'zdataks' ] := dDataK
       aPozDek[ 'ztresc' ] := aPoz[ 'AmiP1Tresc' ]
       aPozDek[ 'zsymb_rej' ] := aPoz[ 'AmiP1RejSymbol' ]
 
@@ -477,16 +482,20 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
    //LOCAL cNipFir := TrimNip( aDane[ 'JPK' ][ 'Firma' ][ 'firma' ][ 'nip' ] )
 
    AEval( aDane[ 'JPK' ][ 'Pozycje' ], { | aPoz |
-      LOCAL aPozDek
+      LOCAL aPozDek, dDataK, dDataR
      // LOCAL cNip := HGetDefault( aPoz, 'P_5B', '' )
       LOCAL cKraj := "PL"
       aPoz[ 'Aktywny' ] := .T.
       aPoz[ 'Importuj' ] := .T.
       aPoz[ 'DataDok' ] := aPoz[ 'P_1' ]
       aPozDek := hb_Hash()
+      dDataR := iif( KosEmptyDate( aPoz[ 'AmiP2RejData' ] ), aPoz[ 'P_1' ], aPoz[ 'AmiP2RejData' ] )
+      aPozDek[ 'DataRej' ] := dDataR
+      dDataK := iif( KosEmptyDate( aPoz[ 'AmiP2KsgData' ] ), aPoz[ 'P_1' ], aPoz[ 'AmiP2KsgData' ] )
+      aPozDek[ 'DataKsg' ] := dDataK
       aPozDek[ 'zsek_cv7' ] := '  '
-      aPozDek[ 'zkolumna' ] := iif( aPoz[ 'AmiP2KsgKol' ] > 0, Str( aPoz[ 'AmiP2KsgKol' ], 2 ), '10' )
-      aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
+      aPozDek[ 'zkolumna' ] := iif( aPoz[ 'AmiP2KsgKol' ] > 0, Str( aPoz[ 'AmiP2KsgKol' ], 2 ), '  ' )
+      aPozDek[ 'zdzien' ] := Str( Day( dDataR ), 2 )
       //aPozDek[ 'zdatatran' ] := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
       aPozDek[ 'zdatatran' ] := aPoz[ 'P_1' ]
       aPozDek[ 'znumer' ] := HGetDefault( aPoz, 'P_2', '' )

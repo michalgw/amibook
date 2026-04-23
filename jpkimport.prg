@@ -2993,7 +2993,7 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
 
    AEval( aDane[ 'Dekret' ], { | aPoz |
 
-      LOCAL aIstniejacyRec, lIstnieje
+      LOCAL aIstniejacyRec, lIstnieje, nOPrzelV, nOPrzelB
       LOCAL lImportuj := JPKImp_VatZ_CzyImport( aDane, aPoz )
 
       IF lImportuj
@@ -3016,21 +3016,37 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zMCS := Str( Month( aPoz[ 'zdatas' ] ), 2 )
          zDZIENS := Str( Day( aPoz[ 'zdatas' ] ), 2 )
          zDATAS := aPoz[ 'zdatas' ]
-         zDATAKS := zDATAS
+         zDATAKS := iif( hb_HHasKey( aPoz, 'DataKsg' ), aPoz[ 'DataKsg' ], zDATAS )
          zDATATRAN := aPoz[ 'zdatatran' ]
          zKOLUMNA := iif( Empty( aPoz[ 'zkolumna' ] ), aDane[ 'Kolumna' ], aPoz[ 'zkolumna' ] )
          IF Empty( zKOLUMNA )
             zKOLUMNA := '10'
          ENDIF
          zuwagi := Space( 20 )
+
+         nOPrzelV := 1
+         nOPrzelB := 1
+         IF aPoz[ 'zopcje' ] $ '257P'
+            nOPrzelV := 0.5
+            DO CASE
+            CASE aPoz[ 'zopcje' ] == '2'
+               nOPrzelB := 0.2
+            CASE aPoz[ 'zopcje' ] == '5'
+               nOPrzelB := 0.5
+            CASE aPoz[ 'zopcje' ] == '7'
+               nOPrzelB := 0.75
+            CASE aPoz[ 'zopcje' ] == 'P'
+               nOPrzelB := 1
+            ENDCASE
+         ENDIF
          zWARTZW := aPoz[ 'zwartzw' ]
          zWART00 := aPoz[ 'zwart00' ]
          zWART02 := aPoz[ 'zwart02' ]
-         zVAT02 := aPoz[ 'zvat02' ]
+         zVAT02 := aPoz[ 'zvat02' ] * nOPrzelV
          zWART07 := aPoz[ 'zwart07' ]
-         zVAT07 := aPoz[ 'zvat07' ]
+         zVAT07 := aPoz[ 'zvat07' ] * nOPrzelV
          zWART22 := aPoz[ 'zwart22' ]
-         zVAT22 := aPoz[ 'zvat22' ]
+         zVAT22 := aPoz[ 'zvat22' ] * nOPrzelV
          zWART12 := 0
          zVAT12 := 0
          zBRUTZW := zWartZw
@@ -3039,7 +3055,10 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zBRUT07 := zWart07 + zVat07
          zBRUT22 := zWart22 + zVat22
          zBRUT12 := zWart12 + zVat12
-         zNETTO := _round( zWARTZW + zWART00 + zWART02 + zWART07 + zWART22 + zWART12, 2 )
+         zNETTO := _round( ( zWARTZW + zWART00 + zWART02 + zWART07 + zWART22 + zWART12 ) * nOPrzelB, 2 )
+         IF aPoz[ 'zopcje' ] $ '257P'
+            zNETTO := zNETTO + ( ( zVAT02 + zVAT07 + zVAT22 ) * nOPrzelB )
+         ENDIF
          zExPORT := aPoz[ 'zexport' ]
          zUE := aPoz[ 'zue' ]
          zKRAJ := aPoz[ 'zkraj' ]
