@@ -2882,7 +2882,15 @@ FUNCTION RejZ_PobierzDok()
       'KOLUMNA2' => KOLUMNA2, ;
       'DATATRAN' => DATATRAN, ;
       'RODZDOW' => RODZDOW, ;
-      'VATMARZA' => VATMARZA }
+      'VATMARZA' => VATMARZA,;
+      'IFT2' => IFT2,;
+      'IFT2SEK' => IFT2SEK,;
+      'IFT2KWOT' => IFT2KWOT,;
+      'SALPRGID' => SALPRGID,;
+      'SALSALID' => SALSALID,;
+      'KSEFSTAT' => KSEFSTAT,;
+      'NRKSEF' => NRKSEF,;
+      'KOSID' => KOSID }
 
    RETURN aBufRec
 
