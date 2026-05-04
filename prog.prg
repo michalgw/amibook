@@ -1133,6 +1133,7 @@ FUNCTION _()
    ColSta()
 
    ident_fir := Str( 0, 3 )
+   Firma_NIP := ''
 
    @  0, 0 SAY '                                                                                '
    @  1, 0 SAY status()
@@ -1186,8 +1187,6 @@ FUNCTION _()
 FUNCTION _a()
 
    MEMVAR aDomProfilDrukarki
-
-   Firma_NIP := ''
 
    // Kody sterujace drukarki
    IF aDomProfilDrukarki[ 'sterownik' ] == 'IBM'
