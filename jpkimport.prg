@@ -3771,7 +3771,7 @@ PROCEDURE JPKImp_VatS( nCelImportu, lZKos )
                @  9, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
             ENDIF
             @ 10, 17 SAY "Do rejestru na dzieä (S-sprzed., W-wystaw., K-KSeF)" GET cDataRej PICTURE "!" VALID cDataRej $ 'KSW'
-            @ 11, 17 SAY "Do ksi©gi na dzieä (S-sprzed., W-wystaw., K-KSeF)" GET cDataRej PICTURE "!" VALID cDataRej $ 'KSW'
+            @ 11, 17 SAY "Do ksi©gi na dzieä (S-sprzed., W-wystaw., K-KSeF)" GET cDataKsg PICTURE "!" VALID cDataKsg $ 'KSW'
             @ 12, 17 SAY "Oznaczenie dot. dostawy i ˜wiadczenia usˆug" GET zOpcje PICTURE '!!' WHEN nCelImportu == 1 .AND. KRejSWhOpcje() VALID KRejSVaOpcje()
             @ 13, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN nCelImportu == 1 .AND. KRejSWhProcedur() VALID KRejSVaProcedur()
             @ 14, 17 SAY "Rodzaj dowodu sprzeda¾y" GET zRodzDow PICTURE '!!!' WHEN nCelImportu == 1 .AND. KRejSWRodzDow() VALID KRejSVRodzDow()
