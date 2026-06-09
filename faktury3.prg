@@ -427,7 +427,7 @@ PROCEDURE Faktury3()
                kom( 3, '*u', ' Miesi&_a.c jest zamkni&_e.ty ' )
                BREAK
             ENDIF
-            IF ! ins .AND. ( ! Empty( faktury->ksefnrksef ) .OR. ( ! Empty( faktury->ksefnrses ) .AND. faktury->ksefstatus < 400 ) )
+            IF ! Empty( faktury->ksefnrksef ) .OR. ( ! Empty( faktury->ksefnrses ) .AND. faktury->ksefstatus < 400 )
                Komun( 'Nie mo¾na usun¥†. Faktura zostaˆa wysˆana do KSeF.' )
                BREAK
             ENDIF

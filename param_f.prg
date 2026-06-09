@@ -544,15 +544,15 @@ return .t.
 ***************************************************
 func wVATFORDR
 ColInf()
-@ 24,0 say padc('Wpisz "7 " - VAT-7, "7K" - VAT-7K, "8 " - VAT-8 lub "9M" - VAT-9M',80,' ')
+@ 24,0 say padc('Wpisz "7 " - VAT-7, "7K" - VAT-7K, "8 " - VAT-8 lub "9M" - VAT-9M, "12" - VAT-12',80,' ')
 ColStd()
 return .t.
 ***************************************************
 func vVATFORDR
 R=.t.
-if zVATFORDR<>'7 '.and.zVATFORDR<>'7K'.and.zVATFORDR<>'8 '.and.zVATFORDR<>'9M'
+if zVATFORDR<>'7 '.and.zVATFORDR<>'7K'.and.zVATFORDR<>'8 '.and.zVATFORDR<>'9M'.and.zVATFORDR<>'12'
    ColInf()
-   @ 24,0 say padc('Wpisz "7 " - VAT-7, "7K" - VAT-7K, "8 " - VAT-8 lub "9M" - VAT-9M',80,' ')
+   @ 24,0 say padc('Wpisz "7 " - VAT-7, "7K" - VAT-7K, "8 " - VAT-8 lub "9M" - VAT-9M, "12" - VAT-12',80,' ')
    ColStd()
    R=.f.
 else

@@ -87,6 +87,7 @@ PROCEDURE Suma_McRTekst()
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
       SELECT firma
       k1 := AllTrim( nazwa )
+      fnip := AllTrim( nip )
       kk1 := scal( miejsc + ' ul.' + ulica + ' ' + nr_domu + iif( Empty( nr_mieszk ), ' ', '/' ) + nr_mieszk )
       SELECT suma_mc
       *k1=k1+space(80-len(k1))
@@ -108,7 +109,7 @@ PROCEDURE Suma_McRTekst()
       k12opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ork07, 1, 12 ) ) ) + ')', 14 )
       k13opis := PadC( '(' + Lower( AllTrim( SubStr( staw_ory10, 1, 12 ) ) ) + ')', 14 )
 
-      mon_drk( '          ' + k1 )
+      mon_drk( '          ' + k1 + iif( ! Empty( fnip ), ', NIP: ' + fnip, '' ) )
       mon_drk( '          ' + kk1 )
       mon_drk( '         ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿' )
       mon_drk( ' Rok     ³                               Kwota przychodu opodatkowanego wg stawki                                 ³    Og¢ˆem    ³' )
@@ -201,7 +202,7 @@ PROCEDURE Suma_McRGraf()
       ENDIF
 
       SELECT firma
-      aDane[ 'firma' ] := AllTrim( nazwa )
+      aDane[ 'firma' ] := AllTrim( nazwa ) + ', NIP: ' + AllTrim( nip )
       aDane[ 'adres' ] := scal( miejsc + ' ul.' + ulica + ' ' + nr_domu + iif( Empty( nr_mieszk ), ' ', '/' ) + nr_mieszk )
       aDane[ 'rok' ] := param_rok
       SELECT suma_mc

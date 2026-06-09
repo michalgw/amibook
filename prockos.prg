@@ -329,6 +329,7 @@ FUNCTION KosImp_Wczytaj( nRodzaj )
                aPoz[ 'TP' ] := oDokFa:TP
                aPoz[ 'KosGTU' ] := oDokFa:KosGTU
                aPoz[ 'KosProcedura' ] := oDokFa:KosProcedura
+               aPoz[ 'DataKSeF' ] := oDokFa:DataKSeF
                aPoz[ 'AmiP1KsgKol' ] := oDokFa:AmiP1KsgKol
                aPoz[ 'AmiP1KsgData' ] := oDokFa:AmiP1KsgData
                aPoz[ 'AmiP1Tresc' ] := oDokFa:AmiP1Tresc
@@ -379,9 +380,11 @@ PROCEDURE KosCzekaj()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION KosImp_VatS_Dekretuj( aDane )
+FUNCTION KosImp_VatS_Dekretuj( aDane, lRycz )
 
    LOCAL aRes := {}, cStr
+
+   hb_default( @lRycz, .F. )
 
    AEval( aDane[ 'JPK' ][ 'Pozycje' ], { | aPoz |
       LOCAL aPozDek, dDataS, dDataK, dDataR
@@ -389,11 +392,21 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
       LOCAL cAdr
       aPoz[ 'Importuj' ] := .T.
 
-      dDataS := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      IF aPoz[ 'P_15' ] < 0
+         dDataS := aPoz[ 'P_1' ]
+      ELSE
+         dDataS := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      ENDIF
 
       aPozDek := hb_Hash()
       dDataR := iif( KosEmptyDate( aPoz[ 'AmiP1RejData' ] ), dDataS, aPoz[ 'AmiP1RejData' ] )
       dDataK := iif( KosEmptyDate( aPoz[ 'AmiP1KsgData' ] ), dDataS, aPoz[ 'AmiP1KsgData' ] )
+      aPozDek[ 'AmiRejData' ] := aPoz[ 'AmiP1RejData' ]
+      aPozDek[ 'AmiKsgData' ] := aPoz[ 'AmiP1KsgData' ]
+      aPozDek[ 'DataWystawienia' ] := aPoz[ 'P_1' ]
+      aPozDek[ 'DataSprzedazy' ] := dDataS
+      aPozDek[ 'DataKSeF' ] := aPoz[ 'DataKSeF' ]
+
       aPozDek[ 'DataRej' ] := dDataR
       aPozDek[ 'DataKsg' ] := dDataK
 
@@ -424,8 +437,6 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
          aPozDek[ 'zexport' ] := 'T'
       ENDIF
 
-
-
       aPozDek[ 'zwart02' ] := HGetDefault( aPoz, 'P_13_3', 0 )
       aPozDek[ 'zvat02' ] := HGetDefault( aPoz, 'P_14_3', 0 )
 
@@ -437,6 +448,13 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
 
       aPozDek[ 'zwart08' ] := HGetDefault( aPoz, 'P_13_5', 0 )
       aPozDek[ 'zwart00' ] := HGetDefault( aPoz, 'P_13_6_1', 0 ) + HGetDefault( aPoz, 'P_13_6_2', 0 ) + HGetDefault( aPoz, 'P_13_6_3', 0 )
+
+      aPozDek[ 'zwart12' ] := HGetDefault( aPoz, 'P_13_4', 0 )
+      aPozDek[ 'zvat12' ] := HGetDefault( aPoz, 'P_14_4', 0 )
+
+      IF lRycz
+         aPozDek[ 'zwart00' ] := aPozDek[ 'zwart00' ] + HGetDefault( aPoz, 'P_13_7', 0 )
+      ENDIF
 
       IF aPoz[ 'P_18' ]
          //aPozDek[ 'zwart08' ] := HGetDefault( aPoz, 'P_13_6', 0 ) + HGetDefault( aPoz, 'P_13_4', 0 )
@@ -466,6 +484,8 @@ FUNCTION KosImp_VatS_Dekretuj( aDane )
       aPozDek[ 'NrKSeF' ] := aPoz[ 'NrKSeF' ]
       aPozDek[ 'KSeFStat' ] := ' '
 
+      aPozDek[ 'P_15' ] := aPoz[ 'P_15' ]
+
       aPozDek[ 'FakturaPoz' ] := aPoz
 
       AAdd( aRes, aPozDek )
@@ -482,16 +502,23 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
    //LOCAL cNipFir := TrimNip( aDane[ 'JPK' ][ 'Firma' ][ 'firma' ][ 'nip' ] )
 
    AEval( aDane[ 'JPK' ][ 'Pozycje' ], { | aPoz |
-      LOCAL aPozDek, dDataK, dDataR
+      LOCAL aPozDek, dDataK, dDataR, dDataS
      // LOCAL cNip := HGetDefault( aPoz, 'P_5B', '' )
       LOCAL cKraj := "PL"
       aPoz[ 'Aktywny' ] := .T.
       aPoz[ 'Importuj' ] := .T.
-      aPoz[ 'DataDok' ] := aPoz[ 'P_1' ]
+      //aPoz[ 'DataDok' ] := aPoz[ 'P_1' ]
+      aPoz[ 'DataDok' ] := aPoz[ 'DataKSeF' ]
       aPozDek := hb_Hash()
-      dDataR := iif( KosEmptyDate( aPoz[ 'AmiP2RejData' ] ), aPoz[ 'P_1' ], aPoz[ 'AmiP2RejData' ] )
+      dDataS := iif( KosEmptyDate( aPoz[ 'P_6' ] ), aPoz[ 'P_1' ], aPoz[ 'P_6' ] )
+      dDataR := iif( KosEmptyDate( aPoz[ 'AmiP2RejData' ] ), aPoz[ 'DataKSeF' ], aPoz[ 'AmiP2RejData' ] )
       aPozDek[ 'DataRej' ] := dDataR
-      dDataK := iif( KosEmptyDate( aPoz[ 'AmiP2KsgData' ] ), aPoz[ 'P_1' ], aPoz[ 'AmiP2KsgData' ] )
+      dDataK := iif( KosEmptyDate( aPoz[ 'AmiP2KsgData' ] ), dDataS, aPoz[ 'AmiP2KsgData' ] )
+      aPozDek[ 'AmiRejData' ] := aPoz[ 'AmiP2RejData' ]
+      aPozDek[ 'AmiKsgData' ] := aPoz[ 'AmiP2KsgData' ]
+      aPozDek[ 'DataWystawienia' ] := aPoz[ 'P_1' ]
+      aPozDek[ 'DataSprzedazy' ] := dDataS
+      aPozDek[ 'DataKSeF' ] := aPoz[ 'DataKSeF' ]
       aPozDek[ 'DataKsg' ] := dDataK
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zkolumna' ] := iif( aPoz[ 'AmiP2KsgKol' ] > 0, Str( aPoz[ 'AmiP2KsgKol' ], 2 ), '  ' )
@@ -528,8 +555,10 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
       aPozDek[ 'zvat07' ] := HGetDefault( aPoz, 'P_14_2', 0 )
       aPozDek[ 'zwart22' ] := HGetDefault( aPoz, 'P_13_1', 0 )
       aPozDek[ 'zvat22' ] := HGetDefault( aPoz, 'P_14_1', 0 )
-      aPozDek[ 'zwart12' ] := 0
-      aPozDek[ 'zvat12' ] := 0
+      aPozDek[ 'zwart12' ] := HGetDefault( aPoz, 'P_13_4', 0 )
+      aPozDek[ 'zvat12' ] := HGetDefault( aPoz, 'P_14_4', 0 )
+      //aPozDek[ 'zwart12' ] := 0
+      //aPozDek[ 'zvat12' ] := 0
       aPozDek[ 'zwart08' ] := 0
       aPozDek[ 'zvat108' ] := 0
       aPozDek[ 'zbrut02' ] := 0
@@ -586,7 +615,7 @@ FUNCTION KosImp_VatZ_Dekretuj( aDane )
 
 FUNCTION KosEmptyDate( dDate )
 
-   RETURN ! HB_ISDATE( dDate ) .OR. dDate < 0d19900101
+   RETURN ! ( ( HB_ISDATE( dDate ) .OR. HB_ISDATETIME( dDate ) ) .AND. dDate >= hb_Date( 1990, 1, 1 ) )
 
 /*----------------------------------------------------------------------*/
 
@@ -721,6 +750,23 @@ FUNCTION KosSprawdzStatusFA( cNrRefSesji, cNrRefFA )
    @ 24, 0
 
    RETURN oStatus
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION NrKSeFData( cNrKSeF )
+
+   LOCAL nR, nM, nD, dRes
+
+   IF Len( cNrKSeF ) == 35
+      nR := Val( SubStr( cNrKSeF, 12, 4 ) )
+      nM := Val( SubStr( cNrKSeF, 16, 2 ) )
+      nD := Val( SubStr( cNrKSeF, 18, 2 ) )
+      IF nR > 0 .AND. nM > 0 .AND. nD > 0
+         dRes := hb_Date( nR, nM, nD )
+      ENDIF
+   ENDIF
+
+   RETURN dRes
 
 /*----------------------------------------------------------------------*/
 

@@ -1640,6 +1640,13 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
             aPoz[ 'Importuj' ] := .F.
          ENDIF
          aPozDek := hb_Hash()
+
+         aPozDek[ 'AmiRejData' ] := NIL
+         aPozDek[ 'AmiKsgData' ] := NIL
+         aPozDek[ 'DataWystawienia' ] := aPoz[ 'P_1' ]
+         aPozDek[ 'DataSprzedazy' ] := HGetDefault( aPoz, 'P_6', aPoz[ 'P_1' ] )
+         aPozDek[ 'DataKSeF' ] := NIL
+
          aPozDek[ 'zsek_cv7' ] := '  '
          aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
          aPozDek[ 'zmc' ] := ''
@@ -1701,6 +1708,8 @@ PROCEDURE JPKImp_VatS_Dekretuj_FA( aDane )
 
          aPozDek[ 'NrKSeF' ] := ''
          aPozDek[ 'KSeFStat' ] := ''
+
+         aPozDek[ 'P_15' ] := HGetDefault( aPoz, 'P_15', 0 )
 
          aPozDek[ 'FakturaPoz' ] := aPoz
 
@@ -1815,6 +1824,13 @@ PROCEDURE JPKImp_VatZ_Dekretuj_FA( aDane )
          ENDIF
          aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
          aPozDek := hb_Hash()
+
+         aPozDek[ 'AmiRejData' ] := NIL
+         aPozDek[ 'AmiKsgData' ] := NIL
+         aPozDek[ 'DataWystawienia' ] := aPoz[ 'P_1' ]
+         aPozDek[ 'DataSprzedazy' ] := HGetDefault( aPoz, 'P_6', aPoz[ 'P_1' ] )
+         aPozDek[ 'DataKSeF' ] := NIL
+
          aPozDek[ 'zsek_cv7' ] := '  '
          aPozDek[ 'zkolumna' ] := '  '
          aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'P_1' ] ), 2 )
@@ -1923,6 +1939,13 @@ PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
       ENDIF
 
       aPozDek := hb_Hash()
+
+      aPozDek[ 'AmiRejData' ] := NIL
+      aPozDek[ 'AmiKsgData' ] := NIL
+      aPozDek[ 'DataWystawienia' ] := aPoz[ 'DataWystawienia' ]
+      aPozDek[ 'DataSprzedazy' ] := aPoz[ 'DataSprzedazy' ]
+      aPozDek[ 'DataKSeF' ] := NIL
+
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
       aPozDek[ 'zmc' ] := ''
@@ -1989,6 +2012,8 @@ PROCEDURE JPKImp_VatS_Dekretuj_VAT( aDane )
       aPozDek[ 'NrKSeF' ] := ''
       aPozDek[ 'KSeFStat' ] := ''
 
+      aPozDek[ 'P_15' ] := 0
+
       aPozDek[ 'SprzedazPoz' ] := aPoz
 
       AAdd( aRes, aPozDek )
@@ -2023,6 +2048,13 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
       ENDIF
       aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
       aPozDek := hb_Hash()
+
+      aPozDek[ 'AmiRejData' ] := NIL
+      aPozDek[ 'AmiKsgData' ] := NIL
+      aPozDek[ 'DataWystawienia' ] := aPoz[ 'DataWystawienia' ]
+      aPozDek[ 'DataSprzedazy' ] := aPoz[ 'DataSprzedazy' ]
+      aPozDek[ 'DataKSeF' ] := NIL
+
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zkolumna' ] := '  '
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
@@ -2226,6 +2258,9 @@ PROCEDURE JPKImp_VatZ_Dekretuj_VAT( aDane )
       ENDIF
 
       aPozDek[ 'znetto' ] := nWNetto
+      aPozDek[ 'ztresc' ] := ''
+      aPozDek[ 'zsymb_rej' ] := '  '
+      aPozDek[ 'zopcje' ] := ' '
 
       aPozDek[ 'SierTrwaly' ] := lSierTrwaly
       aPozDek[ 'UwagaVat' ] := nRodzajVat == 0
@@ -2282,6 +2317,13 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
 */
 
       aPozDek := hb_Hash()
+
+      aPozDek[ 'AmiRejData' ] := NIL
+      aPozDek[ 'AmiKsgData' ] := NIL
+      aPozDek[ 'DataWystawienia' ] := aPoz[ 'DataWystawienia' ]
+      aPozDek[ 'DataSprzedazy' ] := aPoz[ 'DataSprzedazy' ]
+      aPozDek[ 'DataKSeF' ] := NrKSeFData( HGetDefault( aPoz, 'NrKSeF', '' ) )
+
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
       aPozDek[ 'zmc' ] := ''
@@ -2359,6 +2401,8 @@ PROCEDURE JPKImp_VatS_Dekretuj_V7( aDane )
       aPozDek[ 'NrKSeF' ] := HGetDefault( aPoz, 'NrKSeF', '' )
       aPozDek[ 'KSeFStat' ] := HGetDefault( aPoz, 'KSeFStat', '' )
 
+      aPozDek[ 'P_15' ] := 0
+
       AAdd( aRes, aPozDek )
 
    } )
@@ -2392,6 +2436,13 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
 
       aPoz[ 'DataDok' ] := aPoz[ 'DataWystawienia' ]
       aPozDek := hb_Hash()
+
+      aPozDek[ 'AmiRejData' ] := NIL
+      aPozDek[ 'AmiKsgData' ] := NIL
+      aPozDek[ 'DataWystawienia' ] := aPoz[ 'DataWystawienia' ]
+      aPozDek[ 'DataSprzedazy' ] := aPoz[ 'DataSprzedazy' ]
+      aPozDek[ 'DataKSeF' ] := NrKSeFData( HGetDefault( aPoz, 'NrKSeF', '' ) )
+
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zkolumna' ] := '  '
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
@@ -2511,6 +2562,13 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
 
       aPoz[ 'DataDok' ] := aPoz[ 'DataZakupu' ]
       aPozDek := hb_Hash()
+
+      aPozDek[ 'AmiRejData' ] := NIL
+      aPozDek[ 'AmiKsgData' ] := NIL
+      aPozDek[ 'DataWystawienia' ] := aPoz[ 'DataZakupu' ]
+      aPozDek[ 'DataSprzedazy' ] := aPoz[ 'DataWplywu' ]
+      aPozDek[ 'DataKSeF' ] := NrKSeFData( HGetDefault( aPoz, 'NrKSeF', '' ) )
+
       aPozDek[ 'zsek_cv7' ] := '  '
       aPozDek[ 'zkolumna' ] := '10'
       aPozDek[ 'zdzien' ] := Str( Day( aPoz[ 'DataZakupu' ] ), 2 )
@@ -2594,6 +2652,9 @@ PROCEDURE JPKImp_VatZ_Dekretuj_V7( aDane )
       ENDIF
 
       aPozDek[ 'znetto' ] := nWNetto
+      aPozDek[ 'ztresc' ] := ''
+      aPozDek[ 'zsymb_rej' ] := '  '
+      aPozDek[ 'zopcje' ] := ' '
 
       aPozDek[ 'SierTrwaly' ] := lSierTrwaly
       aPozDek[ 'UwagaVat' ] := nRodzajVat == 0
@@ -2664,12 +2725,31 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          @ 14, 17 SAY ProgressBar( nI, nIlosc, 46 )
          ins := .T.
 
+         /*
          IF aDane[ 'DataRej' ] == 'W'
             zDZIEN := aPoz[ 'zdzien' ]
          ELSE
             zDZIEN := Str( Day( aPoz[ 'zdatas' ] ), 2 )
          ENDIF
          zMC := aPoz[ 'zmc' ]
+         */
+         DO CASE
+         CASE ! KosEmptyDate( aPoz[ 'AmiRejData' ] )
+            zDZIEN := Str( Day( aPoz[ 'AmiRejData' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'AmiRejData' ] ), 2 )
+         CASE aDane[ 'DataRej' ] == 'W'
+            zDZIEN := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataWystawienia' ] ), 2 )
+         CASE aDane[ 'DataRej' ] == 'S' .OR. ( aDane[ 'DataRej' ] == 'K' .AND. KosEmptyDate( aPoz[ 'DataKSeF' ] ) )
+            zDZIEN := Str( Day( aPoz[ 'DataSprzedazy' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataSprzedazy' ] ), 2 )
+         CASE aDane[ 'DataRej' ] == 'K' .AND. ! KosEmptyDate( aPoz[ 'DataKSeF' ] )
+            zDZIEN := Str( Day( aPoz[ 'DataKSeF' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataKSeF' ] ), 2 )
+         OTHERWISE
+            zDZIEN := Str( Day( aPoz[ 'DataSprzedazy' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataSprzedazy' ] ), 2 )
+         ENDCASE
          znazwa := iif( Upper( AllTrim( aPoz[ 'znazwa' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'znazwa' ], 100 ) )
          zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
          zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 100 ) )
@@ -2681,7 +2761,19 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          zDATAS := aPoz[ 'zdatas' ]
          zDATATRAN := aPoz[ 'zdatatran' ]
          zKOLUMNA := iif( Empty( aPoz[ 'zkolumna' ] ), aDane[ 'KolRej' ], aPoz[ 'zkolumna' ] )
-         zDATAKS := aPoz[ 'zdataks' ]
+         DO CASE
+         CASE ! KosEmptyDate( aPoz[ 'AmiKsgData' ] )
+            zDATAKS := aPoz[ 'AmiKsgData' ]
+         CASE aDane[ 'DataKsg' ] == 'W'
+            zDATAKS := aPoz[ 'DataWystawienia' ]
+         CASE aDane[ 'DataKsg' ] == 'S' .OR. ( aDane[ 'DataKsg' ] == 'K' .AND. KosEmptyDate( aPoz[ 'DataKSeF' ] ) )
+            zDATAKS := aPoz[ 'DataSprzedazy' ]
+         CASE aDane[ 'DataKsg' ] == 'K' .AND. ! KosEmptyDate( aPoz[ 'DataKSeF' ] )
+            zDATAKS := aPoz[ 'DataKSeF' ]
+         OTHERWISE
+            zDATAKS := aPoz[ 'DataSprzedazy' ]
+         ENDCASE
+         //zDATAKS := aPoz[ 'zdataks' ]
          zuwagi := Space( 20 )
          zWARTZW := aPoz[ 'zwartzw' ]
          zWART08 := aPoz[ 'zwart08' ]
@@ -2718,7 +2810,7 @@ FUNCTION JPKImp_VatS_Importuj( aDane )
          ENDIF
          zUE := aPoz[ 'zue' ]
          zKRAJ := aPoz[ 'zkraj' ]
-         zSEK_CV7 := aPoz[ 'zsek_cv7' ]
+         zSEK_CV7 := iif( aDane[ 'IgnorujAd' ] == 'T', '  ', aPoz[ 'zsek_cv7' ] )
          zRACH := 'F'
          zDETAL := DETALISTA
          zKOREKTA :=  HGetDefault( aPoz, 'zkorekta', iif( zNETTO < 0, 'T', 'N' ) )
@@ -2805,6 +2897,7 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
          @ 14, 17 SAY ProgressBar( nI, nIlosc, 46 )
          ins := .T.
 
+         /*
          IF aDane[ 'DataRej' ] == 'W'
             zDZIEN := aPoz[ 'zdzien' ]
             zMC := aPoz[ 'zmc' ]
@@ -2812,6 +2905,25 @@ FUNCTION JPKImp_OperS_Importuj( aDane )
             zDZIEN := Str( Day( aPoz[ 'zdatas' ] ), 2 )
             zMC := Str( Month( aPoz[ 'zdatas' ] ), 2 )
          ENDIF
+         */
+         DO CASE
+         CASE ! KosEmptyDate( aPoz[ 'AmiKsgData' ] )
+            zDZIEN := Str( Day( aPoz[ 'AmiKsgData' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'AmiKsgData' ] ), 2 )
+         CASE aDane[ 'DataKsg' ] == 'W'
+            zDZIEN := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataWystawienia' ] ), 2 )
+         CASE aDane[ 'DataKsg' ] == 'S' .OR. ( aDane[ 'DataKsg' ] == 'K' .AND. KosEmptyDate( aPoz[ 'DataKSeF' ] ) )
+            zDZIEN := Str( Day( aPoz[ 'DataSprzedazy' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataSprzedazy' ] ), 2 )
+         CASE aDane[ 'DataKsg' ] == 'K' .AND. ! KosEmptyDate( aPoz[ 'DataKSeF' ] )
+            zDZIEN := Str( Day( aPoz[ 'DataKSeF' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataKSeF' ] ), 2 )
+         OTHERWISE
+            zDZIEN := Str( Day( aPoz[ 'DataSprzedazy' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataSprzedazy' ] ), 2 )
+         ENDCASE
+
          znazwa := iif( Upper( AllTrim( aPoz[ 'znazwa' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'znazwa' ], 100 ) )
          zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
          zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 100 ) )
@@ -2902,11 +3014,32 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
          @ 14, 17 SAY ProgressBar( nI, nIlosc, 46 )
          ins := .T.
 
+         /*
          IF aDane[ 'DataRej' ] == 'W'
             zDZIEN := aPoz[ 'zdzien' ]
          ELSE
             zDZIEN := Str( Day( aPoz[ 'zdatas' ] ), 2 )
          ENDIF
+         */
+
+         DO CASE
+         CASE ! KosEmptyDate( aPoz[ 'AmiKsgData' ] )
+            zDZIEN := Str( Day( aPoz[ 'AmiKsgData' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'AmiKsgData' ] ), 2 )
+         CASE aDane[ 'DataKsg' ] == 'W' .OR. ( aDane[ 'DataKsg' ] == 'K' .AND. KosEmptyDate( aPoz[ 'DataKSeF' ] ) )
+            zDZIEN := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataWystawienia' ] ), 2 )
+         CASE aDane[ 'DataKsg' ] == 'Z'
+            zDZIEN := Str( Day( aPoz[ 'DataSprzedazy' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataSprzedazy' ] ), 2 )
+         CASE aDane[ 'DataKsg' ] == 'K' .AND. ! KosEmptyDate( aPoz[ 'DataKSeF' ] )
+            zDZIEN := Str( Day( aPoz[ 'DataKSeF' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataKSeF' ] ), 2 )
+         OTHERWISE
+            zDZIEN := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataWystawienia' ] ), 2 )
+         ENDCASE
+
          znazwa := iif( Upper( AllTrim( aPoz[ 'znazwa' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'znazwa' ], 100 ) )
          zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
          zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 100 ) )
@@ -3002,11 +3135,32 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          @ 14, 17 SAY ProgressBar( nI, nIlosc, 46 )
          ins := .T.
 
+         /*
          IF aDane[ 'DataRej' ] == 'W'
             zDZIEN := aPoz[ 'zdzien' ]
          ELSE
             zDZIEN := Str( Day( aPoz[ 'zdatas' ] ), 2 )
          ENDIF
+         */
+
+         DO CASE
+         CASE ! KosEmptyDate( aPoz[ 'AmiRejData' ] )
+            zDZIEN := Str( Day( aPoz[ 'AmiRejData' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'AmiRejData' ] ), 2 )
+         CASE aDane[ 'DataRej' ] == 'W' .OR. ( aDane[ 'DataRej' ] == 'K' .AND. KosEmptyDate( aPoz[ 'DataKSeF' ] ) )
+            zDZIEN := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataWystawienia' ] ), 2 )
+         CASE aDane[ 'DataRej' ] == 'Z'
+            zDZIEN := Str( Day( aPoz[ 'DataSprzedazy' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataSprzedazy' ] ), 2 )
+         CASE aDane[ 'DataRej' ] == 'K' .AND. ! KosEmptyDate( aPoz[ 'DataKSeF' ] )
+            zDZIEN := Str( Day( aPoz[ 'DataKSeF' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataKSeF' ] ), 2 )
+         OTHERWISE
+            zDZIEN := Str( Day( aPoz[ 'DataSprzedazy' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataSprzedazy' ] ), 2 )
+         ENDCASE
+
          znazwa := iif( Upper( AllTrim( aPoz[ 'znazwa' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'znazwa' ], 100 ) )
          zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'znr_ident' ] ) ) == "BRAK", Space( 30 ), PadR( aPoz[ 'znr_ident' ], 30 ) )
          zNUMER := iif( Upper( AllTrim( aPoz[ 'znumer' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'znumer' ] ), 100 ) )
@@ -3016,7 +3170,19 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zMCS := Str( Month( aPoz[ 'zdatas' ] ), 2 )
          zDZIENS := Str( Day( aPoz[ 'zdatas' ] ), 2 )
          zDATAS := aPoz[ 'zdatas' ]
-         zDATAKS := iif( hb_HHasKey( aPoz, 'DataKsg' ), aPoz[ 'DataKsg' ], zDATAS )
+         DO CASE
+         CASE ! KosEmptyDate( aPoz[ 'AmiKsgData' ] )
+            zDATAKS := aPoz[ 'AmiKsgData' ]
+         CASE aDane[ 'DataKsg' ] == 'W' .OR. ( aDane[ 'DataKsg' ] == 'K' .AND. KosEmptyDate( aPoz[ 'DataKSeF' ] ) )
+            zDATAKS := aPoz[ 'DataWystawienia' ]
+         CASE aDane[ 'DataKsg' ] == 'Z'
+            zDATAKS := aPoz[ 'DataSprzedazy' ]
+         CASE aDane[ 'DataKsg' ] == 'K' .AND. ! KosEmptyDate( aPoz[ 'DataKSeF' ] )
+            zDATAKS := aPoz[ 'DataKSeF' ]
+         OTHERWISE
+            zDATAKS := aPoz[ 'DataWystawienia' ]
+         ENDCASE
+         //zDATAKS := iif( hb_HHasKey( aPoz, 'DataKsg' ), aPoz[ 'DataKsg' ], zDATAS )
          zDATATRAN := aPoz[ 'zdatatran' ]
          zKOLUMNA := iif( Empty( aPoz[ 'zkolumna' ] ), aDane[ 'Kolumna' ], aPoz[ 'zkolumna' ] )
          IF Empty( zKOLUMNA )
@@ -3062,7 +3228,7 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          zExPORT := aPoz[ 'zexport' ]
          zUE := aPoz[ 'zue' ]
          zKRAJ := aPoz[ 'zkraj' ]
-         zSEK_CV7 := aPoz[ 'zsek_cv7' ]
+         zSEK_CV7 := iif( aDane[ 'IgnorujAd' ] == 'T', '  ', aPoz[ 'zsek_cv7' ] )
          zRACH := 'F'
          zDETAL := DETALISTA
          zKOREKTA :=  HGetDefault( aPoz, 'zkorekta', iif( zNETTO < 0, 'T', 'N' ) )
@@ -3367,15 +3533,15 @@ PROCEDURE JPKImp_VatS( nCelImportu, lZKos )
 
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
       'OpisZd', Space( 30 ), 'KolRej', iif( zRYCZALT == 'T', ' 5', '7' ), ;
-      'DataRej', 'W', 'Oznaczenie', Space( 16 ), 'Procedura', Space( 32 ), ;
+      'DataRej', param_ksse, 'Oznaczenie', Space( 16 ), 'Procedura', Space( 32 ), ;
       'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'RodzDow', Space( 6 ), ;
-      'Export', 'N', 'ZezwolNaPuste', 'N' )
+      'Export', 'N', 'ZezwolNaPuste', 'N', 'DataKsg', param_kssk, 'IgnorujAd', 'N' )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
    LOCAL nMenu, cEkran2
    LOCAL aRaport, cRaport, cTN, cRej, lOk, cKolKs, cDataRej, cRegon, cExport
-   LOCAL cPuste
+   LOCAL cPuste, cDataKsg, cIgnorujAd
    LOCAL nSumaImp, nLiczbaLp := 0
    LOCAL bKolRyczW := { | |
       LOCAL cKolor := ColInf()
@@ -3592,28 +3758,33 @@ PROCEDURE JPKImp_VatS( nCelImportu, lZKos )
             zRodzDow := aDane[ 'RodzDow' ]
             cExport := aDane[ 'Export' ]
             cPuste := aDane[ 'ZezwolNaPuste' ]
-            @  6, 13 CLEAR TO 22, 67
-            @  7, 15 TO 21, 65
-            @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID ValidTakNie( cTN, 8, 63 )
-            @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 9, 42 ), .T. }
-            @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "S", "R" ) )
+            cDataKsg := aDane[ 'DataKsg' ]
+            cIgnorujAd := aDane[ 'IgnorujAd' ]
+            @  4, 13 CLEAR TO 22, 72
+            @  5, 15 TO 21, 70
+            @  6, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID ValidTakNie( cTN, 6, 63 )
+            @  7, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 7, 42 ), .T. }
+            @  8, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "S", "R" ) )
             IF zRYCZALT == 'T'
-               @ 11, 17 SAY "Domy˜lna kol. ewid. (5,6,7,8,9,10,11,12,13)" GET cKolRej PICTURE '@K 99' WHEN Eval( bKolRyczW ) VALID ( AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11' .OR. cKolRej == '12' .OR. cKolRej == '13' ) .AND. Eval( bKolRyczV )
+               @  9, 17 SAY "Domy˜lna kol. ewid. (5,6,7,8,9,10,11,12,13)" GET cKolRej PICTURE '@K 99' WHEN Eval( bKolRyczW ) VALID ( AllTrim( cKolRej ) $ '56789' .OR. cKolRej == '10' .OR. cKolRej == '11' .OR. cKolRej == '12' .OR. cKolRej == '13' ) .AND. Eval( bKolRyczV )
             ELSE
-               @ 11, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
+               @  9, 17 SAY "Domy˜lna kolumna ksi©gi (7,8)" GET cKolRej PICTURE "9" VALID cKolRej $ '78'
             ENDIF
-            @ 12, 17 SAY "Do rejestru na dzieä (S-sprzed., W-wystaw.)" GET cDataRej PICTURE "!" VALID cDataRej $ 'SW'
-            @ 13, 17 SAY "Oznaczenie dot. dostawy i ˜wiadczenia usˆug" GET zOpcje PICTURE '!!' WHEN nCelImportu == 1 .AND. KRejSWhOpcje() VALID KRejSVaOpcje()
-            @ 14, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN nCelImportu == 1 .AND. KRejSWhProcedur() VALID KRejSVaProcedur()
-            @ 15, 17 SAY "Rodzaj dowodu sprzeda¾y" GET zRodzDow PICTURE '!!!' WHEN nCelImportu == 1 .AND. KRejSWRodzDow() VALID KRejSVRodzDow()
-            @ 16, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID ValidTakNie( cRegon, 16, 57 )
-            @ 17, 17 SAY "Oznacz kraje UE jako eksport" GET cExport PICTURE '!' VALID ValidTakNie( cExport, 17, 47 )
-            @ 18, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 18, 59 )
+            @ 10, 17 SAY "Do rejestru na dzieä (S-sprzed., W-wystaw., K-KSeF)" GET cDataRej PICTURE "!" VALID cDataRej $ 'KSW'
+            @ 11, 17 SAY "Do ksi©gi na dzieä (S-sprzed., W-wystaw., K-KSeF)" GET cDataRej PICTURE "!" VALID cDataRej $ 'KSW'
+            @ 12, 17 SAY "Oznaczenie dot. dostawy i ˜wiadczenia usˆug" GET zOpcje PICTURE '!!' WHEN nCelImportu == 1 .AND. KRejSWhOpcje() VALID KRejSVaOpcje()
+            @ 13, 17 SAY "Oznaczenia dot. procedur" GET zProcedur PICTURE '!!!!!!!!!!!!!!!' WHEN nCelImportu == 1 .AND. KRejSWhProcedur() VALID KRejSVaProcedur()
+            @ 14, 17 SAY "Rodzaj dowodu sprzeda¾y" GET zRodzDow PICTURE '!!!' WHEN nCelImportu == 1 .AND. KRejSWRodzDow() VALID KRejSVRodzDow()
+            @ 15, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID ValidTakNie( cRegon, 15, 57 )
+            @ 16, 17 SAY "Oznacz kraje UE jako eksport" GET cExport PICTURE '!' VALID ValidTakNie( cExport, 16, 47 )
+            @ 17, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 17, 59 )
+            @ 18, 17 SAY "Ignoruj adnotacje (o.o. i SP)" GET cIgnorujAd PICTURE "!" VALID ValidTakNie( cIgnorujAd, 18, 48 )
             @ 20, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
-            ValidTakNie( cTN, 8, 63 )
-            ValidTakNie( cRegon, 16, 57 )
-            ValidTakNie( cExport, 17, 47 )
-            ValidTakNie( cPuste, 18, 59 )
+            ValidTakNie( cTN, 6, 63 )
+            ValidTakNie( cRegon, 15, 57 )
+            ValidTakNie( cExport, 16, 47 )
+            ValidTakNie( cPuste, 17, 59 )
+            ValidTakNie( cIgnorujAd, 18, 48 )
             READ
             IF LastKey() <> K_ESC
                aDane[ 'ZezwolNaDuplikaty' ] := cTN
@@ -3627,6 +3798,8 @@ PROCEDURE JPKImp_VatS( nCelImportu, lZKos )
                aDane[ 'RodzDow' ] := zRodzDow
                aDane[ 'Export' ] := cExport
                aDane[ 'ZezwolNaPuste' ] := cPuste
+               aDane[ 'DataKsg' ] := cDataKsg
+               aDane[ 'IgnorujAd' ] := cIgnorujAd
             ENDIF
             RestScreen( , , , , cEkran2 )
          CASE nMenu == 4
@@ -3665,19 +3838,23 @@ FUNCTION JPKImp_VatS_Tresc_V( cKatalog )
       SELECT tresc
       SEEK '+' + ident_fir
       IF ! Found()
-         SELECT (cTablica)
+         IF ! Empty( cTablica )
+            SELECT (cTablica)
+         ENDIF
       ELSE
          SAVE SCREEN TO scr2
          Tresc_( cKatalog )
          RESTORE SCREEN FROM scr2
-         SELECT (cTablica)
+         IF ! Empty( cTablica )
+            SELECT (cTablica)
+         ENDIF
          IF LastKey() == K_ESC
             RETURN .T.
          ENDIF
          cOpisZd := Left( tresc->tresc, 30 )
          cKolorTemp := SetColor()
          SET COLOR TO i
-         @ 10, 33 SAY cOpisZd
+         @ 8, 33 SAY cOpisZd
          SetColor( cKolorTemp )
       ENDIF
    ENDIF
@@ -3688,15 +3865,15 @@ FUNCTION JPKImp_VatS_Tresc_V( cKatalog )
 PROCEDURE JPKImp_VatZ( nCelImportu, lZKos )
 
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
-      'OpisZd', Space( 30 ), 'DomVat', 1, 'DataRej', 'W', ;
+      'OpisZd', Space( 30 ), 'DomVat', 1, 'DataRej', param_kszr, ;
       'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'ZezwolNaPuste', 'N', ;
-      'Kolumna', '10' )
+      'Kolumna', '10', 'DataKsg', param_kszk, 'IgnorujAd', 'N' )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
    LOCAL nMenu, cEkran2, nMenu2
    LOCAL aRaport, cRaport, cTN, cRej, lOk, nDomVat, cDataRej, cRegon, cPuste
-   LOCAL nSumaImp, nLiczbaLp := 0, cKolumna
+   LOCAL nSumaImp, nLiczbaLp := 0, cKolumna, cDataKsg, cIgnorujAd
    LOCAL bKolValid := { | | AScan( { "10", "11", "12", "13" }, cKolumna ) > 0 }
 
    PRIVATE cOpisZd
@@ -3924,21 +4101,25 @@ PROCEDURE JPKImp_VatZ( nCelImportu, lZKos )
             cRegon := aDane[ 'SprawdzRegon' ]
             cPuste := aDane[ 'ZezwolNaPuste' ]
             cKolumna := aDane[ 'Kolumna' ]
-            @  8, 13 CLEAR TO 21, 66
-            @  9, 15 TO 20, 64
-            @ 10, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
-            @ 11, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 11, 42, 'Z' ), .T. }
-            @ 12, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "Z", "R" ) )
-            @ 13, 17 SAY "Domy˜lna stawka VAT"
-            @ 13, 37, 20, 41 GET nDomVat LISTBOX { { "23%", 1 }, { "8% ", 2 }, { "5% ", 3 }, { "0% ", 4 } } DROPDOWN
-            @ 14, 17 SAY "Do rejestru na dzieä (Z-zakupu, W-wystaw.)" GET cDataRej VALID cDataRej $ "WZ"
-            @ 15, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
-            @ 16, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 16, 59 )
+            cDataKsg := aDane[ 'DataKsg' ]
+            cIgnorujAd := aDane[ 'IgnorujAd' ]
+            @  6, 13 CLEAR TO 21, 76
+            @  7, 15 TO 20, 74
+            @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
+            @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 9, 42, 'Z' ), .T. }
+            @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "Z", "R" ) )
+            @ 11, 17 SAY "Domy˜lna stawka VAT"
+            @ 11, 37, 20, 41 GET nDomVat LISTBOX { { "23%", 1 }, { "8% ", 2 }, { "5% ", 3 }, { "0% ", 4 } } DROPDOWN
+            @ 12, 17 SAY "Do rejestru na dzieä (Z-zakupu, W-wystaw., K-KSeF)" GET cDataRej PICTURE '!' VALID cDataRej $ "WZK"
+            @ 13, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
+            @ 14, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 14, 59 )
+            @ 15, 17 SAY "Ignoruj adnotacje (o.o. i SP)" GET cPuste PICTURE "!" VALID ValidTakNie( cIgnorujAd, 15, 48 )
             IF zRYCZALT <> 'T'
-               @ 17, 17 SAY "Domy˜lna kolumna ksi©gi" GET cKolumna PICTURE "99" VALID Eval( bKolValid )
+               @ 16, 17 SAY "Domy˜lna kolumna ksi©gi" GET cKolumna PICTURE "99" VALID Eval( bKolValid )
+               @ 17, 17 SAY "Do ksi©gi na dzieä (Z-zakupu, W-wystaw., K-KSeF)" GET cDataKsg PICTURE '!' VALID cDataKsg $ "WZK"
             ENDIF
             @ 19, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
-            ValidTakNie( cPuste, 16, 59 )
+            ValidTakNie( cPuste, 14, 59 )
             READ
             IF LastKey() <> K_ESC
                aDane[ 'ZezwolNaDuplikaty' ] := cTN
@@ -3949,6 +4130,8 @@ PROCEDURE JPKImp_VatZ( nCelImportu, lZKos )
                aDane[ 'SprawdzRegon' ] := cRegon
                aDane[ 'ZezwolNaPuste' ] := cPuste
                aDane[ 'Kolumna' ] := cKolumna
+               aDane[ 'DataKsg' ] := cDataKsg
+               aDane[ 'IgnorujAd' ] := cIgnorujAd
             ENDIF
             RestScreen( , , , , cEkran2 )
          CASE nMenu == 4
@@ -4395,6 +4578,406 @@ PROCEDURE JPKImp_PKPIR_Podglad( aDane, aSumy )
    GM_ArEdit( 2, 0, 22, 79, aDane, @nElem, aNaglowki, aBlokiKolumn, NIL, NIL, NIL, aKlawisze, SetColor() + ",N+/N", aBlokiKoloru, aStopki )
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+PROCEDURE JPKImp_Rycz()
+
+   LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'OpisZd', Space( 30 ), ;
+      'ZezwolNaPuste', 'N', 'Kolumna', 5, 'DataKsg', param_kssk )
+   LOCAL cPlik
+   LOCAL cKolor
+   LOCAL cEkran := SaveScreen()
+   LOCAL nMenu, cEkran2
+   LOCAL aRaport, cRaport, cTN, lOk, cPuste, nKolumna, cDataKsg
+   LOCAL nSumaImp, nLiczbaLp := 0
+   LOCAL bKolumnaW := { ||
+      LOCAL cKolor := ColInf()
+      @ 24, 0 SAY PadC( Tab_RyczInfo(), 80 )
+      SetColor( cKolor )
+      RETURN .T.
+   }
+   LOCAL bKolumnaV := { ||
+      LOCAL lRes := nKolumna >= 5 .AND. nKolumna <= 13
+      IF lRes
+         @ 24, 0
+      ENDIF
+      RETURN lRes
+   }
+   PRIVATE cOpisZd
+
+
+   aDane[ 'JPK' ] := KosImp_Wczytaj( 0 )
+
+   IF HB_ISHASH( aDane[ 'JPK' ] )
+
+      aDane[ 'Dekret' ] := KosImp_VatS_Dekretuj( aDane, .T. )
+      nLiczbaLp := Len( aDane[ 'JPK' ][ 'Pozycje' ] )
+
+      ColStd()
+      @ 24,  0
+      @  2,  0 CLEAR TO 22, 79
+      @  2,  2 TO 19, 77 DOUBLE
+      @  4,  3 TO  4, 76
+      @ 10,  3 TO 10, 76
+      @ 13,  3 TO 13, 76
+      @ 17,  3 TO 17, 76
+
+      @  3,  3 SAY PadC( "IMPORT SPRZEDA½Y Z PLIKU JPK", 72 )
+      PrintTextEx(  5, 4, "Rodzaj pliku JPK: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'KodFormularza' ] + " (" + aDane[ 'JPK' ][ 'Naglowek' ][ 'WariantFormularza' ] + ")" )
+      PrintTextEx(  6, 4, "Data wytworzenia: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DataWytworzeniaJPK' ] )
+      PrintTextEx(  7, 4, "         Data od: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataOd' ] ) )
+      PrintTextEx(  8, 4, "         Data do: {w+}" + DToC( aDane[ 'JPK' ][ 'Naglowek' ][ 'DataDo' ] ) )
+      IF hb_HHasKey( aDane[ 'JPK' ][ 'Naglowek' ], 'DomyslnyKodWaluty' )
+         PrintTextEx(  9, 4, "      Kod waluty: {w+}" + aDane[ 'JPK' ][ 'Naglowek' ][ 'DomyslnyKodWaluty' ] )
+      ENDIF
+      PrintTextEx( 11, 4, "Nazwa firmy: {w+}" + SubStr( sxmlTrim( aDane[ 'JPK' ][ 'Podmiot' ][ 'PelnaNazwa' ] ), 1, 59 ) )
+      PrintTextEx( 12, 4, "  NIP firmy: {w+}" + aDane[ 'JPK' ][ 'Podmiot' ][ 'NIP' ] )
+      PrintTextEx( 14, 4, "Liczba pozycji w pliku JPK: {w+}" + AllTrim( Str( nLiczbaLp ) ) )
+      PrintTextEx( 15, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( Len( aDane[ 'JPK' ][ 'Pozycje' ] ) ) ), 72 ) )
+
+      nMenu := 1
+      DO WHILE nMenu != 0
+         @ 18,  4 PROMPT "[ Wykonaj import ]"
+         @ 18, 26 PROMPT "[ Podgl¥d zawarto˜ci ]"
+         @ 18, 52 PROMPT "[ Opcje ]"
+         @ 18, 65 PROMPT "[ Anuluj ]"
+         MENU TO nMenu
+
+         DO CASE
+         CASE nMenu == 1
+            IF TNEsc( , "Czy wykona† import danych sprzeda¾y? ( T / N )" )
+
+               aRaport := JPKImp_Rycz_Importuj( aDane )
+
+               cRaport := "IMPORT ZAKOãCZONY" + hb_eol()
+               cRaport += "-----------------" + hb_eol()
+               cRaport += hb_eol()
+               cRaport += "Liczba zaimportowanych pozycji: " + AllTrim( Str( aRaport[ 'Zaimportowano' ] ) ) + hb_eol()
+               cRaport += "Liczba pomini©tych dokument¢w: " + AllTrim( Str( aRaport[ 'Pominieto' ] ) ) + hb_eol()
+               cRaport += "Liczba dokument¢w w obej walucie: " + AllTrim( Str( aRaport[ 'Waluta' ] ) ) + hb_eol()
+               IF aRaport[ 'Pominieto' ] > 0
+                  cRaport += hb_eol()
+                  cRaport += "POMINI¨TE DOKUMENTY" + hb_eol()
+                  cRaport += "-------------------" + hb_eol()
+                  AEval( aRaport[ 'ListaPom' ], { | aPoz |
+                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'K_3' ] ) + hb_eol()
+                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'K_4' ] ) + hb_eol()
+                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'K_2' ] ) + hb_eol()
+                     cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                     cRaport += "--------------------------" + hb_eol()
+                  } )
+               ENDIF
+               IF aRaport[ 'Waluta' ] > 0
+                  cRaport += hb_eol()
+                  cRaport += "DOKUMENTY W OBCEJ WALUCIE" + hb_eol()
+                  cRaport += "-------------------" + hb_eol()
+                  AEval( aRaport[ 'ListaWal' ], { | aPoz |
+                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'K_3' ] ) + hb_eol()
+                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'K_4' ] ) + hb_eol()
+                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'K_2' ] ) + hb_eol()
+                     cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
+                     cRaport += "--------------------------" + hb_eol()
+                  } )
+               ENDIF
+
+               WyswietlTekst( cRaport )
+
+               nMenu := 0
+            ENDIF
+         CASE nMenu == 2
+            //JPKImp_PKPIR_Podglad( aDane[ 'JPK' ][ 'Wiersze' ], aDane[ 'JPK' ][ 'WierszeSum' ] )
+            //PrintTextEx( 16, 4, PadR( "Liczba importowanych pozycji: {w+}" + AllTrim( Str( Len( aDane[ 'JPK' ][ 'Wiersze' ] ) ) ), 72 ) )
+         CASE nMenu == 3
+            cEkran2 := SaveScreen()
+            cTN := aDane[ 'ZezwolNaDuplikaty' ]
+            cOpisZd := aDane[ 'OpisZd' ]
+            cPuste := aDane[ 'ZezwolNaPuste' ]
+            nKolumna := aDane[ 'Kolumna' ]
+            cDataKsg := aDane[ 'DataKsg' ]
+            @  6, 13 CLEAR TO 16, 71
+            @  7, 15 TO 15, 69
+            @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
+            @  9, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( "O" )
+            @ 10, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 10, 59 )
+            @ 11, 17 SAY "Domy˜lna kolumna" GET nKolumna PICTURE "99" WHEN Eval( bKolumnaW ) VALID Eval( bKolumnaV )
+            @ 12, 17 SAY "Do ksi©gi na dzieä (S-sprzed., W-wystaw., K-KSeF)" GET cDataKsg PICTURE "!" VALID cDataKsg $ 'KSW'
+            @ 14, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
+            ValidTakNie( cPuste, 10, 59 )
+            READ
+            IF LastKey() <> K_ESC
+               aDane[ 'ZezwolNaDuplikaty' ] := cTN
+               aDane[ 'OpisZd' ] := cOpisZd
+               aDane[ 'ZezwolNaPuste' ] := cPuste
+               aDane[ 'Kolumna' ] := nKolumna
+               aDane[ 'DataKsg' ] := cDataKsg
+            ENDIF
+            RestScreen( , , , , cEkran2 )
+         CASE nMenu == 4
+            nMenu := 0
+         ENDCASE
+
+      ENDDO
+
+   ENDIF
+
+   RestScreen( , , , , cEkran )
+
+   RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION JPKImp_Rycz_Importuj( aDane )
+
+   LOCAL nI := 1, nIlosc := 0
+   LOCAL aRaport := hb_Hash( 'Zaimportowano', 0, 'Pominieto', 0, 'ListaPom', {}, 'Waluta', 0, 'ListaWal', {} )
+
+   @ 11, 15 CLEAR TO 15, 64
+   @ 11, 15 TO 15, 64 DOUBLE
+   @ 12, 16 SAY PadC( "Import sprzeda¾y", 48 )
+
+   AEval( aDane[ 'JPK' ][ 'Pozycje' ], { | aPoz |
+      IF aPoz[ 'Importuj' ]
+         nIlosc++
+      ENDIF
+   } )
+
+   AEval( aDane[ 'Dekret' ], { | aPoz |
+
+      LOCAL aIstniejacyRec, nKolimna, nWartosc
+      LOCAL lImportuj := aPoz[ 'FakturaPoz' ][ 'Importuj' ]
+
+      IF lImportuj
+
+         @ 13, 16 SAY PadC( AllTrim( Str( nI ) ) + " / " + AllTrim( Str( nIlosc ) ), 48 )
+         @ 14, 17 SAY ProgressBar( nI, nIlosc, 46 )
+         ins := .T.
+
+         //zDZIEN := aPoz[ 'zdzien' ]
+         //zMC := aPoz[ 'zmc' ]
+         DO CASE
+         CASE ! KosEmptyDate( aPoz[ 'AmiKsgData' ] )
+            zDZIEN := Str( Day( aPoz[ 'AmiKsgData' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'AmiKsgData' ] ), 2 )
+         CASE aDane[ 'DataKsg' ] == 'W'
+            zDZIEN := Str( Day( aPoz[ 'DataWystawienia' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataWystawienia' ] ), 2 )
+         CASE aDane[ 'DataKsg' ] == 'S' .OR. ( aDane[ 'DataKsg' ] == 'K' .AND. KosEmptyDate( aPoz[ 'DataKSeF' ] ) )
+            zDZIEN := Str( Day( aPoz[ 'DataSprzedazy' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataSprzedazy' ] ), 2 )
+         CASE aDane[ 'DataKsg' ] == 'K' .AND. ! KosEmptyDate( aPoz[ 'DataKSeF' ] )
+            zDZIEN := Str( Day( aPoz[ 'DataKSeF' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataKSeF' ] ), 2 )
+         OTHERWISE
+            zDZIEN := Str( Day( aPoz[ 'DataSprzedazy' ] ), 2 )
+            zMC := Str( Month( aPoz[ 'DataSprzedazy' ] ), 2 )
+         ENDCASE
+
+         znazwa := aPoz[ 'znazwa' ]
+         zNR_IDENT := aPoz[ 'znr_ident' ]
+         zNUMER := aPoz[ 'znumer' ]
+         zADRES := aPoz[ 'zadres' ]
+         zTRESC := aDane[ 'OpisZd' ]
+         zKRAJ := aPoz[ 'zkraj' ]
+         zDATAPRZY := aPoz[ 'zdatas' ]
+         zNRKSEF := aPoz[ 'NrKSeF' ]
+         zZAPLATA := '1'
+
+         nKolumna := Val( aPoz[ 'zkolumna' ] )
+         IF nKolumna == 0
+            nKolumna := aDane[ 'Kolumna' ]
+         ENDIF
+
+         zUWAGI := ''
+         zKWOTA := 0
+
+         nWartosc := aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart08' ]
+
+         zry20 := 0
+         zry17 := 0
+         zryk09 := 0
+         zuslugi := 0
+         zryk10 := 0
+         zprodukcja := 0
+         zhandel := 0
+         zryk07 := 0
+         zry10 := 0
+         zryk08 := 0
+
+         DO CASE
+         CASE nKolumna == 5
+            zry20 := nWartosc
+         CASE nKolumna == 6
+            zry17 := nWartosc
+         CASE nKolumna == 7
+            zryk09 := nWartosc
+         CASE nKolumna == 8
+            zuslugi := nWartosc
+         CASE nKolumna == 9
+            zryk10 := nWartosc
+         CASE nKolumna == 10
+            zprodukcja := nWartosc
+         CASE nKolumna == 11
+            zhandel := nWartosc
+         CASE nKolumna == 12
+            zryk07 := nWartosc
+         CASE nKolumna == 13
+            zry10 := nWartosc
+         ENDCASE
+
+         IF aDane[ 'ZezwolNaDuplikaty' ] == 'N' .AND. EwidSprawdzNrDokRec( 'EWID', ident_fir, miesiac, znumer, @aIstniejacyRec )
+            aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
+            AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Istnieje ju¾ dokument o tym numerze' ) )
+         ELSE
+            //Rycz_Ksieguj()
+
+            zNUMER := dos_l( znumer )
+            zdzien := Str( Val( zDZIEN ), 2 )
+            // *ðððððððððððððððððððððððððððððððð REPL ððððððððððððððððððððððððððððððððð
+            SELECT tresc
+            SEEK '+' + ident_fir + ztresc
+            IF Found()
+               BlokadaR()
+               repl_( 'stan', stan+( -zPRODUKCJA - zUSLUGI - zHANDEL - zRY20 - zRY17 - zRY10 - zRYK07 - zRYK08 - zRYK09 - zRYK10 ) )
+               COMMIT
+               UNLOCK
+            ENDIF
+            SELECT suma_mc
+            BlokadaR()
+            IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
+               repl_( 'wyr_tow', wyr_tow + zPRODUKCJA )
+               repl_( 'uslugi', uslugi + zuslugi )
+               repl_( 'handel', handel + zhandel )
+               repl_( 'RY20', RY20 + zRY20 )
+               repl_( 'RY17', RY17 + zRY17 )
+               repl_( 'RY10', RY10 + zRY10 )
+               repl_( 'RYK07', RYK07 + zRYK07 )
+               repl_( 'RYK08', RYK08 + zRYK08 )
+               repl_( 'RYK09', RYK09 + zRYK09 )
+               repl_( 'RYK10', RYK10 + zRYK10 )
+               repl_( 'pozycje', pozycje + 1 )
+            ENDIF
+            COMMIT
+            UNLOCK
+            SELECT ewid
+            IF ins
+               app()
+               repl_( 'firma', ident_fir )
+               repl_( 'mc', zMC )
+            ENDIF
+            BlokadaR()
+            repl_( 'DZIEN', zdzien )
+            repl_( 'DATAPRZY', zDATAPRZY )
+            DO CASE
+            CASE RTrim( znumer ) == 'REM-P'
+               repl_( 'NUMER', Chr( 1 ) + znumer )
+            CASE rtrim( znumer ) == 'REM-K'
+               repl_( 'NUMER', Chr( 254 ) + znumer )
+            OTHERWISE
+               repl_( 'NUMER', znumer )
+            ENDCASE
+            repl_( 'TRESC', zTRESC )
+            repl_( 'PRODUKCJA', zPRODUKCJA )
+            repl_( 'USLUGI', zUSLUGI )
+            repl_( 'HANDEL', zHANDEL )
+            repl_( 'RY20', zRY20 )
+            repl_( 'RY17', zRY17 )
+            repl_( 'RY10', zRY10 )
+            repl_( 'RYK07', zRYK07 )
+            repl_( 'RYK08', zRYK08 )
+            repl_( 'RYK09', zRYK09 )
+            repl_( 'RYK10', zRYK10 )
+            repl_( 'UWAGI', zUWAGI )
+            repl_( 'zaplata', zzaplata )
+            repl_( 'kwota', zkwota )
+            repl_( 'NR_IDENT', zNR_IDENT )
+            repl_( 'KRAJ', zKRAJ )
+            repl_( 'NRKSEF', zNRKSEF )
+            COMMIT
+            UNLOCK
+            // *********************** lp
+            IF param_lp == 'T'
+               IF param_kslp == '3'
+                  SET ORDER TO 4
+               ENDIF
+               Blokada()
+               ColInb()
+               @ 24, 0
+               Center( 24, 'Prosz&_e. czeka&_c....' )
+               SET COLOR TO
+               rec := RecNo()
+               IF ins
+                  SKIP -1
+                  IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                     zlp := liczba
+                  ELSE
+                     zlp := lp + 1
+                  ENDIF
+                  GO rec
+                  DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                     repl_( 'lp', zlp )
+                     zlp := zlp + 1
+                     SKIP
+                  ENDDO
+               ELSE
+                  zlp := lp
+                  SKIP -1
+                  IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                     zlp := liczba
+                     GO rec
+                     DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                        repl_( 'lp', zlp )
+                        zlp := zlp + 1
+                        SKIP
+                     ENDDO
+                  ELSE
+                     IF lp < zlp
+                        zlp := lp + 1
+                        GO rec
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           repl_( 'lp', zlp )
+                           zlp := zlp + 1
+                           SKIP
+                        ENDDO
+                     ELSE
+                        zlp := lp
+                        GO rec
+                        DO WHILE ! Bof() .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           repl_( 'lp', zlp )
+                           zlp := zlp - 1
+                           SKIP -1
+                        ENDDO
+                     ENDIF
+                  ENDIF
+               ENDIF
+               GO rec
+               COMMIT
+               UNLOCK
+               IF param_kslp == '3'
+                  SET ORDER TO 1
+               ENDIF
+               @ 24, 0
+            ENDIF
+            // ***********************
+            COMMIT
+
+
+            IF HGetDefault( aPoz, 'KodWaluty', 'PLN' ) <> 'PLN'
+               aRaport[ 'Waluta' ] := aRaport[ 'Waluta' ] + 1
+               AAdd( aRaport[ 'ListaWal' ], hb_Hash( 'Importowany', aPoz, 'Przyczyna', 'Dokument w obcej walucie (' + aPoz[ 'KodWaluty' ] + ')' ) )
+            ENDIF
+            aRaport[ 'Zaimportowano' ] := aRaport[ 'Zaimportowano' ] + 1
+         ENDIF
+
+         nI++
+      ELSE
+         aRaport[ 'Pominieto' ] := aRaport[ 'Pominieto' ] + 1
+         AAdd( aRaport[ 'ListaPom' ], hb_Hash( 'Istniejacy', aIstniejacyRec, 'Importowany', aPoz, 'Przyczyna', 'Dokument nie zostaˆ zaznaczony do importu' ) )
+      ENDIF
+
+   } )
+
+   RETURN aRaport
 
 /*----------------------------------------------------------------------*/
 

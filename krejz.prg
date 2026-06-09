@@ -32,7 +32,7 @@ PROCEDURE KRejZ()
    PRIVATE nOrgW2, nOrgW7, nOrgW12, nOrgW22, zRODZDOW, cScrRodzDow
    PRIVATE zK16OPIS, zKOL47, zKOL48, zKOL49, zKOL50, nWartoscNetto, zVATMARZA
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou
-   PRIVATE cOstSymbRej
+   PRIVATE cOstSymbRej, cOldOpcje
 
    fDETALISTA := DETALISTA
 
@@ -497,6 +497,8 @@ PROCEDURE KRejZ()
             ENDIF
             *ðððððððððððððððððððððððððððððððð GET ðððððððððððððððððððððððððððððððððð
 
+            cOldOpcje := zOPCJE
+
             sprawdzVAT( 10, CToD( param_rok + '.' + StrTran( miesiac, ' ', '0' ) + '.01' ) )
             @ 13, 2 SAY Str( vat_A, 2 )
             @ 14, 2 SAY Str( vat_B, 2 )
@@ -894,7 +896,7 @@ PROCEDURE KRejZ()
       CASE kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 19 ]
+         DECLARE pppp[ 20 ]
          *---------------------------------------
          pppp[  1 ] := '                                                            '
          pppp[  2 ] := '   [PgUp/PgDn].......poprzednia/nast©pna strona             '
@@ -907,17 +909,18 @@ PROCEDURE KRejZ()
          pppp[  9 ] := '   [F]...............wykazywanie dokumentu w dek. IFT-2R    '
          pppp[ 10 ] := '   [K]...............kopiowanie dokumentu                   '
          pppp[ 11 ] := '   [P]...............poka¾ wizualizacj© faktury w GM Kos    '
-         pppp[ 12 ] := '   [Del].............kasowanie pozycji                      '
-         pppp[ 13 ] := '   [F5 ].............kopiowanie dokumentu do bufora         '
-         pppp[ 14 ] := '   [Shift+F5]........kopiowanie wsystkich dok. do bufora    '
-         pppp[ 15 ] := '   [F6 ].............wstawianie dokumentu z bufora          '
-         pppp[ 16 ] := '   [F9 ].............szukanie zˆo¾one                       '
-         pppp[ 17 ] := '   [F10].............szukanie dnia                          '
-         pppp[ 18 ] := '   [Esc].............wyj˜cie                                '
-         pppp[ 19 ] := '                                                            '
+         pppp[ 12 ] := '   [Z]...............przenie˜ dokument do innego miesi¥ca   '
+         pppp[ 13 ] := '   [Del].............kasowanie pozycji                      '
+         pppp[ 14 ] := '   [F5 ].............kopiowanie dokumentu do bufora         '
+         pppp[ 15 ] := '   [Shift+F5]........kopiowanie wsystkich dok. do bufora    '
+         pppp[ 16 ] := '   [F6 ].............wstawianie dokumentu z bufora          '
+         pppp[ 17 ] := '   [F9 ].............szukanie zˆo¾one                       '
+         pppp[ 18 ] := '   [F10].............szukanie dnia                          '
+         pppp[ 19 ] := '   [Esc].............wyj˜cie                                '
+         pppp[ 20 ] := '                                                            '
          *---------------------------------------
          SET COLOR TO i
-         i := 19
+         i := 20
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -984,6 +987,16 @@ PROCEDURE KRejZ()
             KosPokazWizualizacje( NRKSEF )
          ELSE
             Komun( "Brak numeru KSeF" )
+         ENDIF
+
+      CASE kl == Asc( 'Z' ) .OR. kl == Asc( 'z' )
+         IF KRej_ZmienMiesiac()
+            SEEK '+' + ident_fir + miesiac
+            IF ! &_top_bot
+               DO &_proc
+            ELSE
+               krejsRysujTlo()
+            ENDIF
          ENDIF
 
       ******************** ENDCASE
@@ -1666,7 +1679,7 @@ FUNCTION SUMPOwz( vari )
    &VVARIM := &vv1+&VV2
    vvari := SubStr( vari, 2 )
    DO CASE
-   CASE &vari == 0 .OR. ( &variM <> &vvariM )
+   CASE &vari == 0 .OR. ( &variM <> &vvariM ) .OR. zOPCJE <> cOldOpcje
       procvat := Val( SubStr( vari, 5, 2 ) )
       DO CASE
       CASE procvat == 2
@@ -1704,7 +1717,7 @@ FUNCTION SUMPOwzB( vari )
    &VVARIM := &vv1+&VV2
    vvari := SubStr( vari, 2 )
    DO CASE
-   CASE &vari == 0 .OR. ( &variM <> &vvariM )
+   CASE &vari == 0 .OR. ( &variM <> &vvariM ) .OR. zOPCJE <> cOldOpcje
       procvat := Val( SubStr( vari, 5, 2 ) )
       DO CASE
       CASE procvat == 2

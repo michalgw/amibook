@@ -6909,6 +6909,67 @@ FUNCTION edek_vat9m_11( aDane )
 
 /*----------------------------------------------------------------------*/
 
+FUNCTION edek_vat12_4( aDane )
+   LOCAL r, nl, tmp_cel
+      tmp_cel = '1'
+      IF kordek='K'
+         tmp_cel = '2'
+      ENDIF
+      nl = Chr(13) + Chr(10)
+      r = '<?xml version="1.0" encoding="UTF-8"?>' + nl
+      r = r + '<Deklaracja  xmlns="http://crd.gov.pl/wzor/2018/05/17/5378/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2016/01/25/eD/DefinicjeTypy/">' + nl
+      r = r + '  <Naglowek>' + nl
+      r = r + '    <KodFormularza kodPodatku="VAT" kodSystemowy="VAT-12 (4)" rodzajZobowiazania="Z" wersjaSchemy="1-0E" >VAT-12</KodFormularza>' + nl
+      r = r + '    <WariantFormularza>4</WariantFormularza>' + nl
+		r = r + '    <CelZlozenia poz="P_7">' + tmp_cel + '</CelZlozenia>' + nl
+      r = r + '    <Rok>' + AllTrim(p5b) + '</Rok>' + nl
+      r = r + '    <Miesiac>' + AllTrim(p5a) + '</Miesiac>' + nl
+		r = r + '    <KodUrzedu>' + P6a + '</KodUrzedu>' + nl
+	   r = r + '  </Naglowek>' + nl
+   	r = r + '  <Podmiot1 rola="Podatnik">' + nl
+      IF spolka_
+         r = r + '    <OsobaNiefizyczna>' + nl
+			r = r + '      <etd:NIP>' + trimnip(AllTrim(P4)) + '</etd:NIP>' + nl
+			r = r + '      <etd:PelnaNazwa>' + str2sxml(AllTrim(P8)) + '</etd:PelnaNazwa>' + nl
+//			r = r + '      <REGON>' +  AllTrim(P11) + '</etd:REGON>' + nl
+		   r = r + '    </OsobaNiefizyczna>' + nl
+      else
+		   r = r + '    <OsobaFizyczna>' + nl
+//         IF Len(AllTrim(P30)) = 0
+            r = r + '      <etd:NIP>' + trimnip(P4) + '</etd:NIP>' + nl
+//         ELSE
+//    			r = r + '      <etd:PESEL>' + P30 + '</etd:PESEL>' + nl
+//         ENDIF
+			r = r + '      <etd:ImiePierwsze>' + str2sxml(naz_imie_imie(AllTrim(P8ni))) + '</etd:ImiePierwsze>' + nl
+			r = r + '      <etd:Nazwisko>' + str2sxml(naz_imie_naz(AllTrim(P8ni))) +'</etd:Nazwisko>' + nl
+			r = r + '      <etd:DataUrodzenia>' + date2strxml(P11d) + '</etd:DataUrodzenia>' + nl
+		   r = r + '    </OsobaFizyczna>' + nl
+      ENDIF
+      r = r + '  </Podmiot1>' + nl
+      r = r + '  <PozycjeSzczegolowe>' + nl
+		r = r + '    <P_10>' + TKwotaC( aDane[ 'P_10' ] ) + '</P_10>' + nl
+		r = r + '    <P_11>' + TKwotaC( aDane[ 'P_11' ] ) + '</P_11>' + nl
+		//r = r + '    <P_12>' + TKwotaC( aDane[ 'P_12' ] ) + '</P_12>' + nl
+		r = r + '    <P_13>' + TKwotaC( aDane[ 'P_13' ] ) + '</P_13>' + nl
+		//r = r + '    <P_14>' + TKwotaC( aDane[ 'P_14' ] ) + '</P_14>' + nl
+      IF Len(AllTrim(zDEKLTEL)) > 0
+   		r = r + '    <P_18>' + AllTrim(zDEKLTEL) + '</P_18>' + nl
+      ENDIF
+		//r = r + '    <P_19>' + date2strxml(Date()) + '</P_19>' + nl
+		r = r + '  </PozycjeSzczegolowe>' + nl
+		r = r + '  <Pouczenia>1</Pouczenia>' + nl
+      IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 )
+         r = r + '  <Zalaczniki>' + nl
+         IF ( tmp_cel = '2' .AND. Len(AllTrim(tresc_korekty_vat7)) > 0 )
+            r = r + edek_ord_zu3(tresc_korekty_vat7) + nl
+         ENDIF
+         r = r + '  </Zalaczniki>' + nl
+      ENDIF
+		r = r + '</Deklaracja>'
+   RETURN r
+
+/*----------------------------------------------------------------------*/
+
 FUNCTION edek_vatue_3()
    LOCAL r, nl
       nl = Chr(13) + Chr(10)

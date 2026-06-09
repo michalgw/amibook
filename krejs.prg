@@ -1448,7 +1448,7 @@ PROCEDURE KRejS()
       case kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 18 ]
+         DECLARE pppp[ 19 ]
          *---------------------------------------
          pppp[  1 ] := '                                                        '
          pppp[  2 ] := '   [PgUp/PgDn]...poprzednia/nast©pna strona             '
@@ -1460,17 +1460,18 @@ PROCEDURE KRejS()
          pppp[  8 ] := '   [W]...........grupowa weryf. stat. VAT               '
          pppp[  9 ] := '   [B]...........przeˆ¥cz wprowadzanie nettem/bruttem   '
          pppp[ 10 ] := '   [P]...........poka¾ wizualizacj© faktury w GM Kos    '
-         pppp[ 11 ] := '   [Del].........kasowanie pozycji                      '
-         pppp[ 12 ] := '   [F5 ].........kopiowanie dokumentu do bufora         '
-         pppp[ 13 ] := '   [Shift+F5]....kopiowanie wsystkich dok. do bufora    '
-         pppp[ 14 ] := '   [F6 ].........wstawianie dokumentu z bufora          '
-         pppp[ 15 ] := '   [F9 ].........szukanie zˆo¾one                       '
-         pppp[ 16 ] := '   [F10].........szukanie dnia                          '
-         pppp[ 17 ] := '   [Esc].........wyj˜cie                                '
-         pppp[ 18 ] := '                                                        '
+         pppp[ 11 ] := '   [Z]...........przenie˜ dokument do innego miesi¥ca   '
+         pppp[ 12 ] := '   [Del].........kasowanie pozycji                      '
+         pppp[ 13 ] := '   [F5 ].........kopiowanie dokumentu do bufora         '
+         pppp[ 14 ] := '   [Shift+F5]....kopiowanie wsystkich dok. do bufora    '
+         pppp[ 15 ] := '   [F6 ].........wstawianie dokumentu z bufora          '
+         pppp[ 16 ] := '   [F9 ].........szukanie zˆo¾one                       '
+         pppp[ 17 ] := '   [F10].........szukanie dnia                          '
+         pppp[ 18 ] := '   [Esc].........wyj˜cie                                '
+         pppp[ 19 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO I
-         i := 18
+         i := 19
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -1532,6 +1533,16 @@ PROCEDURE KRejS()
             KosPokazWizualizacje( NRKSEF )
          ELSE
             Komun( "Brak numeru KSeF" )
+         ENDIF
+
+      CASE kl == Asc( 'Z' ) .OR. kl == Asc( 'z' )
+         IF KRej_ZmienMiesiac()
+            SEEK '+' + ident_fir + miesiac
+            IF ! &_top_bot
+               DO &_proc
+            ELSE
+               krejsRysujTlo()
+            ENDIF
          ENDIF
 
       ******************** ENDCASE
@@ -3942,6 +3953,43 @@ FUNCTION KSeF_Status_Str( cStatus )
    ENDCASE
 
    RETURN cRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION KRej_ZmienMiesiac()
+
+   LOCAL nMc, nDzien, cKolor, cEkran, lRes := .F.
+   LOCAL bSprawdz := { ||
+      LOCAL lRes := .T.
+      RETURN lRes
+   }
+
+   cEkran := SaveScreen()
+   cKolor := ColStd()
+
+   nMc := Val( mc )
+   nDzien := Val( dzien )
+
+   @  5, 20 CLEAR TO 21, 35
+   @  5, 20 TO 21, 35
+   @  5, 22 SAY 'Miesi¥c'
+   @  6, 21, 19, 34 GET nMc LISTBOX { "Styczeä", "Luty", "Marzec", ;
+      "Kwiecieä", "Maj", "Czerwiec", "Lipiec", "Sierpieä", "Wrzesieä", ;
+      "Pa«dziernik", "Listopad", "Grudzieä" }
+   @ 20, 21 SAY "Dzieä " GET nDzien PICTURE '99' VALID Eval( bSprawdz )
+   SET CURSOR ON
+   READ
+   SET CURSOR OFF
+   IF LastKey() <> K_ESC
+      BlokadaR()
+      REPLACE MC WITH Str( nMc, 2 ), DZIEN WITH Str( nDzien, 2 )
+      COMMIT
+      UNLOCK
+   ENDIF
+   SetColor( cKolor )
+   RestScreen( , , , , cEkran )
+
+   RETURN lRes
 
 /*----------------------------------------------------------------------*/
 

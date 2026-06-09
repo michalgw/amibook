@@ -429,6 +429,9 @@ FUNCTION Ewid()
                      CASE zVATFORDR == '9M'
                         verdekold := ' J - VAT-9M   (11)                   '
 
+                     CASE zVATFORDR == '12'
+                        verdekold := ' J - VAT-12   (4)                    '
+
                   ENDCASE
 
                   @  6, 1 TO 22, 39
@@ -500,6 +503,10 @@ FUNCTION Ewid()
                            CASE papier == 'X'
                               vat_720( 0, 0, 1, iif( zVATFORDR == '8 ', '8X', '9X' ) )
                            ENDCASE
+                        ELSEIF zVATFORDR == '12'
+                           papier := menuDeklaracjaDruk( 12, .F. )
+                           SET CURSOR OFF
+                           vat_720( 0, 0, 1, iif( papier == 'X', '12X', '12D' ) )
                         ELSE
                            JPK_V7_Rob( 12, 4 )
                         ENDIF

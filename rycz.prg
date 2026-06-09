@@ -95,6 +95,19 @@ PROCEDURE Rycz()
       kl := Inkey( 0 )
       Ster()
       DO CASE
+      CASE kl == Asc( 'I' ) .OR. kl == Asc( 'i' )
+         // Import z JPK
+         nMenu := MenuEx( 18, 25, { "K - Importuj sprzeda¾ z programu GM Kos" }, 1 )
+         DO CASE
+         CASE nMenu == 1
+            JPKImp_Rycz()
+         ENDCASE
+         IF &_bot
+            SEEK '+' + ident_fir + miesiac
+         ENDIF
+         IF ! &_bot
+            DO &_proc
+         ENDIF
       *########################### INSERT/MODYFIKACJA #############################
       CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. kl == K_F6 .OR. &_top_bot ) .AND. kl # K_ESC
          @ 1, 47 SAY '          '
@@ -676,17 +689,18 @@ PROCEDURE Rycz()
          pppp[  4 ] := '   [Ins]...................wpisywanie                   '
          pppp[  5 ] := '   [M].....................modyfikacja pozycji          '
          pppp[  6 ] := '   [K].....................kopiowanie dokumentu         '
-         pppp[  7 ] := '   [Del]...................kasowanie pozycji            '
-         pppp[  8 ] := '   [F5 ]...................kopiowanie do bufora         '
-         pppp[  9 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
-         pppp[ 10 ] := '   [F6 ]...................wstawianie z bufora          '
-         pppp[ 11 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 12 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 13 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 14 ] := '                                                        '
+         pppp[  7 ] := '   [P].....................poka¾ wizualizacj© w GM Kos  '
+         pppp[  8 ] := '   [Del]...................kasowanie pozycji            '
+         pppp[  9 ] := '   [F5 ]...................kopiowanie do bufora         '
+         pppp[ 10 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
+         pppp[ 11 ] := '   [F6 ]...................wstawianie z bufora          '
+         pppp[ 12 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 13 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 14 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 15 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
-         i := 14
+         i := 15
          j := 22
          DO WHILE i>0
             IF Type( 'pppp[i]' ) # 'U'
@@ -788,7 +802,14 @@ PROCEDURE Rycz()
             Komun( "Skopiowano " + AllTrim( Str( nLicznik ) ) + " dokument¢w" )
          ENDIF
 
-      ******************** ENDCASE
+      CASE kl == Asc( 'P' ) .OR. kl == Asc( 'p' )
+         IF ! Empty( NRKSEF )
+            KosPokazWizualizacje( NRKSEF )
+         ELSE
+            Komun( "Brak numeru KSeF" )
+         ENDIF
+
+     ******************** ENDCASE
       ENDCASE
    ENDDO
    zVAT := VzVAT

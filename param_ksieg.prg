@@ -39,14 +39,14 @@ FUNCTION menuKonfigKsiega()
    @  7,0 say ' Obliczanie podstawy opodatkowania    ³ Tak - sprzeda¾ zbiorczo w RS-7 i RS-8   '
    @  8,0 say ' deklaracji VAT-7 (pole 43.)          ³ Nie - oddzielne wpisy dla ka¾dej sprzed.'
    @  9,0 say ' dla 50% VAT na pojazdy (1/2):        ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
-   @ 10,0 say ' 1 - 100%     2 - 50%                 ³                                         '
-   @ 11,0 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³                                         '
-   @ 12,0 say ' Sortowanie dokument¢w w ksi©dze      ³                                         '
-   @ 13,0 say ' (1 - Nr dok./Dzieä, 2 - Dzieä)       ³                                         '
-   @ 14,0 say ' (3 - Lp./Dzieä )                     ³                                         '
-   @ 15,0 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³                                         '
-   @ 16,0 say ' Inf. o wprowadzeniu dok. z istn. nr  ³                                         '
-   @ 17,0 say ' (N-nie, T-akt.miesiac, R-rok):       ³                                         '
+   @ 10,0 say ' 1 - 100%     2 - 50%                 ³ Import sprzeda¾y - domy˜lne daty        '
+   @ 11,0 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³ Rejestr (Sprzeda¾y/Wystawenia/Ksef)     '
+   @ 12,0 say ' Sortowanie dokument¢w w ksi©dze      ³ Ksi©ga  (Sprzeda¾y/Wystawenia/Ksef)     '
+   @ 13,0 say ' (1 - Nr dok./Dzieä, 2 - Dzieä)       ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
+   @ 14,0 say ' (3 - Lp./Dzieä )                     ³ Import zakup¢w - domy˜lne daty          '
+   @ 15,0 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³ Rejestr (Zakupu/Wystawenia/Ksef)        '
+   @ 16,0 say ' Inf. o wprowadzeniu dok. z istn. nr  ³ Ksi©ga  (Zakupu/Wystawenia/Ksef)        '
+   @ 17,0 say ' (N-nie, T-akt.miesiac, R-rok):       ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ'
    @ 18,0 say 'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³                                         '
    @ 19,0 say ' Odliczanie kwoty wolnej po przekr.   ³                                         '
    @ 20,0 say ' progu (Tak/Nie)                      ³                                         '
@@ -78,6 +78,10 @@ FUNCTION menuKonfigKsiega()
                  zparam_kssr := param_kssr
                  zparam_kswv := param_kswv
                  zparam_ksws := param_ksws
+                 zparam_kssk := param_kssk
+                 zparam_ksse := param_ksse
+                 zparam_kszk := param_kszk
+                 zparam_kszr := param_kszr
                  *ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ GET ğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğğ
                  @  3, 34 get zparam_ks5v PICTURE '!' VALID menuKonfigKsiegaPolKS5V()
                  @  9, 34 get zparam_ks5d PICTURE '!' VALID menuKonfigKsiegaPolKS5D()
@@ -88,6 +92,10 @@ FUNCTION menuKonfigKsiega()
                  @ 22, 33 get zparam_kssr PICTURE '!' VALID menuKonfigKsiegaPolKSSR()
                  @  4, 72 get zparam_kswv PICTURE '!' VALID menuKonfigKsiegaPolKSWV()
                  @  6, 74 get zparam_ksws PICTURE '!' VALID menuKonfigKsiegaPolKSWS()
+                 @ 11, 76 get zparam_kssk PICTURE '!' VALID zparam_kssk $ 'SWK'
+                 @ 12, 76 get zparam_ksse PICTURE '!' VALID zparam_ksse $ 'SWK'
+                 @ 15, 76 get zparam_kszk PICTURE '!' VALID zparam_kszk $ 'ZWK'
+                 @ 16, 76 get zparam_kszr PICTURE '!' VALID zparam_kszr $ 'ZWK'
                  ****************************
                  clear type
                  read_()
@@ -104,6 +112,10 @@ FUNCTION menuKonfigKsiega()
                  param_kssr := zparam_kssr
                  param_kswv := zparam_kswv
                  param_ksws := zparam_ksws
+                 param_kssk := zparam_kssk
+                 param_ksse := zparam_ksse
+                 param_kszk := zparam_kszk
+                 param_kszr := zparam_kszr
                  save TO parksg all like param_ks*
                  SWITCH param_kslp
                  CASE '1'
@@ -220,6 +232,10 @@ PROCEDURE menuKonfigKsiegaPokaz()
    @ 22, 33 SAY iif(param_kssr == 'T', 'Tak', 'Nie')
    @  4, 72 SAY iif(param_kswv == 'T', 'Tak', 'Nie')
    @  6, 74 SAY iif(param_ksws == 'T', 'Tak', 'Nie')
+   @ 11, 76 SAY param_kssk
+   @ 12, 76 SAY param_ksse
+   @ 15, 76 SAY param_kszk
+   @ 16, 76 SAY param_kszr
    SWITCH param_kslp
    CASE '1'
       @ 14, 20 SAY '1 - Nr dok./Dzieä'

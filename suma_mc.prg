@@ -204,7 +204,7 @@ FUNCTION Suma_MC( lGraficzny )
 
          oRap:AddValue('uzytkownik', code())
          oRap:AddValue('rok', param_rok)
-         oRap:AddValue('firma', scal( AllTrim( firma->nazwa ) + ' ' + firma->miejsc + ' ul.' + firma->ulica + ' ' + firma->nr_domu + iif( Empty( firma->nr_mieszk ), ' ', '/' ) + firma->nr_mieszk ) )
+         oRap:AddValue('firma', scal( AllTrim( firma->nazwa ) + ' ' + firma->miejsc + ' ul.' + firma->ulica + ' ' + firma->nr_domu + iif( Empty( firma->nr_mieszk ), ' ', '/' ) + firma->nr_mieszk ) + ', NIP: ' + AllTrim( firma->nip ) )
          oRap:AddValue('rem', iif( xRem, 1, 0 ) )
          oRap:AddDataset('pozycje')
          AEval(aDane, { |aPoz| oRap:AddRow('pozycje', aPoz) })
@@ -235,7 +235,7 @@ FUNCTION Suma_MC( lGraficzny )
       mon_drk('ö' + ProcName() )
       *@@@@@@@@@@@@@@@@@@@@@@@@@ NAGLOWEK @@@@@@@@@@@@@@@@@@@@@@@@@@@@
       SELECT firma
-      k1=scal(alltrim(nazwa)+[ ]+miejsc+[ ul.]+ulica+[ ]+nr_domu+iif(empty(nr_mieszk),[ ],[/])+nr_mieszk)
+      k1=scal(alltrim(nazwa)+[ ]+miejsc+[ ul.]+ulica+[ ]+nr_domu+iif(empty(nr_mieszk),[ ],[/])+nr_mieszk) + ', NIP: ' + AllTrim( nip )
       select suma_mc
       k1=k1+space(100-len(k1))
       mon_drk([               ]+k1)
