@@ -690,17 +690,18 @@ PROCEDURE Rycz()
          pppp[  5 ] := '   [M].....................modyfikacja pozycji          '
          pppp[  6 ] := '   [K].....................kopiowanie dokumentu         '
          pppp[  7 ] := '   [P].....................poka¾ wizualizacj© w GM Kos  '
-         pppp[  8 ] := '   [Del]...................kasowanie pozycji            '
-         pppp[  9 ] := '   [F5 ]...................kopiowanie do bufora         '
-         pppp[ 10 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
-         pppp[ 11 ] := '   [F6 ]...................wstawianie z bufora          '
-         pppp[ 12 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 13 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 14 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 15 ] := '                                                        '
+         pppp[  8 ] := '   [Z].....................przenie˜ do innego miesi¥ca  '
+         pppp[  9 ] := '   [Del]...................kasowanie pozycji            '
+         pppp[ 10 ] := '   [F5 ]...................kopiowanie do bufora         '
+         pppp[ 11 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
+         pppp[ 12 ] := '   [F6 ]...................wstawianie z bufora          '
+         pppp[ 13 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 14 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 15 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 16 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
-         i := 15
+         i := 16
          j := 22
          DO WHILE i>0
             IF Type( 'pppp[i]' ) # 'U'
@@ -807,6 +808,14 @@ PROCEDURE Rycz()
             KosPokazWizualizacje( NRKSEF )
          ELSE
             Komun( "Brak numeru KSeF" )
+         ENDIF
+
+      CASE kl == Asc( 'Z' ) .OR. kl == Asc( 'z' )
+         IF ! docsys()
+            IF Rycz_ZmienMiesiac()
+               SEEK '+' + ident_fir + miesiac
+               DO &_proc
+            ENDIF
          ENDIF
 
      ******************** ENDCASE
@@ -1196,5 +1205,82 @@ FUNCTION Rycz_PobierzDok()
       'KWOTA' => kwota }
 
    RETURN aBufRec
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Rycz_ZmienMiesiac()
+
+   LOCAL nMc, nDzien, cKolor, cEkran, lRes := .F., zMC
+   LOCAL bSprawdz := { ||
+      LOCAL lRes := .T.
+      RETURN lRes
+   }
+
+   cEkran := SaveScreen()
+   cKolor := ColStd()
+
+   nMc := Val( mc )
+   nDzien := Val( dzien )
+
+   @  5, 20 CLEAR TO 21, 35
+   @  5, 20 TO 21, 35
+   @  5, 22 SAY 'Miesi¥c'
+   @  6, 21, 19, 34 GET nMc LISTBOX { "Styczeä", "Luty", "Marzec", ;
+      "Kwiecieä", "Maj", "Czerwiec", "Lipiec", "Sierpieä", "Wrzesieä", ;
+      "Pa«dziernik", "Listopad", "Grudzieä" }
+   @ 20, 21 SAY "Dzieä " GET nDzien PICTURE '99' VALID Eval( bSprawdz )
+   SET CURSOR ON
+   READ
+   SET CURSOR OFF
+   IF LastKey() <> K_ESC
+      IF Val( mc ) <> nMc
+         zMC := Str( nMc, 2 )
+         SELECT suma_mc
+         BlokadaR()
+         IF Left( ewid->numer, 1 ) # Chr( 1 ) .AND. Left( ewid->numer, 1 ) # Chr( 254 )
+            repl_( 'wyr_tow', wyr_tow - ewid->produkcja )
+            repl_( 'uslugi', uslugi - ewid->uslugi )
+            repl_( 'handel', handel - ewid->handel )
+            repl_( 'RY20', RY20 - ewid->RY20 )
+            repl_( 'RY17', RY17 - ewid->RY17 )
+            repl_( 'RY10', RY10 - ewid->RY10 )
+            repl_( 'RYK07', RYK07 - ewid->RYK07 )
+            repl_( 'RYK08', RYK08 - ewid->RYK08 )
+            repl_( 'RYK09', RYK09 - ewid->RYK09 )
+            repl_( 'RYK10', RYK10 - ewid->RYK10 )
+         ENDIF
+         repl_( 'pozycje', pozycje - 1 )
+         COMMIT
+         UNLOCK
+         SEEK '+' + ident_fir + zMC
+         BlokadaR()
+         IF RTrim( ewid->numer ) # 'REM-P' .AND. RTrim( ewid->numer ) # 'REM-K'
+            repl_( 'wyr_tow', wyr_tow + ewid->PRODUKCJA )
+            repl_( 'uslugi', uslugi + ewid->uslugi )
+            repl_( 'handel', handel + ewid->handel )
+            repl_( 'RY20', RY20 + ewid->RY20 )
+            repl_( 'RY17', RY17 + ewid->RY17 )
+            repl_( 'RY10', RY10 + ewid->RY10 )
+            repl_( 'RYK07', RYK07 + ewid->RYK07 )
+            repl_( 'RYK08', RYK08 + ewid->RYK08 )
+            repl_( 'RYK09', RYK09 + ewid->RYK09 )
+            repl_( 'RYK10', RYK10 + ewid->RYK10 )
+         ENDIF
+         repl_( 'pozycje', pozycje + 1 )
+         COMMIT
+         UNLOCK
+         SELECT ewid
+      ENDIF
+
+      BlokadaR()
+      REPLACE MC WITH Str( nMc, 2 ), DZIEN WITH Str( nDzien, 2 )
+      COMMIT
+      UNLOCK
+      lRes := .T.
+   ENDIF
+   SetColor( cKolor )
+   RestScreen( , , , , cEkran )
+
+   RETURN lRes
 
 /*----------------------------------------------------------------------*/

@@ -566,7 +566,7 @@ PROCEDURE Oper()
       CASE kl == K_F1
          SAVE SCREEN TO scr_
          @ 1, 47 SAY '          '
-         DECLARE pppp[ 20 ]
+         DECLARE pppp[ 21 ]
          *---------------------------------------
          pppp[  1 ] := '                                                        '
          pppp[  2 ] := '   [PgUp/PgDn].............poprzednia/nast&_e.pna strona   '
@@ -578,19 +578,20 @@ PROCEDURE Oper()
          pppp[  8 ] := '   [F].....................wykazywanie w dek. IFT-2R    '
          pppp[  9 ] := '   [S].....................przych¢d do ZUS zdrowotne    '
          pppp[ 10 ] := '   [P].....................poka¾ wizualizacj© w GM Kos  '
-         pppp[ 11 ] := '   [Del]...................kasowanie dokumentu          '
-         pppp[ 12 ] := '   [F5 ]...................kopiowanie do bufora         '
-         pppp[ 13 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
-         pppp[ 14 ] := '   [F6 ]...................wstawianie z bufora          '
-         pppp[ 15 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
-         pppp[ 16 ] := '   [F10]...................szukanie dnia                '
-         pppp[ 17 ] := '   [Esc]...................wyj&_s.cie                      '
-         pppp[ 18 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
-         pppp[ 19 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
-         pppp[ 20 ] := '                                                        '
+         pppp[ 11 ] := '   [Z].....................przenie˜ do innego miesi¥ca  '
+         pppp[ 12 ] := '   [Del]...................kasowanie dokumentu          '
+         pppp[ 13 ] := '   [F5 ]...................kopiowanie do bufora         '
+         pppp[ 14 ] := '   [Shift+F5]..............kopiowanie wsyst. do bufora  '
+         pppp[ 15 ] := '   [F6 ]...................wstawianie z bufora          '
+         pppp[ 16 ] := '   [F9 ]...................szukanie z&_l.o&_z.one             '
+         pppp[ 17 ] := '   [F10]...................szukanie dnia                '
+         pppp[ 18 ] := '   [Esc]...................wyj&_s.cie                      '
+         pppp[ 19 ] := '   REM-P   nr dowodu zastrze&_z.ony dla remanentu pocz.    '
+         pppp[ 20 ] := '   REM-K   nr dowodu zastrze&_z.ony dla remanentu ko&_n.c.    '
+         pppp[ 21 ] := '                                                        '
          *---------------------------------------
          SET COLOR TO i
-         i := 20
+         i := 21
          j := 22
          DO WHILE i > 0
             IF Type( 'pppp[i]' ) # 'U'
@@ -710,6 +711,14 @@ PROCEDURE Oper()
             KosPokazWizualizacje( NRKSEF )
          ELSE
             Komun( "Brak numeru KSeF" )
+         ENDIF
+
+      CASE kl == Asc( 'Z' ) .OR. kl == Asc( 'z' )
+         IF ! docsys()
+            IF Oper_ZmienMiesiac()
+               SEEK '+' + ident_fir + miesiac
+               DO &_proc
+            ENDIF
          ENDIF
 
       ******************** ENDCASE
@@ -1761,6 +1770,72 @@ PROCEDURE Oper_WartZUS()
    ENDIF
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Oper_ZmienMiesiac()
+
+   LOCAL nMc, nDzien, cKolor, cEkran, lRes := .F., zMC
+   LOCAL bSprawdz := { ||
+      LOCAL lRes := .T.
+      RETURN lRes
+   }
+
+   cEkran := SaveScreen()
+   cKolor := ColStd()
+
+   nMc := Val( mc )
+   nDzien := Val( dzien )
+
+   @  5, 20 CLEAR TO 21, 35
+   @  5, 20 TO 21, 35
+   @  5, 22 SAY 'Miesi¥c'
+   @  6, 21, 19, 34 GET nMc LISTBOX { "Styczeä", "Luty", "Marzec", ;
+      "Kwiecieä", "Maj", "Czerwiec", "Lipiec", "Sierpieä", "Wrzesieä", ;
+      "Pa«dziernik", "Listopad", "Grudzieä" }
+   @ 20, 21 SAY "Dzieä " GET nDzien PICTURE '99' VALID Eval( bSprawdz )
+   SET CURSOR ON
+   READ
+   SET CURSOR OFF
+   IF LastKey() <> K_ESC
+      IF Val( mc ) <> nMc
+         zMC := Str( nMc, 2 )
+         SELECT SUMA_MC
+         BlokadaR()
+         IF Left( oper->numer, 1 ) # Chr( 1 ) .AND. Left( oper->numer, 1 ) # Chr( 254 )
+            SUMY-
+         ENDIF
+         AKTPOZ-
+         COMMIT
+         UNLOCK
+         SEEK '+' + ident_fir + zMC
+         BlokadaR()
+         IF RTrim( oper->numer ) # 'REM-P' .AND. RTrim( oper->numer ) # 'REM-K'
+            aktpol+ wyr_tow  with oper->wyr_tow
+            aktpol+ uslugi   with oper->uslugi
+            aktpol+ zakup    with oper->zakup
+            aktpol+ uboczne  with oper->uboczne
+            aktpol+ wynagr_g with oper->wynagr_g
+            aktpol+ wydatki  with oper->wydatki
+            aktpol+ pusta    WITH oper->pusta
+         ENDIF
+         AKTPOZ+
+         COMMIT
+         UNLOCK
+         SEEK '+' + ident_fir + miesiac
+         SELECT oper
+      ENDIF
+
+      BlokadaR()
+      REPLACE MC WITH Str( nMc, 2 ), DZIEN WITH Str( nDzien, 2 )
+      COMMIT
+      UNLOCK
+      lRes := .T.
+   ENDIF
+   SetColor( cKolor )
+   RestScreen( , , , , cEkran )
+
+   RETURN lRes
 
 /*----------------------------------------------------------------------*/
 
