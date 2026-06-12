@@ -955,6 +955,8 @@ PROCEDURE FakturyN()
                      ELSE
                         Komun( "Nie udaˆo si© pobra† statusu KSeF" )
                      ENDIF
+                  ELSE
+                     FakturyN_StatusKSeF()
                   ENDIF
                ELSE
                   FakturyN_StatusKSeF()
@@ -3373,19 +3375,20 @@ PROCEDURE Faktury_ZnacznikKSeF( nRow, nCol, cPusty )
 
    LOCAL cKolor := SetColor()
 
-   IF ! Empty( faktury->ksefnrksef )
+   DO CASE
+   CASE ! Empty( faktury->ksefnrksef )
       SetColor( "W/G" )
       @ nRow, nCol SAY "KSeF"
-   ELSEIF ! Empty( faktury->ksefnrses )
+   CASE ! Empty( faktury->ksefnrses )
       SetColor( "N/GR" )
       @ nRow, nCol SAY "KSeF"
-   ELSEIF faktury->ksefstatus >= 400
+   CASE faktury->ksefstatus >= 400
       SetColor( "N/R" )
       @ nRow, nCol SAY "KSeF"
-   ELSE
+   OTHERWISE
       ColStd()
       @ nRow, nCol SAY cPusty
-   ENDIF
+   ENDCASE
 
    SetColor( cKolor )
 
