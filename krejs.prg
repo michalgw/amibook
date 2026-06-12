@@ -3985,6 +3985,7 @@ FUNCTION KRej_ZmienMiesiac()
       REPLACE MC WITH Str( nMc, 2 ), DZIEN WITH Str( nDzien, 2 )
       COMMIT
       UNLOCK
+      lRes := .T.
    ENDIF
    SetColor( cKolor )
    RestScreen( , , , , cEkran )
