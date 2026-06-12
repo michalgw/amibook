@@ -160,6 +160,7 @@ FUNCTION ewid_dr16licz( dDataOd, dDataDo )
          aRow['k11_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k6)
          aRow['k12_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4d)
          aRow['k13_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4c)
+         aRow['NrKSeF'] := nrksef
          AAdd(aRes['pozycje'], aRow)
          skip
       enddo
@@ -175,7 +176,7 @@ RETURN aRes
 
 PROCEDURE ewid_dr16rob()
    LOCAL aDane, oRap, nMonDruk, cScr, cKolor, nPoz := 1, cJPK, cPlik, nFile
-   LOCAL nKorekta, oWorkbook, oWorksheet, cPlikWyj, nWiersz
+   LOCAL nKorekta, oWorkbook, oWorksheet, cPlikWyj, nWiersz, lDrukujNrKSeF
    LOCAL KolOrd := Array( 9 ), KolStaw := { 170, 150, 140, 125, 120, 100, 85, 55, 30 }
    LOCAL nKol, nI, KolNaz := { 'staw_ry20', 'staw_ry17', 'staw_rk09', 'staw_uslu', ;
       'staw_rk10', 'staw_prod', 'staw_hand', 'staw_rk07', 'staw_ry10' }
@@ -218,6 +219,7 @@ PROCEDURE ewid_dr16rob()
          EXIT
       CASE 2
       CASE 3
+         lDrukujNrKSeF := TNEsc( , 'Czy drukowa† numer KSeF? (Tak/Nie)' )
          @ 24, 0
          @ 24, 26 PROMPT '[ Monitor ]'
          @ 24, 44 PROMPT '[ Drukarka ]'
@@ -265,6 +267,8 @@ PROCEDURE ewid_dr16rob()
             oRap:AddValue('k11op', aDane['staw_ohand'])
             oRap:AddValue('k12op', aDane['staw_ork07'])
             oRap:AddValue('k13op', aDane['staw_ory10'])
+
+            oRap:AddValue('DrukujNrKSeF', iif( lDrukujNrKSeF, 1, 0 ) )
 
             oRap:AddDataset('pozycje')
             oRap:AddValue('FP7', 0.0, .T.)
@@ -394,6 +398,7 @@ PROCEDURE ewid_dr16rob()
                   oWorksheet:WriteColWidth( 12, 15, 0 )
                   oWorksheet:WriteColWidth( 13, 15, 0 )
                   oWorksheet:WriteColWidth( 14, 25, 0 )
+                  oWorksheet:WriteColWidth( 15, 35, 0 )
 
                   oWorksheet:WriteText( 0, 0, aDane[ 'firma' ] )
                   oWorksheet:WriteText( 1, 0, "Miesi¥c: " + aDane[ 'miesiac' ] + " " + aDane[ 'rok' ] )
@@ -413,6 +418,7 @@ PROCEDURE ewid_dr16rob()
                   oWorksheet:WriteText( 3, 12, "Przychody op. st. " + NumToStr( aDane[ 'staw_ry10' ] ) + "% (" + aDane[ 'staw_ory10' ] + ")" )
                   oWorksheet:WriteText( 3, 13, "Og¢ˆem przychody" )
                   oWorksheet:WriteText( 3, 14, "Uwagi" )
+                  oWorksheet:WriteText( 3, 15, "Nr KSeF" )
                   nWiersz := 4
                   AEval( aDane[ 'pozycje' ], { | aRow |
                      oWorksheet:WriteNumber( nWiersz, 0, aRow['k1'] )
@@ -450,6 +456,7 @@ PROCEDURE ewid_dr16rob()
                         oWorksheet:WriteCurrency( nWiersz, 13, aRow['k14'] )
                      ENDIF
                      oWorksheet:WriteText( nWiersz, 14, AllTrim( aRow['k15'] ) )
+                     oWorksheet:WriteText( nWiersz, 15, AllTrim( aRow['NrKSeF'] ) )
                      nWiersz++
                   } )
                   IF oWorkbook:WriteToFile( cPlikWyj ) == 0

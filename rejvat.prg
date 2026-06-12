@@ -176,6 +176,8 @@ FUNCTION RejVAT_Zak_Dane( cFirma, cMiesiac, cRodzaj, ewid_rzs, ewid_rzk, ewid_rz
       aRow[ 'mpp' ] := rejz->sek_cv7 == 'SP'
       aRow[ 'imp' ] := rejz->sek_cv7 == 'IT' .OR. rejz->sek_cv7 == 'IZ' .OR. rejz->sek_cv7 == 'IS' .OR. rejz->sek_cv7 == 'IU' .OR. rejz->sek_cv7 == 'UZ' .OR. rejz->sek_cv7 == 'US'
 
+      aRow[ 'NrKSeF' ] := AllTrim( rejz->nrksef )
+
       aRow[ 'oznaczenia' ] := aRow[ 'rodzdow' ]
       IF aRow[ 'mpp' ]
          IF aRow[ 'oznaczenia' ] <> ""
@@ -683,6 +685,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                      oWorksheet:WriteColWidth( 20, 15, 0 )
                      oWorksheet:WriteColWidth( 21, 15, 0 )
                      oWorksheet:WriteColWidth( 22, 15, 0 )
+                     oWorksheet:WriteColWidth( 23, 35, 0 )
 
                      oWorksheet:WriteText( 0, 0, "Rejestr zakup¢w - " + ;
                         aDane[ 'rejestr' ] + " (" + aDane[ 'jaki_rej' ] + ;
@@ -713,6 +716,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                      oWorksheet:WriteText( 3, 20, "Zak. opodat. od sprz. miesz. VAT odlicz" )
                      oWorksheet:WriteText( 3, 21, "Do ksi©gi" )
                      oWorksheet:WriteText( 3, 22, "Og¢lna warto˜† VAT" )
+                     oWorksheet:WriteText( 3, 23, "Nr KSeF" )
                      nWiersz := 4
                      AEval( aDane[ 'pozycje' ], { | aRow |
                         oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
@@ -758,6 +762,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                         IF aRow[ 'wartosc_vat' ] <> 0
                            oWorksheet:WriteCurrency( nWiersz, 22, aRow[ 'wartosc_vat' ] )
                         ENDIF
+                        oWorksheet:WriteCurrency( nWiersz, 23, aRow[ 'NrKSeF' ] )
                         nWiersz++
                      } )
                      IF oWorkbook:WriteToFile( cPlikWyj ) == 0
@@ -794,6 +799,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                      oWorksheet:WriteColWidth( 25, 15, 0 )
                      oWorksheet:WriteColWidth( 26, 15, 0 )
                      oWorksheet:WriteColWidth( 27, 15, 0 )
+                     oWorksheet:WriteColWidth( 28, 35, 0 )
 
                      oWorksheet:WriteText( 0, 0, "Rejestr zakup¢w wg stawek - " + ;
                         aDane[ 'rejestr' ] + " (" + aDane[ 'jaki_rej' ] + ;
@@ -829,6 +835,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                      oWorksheet:WriteText( 3, 25, "Zakupy z odliczeniami NETTO" )
                      oWorksheet:WriteText( 3, 26, "Zakupy z odliczeniami VAT" )
                      oWorksheet:WriteText( 3, 27, "Stan rozr." )
+                     oWorksheet:WriteText( 3, 28, "Nr KSeF" )
                      nWiersz := 4
                      AEval( aDane[ 'pozycje' ], { | aRow |
                         oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
@@ -889,6 +896,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                         IF aRow[ 'fz_zz' ] <> 0
                            oWorksheet:WriteCurrency( nWiersz, 27, aRow[ 'fz_zz' ] )
                         ENDIF
+                        oWorksheet:WriteCurrency( nWiersz, 28, aRow[ 'NrKSeF' ] )
                         nWiersz++
                      } )
                      IF oWorkbook:WriteToFile( cPlikWyj ) == 0
@@ -920,6 +928,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                      oWorksheet:WriteColWidth( 20, 15, 0 )
                      oWorksheet:WriteColWidth( 21, 15, 0 )
                      oWorksheet:WriteColWidth( 22, 15, 0 )
+                     oWorksheet:WriteColWidth( 23, 35, 0 )
 
                      oWorksheet:WriteText( 0, 0, "Rejestr zakup¢w UE, import... - " + ;
                         aDane[ 'rejestr' ] + " (" + aDane[ 'jaki_rej' ] + ;
@@ -950,6 +959,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                      oWorksheet:WriteText( 3, 20, "Podatnikiem nabywca NETTO" )
                      oWorksheet:WriteText( 3, 21, "Podatnikiem nabywca VAT" )
                      oWorksheet:WriteText( 3, 22, "Og¢lna warto˜† VAT" )
+                     oWorksheet:WriteText( 3, 23, "Nr KSeF" )
                      nWiersz := 4
                      AEval( aDane[ 'pozycje' ], { | aRow |
                         oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
@@ -995,6 +1005,7 @@ FUNCTION RejVAT_Zak_Drukuj( nRaport, cFirma, cMiesiac, ewid_rzs, ewid_rzk, ewid_
                         IF aRow[ 'wartosc_vat' ] <> 0
                            oWorksheet:WriteCurrency( nWiersz, 22, aRow[ 'wartosc_vat' ] )
                         ENDIF
+                        oWorksheet:WriteCurrency( nWiersz, 23, aRow[ 'NrKSeF' ] )
                         nWiersz++
                      } )
                      IF oWorkbook:WriteToFile( cPlikWyj ) == 0
@@ -1668,6 +1679,8 @@ FUNCTION RejVAT_Sp_Dane( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_rsi
 
       aRow[ 'vatmarza' ] := rejs->vatmarza
 
+      aRow[ 'NrKSeF' ] := rejs->nrksef
+
       nFS := 0
       nZS := 0
 
@@ -1876,6 +1889,7 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
                      oWorksheet:WriteColWidth( 23, 15, 0 )
                      oWorksheet:WriteColWidth( 24, 15, 0 )
                      oWorksheet:WriteColWidth( 25, 15, 0 )
+                     oWorksheet:WriteColWidth( 26, 35, 0 )
 
                      oWorksheet:WriteText( 0, 0, "Rejestr sprzeda¾y za miesi¥c " + ;
                         aDane[ 'miesiac' ] + ", " + aDane[ 'rok' ] )
@@ -1921,6 +1935,7 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
                      oWorksheet:WriteText( 3, 23, "Sprz. zwol. od pod." )
                      oWorksheet:WriteText( 3, 24, "Sprz. nie podl. VAT" )
                      oWorksheet:WriteText( 3, 25, "Razem warto˜† podatku" )
+                     oWorksheet:WriteText( 3, 26, "Nr KSeF" )
                      nWiersz := 4
                      AEval( aDane[ 'pozycje' ], { | aRow |
                         oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
@@ -1977,6 +1992,7 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
                         IF aRow[ 'dwartosc_vat' ] <> 0
                            oWorksheet:WriteCurrency( nWiersz, 25, aRow[ 'dwartosc_vat' ] )
                         ENDIF
+                        oWorksheet:WriteCurrency( nWiersz, 26, aRow[ 'NrKSeF' ] )
                         nWiersz++
                      } )
                      IF oWorkbook:WriteToFile( cPlikWyj ) == 0
@@ -2001,6 +2017,7 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
                      oWorksheet:WriteColWidth( 14, 15, 0 )
                      oWorksheet:WriteColWidth( 15, 15, 0 )
                      oWorksheet:WriteColWidth( 16, 25, 0 )
+                     oWorksheet:WriteColWidth( 17, 35, 0 )
 
                      oWorksheet:WriteText( 0, 0, "Rejestr korekt sprzeda¾y za miesi¥c " + ;
                         aDane[ 'miesiac' ] + ", " + aDane[ 'rok' ] )
@@ -2037,6 +2054,7 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
                      oWorksheet:WriteText( 3, 14, "Razem rokekta NETTO" )
                      oWorksheet:WriteText( 3, 15, "Razem korekta VAT" )
                      oWorksheet:WriteText( 3, 16, "Uwagi" )
+                     oWorksheet:WriteText( 3, 17, "Nr KSeF" )
                      nWiersz := 4
                      AEval( aDane[ 'pozycje' ], { | aRow |
                         oWorksheet:WriteText( nWiersz, 0, aRow[ 'dzien' ] )
@@ -2066,6 +2084,7 @@ FUNCTION RejVAT_Sp_Drukuj( nRaport, cFirma, cMiesiac, ewid_rss, ewid_rsk, ewid_r
                            oWorksheet:WriteCurrency( nWiersz, 15, aRow[ 'wartosc_vat' ] )
                         ENDIF
                         oWorksheet:WriteText( nWiersz, 16, aRow[ 'uwagi' ] )
+                        oWorksheet:WriteText( nWiersz, 17, aRow[ 'NrKSeF' ] )
                         nWiersz++
                      } )
                      IF oWorkbook:WriteToFile( cPlikWyj ) == 0

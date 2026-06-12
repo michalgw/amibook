@@ -611,6 +611,7 @@ PROCEDURE ksiega16()
                   oWorksheet:WriteColWidth( 15, 25, 0 )
                   oWorksheet:WriteColWidth( 16, 15, 0 )
                   oWorksheet:WriteColWidth( 17, 25, 0 )
+                  oWorksheet:WriteColWidth( 18, 35, 0 )
                   oWorksheet:WriteText( 0, 0, aDane[ 'firma' ] )
                   oWorksheet:WriteText( 1, 0, "Miesi¥c: " + aDane[ 'miesiac' ] + " " + aDane[ 'rok' ] )
                   oWorksheet:WriteText( 3, 0, "L.p." )
@@ -631,6 +632,7 @@ PROCEDURE ksiega16()
                   oWorksheet:WriteText( 3, 15, "Dzieˆalno˜† badawcza - opis kosztu" )
                   oWorksheet:WriteText( 3, 16, "Dzieˆalno˜† badawcza - warto˜†" )
                   oWorksheet:WriteText( 3, 17, "Uwagi" )
+                  oWorksheet:WriteText( 3, 18, "Nr KSeF" )
                   nWiersz := 4
                   AEval( aDane[ 'pozycje' ], { | aRow |
                      oWorksheet:WriteNumber( nWiersz, 0, aRow['k1'] )
@@ -671,6 +673,7 @@ PROCEDURE ksiega16()
                         oWorksheet:WriteCurrency( nWiersz, 16, aRow['k16w'] )
                      ENDIF
                      oWorksheet:WriteText( nWiersz, 17, AllTrim( aRow['k17'] ) )
+                     oWorksheet:WriteText( nWiersz, 18, AllTrim( aRow['nrksef'] ) )
                      nWiersz++
                   } )
                   IF oWorkbook:WriteToFile( cPlikWyj ) == 0
