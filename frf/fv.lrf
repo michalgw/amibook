@@ -7,7 +7,7 @@
     <KeyWords Value=""/>
     <Comments Value=""/>
     <ReportCreateDate Value="1899-12-30 00:00:00"/>
-    <ReportLastChange Value="2026-03-31 22:42:30"/>
+    <ReportLastChange Value="2026-07-01 22:18:10"/>
     <ReportVersionBuild Value=""/>
     <ReportVersionMajor Value=""/>
     <ReportVersionMinor Value=""/>
@@ -1809,7 +1809,7 @@
             <Left Value="36"/>
             <Top Value="448"/>
             <Width Value="420"/>
-            <Height Value="58"/>
+            <Height Value="78"/>
           </Size>
           <Flags Value="3"/>
           <FillColor Value="536870911"/>
@@ -1823,7 +1823,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="Zapłacono: [FormatFloat('0.00', [zaplacono])] zł&#xD;&#xA;[If([do_zaplaty]&lt;&gt;0,'Do zapłaty: ','')][If([do_zaplaty]&lt;&gt;0,FormatFloat('0.00',[do_zaplaty]),'')][If([do_zaplaty]&lt;&gt;0,' zł     w terminie ','')][If([do_zaplaty]&lt;&gt;0,[termin],'')][If([do_zaplaty]&lt;&gt;0,' dni [do dnia ','')][If([do_zaplaty]&lt;&gt;0,[termin_data],'')][If([do_zaplaty]&lt;&gt;0,']','')]&#xD;&#xA;[If([do_zaplaty]&lt;&gt;0,'Na konto: ','')][If([do_zaplaty]&lt;&gt;0,[f_nr_konta],'')][If([do_zaplaty]&lt;&gt;0,'   [','')][If([do_zaplaty]&lt;&gt;0,[f_bank],'')][If([do_zaplaty]&lt;&gt;0,']','')]&#xD;&#xA;Fakturę wystawił: [wystawil]&#xD;&#xA;"/>
+            <Memo Value="Zapłacono: [FormatFloat('0.00', [zaplacono])] zł&#xD;&#xA;[If([do_zaplaty]&lt;&gt;0,'Do zapłaty: ','')][If([do_zaplaty]&lt;&gt;0,FormatFloat('0.00',[do_zaplaty]),'')][If([do_zaplaty]&lt;&gt;0,' zł     w terminie ','')][If([do_zaplaty]&lt;&gt;0,[termin],'')][If([do_zaplaty]&lt;&gt;0,' dni [do dnia ','')][If([do_zaplaty]&lt;&gt;0,[termin_data],'')][If([do_zaplaty]&lt;&gt;0,']','')]&#xD;&#xA;Forma płatności: [sposob_p_t]&#xD;&#xA;[If([sposob_p]=6,'Na konto: ','')][If([sposob_p]=6,[f_nr_konta],'')][If([sposob_p]=6,'   [','')][If([sposob_p]=6,[f_bank],'')][If([sposob_p]=6,']','')]&#xD;&#xA;Fakturę wystawił: [wystawil]&#xD;&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>

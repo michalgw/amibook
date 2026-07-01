@@ -51,7 +51,7 @@ PROCEDURE FaPozN()
    @ 19,  0 SAY 'Nazwa.                                      Ё          Ё 0Ё         Ё          Ё'
    @ 20,  0 SAY 'Adres.                                      Ё          ЁZWЁ         Ё          Ё'
    @ 21,  0 SAY '                                       RAZEMЁ          Ё  Ё         Ё          Ё'
-   @ 22,  0 SAY '                                            юддддддддддаддадддддддддадддддддддды'
+   @ 22,  0 SAY 'Forma p┬at.                                 юддддддддддаддадддддддддадддддддддды'
    SET COLO TO w+
    @ 15,  6 SAY SubStr( RODZDOW, 1, 3 )
    @ 15, 15 SAY SubStr( OPCJE, 1, 8 )

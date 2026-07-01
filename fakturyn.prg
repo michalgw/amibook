@@ -40,7 +40,7 @@ PROCEDURE FakturyN()
    PRIVATE _row_g, _col_l, _row_d, _col_p, _invers, _curs_l, _curs_p, _esc, _top, _bot, _stop, _sbot
    PRIVATE _proc, _row, _proc_spe, _disp, _cls, kl, ins, nr_rec, wiersz, f10, rec, fou, _top_bot
 
-   PRIVATE nPopKsgData, dPopDataTrans, aBufDok, lKorekta, cScrRodzDow, oStatus
+   PRIVATE nPopKsgData, dPopDataTrans, aBufDok, lKorekta, cScrTmp, oStatus, cScrRodzDow
 
    *********************** lp
    m->liczba := 1
@@ -258,6 +258,7 @@ PROCEDURE FakturyN()
                      zODBNAZWA := aBufDok[ 'ODBNAZWA' ]
                      zODBADRES := aBufDok[ 'ODBADRES' ]
                      zODBKRAJ := aBufDok[ 'ODBKRAJ' ]
+                     zSPOSOB_P := iif( aBufDok[ 'SPOSOB_P' ] == 0, 6, aBufDok[ 'SPOSOB_P' ] )
                      IF lKorekta
                         FakturyN_KorInfo()
                      ENDIF
@@ -311,6 +312,7 @@ PROCEDURE FakturyN()
                   zODBNAZWA := Space( 200 )
                   zODBADRES := Space( 200 )
                   zODBKRAJ := "  "
+                  zSPOSOB_P := 6
                ELSE
                   zRACH := RACH
                   zNUMER&zRACH := NUMER
@@ -367,6 +369,7 @@ PROCEDURE FakturyN()
                   zODBNAZWA := ODBNAZWA
                   zODBADRES := ODBADRES
                   zODBKRAJ := ODBKRAJ
+                  zSPOSOB_P := iif( SPOSOB_P == 0, 6, SPOSOB_P )
     *             endif
                ENDIF
                *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
@@ -467,6 +470,7 @@ PROCEDURE FakturyN()
                repl_( 'ODBNAZWA', zODBNAZWA )
                repl_( 'ODBADRES', zODBADRES )
                repl_( 'ODBKRAJ', zODBKRAJ )
+               repl_( 'SPOSOB_P', zSPOSOB_P )
                IF ins
                   repl_( 'KOREKTA', zKOREKTA )
                   repl_( 'KSGZBIOR', pzparam_ksws )
@@ -678,6 +682,7 @@ PROCEDURE FakturyN()
 
                @ 23, 0
                ColStd()
+               @ 22, 12 GET zSPOSOB_P PICTURE '9' WHEN FakturyN_WSP() VALID FakturyN_VSP()
                @ 23,  0 SAY 'Kontrola zaplat....  Termin zaplaty.... (..........) Juz zaplacono.             '
                @ 23, 16 GET zROZRZAPF PICTURE '!' WHEN wROZRget() VALID vROZRget( 'zROZRZAPF', 23, 16 )
                @ 23, 36 GET zZAP_TER PICTURE '999'
@@ -693,6 +698,7 @@ PROCEDURE FakturyN()
                repl_('ZAP_DAT', zZAP_DAT )
                repl_('ZAP_WART', zZAP_WART )
                repl_( 'KSGDATA', zKSGDATA )
+               repl_( 'SPOSOB_P', zSPOSOB_P )
                REKZAK := rec_no
                COMMIT
                unlock
@@ -1102,6 +1108,7 @@ PROCEDURE FakturyN()
                   zODBNAZWA := aBufDok[ 'ODBNAZWA' ]
                   zODBADRES := aBufDok[ 'ODBADRES' ]
                   zODBKRAJ := aBufDok[ 'ODBKRAJ' ]
+                  zSPOSOB_P := aBufDok[ 'SPOSOB_P' ]
 
                KontrApp()
                SELECT firma
@@ -1152,6 +1159,7 @@ PROCEDURE FakturyN()
                repl_( 'ODBNAZWA', zODBNAZWA )
                repl_( 'ODBADRES', zODBADRES )
                repl_( 'ODBKRAJ', zODBKRAJ )
+               repl_( 'SPOSOB_P', zSPOSOB_P )
                IF ins
                   repl_( 'KOREKTA', zKOREKTA )
                   repl_( 'KSGZBIOR', pzparam_ksws )
@@ -1449,6 +1457,7 @@ PROCEDURE say260vn()
    *endcase
 
    *@ 22, 0 say 'Kontrola zaplat....  .................. (..........) ..............             '
+   @ 22, 12 SAY Faktury_SposobPlat( iif( SPOSOB_P == 0, 6, SPOSOB_P ) )
    @ 23, 16 SAY ROZRZAPF + iif( ROZRZAPF =='T', 'ak', 'ie' )
    *if ROZRZAPF='T'
    @ 23, 36 SAY ZAP_TER PICTURE '999'
@@ -2129,6 +2138,8 @@ FUNCTION FakturyN_Dane()
    aDane[ 'duplikat' ] := iif( zduplikat == 'T', 1, 0 )
    aDane[ 'duplikat_data' ] := iif( zduplikat == 'T', zduplikatd, Date() )
    aDane[ 'korekta' ] := faktury->korekta == 'T'
+   aDane[ 'sposob_p' ] := iif( faktury->sposob_p == 0, 6, faktury->sposob_p )
+   aDane[ 'sposob_p_t' ] := Faktury_SposobPlat( iif( faktury->sposob_p == 0, 6, faktury->sposob_p ), .T., .F. )
 
    aDane[ 'jest_zwolnienie' ] := .F.
    aDane[ 'pozycje' ] := {}
@@ -2379,7 +2390,7 @@ PROCEDURE FakturyN_RysujTlo()
    @ 19, 0 SAY 'Nazwa.                                      ³          ³ 0³         ³          ³'
    @ 20, 0 SAY 'Adres.                                      ³          ³ZW³         ³          ³'
    @ 21, 0 SAY '                                       RAZEM³          ³  ³         ³          ³'
-   @ 22, 0 SAY '                                            ְֱֱֱִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִÙ'
+   @ 22, 0 SAY 'Forma pˆat.                                 ְֱֱֱִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִִÙ'
    @ 23, 0 SAY 'Kontrola zaplat....  Termin zaplaty.... (..........) Juz zaplacono.             '
    *if NR_UZYTK=800
    *   @ 20,0  say 'Opl.skarb.'
@@ -3246,7 +3257,7 @@ FUNCTION FakturyN_TworzFA3()
       cFaktura += '      <Zaplacono>1</Zaplacono>' + nl
       cFaktura += '      <DataZaplaty>' + date2strxml( aDane[ 'termin_data' ] ) + '</DataZaplaty>' + nl
    ENDIF
-   cFaktura += '      <FormaPlatnosci>6</FormaPlatnosci>' + nl
+   cFaktura += '      <FormaPlatnosci>' + TNaturalny( aDane[ 'sposob_p' ] ) + '</FormaPlatnosci>' + nl
    IF ! Empty( aDane[ 'f_nr_konta' ] )
       cFaktura += '      <RachunekBankowy>' + nl
       cFaktura += '        <NrRB>' + str2sxml( aDane[ 'f_nr_konta' ] ) + '</NrRB>' + nl
@@ -3393,6 +3404,63 @@ PROCEDURE Faktury_ZnacznikKSeF( nRow, nCol, cPusty )
    SetColor( cKolor )
 
    RETURN NIL
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION FakturyN_WSP()
+
+   LOCAL cKolor
+
+   cScrTmp := SaveScreen()
+   cKolor := SetColor( "W+" )
+   @ 22, 12 SAY Faktury_SposobPlat( zSPOSOB_P )
+
+   ColInf()
+   @ 14, 30 CLEAR TO 22, 46
+   @ 14, 30 TO 22, 46
+   @ 15, 32 SAY "1 - Got¢wka"
+   @ 16, 32 SAY "2 - Karta"
+   @ 17, 32 SAY "3 - Bon"
+   @ 18, 32 SAY "4 - Czek"
+   @ 19, 32 SAY "5 - Kredyt"
+   @ 20, 32 SAY "6 - Przelew"
+   @ 21, 32 SAY "7 - Mobilna"
+
+   SetColor( cKolor )
+
+   RETURN .T.
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION FakturyN_VSP()
+
+   LOCAL cKolor, lRes := zSPOSOB_P >= 1 .AND. zSPOSOB_P <= 7
+
+   IF lRes
+      RestScreen( , , , , cScrTmp )
+      cKolor := SetColor( "W+" )
+      @ 22, 12 SAY Faktury_SposobPlat( zSPOSOB_P )
+      SetColor( cKolor )
+   ENDIF
+
+   RETURN lRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION Faktury_SposobPlat( nSposob, lTylkoNazwy, lWypelnij )
+
+   LOCAL cRes, aDane := { "Got¢wka", "Karta", "Bon", "Czek", ;
+      "Kredyt", "Przelew", "Mobilna" }
+
+   hb_default( @lTylkoNazwy, .F. )
+   hb_default( @lWypelnij, .T. )
+
+   cRes := iif( ! lTylkoNazwy, AllTrim( Str( nSposob ) ) + ' - ', '' ) + aDane[ nSposob ]
+   IF lWypelnij
+      cRes := Pad( cRes, 11 )
+   ENDIF
+
+   RETURN cRes
 
 /*----------------------------------------------------------------------*/
 
