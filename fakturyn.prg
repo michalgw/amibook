@@ -3019,6 +3019,8 @@ FUNCTION FakturyN_TworzFA3()
          ELSE
             cWartosc := '0 KR'
          ENDIF
+      ELSEIF AllTrim( cVat ) == 'NP'
+         cWartosc := 'np II'
       ELSE
          cWartosc := Lower( cVat )
       ENDIF
