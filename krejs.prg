@@ -2256,6 +2256,11 @@ FUNCTION SUMNETs( lRyczModSys )
             IF zNETTO == 0 .AND. nPopNetto <> 0
                zNETTO := nPopNetto
             ENDIF
+            IF zNETTO == nPopNetto + zNETTO2
+               zNETTO := nPopNetto
+            ELSE
+               zNETTO2 := 0
+            ENDIF
          ENDIF
       ENDIF
    ENDIF

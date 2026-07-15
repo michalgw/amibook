@@ -32,7 +32,7 @@ PROCEDURE KRejZ()
    PRIVATE nOrgW2, nOrgW7, nOrgW12, nOrgW22, zRODZDOW, cScrRodzDow
    PRIVATE zK16OPIS, zKOL47, zKOL48, zKOL49, zKOL50, nWartoscNetto, zVATMARZA
    PRIVATE _top, _bot, _top_bot, _stop, _sbot, _proc, kl, ins, nr_rec, f10, rec, fou
-   PRIVATE cOstSymbRej, cOldOpcje
+   PRIVATE cOstSymbRej, cOldOpcje, zMC
 
    fDETALISTA := DETALISTA
 
@@ -506,6 +506,7 @@ PROCEDURE KRejZ()
             @ 18, 2 SAY Str( vat_D, 2 )
 
             stan_ := zNETTO + zNETTO2
+            zMC := ''
             zRACH := 'F'
             scr_kolumL := .F.
             scr_kolumC := .F.
@@ -1802,6 +1803,11 @@ FUNCTION SUMNETz()
             IF zNETTO == 0 .AND. nPopNetto <> 0
                zNETTO := nPopNetto
             ENDIF
+            IF zNETTO == nPopNetto + zNETTO2
+               zNETTO := nPopNetto
+            ELSE
+               zNETTO2 := 0
+            ENDIF
          ENDIF
          nWartoscNetto := zNETTO
       ENDIF
@@ -2282,6 +2288,9 @@ PROCEDURE KRejZ_Ksieguj()
       SEEK '+' + ident_fir + miesiac
    ENDIF
    SELECT rejz
+   IF Empty( zMC )
+      zMC := miesiac
+   ENDIF
    IfIns( 0 )
    BlokadaR()
    IF ! ins
@@ -2291,6 +2300,7 @@ PROCEDURE KRejZ_Ksieguj()
    ENDIF
    ADDPOZ
    ADDREJZ
+   rejz->mc := zMC
    repl_( 'SPZW', iif( zWARTZW <> 0,zSPZW, ' ') )
    repl_( 'SP00', iif( zWART00 <> 0,zSP00, ' ') )
    repl_( 'SP02', iif( zWART02 + zVAT02 <> 0, zSP02, ' ') )
