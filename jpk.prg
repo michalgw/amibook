@@ -41,7 +41,7 @@ FUNCTION jpk_pkpir(aDane)
    cRes := cRes + '  <Naglowek>' + nl
    cRes := cRes + '    <KodFormularza kodSystemowy="JPK_PKPIR (2)" wersjaSchemy="1-0" >JPK_PKPIR</KodFormularza>' + nl
    cRes := cRes + '    <WariantFormularza>2</WariantFormularza>' + nl
-   cRes := cRes + '    <CelZlozenia>' + aDane['CelZlozenia'] + '</CelZlozenia>' + nl
+   cRes := cRes + '    <CelZlozenia>' + iif( aDane['CelZlozenia'] == '0', '1', aDane['CelZlozenia'] ) + '</CelZlozenia>' + nl
    cRes := cRes + '    <DataWytworzeniaJPK>' + aDane['DataWytworzeniaJPK'] + '</DataWytworzeniaJPK>' + nl
    cRes := cRes + '    <DataOd>' + date2strxml(aDane['DataOd']) + '</DataOd>' + nl
    cRes := cRes + '    <DataDo>' + date2strxml(aDane['DataDo']) + '</DataDo>' + nl
@@ -76,11 +76,13 @@ FUNCTION jpk_pkpir(aDane)
    cRes := cRes + '    <P_3>' + TKwota2(aDane['P_3']) + '</P_3>' + nl
    cRes := cRes + '    <P_4>' + TKwota2(aDane['P_4']) + '</P_4>' + nl
    cRes := cRes + '  </PKPIRInfo>' + nl
-   IF aDane['P_5']
-      cRes := cRes + '  <PKPIRSpis typ="G">' + nl
-      cRes := cRes + '    <P_5A>' + date2strxml(aDane['P_5A']) + '</P_5A>' + nl
-      cRes := cRes + '    <P_5B>' + TKwota2(aDane['P_5B']) + '</P_5B>' + nl
-      cRes := cRes + '  </PKPIRSpis>' + nl
+   IF aDane[ 'P_5' ]
+      FOR nI := 1 TO Len( aDane[ 'rem' ] )
+         cRes := cRes + '  <PKPIRSpis typ="G">' + nl
+         cRes := cRes + '    <P_5A>' + date2strxml(aDane['rem'][nI]['k2']) + '</P_5A>' + nl
+         cRes := cRes + '    <P_5B>' + TKwota2(aDane['rem'][nI]['k10']) + '</P_5B>' + nl
+         cRes := cRes + '  </PKPIRSpis>' + nl
+      NEXT
    ENDIF
    FOR nI := 1 TO Len(aDane['pozycje'])
       cRes := cRes + '  <PKPIRWiersz typ="G">' + nl
@@ -90,9 +92,9 @@ FUNCTION jpk_pkpir(aDane)
       ELSE
          cRes := cRes + '    <K_2>' + date2strxml(aDane['pozycje'][nI]['k2']) + '</K_2>' + nl
       ENDIF
-      cRes := cRes + '    <K_3>' + JPKStrND(aDane['pozycje'][nI]['k3']) + '</K_3>' + nl
-      cRes := cRes + '    <K_4>' + JPKStrND(aDane['pozycje'][nI]['k4']) + '</K_4>' + nl
-      cRes := cRes + '    <K_5>' + JPKStrND(aDane['pozycje'][nI]['k5']) + '</K_5>' + nl
+      cRes := cRes + '    <K_3>' + JPKStrND(aDane['pozycje'][nI]['k3a']) + '</K_3>' + nl
+      cRes := cRes + '    <K_4>' + JPKStrND(aDane['pozycje'][nI]['k5a']) + '</K_4>' + nl
+      cRes := cRes + '    <K_5>' + JPKStrND(aDane['pozycje'][nI]['k5b']) + '</K_5>' + nl
       cRes := cRes + '    <K_6>' + JPKStrND(aDane['pozycje'][nI]['k6']) + '</K_6>' + nl
       cRes := cRes + '    <K_7>' + TKwota2(aDane['pozycje'][nI]['k7']) + '</K_7>' + nl
       cRes := cRes + '    <K_8>' + TKwota2(aDane['pozycje'][nI]['k8']) + '</K_8>' + nl
@@ -103,6 +105,114 @@ FUNCTION jpk_pkpir(aDane)
       cRes := cRes + '    <K_13>' + TKwota2(aDane['pozycje'][nI]['k14']) + '</K_13>' + nl
       cRes := cRes + '    <K_14>' + TKwota2(aDane['pozycje'][nI]['k15']) + '</K_14>' + nl
       cRes := cRes + '    <K_15>' + TKwota2(aDane['pozycje'][nI]['k16']) + '</K_15>' + nl
+      IF ( aDane['pozycje'][nI]['k16w'] <> 0 ) .OR. ( Len( AllTrim( aDane['pozycje'][nI]['k16o'] ) ) > 0 )
+         cRes := cRes + '    <K_16A>' + sxml2str(aDane['pozycje'][nI]['k16o']) + '</K_16A>' + nl
+         cRes := cRes + '    <K_16B>' + TKwota2(aDane['pozycje'][nI]['k16w']) + '</K_16B>' + nl
+      ENDIF
+      IF AllTrim(aDane['pozycje'][nI]['k17']) <> ''
+         cRes := cRes + '    <K_17>' + str2sxml(AllTrim(aDane['pozycje'][nI]['k17'])) + '</K_17>' + nl
+      ENDIF
+      cRes := cRes + '  </PKPIRWiersz>' + nl
+   NEXT
+   cRes := cRes + '  <PKPIRCtrl>' + nl
+   cRes := cRes + '    <LiczbaWierszy>' + AllTrim(Str(aDane['LiczbaWierszy'])) + '</LiczbaWierszy>' + nl
+   cRes := cRes + '    <SumaPrzychodow>' + TKwota2(aDane['SumaPrzychodow']) + '</SumaPrzychodow>' + nl
+   cRes := cRes + '  </PKPIRCtrl>' + nl
+   cRes := cRes + '</JPK>' + nl
+RETURN cRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION jpk_pkpir_w3(aDane)
+   LOCAL cRes := '', nl := Chr(13) + Chr(10), nI
+   cRes :=        '<?xml version="1.0" encoding="UTF-8"?>'
+   cRes := cRes + '<JPK xmlns="http://jpk.mf.gov.pl/wzor/2024/10/30/10302/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" >' + nl
+   cRes := cRes + '  <Naglowek>' + nl
+   cRes := cRes + '    <KodFormularza kodSystemowy="JPK_PKPIR (3)" wersjaSchemy="1-0" >JPK_PKPIR</KodFormularza>' + nl
+   cRes := cRes + '    <WariantFormularza>3</WariantFormularza>' + nl
+   cRes := cRes + '    <CelZlozenia>' + aDane['CelZlozenia'] + '</CelZlozenia>' + nl
+   cRes := cRes + '    <DataWytworzeniaJPK>' + aDane['DataWytworzeniaJPK'] + '</DataWytworzeniaJPK>' + nl
+   cRes := cRes + '    <DataOd>' + date2strxml(aDane['DataOd']) + '</DataOd>' + nl
+   cRes := cRes + '    <DataDo>' + date2strxml(aDane['DataDo']) + '</DataDo>' + nl
+   cRes := cRes + '    <KodUrzedu>' + aDane['KodUrzedu'] + '</KodUrzedu>' + nl
+   cRes := cRes + '  </Naglowek>' + nl
+   cRes := cRes + '  <Podmiot1 rola="Podatnik">' + nl
+   IF aDane[ 'Spolka' ]
+      cRes := cRes + '    <OsobaNiefizyczna>' + nl
+      cRes := cRes + '      <NIP>' + trimnip(aDane['NIP']) + '</NIP>' + nl
+      cRes := cRes + '      <PelnaNazwa>' + str2sxml(AllTrim(aDane['PelnaNazwa'])) + '</PelnaNazwa>' + nl
+      cRes := cRes + '    </OsobaNiefizyczna>' + nl
+   ELSE
+      cRes := cRes + '    <OsobaFizyczna>' + nl
+      cRes := cRes + '      <NIP>' + trimnip(aDane['NIP']) + '</NIP>' + nl
+      cRes := cRes + '      <ImiePierwsze>' + str2sxml(AllTrim(aDane['ImiePierwsze'])) + '</ImiePierwsze>' + nl
+      cRes := cRes + '      <Nazwisko>' + str2sxml(AllTrim(aDane['Nazwisko'])) + '</Nazwisko>' + nl
+      cRes := cRes + '      <DataUrodzenia>' + date2strxml(aDane['DataUrodzenia']) + '</DataUrodzenia>' + nl
+      cRes := cRes + '    </OsobaFizyczna>' + nl
+   ENDIF
+   cRes := cRes + '  </Podmiot1>' + nl
+   cRes := cRes + '  <PKPIRInfo>' + nl
+   cRes := cRes + '    <P_1>' + TKwota2(aDane['P_1']) + '</P_1>' + nl
+   cRes := cRes + '    <P_2>' + TKwota2(aDane['P_2']) + '</P_2>' + nl
+   cRes := cRes + '    <P_3>' + TKwota2(aDane['P_3']) + '</P_3>' + nl
+   cRes := cRes + '    <P_4>' + TKwota2(aDane['P_4']) + '</P_4>' + nl
+   cRes := cRes + '  </PKPIRInfo>' + nl
+   IF aDane[ 'P_5' ]
+      FOR nI := 1 TO Len( aDane[ 'rem' ] )
+         cRes := cRes + '  <PKPIRSpis>' + nl
+         cRes := cRes + '    <P_5A>' + date2strxml(aDane['rem'][nI]['k2']) + '</P_5A>' + nl
+         cRes := cRes + '    <P_5B>' + TKwota2(aDane['rem'][nI]['k10']) + '</P_5B>' + nl
+         cRes := cRes + '  </PKPIRSpis>' + nl
+      NEXT
+   ENDIF
+   FOR nI := 1 TO Len(aDane['pozycje'])
+      cRes := cRes + '  <PKPIRWiersz>' + nl
+      cRes := cRes + '    <K_1>' + AllTrim(Str(aDane['pozycje'][nI]['k1'])) + '</K_1>' + nl
+      IF hb_HHasKey( aDane, 'rok' )
+         cRes := cRes + '    <K_2>' + JPKData(aDane['rok'], aDane['miesiac'], aDane['pozycje'][nI]['k2']) + '</K_2>' + nl
+      ELSE
+         cRes := cRes + '    <K_2>' + date2strxml(aDane['pozycje'][nI]['k2']) + '</K_2>' + nl
+      ENDIF
+      cRes := cRes + '    <K_3A>' + JPKStrND(aDane['pozycje'][nI]['k3a']) + '</K_3A>' + nl
+      IF ! Empty( aDane['pozycje'][nI]['k3b'] )
+         cRes := cRes + '    <K_3B>' + JPKStrND(aDane['pozycje'][nI]['k3b']) + '</K_3B>' + nl
+      ENDIF
+      IF ! Empty( aDane['pozycje'][nI]['k4a'] )
+         cRes := cRes + '    <K_4A>' + aDane['pozycje'][nI]['k4a'] + '</K_4A>' + nl
+      ENDIF
+      IF ! Empty( aDane['pozycje'][nI]['k4b'] )
+         cRes := cRes + '    <K_4B>' + aDane['pozycje'][nI]['k4b'] + '</K_4B>' + nl
+      ENDIF
+      cRes := cRes + '    <K_5A>' + JPKStrND(aDane['pozycje'][nI]['k5a']) + '</K_5A>' + nl
+      cRes := cRes + '    <K_5B>' + JPKStrND(aDane['pozycje'][nI]['k5b']) + '</K_5B>' + nl
+      cRes := cRes + '    <K_6>' + JPKStrND(aDane['pozycje'][nI]['k6']) + '</K_6>' + nl
+      IF aDane['pozycje'][nI]['k7'] <> 0
+         cRes := cRes + '    <K_7>' + TKwota2(aDane['pozycje'][nI]['k7']) + '</K_7>' + nl
+      ENDIF
+      IF aDane['pozycje'][nI]['k8'] <> 0
+         cRes := cRes + '    <K_8>' + TKwota2(aDane['pozycje'][nI]['k8']) + '</K_8>' + nl
+      ENDIF
+      IF aDane['pozycje'][nI]['k9'] <> 0
+         cRes := cRes + '    <K_9>' + TKwota2(aDane['pozycje'][nI]['k9']) + '</K_9>' + nl
+      ENDIF
+      IF aDane['pozycje'][nI]['k10'] <> 0
+         cRes := cRes + '    <K_10>' + TKwota2(aDane['pozycje'][nI]['k10']) + '</K_10>' + nl
+      ENDIF
+      IF aDane['pozycje'][nI]['k11'] <> 0
+         cRes := cRes + '    <K_11>' + TKwota2(aDane['pozycje'][nI]['k11']) + '</K_11>' + nl
+      ENDIF
+      IF aDane['pozycje'][nI]['k13'] <> 0
+         cRes := cRes + '    <K_12>' + TKwota2(aDane['pozycje'][nI]['k13']) + '</K_12>' + nl
+      ENDIF
+      IF aDane['pozycje'][nI]['k14'] <> 0
+         cRes := cRes + '    <K_13>' + TKwota2(aDane['pozycje'][nI]['k14']) + '</K_13>' + nl
+      ENDIF
+      IF aDane['pozycje'][nI]['k15'] <> 0
+         cRes := cRes + '    <K_14>' + TKwota2(aDane['pozycje'][nI]['k15']) + '</K_14>' + nl
+      ENDIF
+      IF aDane['pozycje'][nI]['k16'] <> 0
+         cRes := cRes + '    <K_15>' + TKwota2(aDane['pozycje'][nI]['k16']) + '</K_15>' + nl
+      ENDIF
       IF ( aDane['pozycje'][nI]['k16w'] <> 0 ) .OR. ( Len( AllTrim( aDane['pozycje'][nI]['k16o'] ) ) > 0 )
          cRes := cRes + '    <K_16A>' + sxml2str(aDane['pozycje'][nI]['k16o']) + '</K_16A>' + nl
          cRes := cRes + '    <K_16B>' + TKwota2(aDane['pozycje'][nI]['k16w']) + '</K_16B>' + nl

@@ -393,7 +393,7 @@ FUNCTION Ewid()
                   ColPro()
                   @ 16, 5 TO 19, 38
                   @ 17, 6 PROMPT ' D - Wydruk ewidencji           '
-                  @ 18, 6 PROMPT ' J - JPK_PKPIR (2)              '
+                  @ 18, 6 PROMPT ' J - JPK_PKPIR (2,3)            '
                   opcja1 := menu( opcja1 )
                   ColStd()
                   IF LastKey() <> K_ESC

@@ -34,11 +34,28 @@ PROCEDURE JpkPkpirRob()
          urzedy->( dbCloseArea() )
          RETURN
       ENDIF
+      IF ! DostepPro( 'SPOLKA' )
+         firma->( dbCloseArea() )
+         urzedy->( dbCloseArea() )
+         RETURN
+      ENDIF
       firma->( dbGoto( Val( ident_fir ) ) )
       aDane['NIP'] := firma->nip
       IF firma->skarb > 0
          urzedy->( dbGoto( firma->skarb ) )
          aDane['KodUrzedu'] := urzedy->kodurzedu
+      ENDIF
+      aDane[ 'Spolka' ] := firma->spolka
+      IF ! firma->spolka
+         IF spolka->( dbSeek( '+' + ident_fir + firma->nazwisko ) )
+            aDane[ 'Nazwisko' ] := naz_imie_naz( AllTrim( spolka->naz_imie ) )
+            aDane[ 'ImiePierwsze' ] := naz_imie_imie( AllTrim( spolka->naz_imie ) )
+            aDane[ 'DataUrodzenia' ] := spolka->data_ur
+         ELSE
+            aDane[ 'Nazwisko' ] := ''
+            aDane[ 'ImiePierwsze' ] := ''
+            aDane[ 'DataUrodzenia' ] := ''
+         ENDIF
       ENDIF
       aDane['PelnaNazwa'] := firma->nazwa
       aDane['Wojewodztwo'] := firma->param_woj
@@ -51,8 +68,10 @@ PROCEDURE JpkPkpirRob()
       aDane['KodPocztowy'] := firma->kod_p
       aDane['Poczta'] := firma->poczta
       aDane['NazwaSkr'] := firma->nazwa_skr
+
       urzedy->( dbCloseArea() )
       firma->( dbCloseArea() )
+      spolka->( dbCloseArea() )
 
       IF Dostep( 'OPER' )
          SetInd( 'OPER' )
@@ -62,6 +81,7 @@ PROCEDURE JpkPkpirRob()
       ENDIF
       oper->( dbSeek( '+' + ident_fir + Str( Month( aDane['DataOd'] ), 2 ) ) )
       aDane['pozycje'] := {}
+      aDane['rem'] := {}
       DO WHILE oper->del == '+' .AND. oper->firma == ident_fir ;
          .AND. hb_Date( Val( param_rok ), Val( oper->mc ), Val( oper->dzien ) ) >= aDane[ 'DataOd' ] ;
          .AND. hb_Date( Val( param_rok ), Val( oper->mc ), Val( oper->dzien ) ) <= aDane[ 'DataDo' ]
@@ -69,9 +89,12 @@ PROCEDURE JpkPkpirRob()
          aRow := hb_Hash()
          aRow['k1'] := oper->lp
          aRow['k2'] := hb_Date( Val( param_rok ), Val( oper->mc ), Val( oper->dzien ) )
-         aRow['k3'] := iif( Left( oper->numer, 1 ) == Chr( 1 ) .OR. Left( oper->numer, 1 ) == Chr( 254 ), SubStr( oper->numer, 2 ) + [ ], oper->numer )
-         aRow['k4'] := oper->nazwa
-         aRow['k5'] := oper->adres
+         aRow['k3a'] := iif( Left( oper->numer, 1 ) == Chr( 1 ) .OR. Left( oper->numer, 1 ) == Chr( 254 ), SubStr( oper->numer, 2 ) + [ ], oper->numer )
+         aRow['k3b'] := oper->nrksef
+         aRow['k4a'] := oper->kraj
+         aRow['k4b'] := oper->nr_ident
+         aRow['k5a'] := oper->nazwa
+         aRow['k5b'] := oper->adres
          aRow['k6'] := oper->tresc
          aRow['k7'] := oper->wyr_tow
          aRow['k8'] := oper->uslugi
@@ -85,7 +108,11 @@ PROCEDURE JpkPkpirRob()
          aRow['k17'] := oper->uwagi
          aRow['k16w'] := oper->k16wart
          aRow['k16o'] := AllTrim( oper->k16opis )
-         AAdd(aDane['pozycje'], aRow)
+         IF Left( oper->numer, 1 ) == Chr( 1 ) .OR. Left( oper->numer, 1 ) == Chr( 254 )
+            AAdd(aDane['rem'], aRow)
+         ELSE
+            AAdd(aDane['pozycje'], aRow)
+         ENDIF
 
          oper->( dbSkip() )
       ENDDO
@@ -95,10 +122,14 @@ PROCEDURE JpkPkpirRob()
       aDane['SumaPrzychodow'] := 0
       AEval(aDane['pozycje'], { | aRec | aDane['SumaPrzychodow'] := aDane['SumaPrzychodow'] + aRec['k9']  } )
 
-      cJPK := jpk_pkpir(aDane)
+      IF aDane['WersjaJPK'] == 2
+         cJPK := jpk_pkpir(aDane)
+      ELSE
+         cJPK := jpk_pkpir_w3( aDane )
+      ENDIF
 
       edekZapiszXML( cJPK, normalizujNazwe( 'JPK_PKPIR_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) ;
-         + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKKPR-2', ;
+         + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKKPR-' + AllTrim( Str( aDane[ 'WersjaJPK' ] ) ), ;
          aDane['CelZlozenia'] == '2', Month( aDane['DataOd'] ) )
 
    ENDIF
@@ -109,7 +140,7 @@ PROCEDURE JpkPkpirRob()
 
 FUNCTION JpkPkpirParam( aDane )
 
-   LOCAL nP_1 := 0, nP_2 := 0, nP_3 := 0, nP_4 := 0, dP_5A := CToD(''), nP_5B := 0, cP_5 := 'N'
+   LOCAL nP_1 := 0, nP_2 := 0, nP_3 := 0, nP_4 := 0, dP_5A := CToD(''), nP_5B := 0, cP_5 := 'N', nWer := 3
    LOCAL cKorekta := 'D', dDataOd := hb_Date( Val( param_rok ), Val( miesiac ), 1 ), dDataDo := EoM( dDataOd )
 
    SAVE SCREEN TO cScr
@@ -118,25 +149,27 @@ FUNCTION JpkPkpirParam( aDane )
    @  6, 0, 18, 79 BOX B_SINGLE
    @  7, 1 SAY '                                               Dane za okres od'
    @  8, 1 SAY '                                                             do'
-   @  9, 1 SAY '                                   Deklaracja czy Korekta (D/K)'
+   @  9, 1 SAY '                      Deklaracja / Korekta / Na ¾¥danie (D/K/Z)'
    @ 10, 1 SAY '            Warto˜† spisu z natury na pocz¥tek roku podatkowego'
    @ 11, 1 SAY '              Warto˜† spisu z natury na koniec roku podatkowego'
    @ 12, 1 SAY 'Koszty uzysk. przych.,wg obj.do podatk. ksi©gi przych. i rozch.'
    @ 13, 1 SAY '     Doch¢d osi¥gni©ty w roku podatkowym, wg obja˜nieä do PKPiR'
-   @ 14, 1 SAY '          Spis z natury dokonany w ci¥gu roku podatkowego (T/N)'
-   @ 15, 1 SAY '     Data spisu z natury sporz¥dzonego w ci¥gu roku podatkowego'
-   @ 16, 1 SAY '  Warto˜† spisu z natury sporz¥dzonego w ci¥gu roku podatkowego'
+   @ 14, 1 SAY '   Doˆ¥cz spis z natury dokonany w ci¥gu roku podatkowego (T/N)'
+   @ 15, 1 SAY '                                         Wersja pliku JPK (2/3)'
+   //@ 15, 1 SAY '     Data spisu z natury sporz¥dzonego w ci¥gu roku podatkowego'
+   //@ 16, 1 SAY '  Warto˜† spisu z natury sporz¥dzonego w ci¥gu roku podatkowego'
 
    @  7, 65 GET dDataOd VALID Year( dDataOd ) == Val( param_rok )
    @  8, 65 GET dDataDo VALID Year( dDataDo ) == Val( param_rok )
-   @  9, 65 GET cKorekta PICTURE '!' VALID cKorekta#'DK'
+   @  9, 65 GET cKorekta PICTURE '!' VALID cKorekta#'DKZ'
    @ 10, 65 GET nP_1 PICTURE '999 999 999.99'
    @ 11, 65 GET nP_2 PICTURE '999 999 999.99'
    @ 12, 65 GET nP_3 PICTURE '999 999 999.99'
    @ 13, 65 GET nP_4 PICTURE '999 999 999.99'
    @ 14, 65 GET cP_5 PICTURE '!' VALID cP_5#'TN'
-   @ 15, 65 GET dP_5A WHEN cP_5 == 'T'
-   @ 16, 65 GET nP_5B PICTURE '999 999 999.99' WHEN cP_5 == 'T'
+   @ 15, 65 GET nWer PICTURE '9' RANGE 2, 3
+   //@ 15, 65 GET dP_5A WHEN cP_5 == 'T'
+   //@ 16, 65 GET nP_5B PICTURE '999 999 999.99' WHEN cP_5 == 'T'
 
    CLEAR TYPE
    read_()
@@ -153,11 +186,12 @@ FUNCTION JpkPkpirParam( aDane )
    aDane['P_5'] := iif(cP_5 == 'T', .T., .F.)
    aDane['P_5A'] := dP_5A
    aDane['P_5B'] := nP_5B
+   aDane['WersjaJPK'] := nWer
 
    aDane['DataWytworzeniaJPK'] := datetime2strxml(hb_DateTime())
    aDane['DataOd'] := dDataOd
    aDane['DataDo'] := dDataDo
-   aDane['CelZlozenia'] := iif(cKorekta == 'K', '2', '1')
+   aDane['CelZlozenia'] := iif( cKorekta == 'K', '2', iif( cKorekta == 'Z', '0', '1' ) )
 
    RETURN .T.
 

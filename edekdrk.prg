@@ -399,6 +399,11 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\jpkpkpir_w2.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'JPKKPR-3'
+      hDane := DaneXML_JPKPKPIRw3( oDoc, cNrRef )
+      cPlikRap := 'frf\jpkpkpir_w3.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'JPKEWP-1'
       hDane := DaneXML_JPKEWPw1( oDoc, cNrRef )
       cPlikRap := 'frf\jpkewp_w1.frf'
@@ -11721,9 +11726,11 @@ FUNCTION DaneXML_JPKPKPIRw2( oDoc, cNrRef )
    aDane[ 'P_3' ] := sxml2num( xmlWartoscH( aTemp, 'P_3' ), 0 )
    aDane[ 'P_4' ] := sxml2num( xmlWartoscH( aTemp, 'P_4' ), 0 )
 
-   aTemp := edekXmlGrupa( oDoc, 'PKPIRSpis' )
-   aDane[ 'P_5A' ] := xml2date( xmlWartoscH( aTemp, 'P_5A', '' ), '(brak)' )
-   aDane[ 'P_5B' ] := sxml2num( xmlWartoscH( aTemp, 'P_5B' ), 0 )
+   aDane[ 'PKPIRSpis' ] := edekXmlGrupaTab( oDoc, 'JPK', 'PKPIRSpis' )
+   AEval( aDane[ 'PKPIRSpis' ], { | aPoz |
+      aDane[ 'P_5A' ] := xml2date( xmlWartoscH( aPoz, 'P_5A', '' ), '(brak)' )
+      aDane[ 'P_5B' ] := sxml2num( xmlWartoscH( aPoz, 'P_5B' ), 0 )
+   } )
 
    aDane[ 'PKPIRWiersz' ] := edekXmlGrupaTab( oDoc, 'JPK', 'PKPIRWiersz' )
    AEval( aDane[ 'PKPIRWiersz' ], { | aPoz |
@@ -11732,6 +11739,78 @@ FUNCTION DaneXML_JPKPKPIRw2( oDoc, cNrRef )
       aPoz[ 'K_3' ] := sxml2str( xmlWartoscH( aPoz, 'K_3', '' ) )
       aPoz[ 'K_4' ] := sxml2str( xmlWartoscH( aPoz, 'K_4', '' ) )
       aPoz[ 'K_5' ] := sxml2str( xmlWartoscH( aPoz, 'K_5', '' ) )
+      aPoz[ 'K_6' ] := sxml2str( xmlWartoscH( aPoz, 'K_6', '' ) )
+      aPoz[ 'K_7' ] := sxml2num( xmlWartoscH( aPoz, 'K_7' ), 0 )
+      aPoz[ 'K_8' ] := sxml2num( xmlWartoscH( aPoz, 'K_8' ), 0 )
+      aPoz[ 'K_9' ] := sxml2num( xmlWartoscH( aPoz, 'K_9' ), 0 )
+      aPoz[ 'K_10' ] := sxml2num( xmlWartoscH( aPoz, 'K_10' ), 0 )
+      aPoz[ 'K_11' ] := sxml2num( xmlWartoscH( aPoz, 'K_11' ), 0 )
+      aPoz[ 'K_12' ] := sxml2num( xmlWartoscH( aPoz, 'K_12' ), 0 )
+      aPoz[ 'K_13' ] := sxml2num( xmlWartoscH( aPoz, 'K_13' ), 0 )
+      aPoz[ 'K_14' ] := sxml2num( xmlWartoscH( aPoz, 'K_14' ), 0 )
+      aPoz[ 'K_15' ] := sxml2num( xmlWartoscH( aPoz, 'K_15' ), 0 )
+      aPoz[ 'K_16A' ] := sxml2str( xmlWartoscH( aPoz, 'K_16A', '' ) )
+      aPoz[ 'K_16B' ] := sxml2num( xmlWartoscH( aPoz, 'K_16B' ), 0 )
+      aPoz[ 'K_17' ] := sxml2num( xmlWartoscH( aPoz, 'K_17' ), 0 )
+   } )
+
+   aDane[ 'PKPIRCtrl' ] := edekXmlGrupa( oDoc, 'PKPIRCtrl' )
+   aDane[ 'PKPIRCtrl' ][ 'LiczbaWierszy' ] := sxml2num( xmlWartoscH( aDane[ 'PKPIRCtrl' ], 'LiczbaWierszy' ) )
+   aDane[ 'PKPIRCtrl' ][ 'SumaPrzychodow' ] := sxml2num( xmlWartoscH( aDane[ 'PKPIRCtrl' ], 'SumaPrzychodow' ) )
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneXML_JPKPKPIRw3( oDoc, cNrRef )
+
+   LOCAL aDane := hb_Hash()
+   LOCAL aZak, aSprz, aTemp
+
+   aDane[ 'NrRef' ] := AllTrim( cNrRef )
+
+   aTemp := edekXmlGrupa( oDoc, 'Naglowek' )
+   aDane[ 'CelZlozenia' ] := xmlWartoscH( aTemp, 'CelZlozenia' )
+   aDane[ 'DataWytworzeniaJPK' ] := xmlWartoscH( aTemp, 'DataWytworzeniaJPK' )
+   aDane[ 'DataOd' ] := xmlWartoscH( aTemp, 'DataOd' )
+   aDane[ 'DataDo' ] := xmlWartoscH( aTemp, 'DataDo' )
+   aDane[ 'KodUrzedu' ] := xmlWartoscH( aTemp, 'KodUrzedu' )
+
+   aDane[ 'NIP' ] := ''
+   aDane[ 'Nazwa' ] := ''
+   aTemp := edekXmlGrupa( oDoc, 'OsobaFizyczna' )
+   IF ! Empty( aTemp )
+      aDane[ 'NIP' ] := xmlWartoscH( aTemp, 'NIP' )
+      aDane[ 'Nazwa' ] := xmlWartoscH( aTemp, 'ImiePierwsze' ) + ' ' + xmlWartoscH( aTemp, 'Nazwisko' ) + xmlWartoscH( aTemp, 'DataUrodzenia' )
+   ENDIF
+   aTemp := edekXmlGrupa( oDoc, 'OsobaNiefizyczna' )
+   IF ! Empty( aTemp )
+      aDane[ 'NIP' ] := xmlWartoscH( aTemp, 'NIP' )
+      aDane[ 'Nazwa' ] := xmlWartoscH( aTemp, 'PelnaNazwa' )
+   ENDIF
+
+   aTemp := edekXmlGrupa( oDoc, 'PKPIRInfo' )
+   aDane[ 'P_1' ] := sxml2num( xmlWartoscH( aTemp, 'P_1' ), 0 )
+   aDane[ 'P_2' ] := sxml2num( xmlWartoscH( aTemp, 'P_2' ), 0 )
+   aDane[ 'P_3' ] := sxml2num( xmlWartoscH( aTemp, 'P_3' ), 0 )
+   aDane[ 'P_4' ] := sxml2num( xmlWartoscH( aTemp, 'P_4' ), 0 )
+
+   aDane[ 'PKPIRSpis' ] := edekXmlGrupaTab( oDoc, 'JPK', 'PKPIRSpis' )
+   AEval( aDane[ 'PKPIRSpis' ], { | aPoz |
+      aDane[ 'P_5A' ] := xml2date( xmlWartoscH( aPoz, 'P_5A', '' ), '(brak)' )
+      aDane[ 'P_5B' ] := sxml2num( xmlWartoscH( aPoz, 'P_5B' ), 0 )
+   } )
+
+   aDane[ 'PKPIRWiersz' ] := edekXmlGrupaTab( oDoc, 'JPK', 'PKPIRWiersz' )
+   AEval( aDane[ 'PKPIRWiersz' ], { | aPoz |
+      aPoz[ 'K_1' ] := sxml2num( xmlWartoscH( aPoz, 'K_1' ), 0 )
+      aPoz[ 'K_2' ] := xml2date( xmlWartoscH( aPoz, 'K_2', '' ) )
+      aPoz[ 'K_3A' ] := sxml2str( xmlWartoscH( aPoz, 'K_3A', '' ) )
+      aPoz[ 'K_3B' ] := sxml2str( xmlWartoscH( aPoz, 'K_3B', '' ) )
+      aPoz[ 'K_4A' ] := sxml2str( xmlWartoscH( aPoz, 'K_4A', '' ) )
+      aPoz[ 'K_4B' ] := sxml2str( xmlWartoscH( aPoz, 'K_4B', '' ) )
+      aPoz[ 'K_5A' ] := sxml2str( xmlWartoscH( aPoz, 'K_5A', '' ) )
+      aPoz[ 'K_5B' ] := sxml2str( xmlWartoscH( aPoz, 'K_5B', '' ) )
       aPoz[ 'K_6' ] := sxml2str( xmlWartoscH( aPoz, 'K_6', '' ) )
       aPoz[ 'K_7' ] := sxml2num( xmlWartoscH( aPoz, 'K_7' ), 0 )
       aPoz[ 'K_8' ] := sxml2num( xmlWartoscH( aPoz, 'K_8' ), 0 )
