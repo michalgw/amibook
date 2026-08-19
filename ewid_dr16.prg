@@ -161,6 +161,29 @@ FUNCTION ewid_dr16licz( dDataOd, dDataDo )
          aRow['k12_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4d)
          aRow['k13_f'] := iif('REM-P'$k3.or.'REM-K'$k3,0,k4c)
          aRow['NrKSeF'] := nrksef
+         aRow['NrIdent'] := nr_ident
+         aRow['Kraj'] := kraj
+         aRow['stawka'] := 0
+         DO CASE
+         CASE aRow['k5'] <> 0
+            aRow['stawka'] := staw_ry20 * 100
+         CASE aRow['k6'] <> 0
+            aRow['stawka'] := staw_ry17 * 100
+         CASE aRow['k7'] <> 0
+            aRow['stawka'] := staw_rk09 * 100
+         CASE aRow['k8'] <> 0
+            aRow['stawka'] := staw_uslu * 100
+         CASE aRow['k9'] <> 0
+            aRow['stawka'] := staw_rk10 * 100
+         CASE aRow['k10'] <> 0
+            aRow['stawka'] := staw_prod * 100
+         CASE aRow['k11'] <> 0
+            aRow['stawka'] := staw_hand * 100
+         CASE aRow['k12'] <> 0
+            aRow['stawka'] := staw_rk07 * 100
+         CASE aRow['k13'] <> 0
+            aRow['stawka'] := staw_ry10 * 100
+         ENDCASE
          AAdd(aRes['pozycje'], aRow)
          skip
       enddo
@@ -336,11 +359,28 @@ PROCEDURE ewid_dr16rob()
             urzedy->( dbCloseArea() )
             RETURN .F.
          ENDIF
+         IF ! DostepPro( 'SPOLKA', , , , 'SPOLKA' )
+            firma->( dbCloseArea() )
+            urzedy->( dbCloseArea() )
+            RETURN
+         ENDIF
          firma->( dbGoto( Val( ident_fir ) ) )
          aDane['NIP'] := firma->nip
          IF firma->skarb > 0
             urzedy->( dbGoto( firma->skarb ) )
             aDane['KodUrzedu'] := urzedy->kodurzedu
+         ENDIF
+         aDane[ 'Spolka' ] := firma->spolka
+         IF ! firma->spolka
+            IF spolka->( dbSeek( '+' + ident_fir + firma->nazwisko ) )
+               aDane[ 'Nazwisko' ] := naz_imie_naz( AllTrim( spolka->naz_imie ) )
+               aDane[ 'ImiePierwsze' ] := naz_imie_imie( AllTrim( spolka->naz_imie ) )
+               aDane[ 'DataUrodzenia' ] := spolka->data_ur
+            ELSE
+               aDane[ 'Nazwisko' ] := ''
+               aDane[ 'ImiePierwsze' ] := ''
+               aDane[ 'DataUrodzenia' ] := ''
+            ENDIF
          ENDIF
          aDane['PelnaNazwa'] := firma->nazwa
          aDane['Wojewodztwo'] := firma->param_woj
@@ -355,6 +395,7 @@ PROCEDURE ewid_dr16rob()
          aDane['NazwaSkr'] := firma->nazwa_skr
          urzedy->( dbCloseArea() )
          firma->( dbCloseArea() )
+         spolka->( dbCloseArea() )
 
          aDane['rok'] := Val(param_rok)
          aDane['miesiac'] := Val(miesiac)
@@ -374,9 +415,9 @@ PROCEDURE ewid_dr16rob()
 
          aDane[ 'kolumny' ] := KolOrd
 
-         cJPK := jpk_ewp_3(aDane)
+         cJPK := jpk_ewp_4(aDane)
 
-         edekZapiszXML( cJPK, normalizujNazwe( 'JPK_EWP_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKEWP-3', nKorekta == 2, Val(miesiac) )
+         edekZapiszXML( cJPK, normalizujNazwe( 'JPK_EWP_' + AllTrim( aDane[ 'NazwaSkr' ] ) ) + '_' + param_rok + '_' + CMonth( aDane[ 'DataOd' ] ), wys_edeklaracja, 'JPKEWP-4', nKorekta == 2, Val(miesiac) )
 
          EXIT
       CASE 5

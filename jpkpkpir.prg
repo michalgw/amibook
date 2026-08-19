@@ -34,7 +34,7 @@ PROCEDURE JpkPkpirRob()
          urzedy->( dbCloseArea() )
          RETURN
       ENDIF
-      IF ! DostepPro( 'SPOLKA' )
+      IF ! DostepPro( 'SPOLKA', , , , 'SPOLKA' )
          firma->( dbCloseArea() )
          urzedy->( dbCloseArea() )
          RETURN

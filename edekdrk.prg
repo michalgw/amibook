@@ -419,6 +419,11 @@ PROCEDURE Drukuj_DeklarXML( cPlikXML, cTypDeklaracji, cNrRef )
       cPlikRap := 'frf\jpkewp_w3.frf'
       AAdd( aRaporty, { hDane, cPlikRap } )
       EXIT
+   CASE 'JPKEWP-4'
+      hDane := DaneXML_JPKEWPw4( oDoc, cNrRef )
+      cPlikRap := 'frf\jpkewp_w4.frf'
+      AAdd( aRaporty, { hDane, cPlikRap } )
+      EXIT
    CASE 'JPKFA-3'
       hDane := DaneXML_JPKFAw3( oDoc, cNrRef )
       cPlikRap := 'frf\jpkfa_w3.frf'
@@ -11780,8 +11785,8 @@ FUNCTION DaneXML_JPKPKPIRw3( oDoc, cNrRef )
    aDane[ 'Nazwa' ] := ''
    aTemp := edekXmlGrupa( oDoc, 'OsobaFizyczna' )
    IF ! Empty( aTemp )
-      aDane[ 'NIP' ] := xmlWartoscH( aTemp, 'NIP' )
-      aDane[ 'Nazwa' ] := xmlWartoscH( aTemp, 'ImiePierwsze' ) + ' ' + xmlWartoscH( aTemp, 'Nazwisko' ) + xmlWartoscH( aTemp, 'DataUrodzenia' )
+      aDane[ 'NIP' ] := xmlWartoscH( aTemp, 'etd:NIP' )
+      aDane[ 'Nazwa' ] := xmlWartoscH( aTemp, 'etd:ImiePierwsze' ) + ' ' + xmlWartoscH( aTemp, 'etd:Nazwisko' ) + ', ' + xmlWartoscH( aTemp, 'etd:DataUrodzenia' )
    ENDIF
    aTemp := edekXmlGrupa( oDoc, 'OsobaNiefizyczna' )
    IF ! Empty( aTemp )
@@ -11996,6 +12001,55 @@ FUNCTION DaneXML_JPKEWPw3( oDoc, cNrRef )
       aPoz[ 'K_13' ] := sxml2num( xmlWartoscH( aPoz, 'K_13' ), 0 )
       aPoz[ 'K_14' ] := sxml2num( xmlWartoscH( aPoz, 'K_14' ), 0 )
       aPoz[ 'K_15' ] := sxml2str( xmlWartoscH( aPoz, 'K_15', '' ) )
+   } )
+
+   aDane[ 'EWPCtrl' ] := edekXmlGrupa( oDoc, 'EWPCtrl' )
+   aDane[ 'EWPCtrl' ][ 'LiczbaWierszy' ] := sxml2num( xmlWartoscH( aDane[ 'EWPCtrl' ], 'LiczbaWierszy' ) )
+   aDane[ 'EWPCtrl' ][ 'SumaPrzychodow' ] := sxml2num( xmlWartoscH( aDane[ 'EWPCtrl' ], 'SumaPrzychodow' ) )
+
+   RETURN aDane
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION DaneXML_JPKEWPw4( oDoc, cNrRef )
+
+   LOCAL aDane := hb_Hash()
+   LOCAL aZak, aSprz, aTemp
+
+   aDane[ 'NrRef' ] := AllTrim( cNrRef )
+
+   aTemp := edekXmlGrupa( oDoc, 'Naglowek' )
+   aDane[ 'CelZlozenia' ] := xmlWartoscH( aTemp, 'CelZlozenia' )
+   aDane[ 'DataWytworzeniaJPK' ] := xmlWartoscH( aTemp, 'DataWytworzeniaJPK' )
+   aDane[ 'DataOd' ] := xmlWartoscH( aTemp, 'DataOd' )
+   aDane[ 'DataDo' ] := xmlWartoscH( aTemp, 'DataDo' )
+   aDane[ 'KodUrzedu' ] := xmlWartoscH( aTemp, 'KodUrzedu' )
+
+   aDane[ 'NIP' ] := ''
+   aDane[ 'Nazwa' ] := ''
+   aTemp := edekXmlGrupa( oDoc, 'OsobaFizyczna' )
+   IF ! Empty( aTemp )
+      aDane[ 'NIP' ] := xmlWartoscH( aTemp, 'etd:NIP' )
+      aDane[ 'Nazwa' ] := xmlWartoscH( aTemp, 'etd:ImiePierwsze' ) + ' ' + xmlWartoscH( aTemp, 'etd:Nazwisko' ) + ', ' + xmlWartoscH( aTemp, 'etd:DataUrodzenia' )
+   ENDIF
+   aTemp := edekXmlGrupa( oDoc, 'OsobaNiefizyczna' )
+   IF ! Empty( aTemp )
+      aDane[ 'NIP' ] := xmlWartoscH( aTemp, 'NIP' )
+      aDane[ 'Nazwa' ] := xmlWartoscH( aTemp, 'PelnaNazwa' )
+   ENDIF
+
+   aDane[ 'EWPWiersz' ] := edekXmlGrupaTab( oDoc, 'JPK', 'EWPWiersz' )
+   AEval( aDane[ 'EWPWiersz' ], { | aPoz |
+      aPoz[ 'K_1' ] := sxml2num( xmlWartoscH( aPoz, 'K_1' ), 0 )
+      aPoz[ 'K_2' ] := xml2date( xmlWartoscH( aPoz, 'K_2', '' ) )
+      aPoz[ 'K_3' ] := xml2date( xmlWartoscH( aPoz, 'K_3', '' ) )
+      aPoz[ 'K_4' ] := sxml2str( xmlWartoscH( aPoz, 'K_4', '' ) )
+      aPoz[ 'K_5' ] := sxml2str( xmlWartoscH( aPoz, 'K_5', '' ) )
+      aPoz[ 'K_6' ] := sxml2str( xmlWartoscH( aPoz, 'K_6', '' ) )
+      aPoz[ 'K_7' ] := sxml2str( xmlWartoscH( aPoz, 'K_7', '' ) )
+      aPoz[ 'K_8' ] := sxml2num( xmlWartoscH( aPoz, 'K_8' ), 0 )
+      aPoz[ 'K_9' ] := sxml2num( xmlWartoscH( aPoz, 'K_9' ), 0 )
+      aPoz[ 'K_10' ] := sxml2str( xmlWartoscH( aPoz, 'K_10', '' ) )
    } )
 
    aDane[ 'EWPCtrl' ] := edekXmlGrupa( oDoc, 'EWPCtrl' )

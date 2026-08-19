@@ -144,10 +144,10 @@ FUNCTION jpk_pkpir_w3(aDane)
       cRes := cRes + '    </OsobaNiefizyczna>' + nl
    ELSE
       cRes := cRes + '    <OsobaFizyczna>' + nl
-      cRes := cRes + '      <NIP>' + trimnip(aDane['NIP']) + '</NIP>' + nl
-      cRes := cRes + '      <ImiePierwsze>' + str2sxml(AllTrim(aDane['ImiePierwsze'])) + '</ImiePierwsze>' + nl
-      cRes := cRes + '      <Nazwisko>' + str2sxml(AllTrim(aDane['Nazwisko'])) + '</Nazwisko>' + nl
-      cRes := cRes + '      <DataUrodzenia>' + date2strxml(aDane['DataUrodzenia']) + '</DataUrodzenia>' + nl
+      cRes := cRes + '      <etd:NIP>' + trimnip(aDane['NIP']) + '</etd:NIP>' + nl
+      cRes := cRes + '      <etd:ImiePierwsze>' + str2sxml(AllTrim(aDane['ImiePierwsze'])) + '</etd:ImiePierwsze>' + nl
+      cRes := cRes + '      <etd:Nazwisko>' + str2sxml(AllTrim(aDane['Nazwisko'])) + '</etd:Nazwisko>' + nl
+      cRes := cRes + '      <etd:DataUrodzenia>' + date2strxml(aDane['DataUrodzenia']) + '</etd:DataUrodzenia>' + nl
       cRes := cRes + '    </OsobaFizyczna>' + nl
    ENDIF
    cRes := cRes + '  </Podmiot1>' + nl
@@ -474,6 +474,92 @@ FUNCTION jpk_ewp_3(aDane)
       cRes := cRes + '    <K_14>' + TKwota2(aDane['pozycje'][nI][ 'k14' ]) + '</K_14>' + nl
       IF Len( aDane['pozycje'][nI]['k15'] ) > 0
          cRes := cRes + '    <K_15>' + str2sxml(aDane['pozycje'][nI]['k15']) + '</K_15>' + nl
+      ENDIF
+      cRes := cRes + '  </EWPWiersz>' + nl
+   NEXT
+   cRes := cRes + '  <EWPCtrl>' + nl
+   cRes := cRes + '    <LiczbaWierszy>' + AllTrim(Str(aDane['LiczbaWierszy'])) + '</LiczbaWierszy>' + nl
+   cRes := cRes + '    <SumaPrzychodow>' + TKwota2(aDane['SumaPrzychodow']) + '</SumaPrzychodow>' + nl
+   cRes := cRes + '  </EWPCtrl>' + nl
+   cRes := cRes + '</JPK>' + nl
+RETURN cRes
+
+/*----------------------------------------------------------------------*/
+
+FUNCTION jpk_ewp_4(aDane)
+   LOCAL cRes := '', nl := Chr(13) + Chr(10), nI
+   LOCAL bStawki := { | nS |
+      LOCAL cRes := ""
+      DO CASE
+      CASE nS == 17.0
+         cRes := '17'
+      CASE nS == 15.0
+         cRes := '15'
+      CASE Int( nS ) == 14
+         cRes := '14'
+      CASE nS == 12.5
+         cRes := '12.5'
+      CASE nS == 12.0
+         cRes := '12'
+      CASE nS == 10.0
+         cRes := '10'
+      CASE nS == 8.5
+         cRes := '8.5'
+      CASE nS == 5.5
+         cRes := '5.5'
+      CASE nS == 3.0
+         cRes := '3'
+      OTHERWISE
+         cRes := AllTrim( Str( nS ) )
+      ENDCASE
+      RETURN cRes
+   }
+
+   cRes :=        '<?xml version="1.0" encoding="UTF-8"?>'
+   cRes := cRes + '<JPK xmlns="http://jpk.mf.gov.pl/wzor/2024/10/30/10301/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">' + nl
+   cRes := cRes + '  <Naglowek>' + nl
+   cRes := cRes + '    <KodFormularza kodSystemowy="JPK_EWP (4)" wersjaSchemy="1-0" >JPK_EWP</KodFormularza>' + nl
+   cRes := cRes + '    <WariantFormularza>4</WariantFormularza>' + nl
+   cRes := cRes + '    <CelZlozenia>' + aDane['CelZlozenia'] + '</CelZlozenia>' + nl
+   cRes := cRes + '    <DataWytworzeniaJPK>' + aDane['DataWytworzeniaJPK'] + '</DataWytworzeniaJPK>' + nl
+   cRes := cRes + '    <DataOd>' + date2strxml(aDane['DataOd']) + '</DataOd>' + nl
+   cRes := cRes + '    <DataDo>' + date2strxml(aDane['DataDo']) + '</DataDo>' + nl
+   cRes := cRes + '    <KodUrzedu>' + aDane['KodUrzedu'] + '</KodUrzedu>' + nl
+   cRes := cRes + '  </Naglowek>' + nl
+   cRes := cRes + '  <Podmiot1 rola="Podatnik">' + nl
+   IF aDane[ 'Spolka' ]
+      cRes := cRes + '    <OsobaNiefizyczna>' + nl
+      cRes := cRes + '      <NIP>' + trimnip(aDane['NIP']) + '</NIP>' + nl
+      cRes := cRes + '      <PelnaNazwa>' + str2sxml(AllTrim(aDane['PelnaNazwa'])) + '</PelnaNazwa>' + nl
+      cRes := cRes + '    </OsobaNiefizyczna>' + nl
+   ELSE
+      cRes := cRes + '    <OsobaFizyczna>' + nl
+      cRes := cRes + '      <etd:NIP>' + trimnip(aDane['NIP']) + '</etd:NIP>' + nl
+      cRes := cRes + '      <etd:ImiePierwsze>' + str2sxml(AllTrim(aDane['ImiePierwsze'])) + '</etd:ImiePierwsze>' + nl
+      cRes := cRes + '      <etd:Nazwisko>' + str2sxml(AllTrim(aDane['Nazwisko'])) + '</etd:Nazwisko>' + nl
+      cRes := cRes + '      <etd:DataUrodzenia>' + date2strxml(aDane['DataUrodzenia']) + '</etd:DataUrodzenia>' + nl
+      cRes := cRes + '    </OsobaFizyczna>' + nl
+   ENDIF
+   cRes := cRes + '  </Podmiot1>' + nl
+   FOR nI := 1 TO Len(aDane['pozycje'])
+      cRes := cRes + '  <EWPWiersz>' + nl
+      cRes := cRes + '    <K_1>' + AllTrim(Str(aDane['pozycje'][nI]['k1'])) + '</K_1>' + nl
+      cRes := cRes + '    <K_2>' + AllTrim(aDane['pozycje'][nI]['k2']) + '</K_2>' + nl
+      cRes := cRes + '    <K_3>' + AllTrim(aDane['pozycje'][nI]['k3']) + '</K_3>' + nl
+      cRes := cRes + '    <K_4>' + JPKStrND(aDane['pozycje'][nI]['k4']) + '</K_4>' + nl
+      IF ! Empty( aDane['pozycje'][nI]['NrKSeF'] )
+         cRes := cRes + '    <K_5>' + AllTrim(aDane['pozycje'][nI]['NrKSeF']) + '</K_5>' + nl
+      ENDIF
+      IF ! Empty( aDane['pozycje'][nI]['Kraj'] )
+         cRes := cRes + '    <K_6>' + AllTrim(aDane['pozycje'][nI]['Kraj']) + '</K_6>' + nl
+      ENDIF
+      IF ! Empty( aDane['pozycje'][nI]['NrIdent'] )
+         cRes := cRes + '    <K_7>' + AllTrim(aDane['pozycje'][nI]['NrIdent']) + '</K_7>' + nl
+      ENDIF
+      cRes := cRes + '    <K_8>' + TKwota2(aDane['pozycje'][nI][ 'k14' ]) + '</K_8>' + nl
+      cRes := cRes + '    <K_9>' + Eval( bStawki, aDane['pozycje'][nI][ 'stawka' ] ) + '</K_9>' + nl
+      IF Len( aDane['pozycje'][nI]['k15'] ) > 0
+         cRes := cRes + '    <K_10>' + str2sxml(aDane['pozycje'][nI]['k15']) + '</K_10>' + nl
       ENDIF
       cRes := cRes + '  </EWPWiersz>' + nl
    NEXT
