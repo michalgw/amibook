@@ -172,6 +172,7 @@ PROCEDURE KRejZ()
                   zKOLUMNA := aBufDok[ 'KOLUMNA' ]
                   zUWAGI := aBufDok[ 'UWAGI' ]
                   zWARTZW := aBufDok[ 'WARTZW' ]
+                  zWARTNP := aBufDok[ 'WARTNP' ]
                   zWART00 := aBufDok[ 'WART00' ]
                   zWART02 := aBufDok[ 'WART02' ]
                   zVAT02 := aBufDok[ 'VAT02' ]
@@ -253,6 +254,7 @@ PROCEDURE KRejZ()
                zKOLUMNA := KOLUMNA
                zUWAGI := UWAGI
                zWARTZW := WARTZW
+               zWARTNP := WARTNP
                zWART00 := WART00
                zWART02 := WART02
                zVAT02 := VAT02
@@ -348,6 +350,7 @@ PROCEDURE KRejZ()
                zKOLUMNA := '  '
                zuwagi := Space( 14 )
                zWARTZW := 0
+               zWARTNP := 0
                zWART00 := 0
                zWART07 := 0
                zWART02 := 0
@@ -432,6 +435,7 @@ PROCEDURE KRejZ()
                zKOLUMNA := KOLUMNA
                zUWAGI := UWAGI
                zWARTZW := WARTZW
+               zWARTNP := WARTNP
                zWART00 := WART00
                zWART02 := WART02
                zVAT02 := VAT02
@@ -539,7 +543,7 @@ PROCEDURE KRejZ()
             @  5, 77 GET zUE PICTURE '!' WHEN wfUE( 5, 78 ) VALID vfUE( 5, 78 )
             @  6, 77 GET zKRAJ PICTURE '!!'
             @  8, 77 GET zTROJSTR PICTURE "!" WHEN zUE == 'T' VALID Valid_RejZ_Trojstr()
-            @  9, 77 GET zOPCJE PICTURE '!' WHEN w1_opcje() VALID v1_opcje()
+            @  9, 77 GET zOPCJE PICTURE '!' WHEN w1_opcje() VALID v1_opcje( zOPCJE )
             oGetOPCJE := ATail( GetList )
             @ 10, 77 GET zSEK_CV7 PICTURE '!!' WHEN wfSEK_CV7( 10, 78 ) VALID vfSEK_CV7( 10, 78 )
             oGetSekCV7 := ATail( GetList )
@@ -564,6 +568,7 @@ PROCEDURE KRejZ()
                oGetWAR12 := ATail( GetList )
                @ 18, 25 GET zVAT12  PICTURE FPIC WHEN SUMPOwz( 'zvat12' ) VALID SUMPODz()
                oGetVAT12 := ATail( GetList )
+               @ 19,  8 GET zWARTNP PICTURE FPIC VALID SUMPODz()
             ELSE
                @ 13, 42 GET zBRUT22 PICTURE FPIC WHEN w1_wartosc( nOrgW22, @zBRUT22 ) VALID SUMPODzB( zBRUT22, @nOrgW22 )
                oGetWAR22 := ATail( GetList )
@@ -583,6 +588,7 @@ PROCEDURE KRejZ()
                oGetWAR12 := ATail( GetList )
                @ 18, 25 GET zVAT12  PICTURE FPIC WHEN SUMPOwzB( 'zvat12' ) VALID SUMPODzB()
                oGetVAT12 := ATail( GetList )
+               @ 19, 42 GET zWARTNP PICTURE FPIC VALID SUMPODzB()
             ENDIF
             @ 13, 57 GET zSP22  PICTURE '!' WHEN zWART22 + zVAT22<> 0 .AND. wSP() VALID SP(zSP22)
             @ 13, 61 GET zZOM22 PICTURE '!' WHEN zWART22 + zVAT22<> 0 .AND. wZOM() VALID ZOM(zZOM22)
@@ -595,7 +601,7 @@ PROCEDURE KRejZ()
             @ 17, 57 GET zSPZW  PICTURE '!' WHEN zWARTZW <> 0 .AND. wSP() VALID SP( zSPZW )
             @ 18, 57 GET zSP12  PICTURE '!' WHEN zWART12 + zVAT12 <> 0 .AND. wSP() VALID SP( zSP12 )
             @ 18, 61 GET zZOM12 PICTURE '!' WHEN zWART12 + zVAT12 <> 0 .AND. wZOM() VALID ZOM( zZOM12 )
-            @ 20, 42 GET zVATMARZA PICTURE FPIC WHEN param_ksv7 == 'T'
+            @ 19, 68 GET zVATMARZA PICTURE FPIC WHEN param_ksv7 == 'T'
             IF zRYCZALT <> 'T'
                @ 21, 14 GET zDATAKS PICTURE '@D' WHEN w1_6kz( zKOREKTA == 'T' ) VALID v1_6kz()
                @ 21, 29 GET zNETTO PICTURE  FPIC WHEN SUMNETz() VALID vSUMNETz()
@@ -607,7 +613,7 @@ PROCEDURE KRejZ()
             @ 22, 16 GET zROZRZAPZ PICTURE '!' WHEN wRejZ_Rozr( zKOREKTA == 'T' .AND. zRYCZALT == 'T' ) VALID vROZRget( 'zROZRZAPZ', 22, 16 )
             @ 22, 36 GET zZAP_TER PICTURE '999' WHEN zROZRZAPZ == 'T'
             @ 22, 41 GET zZAP_DAT PICTURE '@D' WHEN zROZRZAPZ == 'T' .AND. wZAP_DATZ() VALID vZAP_DATZ()
-            @ 22, 67 GET zZAP_WART PICTURE FPIC WHEN zROZRZAPZ == 'T' VALID zZAP_WART >= 0.0 .AND. zZAP_WART <= Abs( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 )
+            @ 22, 67 GET zZAP_WART PICTURE FPIC WHEN zROZRZAPZ == 'T' VALID zZAP_WART >= 0.0 .AND. zZAP_WART <= Abs( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP + zVAT22 + zVAT12 + zVAT07 + zVAT02 )
             ColStd()
             @ 24,0
             SET COLOR TO
@@ -1065,6 +1071,7 @@ PROCEDURE say1z()
    @ 16,  8 SAY WART00 PICTURE RPIC
    @ 17,  8 SAY WARTZW PICTURE RPIC
    @ 18,  8 SAY WART12 PICTURE RPIC
+   @ 19,  8 SAY WARTNP PICTURE RPIC
    @ 13, 25 SAY VAT22 PICTURE RPIC
    @ 14, 25 SAY VAT07 PICTURE RPIC
    *@ 16,25 say VAT12 pict RPIC
@@ -1109,10 +1116,10 @@ PROCEDURE say1z()
    @ 15, 68 SAY iif( ZOM02 == 'M', Transform( VAT02 * ( zstrusprob / 100 ), RPIC ), Space( 12 ) )
 //   @ 19, 68 SAY iif( SP12 == 'S' .AND. ZOM12 == 'M', Transform( VAT12 * ( zstrusprob / 100 ), RPIC ), iif( SP12 == 'P' .AND. ZOM12 == 'M', '    zbiorczo', Space( 12 ) ) )
    @ 18, 68 SAY iif( ZOM12 == 'M', Transform( VAT12 * ( zstrusprob / 100 ), RPIC ), Space( 12 ) )
-   @ 19,  8 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW PICTURE RPIC
-   @ 19, 25 SAY VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
-   @ 19, 42 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW + VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
-   @ 20, 42 SAY VATMARZA PICTURE RPIC
+   @ 19, 68 SAY VATMARZA PICTURE RPIC
+   @ 20,  8 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW + WARTNP PICTURE RPIC
+   @ 20, 25 SAY VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
+   @ 20, 42 SAY WART22 + WART12 + WART07 + WART02 + WART00 + WARTZW + WARTNP + VAT22 + VAT12 + VAT07 + VAT02 PICTURE RPIC
    IF zRYCZALT <> 'T'
       @ 21, 14 SAY DATAKS PICTURE '@D'
       @ 21, 29 SAY NETTO PICTURE RPIC
@@ -1636,9 +1643,10 @@ FUNCTION SumPodz( nWartosc, nPole )
    @ 16, 42 SAY zWART00 PICTURE RPIC
    @ 17, 42 SAY zWARTZW PICTURE RPIC
    @ 18, 42 SAY zWART12 + zVAT12 + iif( zOPCJE $ "257P", zVAT12, 0 ) PICTURE RPIC
-   @ 19,  8 SAY zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW PICTURE RPIC
-   @ 19, 25 SAY zVAT22 + zVAT12 + zVAT07 + zVAT02 PICTURE RPIC
-   @ 19, 42 SAY ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 + iif( zOPCJE $ "257P", zVAT22 + zVAT12 + zVAT07 + zVAT02, 0 ) ) * iif( zOPCJE == "2", 0.2, iif( zOPCJE == "5", 0.5, iif( zOPCJE == "7", 0.75, 1 ) ) ) PICTURE RPIC
+   @ 19, 42 SAY zWARTNP PICTURE RPIC
+   @ 20,  8 SAY zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP PICTURE RPIC
+   @ 20, 25 SAY zVAT22 + zVAT12 + zVAT07 + zVAT02 PICTURE RPIC
+   @ 20, 42 SAY ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP + zVAT22 + zVAT12 + zVAT07 + zVAT02 + iif( zOPCJE $ "257P", zVAT22 + zVAT12 + zVAT07 + zVAT02, 0 ) ) * iif( zOPCJE == "2", 0.2, iif( zOPCJE == "5", 0.5, iif( zOPCJE == "7", 0.75, 1 ) ) ) PICTURE RPIC
    IF ! Empty( nWartosc )
       nPole := nWartosc
    ENDIF
@@ -1657,9 +1665,10 @@ FUNCTION SumPodzB( nWartosc, nPole )
    @ 16,  8 SAY zWART00 PICTURE RPIC
    @ 17,  8 SAY zWARTZW PICTURE RPIC
    @ 18,  8 SAY zBRUT12 - zVAT12 + iif( zOPCJE $ "257P", zVAT12, 0 ) PICTURE RPIC
-   @ 19,  8 SAY zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW PICTURE RPIC
-   @ 19, 25 SAY zVAT22 + zVAT12 + zVAT07 + zVAT02 PICTURE RPIC
-   @ 19, 42 SAY ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 + iif( zOPCJE $ "257P", zVAT22 + zVAT12 + zVAT07 + zVAT02, 0 ) ) * iif( zOPCJE == "2", 0.2, iif( zOPCJE == "5", 0.5, iif( zOPCJE == "7", 0.75, 1 ) ) ) PICTURE RPIC
+   @ 19,  8 SAY zWARTNP PICTURE RPIC
+   @ 20,  8 SAY zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP PICTURE RPIC
+   @ 20, 25 SAY zVAT22 + zVAT12 + zVAT07 + zVAT02 PICTURE RPIC
+   @ 20, 42 SAY ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP + zVAT22 + zVAT12 + zVAT07 + zVAT02 + iif( zOPCJE $ "257P", zVAT22 + zVAT12 + zVAT07 + zVAT02, 0 ) ) * iif( zOPCJE == "2", 0.2, iif( zOPCJE == "5", 0.5, iif( zOPCJE == "7", 0.75, 1 ) ) ) PICTURE RPIC
    IF ! Empty( nWartosc )
       nPole := nWartosc
    ENDIF
@@ -1764,7 +1773,7 @@ FUNCTION SUMNETz()
       @ 17, 58 SAY iif( zSPZW == 'S', 'T ', iif( zSPZW == 'P', 'oz', Space( 2 ) ) )
       @ 18, 58 SAY iif( zSP12 == 'S', 'T ', iif( zSP12 == 'P', 'oz', Space( 2 ) ) )
       IF ins
-         zNETTO := _round( iif( zSPZW == 'S', 0, zWARTZW ) + ;
+         zNETTO := _round( iif( zSPZW == 'S', 0, zWARTZW ) + zWARTNP + ;
             iif( zSP00 == 'S', 0, zWART00 ) + iif( ( zZOM00 == 'Z' .OR. zRACH == 'R' ) .AND. zSP00 == 'P', 0, 0 ) + ;
             iif( zSP07 == 'S', 0, zWART07 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM07 == 'Z' .OR. zRACH == 'R' ) .AND. zSP07 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT07, 0 ) + ;
             iif( zSP02 == 'S', 0, zWART02 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM02 == 'Z' .OR. zRACH == 'R' ) .AND. zSP02 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT02, 0 ) + ;
@@ -1784,7 +1793,7 @@ FUNCTION SUMNETz()
       ELSE
          IF zNETTO <> 0
             nPopNetto := zNETTO
-            zNETTO := _round( iif( zSPZW == 'S', 0, zWARTZW ) + ;
+            zNETTO := _round( iif( zSPZW == 'S', 0, zWARTZW ) + zWARTNP + ;
                iif( zSP00 == 'S', 0, zWART00 ) + iif( ( zZOM00 == 'Z' .OR. zRACH == 'R' ) .AND. zSP00 == 'P', 0, 0 ) + ;
                iif( zSP07 == 'S', 0, zWART07 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM07 == 'Z' .OR. zRACH == 'R' ) .AND. zSP07 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT07, 0 ) + ;
                iif( zSP02 == 'S', 0, zWART02 * iif( ( zOPCJE $ "257P" .AND. param_ks5v == '2' ), 0.5, 1 ) ) + iif( ( ( zZOM02 == 'Z' .OR. zRACH == 'R' ) .AND. zSP02 == 'P' ) .OR. ( zOPCJE $ "257P" ), zVAT02, 0 ) + ;
@@ -2162,8 +2171,8 @@ FUNCTION krejzRysujTlo()
    @ 16, 0 SAY '   0%                                                                           '
    @ 17, 0 SAY '  ZW                                                                            '
    @ 18, 0 SAY '  ' + Str( vat_D, 2 ) + '%                                                                           '
-   @ 19, 0 SAY 'RAZEM                                                                           '
-   @ 20, 0 SAY '                              Zakup mar¾a                                       '
+   @ 19, 0 SAY '  NP                                                     Zak. mar¾a             '
+   @ 20, 0 SAY 'RAZEM                                                                           '
    IF zRYCZALT == 'T'
       @ 21, 0 SAY Space( 80 )
    ELSE
@@ -2185,7 +2194,7 @@ FUNCTION w1_opcje()
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION v1_opcje()
+FUNCTION v1_opcje( zOPCJE )
 
    LOCAL lResult := zOPCJE $ " 257P"
 
@@ -2323,6 +2332,7 @@ PROCEDURE KRejZ_Ksieguj()
    repl_( 'KOLUMNA2', zKOLUMNA2 )
    repl_( 'NRKSEF', zNRKSEF )
    repl_( 'KSEFSTAT', zKSEFSTAT )
+   repl_( 'WARTNP', zWARTNP )
 
    COMMIT
    UNLOCK
@@ -2340,8 +2350,8 @@ PROCEDURE KRejZ_Ksieguj()
    IF ins
       IF zROZRZAPZ == 'T'
          dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
-         IF ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ) <> 0.0
-            RozrApp( 'Z', 'FZ', zNR_IDENT, zNUMER, dddat, zDATAS, zZAP_DAT, zZAP_TER, REKZAK, ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ), zTRESC, ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ) )
+         IF ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP + zVAT22 + zVAT12 + zVAT07 + zVAT02 ) <> 0.0
+            RozrApp( 'Z', 'FZ', zNR_IDENT, zNUMER, dddat, zDATAS, zZAP_DAT, zZAP_TER, REKZAK, ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP + zVAT22 + zVAT12 + zVAT07 + zVAT02 ), zTRESC, ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ) )
          ENDIF
          IF zZAP_WART > 0.0
             RozrApp( 'Z', 'ZZ', zNR_IDENT, zNUMER, dddat, zDATAS, zZAP_DAT, zZAP_TER, REKZAK, zZAP_WART, zTRESC, 0 )
@@ -2355,8 +2365,8 @@ PROCEDURE KRejZ_Ksieguj()
             SELECT rozr
             RozrDel( 'Z', REKZAK )
             dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
-            IF ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ) <> 0.0
-               RozrApp( 'Z', 'FZ', zNR_IDENT, zNUMER, dddat, zDATAS, zZAP_DAT, zZAP_TER, REKZAK, ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ), zTRESC, ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ) )
+            IF ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP + zVAT22 + zVAT12 + zVAT07 + zVAT02 ) <> 0.0
+               RozrApp( 'Z', 'FZ', zNR_IDENT, zNUMER, dddat, zDATAS, zZAP_DAT, zZAP_TER, REKZAK, ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP + zVAT22 + zVAT12 + zVAT07 + zVAT02 ), zTRESC, ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ) )
             ENDIF
             IF zZAP_WART > 0.0
                RozrApp( 'Z', 'ZZ', zNR_IDENT, zNUMER, dddat, zDATAS, zZAP_DAT, zZAP_TER, REKZAK, zZAP_WART, zTRESC, 0 )
@@ -2370,8 +2380,8 @@ PROCEDURE KRejZ_Ksieguj()
             SELECT rozr
             RozrDel( 'Z', REKZAK )
             dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
-            IF ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ) <> 0.0
-               RozrApp( 'Z', 'FZ', zNR_IDENT, zNUMER, dddat, zDATAS, zZAP_DAT, zZAP_TER, REKZAK, ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ), zTRESC, ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ) )
+            IF ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP + zVAT22 + zVAT12 + zVAT07 + zVAT02 ) <> 0.0
+               RozrApp( 'Z', 'FZ', zNR_IDENT, zNUMER, dddat, zDATAS, zZAP_DAT, zZAP_TER, REKZAK, ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWARTZW + zWARTNP + zVAT22 + zVAT12 + zVAT07 + zVAT02 ), zTRESC, ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ) )
             ENDIF
             IF zZAP_WART > 0.0
                RozrApp( 'Z', 'ZZ', zNR_IDENT, zNUMER, dddat, zDATAS, zZAP_DAT, zZAP_TER, REKZAK, zZAP_WART, zTRESC, 0 )
@@ -2854,6 +2864,7 @@ FUNCTION RejZ_PobierzDok()
       'KOLUMNA' => KOLUMNA, ;
       'UWAGI' => UWAGI, ;
       'WARTZW' => WARTZW, ;
+      'WARTNP' => WARTNP, ;
       'WART00' => WART00, ;
       'WART02' => WART02, ;
       'VAT02' => VAT02, ;

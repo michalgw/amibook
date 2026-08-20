@@ -1267,7 +1267,8 @@ public aREJZdbf := {;
    { "SALSALID", "C", 64, 0 },;                   //  73 Saldeo saldeo id
    { "KSEFSTAT", "C", 1, 0 },;                    //  74 Status KSeF (jesli brak nr ksef) O - Offline, B - faktura poza KSeF, D - inny dowod niz faktura
    { "NRKSEF", "C", 35, 0 },;                     //  75 Nr KSeF dokumentu
-   { "KOSID", "N", 12, 0 } }                      //  76 Nr ID dokumentu w GM Kos
+   { "KOSID", "N", 12, 0 },;                      //  76 Nr ID dokumentu w GM Kos
+   { "WARTNP", "N", 11, 2 } }                     //  77 Wartosc NP
 
 // Create: RELACJE.DBF
 public aRELACJEdbf := {;
