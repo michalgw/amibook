@@ -3194,6 +3194,9 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
          ENDIF
          zuwagi := Space( 20 )
 
+         IF Empty( aPoz[ 'zopcje' ] ) .AND. ! Empty( aDane[ 'Opcje' ] )
+            aPoz[ 'zopcje' ] := aDane[ 'Opcje' ]
+         ENDIF
          nOPrzelV := 1
          nOPrzelB := 1
          IF aPoz[ 'zopcje' ] $ '257P'
@@ -3210,6 +3213,7 @@ FUNCTION JPKImp_VatZ_Importuj( aDane )
             ENDCASE
          ENDIF
          zWARTZW := aPoz[ 'zwartzw' ]
+         zWARTNP := 0
          zWART00 := aPoz[ 'zwart00' ]
          zWART02 := aPoz[ 'zwart02' ]
          zVAT02 := aPoz[ 'zvat02' ] * nOPrzelV
@@ -3878,13 +3882,13 @@ PROCEDURE JPKImp_VatZ( nCelImportu, lZKos )
    LOCAL aDane := hb_Hash( 'ZezwolNaDuplikaty', 'N', 'Rejestr', '  ', ;
       'OpisZd', Space( 30 ), 'DomVat', 1, 'DataRej', param_kszr, ;
       'SprawdzRegon', iif( olparam_ra, 'T', 'N' ), 'ZezwolNaPuste', 'N', ;
-      'Kolumna', '10', 'DataKsg', param_kszk, 'IgnorujAd', 'N' )
+      'Kolumna', '10', 'DataKsg', param_kszk, 'IgnorujAd', 'N', 'Opcje', ' ' )
    LOCAL cPlik
    LOCAL cKolor
    LOCAL cEkran := SaveScreen()
    LOCAL nMenu, cEkran2, nMenu2
    LOCAL aRaport, cRaport, cTN, cRej, lOk, nDomVat, cDataRej, cRegon, cPuste
-   LOCAL nSumaImp, nLiczbaLp := 0, cKolumna, cDataKsg, cIgnorujAd
+   LOCAL nSumaImp, nLiczbaLp := 0, cKolumna, cDataKsg, cIgnorujAd, cOpcje
    LOCAL bKolValid := { | | AScan( { "10", "11", "12", "13" }, cKolumna ) > 0 }
 
    PRIVATE cOpisZd
@@ -4114,23 +4118,25 @@ PROCEDURE JPKImp_VatZ( nCelImportu, lZKos )
             cKolumna := aDane[ 'Kolumna' ]
             cDataKsg := aDane[ 'DataKsg' ]
             cIgnorujAd := aDane[ 'IgnorujAd' ]
-            @  6, 13 CLEAR TO 21, 76
-            @  7, 15 TO 20, 74
-            @  8, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
-            @  9, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 9, 42, 'Z' ), .T. }
-            @ 10, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "Z", "R" ) )
-            @ 11, 17 SAY "Domy˜lna stawka VAT"
-            @ 11, 37, 20, 41 GET nDomVat LISTBOX { { "23%", 1 }, { "8% ", 2 }, { "5% ", 3 }, { "0% ", 4 } } DROPDOWN
-            @ 12, 17 SAY "Do rejestru na dzieä (Z-zakupu, W-wystaw., K-KSeF)" GET cDataRej PICTURE '!' VALID cDataRej $ "WZK"
-            @ 13, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
-            @ 14, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 14, 59 )
-            @ 15, 17 SAY "Ignoruj adnotacje (o.o. i SP)" GET cPuste PICTURE "!" VALID ValidTakNie( cIgnorujAd, 15, 48 )
+            cOpcje := aDane[ 'Opcje' ]
+            @  5, 13 CLEAR TO 21, 76
+            @  6, 15 TO 20, 74
+            @  7, 17 SAY "Zezw¢l na import dokument¢w z istniej¥cym nr" GET cTN PICTURE "!" VALID cTN$"TN"
+            @  8, 17 SAY "Domy˜lny symbol rejestru" GET cRej PICTURE "!!" VALID { || Kat_Rej_Wybierz( @cRej, 8, 42, 'Z' ), .T. }
+            @  9, 17 SAY "Opis zdarzenia" GET cOpisZd VALID JPKImp_VatS_Tresc_V( iif( nCelImportu == 1, "Z", "R" ) )
+            @ 10, 17 SAY "Domy˜lna stawka VAT"
+            @ 10, 37, 20, 41 GET nDomVat LISTBOX { { "23%", 1 }, { "8% ", 2 }, { "5% ", 3 }, { "0% ", 4 } } DROPDOWN
+            @ 11, 17 SAY "Do rejestru na dzieä (Z-zakupu, W-wystaw., K-KSeF)" GET cDataRej PICTURE '!' VALID cDataRej $ "WZK"
+            @ 12, 17 SAY "Pobieraj dane kontrahenta z bazy REGON" GET cRegon PICTURE '!' WHEN olparam_ra VALID cRegon $ 'TN'
+            @ 13, 17 SAY "Zezw¢l na import nieaktywnych dokument¢w" GET cPuste PICTURE "!" VALID ValidTakNie( cPuste, 13, 59 )
+            @ 14, 17 SAY "Ignoruj adnotacje (o.o. i SP)" GET cPuste PICTURE "!" VALID ValidTakNie( cIgnorujAd, 14, 48 )
+            @ 15, 17 SAY "Opcje (pojazdy/paliwo)" GET cOpcje PICTURE '!' WHEN w1_opcje() VALID v1_opcje( cOpcje )
             IF zRYCZALT <> 'T'
                @ 16, 17 SAY "Domy˜lna kolumna ksi©gi" GET cKolumna PICTURE "99" VALID Eval( bKolValid )
                @ 17, 17 SAY "Do ksi©gi na dzieä (Z-zakupu, W-wystaw., K-KSeF)" GET cDataKsg PICTURE '!' VALID cDataKsg $ "WZK"
             ENDIF
             @ 19, 52 GET lOk PUSHBUTTON CAPTION ' Zamknij ' STATE { || ReadKill( .T. ) }
-            ValidTakNie( cPuste, 14, 59 )
+            ValidTakNie( cPuste, 13, 59 )
             READ
             IF LastKey() <> K_ESC
                aDane[ 'ZezwolNaDuplikaty' ] := cTN
@@ -4143,6 +4149,7 @@ PROCEDURE JPKImp_VatZ( nCelImportu, lZKos )
                aDane[ 'Kolumna' ] := cKolumna
                aDane[ 'DataKsg' ] := cDataKsg
                aDane[ 'IgnorujAd' ] := cIgnorujAd
+               aDane[ 'Opcje' ] := cOpcje
             ENDIF
             RestScreen( , , , , cEkran2 )
          CASE nMenu == 4
