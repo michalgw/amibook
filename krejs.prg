@@ -710,6 +710,9 @@ PROCEDURE KRejS()
                      CASE Str( val( rejs-> KOLUMNA2 ), 1 ) $ '8'
                         repl_( 'uslugi', uslugi - rejs->netto2 )
                      ENDCASE
+                     IF rejs->KSGZBIOR == 'N' .AND. stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '78' .OR. AllTrim( rejs->KOLUMNA2 ) $ '78' )
+                        repl_( 'pozycje', pozycje - 1 )
+                     ENDIF
                   ENDIF
                ENDIF
                COMMIT
@@ -1076,6 +1079,9 @@ PROCEDURE KRejS()
                         CASE Str( val( rejs-> KOLUMNA2 ), 1 ) $ '8'
                            repl_( 'uslugi', uslugi - rejs->netto2 )
                         ENDCASE
+                        IF rejs->KSGZBIOR == 'N' .AND. stan_ <> 0 .AND. ( AllTrim( rejs->KOLUMNA ) $ '78' .OR. AllTrim( rejs->KOLUMNA2 ) $ '78' )
+                           repl_( 'pozycje', pozycje - 1 )
+                        ENDIF
                      ENDIF
                   ENDIF
                   COMMIT
@@ -3276,8 +3282,8 @@ PROCEDURE KRejS_Ksieguj()
                         repl_( 'ADRES', zADRES )
                         repl_( 'NR_IDENT', zNR_IDENT )
                         //repl_( 'kwota', 0 )
-                        repl_( 'WYR_TOW', iif( Val( rejs->KOLUMNA ) == 7, zNETTO, 0 ) + iif( Val( rejs->KOLUMNA2 ) == 7, zNETTO2, 0 ) )
-                        repl_( 'USLUGI', iif( Val( rejs->KOLUMNA ) == 8, zNETTO, 0 ) + iif( Val( rejs->KOLUMNA2 ) == 8, zNETTO2, 0 ) )
+                        repl_( 'WYR_TOW', iif( Val( zKOLUMNA ) == 7, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 7, zNETTO2, 0 ) )
+                        repl_( 'USLUGI', iif( Val( zKOLUMNA ) == 8, zNETTO, 0 ) + iif( Val( zKOLUMNA2 ) == 8, zNETTO2, 0 ) )
                         repl_( 'rejzid', REKZAK )
                         repl_( 'NRKSEF', zNRKSEF )
                         repl_( 'NR_IDENT', zNR_IDENT )
@@ -3591,7 +3597,7 @@ PROCEDURE KRejS_Ksieguj()
    ENDIF
    IF zRYCZALT # 'T'
       IF pzparam_ksws == 'N'
-         IF ( lDodajDokOper .OR. ins ) .AND. AllTrim( zKOLUMNA ) $ '78' .OR. AllTrim( zKOLUMNA2 ) $ '78'
+         IF ( lDodajDokOper .OR. ins ) .AND. ( AllTrim( zKOLUMNA ) $ '78' .OR. AllTrim( zKOLUMNA2 ) $ '78' )
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
             IF zNETTO + zNETTO2 <> 0 .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
                SELECT suma_mc
