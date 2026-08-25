@@ -2324,6 +2324,8 @@ PROCEDURE setind( ZB )
         SET INDEX TO tab_dochuks
    CASE ZB == 'TAB_PLA'
         SET INDEX TO tab_pla
+   CASE ZB == 'SUMA_MC'
+        SET INDEX TO suma_mc
    ENDCASE
 
    RETURN

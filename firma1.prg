@@ -88,7 +88,7 @@ PROCEDURE Firma1()
    _invers=[i]
    _curs_l=0
    _curs_p=0
-   _esc=[27,-9,247,22,48,77,109,7,46,28,13,1006,75,107,287]
+   _esc=[27,-9,247,22,48,77,109,7,46,28,13,1006,75,107,287,83,115]
    _top=[.f.]
    _bot=[del#'+']
    _stop=[]
@@ -758,12 +758,13 @@ PROCEDURE Firma1()
          p[ 5]='   [Ins]...................wpisywanie                   '
          p[ 6]='   [M].....................modyfikacja pozycji          '
          p[ 7]='   [K].....................konwersja ryczaˆt <> PKPiR   '
-         p[ 8]='   [ALT-S].................poˆ¥czenie firmy z Saldeo    '
-         p[ 9]='   [Del]...................kasowanie pozycji            '
-         p[10]='   [F10]...................szukanie                     '
-         p[11]='   [Enter].................akceptacja firmy             '
-         p[12]='   [Esc]...................wyj&_s.cie                      '
-         p[13]='                                                        '
+         p[ 8]='   [S].....................konwersja zb.sprz. PKPiR     '
+         p[ 9]='   [ALT-S].................poˆ¥czenie firmy z Saldeo    '
+         p[10]='   [Del]...................kasowanie pozycji            '
+         p[11]='   [F10]...................szukanie                     '
+         p[12]='   [Enter].................akceptacja firmy             '
+         p[13]='   [Esc]...................wyj&_s.cie                      '
+         p[14]='                                                        '
          *---------------------------------------
          set color to i
             i=20
@@ -786,6 +787,9 @@ PROCEDURE Firma1()
       *################################### EKSPORT ################################
       CASE kl == Asc( 'K' ) .OR. kl == Asc( 'k' )
          Firma_Konwertuj()
+
+      CASE kl == Asc( 'S' ) .OR. kl == Asc( 's' )
+         Firma_Konwertuj_RejS()
 
       CASE kl == 287
          SalPolaczFirme()
@@ -1603,3 +1607,143 @@ PROCEDURE Firma_Konwertuj()
 
 /*----------------------------------------------------------------------*/
 
+PROCEDURE Firma_Konwertuj_RejS()
+
+   LOCAL cKolor, nOldWS := Select(), ident_fir := Str( firma->( RecNo() ), 3 )
+
+   IF firma->ryczalt == "T"
+      Komun( 'Konwersja mo¾liwa tylko dla PKPiR' )
+      RETURN
+   ENDIF
+
+   IF Empty( firma->vatfordr )
+      Komun( 'Konwersja nie jest mo¾liwa - brak rejestru sprzeda¾y' )
+      RETURN
+   ENDIF
+
+   IF ! TNEsc( , 'Czy rozdzielicz zbiorcze wpisy sprzeda¾y w PKPiR? (Tak/Nie)' )
+      RETURN
+   ENDIF
+
+   IF ! DostepPro( 'REJS', , , , 'REJS' )
+      RETURN
+   ENDIF
+   IF ! DostepPro( 'OPER', , , , 'OPER' )
+      rejs->( dbCloseArea() )
+      RETURN
+   ENDIF
+   /*IF ! DostepPro( 'SUMA_MC', , , , 'SUMA_MC' )
+      rejs->( dbCloseArea() )
+      oper->( dbCloseArea() )
+      RETURN
+   ENDIF*/
+
+   cKolor := ColInf()
+   @ 24, 0 SAY PadC( '...prosz© czeka†...', 80 )
+
+   rejs->( dbSeek( '+' + ident_fir ) )
+   DO WHILE ! rejs->( Eof() ) .AND. rejs->del == '+' .AND. rejs->firma == ident_fir
+      IF rejs->ksgzbior <> 'N' .AND. ! Empty( rejs->dataks ) .AND. ( rejs->netto <> 0 .OR. rejs->netto2 <> 0 )
+
+
+         SELECT OPER
+         SET ORDER TO 1
+         app()
+         oper->firma := ident_fir
+         repl_( 'DZIEN', Str( Day( rejs->DATAKS ), 2 ) )
+         repl_( 'MC', Str( Month( rejs->DATAKS ), 2 ) )
+         repl_( 'NUMER', 'RS-' + rejs->NUMER)
+         repl_( 'TRESC', rejs->TRESC )
+         repl_( 'UWAGI', rejs->UWAGI )
+         repl_( 'zaplata', '1' )
+         repl_( 'nazwa', rejs->nazwa )
+         repl_( 'ADRES', rejs->ADRES )
+         repl_( 'NR_IDENT', rejs->NR_IDENT )
+         repl_( 'WYR_TOW', iif( Val( rejs->KOLUMNA ) == 7, rejs->NETTO, 0 ) + iif( Val( rejs->KOLUMNA2 ) == 7, rejs->NETTO2, 0 ) )
+         repl_( 'USLUGI', iif( Val( rejs->KOLUMNA ) == 8, rejs->NETTO, 0 ) + iif( Val( rejs->KOLUMNA2 ) == 8, rejs->NETTO2, 0 ) )
+         repl_( 'rejzid', rejs->( RecNo() ) )
+         repl_( 'NRKSEF', rejs->NRKSEF )
+         repl_( 'NR_IDENT', rejs->NR_IDENT )
+         repl_( 'KRAJ', rejs->KRAJ )
+         commit_()
+         UNLOCK
+         *********************** lp
+         IF nr_uzytk >= 0
+            IF param_lp == 'T'
+               IF param_kslp == '3'
+                  SET ORDER TO 4
+               ENDIF
+               Blokada()
+               rec := RecNo()
+               SKIP -1
+               IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( rejs->DATAKS ), 2 ), .F. )
+                  zlp := 1
+               ELSE
+                  zlp := lp + 1
+               ENDIF
+               GO rec
+               DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
+                  repl_( 'lp', zlp )
+                  zlp := zlp + 1
+                  SKIP
+               ENDDO
+               GO rec
+               COMMIT
+               UNLOCK
+               IF param_kslp == '3'
+                  SET ORDER TO 1
+               ENDIF
+            ENDIF
+         ENDIF
+         COMMIT
+         UNLOCK
+
+         SET ORDER TO 3
+         IF Val( rejs->kolumna ) == 7 .OR. Val( rejs->kolumna2 ) == 7
+            IF oper->( dbSeek( '+' + ident_fir + Str( Month( rejs->dataks ), 2 ) + 'RS-7' ) )
+               BlokadaR()
+               oper->wyr_tow := oper->wyr_tow - ( iif( Val( rejs->kolumna ) == 7, rejs->netto, 0 ) + iif( Val( rejs->kolumna2 ) == 7, rejs->netto2, 0 ) )
+            ENDIF
+         ENDIF
+         IF Val( rejs->kolumna ) == 8 .OR. Val( rejs->kolumna2 ) == 8
+            IF oper->( dbSeek( '+' + ident_fir + Str( Month( rejs->dataks ), 2 ) + 'RS-8' ) )
+               BlokadaR()
+               oper->uslugi := oper->uslugi - ( iif( Val( rejs->kolumna ) == 8, rejs->netto, 0 ) + iif( Val( rejs->kolumna2 ) == 8, rejs->netto2, 0 ) )
+            ENDIF
+         ENDIF
+         SET ORDER TO 1
+
+         IF suma_mc->( dbSeek( '+' + ident_fir + Str( Month( rejs->dataks ), 2 ) ) )
+            suma_mc->( RLock() )
+            suma_mc->pozycje := suma_mc->pozycje + 1
+            suma_mc->( dbUnlock() )
+            suma_mc->( dbCommit() )
+         ENDIF
+
+         rejs->( RLock() )
+         rejs->ksgzbior := 'N'
+         rejs->( dbUnlock() )
+         rejs->( dbCommit() )
+
+      ENDIF
+      rejs->( dbSkip() )
+   ENDDO
+
+   oper->( dbCloseArea() )
+   rejs->( dbCloseArea() )
+   //suma_mc->( dbCloseArea() )
+   Select( nOldWS )
+
+   firma->( RLock() )
+   firma->par_ksws := 'N'
+   firma->( dbUnlock() )
+   firma->( dbCommit() )
+
+   SetColor( cKolor )
+   @ 24, 0
+
+   Komun( 'Konwersja zakoäczona' )
+
+   RETURN
+
+/*----------------------------------------------------------------------*/
