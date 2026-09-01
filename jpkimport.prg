@@ -3009,7 +3009,7 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
 
    AEval( aDane[ 'Dekret' ], { | aPoz |
 
-      LOCAL aIstniejacyRec, lIstnieje
+      LOCAL aIstniejacyRec, lIstnieje, nOPrzelB
       LOCAL lImportuj := JPKImp_VatS_CzyImport( aDane, aPoz )
 
       IF lImportuj
@@ -3070,8 +3070,25 @@ FUNCTION JPKImp_OperZ_Importuj( aDane )
             zNRKSEF := aPoz[ 'NrKSeF' ]
          ENDIF
 
-         zNETTO := _round( aPoz[ 'zwartzw' ] + aPoz[ 'zwart08' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ] ;
-            + aPoz[ 'zvat02' ] + aPoz[ 'zvat07' ] + aPoz[ 'zvat22' ], 2 )
+         IF Empty( aPoz[ 'zopcje' ] ) .AND. ! Empty( aDane[ 'Opcje' ] )
+            aPoz[ 'zopcje' ] := aDane[ 'Opcje' ]
+         ENDIF
+         nOPrzelB := 1
+         IF aPoz[ 'zopcje' ] $ '257P'
+            DO CASE
+            CASE aPoz[ 'zopcje' ] == '2'
+               nOPrzelB := 0.2
+            CASE aPoz[ 'zopcje' ] == '5'
+               nOPrzelB := 0.5
+            CASE aPoz[ 'zopcje' ] == '7'
+               nOPrzelB := 0.75
+            CASE aPoz[ 'zopcje' ] == 'P'
+               nOPrzelB := 1
+            ENDCASE
+         ENDIF
+
+         zNETTO := _round( ( aPoz[ 'zwartzw' ] + aPoz[ 'zwart08' ] + aPoz[ 'zwart00' ] + aPoz[ 'zwart02' ] + aPoz[ 'zwart07' ] + aPoz[ 'zwart22' ] ;
+            + aPoz[ 'zvat02' ] + aPoz[ 'zvat07' ] + aPoz[ 'zvat22' ] ) * nOPrzelB, 2 )
 
          cKol := iif( Empty( aPoz[ 'zkolumna' ] ), aDane[ 'Kolumna' ], aPoz[ 'zkolumna' ] )
 
