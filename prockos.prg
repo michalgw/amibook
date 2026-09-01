@@ -664,7 +664,7 @@ PROCEDURE KosPokazWizualizacje( cNrKSeF )
       oKosFirma := oKosApp:Firma()
       nKosFirmaID := oKosFirma:Znajdz( Firma_NIP )
       IF nKosFirmaID > 0
-         IF oKosFirma:PokazWizualizacje( nKosFirmaID, cNrKSeF ) <> 0
+         IF oKosFirma:PokazWizualizacje( nKosFirmaID, cNrKSeF, 0 ) <> 0
             Komun( "Brak dokumentu w KSeF" )
          ENDIF
       ELSE
