@@ -23,14 +23,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "hbxml.ch"
 #include "inkey.ch"
 
-FUNCTION JPKImp_NrDokumentu( cNrDok )
+FUNCTION JPKImp_NrDokumentu( cNrDok, lZezwolRem )
 
    LOCAL lDodaj := .F.
 
+   hb_default( @lZezwolRem, .F. )
+
    DO CASE
-   CASE AllTrim( cNrDok ) == 'REM-P'
+   CASE ! lZezwolRem .AND. AllTrim( cNrDok ) == 'REM-P'
       lDodaj := .T.
-   CASE AllTrim( cNrDok ) == 'REM-K'
+   CASE ! lZezwolRem .AND. AllTrim( cNrDok ) == 'REM-K'
       lDodaj := .T.
    CASE AllTrim( cNrDok ) == 'RS-7'
       lDodaj := .T.
@@ -4367,7 +4369,7 @@ FUNCTION JPKImp_PKPIR_Wczytaj( cPlikJpk )
 
    LOCAL oDoc, cAktKlucz
    LOCAL xRes := .F.
-   LOCAL aDaneJPK := hb_Hash()
+   LOCAL aDaneJPK := hb_Hash(), aGrupa
    LOCAL aWeryf, aWiersz
    LOCAL oWiersz, oWierszIter, oWartosc, oWartoscIter
    LOCAL aFirma, lDaneDostepne := .F.
@@ -4380,6 +4382,12 @@ FUNCTION JPKImp_PKPIR_Wczytaj( cPlikJpk )
 
          aDaneJPK[ 'Naglowek' ] := JPKImp_WczytajNagl( oDoc )
          aDaneJPK[ 'Podmiot' ] := JPKImp_WczytajPodm( oDoc )
+
+         aGrupa := edekXmlGrupa( oDoc, 'PKPIRInfo', .F., .T. )
+         aDaneJPK[ 'P_1' ] := sxml2num( xmlWartoscH( aGrupa, 'P_1' ) )
+         aDaneJPK[ 'P_2' ] := sxml2num( xmlWartoscH( aGrupa, 'P_2' ) )
+         aDaneJPK[ 'P_3' ] := sxml2num( xmlWartoscH( aGrupa, 'P_3' ) )
+         aDaneJPK[ 'P_4' ] := sxml2num( xmlWartoscH( aGrupa, 'P_4' ) )
 
          aFirma := PobierzFirme( Val( ident_fir ) )
          aDaneJPK[ 'Firma' ] := aFirma
@@ -4516,6 +4524,62 @@ FUNCTION JPKImp_PKPIR_Wczytaj( cPlikJpk )
                   aW[ 'Importuj' ] := Month( aW[ 'K_2' ] ) == Val( miesiac )
                } )
 
+               IF aDaneJPK[ 'P_1' ] <> 0
+                  aWiersz := hb_Hash()
+                  aWiersz[ 'Aktywny' ] := .T.
+                  aWiersz[ 'Importuj' ] := .T.
+                  aWiersz[ 'K_1' ] := 1
+                  aWiersz[ 'K_2' ] := hb_Date( Val( param_rok ), 1, 1 )
+                  aWiersz[ 'K_3A' ] := 'REM-P'
+                  aWiersz[ 'K_3B' ] := ''
+                  aWiersz[ 'K_4A' ] := ''
+                  aWiersz[ 'K_4B' ] := ''
+                  aWiersz[ 'K_5A' ] := ''
+                  aWiersz[ 'K_5B' ] := ''
+                  aWiersz[ 'K_6' ] := 'Remanent pocz¥tkowy'
+                  aWiersz[ 'K_7' ] := 0
+                  aWiersz[ 'K_8' ] := 0
+                  aWiersz[ 'K_9' ] := 0
+                  aWiersz[ 'K_10' ] := aDaneJPK[ 'P_1' ]
+                  aWiersz[ 'K_11' ] := 0
+                  aWiersz[ 'K_12' ] := 0
+                  aWiersz[ 'K_13' ] := 0
+                  aWiersz[ 'K_14' ] := 0
+                  aWiersz[ 'K_15' ] := 0
+                  aWiersz[ 'K_16A' ] := ''
+                  aWiersz[ 'K_16B' ] := 0
+                  aWiersz[ 'Importuj' ] := Month( aWiersz[ 'K_2' ] ) == Val( miesiac )
+                  AIns( aDaneJPK[ 'Wiersze' ], 1 )
+                  aDaneJPK[ 'Wiersze' ][ 1 ] := aWiersz
+               ENDIF
+               IF aDaneJPK[ 'P_2' ] <> 0
+                  aWiersz := hb_Hash()
+                  aWiersz[ 'Aktywny' ] := .T.
+                  aWiersz[ 'Importuj' ] := .T.
+                  aWiersz[ 'K_1' ] := 1
+                  aWiersz[ 'K_2' ] := hb_Date( Val( param_rok ), 12, 31 )
+                  aWiersz[ 'K_3A' ] := 'REM-K'
+                  aWiersz[ 'K_3B' ] := ''
+                  aWiersz[ 'K_4A' ] := ''
+                  aWiersz[ 'K_4B' ] := ''
+                  aWiersz[ 'K_5A' ] := ''
+                  aWiersz[ 'K_5B' ] := ''
+                  aWiersz[ 'K_6' ] := 'Remanent koäcowy'
+                  aWiersz[ 'K_7' ] := 0
+                  aWiersz[ 'K_8' ] := 0
+                  aWiersz[ 'K_9' ] := 0
+                  aWiersz[ 'K_10' ] := aDaneJPK[ 'P_2' ]
+                  aWiersz[ 'K_11' ] := 0
+                  aWiersz[ 'K_12' ] := 0
+                  aWiersz[ 'K_13' ] := 0
+                  aWiersz[ 'K_14' ] := 0
+                  aWiersz[ 'K_15' ] := 0
+                  aWiersz[ 'K_16A' ] := ''
+                  aWiersz[ 'K_16B' ] := 0
+                  aWiersz[ 'Importuj' ] := Month( aWiersz[ 'K_2' ] ) == Val( miesiac )
+                  AAdd( aDaneJPK[ 'Wiersze' ], aWiersz )
+               ENDIF
+
                xRes := aDaneJPK
 
             ELSE
@@ -4550,6 +4614,10 @@ FUNCTION JPKImp_PKPIR_Importuj( aDane )
       ENDIF
    } )
 
+   IF aDane[ 'JPK' ][ 'P_1' ] <> 0
+
+   ENDIF
+
    AEval( aDane[ 'JPK' ][ 'Wiersze' ], { | aPoz |
 
       LOCAL aIstniejacyRec
@@ -4562,11 +4630,12 @@ FUNCTION JPKImp_PKPIR_Importuj( aDane )
          ins := .T.
 
          zDZIEN := Str( Day( aPoz[ 'K_2' ] ) )
+         zMC := Str( Month( aPoz[ 'K_2' ] ), 2 )
          znazwa := iif( Upper( AllTrim( aPoz[ 'K_5A' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'K_5A' ], 100 ) )
          zNR_IDENT := iif( Upper( AllTrim( aPoz[ 'K_4B' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'K_4B' ], 100 ) )
-         zNUMER := iif( Upper( AllTrim( aPoz[ 'K_3A' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'K_3A' ] ), 100 ) )
+         zNUMER := iif( Upper( AllTrim( aPoz[ 'K_3A' ] ) ) == "BRAK", Space( 100 ), PadR( JPKImp_NrDokumentu( aPoz[ 'K_3A' ], .T. ), 100 ) )
          zADRES := iif( Upper( AllTrim( aPoz[ 'K_5B' ] ) ) == "BRAK", Space( 100 ), PadR( aPoz[ 'K_5B' ], 100 ) )
-         zTRESC := aDane[ 'OpisZd' ]
+         zTRESC := iif( Empty( aPoz[ 'K_6' ] ), aDane[ 'OpisZd' ], aPoz[ 'K_6' ] )
          zKRAJ := aPoz[ 'K_4A' ]
          zNRKSEF := aPoz[ 'K_3B' ]
 
@@ -4605,8 +4674,6 @@ FUNCTION JPKImp_PKPIR_Importuj( aDane )
       ENDIF
 
    } )
-
-
 
    RETURN aRaport
 
@@ -4663,6 +4730,10 @@ PROCEDURE JPKImp_PKPIR_Podglad( aDane, aSumy )
          ar[ nElem ][ 'Importuj' ] := ! ar[ nElem ][ 'Importuj' ]
       ELSE
          komun( "Nie mo¾na importowa† tej pozycji" )
+      ENDIF
+   } }, { { Asc( 'W' ), Asc( 'w' ) }, { | nElem, ar, b |
+      IF TNEsc( , "Czy zaznaczy† wszystkie pozycje? (Tak / Nie)" )
+         AEval( ar, { | aEl | aEl[ 'Importuj' ] := aEl[ 'Aktywny' ] } )
       ENDIF
    } } }
    LOCAL aBlokiKoloru := {}

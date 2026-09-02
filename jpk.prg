@@ -76,8 +76,8 @@ FUNCTION jpk_pkpir(aDane)
    cRes := cRes + '    <P_3>' + TKwota2(aDane['P_3']) + '</P_3>' + nl
    cRes := cRes + '    <P_4>' + TKwota2(aDane['P_4']) + '</P_4>' + nl
    cRes := cRes + '  </PKPIRInfo>' + nl
-   IF aDane[ 'P_5' ]
-      FOR nI := 1 TO Len( aDane[ 'rem' ] )
+   IF aDane[ 'P_5' ] .AND. Len( aDane[ 'rem' ] ) > 2
+      FOR nI := 2 TO Len( aDane[ 'rem' ] ) - 1
          cRes := cRes + '  <PKPIRSpis typ="G">' + nl
          cRes := cRes + '    <P_5A>' + date2strxml(aDane['rem'][nI]['k2']) + '</P_5A>' + nl
          cRes := cRes + '    <P_5B>' + TKwota2(aDane['rem'][nI]['k10']) + '</P_5B>' + nl
@@ -157,8 +157,8 @@ FUNCTION jpk_pkpir_w3(aDane)
    cRes := cRes + '    <P_3>' + TKwota2(aDane['P_3']) + '</P_3>' + nl
    cRes := cRes + '    <P_4>' + TKwota2(aDane['P_4']) + '</P_4>' + nl
    cRes := cRes + '  </PKPIRInfo>' + nl
-   IF aDane[ 'P_5' ]
-      FOR nI := 1 TO Len( aDane[ 'rem' ] )
+   IF aDane[ 'P_5' ] .AND. Len( aDane[ 'rem' ] ) > 2
+      FOR nI := 2 TO Len( aDane[ 'rem' ] ) - 1
          cRes := cRes + '  <PKPIRSpis>' + nl
          cRes := cRes + '    <P_5A>' + date2strxml(aDane['rem'][nI]['k2']) + '</P_5A>' + nl
          cRes := cRes + '    <P_5B>' + TKwota2(aDane['rem'][nI]['k10']) + '</P_5B>' + nl
