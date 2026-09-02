@@ -667,10 +667,11 @@ FUNCTION edekXmlPodmiot2(oDoc)
 
 /*----------------------------------------------------------------------*/
 
-FUNCTION edekXmlGrupa(oDoc, cNazwaWezla, lKonwertuj)
+FUNCTION edekXmlGrupa(oDoc, cNazwaWezla, lKonwertuj, lUsunNS)
    LOCAL hRes := hb_Hash(), oNode, oIt, oEl
    hb_default( @lKonwertuj, .T. )
-   oNode := oDoc:FindFirst(cNazwaWezla)
+   hb_default( @lUsunNS, .F. )
+   oNode := iif( lUsunNS, oDoc:FindFirstRegex( '(([\w]*:)' + cNazwaWezla + '|(^' + cNazwaWezla + '))' ), oDoc:FindFirst(cNazwaWezla) )
    IF oNode != NIL
       oIt := TXMLIterator():New(oNode)
       DO WHILE .T.
@@ -678,7 +679,7 @@ FUNCTION edekXmlGrupa(oDoc, cNazwaWezla, lKonwertuj)
          IF oEl == NIL
             EXIT
          ENDIF
-         hRes[oEl:cName] := iif( lKonwertuj, sxml2str( oEl:cData ), oEl:cData )
+         hRes[ iif( lUsunNS, xmlUsunNamespace( oEl:cName ), oEl:cName ) ] := iif( lKonwertuj, sxml2str( oEl:cData ), oEl:cData )
       ENDDO
    ENDIF
    RETURN hRes
