@@ -4825,9 +4825,9 @@ PROCEDURE JPKImp_Rycz()
                   cRaport += "POMINI¨TE DOKUMENTY" + hb_eol()
                   cRaport += "-------------------" + hb_eol()
                   AEval( aRaport[ 'ListaPom' ], { | aPoz |
-                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'K_3' ] ) + hb_eol()
-                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'K_4' ] ) + hb_eol()
-                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'K_2' ] ) + hb_eol()
+                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
+                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
+                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'DataWystawienia' ] ) + hb_eol()
                      cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
                      cRaport += "--------------------------" + hb_eol()
                   } )
@@ -4837,9 +4837,9 @@ PROCEDURE JPKImp_Rycz()
                   cRaport += "DOKUMENTY W OBCEJ WALUCIE" + hb_eol()
                   cRaport += "-------------------" + hb_eol()
                   AEval( aRaport[ 'ListaWal' ], { | aPoz |
-                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'K_3' ] ) + hb_eol()
-                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'K_4' ] ) + hb_eol()
-                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'K_2' ] ) + hb_eol()
+                     cRaport += "Nr dokumentu: " + AllTrim( aPoz[ 'Importowany' ][ 'znumer' ] ) + hb_eol()
+                     cRaport += "Kontrahent: " + AllTrim( aPoz[ 'Importowany' ][ 'znazwa' ] ) + hb_eol()
+                     cRaport += "Data wystawienia: " + DToC( aPoz[ 'Importowany' ][ 'DataWystawienia' ] ) + hb_eol()
                      cRaport += "Przyczyna: " + aPoz[ 'Przyczyna' ] + hb_eol()
                      cRaport += "--------------------------" + hb_eol()
                   } )
@@ -4939,7 +4939,7 @@ FUNCTION JPKImp_Rycz_Importuj( aDane )
 
          znazwa := aPoz[ 'znazwa' ]
          zNR_IDENT := aPoz[ 'znr_ident' ]
-         zNUMER := aPoz[ 'znumer' ]
+         zNUMER := JPKImp_NrDokumentu( aPoz[ 'znumer' ] )
          zADRES := aPoz[ 'zadres' ]
          zTRESC := aDane[ 'OpisZd' ]
          zKRAJ := aPoz[ 'zkraj' ]

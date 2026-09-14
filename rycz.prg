@@ -492,6 +492,8 @@ PROCEDURE Rycz()
                   ENDIF
                   dbCloseArea()
                   SELECT ewid
+               ELSEIF Left( numer, 2 ) == 'F-' .OR. Left( numer, 2 ) == 'S-' .OR. Left( numer, 2 ) == 'R-' .OR. Left( numer, 3 ) == 'KF-'  .OR. Left( numer, 3 ) == 'KR-'
+
                ELSE
                   kom( 4, '*u', ' Nie mo¾na usun¥† tego dokumentu ' )
                   BREAK
