@@ -88,9 +88,9 @@ PROCEDURE Oper()
          IF ! &_bot
             DO &_proc
          ENDIF
-      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. kl == K_F6 .OR. &_top_bot ) .AND. kl # K_ESC
+      CASE ( kl == K_INS .OR. kl == Asc( '0' ) .OR. kl == Asc( 'M' ) .OR. kl == Asc( 'm' ) .OR. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .OR. kl == K_F6 .OR. kl == K_ALT_M .OR. &_top_bot ) .AND. kl # K_ESC
          @ 1, 47 SAY '          '
-         ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) ) .OR. &_top_bot
+         ins := ( kl # Asc( 'M' ) .AND. kl # Asc( 'm' ) .AND. kl != K_ALT_M ) .OR. &_top_bot
          KtorOper()
          BEGIN SEQUENCE
             IF ZamSum1()
@@ -131,7 +131,7 @@ PROCEDURE Oper()
                   BREAK
                ENDIF
             ELSEIF ins .AND. kl == Asc( 'K' ) .OR. kl == Asc( 'k' ) .AND. ! &_top_bot
-               IF docsys()
+               IF kl != K_ALT_M .AND. docsys()
                   BREAK
                ENDIF
                zDZIEN := DZIEN
@@ -187,7 +187,7 @@ PROCEDURE Oper()
                ENDIF
                ***********************
             ELSE
-               IF docsys()
+               IF kl != K_ALT_M .AND. docsys()
                   BREAK
                ENDIF
                zDZIEN := DZIEN
@@ -218,14 +218,16 @@ PROCEDURE Oper()
             zMC := ''
             *ננננננננננננננננננננננננננננננננ GET ננננננננננננננננננננננננננננננננננ
             ColStd()
-            @  3, 27 GET zDZIEN PICTURE "99" WHEN PolePaliwoStop() .AND. ( WERSJA4 == .T. .OR. ins ) VALID v1_1()
-            @  4, 27 GET zNUMER PICTURE "@S40 " + repl( '!', 100 ) WHEN PolePaliwoStop() VALID v1_2()
-            @  5, 27 GET zNR_IDENT PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" WHEN PolePaliwoStop() VALID OperNrIdentV()
-            @  6, 15 GET zNAZWA PICTURE "@S64 " + repl( '!', 200 ) WHEN PolePaliwoStop() VALID w1_3()
-            @  7, 15 GET zADRES PICTURE "@S52 " + repl( '!', 200 ) WHEN PolePaliwoStop()
-            @  7, 77 GET zKRAJ PICTURE "!!" WHEN PolePaliwoStop()
-            @  8, 37 GET zTRESC WHEN PolePaliwoStop() VALID v1_5()
-            @  9, 15 GET zNRKSEF PICTURE Replicate( '!', 35 ) WHEN PolePaliwoStop() VALID KRejS_V_NrKSeF()
+            IF kl != K_ALT_M
+               @  3, 27 GET zDZIEN PICTURE "99" WHEN PolePaliwoStop() .AND. ( WERSJA4 == .T. .OR. ins ) VALID v1_1()
+               @  4, 27 GET zNUMER PICTURE "@S40 " + repl( '!', 100 ) WHEN PolePaliwoStop() VALID v1_2()
+               @  5, 27 GET zNR_IDENT PICTURE "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" WHEN PolePaliwoStop() VALID OperNrIdentV()
+               @  6, 15 GET zNAZWA PICTURE "@S64 " + repl( '!', 200 ) WHEN PolePaliwoStop() VALID w1_3()
+               @  7, 15 GET zADRES PICTURE "@S52 " + repl( '!', 200 ) WHEN PolePaliwoStop()
+               @  7, 77 GET zKRAJ PICTURE "!!" WHEN PolePaliwoStop()
+               @  8, 37 GET zTRESC WHEN PolePaliwoStop() VALID v1_5()
+            ENDIF
+            @  9, 15 GET zNRKSEF PICTURE Replicate( '!', 35 ) WHEN PolePaliwoStop() VALID KRejS_V_NrKSeF( 9 )
             @ 10, 67 GET zWYR_TOW  PICTURE FPIC WHEN PolePaliwoStop() VALID iif( zWYR_TOW # 0, vKONIEC(), .T. )
             @ 11, 67 GET zUSLUGI   PICTURE FPIC WHEN PolePaliwoStop() VALID iif( zUSLUGI # 0, vKONIEC(), .T. )
             @ 12, 67 GET zZAKUP    PICTURE FPIC WHEN PolePaliwoStart() VALID vSUMOP() .AND. iif( zZAKUP # 0, vKONIEC(), .T.) .AND. PolePaliwoStop()
