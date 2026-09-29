@@ -25,6 +25,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "hbcompat.ch"
 
 STATIC aUmowaPolaTrans := { ;
+   '@FIRMA' => { || firma->NAZWA }, ;
+   '#FIRMA' => { || AllTrim( firma->NAZWA ) }, ;
+   '@UL_FIRMY' => { || firma->ULICA + ' ' + firma->NR_DOMU + '/' + firma->NR_MIESZK }, ;
+   '#UL_FIRMY' => { || AllTrim( firma->ULICA ) + ' ' + AllTrim( firma->NR_DOMU ) + '/' + AllTrim( firma->NR_MIESZK ) }, ;
+   '@ADR_FIRMY' => { || firma->MIEJSC }, ;
+   '#ADR_FIRMY' => { || AllTrim( firma->MIEJSC ) }, ;
+   '@NIP_FIRMY' => { || firma->NIP }, ;
+   '#NIP_FIRMY' => { || AllTrim( firma->NIP ) }, ;
+   '@REG_FIRMY' => { || firma->NR_REGON }, ;
+   '#REG_FIRMY' => { || AllTrim( firma->NR_REGON ) }, ;
    '@DZISIAJ' => { || DToC( DATE() ) }, ;
    '#DZISIAJ' => { || DToC( DATE() ) }, ;
    '@NAZWISKO' => { || prac->NAZWISKO }, ;
@@ -61,12 +71,6 @@ STATIC aUmowaPolaTrans := { ;
    '#LOKAL' => { || AllTrim( prac->NR_MIESZK ) }, ;
    '@DOWOD' => { || prac->DOWOD_OSOB }, ;
    '#DOWOD' => { || AllTrim( prac->DOWOD_OSOB ) }, ;
-   '@FIRMA' => { || firma->NAZWA }, ;
-   '#FIRMA' => { || AllTrim( firma->NAZWA ) }, ;
-   '@UL_FIRMY' => { || firma->ULICA + ' ' + firma->NR_DOMU + '/' + firma->NR_MIESZK }, ;
-   '#UL_FIRMY' => { || AllTrim( firma->ULICA ) + ' ' + AllTrim( firma->NR_DOMU ) + '/' + AllTrim( firma->NR_MIESZK ) }, ;
-   '@ADR_FIRMY' => { || firma->MIEJSC }, ;
-   '#ADR_FIRMY' => { || AllTrim( firma->MIEJSC ) }, ;
    '@UMOWA' => { || umowy->NUMER }, ;
    '#UMOWA' => { || AllTrim( umowy->NUMER ) }, ;
    '@DATA_UM' => { || DToC( umowy->DATA_UMOWY ) }, ;
