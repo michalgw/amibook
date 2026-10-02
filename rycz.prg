@@ -286,14 +286,21 @@ PROCEDURE Rycz()
                ENDIF
             ENDIF
             *-------------------------
+            // usun spacje na poczatku nr
             zNUMER := dos_l( znumer )
+            // przeformatuj dzien
             zdzien := Str( Val( zDZIEN ), 2 )
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+            // zapisz poprzednia tresc
             tresc_ := tresc
+            // zapisz poprzednie wartosci
             stan_ := -USLUGI - PRODUKCJA - HANDEL - RY20 - RY17 - RY10 - RYK07 - RYK08 - RYK09 - RYK10
             obrot_ := USLUGI + PRODUKCJA + HANDEL + RY20 + RY17 + RY10 + RYK07 + RYK08 + RYK09 + RYK10
+            // aktualizuj wartosci tresci
             SELECT tresc
+            // jesli modyfikacja
             IF ! ins
+               // przywroc wartosc poprzedniej tresci
                SEEK '+' + ident_fir + tresc_
                IF Found()
                   BlokadaR()
@@ -302,6 +309,7 @@ PROCEDURE Rycz()
                   UNLOCK
                ENDIF
             ENDIF
+            // dodaj wartosc nowej tresci
             SEEK '+' + ident_fir + ztresc
             IF Found()
                BlokadaR()
@@ -311,6 +319,7 @@ PROCEDURE Rycz()
             ENDIF
             SELECT suma_mc
             BlokadaR()
+            // przywroc poprzednie wartosci sum miesiecznych
             IF ! ins .AND. Left( ewid->numer, 1 ) # Chr( 1 ) .AND. Left( ewid->numer, 1 ) # Chr( 254 )
                repl_( 'wyr_tow', wyr_tow - ewid->produkcja )
                repl_( 'uslugi', uslugi - ewid->uslugi )
@@ -323,6 +332,7 @@ PROCEDURE Rycz()
                repl_( 'RYK09', RYK09 - ewid->RYK09 )
                repl_( 'RYK10', RYK10 - ewid->RYK10 )
             ENDIF
+            // aktualizuj nowe wartosci sum miesiecznych
             IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
                repl_( 'wyr_tow', wyr_tow + zPRODUKCJA )
                repl_( 'uslugi', uslugi + zuslugi )
@@ -335,17 +345,20 @@ PROCEDURE Rycz()
                repl_( 'RYK09', RYK09 + zRYK09 )
                repl_( 'RYK10', RYK10 + zRYK10 )
             ENDIF
+            // jesli nowa pozycje to zwieksz ilosc dokumentow w sumach miesiecznych
             IF ins
                repl_( 'pozycje', pozycje + 1 )
             ENDIF
             COMMIT
             UNLOCK
             SELECT ewid
+            // dodaj nowy wpis do ewidencji jesli trzeba
             IF ins
                app()
                repl_( 'firma', ident_fir )
                repl_( 'mc', miesiac )
             ENDIF
+            // ustaw nowe wartosci wpisu ewidencji
             BlokadaR()
             repl_( 'DZIEN', zdzien )
             repl_( 'DATAPRZY', zDATAPRZY )
@@ -376,6 +389,7 @@ PROCEDURE Rycz()
             repl_( 'NRKSEF', zNRKSEF )
             COMMIT
             UNLOCK
+            // przenumeruj wpisy w ewidencji
             *********************** lp
             IF param_lp == 'T'
                IF param_kslp == '3'

@@ -1047,27 +1047,6 @@ FUNCTION V1_22()
    RETURN ZKWOTA > 0
 
 **************************************************
-PROCEDURE KontrApp()
-**************************************************
-   SELECT kontr
-   IF ! Empty( znazwa ) .AND. param_aut == 'T'
-      SEEK '+' + ident_fir + SubStr( znazwa, 1, 15 ) + SubStr( zadres, 1, 15 )
-      IF ! Found()
-         app()
-         REPLACE firma WITH ident_fir
-         REPLACE nazwa WITH znazwa
-         REPLACE adres WITH zadres
-         REPLACE NR_IDENT WITH zNR_IDENT
-         REPLACE EXPORT WITH zEXPORT
-         REPLACE UE WITH zUE
-         REPLACE KRAJ WITH zKRAJ
-         COMMIT
-         UNLOCK
-      ENDIF
-   ENDIF
-   RETURN
-
-**************************************************
 PROCEDURE LpStart()
 **************************************************
    IF param_lp == 'T'
@@ -1204,82 +1183,6 @@ FUNCTION Zaplacono()
       ENDIF
    END
    RETURN R
-
-*************************************
-PROCEDURE WrocStan()
-*************************************
-   SELECT tresc
-   IF ! ins
-      SEEK '+' + ident_fir + tresc_
-      IF Found()
-         BlokadaR()
-         STANUJ
-         COMMIT
-         UNLOCK
-      ENDIF
-   ENDIF
-   RETURN
-
-*************************************
-PROCEDURE AktKol( mnoz, kolum, wart )
-*************************************
-   koko := Val( AllTrim( kolum ) )
-   IF zRYCZALT == 'T'
-      BlokadaR()
-      DO CASE
-      CASE KOKO == 5
-         AKTPOL+ ry20 WITH wart * mnoz
-      CASE KOKO == 6
-         AKTPOL+ ry17 WITH wart * mnoz
-      CASE KOKO == 7
-         AKTPOL+ ryk09 WITH wart * mnoz
-      CASE KOKO == 8
-         AKTPOL+ uslugi WITH wart * mnoz
-      CASE KOKO == 9
-         AKTPOL+ ryk10 WITH wart * mnoz
-      CASE KOKO == 10
-         AKTPOL+ wyr_tow WITH wart * mnoz
-      CASE KOKO == 11
-         AKTPOL+ handel WITH wart * mnoz
-      CASE KOKO == 12
-         AKTPOL+ ryk07 WITH wart * mnoz
-      CASE KOKO == 13
-         AKTPOL+ ry10 WITH wart * mnoz
-      ENDCASE
-      COMMIT
-      UNLOCK
-   ELSE
-      BlokadaR()
-      DO CASE
-      CASE KOKO == 7
-         AKTPOL+ wyr_tow WITH wart * mnoz
-      CASE KOKO == 8
-         AKTPOL+ uslugi WITH wart * mnoz
-      CASE KOKO == 10
-         AKTPOL+ zakup WITH wart * mnoz
-      CASE KOKO == 11
-         AKTPOL+ uboczne WITH wart * mnoz
-      CASE KOKO == 12
-         AKTPOL+ wynagr_g WITH wart * mnoz
-      CASE KOKO == 13 .OR. KOKO == 16
-         AKTPOL+ wydatki WITH wart * mnoz
-      ENDCASE
-      COMMIT
-      UNLOCK
-   ENDIF
-   RETURN
-
-************************************
-PROCEDURE IfIns( rrrec )
-************************************
-   IF ins
-      app()
-      ADDDOC
-      IF rrrec > 0.0
-         repl_( 'REC_NO', rrrec )
-      ENDIF
-   ENDIF
-   RETURN
 
 *############################################################################
 FUNCTION wROZRget()
@@ -1424,17 +1327,25 @@ FUNCTION PolePaliwoLicz( nWartosc, nNetto, cVat, cRodzaj )
 
 PROCEDURE Oper_Ksieguj()
 
+   // ustaw zmienna z miesiacem
    IF Empty( zMC )
       zMC := miesiac
    ENDIF
+   // usun poczatkowe spacje z nr dowodu
    znumer := dos_l( znumer )
+   // przeformatuj nr dnia
    zdzien := Str( Val( zDZIEN ), 2 )
    *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+   // zachowaj poprzednia tresc
    tresc_ := tresc
+   // zachowaj poprzednia wartosc dokumentu
    stan_ := -WYR_TOW - USLUGI + ZAKUP + UBOCZNE + WYNAGR_G + WYDATKI + PUSTA
    obrot_ := wyr_tow
+   // dodaj kontrahenta do bazy jesli potrzeba
    KontrApp()
+   // przywroc stan da poprzedniej tresci
    WrocStan()
+   // dodaj stan do obecnej tresci
    SEEK '+' + ident_fir + ztresc
    IF Found()
       BlokadaR()
@@ -1442,13 +1353,16 @@ PROCEDURE Oper_Ksieguj()
       COMMIT
       UNLOCK
    ENDIF
+   // przywroc kowty sum miesiecznyh
    SELECT SUMA_MC
+   SEEK '+' + ident_fir + zMC
    BlokadaR()
    IF ! ins .AND. Left( oper->numer, 1 ) # Chr( 1 ) .AND. Left( oper->numer, 1 ) # Chr( 254 )
       SUMY-
    ENDIF
    COMMIT
    UNLOCK
+   // aktualizuj sumy miesieczne z nowymi wartosciami
    SEEK '+' + ident_fir + zMC
    BlokadaR()
    IF RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
@@ -1456,6 +1370,7 @@ PROCEDURE Oper_Ksieguj()
    ENDIF
    COMMIT
    UNLOCK
+   // jesli nowa pozycje to zwieksz liczbe dokumentow w sumach miesiecznych
    IF ins
       BlokadaR()
       AKTPOZ+
@@ -1465,7 +1380,7 @@ PROCEDURE Oper_Ksieguj()
    SEEK '+' + ident_fir + miesiac
 
    SELECT oper
-
+   // jesli nowy to ustal rec_no
    IF ins
       SET ORDER TO 2
       Blokada()
@@ -1475,8 +1390,9 @@ PROCEDURE Oper_Ksieguj()
    ELSE
       IDPR := rec_no
    ENDIF
-
+   // inicjuj rekord
    ifins( IDPR )
+   // jesli wpisy rmanentu to dodaj odpowiedni przedrostek dla indeksowania
    DO CASE
    CASE RTrim( znumer ) == 'REM-P'
       znumer := Chr( 1 ) + znumer
@@ -1484,10 +1400,13 @@ PROCEDURE Oper_Ksieguj()
       zNUMER := Chr( 254 ) + znumer
    ENDCASE
    BlokadaR()
+   // dodaj naglowek dokumentu (dzien, nr, nazwa adres i nr ident kontrahenta)
    ADDPOZ
+   // ustaw miesiac ze zmiennej
    IF ins
       oper->mc := zMC
    ENDIF
+   // przypisz pola
    REPLACE WYR_TOW  WITH zWYR_TOW
    REPLACE USLUGI   WITH zUSLUGI
    REPLACE ZAKUP    WITH zZAKUP
@@ -1511,6 +1430,7 @@ PROCEDURE Oper_Ksieguj()
 
    COMMIT
    UNLOCK
+   // przenumeruj pozycje w ksiedze
    *********************** lp
    IF param_lp == 'T'
       Blokada()
@@ -1538,10 +1458,10 @@ PROCEDURE Oper_Ksieguj()
       ELSE
          zlp := lp
          SKIP -1
-         IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+         IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # zMC, .F. )
             zlp := liczba
             GO rec
-            DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+            DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == zMC, .T. )
                REPLACE lp WITH zlp
                zlp := zlp + 1
                SKIP
@@ -1550,7 +1470,7 @@ PROCEDURE Oper_Ksieguj()
             IF lp < zlp
                zlp := lp + 1
                GO rec
-               DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+               DO WHILE del == '+' .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == zMC, .T. )
                   REPLACE lp WITH zlp
                   zlp := zlp + 1
                   SKIP
@@ -1558,7 +1478,7 @@ PROCEDURE Oper_Ksieguj()
             ELSE
                zlp := lp
                GO rec
-               DO WHILE ! Bof() .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+               DO WHILE ! Bof() .AND. firma == ident_fir .AND. lp # zlp .AND. iif( Firma_RodzNrKs == "M", mc == zMC, .T. )
                   REPLACE lp WITH zlp
                   zlp := zlp - 1
                   SKIP -1
@@ -1577,10 +1497,11 @@ PROCEDURE Oper_Ksieguj()
    *para fZRODLO,fJAKIDOK,fNIP,fNRDOK,fDATAKS,fDATADOK,fTERMIN,fDNIPLAT,fRECNO,fKWOTA,fTRESC,fKWOTAVAT
    * JAKIDOK: FS i FZ (faktury zakupu i sprzedazy), ZS i ZZ (zaplaty za sprzedaz i zakupy)
 
+   // dodaj lub aktualizuj rozrachunki jesli treba
    SELECT rozr
    IF ins
       IF zROZRZAPK == 'T'
-         dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+         dddat := CToD( StrTran( param_rok + '.' + zMC + '.' + zdzien, ' ', '0' ) )
          IF zWYR_TOW + zUSLUGI <> 0.0
             RozrApp( 'K', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zWYR_TOW + zUSLUGI ), zTRESC, 0 )
          ENDIF
@@ -1606,11 +1527,11 @@ PROCEDURE Oper_Ksieguj()
             RozrDel( 'K', IDPR )
             *select OPER
             IF zWYR_TOW + zUSLUGI <> 0.0
-               dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+               dddat := CToD( StrTran( param_rok + '.' + zMC + '.' + zdzien, ' ', '0' ) )
                RozrApp( 'K', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zWYR_TOW + zUSLUGI ), zTRESC, 0 )
             ENDIF
             IF zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA <> 0.0
-               dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+               dddat := CToD( StrTran( param_rok + '.' + zMC + '.' + zdzien, ' ', '0' ) )
                RozrApp( 'K', 'FZ', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ), zTRESC, 0 )
             ENDIF
             IF zZAP_WART > 0.0
@@ -1631,11 +1552,11 @@ PROCEDURE Oper_Ksieguj()
       ELSE
          IF zROZRZAPK == 'T'
             IF zWYR_TOW + zUSLUGI <> 0.0
-               dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+               dddat := CToD( StrTran( param_rok + '.' + zMC + '.' + zdzien, ' ', '0' ) )
                RozrApp( 'K', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zWYR_TOW + zUSLUGI ), zTRESC, 0 )
             ENDIF
             IF zZAKUP + zUBOCZNE + zWYNAGR_G  + zWYDATKI + zPUSTA <> 0.0
-               dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+               dddat := CToD( StrTran( param_rok + '.' + zMC + '.' + zdzien, ' ', '0' ) )
                RozrApp( 'K', 'FZ', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, IDPR, ( zZAKUP + zUBOCZNE + zWYNAGR_G + zWYDATKI + zPUSTA ), zTRESC, 0 )
             ENDIF
             IF zZAP_WART > 0.0

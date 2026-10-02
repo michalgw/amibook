@@ -741,14 +741,14 @@ PROCEDURE KRejS()
                   SET ORDER TO 1
                   *********************** lp
                   IF nr_uzytk >= 0
-                     IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                     IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                         IF param_kslp == '3'
                            SET ORDER TO 4
                         ENDIF
                         Blokada()
                         Czekaj()
                         rec := RecNo()
-                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                            repl_( 'lp', lp - 1 )
                            SKIP
                         ENDDO
@@ -777,14 +777,14 @@ PROCEDURE KRejS()
                         SET ORDER TO 1
                         *********************** lp
                         IF nr_uzytk >= 0
-                           IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                               IF param_kslp == '3'
                                  SET ORDER TO 4
                               ENDIF
                               Blokada()
                               Czekaj()
                               rec := RecNo()
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                                  repl_( 'lp', lp - 1 )
                                  SKIP
                               ENDDO
@@ -804,7 +804,7 @@ PROCEDURE KRejS()
                   SET ORDER TO 3
                   IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' )
                      GO TOP
-                     SEEK '+' + ident_fir + miesiac + 'RS-7'
+                     SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 ) + 'RS-7'
                      IF Found()
                         SET ORDER TO 1
                         BlokadaR()
@@ -815,13 +815,16 @@ PROCEDURE KRejS()
                         SET ORDER TO 1
                         *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
                         SELECT suma_mc
+                        SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 )
                         BlokadaR()
                         repl_( 'pozycje', pozycje + 1 )
                         COMMIT
                         UNLOCK
+                        SEEK '+' + ident_fir + miesiac
                         SELECT &usebaz
                         app()
                         ADDDOC
+                        repl_( 'MC', Str( Month( rejs->DATAKS ), 2 ) )
                         repl_( 'DZIEN', DAYM )
                         repl_( 'NUMER', 'RS-7' )
                         repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
@@ -841,13 +844,13 @@ PROCEDURE KRejS()
                               rec := RecNo()
 
                               SKIP -1
-                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( rejs->DATAKS ), 2 ), .F. )
                                  zlp := liczba
                               ELSE
                                  zlp := lp + 1
                               ENDIF
                               GO rec
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                                  repl_( 'lp', zlp )
                                  zlp := zlp + 1
                                  SKIP
@@ -870,7 +873,7 @@ PROCEDURE KRejS()
                   IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
                      SET ORDER TO 3
                      GO TOP
-                     SEEK '+' + ident_fir + miesiac + 'RS-8'
+                     SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 ) + 'RS-8'
                      IF Found()
                         SET ORDER TO 1
                         BlokadaR()
@@ -881,13 +884,16 @@ PROCEDURE KRejS()
                         SET ORDER TO 1
                         *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
                         SELECT suma_mc
+                        SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 )
                         BlokadaR()
                         repl_( 'pozycje', pozycje + 1 )
                         COMMIT
                         UNLOCK
+                        SEEK '+' + ident_fir + miesiac
                         SELECT &usebaz
                         app()
                         ADDDOC
+                        repl_( 'MC', Str( Month( rejs->DATAKS ), 2 ) )
                         repl_( 'DZIEN', DAYM )
                         repl_( 'NUMER', 'RS-8' )
                         repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
@@ -907,13 +913,13 @@ PROCEDURE KRejS()
                               rec := RecNo()
 
                               SKIP -1
-                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                              IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( rejs->DATAKS ), 2 ), .F. )
                                  zlp := liczba
                               ELSE
                                  zlp :=lp + 1
                               ENDIF
                               GO rec
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                                  repl_( 'lp', zlp )
                                  zlp := zlp + 1
                                  SKIP
@@ -1020,6 +1026,7 @@ PROCEDURE KRejS()
                ENDIF
                IF ! Empty( rejs->DATAKS ) .AND. Year( rejs->DATAKS ) == Val( param_rok )
                   SELECT suma_mc
+                  SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 )
                   BlokadaR()
                   IF Left( rejs->numer, 1 ) # Chr( 1 ) .AND. Left( rejs->numer, 1 ) # Chr( 254 )
                      IF zRYCZALT == 'T'
@@ -1109,14 +1116,14 @@ PROCEDURE KRejS()
                      SET ORDER TO 1
                      *********************** lp
                      IF nr_uzytk >= 0
-                        IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                        IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                            IF param_kslp == '3'
                               SET ORDER TO 4
                            ENDIF
                            Blokada()
                            Czekaj()
                            rec := RecNo()
-                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                               repl_( 'lp', lp - 1 )
                               SKIP
                            ENDDO
@@ -1145,14 +1152,14 @@ PROCEDURE KRejS()
                            SET ORDER TO 1
                            *********************** lp
                            IF nr_uzytk >= 0
-                              IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                              IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                                  IF param_kslp == '3'
                                     SET ORDER TO 4
                                  ENDIF
                                  Blokada()
                                  Czekaj()
                                  rec := RecNo()
-                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                                     repl_( 'lp', lp - 1 )
                                     SKIP
                                  ENDDO
@@ -1172,7 +1179,7 @@ PROCEDURE KRejS()
                      SET ORDER TO 3
                      IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' )
                         GO TOP
-                        SEEK '+' + ident_fir + miesiac + 'RS-7'
+                        SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 ) + 'RS-7'
                         IF Found()
                            SET ORDER TO 1
                            BlokadaR()
@@ -1183,13 +1190,16 @@ PROCEDURE KRejS()
                            SET ORDER TO 1
                            *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
                            SELECT suma_mc
+                           SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 )
                            BlokadaR()
                            repl_( 'pozycje', pozycje + 1 )
                            COMMIT
                            UNLOCK
+                           SEEK '+' + ident_fir + miesiac
                            SELECT &usebaz
                            app()
                            ADDDOC
+                           repl_( 'MC', Str( Month( rejs->DATAKS ), 2 ) )
                            repl_( 'DZIEN', DAYM )
                            repl_( 'NUMER', 'RS-7' )
                            repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
@@ -1209,13 +1219,13 @@ PROCEDURE KRejS()
                                  rec := RecNo()
 
                                  SKIP -1
-                                 IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                                 IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( rejs->DATAKS ), 2 ), .F. )
                                     zlp := liczba
                                  ELSE
                                     zlp := lp + 1
                                  ENDIF
                                  GO rec
-                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                                     repl_( 'lp', zlp )
                                     zlp := zlp + 1
                                     SKIP
@@ -1238,7 +1248,7 @@ PROCEDURE KRejS()
                      IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
                         SET ORDER TO 3
                         GO TOP
-                        SEEK '+' + ident_fir + miesiac + 'RS-8'
+                        SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 ) + 'RS-8'
                         IF Found()
                            SET ORDER TO 1
                            BlokadaR()
@@ -1249,13 +1259,16 @@ PROCEDURE KRejS()
                            SET ORDER TO 1
                            *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
                            SELECT suma_mc
+                           SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 )
                            BlokadaR()
                            repl_( 'pozycje', pozycje + 1 )
                            COMMIT
                            UNLOCK
+                           SEEK '+' + ident_fir + miesiac
                            SELECT &usebaz
                            app()
                            ADDDOC
+                           repl_( 'MC', Str( Month( rejs->DATAKS ), 2 ) )
                            repl_( 'DZIEN', DAYM )
                            repl_( 'NUMER', 'RS-8' )
                            repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
@@ -1275,13 +1288,13 @@ PROCEDURE KRejS()
                                  rec := RecNo()
 
                                  SKIP -1
-                                 IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                                 IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( rejs->DATAKS ), 2 ), .F. )
                                     zlp := liczba
                                  ELSE
                                     zlp :=lp + 1
                                  ENDIF
                                  GO rec
-                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                                 DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( rejs->DATAKS ), 2 ), .T. )
                                     repl_( 'lp', zlp )
                                     zlp := zlp + 1
                                     SKIP
@@ -2908,12 +2921,18 @@ PROCEDURE KRejS_Ksieguj()
 
    LOCAL lDodajDokOper := .F.
 
+   // usun poczatkowe spacje z numeru
    znumer := dos_l( znumer )
+   // przeformatuj dzien
    zdzien := Str( Val( zDZIEN ), 2 )
    *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+   // poprzednia tresc
    tresc_ := tresc
+   // dodaj kontrahenta do bazy jesli potrzeba
    KontrApp()
+   // wroc stan dla poprzedniej tresci
    WrocStan()
+   // dodaj nowy stan do aktualnej tresci
    SEEK '+' + ident_fir + ztresc
    IF Found()
       BlokadaR()
@@ -2921,15 +2940,18 @@ PROCEDURE KRejS_Ksieguj()
       COMMIT
       UNLOCK
    ENDIF
+   // ??
    IF ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
    ENDIF
    SELECT suma_mc
+   // przywroc sumy miesieczne dla kolumn
    IF ! ins .AND. ! Empty( rejs->DATAKS ) .AND. Year( rejs->DATAKS ) == Val( param_rok ) .AND. Left( rejs->numer, 1 ) # Chr( 1 ) .AND. Left( rejs->numer, 1 ) # Chr( 254 )
       SEEK '+' + ident_fir + Str( Month( rejs->DATAKS ), 2 )
       BlokadaR()
       AktKol( -1, rejs->KOLUMNA, netprzed )
       AktKol( -1, rejs->KOLUMNA2, netprzed2 )
    ENDIF
+   // aktualizuj sumy miesieczne z nowymi wartosciami
    IF ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok ) .AND. RTrim( znumer ) # 'REM-P' .AND. RTrim( znumer ) # 'REM-K'
       SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
       BlokadaR()
@@ -2940,6 +2962,7 @@ PROCEDURE KRejS_Ksieguj()
    UNLOCK
    SEEK '+' + ident_fir + miesiac
    SELECT rejs
+   // zachowaj poprzednia date do ksiegi jesli jest modyfikacja lub obecna date do ksiegi przy dopisywaniu
    IF ! ins
       zDATAKS_OLD := DATAKS
    ELSE
@@ -2948,18 +2971,24 @@ PROCEDURE KRejS_Ksieguj()
    IF Empty( zMC )
       zMC := miesiac
    ENDIF
+   // jesli nowa pozycja to przypisz identyfikator firmy, miesiac i nr rekordu
    IfIns( 0 )
    BlokadaR()
+   // przypisz dzien, numer, nazwe, adres i identyfikator kontrahenta, trsc
    ADDPOZ
    *WAIT zsek_cv7
+   // dodaj wartosci i reszte danych rejestru sprzedazy
    ADDREJS
+   // zastap miesiac tym ze zmiennej zMC
    rejs->mc := zMC
+   // czy ksiegowanie zapisu zbiorczo (RS-7, RS-8) czy kazdy osobno
    IF ins
       rejs->ksgzbior := pzparam_ksws
    ENDIF
 
    COMMIT
    UNLOCK
+   // aktualny rekord zakupow
    REKZAK := RecNo()
 
    *para fZRODLO,fJAKIDOK,fNIP,fNRDOK,fDATAKS,fDATADOK,fTERMIN,fDNIPLAT,fRECNO,fKWOTA,fTRESC,fKWOTAVAT
@@ -2969,11 +2998,11 @@ PROCEDURE KRejS_Ksieguj()
    DO WHILE ! Dostep( 'ROZR' )
    ENDDO
    SetInd( 'ROZR' )
-
+   // zapis rozliczen
    SELECT rozr
    IF ins
       IF zROZRZAPS == 'T'
-         dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+         dddat := CToD( StrTran( param_rok + '.' + zMC + '.' + zdzien, ' ', '0' ) )
          IF ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWART08 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ) <> 0.0
             RozrApp( 'S', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, REKZAK, ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWART08 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ), zTRESC, ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ) )
          ENDIF
@@ -2988,7 +3017,7 @@ PROCEDURE KRejS_Ksieguj()
          IF zROZRZAPS == 'T'
             SELECT rozr
             RozrDel( 'S', REKZAK )
-            dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+            dddat := CToD( StrTran( param_rok + '.' + zMC + '.' + zdzien, ' ', '0' ) )
             IF ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWART08 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ) <> 0.0
                RozrApp( 'S', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, REKZAK, ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWART08 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ), zTRESC, ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ) )
             ENDIF
@@ -3003,7 +3032,7 @@ PROCEDURE KRejS_Ksieguj()
          IF zROZRZAPS == 'T'
             SELECT rozr
             RozrDel( 'S', REKZAK )
-            dddat := CToD( StrTran( param_rok + '.' + miesiac + '.' + zdzien, ' ', '0' ) )
+            dddat := CToD( StrTran( param_rok + '.' + zMC + '.' + zdzien, ' ', '0' ) )
             IF ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWART08 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ) <> 0.0
                RozrApp( 'S', 'FS', zNR_IDENT, zNUMER, dddat, dddat, zZAP_DAT, zZAP_TER, REKZAK, ( zWART22 + zWART12 + zWART07 + zWART02 + zWART00 + zWART08 + zWARTZW + zVAT22 + zVAT12 + zVAT07 + zVAT02 ), zTRESC, ( zVAT22 + zVAT12 + zVAT07 + zVAT02 ) )
             ENDIF
@@ -3025,7 +3054,9 @@ PROCEDURE KRejS_Ksieguj()
    ENDDO
    SetInd( USEBAZ )
    IF ! ins
+      // jesli modyfikacja i ryczalt
       IF zRYCZALT == 'T'
+         // jesli przed modyfikacja byla podana kolumna i jest podana kolumna
          IF ( AllTrim( zKOLUMNA ) $ '56789' .OR. AllTrim( rejs->KOLUMNA ) $ '56789' .OR. AllTrim( zKOLUMNA ) == '10' .OR. AllTrim( rejs->KOLUMNA ) == '10' ;
             .OR. AllTrim( zKOLUMNA ) == '11' .OR. AllTrim( rejs->KOLUMNA ) == '11' ;
             .OR. AllTrim( zKOLUMNA ) == '12' .OR. AllTrim( rejs->KOLUMNA ) == '12' ;
@@ -3035,18 +3066,25 @@ PROCEDURE KRejS_Ksieguj()
             .OR. AllTrim( zKOLUMNA2 ) == '12' .OR. AllTrim( rejs->KOLUMNA2 ) == '12' ;
             .OR. AllTrim( zKOLUMNA2 ) == '13' .OR. AllTrim( rejs->KOLUMNA2 ) == '13' )
             DO CASE
+            // jesli wczesniej byla jakas kwota
             CASE netprzed <> 0
+               // znajdz wpis w ewidencji
                SET ORDER TO 5
                SEEK '+' + Str( REKZAK, 5 ) + 'RS-'
+               // jesli znaleziono wpis
                IF Found()
+                  // jesli nowe netto jest 0
                   IF zNETTO == 0
+                     // usuwamy wpis w ewidencji
                      BlokadaR()
                      DELETE
                      COMMIT
                      UNLOCK
+                     // jesli poprzednia data ksiegowania byla podana i wskazuje na aktualny rok
                      IF ! Empty( zDATAKS_OLD ) .AND. Year( zDATAKS_OLD ) == Val( param_rok )
-                        SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 )
+                        // zmniejsz liczbe dokumentow w miesiacu usunietego wpisu ewidencji
                         SELECT suma_mc
+                        SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 )
                         BlokadaR()
                         repl_( 'pozycje', pozycje - 1 )
                         COMMIT
@@ -3056,14 +3094,15 @@ PROCEDURE KRejS_Ksieguj()
                      SET ORDER TO 1
                      *********************** lp
                      IF nr_uzytk >= 0
-                        IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                        // zmieniamy numery pozycji pozostalych wpisow ewidencji
+                        IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS_OLD ), 2 ), .T. )
                            IF param_kslp == '3'
                               SET ORDER TO 4
                            ENDIF
                            Blokada()
                            Czekaj()
                            rec := RecNo()
-                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                           DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS_OLD ), 2 ), .T. )
                               repl_( 'lp', lp - 1 )
                               SKIP
                            ENDDO
@@ -3077,7 +3116,9 @@ PROCEDURE KRejS_Ksieguj()
                         ENDIF
                      ENDIF
                      *******************************
+                  // nowe netto <> 0
                   ELSE
+                     // dodajemy wpis ewidencji
                      BlokadaR()
                      //repl_( 'DZIEN', zdzien )
                      repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
@@ -3103,23 +3144,23 @@ PROCEDURE KRejS_Ksieguj()
                      IF zNETTO2 <> 0 .AND. Val( zKOLUMNA2 ) > 0
                         DO CASE
                         CASE AllTrim( zKOLUMNA2 ) == '5'
-                           REPLACE  ry20      WITH zNETTO2
+                           REPLACE  ry20      WITH ry20 + zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '6'
-                           REPLACE  ry17      WITH zNETTO2
+                           REPLACE  ry17      WITH ry17 + zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '7'
-                           REPLACE  ryk09     WITH zNETTO2
+                           REPLACE  ryk09     WITH ryk09 + zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '8'
-                           REPLACE  uslugi    WITH zNETTO2
+                           REPLACE  uslugi    WITH uslugi + zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '9'
-                           REPLACE  ryk10     WITH zNETTO2
+                           REPLACE  ryk10     WITH ryk10 + zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '10'
-                           REPLACE  produkcja WITH zNETTO2
+                           REPLACE  produkcja WITH produkcja + zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '11'
-                           REPLACE  handel    WITH zNETTO2
+                           REPLACE  handel    WITH handel + zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '12'
-                           REPLACE  ryk07     WITH zNETTO2
+                           REPLACE  ryk07     WITH ryk07 + zNETTO2
                         CASE AllTrim( zKOLUMNA2 ) == '13'
-                           REPLACE  ry10      WITH zNETTO2
+                           REPLACE  ry10      WITH ry10 + zNETTO2
                         ENDCASE
                      ENDIF
                      repl_( 'rejzid', REKZAK )
@@ -3128,15 +3169,19 @@ PROCEDURE KRejS_Ksieguj()
                   ENDIF
                   commit_()
                ENDIF
+            // jesli nie bylo kwoty (brak wpisu w ewidencji)
             CASE netprzed == 0
                *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-               IF zNETTO <> 0 .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
+               // jesli jest kwota do ewidencji
+               IF ( zNETTO <> 0 .OR. zNETTO2 <> 0 ) .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
+                  // zwieksz liczbe pozycji w sumach miesiecznych
                   SELECT suma_mc
                   SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                   BlokadaR()
                   repl_( 'pozycje', pozycje + 1 )
                   COMMIT
                   UNLOCK
+                  // dodaj wpis do ewidencji
                   SELECT &USEBAZ
                   SET ORDER TO 1
                   app()
@@ -3165,30 +3210,32 @@ PROCEDURE KRejS_Ksieguj()
                   IF zNETTO2 <> 0 .AND. Val( zKOLUMNA2 ) > 0
                      DO CASE
                      CASE AllTrim( zKOLUMNA2 ) == '5'
-                        REPLACE  ry20      WITH zNETTO2
+                        REPLACE  ry20      WITH ry20 + zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '6'
-                        REPLACE  ry17      WITH zNETTO2
+                        REPLACE  ry17      WITH ry17 + zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '7'
-                        REPLACE  ryk09     WITH zNETTO2
+                        REPLACE  ryk09     WITH ryk09 + zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '8'
-                        REPLACE  uslugi    WITH zNETTO2
+                        REPLACE  uslugi    WITH uslugi + zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '9'
-                        REPLACE  ryk10     WITH zNETTO2
+                        REPLACE  ryk10     WITH ryk10 + zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '10'
-                        REPLACE  produkcja WITH zNETTO2
+                        REPLACE  produkcja WITH produkcja + zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '11'
-                        REPLACE  handel    WITH zNETTO2
+                        REPLACE  handel    WITH handel + zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '12'
-                        REPLACE  ryk07     WITH zNETTO2
+                        REPLACE  ryk07     WITH ryk07 + zNETTO2
                      CASE AllTrim( zKOLUMNA2 ) == '13'
-                        REPLACE  ry10      WITH zNETTO2
+                        REPLACE  ry10      WITH ry10 + zNETTO2
                      ENDCASE
                   ENDIF
+                  // dodaj nr rekordu rejeztru sprzedazy
                   repl_( 'rejzid', REKZAK )
                   COMMIT
                   UNLOCK
                   *********************** lp
                   IF nr_uzytk >= 0
+                     // zaktualizuj numery wpisow w ewidencji po dodaniu nowego wpisu
                      IF param_lp == 'T'
                         IF param_kslp == '3'
                            SET ORDER TO 4
@@ -3223,38 +3270,48 @@ PROCEDURE KRejS_Ksieguj()
                ENDIF
             ENDCASE
          ENDIF
+      // jesli zapis do ksiegi (nie ryczaltowiec)
       ELSE
+         // jesli wpisy w ksiedze sa osobne dla sprzedazy
          IF rejs->KSGZBIOR == 'N'
+            // jesli kolumnu to 7 lub 8
             IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' ) ;
                .OR. ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
                DO CASE
+               // jesli poprzednie netto jest rozne od 0 (istnieje wpis w ksiedze)
                CASE netprzed <> 0
+                  // znajdz wpis w ksiedze
                   SET ORDER TO 5
                   SEEK '+' + Str( REKZAK, 5 ) + 'RS-'
+                  // jesli znaleziono
                   IF Found()
-                     IF zNETTO == 0
+                     // jesli brak kwot do ksiegi
+                     IF zNETTO == 0 .AND. zNETTO2 == 0
+                        // usun dotychczasowy wpis w ksiedze
                         BlokadaR()
                         DELETE
                         COMMIT
                         UNLOCK
+                        // zmniejsz liczbe dokumentow w sumach miesiecznych
                         SELECT suma_mc
-                        SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
+                        SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 )
                         BlokadaR()
                         repl_( 'pozycje', pozycje - 1 )
                         COMMIT
                         UNLOCK
+                        // przenumeruj dokumenty w ksiedze
                         SELECT &USEBAZ
                         SET ORDER TO 1
                         *********************** lp
                         IF nr_uzytk >= 0
-                           IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
+                           IF param_lp == 'T' .AND. del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS_OLD ), 2 ), .T. )
                               IF param_kslp == '3'
                                  SET ORDER TO 4
                               ENDIF
                               Blokada()
                               Czekaj()
                               rec := RecNo()
-                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
+                              DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS_OLD ), 2 ), .T. )
                                  repl_( 'lp', lp - 1 )
                                  SKIP
                               ENDDO
@@ -3268,7 +3325,24 @@ PROCEDURE KRejS_Ksieguj()
                            ENDIF
                         ENDIF
                         *******************************
+                     // sa kwoty do ksiegi, popraw istniejacy wpis w ksiedze
                      ELSE
+                        // zmniejsz liczbe dokumentow w sumach miesiecznych
+                        IF zDATAKS_OLD <> zDATAKS
+                           SELECT suma_mc
+                           SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 )
+                           BlokadaR()
+                           repl_( 'pozycje', pozycje - 1 )
+                           COMMIT
+                           UNLOCK
+                           SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
+                           BlokadaR()
+                           repl_( 'pozycje', pozycje + 1 )
+                           COMMIT
+                           UNLOCK
+                           SELECT &USEBAZ
+                        ENDIF
+                        // aktualizuj wpis w ksiedze
                         BlokadaR()
                         //repl_( 'DZIEN', zdzien )
                         repl_( 'DZIEN', Str( Day( zDATAKS ), 2 ) )
@@ -3292,18 +3366,23 @@ PROCEDURE KRejS_Ksieguj()
                         UNLOCK
                      ENDIF
                      commit_()
+                  // nie znaleziono poprzedniego wpisu, dodaj potem
                   ELSE
                      lDodajDokOper := .T.
                   ENDIF
+               // kwota do ksiegi przed modyfikacja jest zero, brak wpisu w ksiedze do modyfikowanej pozycji
                CASE netprzed == 0
                   *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-                  IF zNETTO <> 0 .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
+                  // jesli sa wskazane kwoty do ksiegi dodaj wpis w ksiedze
+                  IF ( zNETTO <> 0 .OR. zNETTO2 <> 0 ) .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
+                     // zwieksz liczbe pozycji w sumach miesiecznych
                      SELECT suma_mc
                      SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                      BlokadaR()
                      repl_( 'pozycje', pozycje + 1 )
                      COMMIT
                      UNLOCK
+                     // dodaj wpis w ksiedze
                      SELECT &USEBAZ
                      SET ORDER TO 1
                      app()
@@ -3329,6 +3408,7 @@ PROCEDURE KRejS_Ksieguj()
                      COMMIT
                      UNLOCK
                      *********************** lp
+                     // przenumeruj dokumenty w ksiedze
                      IF nr_uzytk >= 0
                         IF param_lp == 'T'
                            IF param_kslp == '3'
@@ -3363,21 +3443,29 @@ PROCEDURE KRejS_Ksieguj()
                   ENDIF
                ENDCASE
             ENDIF
+         // zbiorczy wpis w ksiedze (RS-7, RS-8)
          ELSE
+            // czy poprzednio bylo cos do kolumny 7 - wpis RS-7
             IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '7' )
+               // poszukaj wpisu RS-7 w ksiedze
                SET ORDER TO 3
                GO TOP
-               SEEK '+' + ident_fir + miesiac + 'RS-7'
+               SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 ) + 'RS-7'
                IF Found()
+                  // znaleziono, odejmij kwote przed modyfikacja
                   SET ORDER TO 1
                   BlokadaR()
                   AKTPOL- wyr_tow WITH  iif( Str( Val( rejs->KOLUMNA ), 1 ) == '7', netprzed, netprzed2 )
                   COMMIT
                   UNLOCK
                ELSE
+                  // brak, dodaj wpis RS-7 i odejmij poprzednia kwote
+                  // tylko po co?
                   SET ORDER TO 1
                   *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                  // zwieksz ilosc dokumentow w sumach miesiecznych
                   SELECT suma_mc
+                  SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 )
                   BlokadaR()
                   repl_( 'pozycje', pozycje + 1 )
                   COMMIT
@@ -3385,6 +3473,7 @@ PROCEDURE KRejS_Ksieguj()
                   SELECT &USEBAZ
                   app()
                   ADDDOC
+                  repl_( 'MC',  Str( Month( zDATAKS_OLD ), 2 ) )
                   repl_( 'DZIEN', DAYM )
                   repl_( 'NUMER', 'RS-7' )
                   repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
@@ -3393,6 +3482,7 @@ PROCEDURE KRejS_Ksieguj()
                   *repl_([kwota],zkwota)
                   COMMIT
                   UNLOCK
+                  // przenumeruj dokumenty w ksiedze
                   *********************** lp
                   IF nr_uzytk >= 0
                      IF param_lp == 'T'
@@ -3404,13 +3494,13 @@ PROCEDURE KRejS_Ksieguj()
                         rec := RecNo()
 
                         SKIP -1
-                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( zDATAKS_OLD ), 2 ), .F. )
                            zlp := liczba
                         ELSE
                            zlp := lp + 1
                         ENDIF
                         GO rec
-                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS_OLD ), 2 ), .T. )
                            repl_( 'lp', zlp )
                            zlp := zlp + 1
                            SKIP
@@ -3430,10 +3520,11 @@ PROCEDURE KRejS_Ksieguj()
                   ***********************
                ENDIF
             ENDIF
+            // to samo co powyzej dla kolumny 8
             IF ( Str( Val( rejs->KOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( rejs->KOLUMNA2 ), 1 ) == '8' )
                SET ORDER TO 3
                GO TOP
-               SEEK '+' + ident_fir + miesiac + 'RS-8'
+               SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 ) + 'RS-8'
                IF Found()
                   SET ORDER TO 1
                   BlokadaR()
@@ -3444,6 +3535,7 @@ PROCEDURE KRejS_Ksieguj()
                   SET ORDER TO 1
                   *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
                   SELECT suma_mc
+                  SEEK '+' + ident_fir + Str( Month( zDATAKS_OLD ), 2 )
                   BlokadaR()
                   repl_( 'pozycje', pozycje + 1 )
                   COMMIT
@@ -3451,6 +3543,7 @@ PROCEDURE KRejS_Ksieguj()
                   SELECT &USEBAZ
                   app()
                   ADDDOC
+                  repl_( 'MC',  Str( Month( zDATAKS_OLD ), 2 ) )
                   repl_( 'DZIEN', DAYM )
                   repl_( 'NUMER', 'RS-8' )
                   repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
@@ -3470,13 +3563,13 @@ PROCEDURE KRejS_Ksieguj()
                         rec := RecNo()
 
                         SKIP -1
-                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( zDATAKS_OLD ), 2 ), .F. )
                            zlp := liczba
                         ELSE
                            zlp := lp + 1
                         ENDIF
                         GO rec
-                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS_OLD ), 2 ), .T. )
                            repl_( 'lp', zlp )
                            zlp := zlp + 1
                            SKIP
@@ -3498,17 +3591,23 @@ PROCEDURE KRejS_Ksieguj()
             ENDIF
          ENDIF
       ENDIF
+   // nowy wpis do rejestru - dodawanie wpisu ksiegi/ewidencji
    ELSE
+      // jesli wpis do ewidencji
       IF zRYCZALT == 'T'
+         // jesli wskazano jakas kolumne
          IF ( AllTrim( zKOLUMNA ) $ '56789' .OR. AllTrim( zKOLUMNA ) == '10' .OR. AllTrim( zKOLUMNA ) == '11' .OR. AllTrim( zKOLUMNA ) == '12' .OR. AllTrim( zKOLUMNA ) == '13' ) .OR. ( AllTrim( zKOLUMNA2 ) $ '56789' .OR. AllTrim( zKOLUMNA2 ) == '10' .OR. AllTrim( zKOLUMNA2 ) == '11' .OR. AllTrim( zKOLUMNA2 ) == '12' .OR. AllTrim( zKOLUMNA2 ) == '13' )
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
-            IF zNETTO <> 0 .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
+            // jesli wskazano jakas kwote
+            IF ( zNETTO <> 0 .OR. zNETTO2 <> 0 ) .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
+               // zwieksz liczbe dokumentow w sumach miesiecznych
                SELECT suma_mc
                SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                BlokadaR()
                repl_( 'pozycje', pozycje+1)
                COMMIT
                unlock
+               // dodaj wpis do ewidencji
                select &USEBAZ
                set orde to 1
                app()
@@ -3559,6 +3658,7 @@ PROCEDURE KRejS_Ksieguj()
                repl_( 'rejzid', REKZAK )
                commit_()
                UNLOCK
+               // przenumeruj dokumenty w ewidencji
                *********************** lp
                IF nr_uzytk >= 0
                   IF param_lp == 'T'
@@ -3595,17 +3695,23 @@ PROCEDURE KRejS_Ksieguj()
          ENDIF
       ENDIF
    ENDIF
+   // dla ksiegi dodawanie wpisu
    IF zRYCZALT # 'T'
+      // jesli osobne wpisy w ksiedze dla sprzedazy
       IF pzparam_ksws == 'N'
+         // jesli potrzeba dodac wpis (nowy albo modyfikowany) i jest podana kolumna ksiegi
          IF ( lDodajDokOper .OR. ins ) .AND. ( AllTrim( zKOLUMNA ) $ '78' .OR. AllTrim( zKOLUMNA2 ) $ '78' )
             *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+            // jesli jest podana kwota do ksiegi i data ksiegowania to obecny rok
             IF zNETTO + zNETTO2 <> 0 .AND. ! Empty( zDATAKS ) .AND. Year( zDATAKS ) == Val( param_rok )
+               // zwieksz liczbe dokumentow w sumach miesiecznych
                SELECT suma_mc
                SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                BlokadaR()
                repl_( 'pozycje', pozycje+1)
                COMMIT
                unlock
+               // dodaj nowy wpis do ksiegi
                select &USEBAZ
                set orde to 1
                app()
@@ -3630,6 +3736,7 @@ PROCEDURE KRejS_Ksieguj()
                repl_( 'KRAJ', zKRAJ )
                commit_()
                UNLOCK
+               // przenumeruj dokumenty w ksiedze
                *********************** lp
                IF nr_uzytk >= 0
                   IF param_lp == 'T'
@@ -3664,23 +3771,31 @@ PROCEDURE KRejS_Ksieguj()
                UNLOCK
             ENDIF
          ENDIF
+      // jesli zbiorcze wpisy spreda¾y w ksiedze (RS-7, RS-8)
       ELSE
+         // jesli wskazano kolumne
          IF ( Str( Val( zKOLUMNA ), 1 ) $ '78' ) .OR. ( Str( Val( zKOLUMNA2 ), 1 ) $ '78' )
             SELECT oper
             SET ORDER TO 3
+            // jesli kolumna 7
             IF ( Str( Val( zKOLUMNA ), 1 ) == '7' ) .OR. ( Str( Val( zKOLUMNA2 ), 1 ) == '7' )
+               // znajdz wpis RS-7
                GO TOP
-               SEEK '+' + ident_fir + miesiac + 'RS-7'
+               SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 ) + 'RS-7'
                IF Found()
+                  // znaleziono, aktualizuj wartosc
                   SET ORDER TO 1
                   BlokadaR()
                   repl_( 'wyr_tow', wyr_tow + iif( Str( Val( zKOLUMNA ), 1 ) == '7', znetto, znetto2 ) )
                   COMMIT
                   UNLOCK
                ELSE
+                  // nie znaleziono, dodaj wpis RS-7
                   SET ORDER TO 1
                   *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
+                  // aktualizuj ilosc dokumentow w sumach miesiecznych
                   SELECT suma_mc
+                  SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                   BlokadaR()
                   repl_( 'pozycje', pozycje+1)
                   COMMIT
@@ -3688,6 +3803,7 @@ PROCEDURE KRejS_Ksieguj()
                   select &USEBAZ
                   app()
                   adddoc
+                  repl_( 'MC', Str( Month( zDATAKS ), 2 ) )
                   repl_( 'DZIEN', DAYM)
                   repl_( 'NUMER', 'RS-7')
                   repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY')
@@ -3696,6 +3812,7 @@ PROCEDURE KRejS_Ksieguj()
                   * repl_([kwota],zkwota)
                   COMMIT
                   unlock
+                  // przenumeruj wpisy w ksiedze
                   *********************** lp
                   IF nr_uzytk >= 0
                      IF param_lp == 'T'
@@ -3707,13 +3824,13 @@ PROCEDURE KRejS_Ksieguj()
                         rec := RecNo()
 
                         SKIP -1
-                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( zDATAKS ), 2 ), .F. )
                            zlp := liczba
                         ELSE
                            zlp := lp + 1
                         ENDIF
                         GO rec
-                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
                            repl_( 'lp', zlp )
                            zlp := zlp + 1
                            SKIP
@@ -3733,10 +3850,11 @@ PROCEDURE KRejS_Ksieguj()
                   ***********************
                ENDIF
             ENDIF
+            // zrob to samo dla RS-8
             IF ( Str( Val( zKOLUMNA ), 1 ) == '8' ) .OR. ( Str( Val( zKOLUMNA2 ), 1 ) == '8' )
                SET ORDER TO 3
                GO TOP
-               SEEK '+' + ident_fir + miesiac + 'RS-8'
+               SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 ) + 'RS-8'
                IF Found()
                   SET ORDER TO 1
                   BlokadaR()
@@ -3747,6 +3865,7 @@ PROCEDURE KRejS_Ksieguj()
                   SET ORDER TO 1
                   *ננננננננננננננננננננננננננננננננ REPL נננננננננננננננננננננננננננננננננ
                   SELECT suma_mc
+                  SEEK '+' + ident_fir + Str( Month( zDATAKS ), 2 )
                   BlokadaR()
                   repl_( 'pozycje', pozycje + 1 )
                   COMMIT
@@ -3754,6 +3873,7 @@ PROCEDURE KRejS_Ksieguj()
                   SELECT &USEBAZ
                   app()
                   ADDDOC
+                  repl_( 'MC', Str( Month( zDATAKS ), 2 ) )
                   repl_( 'DZIEN', DAYM )
                   repl_( 'NUMER', 'RS-8' )
                   repl_( 'TRESC', 'SUMA Z REJESTRU SPRZEDAZY' )
@@ -3773,13 +3893,13 @@ PROCEDURE KRejS_Ksieguj()
                         rec := RecNo()
 
                         SKIP -1
-                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # miesiac, .F. )
+                        IF Bof() .OR. firma # ident_fir .OR. iif( Firma_RodzNrKs == "M", mc # Str( Month( zDATAKS ), 2 ), .F. )
                            zlp := liczba
                         ELSE
                            zlp := lp + 1
                         ENDIF
                         GO rec
-                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == miesiac, .T. )
+                        DO WHILE del == '+' .AND. firma == ident_fir .AND. iif( Firma_RodzNrKs == "M", mc == Str( Month( zDATAKS ), 2 ), .T. )
                            repl_( 'lp', zlp )
                            zlp := zlp + 1
                            SKIP
